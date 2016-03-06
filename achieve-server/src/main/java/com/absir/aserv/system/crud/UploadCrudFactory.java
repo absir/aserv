@@ -143,7 +143,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 	 */
 	public String randUploadFile(int hashCode) {
 		Date date = new Date();
-		return DATE_FORMAT.format(date) + '/' + HelperRandom.randSecendBuidler((int) date.getTime(), 16, hashCode);
+		return DATE_FORMAT.format(date) + '/' + HelperRandom.randSecondId((int) date.getTime(), 16, hashCode);
 	}
 
 	/**

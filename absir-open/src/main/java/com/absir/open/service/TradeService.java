@@ -7,11 +7,6 @@
  */
 package com.absir.open.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.hibernate.Session;
-
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.helper.HelperRandom;
@@ -21,6 +16,10 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.open.bean.JPayHistory;
 import com.absir.open.bean.JPayTrade;
 import com.absir.orm.transaction.value.Transaction;
+import org.hibernate.Session;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author absir
@@ -41,7 +40,7 @@ public class TradeService {
 	 * @return
 	 */
 	public String newTradeId(int hashCode) {
-		return HelperRandom.randSecendId(hashCode);
+		return HelperRandom.randSecondId(hashCode);
 	}
 
 	/**

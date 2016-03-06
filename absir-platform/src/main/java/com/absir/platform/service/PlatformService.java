@@ -7,10 +7,6 @@
  */
 package com.absir.platform.service;
 
-import java.util.Iterator;
-
-import org.hibernate.Session;
-
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
@@ -23,6 +19,9 @@ import com.absir.core.kernel.KernelString;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.platform.bean.JPlatformUser;
 import com.absir.platform.bean.JPlatformUserRef;
+import org.hibernate.Session;
+
+import java.util.Iterator;
 
 /**
  * @author absir
@@ -210,7 +209,7 @@ public class PlatformService {
 				platformUser.setPassTime(currentTime + lifeTime);
 				if (type == 2 || KernelString.isEmpty(platformUser.getSessionId())) {
 					platformUser
-							.setSessionId(HelperRandom.randSecendId(currentTime, 8, platformUser.getId().hashCode()));
+							.setSessionId(HelperRandom.randSecondId(currentTime, 8, platformUser.getId().hashCode()));
 				}
 			}
 

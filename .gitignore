@@ -5,7 +5,8 @@ out
 .svn
 .classpath
 .project
-*.iml
 .setting
+*.iml
 .idea
 *.log
+.DS_Store
