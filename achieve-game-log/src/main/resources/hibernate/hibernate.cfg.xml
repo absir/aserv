@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE hibernate-configuration PUBLIC  
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"  
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<!--hibernate-configuration是配置文件的根元素，配置信息都在此元素内。 -->
+<hibernate-configuration>
+	<!--session-factory子元素。 -->
+	<session-factory>
+		<!-- 数据库驱动 -->
+		<property name="connection.driver_class">${database.driverClass}</property>
+		<!-- 连接URL -->
+		<property name="connection.url">${database.url}</property>
+		<!-- 用户名和密码 -->
+		<property name="connection.username">${database.username}</property>
+		<property name="connection.password">${database.password}</property>
+		<!-- 使用内置连接池，大小为1 -->
+		<property name="connection.pool_size">1</property>
+		<property name="connection.provider_class">org.hibernate.c3p0.internal.C3P0ConnectionProvider</property>
+		<property name="hibernate.c3p0.timeout">60</property>
+		<property name="hibernate.c3p0.min_size">2</property>
+		<property name="hibernate.c3p0.max_size">32</property>
+		<property name="hibernate.c3p0.idle_test_period">900</property>
+		<property name="hibernate.c3p0.preferredTestQuery">select 1</property>
+		<property name="hibernate.c3p0.max_statements">50</property>
+		<!-- <property name="c3p0.testConnectionOnCheckout">true</property> -->
+		<!-- 数据库语言 -->
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="current_session_context_class">com.absir.orm.hibernate.transaction.JSessionContext</property>
+		<!-- 向标准输出设备输出hibernate为我们生成的SQL语句。 -->
+		<property name="show_sql">${database.show}</property>
+		<!-- 自动创建数据库 -->
+		<property name="hbm2ddl.auto">update</property>
+		<!-- 指定要用到的映射文件，就是我们刚才创建的。<mapping resource="" /> -->
+		<!-- 设置二级缓存 -->
+		<!--<property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property> -->
+		<!--<property name="hibernate.cache.use_structured_entries" value="true" 
+			/> -->
+		<property name="hibernate.cache.use_query_cache">true</property>
+		<property name="hibernate.cache.region.factory_class">org.hibernate.cache.EhCacheRegionFactory</property>
+		<property name="net.sf.ehcache.configurationResourceName">hibernate.ehcache.xml</property>
+	</session-factory>
+</hibernate-configuration> 

@@ -1,0 +1,28 @@
+\#set(page_title = ${Pag::getLang("管理后台", false)})
+\#set(body_class = "skin-blue") 
+\#set(page_title = Pag::configure().sitename + ${Pag::getLang("管理后台",false)})
+\#tag layout("/WEB-INF/tpl/layout.html")
+\#include("../head.html") 
+<div class="wrapper">
+      ${Pag::include("head.html")}
+      <!-- Left side column. contains the logo and sidebar -->
+      ${Pag::include("menu.html")}
+      <!-- Right side column. Contains the navbar and content of the page -->
+      <div class="content-wrapper">
+      	<iframe id="navTab" name="navTab" width="100%;" height="100%" style="height: 100%" src="http://www.baidu.com"></iframe>
+      </div>
+      <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+          <b>Version</b> 1.0
+        </div>
+        <strong>Copyright &copy; 2014-2015 <a href="http://absir.com">absir</a>.</strong> All rights reserved.
+      </footer>
+    </div><!-- ./wrapper -->
+\#include("../foot.html")
+    <script>
+      $(function () {
+    	var $navTab = $('#navTab');
+    	$navTab.height($navTab.parent().height());
+      });
+    </script> 
+\#end

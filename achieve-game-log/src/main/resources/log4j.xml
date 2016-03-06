@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<!-- console logger -->
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-5p: %c - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="ALL" />
+			<param name="LevelMax" value="INFO" />
+		</filter>
+	</appender>
+
+	<!-- main logger -->
+	<appender name="main" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${classPath}/logs/main.log" />
+		<param name="MaxFileSize" value="10240KB" />
+		<param name="MaxBackupIndex" value="8" />
+		<param name="Encoding" value="utf-8" />
+		<param name="DatePattern" value="yyyy-MM-dd H:M:S" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d-[HL] %p %t %c - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="WARN" />
+			<param name="LevelMax" value="WARN" />
+		</filter>
+	</appender>
+
+	<!-- error logger -->
+	<appender name="error" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${classPath}/logs/error.log" />
+		<param name="MaxFileSize" value="10240KB" />
+		<param name="MaxBackupIndex" value="8" />
+		<param name="Encoding" value="utf-8" />
+		<param name="DatePattern" value="yyyy-MM-dd H:M:S" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d-[HL] %p %t %c - %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="ERROR" />
+			<param name="LevelMax" value="ERROR" />
+		</filter>
+	</appender>
+
+	<!-- root log4j configure -->
+	<logger name="com.absir">
+		<level value="ALL" />
+		<appender-ref ref="console" />
+		<appender-ref ref="main" />
+		<appender-ref ref="error" />
+	</logger>
+</log4j:configuration>

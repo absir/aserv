@@ -1,0 +1,7 @@
+package G2.Protocol;
+
+option optimize_for = LITE_RUNTIME;
+
+message UserAccount {
+
+}

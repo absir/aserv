@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+#set(locale = Pag::locale()) 
+#set(Object ace = SITE_ROUTE + "/static/ace/")
+<link rel="stylesheet" href="${ace}assets/css/bootstrap.css" />
+<link rel="stylesheet" href="${ace}assets/css/font-awesome.css" />
+<link rel="stylesheet" href="${ace}assets/css/ace-fonts.css" />
+<link rel="stylesheet" href="${ace}assets/css/ace.css" />
+
+<!--[if lte IE 9]>
+	<link rel="stylesheet" href="${ace}assets/css/ace-part2.css" />
+<![endif]-->
+
+<link rel="stylesheet" href="${ace}assets/css/ace-rtl.css" />
+
+<!--[if lte IE 9]>
+	<link rel="stylesheet" href="${ace}assets/css/ace-ie.css" />
+<![endif]-->
+<!--[if lt IE 9]>
+<script src="${ace}assets/js/html5shiv.js"></script>
+<script src="${ace}assets/js/respond.js"></script>
+<![endif]-->
+<title>${page_title}</title>
+${page_header}
+</head>
+<body class="${body_class}">
+${bodyContent}
+</body>
+		<!-- basic scripts -->
+		<!--[if !IE]> -->
+		<script type="text/javascript">
+			window.jQuery || document.write("<script src='${ace}assets/js/jquery.js'>"+"<"+"/script>");
+		</script>
+		<!-- <![endif]-->
+
+		<!--[if IE]>
+		<script type="text/javascript">
+ 			window.jQuery || document.write("<script src='${ace}assets/js/jquery1x.js'>"+"<"+"/script>");
+		</script>
+		<![endif]-->
+		<script type="text/javascript">
+			if('ontouchstart' in document.documentElement) document.write("<script src='${ace}assets/js/jquery.mobile.custom.js'>"+"<"+"/script>");
+		</script>
+		<script src="${ace}assets/js/bootstrap.js"></script>
+
+		<!-- ace scripts -->
+		<script src="${ace}assets/js/ace/elements.scroller.js"></script>
+		<script src="${ace}assets/js/ace/elements.colorpicker.js"></script>
+		<script src="${ace}assets/js/ace/elements.fileinput.js"></script>
+		<script src="${ace}assets/js/ace/elements.typeahead.js"></script>
+		<script src="${ace}assets/js/ace/elements.wysiwyg.js"></script>
+		<script src="${ace}assets/js/ace/elements.spinner.js"></script>
+		<script src="${ace}assets/js/ace/elements.treeview.js"></script>
+		<script src="${ace}assets/js/ace/elements.wizard.js"></script>
+		<script src="${ace}assets/js/ace/elements.aside.js"></script>
+		<script src="${ace}assets/js/ace/ace.js"></script>
+		<script src="${ace}assets/js/ace/ace.ajax-content.js"></script>
+		<script src="${ace}assets/js/ace/ace.touch-drag.js"></script>
+		<script src="${ace}assets/js/ace/ace.sidebar.js"></script>
+		<script src="${ace}assets/js/ace/ace.sidebar-scroll-1.js"></script>
+		<script src="${ace}assets/js/ace/ace.submenu-hover.js"></script>
+		<script src="${ace}assets/js/ace/ace.widget-box.js"></script>
+		<script src="${ace}assets/js/ace/ace.settings.js"></script>
+		<script src="${ace}assets/js/ace/ace.settings-rtl.js"></script>
+		<script src="${ace}assets/js/ace/ace.settings-skin.js"></script>
+		<script src="${ace}assets/js/ace/ace.widget-on-reload.js"></script>
+		<script src="${ace}assets/js/ace/ace.searchbox-autocomplete.js"></script>
+${page_footer}
+</html>

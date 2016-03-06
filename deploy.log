@@ -1,0 +1,479 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-lang:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-lang:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-lang/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-io:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-io:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-io/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-bean:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-bean:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-bean/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-core:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-core:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-core/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-context:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-context:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-context/pom.xml, line 9, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-aop:jar:0.0.1-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-asyn:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-asyn:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-asyn/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-hibernate:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-hibernate:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-hibernate/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-server:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-server:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-server/pom.xml, line 9, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-servlet:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-servlet:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-servlet/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-webapp:war:0.0.1-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir.core:absir-jooq:jar:0.0.1-SNAPSHOT
+[WARNING] 'parent.relativePath' points at com.absir:parent instead of com.absir.core:absir, please verify your project structure @ line 3, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir.core:absir:0.0.1-SNAPSHOT, /Users/absir/.m2/repository/com/absir/core/absir/0.0.1-SNAPSHOT/absir-0.0.1-SNAPSHOT.pom, line 23, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-boneCP:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-boneCP:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-boneCP/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-developer:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-developer:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-developer/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:achieve-server:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:achieve-server:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/achieve-server/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-developerImpl:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-developerImpl:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-developerImpl/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-developerJsp:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-developerJsp:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-developerJsp/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-jsp:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-jsp:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-jsp/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-game:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-game:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-game/pom.xml, line 9, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-card:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-card:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-card/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-socket:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-socket:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-socket/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-alipay:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-alipay:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-alipay/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-ab:jar:0.0.1-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-duoku:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-duoku:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-duoku/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-open:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-open:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-open/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-iap:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-iap:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-iap/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-developerWeb:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-developerWeb:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-developerWeb/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-source:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-source:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-source/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:absir-yidong:jar:0.0.1-SNAPSHOT
+[WARNING] 'version' contains an expression but should be a constant. @ com.absir:absir-yidong:${com.absir.version}, /Users/absir/Documents/workspace-sts/absir/absir-yidong/pom.xml, line 10, column 11
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ com.absir:parent:0.0.1-SNAPSHOT, /Users/absir/Documents/workspace-sts/absir/pom.xml, line 62, column 12
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.absir:parent:pom:0.0.1-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ line 54, column 12
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ line 62, column 12
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] parent
+[INFO] absir-lang
+[INFO] absir-io
+[INFO] absir-bean
+[INFO] absir-core
+[INFO] absir-context
+[INFO] absir-aop
+[INFO] absir-asyn
+[INFO] absir-hibernate
+[INFO] absir-server
+[INFO] absir-servlet
+[INFO] absir-developer
+[INFO] absir-webapp Maven Webapp
+[INFO] absir-jooq
+[INFO] absir-boneCP
+[INFO] achieve-server
+[INFO] absir-developerImpl
+[INFO] absir-jsp
+[INFO] absir-developerJsp
+[INFO] absir-game
+[INFO] absir-card
+[INFO] absir-socket
+[INFO] absir-open
+[INFO] absir-alipay
+[INFO] absir-ab
+[INFO] absir-duoku
+[INFO] absir-iap
+[INFO] absir-developerWeb
+[INFO] absir-source
+[INFO] absir-yidong
+[INFO] 
+[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building parent 0.0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] >>> maven-source-plugin:2.2.1:jar (default) @ parent >>>
+[INFO] 
+[INFO] <<< maven-source-plugin:2.2.1:jar (default) @ parent <<<
+[INFO] 
+[INFO] --- maven-source-plugin:2.2.1:jar (default) @ parent ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ parent ---
+[INFO] Installing /Users/absir/Documents/workspace-sts/absir/pom.xml to /Users/absir/.m2/repository/com/absir/parent/0.0.1-SNAPSHOT/parent-0.0.1-SNAPSHOT.pom
+[INFO] 
+[INFO] --- maven-deploy-plugin:2.7:deploy (default-deploy) @ parent ---
+Downloading: http://o.absir.com:8080/nexus/content/repositories/snapshots/com/absir/parent/0.0.1-SNAPSHOT/maven-metadata.xml
+594/594 B               Downloaded: http://o.absir.com:8080/nexus/content/repositories/snapshots/com/absir/parent/0.0.1-SNAPSHOT/maven-metadata.xml (594 B at 0.9 KB/sec)
+Uploading: http://o.absir.com:8080/nexus/content/repositories/snapshots/com/absir/parent/0.0.1-SNAPSHOT/parent-0.0.1-20140604.120612-29.pom
+2/3 KB      3/3 KB            Uploaded: http://o.absir.com:8080/nexus/content/repositories/snapshots/com/absir/parent/0.0.1-SNAPSHOT/parent-0.0.1-20140604.120612-29.pom (3 KB at 29.6 KB/sec)
+Downloading: http://o.absir.com:8080/nexus/content/repositories/snapshots/com/absir/parent/maven-metadata.xml
+275/275 B               Downloaded: http://o.absir.com:8080/nexus/content/repositories/snapshots/com/absir/parent/maven-metadata.xml (275 B at 1.3 KB/sec)
+Uploading: http://o.absir.com:8080/nexus/content/repositories/snapshots/com/absir/parent/0.0.1-SNAPSHOT/maven-metadata.xml
+594/594 B               Uploaded: http://o.absir.com:8080/nexus/content/repositories/snapshots/com/absir/parent/0.0.1-SNAPSHOT/maven-metadata.xml (594 B at 9.7 KB/sec)
+Uploading: http://o.absir.com:8080/nexus/content/repositories/snapshots/com/absir/parent/maven-metadata.xml
+275/275 B               Uploaded: http://o.absir.com:8080/nexus/content/repositories/snapshots/com/absir/parent/maven-metadata.xml (275 B at 3.0 KB/sec)
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building absir-lang 0.0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ absir-lang ---
+[WARNING] Using platform encoding (EUC_CN actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:2.5.1:compile (default-compile) @ absir-lang ---
+[WARNING] File encoding has not been set, using platform encoding EUC_CN, i.e. build is platform dependent!
+[INFO] Compiling 40 source files to /Users/absir/Documents/workspace-sts/absir/absir-lang/target/classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAtom.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAtom.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAtom.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAtom.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAnnotation.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAnnotation.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAnnotation.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAnnotation.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvertAbstract.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvertAbstract.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvertAbstract.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvertAbstract.java:[6,28] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelByte.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelByte.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelByte.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelByte.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelObject.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelObject.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelObject.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelObject.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilFile.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilFile.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilFile.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilFile.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilParameter.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilParameter.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilParameter.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilParameter.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilDump.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilDump.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilDump.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilDump.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelReflect.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelReflect.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelReflect.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelReflect.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelPattern.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelPattern.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelPattern.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelPattern.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelLang.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelLang.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelLang.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelLang.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelUtil.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelUtil.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelUtil.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelUtil.java:[6,28] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelMap.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelMap.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelMap.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelMap.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelEnum.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelEnum.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelEnum.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelEnum.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAbstractHandler.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAbstractHandler.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAbstractHandler.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAbstractHandler.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilIterator.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilIterator.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilIterator.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilIterator.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[19,4] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[19,5] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[19,6] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[19,7] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[19,8] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[19,10] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelList.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelList.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelList.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelList.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAccessor.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAccessor.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAccessor.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAccessor.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilTest.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilTest.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilTest.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilTest.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[30,4] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[30,5] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[30,6] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[30,7] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[30,8] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[30,10] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvert.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvert.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvert.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvert.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] parent ............................................ SUCCESS [  2.661 s]
+[INFO] absir-lang ........................................ FAILURE [  0.599 s]
+[INFO] absir-io .......................................... SKIPPED
+[INFO] absir-bean ........................................ SKIPPED
+[INFO] absir-core ........................................ SKIPPED
+[INFO] absir-context ..................................... SKIPPED
+[INFO] absir-aop ......................................... SKIPPED
+[INFO] absir-asyn ........................................ SKIPPED
+[INFO] absir-hibernate ................................... SKIPPED
+[INFO] absir-server ...................................... SKIPPED
+[INFO] absir-servlet ..................................... SKIPPED
+[INFO] absir-developer ................................... SKIPPED
+[INFO] absir-webapp Maven Webapp ......................... SKIPPED
+[INFO] absir-jooq ........................................ SKIPPED
+[INFO] absir-boneCP ...................................... SKIPPED
+[INFO] achieve-server .................................... SKIPPED
+[INFO] absir-developerImpl ............................... SKIPPED
+[INFO] absir-jsp ......................................... SKIPPED
+[INFO] absir-developerJsp ................................ SKIPPED
+[INFO] absir-game ........................................ SKIPPED
+[INFO] absir-card ........................................ SKIPPED
+[INFO] absir-socket ...................................... SKIPPED
+[INFO] absir-open ........................................ SKIPPED
+[INFO] absir-alipay ...................................... SKIPPED
+[INFO] absir-ab .......................................... SKIPPED
+[INFO] absir-duoku ....................................... SKIPPED
+[INFO] absir-iap ......................................... SKIPPED
+[INFO] absir-developerWeb ................................ SKIPPED
+[INFO] absir-source ...................................... SKIPPED
+[INFO] absir-yidong ...................................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 3.608 s
+[INFO] Finished at: 2014-06-04T20:06:13+08:00
+[INFO] Final Memory: 8M/81M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:2.5.1:compile (default-compile) on project absir-lang: Compilation failure: Compilation failure:
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAtom.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAtom.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAtom.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAtom.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAnnotation.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAnnotation.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAnnotation.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAnnotation.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvertAbstract.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvertAbstract.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvertAbstract.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvertAbstract.java:[6,28] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelByte.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelByte.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelByte.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelByte.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelObject.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelObject.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelObject.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelObject.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilFile.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilFile.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilFile.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilFile.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilParameter.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilParameter.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilParameter.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilParameter.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilDump.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilDump.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilDump.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilDump.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelReflect.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelReflect.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelReflect.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelReflect.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelPattern.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelPattern.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelPattern.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelPattern.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelLang.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelLang.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelLang.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelLang.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelUtil.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelUtil.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelUtil.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelUtil.java:[6,28] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelMap.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelMap.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelMap.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelMap.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelEnum.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelEnum.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelEnum.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelEnum.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAbstractHandler.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAbstractHandler.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAbstractHandler.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAbstractHandler.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilIterator.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilIterator.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilIterator.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilIterator.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[19,4] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[19,5] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[19,6] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[19,7] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[19,8] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/Element.java:[19,10] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelList.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelList.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelList.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/kernel/KernelList.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAccessor.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAccessor.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAccessor.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilAccessor.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilTest.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilTest.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilTest.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/util/UtilTest.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[6,27] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[30,4] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[30,5] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[30,6] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[30,7] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[30,8] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/base/ElementCompare.java:[30,10] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvert.java:[6,23] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvert.java:[6,24] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvert.java:[6,25] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] /Users/absir/Documents/workspace-sts/absir/absir-lang/src/main/java/com/absir/core/dyna/DynaConvert.java:[6,26] ±àÂë EUC_CN µÄ²»¿ÉÓ³Éä×Ö·û
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <goals> -rf :absir-lang

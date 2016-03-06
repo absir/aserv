@@ -1,0 +1,246 @@
+/**
+ * Copyright 2015 ABSir's Studio
+ * 
+ * All right reserved
+ *
+ * Create on 2015年11月9日 下午9:17:18
+ */
+package com.absir.slave;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SocketChannel;
+import java.util.Map;
+
+import com.absir.client.SocketAdapter;
+import com.absir.client.SocketAdapterSel;
+import com.absir.client.callback.CallbackMsg;
+import com.absir.context.core.ContextUtils;
+import com.absir.core.kernel.KernelLang.ObjectEntry;
+import com.absir.data.helper.HelperDatabind;
+import com.absir.slave.resolver.ISlaveCallback;
+
+/**
+ * @author absir
+ *
+ */
+public class InputSlaveAdapter extends SocketAdapterSel {
+
+	/** ip */
+	protected String ip;
+
+	/** port */
+	protected int port;
+
+	/** group */
+	protected String group;
+
+	/** key */
+	protected String key;
+
+	/** url */
+	protected String url;
+
+	/** slaveKey */
+	protected String slaveKey;
+
+	/**
+	 * @return the ip
+	 */
+	public String getIp() {
+		return ip;
+	}
+
+	/**
+	 * @return the port
+	 */
+	public int getPort() {
+		return port;
+	}
+
+	/**
+	 * @return the group
+	 */
+	public String getGroup() {
+		return group;
+	}
+
+	/**
+	 * @return the key
+	 */
+	public String getKey() {
+		return key;
+	}
+
+	/**
+	 * @return the url
+	 */
+	public String getUrl() {
+		return url;
+	}
+
+	/**
+	 * @return the slaveKey
+	 */
+	public String getSlaveKey() {
+		return slaveKey;
+	}
+
+	/**
+	 * 初始化
+	 */
+	public InputSlaveAdapter(String ip, int port, String group, String key, String url,
+			ISlaveCallback[] slaveCallbacks) {
+		this.ip = ip;
+		this.port = port;
+		this.group = group;
+		this.key = key;
+		this.url = url;
+		setCallbackConnect(new CallbackAdapte() {
+
+			@Override
+			public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
+				connectAdapter(adapter);
+			}
+		});
+
+		setCallbackDisconnect(new CallbackAdapte() {
+
+			@Override
+			public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
+				disconnectAdapter(adapter);
+			}
+		});
+
+		setAcceptCallback(new CallbackAdapte() {
+
+			@Override
+			public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
+				acceptAdapter(adapter, buffer);
+			}
+		});
+
+		setRegisterCallback(new CallbackAdapte() {
+
+			@Override
+			public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
+				registerAdapter(adapter, buffer);
+			}
+		});
+
+		setReceiveCallback(new CallbackAdapte() {
+
+			@Override
+			public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
+				receiveCallback(adapter, buffer);
+			}
+		});
+
+		if (slaveCallbacks != null) {
+			Map<Integer, ObjectEntry<CallbackAdapte, CallbackTimeout>> receiveCallbacks = getReceiveCallbacks();
+			for (ISlaveCallback slaveCallback : slaveCallbacks) {
+				int callbackIndex = slaveCallback.getCallbackIndex();
+				if (callbackIndex <= getMinCallbackIndex() && !receiveCallbacks.containsKey(callbackIndex)) {
+					putReceiveCallbacks(callbackIndex, 0, slaveCallback);
+				}
+			}
+		}
+
+		slaveKey = key;
+		// 接受密钥
+		putReceiveCallbacks(2, 0, new CallbackAdapte() {
+
+			@Override
+			public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
+				slaveKey = new String(buffer, 5, buffer.length - 5);
+			}
+		});
+	}
+
+	/**
+	 * 连接
+	 * 
+	 * @param adapter
+	 */
+	protected void connectAdapter(SocketAdapter adapter) {
+		if (ip != null) {
+			try {
+				SocketChannel socketChannel = SocketChannel.open();
+				socketChannel.connect(new InetSocketAddress(ip, port));
+				adapter.setSocket(socketChannel.socket());
+				adapter.receiveSocketChannelStart();
+
+			} catch (Exception e) {
+				LOGGER.error("connectAdapter error", e);
+			}
+		}
+	}
+
+	/**
+	 * 断开重连
+	 * 
+	 * @param adapter
+	 */
+	protected void disconnectAdapter(SocketAdapter adapter) {
+		adapter.connect();
+	}
+
+	/**
+	 * 接收
+	 * 
+	 * @param adapter
+	 * @param buffer
+	 */
+	protected void acceptAdapter(SocketAdapter adapter, byte[] buffer) {
+		adapter.sendData(InputSlaveContext.ME.registerData(this, buffer));
+	}
+
+	/**
+	 * 注册
+	 * 
+	 * @param adapter
+	 * @param buffer
+	 */
+	protected void registerAdapter(SocketAdapter adapter, byte[] buffer) {
+		if (InputSlaveContext.ME.isRegisterData(this, buffer)) {
+			adapter.setRegistered(true);
+
+		} else {
+			LOGGER.error("registerAdapter failed status : " + new String(buffer));
+			adapter.close();
+		}
+	}
+
+	/**
+	 * 接收数据
+	 * 
+	 * @param adapter
+	 * @param buffer
+	 */
+	protected void receiveCallback(SocketAdapter adapter, byte[] buffer) {
+		// LOGGER.info("receiveCallback" + buffer);
+	}
+
+	/**
+	 * @param uri
+	 * @param postData
+	 * @param callbackMsg
+	 * @throws IOException
+	 */
+	public void sendData(String uri, Object postData, CallbackMsg<?> callbackMsg) throws IOException {
+		sendData(uri, postData, 30000, callbackMsg);
+	}
+
+	/**
+	 * @param uri
+	 * @param postData
+	 * @param timeout
+	 * @param callbackMsg
+	 * @throws IOException
+	 */
+	public void sendData(String uri, Object postData, int timeout, CallbackMsg<?> callbackMsg) throws IOException {
+		sendData(uri.getBytes(ContextUtils.getCharset()), true, false,
+				postData == null ? null : HelperDatabind.writeAsBytes(postData), timeout, callbackMsg);
+	}
+
+}

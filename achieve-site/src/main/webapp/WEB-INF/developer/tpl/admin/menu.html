@@ -1,0 +1,31 @@
+      <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+          <!-- sidebar menu: : style can be found in sidebar.less -->
+          <ul class="sidebar-menu">
+            \#for (IMenuBean adminBean : Pag::menu("admin"))
+            <li class="active treeview">
+              <a href="#">
+                <i class="fa fa-share"></i> <span>\${adminBean.name}</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+              \#for (IMenuBean menuBean : adminBean.getChildren())
+                <li>
+                  <a \${menuBean.url ? ('href="' + menuBean.url +'" ref="' + menuBean.ref +'"') : ''}>
+                    <i class="fa fa-circle-o"></i>\${menuBean.name}<i class="fa fa-angle-left pull-right"></i>
+                  </a>
+                  <ul class="treeview-menu">
+                  \#for (IMenuBean menu : menuBean.getChildren())
+                    <li><a href="\${menu.url}" rel="\${menu.ref}" target="navTab">\${menu.name}</a></li>
+                  \#end
+                  </ul>
+                </li>
+              \#end
+              </ul>
+            </li>
+            \#end
+          </ul>
+        </section>
+        <!-- /.sidebar -->
+      </aside>

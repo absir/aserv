@@ -1,0 +1,15 @@
+<html lang="en">
+<meta charset="utf-8" />
+<script type="text/javascript" src="jquery-1.7.2.js"></script>
+<script type="text/javascript">
+$.ajax({
+	type: 'GET',
+	url: "http://www.baidu.com",
+	data: null,
+	dataType: "text",
+	cache: false,
+	success: function(response){
+		alert(response);
+	}});
+</script>
+</html>

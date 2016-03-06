@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class entity-name="Customer" table=""> <!-- 动态模型，不用编写PO -->
+		<composite-id name="id" mapped="true" access="property">
+			<key-property name="name" type="java.lang.String"></key-property>
+			<key-property name="id" type="java.lang.String" length="1024"></key-property>
+			<generator class="assigned"></generator>
+		</composite-id>
+		<property name="password" column="PASSWORD" type="java.lang.String" />
+		<property name="cname" column="CNAME" type="java.lang.String" />
+		<property name="cbalance" column="CBALANCE" type="java.lang.Double" />
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,20 @@
+.pageFormContent div.p {
+	float: left;
+	display: block;
+	margin: 0 0 10px 0;
+	padding: 5px 0;
+	position: relative;
+	min-width: 380px
+}
+
+.itemDetail .archetype {
+	display: none
+}
+
+.searchFormContent { display:block; overflow:auto; padding:10px 5px; position:relative;}
+.searchFormContent div.unit {display:block; margin:0; padding:5px 0; position:relative;clear:both;}
+.searchFormContent p { float:left; display:block; height:21px; margin:0; padding:5px 10px 5px 0; position:relative;}
+.searchFormContent p.nowrap { height:auto; width: 100%}
+.searchFormContent .radioGroup { float:left; display:block; overflow:hidden;}
+.searchFormContent label { float:left; width:auto; padding:0 10px 0 5px; line-height:21px;}
+.searchFormContent .textInput { float:left;}

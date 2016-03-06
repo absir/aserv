@@ -1,0 +1,83 @@
+框架入门介绍
+1.命名规范和注释
+
+本框架在命名上花了很大功夫，做到了基本上通过包名，类名，方法名，参数名就可以看出功能和需求。框架上非复杂逻辑一般没有注释。
+
+2.在java开发过程中或多或少需要使用动态类型，反射调用,成员路径访问,Dump对象等脚本语言中才能快速使用的特性。absir-lang模块就是对这些功能最好的补充。
+详细参考使用类 KernelReflect, KernelObject, KernelDyna, UtilAccessor, UtilDump
+
+3.IOC功能在以功能模块化的框架中是必须的，灵活扩展自定义类，共用类扫描，解析和参与IOC对象的生成就可以非常灵活的配置IOC的扩展功能。absir-bean 模块就是IOC框架的基础实现。
+
+a.IOC入口:BeanFactoryProvider类，可传入Application级别对象(即程序生命周期中一直存在的对象)
+，在程序开始和介绍需要分表调用started和stopped入口
+例如在absir-servlet中的入口代码为
+
+`/*`
+	 `* (non-Javadoc)`
+	 `* `
+	 `* @see com.absir.servlet.InDispathFilter#init(javax.servlet.FilterConfig)`
+	 `*/`
+	`@Override`
+	`public void init(FilterConfig filterConfig) throws ServletException {`
+		`// TODO Auto-generated method stub`
+		`super.init(filterConfig);`
+		`BeanDefineDiscover.open();`
+		`BeanProviderContext beanProviderContext = new BeanProviderContext(BeanFactoryProvider.getParameterList(filterConfig.getInitParameter("include")),`
+				`BeanFactoryProvider.getParameterList(filterConfig.getInitParameter("exclude")), BeanFactoryProvider.getParameterList(filterConfig.getInitParameter("filter")));`
+		`beanProviderContext.scan(null, null, filterConfig.getServletContext());`
+		`if (BeanFactoryUtils.getEnvironment().compareTo(Environment.DEBUG) <= 0) {`
+			`System.out.println("beanfactory start from " + this);`
+		`}`
+
+		`beanProviderContext.started();`
+		`beanFactoryStoppings = beanProviderContext.getBeanFactoryStoppeds();`
+	`}`
+
+	`/*`
+	 `* (non-Javadoc)`
+	 `* `
+	 `* @see javax.servlet.Servlet#destroy()`
+	 `*/`
+	`@Override`
+	`public void destroy() {`
+		`// TODO Auto-generated method stub`
+		`super.destroy();`
+		`List<IBeanFactoryStopping> stoppings = beanFactoryStoppings;`
+		`if (stoppings != null) {`
+			`beanFactoryStoppings = null;`
+			`boolean inDebug = BeanFactoryUtils.getEnvironment().compareTo(Environment.DEBUG) <= 0;`
+			`if (inDebug) {`
+				`System.out.println("beanfactory stopping... [" + (stoppings == null ? 0 : stoppings.size()) + "]");`
+			`}`
+
+			`BeanFactory beanFactory = BeanFactoryUtils.get();`
+			`for (IBeanFactoryStopping stopping : stoppings) {`
+				`if (inDebug) {`
+					`System.out.println("beanfactory stopping... [" + stopping + "]");`
+				`}`
+
+				`stopping.stopping(beanFactory);`
+			`}`
+		`}`
+	`}`
+
+b.配置文件入口 classes目录下的config.properties文件
+配置文件基本语法
+#为单行注释
+i.name=value 简单指定
+ii.name|TEST|PRODUCT=value 为指定在对应的environment下才生效
+iii.name.=value name#=value name+=value 分别为指定name的value 做数组加 字符串加 和字符串加带换行符的运算
+iv.ii和iii为配置语法可以任意组合搭配使用
+v.value支持转义和变量,转移为\符号
+例如 
+" value dsd " 则为带左右空格的字符串 
+\" value 为 " value
+value${name} 为value拼接已经配置的name值
+vi.语句块
+{"
+"}
+name=value value为空则value为上一个语句块，否则为上一个语句块加换行符加value
+
+配置文件可以指定environment，resourcePath(即资源路径，可以指定任意目录可以将资源不放到class目录下)
+
+a.
