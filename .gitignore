@@ -1,12 +1,13 @@
-bin
+.DS_Store
 target
+bin
 gen
 out
 .svn
-.classpath
 .project
+.classpath
 .setting
-*.iml
 .idea
+*.iml
 *.log
-.DS_Store
+projects

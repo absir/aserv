@@ -1,177 +1,183 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-3-18 下午7:26:21
  */
 package com.absir.server.socket;
+
+import com.absir.server.socket.SocketServerContext.ChannelContext;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 import java.nio.channels.SocketChannel;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.absir.server.socket.SocketServerContext.ChannelContext;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * @author absir
- * 
  */
 public class SocketServerContext<T extends ChannelContext> {
 
-	/** mutil */
-	protected boolean mult;
+    /**
+     * mutil
+     */
+    protected boolean mult;
 
-	/** channelContexts */
-	@JsonIgnore
-	protected ConcurrentHashMap<Serializable, T> channelContexts = createContexts();
+    /**
+     * channelContexts
+     */
+    @JsonIgnore
+    protected ConcurrentHashMap<Serializable, T> channelContexts = createContexts();
 
-	/** channelContextMults */
-	@JsonIgnore
-	protected ConcurrentHashMap<SocketChannel, T> channelContextMults;
+    /**
+     * channelContextMults
+     */
+    @JsonIgnore
+    protected ConcurrentHashMap<SocketChannel, T> channelContextMults;
 
-	/**
-	 * @author absir
-	 *
-	 */
-	public static class ChannelContext {
+    /**
+     * @return the mult
+     */
+    public boolean isMult() {
+        return mult;
+    }
 
-		/** channel */
-		protected SocketChannel channel;
+    /**
+     * @param mult the mult to set
+     */
+    public void setMult(boolean mult) {
+        this.mult = mult;
+        if (mult) {
+            if (channelContextMults == null) {
+                channelContextMults = createContextMults();
+            }
 
-		/** attachObj */
-		protected Object attachObj;
+        } else {
+            channelContextMults = null;
+        }
+    }
 
-		/**
-		 * @param channel
-		 */
-		public ChannelContext(SocketChannel channel) {
-			this.channel = channel;
-		}
+    /**
+     * @return
+     */
+    protected ConcurrentHashMap<Serializable, T> createContexts() {
+        return new ConcurrentHashMap<Serializable, T>();
+    }
 
-		/**
-		 * @return the channel
-		 */
-		public SocketChannel getChannel() {
-			return channel;
-		}
+    /**
+     * @return
+     */
+    protected ConcurrentHashMap<SocketChannel, T> createContextMults() {
+        return new ConcurrentHashMap<SocketChannel, T>();
+    }
 
-		/**
-		 * @return the attachObj
-		 */
-		public Object getAttachObj() {
-			return attachObj;
-		}
+    /**
+     * @return the online
+     */
+    public long getOnline() {
+        return channelContexts.size() + (channelContextMults == null ? 0 : channelContextMults.size());
+    }
 
-		/**
-		 * @param attachObj
-		 *            the attachObj to set
-		 */
-		public void setAttachObj(Object attachObj) {
-			this.attachObj = attachObj;
-		}
-	}
+    /**
+     * @return the channelContexts
+     */
+    public Map<Serializable, T> getChannelContexts() {
+        return channelContexts;
+    }
 
-	/**
-	 * @return the mult
-	 */
-	public boolean isMult() {
-		return mult;
-	}
+    /**
+     * @return the channelContextMults
+     */
+    public Map<SocketChannel, T> getChannelContextMults() {
+        return channelContextMults;
+    }
 
-	/**
-	 * @return
-	 */
-	protected ConcurrentHashMap<Serializable, T> createContexts() {
-		return new ConcurrentHashMap<Serializable, T>();
-	}
+    /**
+     * @param id
+     * @param channelContext
+     */
+    public synchronized void loginSocketChannel(Serializable id, T channelContext) {
+        ChannelContext context = channelContexts.put(id, channelContext);
+        if (context != null) {
+            if (mult) {
+                channelContextMults.put(channelContext.channel, channelContext);
 
-	/**
-	 * @return
-	 */
-	protected ConcurrentHashMap<SocketChannel, T> createContextMults() {
-		return new ConcurrentHashMap<SocketChannel, T>();
-	}
+            } else {
+                SocketServer.close(channelContext.channel);
+            }
+        }
+    }
 
-	/**
-	 * @param mult
-	 *            the mult to set
-	 */
-	public void setMult(boolean mult) {
-		this.mult = mult;
-		if (mult) {
-			if (channelContextMults == null) {
-				channelContextMults = createContextMults();
-			}
+    /**
+     * @param id
+     * @param channel
+     * @return
+     */
+    public synchronized T logoutSocketChannel(Serializable id, SocketChannel channel) {
+        if (mult) {
+            T context = channelContexts.get(id);
+            if (context == null || context.channel != channel) {
+                return channelContextMults.remove(channel);
 
-		} else {
-			channelContextMults = null;
-		}
-	}
+            } else {
+                return channelContexts.remove(id);
+            }
 
-	/**
-	 * @return the online
-	 */
-	public long getOnline() {
-		return channelContexts.size() + (channelContextMults == null ? 0 : channelContextMults.size());
-	}
+        } else {
+            T context = channelContexts.remove(id);
+            if (context != null && context.channel != channel) {
+                channelContexts.put(id, context);
+                context = null;
+            }
 
-	/**
-	 * @return the channelContexts
-	 */
-	public Map<Serializable, T> getChannelContexts() {
-		return channelContexts;
-	}
+            return context;
+        }
+    }
 
-	/**
-	 * @return the channelContextMults
-	 */
-	public Map<SocketChannel, T> getChannelContextMults() {
-		return channelContextMults;
-	}
+    /**
+     * @author absir
+     */
+    public static class ChannelContext {
 
-	/**
-	 * @param id
-	 * @param channelContext
-	 */
-	public synchronized void loginSocketChannel(Serializable id, T channelContext) {
-		ChannelContext context = channelContexts.put(id, channelContext);
-		if (context != null) {
-			if (mult) {
-				channelContextMults.put(channelContext.channel, channelContext);
+        /**
+         * channel
+         */
+        protected SocketChannel channel;
 
-			} else {
-				SocketServer.close(channelContext.channel);
-			}
-		}
-	}
+        /**
+         * attachObj
+         */
+        protected Object attachObj;
 
-	/**
-	 * @param id
-	 * @param channel
-	 * @return
-	 */
-	public synchronized T logoutSocketChannel(Serializable id, SocketChannel channel) {
-		if (mult) {
-			T context = channelContexts.get(id);
-			if (context == null || context.channel != channel) {
-				return channelContextMults.remove(channel);
+        /**
+         * @param channel
+         */
+        public ChannelContext(SocketChannel channel) {
+            this.channel = channel;
+        }
 
-			} else {
-				return channelContexts.remove(id);
-			}
+        /**
+         * @return the channel
+         */
+        public SocketChannel getChannel() {
+            return channel;
+        }
 
-		} else {
-			T context = channelContexts.remove(id);
-			if (context != null && context.channel != channel) {
-				channelContexts.put(id, context);
-				context = null;
-			}
+        /**
+         * @return the attachObj
+         */
+        public Object getAttachObj() {
+            return attachObj;
+        }
 
-			return context;
-		}
-	}
+        /**
+         * @param attachObj the attachObj to set
+         */
+        public void setAttachObj(Object attachObj) {
+            this.attachObj = attachObj;
+        }
+    }
 
 }

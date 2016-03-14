@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-2-13 下午4:38:14
  */
 package com.absir.orm.transaction;
@@ -13,124 +13,133 @@ import java.util.Stack;
 
 /**
  * @author absir
- * 
  */
 public class TransactionSession {
 
-	/** addition */
-	private boolean addition;
+    /**
+     * addition
+     */
+    private boolean addition;
 
-	/** transactionAttribute */
-	private TransactionAttribute transactionAttribute;
+    /**
+     * transactionAttribute
+     */
+    private TransactionAttribute transactionAttribute;
 
-	/** transactionAttributes */
-	private List<TransactionAttribute> transactionAttributes;
+    /**
+     * transactionAttributes
+     */
+    private List<TransactionAttribute> transactionAttributes;
 
-	/** sessionHolder */
-	private ISessionHolder sessionHolder;
+    /**
+     * sessionHolder
+     */
+    private ISessionHolder sessionHolder;
 
-	/** sessionHolders */
-	private Stack<ISessionHolder> sessionHolders;
+    /**
+     * sessionHolders
+     */
+    private Stack<ISessionHolder> sessionHolders;
 
-	/**
-	 * @param attribute
-	 * @param addition
-	 */
-	public void add(TransactionAttribute attribute, boolean addition) {
-		if (this.addition) {
-			if (addition) {
-				return;
-			}
+    /**
+     * @param attribute
+     * @param addition
+     */
+    public void add(TransactionAttribute attribute, boolean addition) {
+        if (this.addition) {
+            if (addition) {
+                return;
+            }
 
-		} else {
-			this.addition = true;
-		}
+        } else {
+            this.addition = true;
+        }
 
-		if (transactionAttribute != null) {
-			if (transactionAttributes == null) {
-				transactionAttributes = new ArrayList<TransactionAttribute>();
-			}
+        if (transactionAttribute != null) {
+            if (transactionAttributes == null) {
+                transactionAttributes = new ArrayList<TransactionAttribute>();
+            }
 
-			transactionAttributes.add(transactionAttribute);
-		}
+            transactionAttributes.add(transactionAttribute);
+        }
 
-		transactionAttribute = attribute;
-	}
+        transactionAttribute = attribute;
+    }
 
-	/**
-	 * @param sessionContext
-	 */
-	public void open(ISessionContext sessionContext) {
-		if (transactionAttribute != null) {
-			addition = false;
-			if (!(transactionAttributes == null || transactionAttributes.isEmpty())) {
-				for (TransactionAttribute transactionAttribute : transactionAttributes) {
-					holder(sessionContext.open(sessionHolder, transactionAttribute, this));
-				}
+    /**
+     * @param sessionContext
+     */
+    public void open(ISessionContext sessionContext) {
+        if (transactionAttribute != null) {
+            addition = false;
+            if (!(transactionAttributes == null || transactionAttributes.isEmpty())) {
+                for (TransactionAttribute transactionAttribute : transactionAttributes) {
+                    holder(sessionContext.open(sessionHolder, transactionAttribute, this));
+                }
 
-				transactionAttributes.clear();
-			}
+                transactionAttributes.clear();
+            }
 
-			holder(sessionContext.open(sessionHolder, transactionAttribute, this));
-			transactionAttribute = null;
-		}
-	}
+            holder(sessionContext.open(sessionHolder, transactionAttribute, this));
+            transactionAttribute = null;
+        }
+    }
 
-	/**
-	 * @param holder
-	 */
-	private void holder(ISessionHolder holder) {
-		if (sessionHolder != null) {
-			if (sessionHolders == null) {
-				sessionHolders = new Stack<ISessionHolder>();
-			}
+    /**
+     * @param holder
+     */
+    private void holder(ISessionHolder holder) {
+        if (sessionHolder != null) {
+            if (sessionHolders == null) {
+                sessionHolders = new Stack<ISessionHolder>();
+            }
 
-			sessionHolders.add(sessionHolder);
-		}
+            sessionHolders.add(sessionHolder);
+        }
 
-		sessionHolder = holder;
-	}
+        sessionHolder = holder;
+    }
 
-	/**
-	 * @param e
-	 * @return
-	 */
-	public boolean closeCurrent(Throwable e) {
-		addition = false;
-		if (transactionAttribute == null) {
-			if (sessionHolder == null) {
-				return true;
-			}
+    /**
+     * @param e
+     * @return
+     */
+    public boolean closeCurrent(Throwable e) {
+        addition = false;
+        if (transactionAttribute == null) {
+            if (sessionHolder == null) {
+                return true;
+            }
 
-			ISessionHolder holder = sessionHolder;
-			if (sessionHolders == null) {
-				sessionHolder = null;
+            ISessionHolder holder = sessionHolder;
+            if (sessionHolders == null) {
+                sessionHolder = null;
 
-			} else {
-				sessionHolder = sessionHolders.isEmpty() ? null : sessionHolders.pop();
-			}
+            } else {
+                sessionHolder = sessionHolders.isEmpty() ? null : sessionHolders.pop();
+            }
 
-			holder.close(e);
+            holder.close(e);
 
-		} else {
-			if (transactionAttributes != null) {
-				int size = transactionAttributes.size();
-				if (size > 0) {
-					transactionAttribute = transactionAttributes.remove(--size);
-					return false;
-				}
-			}
+        } else {
+            if (transactionAttributes != null) {
+                int size = transactionAttributes.size();
+                if (size > 0) {
+                    transactionAttribute = transactionAttributes.remove(--size);
+                    return false;
+                }
+            }
 
-			transactionAttribute = null;
-		}
+            transactionAttribute = null;
+        }
 
-		return isCloseAll();
-	}
+        return isCloseAll();
+    }
 
-	/**
-	 * @return
-	 */
-	public boolean isCloseAll() {
-		return transactionAttribute == null && sessionHolders == null;
-	}
+    /**
+     * @return
+     */
+    public boolean isCloseAll() {
+        return transactionAttribute == null && sessionHolders == null;
+    }
 }

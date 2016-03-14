@@ -1,18 +1,14 @@
-<%@ page trimDirectiveWhitespaces="true" pageEncoding="utf-8"%>
-<%@ page import="java.util.ArrayList"%>
-<%@ page import="java.util.HashMap"%>
-<%@ page import="java.util.List"%>
-<%@ page import="java.util.Map"%>
-<%@ page import="com.absir.core.kernel.*"%>
-<%@ page import="com.absir.aserv.developer.*"%>
-<%@ page import="com.absir.aserv.developer.model.*"%>
-<%@ page import="com.absir.aserv.support.developer.*"%>
-<%@ page import="com.absir.aserv.support.web.WebJsplUtils"%>
-<%@ page import="com.absir.aserv.system.bean.value.*"%>
-<%@ page import="com.absir.aserv.system.service.statics.EntityStatics"%>
-<%@ page import="com.absir.server.in.IAttributes" %>
-<%@ page import="com.absir.server.in.Input" %>
-<%@ page import="org.jsoup.Jsoup"%>
-<%@ page import="org.jsoup.nodes.*"%>
-<%@ page import="org.jsoup.parser.*"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page trimDirectiveWhitespaces="true" pageEncoding="utf-8" %>
+<%@ page import="com.absir.appserv.developer.DeveloperCode" %>
+<%@ page import="com.absir.appserv.developer.DeveloperGenerator" %>
+<%@ page import="com.absir.appserv.developer.Scenario" %>
+<%@ page import="com.absir.appserv.developer.model.EntityModel" %>
+<%@ page import="com.absir.appserv.support.developer.IField" %>
+<%@ page import="com.absir.appserv.system.bean.value.JaEdit" %>
+<%@ page import="org.jsoup.nodes.Document" %>
+<%@ page import="org.jsoup.nodes.Element" %>
+<%@ page import="org.jsoup.nodes.Node" %>
+<%@ page import="org.jsoup.nodes.ScripteNode" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>

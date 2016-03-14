@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-5-23 下午4:00:57
  */
 package com.absir.aserv.crud.bean;
@@ -15,7 +15,7 @@ import com.absir.core.kernel.KernelClass;
 
 /**
  * @author absir
- * 
+ *
  */
 @SuppressWarnings("unchecked")
 @Bean
@@ -23,34 +23,34 @@ import com.absir.core.kernel.KernelClass;
 @MaSupply(folder = "功能管理", name = "添加", method = "edit")
 public class CrudBeanSupply extends CrudSupply<CrudBean> {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.aserv.crud.ICrudSupply#create(java.lang.String)
-	 */
-	@Override
-	public Object create(String entityName) {
-		return KernelClass.newInstance(getEntityClass(entityName));
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.aserv.crud.ICrudSupply#create(java.lang.String)
+     */
+    @Override
+    public Object create(String entityName) {
+        return KernelClass.newInstance(getEntityClass(entityName));
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.aserv.crud.ICrudSupply#mergeEntity(java.lang.String,
-	 * java.lang.Object, boolean)
-	 */
-	@Override
-	public void mergeEntity(String entityName, Object entity, boolean create) {
-		((CrudBean) entity).merge();
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.aserv.crud.ICrudSupply#mergeEntity(java.lang.String,
+     * java.lang.Object, boolean)
+     */
+    @Override
+    public void mergeEntity(String entityName, Object entity, boolean create) {
+        ((CrudBean) entity).merge();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.aserv.crud.ICrudSupply#deleteEntity(java.lang.String,
-	 * java.lang.Object)
-	 */
-	@Override
-	public void deleteEntity(String entityName, Object entity) {
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.aserv.crud.ICrudSupply#deleteEntity(java.lang.String,
+     * java.lang.Object)
+     */
+    @Override
+    public void deleteEntity(String entityName, Object entity) {
+    }
 }

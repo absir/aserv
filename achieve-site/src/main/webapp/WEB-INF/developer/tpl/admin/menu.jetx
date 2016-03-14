@@ -1,0 +1,30 @@
+<div id="bjui-hnav-navbar-box">
+    <ul id="bjui-hnav-navbar">
+        \#for (IMenuBean adminBean : Pag::menu("admin"))
+        <li class="active">
+            <a href="javascript:;" data-toggle="slidebar"><i class="fa fa-\${adminBean.icon}"></i>\${adminBean.name}</a>
+
+            <div class="items hide" data-noinit="true">
+                <ul class="menu-items" data-faicon="\${adminBean.icon}">
+                    \#for (IMenuBean menuBean : adminBean.getChildren())
+                    <li>
+                        <a href="\${menuBean.url ? menuBean.url : ''}"
+                           data-options="{id:'\${menuBean.ref}', faicon:'\${menuBean.icon ? menuBean.icon :
+                        'asterisk'}', fresh:'true'}">\${menuBean.name}</a>
+                        <b><i class="fa fa-angle-down"></i></b>
+                        <ul class="menu-items-children">
+                            \#for (IMenuBean menu : menuBean.getChildren())
+                            <li>
+                                <a href="\${menu.url}" data-options="{id:'\${menu.ref}', faicon:'\${menu.icon ? menu.icon : 'caret-right'}', fresh:'true'}">\${menu.name}</a>
+                            </li>
+                            \#end
+                        </ul>
+                    </li>
+                    \#end
+                </ul>
+            </div>
+        </li>
+        \#end
+    </ul>
+</div>
+

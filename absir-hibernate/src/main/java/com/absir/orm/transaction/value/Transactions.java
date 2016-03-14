@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-1-21 上午11:01:06
  */
 package com.absir.orm.transaction.value;
@@ -14,14 +14,14 @@ import java.lang.annotation.Target;
 
 /**
  * @author absir
- * 
+ *
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Transactions {
 
-	/**
-	 * @return
-	 */
-	Transaction[] value() default {};
+    /**
+     * @return
+     */
+    Transaction[] value() default {};
 }

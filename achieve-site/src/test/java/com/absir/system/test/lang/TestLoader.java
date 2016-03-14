@@ -1,45 +1,45 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-4-8 下午4:13:43
  */
 package com.absir.system.test.lang;
 
-import org.junit.Test;
-
 import com.absir.aop.AopProxyUtils;
 import com.absir.system.test.AbstractTest;
+import org.junit.Test;
 
 /**
  * @author absir
- * 
+ *
  */
 public class TestLoader extends AbstractTest {
 
-	/**
-	 * @return
-	 */
-	public static String getName() {
-		return "123";
-	}
+    /**
+     * @return
+     */
+    public static String getName() {
+        return "123";
+    }
 
-	public static abstract class TestAop {
+    public static void main(String... args) throws Throwable {
+        new TestLoader().test();
+    }
 
-		public String getName() {
-			return "123";
-		}
-	}
+    @Test
+    public void test() {
+        TestAop testAop = (TestAop) AopProxyUtils.getProxy(null, TestAop.class, null, false, true);
+        System.out.println(testAop.getName());
+        String str = "\">" + "${entity.";
 
-	@Test
-	public void test() {
-		TestAop testAop = (TestAop) AopProxyUtils.getProxy(null, TestAop.class, null, false, true);
-		System.out.println(testAop.getName());
+    }
 
-	}
+    public static abstract class TestAop {
 
-	public static void main(String... args) throws Throwable {
-		new TestLoader().test();
-	}
+        public String getName() {
+            return "123";
+        }
+    }
 }

@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-6-7 下午5:47:44
  */
 package com.absir.orm.value;
@@ -14,20 +14,19 @@ import java.lang.annotation.Target;
 
 /**
  * @author absir
- * 
  */
-@Target({ ElementType.FIELD })
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JaNames {
 
-	/**
-	 * @return
-	 */
-	public String value() default "";
+    /**
+     * @return
+     */
+    public String value() default "";
 
-	/**
-	 * @return
-	 */
-	public String key() default "";
+    /**
+     * @return
+     */
+    public String key() default "";
 
 }

@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2014-1-15 下午12:10:49
  */
 package com.absir.server.route;
@@ -11,38 +11,41 @@ import com.absir.server.in.Input;
 
 /**
  * @author absir
- * 
  */
 public abstract class RouteEntity {
 
-	/** route */
-	Object route;
+    /**
+     * route
+     */
+    Object route;
 
-	/** routeEntry */
-	RouteEntry routeEntry;
+    /**
+     * routeEntry
+     */
+    RouteEntry routeEntry;
 
-	/**
-	 * @return the route
-	 */
-	public Object getRoute() {
-		return route;
-	}
+    /**
+     * @return the route
+     */
+    public Object getRoute() {
+        return route;
+    }
 
-	/**
-	 * @return the routeEntry
-	 */
-	public RouteEntry getRouteEntry() {
-		return routeEntry;
-	}
+    /**
+     * @return the routeEntry
+     */
+    public RouteEntry getRouteEntry() {
+        return routeEntry;
+    }
 
-	/**
-	 * @return
-	 */
-	public abstract Class<?> getRouteType();
+    /**
+     * @return
+     */
+    public abstract Class<?> getRouteType();
 
-	/**
-	 * @param input
-	 * @return
-	 */
-	public abstract Object getRouteBean(Input input);
+    /**
+     * @param input
+     * @return
+     */
+    public abstract Object getRouteBean(Input input);
 }

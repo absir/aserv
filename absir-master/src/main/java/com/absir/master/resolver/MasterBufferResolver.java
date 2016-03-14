@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2015年11月9日 上午9:56:50
  */
 package com.absir.master.resolver;
@@ -14,13 +14,14 @@ import com.absir.server.socket.resolver.SocketBufferResolver;
 
 /**
  * @author absir
- *
  */
 @Base
 @Bean
 public class MasterBufferResolver extends SocketBufferResolver {
 
-	/** ME */
-	public static final MasterBufferResolver ME = BeanFactoryUtils.get(MasterBufferResolver.class);
+    /**
+     * ME
+     */
+    public static final MasterBufferResolver ME = BeanFactoryUtils.get(MasterBufferResolver.class);
 
 }

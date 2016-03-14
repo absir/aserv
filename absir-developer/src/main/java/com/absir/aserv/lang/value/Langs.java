@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014年8月26日 下午12:16:29
  */
 package com.absir.aserv.lang.value;
@@ -16,12 +16,12 @@ import java.lang.annotation.Target;
  * @author absir
  *
  */
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Langs {
 
-	/**
-	 * @return
-	 */
-	boolean value() default true;
+    /**
+     * @return
+     */
+    boolean value() default true;
 }

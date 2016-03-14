@@ -1,14 +1,11 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-9-28 上午9:26:44
  */
 package com.absir.aserv.game.bean;
-
-import javax.persistence.Index;
-import javax.persistence.MappedSuperclass;
 
 import com.absir.aserv.game.value.ILevelExp;
 import com.absir.aserv.system.bean.base.JbBean;
@@ -18,134 +15,136 @@ import com.absir.aserv.system.bean.value.JaName;
 import com.absir.orm.value.JaColum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.Index;
+import javax.persistence.MappedSuperclass;
+
 /**
  * @author absir
- * 
+ *
  */
 @MappedSuperclass
 public abstract class JbPlayer extends JbBean implements ILevelExp {
 
-	@JaLang("服务区")
-	@JsonIgnore
-	@JaEdit(groups = { JaEdit.GROUP_SUGGEST })
-	@JaColum(indexs = @Index(columnList = "serverId,userId") )
-	private long serverId;
+    @JaLang("服务区")
+    @JsonIgnore
+    @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
+    @JaColum(indexs = @Index(columnList = "serverId,userId"))
+    private long serverId;
 
-	@JaLang("用户ID")
-	@JsonIgnore
-	@JaName("JPlatformUser")
-	@JaEdit(groups = { JaEdit.GROUP_SUGGEST })
-	private long userId;
+    @JaLang("用户ID")
+    @JsonIgnore
+    @JaName("JPlatformUser")
+    @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
+    private long userId;
 
-	@JaLang("名称")
-	@JaEdit(groups = { JaEdit.GROUP_SUGGEST })
-	@JaColum(indexs = @Index(columnList = "serverId,name", unique = true) )
-	private String name;
+    @JaLang("名称")
+    @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
+    @JaColum(indexs = @Index(columnList = "serverId,name", unique = true))
+    private String name;
 
-	@JaLang("平台")
-	@JaEdit(groups = { JaEdit.GROUP_SUGGEST })
-	private String platform;
+    @JaLang("平台")
+    @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
+    private String platform;
 
-	@JaLang("渠道")
-	@JaEdit(groups = { JaEdit.GROUP_LIST })
-	private String channel;
+    @JaLang("渠道")
+    @JaEdit(groups = {JaEdit.GROUP_LIST})
+    private String channel;
 
-	@JaLang("创建时间")
-	@JaEdit(types = "dateTime")
-	private long createTime;
+    @JaLang("创建时间")
+    @JaEdit(types = "dateTime")
+    private long createTime;
 
-	@JaLang("禁止时间")
-	@JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
-	private long banTime;
+    @JaLang("禁止时间")
+    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
+    private long banTime;
 
-	/**
-	 * @return the serverId
-	 */
-	public long getServerId() {
-		return serverId;
-	}
+    /**
+     * @return the serverId
+     */
+    public long getServerId() {
+        return serverId;
+    }
 
-	/**
-	 * @param serverId
-	 *            the serverId to set
-	 */
-	public void setServerId(long serverId) {
-		this.serverId = serverId;
-	}
+    /**
+     * @param serverId the serverId to set
+     */
+    public void setServerId(long serverId) {
+        this.serverId = serverId;
+    }
 
-	/**
-	 * @return the userId
-	 */
-	public long getUserId() {
-		return userId;
-	}
+    /**
+     * @return the userId
+     */
+    public long getUserId() {
+        return userId;
+    }
 
-	/**
-	 * @param userId
-	 *            the userId to set
-	 */
-	public void setUserId(long userId) {
-		this.userId = userId;
-	}
+    /**
+     * @param userId
+     *            the userId to set
+     */
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * @param name
+     *            the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @return the platform
-	 */
-	public String getPlatform() {
-		return platform;
-	}
+    /**
+     * @return the platform
+     */
+    public String getPlatform() {
+        return platform;
+    }
 
-	/**
-	 * @param platform
-	 *            the platform to set
-	 */
-	public void setPlatform(String platform) {
-		this.platform = platform;
-	}
+    /**
+     * @param platform
+     *            the platform to set
+     */
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
 
-	/**
-	 * @return the createTime
-	 */
-	public long getCreateTime() {
-		return createTime;
-	}
+    /**
+     * @return the createTime
+     */
+    public long getCreateTime() {
+        return createTime;
+    }
 
-	/**
-	 * @param createTime
-	 *            the createTime to set
-	 */
-	public void setCreateTime(long createTime) {
-		this.createTime = createTime;
-	}
+    /**
+     * @param createTime
+     *            the createTime to set
+     */
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
 
-	/**
-	 * @return the banTime
-	 */
-	public long getBanTime() {
-		return banTime;
-	}
+    /**
+     * @return the banTime
+     */
+    public long getBanTime() {
+        return banTime;
+    }
 
-	/**
-	 * @param banTime
-	 *            the banTime to set
-	 */
-	public void setBanTime(long banTime) {
-		this.banTime = banTime;
-	}
+    /**
+     * @param banTime
+     *            the banTime to set
+     */
+    public void setBanTime(long banTime) {
+        this.banTime = banTime;
+    }
 
 }

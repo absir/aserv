@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-5-22 上午10:17:30
  */
 package com.absir.aserv.system.dao;
@@ -14,19 +14,21 @@ import com.absir.bean.inject.value.Bean;
 
 /**
  * @author absir
- * 
+ *
  */
 @Bean
 public interface JUserDao {
 
-	/** ME */
-	public final static JUserDao ME = BeanFactoryUtils.get(JUserDao.class);
+    /**
+     * ME
+     */
+    public final static JUserDao ME = BeanFactoryUtils.get(JUserDao.class);
 
-	/**
-	 * @param username
-	 * @return
-	 */
-	@DataQuery("SELECT o FROM JUser o WHERE o.username = ?")
-	public JUser findByUsername(String username);
-	
+    /**
+     * @param username
+     * @return
+     */
+    @DataQuery("SELECT o FROM JUser o WHERE o.username = ?")
+    public JUser findByUsername(String username);
+
 }

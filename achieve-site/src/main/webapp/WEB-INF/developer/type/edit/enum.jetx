@@ -1,0 +1,25 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+#tag layout_block("shtml")
+\#set(selected = Pag::value(${inputval}))
+#if(field.isNullable())
+<option value="">${Pag::getLang('未选择')}</option>
+#end
+#for(entry : field.metas.values)
+#set(value = entry.key)
+<option value="${value}" \${selected=='${value}' ? 'selected' : ''}>
+${Pag::namesLang(entry.value)}
+</option>
+#end
+
+#end
+
+${input.tagName('select')}
+${input.attr('data-toggle', 'selectpicker')}
+${input.removeAttr('value')}
+${input.removeAttr('type')}
+${input.removeAttr('size')}
+${input.attr('data-width', '200')}
+${input.appendChild(ScripteNode::node(shtml)).voidValue()}

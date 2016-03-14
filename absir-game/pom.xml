@@ -1,18 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>com.absir</groupId>
-		<artifactId>parent</artifactId>
-		<version>1.0-Final</version>
-	</parent>
-	<artifactId>absir-game</artifactId>
-	<version>${com.absir.version}</version>
-	<dependencies>
-		<dependency>
-			<groupId>com.absir</groupId>
-			<artifactId>absir-developer</artifactId>
-			<version>${com.absir.version}</version>
-		</dependency>
-	</dependencies>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.absir</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0-Final</version>
+    </parent>
+    <artifactId>absir-game</artifactId>
+    <version>${com.absir.version}</version>
+    <dependencies>
+        <dependency>
+            <groupId>com.absir</groupId>
+            <artifactId>absir-developer</artifactId>
+            <version>${com.absir.version}</version>
+        </dependency>
+    </dependencies>
 </project>

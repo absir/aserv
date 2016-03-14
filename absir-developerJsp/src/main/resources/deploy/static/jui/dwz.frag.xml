@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <_AJAX_>
 
-<!-- dwz.dialog -->
-<_PAGE_ id="dialogFrag"><![CDATA[
+    <!-- dwz.dialog -->
+    <_PAGE_ id="dialogFrag"><![CDATA[
 <div class="dialog" style="top:150px; left:300px;">
 	<div class="dialogHeader" onselectstart="return false;" oncopy="return false;" onpaste="return false;" oncut="return false;">
 		<div class="dialogHeader_r">
@@ -28,8 +28,8 @@
 	<div class="resizable_f_c" tar="s"></div>
 </div>
 ]]></_PAGE_>
-<!-- dwz.dialog shadow -->
-<_PAGE_ id="dialogProxy"><![CDATA[
+    <!-- dwz.dialog shadow -->
+    <_PAGE_ id="dialogProxy"><![CDATA[
 <div id="dialogProxy" class="dialog dialogProxy">
 	<div class="dialogHeader">
 		<div class="dialogHeader_r">
@@ -50,8 +50,8 @@
 	</div>
 </div>
 ]]></_PAGE_>
-<!-- dwz.dialog taskbar -->
-<_PAGE_ id="taskbar"><![CDATA[
+    <!-- dwz.dialog taskbar -->
+    <_PAGE_ id="taskbar"><![CDATA[
 <div id="taskbar" style="left:0px; display:none;">
 	<div class="taskbarContent">
 		<ul></ul>
@@ -61,8 +61,8 @@
 </div>
 ]]></_PAGE_>
 
-<!-- other dwz fragment -->
-<_PAGE_ id="dwzFrag"><![CDATA[
+    <!-- other dwz fragment -->
+    <_PAGE_ id="dwzFrag"><![CDATA[
 <div id="splitBar"></div>
 <div id="splitBarProxy"></div>
 
@@ -94,8 +94,8 @@
 <div id='progressBar' class='progressBar'>数据加载中，请稍等...</div>
 ]]></_PAGE_>
 
-<!-- dwz.pagination -->
-<_PAGE_ id="pagination"><![CDATA[
+    <!-- dwz.pagination -->
+    <_PAGE_ id="pagination"><![CDATA[
 <ul>
 	<li class="j-first">
 		<a class="first" href="javascript:;"><span>首页</span></a>
@@ -118,17 +118,17 @@
 </ul>
 ]]></_PAGE_>
 
-	
-<!-- dwz.alertMsg -->
-<_PAGE_ id="alertBoxFrag"><![CDATA[
+
+    <!-- dwz.alertMsg -->
+    <_PAGE_ id="alertBoxFrag"><![CDATA[
 <div id="alertMsgBox" class="alert"><div class="alertContent"><div class="#type#"><div class="alertInner"><h1>#title#</h1><div class="msg">#message#</div></div><div class="toolBar"><ul>#butFragment#</ul></div></div></div><div class="alertFooter"><div class="alertFooter_r"><div class="alertFooter_c"></div></div></div></div>
 ]]></_PAGE_>
-		
-<_PAGE_ id="alertButFrag"><![CDATA[
+
+    <_PAGE_ id="alertButFrag"><![CDATA[
 <li><a class="button" rel="#callback#" onclick="alertMsg.close()" href="javascript:"><span>#butMsg#</span></a></li>
 ]]></_PAGE_>
 
-<_PAGE_ id="calendarFrag"><![CDATA[
+    <_PAGE_ id="calendarFrag"><![CDATA[
 <div id="calendar">
 	<div class="main">
 		<div class="head">
@@ -215,7 +215,7 @@
 </div>
 ]]></_PAGE_>
 
-<_PAGE_ id="navTabCM"><![CDATA[
+    <_PAGE_ id="navTabCM"><![CDATA[
 <ul id="navTabCM">
 	<li rel="reload">刷新标签页</li>
 	<li rel="closeCurrent">关闭标签页</li>
@@ -223,22 +223,22 @@
 	<li rel="closeAll">关闭全部标签页</li>
 </ul>
 ]]></_PAGE_>
-<_PAGE_ id="dialogCM"><![CDATA[
+    <_PAGE_ id="dialogCM"><![CDATA[
 <ul id="dialogCM">
 	<li rel="closeCurrent">关闭弹出窗口</li>
 	<li rel="closeOther">关闭其它弹出窗口</li>
 	<li rel="closeAll">关闭全部弹出窗口</li>
 </ul>
 ]]></_PAGE_>
-<_PAGE_ id="externalFrag"><![CDATA[
+    <_PAGE_ id="externalFrag"><![CDATA[
 <iframe src="{url}" style="width:100%;height:{height};" frameborder="no" border="0" marginwidth="0" marginheight="0"></iframe>
 ]]></_PAGE_>
-<_MSG_ id="statusCode_503"><![CDATA[服务器当前负载过大或者正在维护!]]></_MSG_>
-<_MSG_ id="validateFormError"><![CDATA[提交数据不完整，{0}个字段有错误，请改正后再提交!]]></_MSG_>
-<_MSG_ id="sessionTimout"><![CDATA[会话超时，请重新登录!]]></_MSG_>
-<_MSG_ id="alertSelectMsg"><![CDATA[请选择信息!]]></_MSG_>
-<_MSG_ id="forwardConfirmMsg"><![CDATA[继续下一步!]]></_MSG_>
+    <_MSG_ id="statusCode_503"><![CDATA[服务器当前负载过大或者正在维护!]]></_MSG_>
+    <_MSG_ id="validateFormError"><![CDATA[提交数据不完整，{0}个字段有错误，请改正后再提交!]]></_MSG_>
+    <_MSG_ id="sessionTimout"><![CDATA[会话超时，请重新登录!]]></_MSG_>
+    <_MSG_ id="alertSelectMsg"><![CDATA[请选择信息!]]></_MSG_>
+    <_MSG_ id="forwardConfirmMsg"><![CDATA[继续下一步!]]></_MSG_>
 
-<_MSG_ id="dwzTitle"><![CDATA[DWZ富客户端框架]]></_MSG_>
-<_MSG_ id="mainTabTitle"><![CDATA[我的主页]]></_MSG_>
+    <_MSG_ id="dwzTitle"><![CDATA[DWZ富客户端框架]]></_MSG_>
+    <_MSG_ id="mainTabTitle"><![CDATA[我的主页]]></_MSG_>
 </_AJAX_>

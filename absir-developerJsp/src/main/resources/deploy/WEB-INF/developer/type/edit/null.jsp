@@ -1,4 +1,4 @@
-<%@ include file="../../common/edit.jsp"%>
+<%@ include file="../../common/edit.jsp" %>
 <%
-	input.attr("value", "");
+    input.attr("value", "");
 %>

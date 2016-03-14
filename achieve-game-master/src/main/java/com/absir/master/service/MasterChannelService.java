@@ -1,19 +1,11 @@
 /**
  * Copyright 2015 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2015年11月18日 下午2:18:06
  */
 package com.absir.master.service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.hibernate.Session;
 
 import com.absir.aserv.data.value.DataQuery;
 import com.absir.aserv.master.bean.JSlave;
@@ -39,197 +31,207 @@ import com.absir.master.bean.dto.DServer;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.hibernate.boost.L2EntityMergeService;
 import com.absir.orm.transaction.value.Transaction;
+import org.hibernate.Session;
+
+import java.util.*;
 
 /**
  * @author absir
- *
  */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
 public abstract class MasterChannelService {
 
-	/** ME */
-	public static final MasterChannelService ME = BeanFactoryUtils.get(MasterChannelService.class);
+    /**
+     * ME
+     */
+    public static final MasterChannelService ME = BeanFactoryUtils.get(MasterChannelService.class);
 
-	/** channelCache */
-	private DCacheEntity<JChannel> channelCache;
+    /**
+     * channelCache
+     */
+    private DCacheEntity<JChannel> channelCache;
 
-	/** channelAnnouncementCache */
-	private DCache<JChannelAnnouncement, List<DAnnouncement>> channelAnnouncementCache;
+    /**
+     * channelAnnouncementCache
+     */
+    private DCache<JChannelAnnouncement, List<DAnnouncement>> channelAnnouncementCache;
 
-	/** channelMapServers */
-	private Map<String, List<DServer>> channelMapServers;
+    /**
+     * channelMapServers
+     */
+    private Map<String, List<DServer>> channelMapServers;
 
-	/**
-	 * 
-	 */
-	@Inject
-	protected void inject() {
-		channelCache = new DCacheEntity<JChannel>(JChannel.class, null);
-		channelAnnouncementCache = new DCacheOpen<List<DAnnouncement>, JChannelAnnouncement>(JChannelAnnouncement.class,
-				null);
-		channelMapServers = new HashMap<String, List<DServer>>();
-		ME.reloadCache();
-		L2EntityMergeService.ME.addEntityMerges(JSlaveServer.class, new IEntityMerge<JSlaveServer>() {
+    /**
+     *
+     */
+    @Inject
+    protected void inject() {
+        channelCache = new DCacheEntity<JChannel>(JChannel.class, null);
+        channelAnnouncementCache = new DCacheOpen<List<DAnnouncement>, JChannelAnnouncement>(JChannelAnnouncement.class,
+                null);
+        channelMapServers = new HashMap<String, List<DServer>>();
+        ME.reloadCache();
+        L2EntityMergeService.ME.addEntityMerges(JSlaveServer.class, new IEntityMerge<JSlaveServer>() {
 
-			@Override
-			public void merge(String entityName, JSlaveServer entity,
-					com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType, Object mergeEvent) {
-				channelMapServers = new HashMap<String, List<DServer>>();
-			}
+            @Override
+            public void merge(String entityName, JSlaveServer entity,
+                              com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType, Object mergeEvent) {
+                channelMapServers = new HashMap<String, List<DServer>>();
+            }
 
-		});
-		L2EntityMergeService.ME.addEntityMerges(JChannelSlaveServer.class, new IEntityMerge<JChannelSlaveServer>() {
+        });
+        L2EntityMergeService.ME.addEntityMerges(JChannelSlaveServer.class, new IEntityMerge<JChannelSlaveServer>() {
 
-			@Override
-			public void merge(String entityName, JChannelSlaveServer entity,
-					com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType, Object mergeEvent) {
-				channelMapServers = new HashMap<String, List<DServer>>();
-			}
+            @Override
+            public void merge(String entityName, JChannelSlaveServer entity,
+                              com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType, Object mergeEvent) {
+                channelMapServers = new HashMap<String, List<DServer>>();
+            }
 
-		});
-	}
+        });
+    }
 
-	/**
-	 * 重载缓存
-	 */
-	@Schedule(cron = "0 0,30 * * * *")
-	@Async(notifier = true)
-	@Transaction(readOnly = true)
-	protected void reloadCache() {
-		Session session = BeanDao.getSession();
-		channelCache.reloadCache(session);
-		channelAnnouncementCache.reloadCache(session);
-		channelMapServers = new HashMap<String, List<DServer>>();
-	}
+    /**
+     * 重载缓存
+     */
+    @Schedule(cron = "0 0,30 * * * *")
+    @Async(notifier = true)
+    @Transaction(readOnly = true)
+    protected void reloadCache() {
+        Session session = BeanDao.getSession();
+        channelCache.reloadCache(session);
+        channelAnnouncementCache.reloadCache(session);
+        channelMapServers = new HashMap<String, List<DServer>>();
+    }
 
-	/**
-	 * @param channel
-	 * @param version
-	 * @param annc
-	 * @return
-	 */
-	protected String getChannelAlias(String channel, String version, boolean annc) {
-		JChannel jChannel = channelCache.getCacheValue(channel);
-		if (jChannel == null) {
-			return null;
-		}
+    /**
+     * @param channel
+     * @param version
+     * @param annc
+     * @return
+     */
+    protected String getChannelAlias(String channel, String version, boolean annc) {
+        JChannel jChannel = channelCache.getCacheValue(channel);
+        if (jChannel == null) {
+            return null;
+        }
 
-		String alias = annc ? jChannel.getAnnouncementAlias() : jChannel.getServerAlias();
-		channel = KernelString.isEmpty(alias) ? channel : alias;
-		if (version != null) {
-			String toVersion = jChannel.getVersion();
-			if (toVersion != null && KernelUtil.compareVersion(version, toVersion) > 0) {
-				return channel + "_review";
-			}
-		}
+        String alias = annc ? jChannel.getAnnouncementAlias() : jChannel.getServerAlias();
+        channel = KernelString.isEmpty(alias) ? channel : alias;
+        if (version != null) {
+            String toVersion = jChannel.getVersion();
+            if (toVersion != null && KernelUtil.compareVersion(version, toVersion) > 0) {
+                return channel + "_review";
+            }
+        }
 
-		return channel;
-	}
+        return channel;
+    }
 
-	/**
-	 * @param channel
-	 * @param version
-	 * @return
-	 */
-	public List<DAnnouncement> getAnnouncements(String channel, String channelCode, String version) {
-		List<DAnnouncement> announcements = KernelString.isEmpty(channelCode) ? null
-				: channelAnnouncementCache.getCacheValue(channelCode);
-		if (announcements != null) {
-			return announcements;
-		}
+    /**
+     * @param channel
+     * @param version
+     * @return
+     */
+    public List<DAnnouncement> getAnnouncements(String channel, String channelCode, String version) {
+        List<DAnnouncement> announcements = KernelString.isEmpty(channelCode) ? null
+                : channelAnnouncementCache.getCacheValue(channelCode);
+        if (announcements != null) {
+            return announcements;
+        }
 
-		String alias = ME.getChannelAlias(channel, version, true);
-		if (alias == null) {
-			return null;
-		}
+        String alias = ME.getChannelAlias(channel, version, true);
+        if (alias == null) {
+            return null;
+        }
 
-		return channelAnnouncementCache.getCacheValue(alias);
-	}
+        return channelAnnouncementCache.getCacheValue(alias);
+    }
 
-	/**
-	 * @param channel
-	 * @param version
-	 * @return
-	 */
-	public List<DServer> getServers(String channel, String version) {
-		String alias = ME.getChannelAlias(channel, version, false);
-		if (alias == null) {
-			return null;
-		}
+    /**
+     * @param channel
+     * @param version
+     * @return
+     */
+    public List<DServer> getServers(String channel, String version) {
+        String alias = ME.getChannelAlias(channel, version, false);
+        if (alias == null) {
+            return null;
+        }
 
-		return findServers(channel);
-	}
+        return findServers(channel);
+    }
 
-	/**
-	 * @param channel
-	 * @return
-	 */
-	@Transaction
-	@DataQuery("SELECT o FROM JSlaveServerChannel o WHERE o.channel = ? AND o.server.synched = TRUE ORDER BY o.id DESC")
-	public abstract List<JChannelSlaveServer> getChannelServers(String channel);
+    /**
+     * @param channel
+     * @return
+     */
+    @Transaction
+    @DataQuery("SELECT o FROM JSlaveServerChannel o WHERE o.channel = ? AND o.server.synched = TRUE ORDER BY o.id DESC")
+    public abstract List<JChannelSlaveServer> getChannelServers(String channel);
 
-	/**
-	 * @param channel
-	 * @return
-	 */
-	public List<DServer> findServers(String channel) {
-		List<DServer> servers = channelMapServers.get(channel);
-		if (servers == null) {
-			servers = ME.selectServers(channel);
-			channelMapServers.put(channel, servers);
-		}
+    /**
+     * @param channel
+     * @return
+     */
+    public List<DServer> findServers(String channel) {
+        List<DServer> servers = channelMapServers.get(channel);
+        if (servers == null) {
+            servers = ME.selectServers(channel);
+            channelMapServers.put(channel, servers);
+        }
 
-		return servers;
-	}
+        return servers;
+    }
 
-	/**
-	 * @param channel
-	 * @return
-	 */
-	@Transaction(readOnly = true)
-	public List<DServer> selectServers(String channel) {
-		long currentTime = System.currentTimeMillis();
-		Iterator<JChannelSlaveServer> iterator = QueryDaoUtils.createQueryArray(BeanDao.getSession(),
-				"SELECT o FROM JSlaveServerChannel o WHERE o.channel = ? AND o.server.passTime > ? AND o.server.synched = TRUE ORDER BY o.id DESC",
-				channel, currentTime).iterate();
-		List<DServer> servers = new ArrayList<DServer>();
-		boolean opened = false;
-		while (iterator.hasNext()) {
-			JChannelSlaveServer channelSlaveServer = iterator.next();
-			JSlaveServer slaveServer = channelSlaveServer.getServer();
-			JSlave slave = slaveServer.getHost();
-			long beginTime = slaveServer.getBeginTime();
-			int status = beginTime > currentTime ? 0 : slave.isConnecting() || slave.isForceOpen() ? 1 : 2;
-			if (status == 0 && opened) {
-				break;
-			}
+    /**
+     * @param channel
+     * @return
+     */
+    @Transaction(readOnly = true)
+    public List<DServer> selectServers(String channel) {
+        long currentTime = System.currentTimeMillis();
+        Iterator<JChannelSlaveServer> iterator = QueryDaoUtils.createQueryArray(BeanDao.getSession(),
+                "SELECT o FROM JSlaveServerChannel o WHERE o.channel = ? AND o.server.passTime > ? AND o.server.synched = TRUE ORDER BY o.id DESC",
+                channel, currentTime).iterate();
+        List<DServer> servers = new ArrayList<DServer>();
+        boolean opened = false;
+        while (iterator.hasNext()) {
+            JChannelSlaveServer channelSlaveServer = iterator.next();
+            JSlaveServer slaveServer = channelSlaveServer.getServer();
+            JSlave slave = slaveServer.getHost();
+            long beginTime = slaveServer.getBeginTime();
+            int status = beginTime > currentTime ? 0 : slave.isConnecting() || slave.isForceOpen() ? 1 : 2;
+            if (status == 0 && opened) {
+                break;
+            }
 
-			DServer server = new DServer();
-			servers.add(server);
-			server.id = slaveServer.getId();
-			String ip = slaveServer.getServerIP();
-			if (KernelString.isEmpty(ip)) {
-				ip = slave.getServerIP();
-				if (KernelString.isEmpty(ip)) {
-					ip = slave.getIp();
-				}
-			}
+            DServer server = new DServer();
+            servers.add(server);
+            server.id = slaveServer.getId();
+            String ip = slaveServer.getServerIP();
+            if (KernelString.isEmpty(ip)) {
+                ip = slave.getServerIP();
+                if (KernelString.isEmpty(ip)) {
+                    ip = slave.getIp();
+                }
+            }
 
-			server.ip = ip;
-			server.port = slaveServer.getPort();
-			server.name = channelSlaveServer.getName();
-			server.openTime = (int) ((currentTime - beginTime) / 1000);
-			server.status = status;
-			server.path = slave.getPath();
-			if (status == 0) {
-				break;
-			}
+            server.ip = ip;
+            server.port = slaveServer.getPort();
+            server.name = channelSlaveServer.getName();
+            server.openTime = (int) ((currentTime - beginTime) / 1000);
+            server.status = status;
+            server.path = slave.getPath();
+            if (status == 0) {
+                break;
+            }
 
-			opened = true;
-		}
+            opened = true;
+        }
 
-		return servers;
-	}
+        return servers;
+    }
 }

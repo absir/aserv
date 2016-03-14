@@ -1,15 +1,11 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-1-15 下午12:51:25
  */
 package com.absir.server.route.entity;
-
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.absir.bean.basis.BeanDefine;
 import com.absir.bean.basis.Configure;
@@ -20,106 +16,116 @@ import com.absir.context.core.ContextUtils;
 import com.absir.server.in.Input;
 import com.absir.server.route.RouteEntity;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author absir
- * 
  */
 @Configure
 public class EntityOnPut extends RouteEntity {
 
-	@Value(value = "onPut.lifeTime")
-	private static long lifeTime = 600000;
+    @Value(value = "onPut.lifeTime")
+    private static long lifeTime = 600000;
 
-	/** beanDefine */
-	private BeanDefine beanDefine;
+    /**
+     * beanDefine
+     */
+    private BeanDefine beanDefine;
 
-	/** idMapBeanObject */
-	private Map<Serializable, ContextOnPut> idMapBeanObject = new HashMap<Serializable, ContextOnPut>();
+    /**
+     * idMapBeanObject
+     */
+    private Map<Serializable, ContextOnPut> idMapBeanObject = new HashMap<Serializable, ContextOnPut>();
 
-	/**
-	 * @author absir
-	 * 
-	 */
-	public class ContextOnPut extends ContextBase {
+    /**
+     * @param beanDefine
+     */
+    public EntityOnPut(BeanDefine beanDefine) {
+        this.beanDefine = beanDefine;
+    }
 
-		/** id */
-		private Serializable id;
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.server.route.RouteEntity#getRouteType()
+     */
+    @Override
+    public Class<?> getRouteType() {
+        return beanDefine.getBeanType();
+    }
 
-		/** beanObject */
-		private Object beanObject;
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.absir.server.route.RouteEntity#getRouteBean(com.absir.server.in.Input
+     * )
+     */
+    @Override
+    public Object getRouteBean(Input input) {
+        Serializable id = input.getId();
+        ContextOnPut contextOnPut = idMapBeanObject.get(id);
+        if (contextOnPut == null) {
+            synchronized (idMapBeanObject) {
+                contextOnPut = idMapBeanObject.get(id);
+                if (contextOnPut == null) {
+                    contextOnPut = new ContextOnPut(id, beanDefine.getBeanObject(BeanFactoryUtils.get()));
+                    ContextUtils.getContextFactory().addContext(contextOnPut);
+                    return contextOnPut.beanObject;
+                }
+            }
+        }
 
-		/**
-		 * @param id
-		 * @param beanObject
-		 */
-		public ContextOnPut(Serializable id, Object beanObject) {
-			this.id = id;
-			this.beanObject = beanObject;
-		}
+        contextOnPut.retainAt();
+        return contextOnPut.beanObject;
+    }
 
-		/**
-		 * @return
-		 */
-		protected long getLifeTime() {
-			return lifeTime;
-		}
+    /**
+     * @author absir
+     */
+    public class ContextOnPut extends ContextBase {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see com.absir.context.core.ContextBase#uninitialize()
-		 */
-		@Override
-		public void uninitialize() {
-			if (isExpiration()) {
-				idMapBeanObject.remove(id);
+        /**
+         * id
+         */
+        private Serializable id;
 
-			} else {
-				ContextUtils.getContextFactory().addContext(this);
-			}
-		}
-	}
+        /**
+         * beanObject
+         */
+        private Object beanObject;
 
-	/**
-	 * @param beanDefine
-	 */
-	public EntityOnPut(BeanDefine beanDefine) {
-		this.beanDefine = beanDefine;
-	}
+        /**
+         * @param id
+         * @param beanObject
+         */
+        public ContextOnPut(Serializable id, Object beanObject) {
+            this.id = id;
+            this.beanObject = beanObject;
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.server.route.RouteEntity#getRouteType()
-	 */
-	@Override
-	public Class<?> getRouteType() {
-		return beanDefine.getBeanType();
-	}
+        /**
+         * @return
+         */
+        protected long getLifeTime() {
+            return lifeTime;
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.absir.server.route.RouteEntity#getRouteBean(com.absir.server.in.Input
-	 * )
-	 */
-	@Override
-	public Object getRouteBean(Input input) {
-		Serializable id = input.getId();
-		ContextOnPut contextOnPut = idMapBeanObject.get(id);
-		if (contextOnPut == null) {
-			synchronized (idMapBeanObject) {
-				contextOnPut = idMapBeanObject.get(id);
-				if (contextOnPut == null) {
-					contextOnPut = new ContextOnPut(id, beanDefine.getBeanObject(BeanFactoryUtils.get()));
-					ContextUtils.getContextFactory().addContext(contextOnPut);
-					return contextOnPut.beanObject;
-				}
-			}
-		}
+        /*
+         * (non-Javadoc)
+         *
+         * @see com.absir.context.core.ContextBase#uninitialize()
+         */
+        @Override
+        public void uninitialize() {
+            if (isExpiration()) {
+                idMapBeanObject.remove(id);
 
-		contextOnPut.retainAt();
-		return contextOnPut.beanObject;
-	}
+            } else {
+                ContextUtils.getContextFactory().addContext(this);
+            }
+        }
+    }
 }

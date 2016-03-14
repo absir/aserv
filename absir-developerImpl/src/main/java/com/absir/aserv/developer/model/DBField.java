@@ -1,216 +1,260 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-4-3 下午5:18:30
  */
 package com.absir.aserv.developer.model;
+
+import com.absir.aserv.support.developer.IField;
+import com.absir.aserv.support.developer.JCrudField;
+import com.absir.aserv.system.bean.value.JeEditable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.absir.aserv.support.developer.IField;
-import com.absir.aserv.support.developer.JCrudField;
-import com.absir.aserv.system.bean.value.JeEditable;
-
 /**
  * @author absir
- * 
  */
 public class DBField implements IField {
 
-	/** crudField */
-	protected JCrudField crudField;
+    /**
+     * crudField
+     */
+    protected JCrudField crudField;
 
-	/** valueField */
-	protected IField valueField;
+    /**
+     * valueField
+     */
+    protected IField valueField;
 
-	/** entityName */
-	protected String entityName;
+    /**
+     * entityName
+     */
+    protected String entityName;
 
-	/** valueEntityName */
-	protected String valueEntityName;
+    /**
+     * valueEntityName
+     */
+    protected String valueEntityName;
 
-	/** caption */
-	protected String caption;
+    /**
+     * caption
+     */
+    protected String caption;
 
-	/** groups */
-	protected String[] groups;
+    /**
+     * groups
+     */
+    protected String[] groups;
 
-	/** generated */
-	protected boolean generated;
+    /**
+     * generated
+     */
+    protected boolean generated;
 
-	/** canOrder */
-	protected boolean canOrder = true;
+    /**
+     * canOrder
+     */
+    protected boolean canOrder = true;
 
-	/** nullable */
-	protected boolean nullable = true;
+    /**
+     * nullable
+     */
+    protected boolean nullable = true;
 
-	/** collection */
-	protected boolean collection;
+    /**
+     * collection
+     */
+    protected boolean collection;
 
-	/** mappedBy */
-	protected String mappedBy;
+    /**
+     * mappedBy
+     */
+    protected String mappedBy;
 
-	/** types */
-	protected List<String> types = new ArrayList<String>();
+    /**
+     * types
+     */
+    protected List<String> types = new ArrayList<String>();
 
-	/** editable */
-	protected JeEditable editable = JeEditable.ENABLE;
+    /**
+     * editable
+     */
+    protected JeEditable editable = JeEditable.ENABLE;
 
-	/** metas */
-	protected Map<String, Object> metas = new HashMap<String, Object>();
+    /**
+     * metas
+     */
+    protected Map<String, Object> metas = new HashMap<String, Object>();
 
-	/** defaultEntity */
-	protected Object defaultEntity;
+    /**
+     * defaultEntity
+     */
+    protected Object defaultEntity;
+    /**
+     * nodeName
+     */
+    private String nodeName;
 
-	/**
-	 * 
-	 */
-	public DBField() {
-		crudField = new JCrudField();
-	}
+    /**
+     *
+     */
+    public DBField() {
+        crudField = new JCrudField();
+    }
 
-	/**
-	 * @param column
-	 */
-	public DBField(DBColumn column) {
-		this();
-	}
+    /**
+     * @param column
+     */
+    public DBField(DBColumn column) {
+        this();
+    }
 
-	/**
-	 * @return the crudField
-	 */
-	public JCrudField getCrudField() {
-		return crudField;
-	}
+    /**
+     * @return the crudField
+     */
+    public JCrudField getCrudField() {
+        return crudField;
+    }
 
-	/**
-	 * @return
-	 */
-	public String getName() {
-		return crudField.getName();
-	}
+    /**
+     * @return
+     */
+    public String getName() {
+        return crudField.getName();
+    }
 
-	/**
-	 * @return
-	 */
-	public Class<?> getType() {
-		return crudField.getType();
-	}
+    /**
+     * @return
+     */
+    public String getNodeName() {
+        if (nodeName == null) {
+            nodeName = crudField.getName().replace('.', '-');
+        }
 
-	/**
-	 * @return
-	 */
-	public IField getValueField() {
-		return valueField;
-	}
+        return nodeName;
+    }
 
-	/**
-	 * @return
-	 */
-	public String getEntityName() {
-		return entityName;
-	}
+    /**
+     * @return
+     */
+    public Class<?> getType() {
+        return crudField.getType();
+    }
 
-	/**
-	 * @return
-	 */
-	public String getValueEntityName() {
-		return valueEntityName;
-	}
+    /**
+     * @return
+     */
+    public IField getValueField() {
+        return valueField;
+    }
 
-	/**
-	 * @return the caption
-	 */
-	public String getCaption() {
-		return caption;
-	}
+    /**
+     * @return
+     */
+    public String getEntityName() {
+        return entityName;
+    }
 
-	/**
-	 * @return the groups
-	 */
-	public String[] getGroups() {
-		return groups;
-	}
+    /**
+     * @return
+     */
+    public String getValueEntityName() {
+        return valueEntityName;
+    }
 
-	/**
-	 * @return the generated
-	 */
-	public boolean isGenerated() {
-		return generated;
-	}
+    /**
+     * @return the caption
+     */
+    public String getCaption() {
+        return caption;
+    }
 
-	/**
-	 * @return the canOrder
-	 */
-	public boolean isCanOrder() {
-		return canOrder;
-	}
+    /**
+     * @return the groups
+     */
+    public String[] getGroups() {
+        return groups;
+    }
 
-	/**
-	 * @return the nullable
-	 */
-	public boolean isNullable() {
-		return nullable;
-	}
+    /**
+     * @return the generated
+     */
+    public boolean isGenerated() {
+        return generated;
+    }
 
-	/**
-	 * @return the collection
-	 */
-	public boolean isCollection() {
-		return collection;
-	}
+    /**
+     * @return the canOrder
+     */
+    public boolean isCanOrder() {
+        return canOrder;
+    }
 
-	/**
-	 * @return the mappedBy
-	 */
-	public String getMappedBy() {
-		return mappedBy;
-	}
+    /**
+     * @return the nullable
+     */
+    public boolean isNullable() {
+        return nullable;
+    }
 
-	/**
-	 * @return the types
-	 */
-	public List<String> getTypes() {
-		return types;
-	}
+    /**
+     * @return the collection
+     */
+    public boolean isCollection() {
+        return collection;
+    }
 
-	/**
-	 * @return the editable
-	 */
-	public JeEditable getEditable() {
-		return editable;
-	}
+    /**
+     * @return the mappedBy
+     */
+    public String getMappedBy() {
+        return mappedBy;
+    }
 
-	/**
-	 * @return the metas
-	 */
-	public Map<String, Object> getMetas() {
-		return metas;
-	}
+    /**
+     * @return the types
+     */
+    public List<String> getTypes() {
+        return types;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.aserv.support.developer.IField#getDefaultEntity()
-	 */
-	@Override
-	public final Object getDefaultEntity() {
-		if (defaultEntity == null) {
-			defaultEntity = instanceDefaultEntity();
-		}
+    /**
+     * @return the editable
+     */
+    public JeEditable getEditable() {
+        return editable;
+    }
 
-		return defaultEntity;
-	}
+    /**
+     * @return the metas
+     */
+    public Map<String, Object> getMetas() {
+        return metas;
+    }
 
-	/**
-	 * @return
-	 */
-	protected Object instanceDefaultEntity() {
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.aserv.support.developer.IField#getDefaultEntity()
+     */
+    @Override
+    public final Object getDefaultEntity() {
+        if (defaultEntity == null) {
+            defaultEntity = instanceDefaultEntity();
+        }
+
+        return defaultEntity;
+    }
+
+    /**
+     * @return
+     */
+    protected Object instanceDefaultEntity() {
+        return null;
+    }
 }

@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014年7月24日 下午1:04:57
  */
 package com.absir.aserv.support.web.value;
@@ -16,13 +16,13 @@ import java.lang.annotation.Target;
  * @author absir
  *
  */
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BaMethod {
 
-	/**
-	 * @return
-	 */
-	String name() default "";
+    /**
+     * @return
+     */
+    String name() default "";
 
 }

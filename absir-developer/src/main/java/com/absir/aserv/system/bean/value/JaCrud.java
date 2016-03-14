@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-6-7 下午4:57:40
  */
 package com.absir.aserv.system.bean.value;
@@ -14,56 +14,59 @@ import java.lang.annotation.Target;
 
 /**
  * @author absir
- * 
+ *
  */
-@Target({ ElementType.TYPE, ElementType.FIELD })
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JaCrud {
 
-	/**
-	 * @author absir
-	 * 
-	 */
-	public static enum Crud {
+    /**
+     * 处理工厂引用名
+     *
+     * @return
+     */
+    String value() default "";
 
-		/** 创建处理 CREATE */
-		CREATE,
+    /**
+     * 处理工厂引用类
+     *
+     * @return
+     */
+    Class<?> factory() default void.class;
 
-		/** 更新处理 UPDATE */
-		UPDATE,
+    /**
+     * 工厂构造参数
+     *
+     * @return
+     */
+    String[] parameters() default {};
 
-		/** 删除处理 DELETE */
-		DELETE,
+    /**
+     * 关联处理
+     *
+     * @return
+     */
+    JaCrud.Crud[] cruds() default {JaCrud.Crud.CREATE, JaCrud.Crud.UPDATE};
 
-		/** 全部处理|LIST COMPLETE */
-		COMPLETE;
-	}
+    /**
+     * @author absir
+     */
+    public static enum Crud {
 
-	/**
-	 * 处理工厂引用名
-	 * 
-	 * @return
-	 */
-	String value() default "";
+        /**
+         * 创建处理 CREATE
+         */
+        CREATE,
 
-	/**
-	 * 处理工厂引用类
-	 * 
-	 * @return
-	 */
-	Class<?> factory() default void.class;
+        /**
+         * 更新处理 UPDATE
+         */
+        UPDATE,
 
-	/**
-	 * 工厂构造参数
-	 * 
-	 * @return
-	 */
-	String[] parameters() default {};
+        /** 删除处理 DELETE */
+        DELETE,
 
-	/**
-	 * 关联处理
-	 * 
-	 * @return
-	 */
-	JaCrud.Crud[] cruds() default { JaCrud.Crud.CREATE, JaCrud.Crud.UPDATE };
+        /** 全部处理|LIST COMPLETE */
+        COMPLETE;
+    }
 }

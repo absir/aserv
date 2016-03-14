@@ -1,175 +1,181 @@
 /**
  * Copyright 2015 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2015年10月26日 上午11:10:30
  */
 package com.absir.core.util;
+
+import com.absir.core.base.Environment;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.absir.core.base.Environment;
-
 /**
  * @author absir
- *
  */
 public class UtilStep extends Thread {
 
-	/** status */
-	private int status;
+    /**
+     * status
+     */
+    private int status;
 
-	/** sleepTime */
-	private long sleepTime;
+    /**
+     * sleepTime
+     */
+    private long sleepTime;
 
-	/** steps */
-	private List<IStep> steps = new LinkedList<UtilStep.IStep>();
+    /**
+     * steps
+     */
+    private List<IStep> steps = new LinkedList<UtilStep.IStep>();
 
-	/** addSteps */
-	private List<IStep> addSteps;
+    /**
+     * addSteps
+     */
+    private List<IStep> addSteps;
 
-	/**
-	 * @author absir
-	 *
-	 */
-	public interface IStep {
+    /**
+     * @param closed
+     * @param sleep
+     */
+    public UtilStep(boolean closed, long sleep) {
+        status = closed ? 0 : 1;
+        if (sleep < 1000) {
+            sleep = 1000;
+        }
 
-		/**
-		 * @param contextTime
-		 * @return
-		 */
-		public boolean stepDone(long contextTime);
+        sleepTime = sleep;
+    }
 
-	}
+    /**
+     * @param daemon
+     * @param name
+     * @param sleep
+     * @return
+     */
+    public static UtilStep openUtilStep(boolean daemon, String name, long sleep) {
+        return openUtilStep(daemon, name, false, sleep);
+    }
 
-	/**
-	 * @param daemon
-	 * @param name
-	 * @param sleep
-	 * @return
-	 */
-	public static UtilStep openUtilStep(boolean daemon, String name, long sleep) {
-		return openUtilStep(daemon, name, false, sleep);
-	}
+    /**
+     * @param daemon
+     * @param name
+     * @param closed
+     * @param sleep
+     * @return
+     */
+    public static UtilStep openUtilStep(boolean daemon, String name, boolean closed, long sleep) {
+        UtilStep utilStep = new UtilStep(closed, sleep);
+        utilStep.setDaemon(daemon);
+        utilStep.setName(name);
+        utilStep.start();
+        return utilStep;
+    }
 
-	/**
-	 * @param daemon
-	 * @param name
-	 * @param closed
-	 * @param sleep
-	 * @return
-	 */
-	public static UtilStep openUtilStep(boolean daemon, String name, boolean closed, long sleep) {
-		UtilStep utilStep = new UtilStep(closed, sleep);
-		utilStep.setDaemon(daemon);
-		utilStep.setName(name);
-		utilStep.start();
-		return utilStep;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Thread#start()
+     */
+    @Override
+    public synchronized void start() {
+        if (status < 2) {
+            status += 2;
+            super.start();
+        }
+    }
 
-	/**
-	 * @param closed
-	 * @param sleep
-	 */
-	public UtilStep(boolean closed, long sleep) {
-		status = closed ? 0 : 1;
-		if (sleep < 1000) {
-			sleep = 1000;
-		}
+    /**
+     *
+     */
+    public synchronized void close() {
+        if (status == 2) {
+            status = 0;
+        }
+    }
 
-		sleepTime = sleep;
-	}
+    /**
+     * @param step
+     */
+    public synchronized void addStep(IStep step) {
+        if (addSteps == null) {
+            addSteps = new ArrayList<IStep>();
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Thread#start()
-	 */
-	@Override
-	public synchronized void start() {
-		if (status < 2) {
-			status += 2;
-			super.start();
-		}
-	}
+        addSteps.add(step);
+    }
 
-	/**
-	 * 
-	 */
-	public synchronized void close() {
-		if (status == 2) {
-			status = 0;
-		}
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Thread#run()
+     */
+    @Override
+    public void run() {
+        while (Environment.isStarted() && status > 1) {
+            try {
+                Thread.sleep(sleepTime);
 
-	/**
-	 * @param step
-	 */
-	public synchronized void addStep(IStep step) {
-		if (addSteps == null) {
-			addSteps = new ArrayList<IStep>();
-		}
+            } catch (Throwable e) {
+                break;
+            }
 
-		addSteps.add(step);
-	}
+            long contextTime = getContextTime();
+            Iterator<IStep> iterator = steps.iterator();
+            while (iterator.hasNext()) {
+                try {
+                    if (iterator.next().stepDone(contextTime)) {
+                        iterator.remove();
+                    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Thread#run()
-	 */
-	@Override
-	public void run() {
-		while (Environment.isStarted() && status > 1) {
-			try {
-				Thread.sleep(sleepTime);
+                } catch (Throwable e) {
+                    logThrowable(e);
+                }
+            }
 
-			} catch (Throwable e) {
-				break;
-			}
+            if (addSteps != null) {
+                synchronized (this) {
+                    steps.addAll(addSteps);
+                    addSteps = null;
+                }
+            }
+        }
 
-			long contextTime = getContextTime();
-			Iterator<IStep> iterator = steps.iterator();
-			while (iterator.hasNext()) {
-				try {
-					if (iterator.next().stepDone(contextTime)) {
-						iterator.remove();
-					}
+        status = status == 2 ? 0 : 1;
+    }
 
-				} catch (Throwable e) {
-					logThrowable(e);
-				}
-			}
+    /**
+     * @return
+     */
+    protected long getContextTime() {
+        return UtilContext.getCurrentTime();
+    }
 
-			if (addSteps != null) {
-				synchronized (this) {
-					steps.addAll(addSteps);
-					addSteps = null;
-				}
-			}
-		}
+    /**
+     * @param e
+     */
+    protected void logThrowable(Throwable e) {
+        if (Environment.getEnvironment() == Environment.DEVELOP) {
+            e.printStackTrace();
+        }
+    }
 
-		status = status == 2 ? 0 : 1;
-	}
+    /**
+     * @author absir
+     */
+    public interface IStep {
 
-	/**
-	 * @return
-	 */
-	protected long getContextTime() {
-		return UtilContext.getCurrentTime();
-	}
+        /**
+         * @param contextTime
+         * @return
+         */
+        public boolean stepDone(long contextTime);
 
-	/**
-	 * @param e
-	 */
-	protected void logThrowable(Throwable e) {
-		if (Environment.getEnvironment() == Environment.DEVELOP) {
-			e.printStackTrace();
-		}
-	}
+    }
 
 }

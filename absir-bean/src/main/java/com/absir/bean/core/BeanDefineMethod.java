@@ -1,13 +1,11 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2013-6-17 上午11:14:11
  */
 package com.absir.bean.core;
-
-import java.lang.reflect.Method;
 
 import com.absir.bean.basis.BeanDefine;
 import com.absir.bean.basis.BeanFactory;
@@ -16,266 +14,274 @@ import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
 
+import java.lang.reflect.Method;
+
 /**
  * @author absir
- * 
  */
 public class BeanDefineMethod extends BeanDefineAbstractor {
 
-	/** beanDefine */
-	BeanDefine beanDefine;
+    /**
+     * beanDefine
+     */
+    BeanDefine beanDefine;
 
-	/** method */
-	Method method;
+    /**
+     * method
+     */
+    Method method;
 
-	/** paramNames */
-	String[] paramNames;
+    /**
+     * paramNames
+     */
+    String[] paramNames;
 
-	/** bean */
-	Object bean;
+    /**
+     * bean
+     */
+    Object bean;
 
-	/**
-	 * @param method
-	 */
-	public BeanDefineMethod(Method method) {
-		this(null, method);
-	}
+    /**
+     * @param method
+     */
+    public BeanDefineMethod(Method method) {
+        this(null, method);
+    }
 
-	/**
-	 * @param beanDefine
-	 * @param method
-	 */
-	public BeanDefineMethod(BeanDefine beanDefine, Method method) {
-		this(null, beanDefine, method);
-	}
+    /**
+     * @param beanDefine
+     * @param method
+     */
+    public BeanDefineMethod(BeanDefine beanDefine, Method method) {
+        this(null, beanDefine, method);
+    }
 
-	/**
-	 * @param beanName
-	 * @param beanDefine
-	 * @param method
-	 */
-	public BeanDefineMethod(String beanName, BeanDefine beanDefine, Method method) {
-		this.beanName = getBeanName(beanName, method);
-		this.beanDefine = beanDefine;
-		this.method = method;
-		this.paramNames = BeanDefineDiscover.paramterNames(method);
-	}
+    /**
+     * @param beanName
+     * @param beanDefine
+     * @param method
+     */
+    public BeanDefineMethod(String beanName, BeanDefine beanDefine, Method method) {
+        this.beanName = getBeanName(beanName, method);
+        this.beanDefine = beanDefine;
+        this.method = method;
+        this.paramNames = BeanDefineDiscover.paramterNames(method);
+    }
 
-	/**
-	 * @return
-	 */
-	public BeanDefine getBeanDefine() {
-		return beanDefine;
-	}
+    /**
+     * @param beanName
+     * @param method
+     * @return
+     */
+    public static String getBeanName(String beanName, Method method) {
+        if (KernelString.isEmpty(beanName)) {
+            beanName = method.getName();
+            if (beanName.length() > 3 && beanName.startsWith("get")) {
+                beanName = KernelString.unCapitalize(beanName.substring(3));
+            }
+        }
 
-	/**
-	 * @param beanDefine
-	 *            the beanDefine to set
-	 */
-	public void setBeanDefine(BeanDefine beanDefine) {
-		this.beanDefine = beanDefine;
-	}
+        return beanName;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.android.bean.value.IBeanDefine#getBeanType()
-	 */
-	@Override
-	public Class<?> getBeanType() {
-		return method.getReturnType();
-	}
+    /**
+     * @param beanFactory
+     * @param method
+     * @return
+     */
+    public static Object getBeanObject(BeanFactory beanFactory, Method method) {
+        return getBeanObject(beanFactory, null, method);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.bean.basis.BeanDefine#getBeanObject(com.absir.bean.basis.
-	 * BeanFactory)
-	 */
-	@Override
-	public Object getBeanObject(BeanFactory beanFactory) {
-		if (beanDefine != null && bean == null) {
-			bean = beanDefine.getBeanObject(beanFactory);
-			beanDefine = null;
-		}
+    /**
+     * @param beanFactory
+     * @param factory
+     * @param method
+     * @return
+     */
+    public static Object getBeanObject(BeanFactory beanFactory, Object factory, Method method) {
+        return getBeanObject(beanFactory, factory, method, BeanDefineDiscover.paramterNames(method));
+    }
 
-		return getBeanObject(beanFactory, bean, method, paramNames);
-	}
+    /**
+     * @param beanFactory
+     * @param factory
+     * @param method
+     * @param paramNames
+     * @return
+     */
+    public static Object getBeanObject(BeanFactory beanFactory, Object factory, Method method, String[] paramNames) {
+        return getBeanObject(beanFactory, factory, method, paramNames, false);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.android.bean.value.IBeanDefine#getBeanScope()
-	 */
-	@Override
-	public BeanScope getBeanScope() {
-		return BeanScope.PROTOTYPE;
-	}
+    /**
+     * @param beanFactory
+     * @param beanObject
+     * @param method
+     * @param paramNames
+     * @param required
+     * @return
+     */
+    public static Object getBeanObject(BeanFactory beanFactory, Object beanObject, Method method, String[] paramNames,
+                                       boolean required) {
+        return getBeanObject(beanFactory, beanObject, method, paramNames, required, false);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.android.bean.value.IBeanDefine#getBeanComponent()
-	 */
-	@Override
-	public Object getBeanComponent() {
-		return method;
-	}
+    /**
+     * @param beanFactory
+     * @param beanObject
+     * @param method
+     * @param paramNames
+     * @param required
+     * @param invoke
+     * @return
+     */
+    public static Object getBeanObject(BeanFactory beanFactory, Object beanObject, Method method, String[] paramNames,
+                                       boolean required, boolean invoke) {
+        if (paramNames == null) {
+            try {
+                return method.invoke(beanObject);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.bean.core.BeanDefineAbstractor#preloadBeanDefine()
-	 */
-	@Override
-	public void preloadBeanDefine() {
-		KernelClass.forName(method.getDeclaringClass().getName());
-	}
+            } catch (Exception e) {
+                throw new RuntimeException("Can not inject " + beanObject + '.' + method, e);
+            }
+        }
 
-	/**
-	 * @param beanName
-	 * @param method
-	 * @return
-	 */
-	public static String getBeanName(String beanName, Method method) {
-		if (KernelString.isEmpty(beanName)) {
-			beanName = method.getName();
-			if (beanName.length() > 3 && beanName.startsWith("get")) {
-				beanName = KernelString.unCapitalize(beanName.substring(3));
-			}
-		}
+        return getBeanObject(beanObject, method,
+                getParameters(beanFactory, method.getParameterTypes(), paramNames, required ? method : null, invoke));
+    }
 
-		return beanName;
-	}
+    /**
+     * @param beanFactory
+     * @param beanObject
+     * @param method
+     * @param parameterTypes
+     * @return
+     */
+    public static Object getBeanObject(BeanFactory beanFactory, Object beanObject, Method method, Class<?>[] parameterTypes,
+                                       String[] paramNames, boolean required, boolean invoke) {
+        return getBeanObject(beanObject, method,
+                getParameters(beanFactory, method.getParameterTypes(), paramNames, required ? method : null, invoke));
+    }
 
-	/**
-	 * @param beanFactory
-	 * @param method
-	 * @return
-	 */
-	public static Object getBeanObject(BeanFactory beanFactory, Method method) {
-		return getBeanObject(beanFactory, null, method);
-	}
+    /**
+     * @param beanFactory
+     * @param method
+     * @param parameterTypes
+     * @param paramNames
+     * @param required
+     * @return
+     */
+    public static Object[] getParameters(BeanFactory beanFactory, Class<?>[] parameterTypes, String[] paramNames, Object required,
+                                         boolean invoke) {
+        int length = paramNames.length;
+        if (length == 0) {
+            return KernelLang.NULL_OBJECTS;
+        }
 
-	/**
-	 * @param beanFactory
-	 * @param factory
-	 * @param method
-	 * @return
-	 */
-	public static Object getBeanObject(BeanFactory beanFactory, Object factory, Method method) {
-		return getBeanObject(beanFactory, factory, method, BeanDefineDiscover.paramterNames(method));
-	}
+        Object[] parameters = new Object[length];
+        for (int i = 0; i < length; i++) {
+            Object parameter = beanFactory.getBeanObject(paramNames[i], parameterTypes[i], false);
+            if (parameter == null) {
+                if (required != null) {
+                    throw new RuntimeException("Can not inject " + required + " parameters [" + paramNames[i] + "] class = "
+                            + parameterTypes[i]);
+                }
 
-	/**
-	 * @param beanFactory
-	 * @param factory
-	 * @param method
-	 * @param paramNames
-	 * @return
-	 */
-	public static Object getBeanObject(BeanFactory beanFactory, Object factory, Method method, String[] paramNames) {
-		return getBeanObject(beanFactory, factory, method, paramNames, false);
-	}
+            } else {
+                invoke = true;
+                parameters[i] = parameter;
+            }
+        }
 
-	/**
-	 * @param beanFactory
-	 * @param beanObject
-	 * @param method
-	 * @param paramNames
-	 * @param required
-	 * @return
-	 */
-	public static Object getBeanObject(BeanFactory beanFactory, Object beanObject, Method method, String[] paramNames,
-			boolean required) {
-		return getBeanObject(beanFactory, beanObject, method, paramNames, required, false);
-	}
+        return invoke ? parameters : null;
+    }
 
-	/**
-	 * @param beanFactory
-	 * @param beanObject
-	 * @param method
-	 * @param paramNames
-	 * @param required
-	 * @param invoke
-	 * @return
-	 */
-	public static Object getBeanObject(BeanFactory beanFactory, Object beanObject, Method method, String[] paramNames,
-			boolean required, boolean invoke) {
-		if (paramNames == null) {
-			try {
-				return method.invoke(beanObject);
+    /**
+     * @param beanObject
+     * @param method
+     * @param parameters
+     * @return
+     */
+    public static Object getBeanObject(Object beanObject, Method method, Object[] parameters) {
+        try {
+            return parameters == null ? null : parameters == KernelLang.NULL_OBJECTS ? method.invoke(beanObject) : method.invoke(
+                    beanObject, parameters);
 
-			} catch (Exception e) {
-				throw new RuntimeException("Can not inject " + beanObject + '.' + method, e);
-			}
-		}
+        } catch (Exception e) {
+            throw new RuntimeException("Can not inject " + beanObject + '.' + method + '[' + KernelString.implode(parameters, ',')
+                    + ']', e);
+        }
+    }
 
-		return getBeanObject(beanObject, method,
-				getParameters(beanFactory, method.getParameterTypes(), paramNames, required ? method : null, invoke));
-	}
+    /**
+     * @return
+     */
+    public BeanDefine getBeanDefine() {
+        return beanDefine;
+    }
 
-	/**
-	 * @param beanFactory
-	 * @param beanObject
-	 * @param method
-	 * @param parameterTypes
-	 * @return
-	 */
-	public static Object getBeanObject(BeanFactory beanFactory, Object beanObject, Method method, Class<?>[] parameterTypes,
-			String[] paramNames, boolean required, boolean invoke) {
-		return getBeanObject(beanObject, method,
-				getParameters(beanFactory, method.getParameterTypes(), paramNames, required ? method : null, invoke));
-	}
+    /**
+     * @param beanDefine the beanDefine to set
+     */
+    public void setBeanDefine(BeanDefine beanDefine) {
+        this.beanDefine = beanDefine;
+    }
 
-	/**
-	 * @param beanFactory
-	 * @param method
-	 * @param parameterTypes
-	 * @param paramNames
-	 * @param required
-	 * @return
-	 */
-	public static Object[] getParameters(BeanFactory beanFactory, Class<?>[] parameterTypes, String[] paramNames, Object required,
-			boolean invoke) {
-		int length = paramNames.length;
-		if (length == 0) {
-			return KernelLang.NULL_OBJECTS;
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.android.bean.value.IBeanDefine#getBeanType()
+     */
+    @Override
+    public Class<?> getBeanType() {
+        return method.getReturnType();
+    }
 
-		Object[] parameters = new Object[length];
-		for (int i = 0; i < length; i++) {
-			Object parameter = beanFactory.getBeanObject(paramNames[i], parameterTypes[i], false);
-			if (parameter == null) {
-				if (required != null) {
-					throw new RuntimeException("Can not inject " + required + " parameters [" + paramNames[i] + "] class = "
-							+ parameterTypes[i]);
-				}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.bean.basis.BeanDefine#getBeanObject(com.absir.bean.basis.
+     * BeanFactory)
+     */
+    @Override
+    public Object getBeanObject(BeanFactory beanFactory) {
+        if (beanDefine != null && bean == null) {
+            bean = beanDefine.getBeanObject(beanFactory);
+            beanDefine = null;
+        }
 
-			} else {
-				invoke = true;
-				parameters[i] = parameter;
-			}
-		}
+        return getBeanObject(beanFactory, bean, method, paramNames);
+    }
 
-		return invoke ? parameters : null;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.android.bean.value.IBeanDefine#getBeanScope()
+     */
+    @Override
+    public BeanScope getBeanScope() {
+        return BeanScope.PROTOTYPE;
+    }
 
-	/**
-	 * @param beanObject
-	 * @param method
-	 * @param parameters
-	 * @return
-	 */
-	public static Object getBeanObject(Object beanObject, Method method, Object[] parameters) {
-		try {
-			return parameters == null ? null : parameters == KernelLang.NULL_OBJECTS ? method.invoke(beanObject) : method.invoke(
-					beanObject, parameters);
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.android.bean.value.IBeanDefine#getBeanComponent()
+     */
+    @Override
+    public Object getBeanComponent() {
+        return method;
+    }
 
-		} catch (Exception e) {
-			throw new RuntimeException("Can not inject " + beanObject + '.' + method + '[' + KernelString.implode(parameters, ',')
-					+ ']', e);
-		}
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.bean.core.BeanDefineAbstractor#preloadBeanDefine()
+     */
+    @Override
+    public void preloadBeanDefine() {
+        KernelClass.forName(method.getDeclaringClass().getName());
+    }
 
 }

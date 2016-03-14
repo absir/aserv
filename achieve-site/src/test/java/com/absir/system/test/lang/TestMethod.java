@@ -1,182 +1,180 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-4-8 下午4:13:43
  */
 package com.absir.system.test.lang;
 
-import java.io.IOException;
-
-import javax.script.ScriptException;
-
+import com.absir.system.test.AbstractTest;
 import org.junit.Test;
 
-import com.absir.system.test.AbstractTest;
+import javax.script.ScriptException;
+import java.io.IOException;
 
 /**
  * @author absir
- * 
+ *
  */
 public class TestMethod extends AbstractTest {
 
-	public interface TI<T> {
+    /**
+     * @param value
+     * @return
+     */
+    public static String unTransferred(String value) {
+        value = value.trim();
+        int length = value.length();
+        if (length < 1) {
+            return value;
+        }
 
-		public T t(T t);
+        StringBuilder stringBuilder = new StringBuilder();
+        int quotation = 0;
+        char chr = value.charAt(0);
+        if (chr == '"') {
+            quotation = 1;
 
-	}
+        } else {
+            stringBuilder.append(chr);
+        }
 
-	public class TS implements TI<String> {
+        length--;
+        boolean transferred = false;
+        for (int i = 1; i < length; i++) {
+            chr = value.charAt(i);
+            if (transferred) {
+                transferred = false;
+                appendTransferred(stringBuilder, chr);
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see com.absir.system.test.lang.TestMethod.TI#t(java.lang.Object)
-		 */
-		@Override
-		public String t(String t) {
-			return null;
-		}
+            } else if (chr == '\\') {
+                transferred = true;
 
-	}
+            } else {
+                stringBuilder.append(chr);
+            }
+        }
 
-	public class TL implements TI<Long> {
+        chr = value.charAt(length);
+        if (transferred) {
+            appendTransferred(stringBuilder, chr);
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see com.absir.system.test.lang.TestMethod.TI#t(java.lang.Object)
-		 */
-		@Override
-		public Long t(Long t) {
-			return null;
-		}
+        } else {
+            // "" quotation
+            if (quotation == 1 && chr == '"') {
+                quotation = 2;
 
-	}
+            } else {
+                stringBuilder.append(chr);
+            }
+        }
 
-	public static interface TestProxy {
+        return quotation == 1 ? '"' + stringBuilder.toString() : stringBuilder.toString();
+    }
 
-		public void emptyProxy();
-	}
+    /**
+     * @param stringBuilder
+     * @param chr
+     */
+    public static void appendTransferred(StringBuilder stringBuilder, char chr) {
+        switch (chr) {
+            case 't':
+                stringBuilder.append("\t");
+                break;
+            case 'r':
+                stringBuilder.append("\r");
+                break;
+            case 'n':
+                stringBuilder.append("\n");
+                break;
+            case '"':
+                stringBuilder.append('"');
+                break;
+            case '\'':
+                stringBuilder.append('\'');
+                break;
 
-	public static abstract class TestProxyClass implements TestProxy {
+            default:
+                stringBuilder.append('\\');
+                stringBuilder.append(chr);
+                break;
+        }
+    }
 
-		protected String getName() {
-			return "dddd";
-		}
-	}
+    public void dump() {
+        new Exception().printStackTrace();
+    }
 
-	/**
-	 * @param value
-	 * @return
-	 */
-	public static String unTransferred(String value) {
-		value = value.trim();
-		int length = value.length();
-		if (length < 1) {
-			return value;
-		}
+    void test(String name, Object test, Object nl, Character t) {
+        System.out.println(name);
+    }
 
-		StringBuilder stringBuilder = new StringBuilder();
-		int quotation = 0;
-		char chr = value.charAt(0);
-		if (chr == '"') {
-			quotation = 1;
+    @Test
+    public void main() throws IOException, ScriptException, NoSuchMethodException {
 
-		} else {
-			stringBuilder.append(chr);
-		}
+        //IEntityMerge<T>
 
-		length--;
-		boolean transferred = false;
-		for (int i = 1; i < length; i++) {
-			chr = value.charAt(i);
-			if (transferred) {
-				transferred = false;
-				appendTransferred(stringBuilder, chr);
+        // System.out.println(TI.class.getGenericSuperclass());
 
-			} else if (chr == '\\') {
-				transferred = true;
+        // System.out.println(DynaBinder.to("name", List.class));
+        // System.out.println(DynaBinder.to("name", String[].class));
+        // System.out.println(HelperRandom.randSecendId(7));
+        // System.out.println(HelperRandom.randSecendId(8));
+        // System.out.println(HelperRandom.randSecendId(9));
+        // System.out.println(HelperRandom.randSecendId(31));
+        // System.out.println(HelperRandom.randSecendId(32));
+        // System.out.println(HelperRandom.randSecendId(33));
+        // //[^/\\]*([/\\]*)
+        // String regx = "^([/\\\\]*)[^/\\\\]*([/\\\\]+)";
+        // System.out.println("\\/ddd/a/sdsd".replaceFirst(regx, "$1admin$2"));
+        // System.out.println("ddd/a/sdsd".replaceFirst(regx, "$1admin$2"));
+        // System.out.println("/ddd\\a/sdsd".replaceFirst(regx, "$1admin$2"));
+    }
 
-			} else {
-				stringBuilder.append(chr);
-			}
-		}
+    public interface TI<T> {
 
-		chr = value.charAt(length);
-		if (transferred) {
-			appendTransferred(stringBuilder, chr);
+        public T t(T t);
 
-		} else {
-			// "" quotation
-			if (quotation == 1 && chr == '"') {
-				quotation = 2;
+    }
 
-			} else {
-				stringBuilder.append(chr);
-			}
-		}
+    public static interface TestProxy {
 
-		return quotation == 1 ? '"' + stringBuilder.toString() : stringBuilder.toString();
-	}
+        public void emptyProxy();
+    }
 
-	/**
-	 * @param stringBuilder
-	 * @param chr
-	 */
-	public static void appendTransferred(StringBuilder stringBuilder, char chr) {
-		switch (chr) {
-		case 't':
-			stringBuilder.append("\t");
-			break;
-		case 'r':
-			stringBuilder.append("\r");
-			break;
-		case 'n':
-			stringBuilder.append("\n");
-			break;
-		case '"':
-			stringBuilder.append('"');
-			break;
-		case '\'':
-			stringBuilder.append('\'');
-			break;
+    public static abstract class TestProxyClass implements TestProxy {
 
-		default:
-			stringBuilder.append('\\');
-			stringBuilder.append(chr);
-			break;
-		}
-	}
+        protected String getName() {
+            return "dddd";
+        }
+    }
 
-	public void dump() {
-		new Exception().printStackTrace();
-	}
+    public class TS implements TI<String> {
 
-	void test(String name, Object test, Object nl, Character t) {
-		System.out.println(name);
-	}
+        /*
+         * (non-Javadoc)
+         *
+         * @see com.absir.system.test.lang.TestMethod.TI#t(java.lang.Object)
+         */
+        @Override
+        public String t(String t) {
+            return null;
+        }
 
-	@Test
-	public void main() throws IOException, ScriptException, NoSuchMethodException {
-		
-		//IEntityMerge<T>
+    }
 
-		// System.out.println(TI.class.getGenericSuperclass());
+    public class TL implements TI<Long> {
 
-		// System.out.println(DynaBinder.to("name", List.class));
-		// System.out.println(DynaBinder.to("name", String[].class));
-		// System.out.println(HelperRandom.randSecendId(7));
-		// System.out.println(HelperRandom.randSecendId(8));
-		// System.out.println(HelperRandom.randSecendId(9));
-		// System.out.println(HelperRandom.randSecendId(31));
-		// System.out.println(HelperRandom.randSecendId(32));
-		// System.out.println(HelperRandom.randSecendId(33));
-		// //[^/\\]*([/\\]*)
-		// String regx = "^([/\\\\]*)[^/\\\\]*([/\\\\]+)";
-		// System.out.println("\\/ddd/a/sdsd".replaceFirst(regx, "$1admin$2"));
-		// System.out.println("ddd/a/sdsd".replaceFirst(regx, "$1admin$2"));
-		// System.out.println("/ddd\\a/sdsd".replaceFirst(regx, "$1admin$2"));
-	}
+        /*
+         * (non-Javadoc)
+         *
+         * @see com.absir.system.test.lang.TestMethod.TI#t(java.lang.Object)
+         */
+        @Override
+        public Long t(Long t) {
+            return null;
+        }
+
+    }
 }

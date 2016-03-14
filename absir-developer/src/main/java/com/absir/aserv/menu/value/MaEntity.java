@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-9-12 下午2:35:42
  */
 package com.absir.aserv.menu.value;
@@ -14,29 +14,29 @@ import java.lang.annotation.Target;
 
 /**
  * @author absir
- * 
+ *
  */
-@Target(value = { ElementType.TYPE })
+@Target(value = {ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MaEntity {
 
-	/**
-	 * @return
-	 */
-	boolean closed() default false;
+    /**
+     * @return
+     */
+    boolean closed() default false;
 
-	/**
-	 * @return
-	 */
-	MaMenu[] parent() default {};
+    /**
+     * @return
+     */
+    MaMenu[] parent() default {};
 
-	/**
-	 * @return
-	 */
-	String name() default "";
+    /**
+     * @return
+     */
+    String name() default "";
 
-	/**
-	 * @return
-	 */
-	MaMenu value() default @MaMenu;
+    /**
+     * @return
+     */
+    MaMenu value() default @MaMenu;
 }

@@ -1,214 +1,213 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2013-3-5 下午2:31:23
  */
 package com.absir.core.kernel;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.core.kernel.KernelLang.FilterTemplate;
 
+import java.util.*;
+
 /**
  * @author absir
- * 
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class KernelList {
 
-	/** EMPTY_LIST */
-	public static final List EMPTY_LIST = new ArrayList();
+    /**
+     * EMPTY_LIST
+     */
+    public static final List EMPTY_LIST = new ArrayList();
+    /**
+     * COMPARATOR
+     */
+    public static final Comparator<Orderable> COMPARATOR = new Comparator<Orderable>() {
 
-	/**
-	 * @param list
-	 * @param index
-	 * @return
-	 */
-	public static <T> T get(List<T> list, int index) {
-		return get(list, null, index);
-	}
+        @Override
+        public int compare(Orderable lhs, Orderable rhs) {
+            return lhs.getOrder() - rhs.getOrder();
+        }
+    };
+    /**
+     * COMPARATOR_DESC
+     */
+    public static final Comparator<Orderable> COMPARATOR_DESC = new Comparator<Orderable>() {
 
-	/**
-	 * @param list
-	 * @param defaultValue
-	 * @param index
-	 * @return
-	 */
-	public static <T> T get(List<T> list, T defaultValue, int index) {
-		if (index >= 0 && index < list.size()) {
-			return list.get(index);
-		}
+        @Override
+        public int compare(Orderable lhs, Orderable rhs) {
+            return rhs.getOrder() - lhs.getOrder();
+        }
+    };
+    /**
+     * COMMON_COMPARATOR
+     */
+    public static final Comparator COMMON_COMPARATOR = new Comparator() {
 
-		return defaultValue;
-	}
+        @Override
+        public int compare(Object lhs, Object rhs) {
+            return getOrder(lhs) - getOrder(rhs);
+        }
+    };
 
-	/**
-	 * @param list
-	 * @param element
-	 */
-	public static <T> void addOnly(List<T> list, T element) {
-		for (T el : list) {
-			if (el == element) {
-				return;
-			}
-		}
+    /**
+     * @param list
+     * @param index
+     * @return
+     */
+    public static <T> T get(List<T> list, int index) {
+        return get(list, null, index);
+    }
 
-		list.add(element);
-	}
+    /**
+     * @param list
+     * @param defaultValue
+     * @param index
+     * @return
+     */
+    public static <T> T get(List<T> list, T defaultValue, int index) {
+        if (index >= 0 && index < list.size()) {
+            return list.get(index);
+        }
 
-	/**
-	 * @author absir
-	 * 
-	 */
-	public interface Orderable {
-		public int getOrder();
-	}
+        return defaultValue;
+    }
 
-	/**
-	 * @param list
-	 * @param element
-	 */
-	public static <T extends Orderable> void addOrder(List<T> list, T element) {
-		int order = element.getOrder();
-		int size = list.size();
-		for (int i = 0; i < size; i++) {
-			if (order < list.get(i).getOrder()) {
-				list.add(i, element);
-				return;
-			}
-		}
+    /**
+     * @param list
+     * @param element
+     */
+    public static <T> void addOnly(List<T> list, T element) {
+        for (T el : list) {
+            if (el == element) {
+                return;
+            }
+        }
 
-		list.add(element);
-	}
+        list.add(element);
+    }
 
-	/**
-	 * @param list
-	 * @param element
-	 */
-	public static <T extends Orderable> void addOrderOnly(List<T> list, T element) {
-		int order = element.getOrder();
-		int size = list.size();
-		for (int i = 0; i < size; i++) {
-			Orderable orderable = list.get(i);
-			if (orderable == element) {
-				return;
-			}
+    /**
+     * @param list
+     * @param element
+     */
+    public static <T extends Orderable> void addOrder(List<T> list, T element) {
+        int order = element.getOrder();
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            if (order < list.get(i).getOrder()) {
+                list.add(i, element);
+                return;
+            }
+        }
 
-			if (order < orderable.getOrder()) {
-				list.add(i, element);
-				return;
-			}
-		}
+        list.add(element);
+    }
 
-		list.add(element);
-	}
+    /**
+     * @param list
+     * @param element
+     */
+    public static <T extends Orderable> void addOrderOnly(List<T> list, T element) {
+        int order = element.getOrder();
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            Orderable orderable = list.get(i);
+            if (orderable == element) {
+                return;
+            }
 
-	/** COMPARATOR */
-	public static final Comparator<Orderable> COMPARATOR = new Comparator<Orderable>() {
+            if (order < orderable.getOrder()) {
+                list.add(i, element);
+                return;
+            }
+        }
 
-		@Override
-		public int compare(Orderable lhs, Orderable rhs) {
-			return lhs.getOrder() - rhs.getOrder();
-		}
-	};
+        list.add(element);
+    }
 
-	/**
-	 * @param list
-	 */
-	public static <T extends Orderable> void sortOrderable(List<T> list) {
-		Collections.sort(list, COMPARATOR);
-	}
+    /**
+     * @param list
+     */
+    public static <T extends Orderable> void sortOrderable(List<T> list) {
+        Collections.sort(list, COMPARATOR);
+    }
 
-	/** COMPARATOR_DESC */
-	public static final Comparator<Orderable> COMPARATOR_DESC = new Comparator<Orderable>() {
+    /**
+     * @param list
+     */
+    public static <T extends Orderable> void sortOrderableDesc(List<T> list) {
+        Collections.sort(list, COMPARATOR_DESC);
+    }
 
-		@Override
-		public int compare(Orderable lhs, Orderable rhs) {
-			return rhs.getOrder() - lhs.getOrder();
-		}
-	};
+    /**
+     * @param element
+     * @return
+     */
+    public static int getOrder(Object element) {
+        return element instanceof Orderable ? ((Orderable) element).getOrder() : 0;
+    }
 
-	/**
-	 * @param list
-	 */
-	public static <T extends Orderable> void sortOrderableDesc(List<T> list) {
-		Collections.sort(list, COMPARATOR_DESC);
-	}
+    /**
+     * @param list
+     * @param element
+     */
+    public static void addOrderObject(List list, Object element) {
+        int order = getOrder(element);
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            if (order < getOrder(list.get(i))) {
+                list.add(i, element);
+                return;
+            }
+        }
 
-	/**
-	 * @param element
-	 * @return
-	 */
-	public static int getOrder(Object element) {
-		return element instanceof Orderable ? ((Orderable) element).getOrder() : 0;
-	}
+        list.add(element);
+    }
 
-	/**
-	 * @param list
-	 * @param element
-	 */
-	public static void addOrderObject(List list, Object element) {
-		int order = getOrder(element);
-		int size = list.size();
-		for (int i = 0; i < size; i++) {
-			if (order < getOrder(list.get(i))) {
-				list.add(i, element);
-				return;
-			}
-		}
+    /**
+     * @param list
+     */
+    public static void sortCommonObjects(List list) {
+        Collections.sort(list, COMMON_COMPARATOR);
+    }
 
-		list.add(element);
-	}
+    /**
+     * @param collection
+     * @param filterTemplate
+     * @param comparator
+     * @return
+     */
+    public static <T> List<T> getFilterSortList(Collection<T> collection, FilterTemplate<T> filterTemplate, Comparator<T> comparator) {
+        if (filterTemplate == null && comparator == null) {
+            return new ArrayList<T>(collection);
+        }
 
-	/** COMMON_COMPARATOR */
-	public static final Comparator COMMON_COMPARATOR = new Comparator() {
+        List<T> list = new ArrayList<T>(collection.size());
+        try {
+            for (T element : collection) {
+                if (filterTemplate == null || filterTemplate.doWith(element)) {
+                    list.add(element);
+                }
+            }
 
-		@Override
-		public int compare(Object lhs, Object rhs) {
-			return getOrder(lhs) - getOrder(rhs);
-		}
-	};
+        } catch (BreakException e) {
+        }
 
-	/**
-	 * @param list
-	 */
-	public static void sortCommonObjects(List list) {
-		Collections.sort(list, COMMON_COMPARATOR);
-	}
+        if (comparator != null) {
+            Collections.sort(list, comparator);
+        }
 
-	/**
-	 * @param collection
-	 * @param filterTemplate
-	 * @param comparator
-	 * @return
-	 */
-	public static <T> List<T> getFilterSortList(Collection<T> collection, FilterTemplate<T> filterTemplate, Comparator<T> comparator) {
-		if (filterTemplate == null && comparator == null) {
-			return new ArrayList<T>(collection);
-		}
+        return list;
+    }
 
-		List<T> list = new ArrayList<T>(collection.size());
-		try {
-			for (T element : collection) {
-				if (filterTemplate == null || filterTemplate.doWith(element)) {
-					list.add(element);
-				}
-			}
-
-		} catch (BreakException e) {
-		}
-
-		if (comparator != null) {
-			Collections.sort(list, comparator);
-		}
-
-		return list;
-	}
+    /**
+     * @author absir
+     */
+    public interface Orderable {
+        public int getOrder();
+    }
 }

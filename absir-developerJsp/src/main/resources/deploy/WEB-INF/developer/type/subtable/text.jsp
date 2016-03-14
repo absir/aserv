@@ -1,6 +1,6 @@
-<%@ include file="../../common/edit.jsp"%>
+<%@ include file="../../common/edit.jsp" %>
 <%
-	element.tagName("td");
-	element.removeClass("p");
-	element.previousSibling().remove();
+    element.tagName("td");
+    element.removeClass("p");
+    element.previousSibling().remove();
 %>

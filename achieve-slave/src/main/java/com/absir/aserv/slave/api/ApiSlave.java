@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2015年4月13日 下午4:10:30
  */
 package com.absir.aserv.slave.api;
@@ -21,24 +21,24 @@ import com.absir.slave.InputSlave;
  */
 public class ApiSlave extends ApiServer {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.absir.aserv.system.api.ApiServer#onAuthentication(com.absir.server
-	 * .in.Input)
-	 */
-	@Override
-	protected SecurityContext onAuthentication(Input input) throws Throwable {
-		SecurityContext context = super.onAuthentication(input);
-		JiUserBase userBase = context == null ? null : context.getUser();
-		if (userBase == null || !userBase.isDeveloper()) {
-			if (!InputSlave.onAuthentication(input)) {
-				throw new ServerException(ServerStatus.ON_DENIED);
-			}
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.absir.aserv.system.api.ApiServer#onAuthentication(com.absir.server
+     * .in.Input)
+     */
+    @Override
+    protected SecurityContext onAuthentication(Input input) throws Throwable {
+        SecurityContext context = super.onAuthentication(input);
+        JiUserBase userBase = context == null ? null : context.getUser();
+        if (userBase == null || !userBase.isDeveloper()) {
+            if (!InputSlave.onAuthentication(input)) {
+                throw new ServerException(ServerStatus.ON_DENIED);
+            }
+        }
 
-		return context;
-	}
+        return context;
+    }
 
 }

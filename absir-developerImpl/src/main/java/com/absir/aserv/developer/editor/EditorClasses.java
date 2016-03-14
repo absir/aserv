@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-4-30 下午5:23:31
  */
 package com.absir.aserv.developer.editor;
@@ -14,52 +14,52 @@ import com.absir.property.PropertyResolverAbstract;
 
 /**
  * @author absir
- * 
+ *
  */
 @Bean
 public class EditorClasses extends PropertyResolverAbstract<EditorObject, JaClasses> {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-	 * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-	 */
-	@Override
-	public EditorObject getPropertyObjectAnnotation(EditorObject propertyObject, JaClasses annotation) {
-		if (propertyObject == null) {
-			propertyObject = new EditorObject();
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
+     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
+     */
+    @Override
+    public EditorObject getPropertyObjectAnnotation(EditorObject propertyObject, JaClasses annotation) {
+        if (propertyObject == null) {
+            propertyObject = new EditorObject();
+        }
 
-		propertyObject.setKeyClass(annotation.key());
-		propertyObject.setValueClass(annotation.value());
-		return propertyObject;
-	}
+        propertyObject.setKeyClass(annotation.key());
+        propertyObject.setValueClass(annotation.value());
+        return propertyObject;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-	 * (com.absir.property.PropertyObject, java.lang.String)
-	 */
-	@Override
-	public EditorObject getPropertyObjectAnnotationValue(EditorObject propertyObject, String annotationValue) {
-		if (propertyObject == null) {
-			propertyObject = new EditorObject();
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
+     * (com.absir.property.PropertyObject, java.lang.String)
+     */
+    @Override
+    public EditorObject getPropertyObjectAnnotationValue(EditorObject propertyObject, String annotationValue) {
+        if (propertyObject == null) {
+            propertyObject = new EditorObject();
+        }
 
-		String[] names = annotationValue.split(",");
-		if (names.length == 1) {
-			propertyObject.setValueClass(KernelClass.forName(names[0]));
+        String[] names = annotationValue.split(",");
+        if (names.length == 1) {
+            propertyObject.setValueClass(KernelClass.forName(names[0]));
 
-		} else if (names.length == 2) {
-			propertyObject.setKeyClass(KernelClass.forName(names[0]));
-			propertyObject.setValueClass(KernelClass.forName(names[1]));
-		}
+        } else if (names.length == 2) {
+            propertyObject.setKeyClass(KernelClass.forName(names[0]));
+            propertyObject.setValueClass(KernelClass.forName(names[1]));
+        }
 
-		return propertyObject;
-	}
+        return propertyObject;
+    }
 
 }

@@ -1,0 +1,2743 @@
+package G2.Protocol;
+
+option optimize_for = LITE_RUNTIME;
+
+enum GoogleProtoType {
+    TypeLoginOK = 1;
+    TypeCharacterInfo = 2;
+    TypeGetMagic = 3;
+    TypeAllInfo = 4;
+    TypeGetEquip = 5;
+    TypeEquipEquip = 6;
+    TypeEquipMagic = 7;
+    TypeUpdateCharacterProperty = 8;
+    TypeUpdateNpcProperty = 9;
+    TypeLevelUpEquip = 10;
+    TypeLevelUpMagic = 11;
+    TypeSellEquip = 12;
+    TypeChangeNpcPosition = 13;
+    TypeBattleResult = 14;
+    TypeNewNpc = 15;
+    TypeCreateCharacterResult = 16;
+
+    //	TypeNpcInfo = 17;
+    TypeGetItem = 18;
+    TypeGetAward = 19;
+
+    TypeArenaData = 20;
+
+    TypeReadMail = 21; // label the mail as read
+    TypeSendMail = 22;
+    TypeGetMail = 23; // get all mails
+    TypeMailReceived = 24;
+
+
+    TypeAddFriend = 25;
+    TypeGetFriends = 26;
+    TypeSearchFriends = 27;
+    TypeDeleteFriend = 28;
+
+    TypeGetAttach = 29;
+
+    TypeSpeak = 30;
+    TypeGetAnnouncement = 31;
+    TypePaomadeng = 32;
+
+    TypeGetFans = 33;
+
+    TypeGetRecruitInfo = 41;
+    TypeRecruitNpc = 42;
+    TypeRecruitNpcsList = 43;
+
+    TypeGetLevelRecords = 51;
+
+    TypeUseItem = 61;
+    TypeBuy = 62;
+    TypeBoughtVipGifts = 63;
+
+    TypeGetSpirit = 71;
+    TypeRecruitBySpirit = 72;
+    TypeTransferLevel = 73;
+
+    TypeTryPeiyang = 81;
+    TypeConfirmPeiyang = 82;
+
+    TypeCashOutDailyExp = 91;
+    TypeEatDailyPeach = 92;
+    TypeTodayPeachStatus = 93;
+    TypeSignToday = 94;
+    TypeReadyToSignToday = 95;
+
+    TypeRetrieveFirstAchievedArenaAward = 101;
+    TypeConvertPoints = 102;
+
+    TypeLiudaoSummary = 111;
+    TypeLiudaoStatus = 112;
+    TypeAttackLiudao = 113;
+    TypeLiudaoBuff = 114;
+    TypeBuyLiudaoReviveTime = 115;
+    TypeLiudaoRankList = 116;
+    TypeTakeLiudaoFirstWinAward = 117;
+
+    TypeGetHorse = 121;
+    TypeCurrentHorses = 122;
+    TypeRefreshHorses = 123;
+    TypeEquipHorse = 124;
+    TypeTrainHorse = 125;
+    TypeUpdateHorseProperty = 126;
+    TypeNpcEaten = 127;
+    TypeHorseLevelTransfer = 128;
+    TypeHorseEatBudda = 129;
+    TypeSellHorse = 130;
+    TypeHorseEatEquip = 131;
+    TypeEquipEaten = 132;
+    TypeActivateHorseGenius = 133;
+    TypeRefreshHorseGenius = 134;
+    TypeTrainHorseAll = 135;
+
+    TypeGetMagicFragment = 141;
+    TypeSummonMagic = 142;
+    TypeGetRobberyTarget = 143;
+    TypeRobberForMagic = 144;
+    TypeMagicFragmentRobbed = 145;
+    TypeSellMagicFragment = 146;
+
+    TypeAttackLevel = 151;
+    TypeBuyAttackLevelTimes = 152;
+    TypeEatPeach = 153;
+    TypeSweepLevel = 154;
+    TypeAttackArena = 155;
+    TypeCoolDownSweepLevel = 156;
+    TypeRearrangeNpc = 157;
+    TypeTeamInfo = 158;
+    TypeTakeArenaTopAward = 159;
+
+    TypeReleaseSoul = 161;
+    TypeEvolveLevel = 162;
+    TypeEvolve = 163;
+    TypeCombineBudda = 164;
+
+    TypeBuyStamina = 171;
+    TypeBuyQi = 172;
+    TypeBuyGodStamina = 173;
+
+    TypeGetMyCollections = 181;
+
+    TypeTopUp = 191;
+    TypeGetFirstTopUpAward = 192;
+    TypeGetSecondTopUpAward = 193;
+    TypeGetDailyTopUpAward = 194;
+
+    TypeTrainNpc = 201;
+    TypeGetNpcTrainingSessions = 202;
+    TypeFinishTrainingSession = 203;
+
+    TypeRetrieveLevelAward = 211;
+    TypeLevelUpAward = 212;
+
+    TypeCurrentTempleTask = 213;
+    TypeCompleteTempleTask = 214;
+    TypeNextTempleTask = 215;
+    TypeTempleDailyAward = 216;
+    TypeTempleRanks = 217;
+    TypeTempleAssistants = 218;
+    TypeSendGhostResult = 219;
+    //	TypeGhostListInMyTemple = 220;
+    TypeGhostStatus = 221;
+    TypeKickGhost = 222;
+    TypeCaptureHorseResult = 223;
+    TypeLevelUpTower = 224;
+    TypeLevelUpJinshen = 225;
+
+    TypeGetMutualFriends = 241;
+
+    TypeGuideAvailable = 251;
+    TypeFinishGuide = 252;
+
+    TypeUpdateEquip = 261;
+    TypeUpdateMagic = 262;
+    TypeUpdateHorse = 263;
+    TypeLevelUpEquipAll = 264;
+    TypeUpdateBook = 265;
+    TypeUpdateItem = 266;
+
+    TypeFenbaoStatus = 271;
+    TypeFenbaoResult = 272;
+
+    TypeLongGongStatus = 281;
+    TypeExploreLongGongResult = 282;
+    TypeGetWeiboAward = 283;
+    TypeUseActivationCode = 284;
+
+    TypeRepairEquip = 291;
+
+    TypeGetAwardList = 301;
+    TypeUpdateNpcList = 302;
+
+    TypeGetGhostLordList = 311;
+    TypeFightGhostLord = 312;
+    TypeSummonGhostLord = 313;
+    TypeClearGhostLordCoolDown = 314;
+
+    TypeDeleteNpc = 321;
+
+    TypeJubaopenStatus = 331;
+    TypeLevelUpJubaopen = 332;
+    TypeTakeFromJubaopen = 333;
+
+    TypeSaleList = 341;
+    TypeBuySaleItem = 342;
+    TypeCollectionAchievementStatus = 343;
+    TypeTakeCollectionAchievementAward = 344;
+    TypeLevelAchievementStatus = 345;
+    TypeTakeLevelAchievementAward = 346;
+    TypeTopUpAwardList = 347;
+    TypeTakeTopUpAward = 348;
+    TypeCollectTodayVipSalary = 349;
+    TypeVipSalaryStatus = 350;
+    TypeLingShiSaleList = 351;
+    TypeBuyLingShiItem = 352;
+    TypeTakeConsumptionAward = 353;
+    TypeConsumptionAwardList = 354;
+    TypeTopConsumptionList = 355;
+    TypeReturnGiftTaken = 356;
+
+    TypeTakeCommentAward = 361;
+
+    TypeAllNpc = 401;
+    TypeAllEquip = 402;
+    TypeAllMagic = 403;
+    TypeAllHorse = 404;
+    TypeAllSpirit = 405;
+    TypeAllItem = 406;
+    TypeAllFragment = 407;
+    TypeAllBook = 408;
+
+    TypeInvitationStatus = 411;
+    TypeTakeInvitationAward = 412;
+    TypeConfirmInvitation = 413;
+
+    TypeChangeName = 421;
+
+    TypeZhenYao = 431;
+    TypeZhenYaoStatus = 432;
+
+    TypeGetBook = 441;
+    TypeLevelUpBook = 442;
+    TypeEquipBook = 443;
+    TypeTradeBook = 444;
+
+    TypeCurrentTask = 451;
+    TypeTakeTaskAward = 452;
+    TypeTaskAccomplished = 453;
+    TypeTaskFinished = 454;
+
+    TypeLundaoStatus = 461;
+    TypeAttackLundao = 462;
+    TypeAdmireLundao = 463;
+    TypeGanwu = 464;
+
+    TypeTakeDownloadAward = 471;
+
+    TypeRedbagStatus = 481;
+    TypeDistributeRedbag = 482;
+    TypeOpenRedbag = 483;
+
+    TypeMonthVipStatus = 491;
+    TypeTakeDailyMonthVipAward = 492;
+
+    TypeDessembleEquip = 501;
+    TypeCombineEquip = 502;
+    TypeDessembleMagic = 503;
+    TypeDessembleBook = 504;
+
+    TypeUpdateBattlePower = 511;
+
+    TypeGeneralError = 1001;
+    TypeAnotherOnline = 1002;
+    TypeAccountFrozen = 1003;
+    TypeExecutionError = 1004;
+    TypeKickedOff = 1005;
+    TypeLiudaoNextDay = 1006;
+    TypeSystemMessage = 1007;
+    TypeVersionTooLow = 1008;
+
+    TypeHeartBeat = 1011;
+
+    TypeAlert = 1100;
+
+    TypeTakeOnceTopUpAwards = 1101; // 获取单笔充值奖励
+    TypeGetAllOnceTopUpAwards = 1102; // 获取所有单笔充值奖励信息
+
+    TypeRefiningElixir = 1103; // 神农鼎炼丹
+
+    TypeGetNewcomerAwardList = 1110; // 获取新手福利活动奖励列表
+    TypeTakeNewcomerAward = 1111; // 领取新手福利活动奖励
+
+    TypeGetVIPShopItems = 1120; // 获取所有VIP商店出售的物品
+    TypeBuyVIPShopItem = 1121; // 购买VIP道具
+
+    TypeGetTianShanStatus = 1131; // 获取天外仙山状态
+    TypeExploreTianShan = 1132; // 探索天外仙山
+
+    TypeGetCurrentFateInfo = 1140; // 气运信息
+    TypeTakeFate = 1141; // 抽签
+    TypeExplainFate = 1142; // 解签
+
+    TypeGetActorRankInfo = 1150; // 获取升降阶仙友状态
+    TypeUpgradeActorRank = 1151; // 升阶仙友
+    TypeReduceActorRank = 1152; // 降阶仙友
+
+    TypeTakeTreasureAwards = 1160; // 兑换仙宝
+    TypeGetTreasureAwardsList = 1161; // 获取仙宝兑换状态
+
+    TypeGemSaleList = 1170; // 仙界商人出售列表
+    TypeBuyGemShopItem = 1171; // 购买仙界商人的物品
+
+    TypeEquipEvolve = 1180; // 装备升阶
+
+    TypeTianYuanCollectStatus = 1190; // 获取天缘收集情况
+    TypeTakeTianYuanCollectAward = 1191; // 领取天缘收集奖励
+
+    TypeSelectSect = 1200; // 选择阵营
+    TypeChangeSect = 1201; // 转换阵营
+    TypeChangeTempleMap = 1202; // 迁入地图
+    TypeClearChangeTempleMapTime = 1203; // 清除迁入地图CD
+    TypeOtherTempleListInfo = 1204; // 获取地图上神庙基本信息
+
+    TypeGetSectShopItemList = 1205; // 教派商店物品列表
+    TypeBuySectShopItem = 1206; // 购买教派商店物品
+    TypeTakeSectTitleAward = 1207; // 领取每日教派俸禄
+    TypeTakeSectCreditAward = 1208; // 领取教派声望奖励
+    TypeGetSectRankInfo = 1209; // 获取当前声望排行榜
+    TypeGetSectAllJobInfo = 1210; // 获取教派职务列表
+    TypeAttackTemple = 1211; // 攻击神庙
+    TypeNewTitle = 1212; // 获得新的称号
+    TypeBuyTaoFaLing = 1213; // 购买讨伐令
+    TypeGetMapTempleCount = 1214; // 获取每个地图神庙数量
+    TypeSectAttackReportList = 1215; // 获取教派战报
+    TypeSectStrikeback = 1216; // 教派反击
+    TypeSectViewTeam = 1217; // 获取跨服玩家阵容
+    TypeAttackTempleNeedRefresh = 1218; // 攻击神庙时必须刷新数据
+    TypeSectStrikebackResult = 1219; // 反击结果信息
+    TypeSectTempleReturnToBase = 1220; // 防守方是否被打回主城
+
+    TypeAlchimestStatus = 1221; // 炼金状态
+    TypeMakeAlchimest = 1222; // 制造炼金
+
+    TypeTakeBelieverRankAward = 1223; // 获取信徒排行奖励
+
+    TypeHasUnopitionStatus = 1224; // 未操作提示
+
+    TypeTopUpGoodList = 1225; //充值列表
+}
+
+message GeneralError {
+    required ProtoError error = 1;
+    optional string message = 2;
+}
+
+message HeartBeat {
+}
+
+message VersionTooLow {
+    required string message = 1;
+}
+
+message SystemMessage {
+    required string message = 1;
+}
+
+message KickedOff {
+    required string message = 1;
+}
+
+message ExecutionError {
+}
+
+message AnotherOnline {
+    required bool placeholder = 1;
+}
+
+message Alert {
+    required AlertType type = 1;
+    optional string message = 2;
+}
+
+enum AlertType {
+    Alert_Ghost = 1;
+}
+
+message Login {
+    required int32 label = 1;
+    optional CharacterInfo character = 2;
+    optional LoginError error = 3;
+    optional int32 signProgress = 4; // deprecated
+    optional string errorMessage = 5;
+    optional bool needShowGuide = 6;
+}
+
+message CreateCharacterResult {
+    optional CreateAccountError error = 101;
+    optional AllInfo allInfo = 1;
+}
+
+message CharacterInfo {
+    required int64 id = 1;
+    optional string name = 2;
+    optional int32 level = 3;
+    optional int32 exp = 4;
+    optional int32 dollar = 5; //金钱
+    optional int32 coin = 6;
+    optional int32 vip = 7; // VIP等级
+    optional int32 stamina = 8; //精力
+    optional int32 qi = 9; //元气
+    optional int32 qishi = 10; //????
+
+    optional int32 nextLevelExp = 11; // exp required to level up
+
+    optional int32 merit = 12; //功绩
+    optional int32 vipExp = 13; //会员经验
+    optional bool hasToppedUp = 14; //是否首冲
+    optional int32 buyStaminaTime = 15; //购买精力次数
+    optional int32 firstTopUpDollar = 16; //首冲奖励元宝
+    optional bool hasTakenFirstTopUpAward = 17; //有等级上升奖励 //首冲奖励
+    optional int32 buyQiTime = 18; //购买元气的次数
+    optional int32 towerLevel = 19; //主城等级
+    optional int32 lingshiCount = 20; //灵石数量
+
+    optional int32 battlePower = 21; //战斗力
+    repeated bool levelAwardRetrieved = 22; //等级奖励补偿
+    optional int32 todayDollarRefreshHorseTime = 23; //今日金钱刷马次数
+
+    optional int32 templeLevel = 31; //神庙等级
+    optional int32 believerNumber = 32; //信徒数量
+    optional int32 godStamina = 33; //神精力
+    optional int32 buyGodStaminaTime = 34; //购买神精力次数
+    optional bool todayTempleAwardTaken = 35; //今日神庙奖励获取
+    optional int32 boughtAttackLevelTime = 36; //购买攻击等级次数
+
+    optional int32 userGuideStep = 41; //用户引导步骤
+    optional int32 jinshenLevel = 42; //金身等级
+
+    optional int32 todayRefreshHorseGeniusCount = 51; //今日刷马天赋数量
+
+    optional bool longGongOpening = 61; //长钟开启
+    repeated bool activityOpening = 62; //活动开启
+    optional bool invitationCodeEntered = 63; //激活码登记
+
+    optional int32 ganwu = 66; //感悟
+    optional int32 zhihui = 67; //智慧
+    optional bool canTakeArenaTopAward = 68; //可获取竞技场奖励
+
+    optional int32 seq = 71; //音序 //????
+
+    repeated bool mainCharacterSkillEnabled = 81; //主角色技能激活
+    optional RoutineActivityStatus routineActivityStatus = 82; //
+    optional bool monthVipActivated = 83; //日常任务状态
+
+    required int32 HorseInterfereCount = 84; //马打扰数量 //????
+    required int32 horseGeniusInterfereCount = 85; //马天赋打扰数量 //????
+    optional bool hasTakenSecondTopUpAward = 90; //有获取秒升级奖励 //????
+    optional bool secondToppedUp = 91; //获取秒升级
+
+    optional bool hasTakenDailyTopUpAward = 92; //有可获取日常升级奖励
+    optional bool hasToppedUpToday = 93; //还有多少升级今天 //????
+
+    optional int32 templeDefence = 94; // 神庙城防值
+    optional int64 mapOfTemple = 95; // 神庙所在地图
+    optional int32 sectType = 96; // 当前教派
+    optional int64 sectCredit = 97; // 教派声望
+    optional int64 sectFeats = 99; // 教派功勋
+    optional string sectJob = 100; // 教派职位
+    optional string sectTitle = 101; // 教派称号
+    optional bool hasTakeSectTitleDailyAward = 102; // 是否领取过每日称号奖励
+    optional int32 sectTaoFaLing = 103; // 拥有讨伐令数量
+    optional int64 changeTempleMapRemainingSeconds = 104; // 迁移神庙冷却剩余时间
+    optional int32 sectTitleID = 105; // 教派称号ID
+    optional int32 sectTitleLv = 106; // 教派称号等级
+    optional int64 sectTotalCredit = 107; // 教派总声望
+    optional int32 sectCreditRank = 108; // 当前教派声望排名
+    optional int32 maxTempleDefence = 109; // 最大神庙城防值
+    optional int32 sectJobID = 111; // 教派职位ID
+    optional int32 todayBuyTaoFaLingTimes = 112; // 今日购买讨伐令次数
+
+    optional int32 activityTopUpDollar = 121; //获取获取上升金钱
+
+    optional int32 hasUnOpitionStatus = 122; //参考 HasUnOptionStatus
+}
+
+message HasUnOpitionStatus {
+    required int32 hasUnOpitionStatus = 122; //未操作提示 活动奖励 0x01 成就奖励 0x02 奇异状态 0x04 竞技场 0x08
+}
+
+message RoutineActivityStatus {
+    required bool peachDoubled = 1;
+    required bool arenaScoreTripled = 2;
+    required bool robberyTripled = 3;
+}
+
+message TopUp {
+    required int32 dollar = 1;
+    required int32 newDollar = 2;
+    required int32 newVip = 3;
+}
+
+message GetFirstTopUpAward {
+    repeated Award awardList = 1;
+}
+
+message GetSecondTopUpAward {
+    repeated Award awardList = 1;
+}
+
+message GetDailyTopUpAward {
+    repeated Award awardList = 1;
+}
+
+message AllInfo {
+    repeated Npc npcList = 1;
+    repeated Magic magicList = 2;
+    repeated Equip equipList = 3;
+    repeated Item itemList = 4;
+    repeated Spirit spiritList = 5;
+    repeated Horse horseList = 6;
+    repeated MagicFragment magicFragList = 7;
+    repeated Book bookList = 8;
+    optional int32 exp = 9;
+    optional int32 nextLevelExp = 10;
+}
+
+message AllNpc {
+    repeated Npc npcList = 1;
+}
+
+message AllMagic {
+    repeated Magic magicList = 1;
+}
+
+message AllEquip {
+    repeated Equip equipList = 1;
+}
+
+message AllItem {
+    repeated Item itemList = 1;
+}
+
+message AllSpirit {
+    repeated Spirit spiritList = 1;
+}
+
+message AllHorse {
+    repeated Horse horseList = 1;
+}
+
+message AllFragment {
+    repeated MagicFragment magicFragList = 1;
+}
+
+message AllBook {
+    repeated Book bookList = 1;
+}
+
+message TeamInfo {
+    required AllInfo info = 1;
+}
+
+message UpdateBattlePower {
+    required int32 battlePower = 1;
+}
+
+message Npc {
+    required int64 id = 1;
+    optional string name = 2;
+
+    optional int32 position = 3; // 站位
+    optional int64 typeId = 4; // 弟子类型Id
+
+    optional int32 maxHp = 5;
+    optional int32 attack = 6;
+    optional int32 defense = 7;
+    optional int32 magic = 8;
+    optional int32 exp = 9;
+
+    optional int32 npcClass = 10;
+
+    optional int32 level = 13;
+    optional int32 nextLevelExp = 14;
+
+    optional int32 baseAttack = 15;
+    optional int32 baseDefense = 16;
+    optional int32 baseHp = 17;
+    optional int32 baseMagic = 18;
+
+    required bool isMain = 21;
+    required int32 relation = 22;
+
+    required int32 battlePower = 31;
+    required int32 potential = 32;
+    required int32 evolveLevel = 33;
+
+    required bool inXiulian = 41;
+    required bool inHufa = 42;
+
+    required int32 activatedMifaIndex = 45;
+
+    optional int32 seq = 51;
+}
+
+message Equip {
+    required int64 id = 1;
+    required int64 equiptorId = 2; // 装备Npc
+    required int64 typeId = 3; // 装备类型
+
+    required int32 level = 6; // 装备等级
+    optional string name = 7;
+    required int32 battlePower = 8;
+
+    optional int32 attack = 11;
+    optional int32 defense = 12;
+    optional int32 magic = 13;
+    optional int32 hp = 14;
+
+    optional int32 seq = 21;
+
+    required bool satisfied = 22;
+}
+
+message Horse {
+    required int64 id = 1;
+    required int64 equiptorId = 2; // 装备Npc
+    required int64 typeId = 3; // 装备类型
+    required int32 todayTrainingTimes = 4;
+
+    required int32 level = 6; // 装备等级
+    optional string name = 7;
+    required int32 battlePower = 8;
+    required int32 exp = 9;
+    required int32 nextLevelExp = 10;
+
+    optional int32 attack = 11;
+    optional int32 defense = 12;
+    optional int32 magic = 13;
+    optional int32 hp = 14;
+
+    repeated int64 geniusIds = 15;
+
+    optional int32 seq = 21;
+
+    required bool satisfied = 22;
+}
+
+
+message NewNpc {
+    required Npc TheNpc = 1;
+    required Magic GeniusMagic = 2;
+}
+
+message DeleteNpc {
+    repeated int64 npcIds = 1;
+}
+
+message GetRecruitInfo {
+    required bool doneFirstRecruitMiddle = 2;
+    required bool doneFirstRecruitHigh = 3;
+
+    required int32 nextRecruitLowTime = 4;
+    required int32 nextRecruitMiddleTime = 5;
+    required int32 nextRecruitHighTime = 6;
+
+    required int32 todayRecruitLowCount = 7;
+
+    required int32 highRecruitItemCount = 11;
+    required int32 midRecruitItemCount = 12;
+    required int32 lowRecruitItemCount = 13;
+
+    optional int32 recruitNpcInterfereCount = 14;
+}
+
+message RecruitNpc {
+    required GetRecruitInfo recruitInfo = 1;
+    repeated Award awardList = 2;
+    repeated int64 spiritIds = 3;
+    repeated int32 spiritCounts = 4;
+    repeated Award extraSpiritList = 5;
+    optional int32 extraSpiritIndex = 6;
+}
+
+message RecruitNpcsList {
+    required GetRecruitInfo recruitInfo = 1;
+    repeated Award awardList = 2;
+    repeated int64 npcIds = 3;
+}
+
+message Magic {
+    required int64 id = 1;
+    optional string name = 2;
+    required int64 typeId = 3; // 法术类型Id
+    required MagicCategory category = 4;
+    required int32 power = 5;
+    required MagicPart equipPart = 6;
+    required int32 level = 7;
+    required int64 equiptorId = 8; // 装备者NPC Id
+    required int32 battlePower = 9;
+    required int32 exp = 10;
+
+    optional double buffAttack = 11;
+    optional double buffDefense = 12;
+    optional double buffMagic = 13;
+    optional double buffHp = 14;
+    optional int32 magicPower = 15;
+
+    required int32 nextLevelExp = 21;
+
+    optional int32 seq = 31;
+    required bool satisfied = 32;
+}
+
+message MagicFragment {
+    required int64 id = 1;
+    required int64 typeId = 2;
+    required int64 magicTypeId = 3;
+    required int32 index = 4;
+    required int32 count = 5;
+    optional int32 seq = 11;
+}
+
+message Item {
+    required int64 id = 1;
+    optional string name = 2;
+    required int64 typeId = 3;
+    required int32 count = 4;
+    optional int64 remainingSeconds = 5; // 如果有值则显示倒计时
+    optional int32 alreadyTopUpMoney = 6;
+    optional int32 openDollar = 7;
+    optional int32 requiredTopUpMoney = 8;
+    optional int32 seq = 11;
+}
+
+message Spirit {
+    required int64 id = 1;
+    optional string name = 2;
+    required int64 typeId = 3;
+    required int32 count = 4;
+    optional int32 seq = 11;
+}
+
+message Book {
+    required int64 id = 1;
+    required int64 equiptorId = 2;
+    required int64 typeId = 3;
+
+    required int32 level = 4;
+    required int32 battlePower = 5;
+    required int32 exp = 6;
+    required BookPart equipPart = 7;
+
+    required int32 attackInc = 11;
+    required int32 defenseInc = 12;
+    required int32 hpInc = 13;
+    required int32 magicInc = 14;
+    required int32 waterInc = 15;
+    required int32 fireInc = 16;
+    required int32 thunderInc = 17;
+    required int32 poisonInc = 18;
+    required int32 commonAttackInc = 19;
+    required int32 magicPowerInc = 20;
+    required int32 commonDefInc = 21;
+    required int32 magicDefInc = 22;
+    required int32 waterDefInc = 23;
+    required int32 fireDefInc = 24;
+    required int32 thunderDefInc = 25;
+    required int32 poisonDefInc = 36;
+}
+
+message GetItem {
+    required Item item = 1;
+}
+
+message GetAwardList {
+    repeated Item items = 1;
+    repeated MagicFragment frags = 2;
+    repeated Horse horses = 3;
+    repeated Equip equips = 4;
+    repeated Magic magics = 5;
+    repeated Spirit spirits = 6;
+    repeated Book books = 7;
+}
+
+message GetEquip {
+    required Equip equip = 1;
+}
+
+message UpdateEquip {
+    repeated Equip equip = 1;
+}
+
+message GetMagic {
+    required Magic magic = 1;
+}
+
+message UpdateMagic {
+    repeated Magic magic = 1;
+}
+
+message GetBook {
+    required Book book = 1;
+}
+
+message UpdateBook {
+    repeated Book book = 1;
+}
+
+message TradeBook {
+    repeated Award awards = 1;
+}
+
+message GetMagicFragment {
+    required MagicFragment fragment = 1;
+}
+
+message GetSpirit {
+    required Spirit spirit = 1;
+}
+
+message RecruitBySpirit {
+    required int64 typeId = 1;
+    required int32 newCount = 2;
+}
+
+message EquipEquip {
+    //	required UpdateNpcProperty updateProperty = 1;
+    required int32 label = 1;
+    optional int64 unequipedEquip = 2; // in case that the target equipment position is occupied, return the equip id to unequip
+    optional int64 unequipedNpc = 3;
+    required int64 equiptorId = 6;
+    required int64 equipId = 7;
+    //	optional UpdateNpcProperty updateUnequiptor = 3;  // in case that the target equipment is already equiped by other npc, update the property of that NPC
+}
+
+message EquipMagic {
+    required int32 label = 1;
+    //	optional UpdateNpcProperty updateProperty = 2;
+    optional int64 unequipedEquip = 3; // in case that the target equipment position is occupied, return the equip id to unequip
+    //	optional UpdateNpcProperty updateUnequiptor = 4;  // in case that the target equipment is already equiped by other npc, update the property of that NPC
+    optional int64 unequipedNpc = 5;
+    required int64 equiptorId = 6;
+    required int64 equipId = 7;
+    required MagicPart equipPart = 8;
+}
+
+message EquipHorse {
+    required int32 label = 1;
+
+    optional int64 unequipedEquip = 3; // in case that the target equipment position is occupied, return the equip id to unequip
+
+    optional int64 unequipedNpc = 5;
+    required int64 equiptorId = 6;
+    required int64 equipId = 7;
+}
+
+message EquipBook {
+    required int32 label = 1;
+
+    optional int64 unequipedEquip = 3; // in case that the target equipment position is occupied, return the equip id to unequip
+
+    optional int64 unequipedNpc = 5;
+    required int64 equiptorId = 6;
+    required int64 equipId = 7;
+    required BookPart equipPart = 8;
+}
+
+message BattleAward {
+    required int32 coin = 1;
+    optional int32 cexp = 2; // character exp
+    optional int32 levelUp = 3; // character new level
+    optional int32 levelUpDollar = 4;
+
+    optional int32 newcExp = 5; // character new exp
+    optional int32 oldLevel = 6;
+    optional int32 arenaScore = 7;
+
+    repeated NpcExpAward npcAwards = 11;
+
+    optional int32 sectFeats = 12;
+    optional int32 sectCredit = 13;
+
+}
+
+message Entity {
+    required int64 id = 1;
+    required EntityType entityType = 2;
+    required int64 type = 3;
+
+    required int32 count = 11;
+}
+
+message GetAward {
+    repeated Award awardList = 1;
+}
+
+message Award {
+    optional int32 coin = 1;
+    optional int32 npcExp = 2;
+    optional int32 stamina = 3;
+    optional int32 qi = 4;
+    optional int32 exp = 5;
+    optional int32 dollar = 6;
+    optional int32 merit = 7;
+    optional int32 arenaTime = 8;
+    optional int32 godStamina = 9;
+    optional int32 arenaAwardScore = 10;
+
+    optional int32 attack = 11;
+    optional int32 defensee = 12;
+    optional int32 maxHp = 13;
+    optional int32 magic = 14;
+
+    optional Entity entity = 21; // deprecated
+    optional Npc npc = 22; // deprecated
+
+    optional ShadowEntity shadowEntity = 31; // this is for display
+    required EntityType entityType = 32;
+
+    required bool preview = 41; // deprecated
+
+    required bool Satisfied = 42;
+}
+
+message ShadowEntity {
+    required int64 typeId = 1;
+    required int32 count = 2;
+}
+
+message NpcExpAward {
+    required int64 id = 1;
+    required int32 exp = 2;
+    optional int32 levelUp = 3; // new level
+    required int32 newExp = 4;
+    optional int32 oldLevel = 5;
+    required ExpType type = 11;
+}
+
+enum ExpType {
+    EXP_Npc = 1;
+    EXP_Horse = 2;
+    EXP_MAGIC = 3;
+    EXP_BOOK = 4;
+}
+
+message LevelUpEquip {
+    required int64 id = 1;
+    required int32 newLevel = 3;
+    required int32 levelUp = 4;
+
+    optional int32 attack = 11;
+    optional int32 defense = 12;
+    optional int32 maxHp = 13;
+    optional int32 magic = 14;
+    optional int32 battlePower = 15;
+}
+
+message LevelUpEquipAll {
+    required int32 count = 1;
+}
+
+message SellEquip {
+    repeated int64 id = 1;
+    required int32 coin = 2;
+    //	optional int64 equiptorId = 3;
+}
+
+message RepairEquip {
+    required Equip newEquip = 1;
+    required int64 oldEquipId = 2;
+}
+
+message TryPeiyang {
+    required int64 id = 1;
+    required int32 remainingDrugCount = 2;
+    required int32 remainingDollar = 3;
+    required int32 potential = 4;
+
+    optional int32 deltaAttack = 11;
+    optional int32 deltaDefense = 12;
+    optional int32 deltaHp = 13;
+    optional int32 deltaMagic = 14;
+}
+
+message ConfirmPeiyang {
+    required int64 id = 1;
+}
+
+message LevelUpMagic {
+    required int64 id = 1;
+    required NpcExpAward expAward = 3;
+    repeated int64 consumedMagics = 5;
+
+    optional double attack = 11;
+    optional double defense = 12;
+    optional double maxHp = 13;
+    optional double magic = 14;
+    optional int32 power = 15;
+    optional int32 battlePower = 16;
+    optional int32 nextLevelExp = 17;
+    optional int32 magicPower = 18;
+}
+
+message LevelUpBook {
+    required int64 id = 1;
+    required NpcExpAward expAward = 2;
+    repeated int64 consumedBooks = 3;
+    optional Book updateBook = 4;
+}
+
+
+message ChangeNpcPosition {
+    required int64 id = 1;
+    required int32 position = 2; // new position of the target NPC
+    optional int64 affectedNpcId = 3; // if the position is occupied by another NPC
+    optional int32 affectedNpcPosition = 4; // the new position of the original NPC. it should be same as the original position of the target NPC
+}
+
+message RearrangeNpc {
+    repeated int64 npcIdList = 1;
+}
+
+message TransferLevel {
+    optional int64 masterId = 1;
+    required Npc updatedNpc = 2;
+}
+
+/*** Battle Related ***/
+message BattleResult {
+    required bool win = 1;
+    optional int32 star = 2;
+    required BattleGroup attacker = 3;
+    required BattleGroup defender = 4;
+    required BattleAward award = 5;
+    required bool attackerFirst = 6;
+    required BattleType battleType = 7;
+    repeated Award otherAward = 8;
+    required string battleName = 9;
+
+    required bool tripleAward = 10;
+
+    repeated BattleRoundResult rounds = 11;
+    repeated FailStat failStat = 12;
+
+    optional int32 liudaoLevelStar = 21;
+    optional int32 bestStar = 22;
+    optional int64 levelId = 23;
+    optional SkipBattleType SkipType = 24;
+}
+
+enum SkipBattleType {
+    SkipBattle_5Sec = 0;
+    SkipBattle_NoSkip = 1;
+    SkipBattle_Direct = 2;
+}
+
+message FailStat {
+    required int64 id = 1;
+    required int32 failedRound = 2;
+    required int32 allDamage = 3;
+}
+
+message BattleGroup {
+    required int64 leaderId = 1;
+    repeated BattleActor actors = 2;
+    required int32 battlePower = 3;
+    required string leaderName = 4;
+}
+
+message BattleRoundResult {
+    repeated BattleActionResult turns = 1;
+    required bool finished = 2;
+    repeated BuffEffect preBuffEffect = 3;
+}
+
+message BattleActionResult {
+    required int64 leaderId = 1;
+    required int64 actorId = 2;
+    required BattleActionType action = 3;
+    required int64 value = 4;
+
+    repeated BuffEffect preBuffEffect = 6;
+    repeated BuffEffect postBuffEffect = 7;
+
+    repeated BattleActionResult consequence = 11;
+}
+
+message BuffEffect {
+    required int64 actorId = 1;
+    required int64 leaderId = 2;
+    optional int64 mifaTypeId = 3;
+    optional bool iconActiviated = 4;
+}
+
+message BattleActor {
+    required int64 id = 1;
+    required int64 typeId = 2;
+    required int32 maxHp = 3;
+    required int32 magic = 4;
+    required string name = 5;
+    optional string code = 6;
+    optional int32 quality = 7;
+
+    repeated int64 buffType = 11;
+    optional int32 seq = 21;
+}
+
+message GetLevelRecords {
+    required int64 currentSceneId = 1;
+    required int64 currentLevelId = 2;
+    repeated LevelRecord recordList = 3;
+    required int32 nextSweepTime = 4; // count down in seconds
+}
+
+message LevelRecord {
+    required int64 levelId = 1;
+    required int32 star = 2;
+    required int32 attackCountToday = 3;
+    optional bool peachEaten = 4; // only identify whether the peach for that level is eaten or not. i.e. only the last level is effective
+    optional int32 seq = 11;
+}
+
+message AttackLevel {
+    required int64 levelId = 1;
+    required int32 star = 2;
+    optional int32 attackCountToday = 3;
+    optional bool peachEaten = 4; // if not set: not all levels gets 3 stars. if set and false: can eat, otherwise it is already eaten
+    required int64 sceneId = 5;
+}
+
+
+message AttackArena {
+    required bool win = 1;
+    required MyArenaData arenaData = 2;
+}
+
+message TakeArenaTopAward {
+    repeated Award awards = 1;
+}
+
+message EatPeach {
+    required int64 sceneId = 1;
+    required int32 stamina = 2;
+    required int32 newStamina = 3;
+    repeated Award awardList = 4;
+}
+
+message SweepLevel {
+    required int64 levelId = 1; // the level id to sweep
+    required int32 updatedAttackCount = 2; // the updated number that attack times of the given level
+    repeated SweepLevelResult resultList = 3; // the resultse
+    required int32 nextSweepTime = 4; // the seconds to next sweep
+}
+
+message SweepLevelResult {
+    required BattleAward battleAward = 1;
+    repeated Award otherAwardList = 2;
+}
+
+message CoolDownSweepLevel {
+    required int32 newDollar = 1;
+}
+
+message BuyAttackLevelTimes {
+    required int64 levelId = 1;
+    required int32 newDollar = 2;
+    required int32 boughtTimes = 3;
+}
+/*** End of Battle Related ***/
+
+/*** Start of Arena Related ***/
+message MyArenaData {
+    required int32 myRank = 1;
+
+    required int32 leftTimes = 11;
+    required int32 buyTimes = 12;
+    required int32 arenaPoints = 13;
+    required int32 arenaAwardActivated = 14;
+    required int32 arenaAwardTookStatus = 15;
+    required int32 yesterdayArenaRank = 16;
+
+    repeated Award awardList = 21;
+
+    repeated Others canChallenge = 22;
+    repeated Others losers = 23;
+
+    optional bool isLuck = 25;
+    optional int32 rankChange = 26;
+}
+
+message RetrieveFirstAchievedArenaAward {
+    required bool success = 1;
+    required int32 arenaAwardTookStatus = 2;
+    required int32 newArenaPoints = 3;
+}
+
+message ConvertPoints {
+    required int32 newDrugs = 1;
+    required int32 remainingPoints = 2;
+    required int32 totalDrugs = 3;
+    repeated Award awardList = 11;
+}
+
+
+/*** End of Arena Related ***/
+
+/*** Start of Liudao ***/
+
+message LiudaoSummary {
+    required int32 yesterdayStars = 1;
+    required int64 yesterdaySceneId = 2;
+    required int64 yesterdayLevelId = 3;
+    required int32 todayRank = 4;
+    required int32 yesterdayRank = 5;
+
+    required int32 inheritedBuff = 11;
+
+    optional LiudaoStatus status = 21;
+}
+
+message LiudaoNextDay {
+}
+
+message LiudaoStatus {
+    required int64 levelId = 1;
+    required int32 allStars = 3;
+    required int32 remainingStars = 4;
+    repeated int32 historyStars = 5;
+    required int32 currentRank = 6;
+    repeated bool firstWinAwardTaken = 7;
+
+    required int32 buffAttack = 11;
+    required int32 buffDefense = 12;
+    required int32 buffHp = 13;
+    required int32 buffMagic = 14;
+
+    required int32 reviveTime = 21;
+
+    optional LiudaoBuff chooseBuff = 31; // buff options for every 3 levels
+    optional int32 merit = 32;
+    optional int32 starsForAward = 33; // is set only when award is available
+    optional int32 coin = 34;
+
+    repeated Award awardList = 41; // liudao award for each 5 levels
+}
+
+message AttackLiudao {
+    required bool success = 1;
+    required int32 remainingReviveTime = 2;
+    required int32 currentStars = 3;
+    required int32 remainingStars = 4;
+    required bool isFirstWin = 5;
+    required int32 stars = 6; // the difficulty level of current stage
+    repeated Award awardList = 7;
+}
+
+message LiudaoBuff {
+    required BuffType three = 1;
+    required BuffType fifteen = 2;
+    required BuffType thirty = 3;
+}
+
+message BuyLiudaoReviveTime {
+    required int32 reviveTime = 1;
+    required int32 dollar = 2;
+}
+
+message LiudaoRankList {
+    repeated LiudaoRankData list = 1;
+}
+
+message LiudaoRankData {
+    required int64 id = 1;
+    required string name = 2;
+    required int64 levelId = 3;
+    required int32 rank = 4;
+    required int32 level = 5;
+}
+
+message TakeLiudaoFirstWinAward {
+    required int64 levelId = 1;
+}
+
+/*** End of Liudao ***/
+
+/*** Magic related ***/
+message SummonMagic {
+    required Magic magic = 1;
+    repeated int64 consumedFragments = 2;
+}
+
+message GetRobberyTarget {
+    repeated RobberyTarget targets = 1;
+}
+
+message RobberyTarget {
+    required int32 id = 1;
+    required string name = 2;
+    required int32 level = 3;
+    required int64 fragmentIndex = 4;
+    repeated int64 actorTypeIds = 5;
+}
+
+message RobberForMagic {
+    required int32 index = 1;
+    required bool battleWin = 2;
+    required bool robberySuccess = 3;
+    optional MagicFragment fragment = 4;
+}
+
+message MagicFragmentRobbed {
+    required int64 id = 1;
+    required int32 newCount = 2;
+}
+
+message SellMagicFragment {
+    required int64 id = 1;
+    required int32 coin = 2;
+    required int32 newCoin = 3;
+}
+
+/*** End of Magic ***/
+
+/*** start of horse ***/
+message CurrentHorses {
+    repeated int64 horseTypeIds = 1;
+    repeated bool captured = 2;
+    required int32 nextRefresh = 3;
+}
+
+message GetHorse {
+    required Horse horse = 1;
+    required int32 index = 2;
+}
+
+message UpdateHorse {
+    repeated Horse horse = 1;
+}
+
+message UpdateItem {
+    repeated Item item = 1;
+}
+
+message RefreshHorses {
+    repeated int64 horseTypeIds = 1;
+}
+
+message UpdateCharacterProperty {
+    required CharacterInfo character = 1;
+}
+
+message TrainHorse {
+    required NpcExpAward exp = 1;
+    required int32 factor = 2;
+}
+
+message TrainHorseAll {
+    required int32 count = 1;
+    optional int32 coincost = 2;
+    optional int32 dollarcost = 3;
+}
+
+message UpdateHorseProperty {
+    required Horse horse = 1;
+}
+
+message NpcEaten {
+    repeated int64 npcIds = 1;
+}
+
+message HorseLevelTransfer {
+    required int64 consumedId = 1;
+    required Horse target = 2;
+}
+
+message HorseEatBudda {
+    required Horse horse = 1;
+}
+
+message HorseEatEquip {
+    required Horse horse = 1;
+}
+
+message EquipEaten {
+    repeated int64 equipIds = 1;
+}
+
+message SellHorse {
+    repeated int64 id = 1;
+    required int32 soldMerit = 2;
+    required int32 newMerit = 3;
+    repeated Award awardList = 4;
+}
+
+message ActivateHorseGenius {
+    required int64 horseId = 1;
+    required int64 geniusId = 2;
+    required int32 index = 3;
+}
+
+message RefreshHorseGenius {
+    required int64 horseId = 1;
+    required int64 geniusId = 2;
+    required int32 index = 3;
+}
+
+/*** End of Horse ***/
+
+/*** start of training ***/
+
+message TrainNpc {
+    required NpcTrainingSession session = 1;
+}
+
+message GetNpcTrainingSessions {
+    repeated NpcTrainingSession sessions = 1;
+}
+
+message NpcTrainingSession {
+    required int64 npcId = 1;
+    required int32 timeStarted = 2;
+    required int32 position = 3;
+}
+
+message FinishTrainingSession {
+    required int32 position = 1;
+    required int64 npcId = 2;
+}
+
+/*** end of training ***/
+
+/*** Start of Evolution ***/
+message ReleaseSoul {
+    required int32 merit = 1;
+    required int32 newMerit = 2;
+}
+
+message EvolveLevel {
+    required bool success = 1;
+}
+
+message Evolve {
+    optional int64 originalActor = 1;
+    optional Magic newGeniusMagic = 2;
+    optional int32 position = 3;
+}
+
+message CombineBudda {
+    required int64 targetId = 1;
+    required int32 newDollar = 2;
+    repeated int64 consumedNpc = 3;
+}
+
+/*** End of Evolution ***/
+
+/*** Social Related ***/
+
+message Mail {
+    required int64 id = 1;
+    required int64 receiverId = 2;
+    required int64 senderId = 3;
+    required string receiverName = 4;
+    required string senderName = 5;
+    required MailStatus status = 6;
+    required MailType type = 7;
+    required int32 sendTime = 8; // the number of seconds since 2013/6/1 00:00:00
+
+    optional string subject = 11;
+    required string content = 12;
+    required bool hasAttachment = 13;
+
+    optional int64 arenaOpponentId = 21;
+    optional int64 friendId = 22;
+    optional bool friendAdded = 23;
+}
+
+message SendMail {
+    required bool success = 1;
+}
+
+message MailReceived {
+    required Mail mail = 1;
+}
+
+message ReadMail {
+    required bool success = 1;
+}
+
+message GetMails {
+    repeated Mail mailList = 1;
+}
+
+message GetAttach {
+    required int64 id = 1;
+    repeated Award awardList = 2;
+}
+
+enum MailStatus {
+    NEW = 0;
+    READ = 1;
+    ARCHIVED = 2;
+}
+
+message AddFriend {
+    required bool success = 1;
+
+    optional Others Friend = 9;
+}
+
+message GetFriends {
+    repeated Others friendList = 1;
+    required int32 count = 2;
+}
+
+message GetFans {
+    repeated Others fanList = 1;
+}
+
+message SearchFriends {
+    repeated Others friendList = 1;
+    required int32 count = 2;
+}
+
+message DeleteFriend {
+    required int64 id = 1;
+}
+
+message Speak {
+    required int64 speakerId = 1;
+    required string speakerName = 2;
+    required string content = 3;
+    required int64 time = 4;
+    required SpeakChannel channel = 5;
+
+    optional int64 speakerTypeId = 6;
+    required int32 VipLevel = 7; // VIP等级
+    required int64 VipExp = 8; // VIP经验
+}
+
+enum SpeakChannel {
+    CHANNEL_World = 1;
+    CHANNEL_Guild = 2;
+    CHANNEL_God = 3;
+    CHANNEL_Pub = 4;
+}
+
+message SpeakList {
+    repeated Speak speaks = 1;
+}
+
+/*** End of Social Related ***/
+
+/*** Daily event ***/
+message CashOutDailyExp {
+    required int32 exp = 1;
+    required bool success = 2;
+}
+
+message EatDailyPeach {
+    required TodayPeachStatus status = 1;
+    required int32 newStamina = 2;
+    optional int32 staminaAdded = 3;
+}
+
+message TodayPeachStatus {
+    required bool noon = 1;
+    required bool night = 2;
+    required int32 currentTime = 3;
+}
+
+message ReadyToSignToday {
+    required int32 signProgress = 4;
+}
+
+message SignToday {
+    repeated Award awardList = 1;
+}
+
+/**** end of daily event ***/
+
+/*** Ghost Lord ***/
+message GhostLord {
+    required int64 lordId = 1;
+    required int32 timeRemaining = 2;
+    required int32 numberRemaining = 3;
+    required int64 finderId = 4;
+    required string finderName = 5;
+    required int64 finderTypeId = 6;
+    required int32 totalRemainingHp = 7;
+    required int32 totalHp = 8;
+    required int32 level = 9;
+    required int64 lordTypeId = 10;
+    required int32 lordNumber = 11;
+
+    optional int32 seq = 21;
+}
+
+message GetGhostLordList {
+    repeated GhostLord myLordList = 1;
+    repeated GhostLord friendLordList = 2;
+    required int32 todaySummonLordRemainingCount = 3;
+    required int32 coolDownTime = 4;
+}
+
+message FightGhostLord {
+    required int64 lordId = 1;
+    repeated Award awardList = 2;
+}
+
+message SummonGhostLord {
+    required int64 lordId = 1;
+    required FightGhostLord fightResult = 2;
+}
+
+message ClearGhostLordCoolDown {
+}
+
+/*** end of Ghost Lord ***/
+
+message AllAnnouncements {
+    repeated Announcement announcementList = 1;
+    required int32 count = 2;
+}
+
+message Announcement {
+    required string subject = 1;
+    repeated string content = 2;
+    optional int32 gotoPanel = 3;
+    optional int32 seq = 11;
+}
+
+message Paomadeng {
+    repeated string contentList = 1;
+}
+
+message Others {
+    required int64 id = 1;
+    required string name = 2;
+    required int32 level = 3;
+    required int32 rank = 4;
+    repeated int64 actorTypeIds = 5;
+    optional bool real = 6;
+    optional int32 templeLvel = 7;
+    optional int32 believers = 8;
+    optional int32 todayGhost = 9;
+    optional int32 battlePower = 10;
+
+    optional ArenaOpponentStatus status = 11;
+    optional FriendGroup friendType = 12;
+
+    optional int32 yesterdayArenaRank = 13;
+
+    optional int32 seq = 21;
+
+    optional bool isLuck = 31;
+    optional int32 rankChange = 32; // 正的表示排名上升,负的表示排名下降,0表示不变
+}
+
+message UpdateNpcProperty {
+    required Npc npc = 1;
+}
+
+message UpdateNpcList {
+    repeated Npc list = 1;
+}
+
+message Buy {
+    required int64 itemId = 1;
+    required bool isVipGift = 2;
+    required int64 itemTypeId = 3;
+}
+
+message BoughtVipGifts {
+    repeated int64 itemId = 1;
+}
+
+message UseItem {
+    required int64 itemId = 1;
+    required int32 newCount = 2;
+    repeated Award awardList = 3;
+    optional int64 consumedItemId = 4;
+    optional int32 consumedItemNewCount = 5;
+    optional string message = 6; // 消息
+}
+
+message BuyStamina {
+    required int32 staminaBought = 1;
+    required int32 newStamina = 2;
+    required int32 dollarCost = 3;
+    required int32 newDollar = 4;
+    required int32 boughtTime = 5;
+}
+
+message BuyGodStamina {
+    required int32 staminaBought = 1;
+    required int32 newStamina = 2;
+    required int32 dollarCost = 3;
+    required int32 newDollar = 4;
+    required int32 boughtTime = 5;
+}
+
+message BuyQi {
+    required int32 qiBought = 1;
+    required int32 newQi = 2;
+    required int32 dollarCost = 3;
+    required int32 newDollar = 4;
+    required int32 boughtTime = 5;
+}
+
+message GetMyCollections {
+    repeated int64 list = 1;
+}
+
+message RetrieveLevelAward {
+    repeated Award awards = 1;
+}
+
+message LevelUpAward {
+    required int32 dollar = 1;
+    required int32 coin = 2;
+    required int32 drugs = 3;
+    required int32 merit = 4;
+    required int32 isCharacter = 5; //0 人物升级 1 神庙升级 2 炼金升级
+}
+
+/*** start of temple ***/
+message CurrentTempleTask {
+    required int32 index = 1;
+    optional int64 horseTypeId = 2;
+}
+
+message NextTempleTask {
+    required int32 index = 1;
+}
+
+message CompleteTempleTask {
+    required int32 merit = 1;
+    required int32 believer = 2;
+    required int32 nextTaskIndex = 3;
+    optional bool battleWin = 4;
+
+    repeated Award awardList = 11;
+    optional int64 horseTypeId = 12;
+}
+
+message ZhenYaoStatus {
+    optional int64 horseTypeId = 1;
+}
+
+message ZhenYao {
+    optional int64 horseTypeId = 1;
+}
+
+message CaptureHorseResult {
+    required bool success = 1;
+    optional Horse horse = 2;
+    optional int32 payback = 3;
+}
+
+message TempleDailyAward {
+    required int32 coin = 1;
+    optional int32 rank = 2;
+    optional double factor = 3;
+}
+
+message TempleRanks {
+    repeated TempleRankData list = 1;
+    required int32 remainingSeconds = 2;
+    required int32 addBeliever = 3;
+    required string awardStr = 4;
+    required bool hasTakenAward = 5;
+    required int32 awardBelieverNum = 6;
+    optional int32 yesterdayTempleRank = 7;
+}
+
+message TempleRankData {
+    required int64 id = 1;
+    required string name = 2;
+    required int32 believer = 3;
+    required int32 rank = 4;
+    required double factor = 5;
+    required int32 templeLevel = 6;
+}
+
+message TempleAssistants {
+    repeated int64 list = 1;
+}
+
+message SendGhostResult {
+    required SendGhostResultError error = 1;
+    repeated MySentGhost list = 2;
+    repeated Others friendList = 3;
+}
+
+enum SendGhostResultError {
+    GhostError_Success = 0;
+    GhostError_TargetFull = 1;
+    GhostError_LevelTooDiff = 2;
+}
+
+message MySentGhostList {
+    repeated MySentGhost list = 1;
+}
+
+message MySentGhost {
+    required int64 targetId = 1;
+    required bool success = 2;
+    required bool finished = 3;
+}
+
+message GhostListInMyTemple {
+    repeated GhostInMyTemple list = 1;
+}
+
+message GhostInMyTemple {
+    required int64 senderId = 1;
+    required string senderName = 2;
+}
+
+message GhostStatus {
+    repeated MySentGhost sentGhostList = 1;
+    repeated GhostInMyTemple ghostListInMyTemple = 2;
+    repeated MySentGhost returnList = 3;
+    repeated GhostInMyTemple escapedGhostList = 4;
+    repeated Others friendList = 5;
+}
+
+message KickGhost {
+    required GhostInMyTemple ghost = 1;
+    required int32 merit = 2;
+    required int32 believer = 3;
+}
+
+message LevelUpTower {
+}
+
+message LevelUpJinshen {
+}
+
+/*** end of temple ***/
+
+
+/*** Activities ***/
+
+message JubaopenStatus {
+    required int32 level = 1;
+    required int32 coin = 2;
+    required int32 remainingSeconds = 3;
+    required int32 maxLevel = 4;
+}
+
+message LevelUpJubaopen {
+    required JubaopenStatus status = 1;
+    repeated Award awards = 2;
+}
+
+message TakeFromJubaopen {
+    required int32 coin = 1;
+}
+
+message SaleItem {
+    required int64 itemId = 1;
+    required int32 dollar = 2;
+    required int32 coin = 3;
+    required int32 remainingCount = 4;
+    required int32 remainingQuota = 5;
+    required int64 id = 6;
+    optional int32 remainingSeconds = 7;
+}
+
+message SaleList {
+    required int32 saleRemainingSeconds = 1;
+    repeated SaleItem items = 2;
+}
+
+message BuySaleItem {
+    required int64 id = 1;
+    repeated Award items = 2;
+    required SaleList list = 3;
+}
+
+message LingShiSaleItem {
+    required int64 id = 1;
+    required int32 lingshiPrice = 2;
+    required int32 remainingQuota = 3;
+    required int32 remainingCount = 4;
+
+    required Award award = 5;
+}
+
+message LingShiSaleList {
+    required int32 saleRemainingSeconds = 1;
+    repeated LingShiSaleItem items = 2;
+}
+
+message BuyLingShiItem {
+    required int64 id = 1;
+    repeated Award items = 2;
+    required LingShiSaleList list = 3;
+}
+
+message CollectionAchievementStatus {
+    repeated int32 progress = 1;
+    repeated int32 requirement = 2;
+    required int32 remainingSeconds = 3;
+    repeated bool taken = 4;
+}
+
+message TakeCollectionAchievement {
+    repeated Award awards = 1;
+    required CollectionAchievementStatus status = 2;
+}
+
+message LevelAchievementStatus {
+    repeated bool taken = 1;
+}
+
+message TakeLevelAchievementAward {
+    repeated Award awards = 1;
+    required LevelAchievementStatus status = 2;
+    optional int32 VipExp = 3;
+}
+
+message UseActivationCode {
+    required UseActivationCodeResult result = 1;
+    repeated Award awardList = 2;
+}
+
+message TopUpAwardList {
+    required int32 remainingSeconds = 1;
+    required int32 toppedUp = 2; // 活动开始时已充值
+    repeated int32 dollar = 4;
+    repeated bool taken = 5;
+
+    repeated TopUpAward awardList = 6;
+}
+
+message TopUpAward {
+    repeated int64 entityIdList = 1;
+    repeated int32 entityCount = 2;
+    repeated EntityType entityTypeList = 3;
+}
+
+message TakeTopUpAward {
+    repeated bool taken = 1;
+    repeated Award awards = 2; // 真的获取的奖励
+}
+
+message ConsumptionAwardList {
+    required int32 remainingSeconds = 1;
+    required int32 consumedDollar = 2; // 活动开始时已消耗元宝数
+    repeated int32 dollar = 3;
+    repeated bool taken = 4;
+
+    repeated TopUpAward awardList = 5;
+}
+
+message TakeConsumptionAward {
+    repeated bool taken = 1;
+    repeated Award awards = 2; // 真的获取的奖励
+}
+
+message CollectTodayVipSalary {
+    repeated Award awards = 1;
+}
+
+message VipSalaryStatus {
+    required bool todayTaken = 1;
+}
+
+message ConsumptionInfo {
+    required int64 characterId = 1;
+    required string characterName = 2;
+    required int32 characterLevel = 3;
+    required int32 order = 4;
+    required int32 consumedDollar = 5;
+}
+
+message TopConsumptionList {
+    required int32 remainingSeconds = 1;
+    required int32 consumedDollar = 2; // 活动开始时已消耗元宝数
+
+    repeated ConsumptionInfo list = 3;
+    repeated Award awardList = 4;
+}
+
+message ReturnGiftTaken {
+    repeated Award list = 1;
+}
+
+enum UseActivationCodeResult {
+    UAC_SUCCESS = 0;
+    UAC_WRONG_FORMAT = 1;
+    UAC_NOT_EXIST = 2;
+    UAC_ALREADY_USED = 3;
+    UAC_SAME_TYPE_USED = 4;
+}
+
+message FenbaoStatus {
+    required int32 totalDays = 1;
+    required int32 accDays = 2;
+    required bool canFenbao = 3;
+
+    repeated Award awards = 11;
+}
+
+message FenbaoResult {
+    required FenbaoStatus status = 1;
+    repeated Award awardList = 2;
+    optional int32 exp = 3;
+}
+
+message LongGongStatus {
+    required int32 freeTimes = 1;
+    required int32 price = 2;
+    repeated LongGongItem items = 3;
+    optional int32 position = 4;
+}
+
+message LongGongItem {
+    required bool advanced = 1;
+    required Award award = 2;
+    required bool taken = 3;
+    required int32 position = 4;
+}
+
+message ExploreLongGongResult {
+    required int32 freeTimes = 1;
+    required bool advanced = 2;
+    required bool takeAll = 3;
+    required int32 updatedDollar = 4;
+    repeated Award awardList = 5;
+    repeated LongGongItem newItems = 6; // when "takeall" happens, all items will be refreshed.
+    required int32 position = 7;
+}
+
+message GetWeiboAward {
+    required bool success = 1;
+}
+
+/*** invitation ***/
+
+message InvitationStatus {
+    required string myInvitationId = 1;
+    required int64 invitedBy = 2;
+    required int32 totalInvited = 3; // 全部邀请人数
+    required int32 invitedAndLevelUp = 4; // 邀请而且到达等级要求的人数
+    required int32 levelRequirement = 5; // 等级要求 - 目前是45
+
+    repeated int32 requiredCount = 11;
+    repeated bool taken = 12;
+    repeated TopUpAward awards = 13;
+}
+
+message TakeInvitationAward {
+    repeated Award awards = 1; // 真的获取的奖励
+    required InvitationStatus status = 2;
+}
+
+message ConfirmInvitation {
+    repeated Award awardList = 1;
+}
+
+/*** end of Activities ***/
+
+/** Task related **/
+message CurrentTask {
+    optional Task task = 1;
+}
+
+message Task {
+    required int64 taskId = 1;
+    required bool accomplished = 2;
+}
+
+message TakeTaskAward {
+    repeated Award awards = 1;
+    optional Task newTask = 2;
+}
+
+message TaskAccomplished {
+    required Task task = 1;
+}
+
+message TaskFinished { // 这个协议的唯一作用是完成任务时在兑现奖励之前通知前端
+}
+
+/** end of task **/
+
+message ChangeName {
+}
+
+/*** user guide ***/
+
+message GuideAvailable {
+    required int32 id = 1;
+}
+
+message FinishGuide {
+    required int32 id = 1;
+}
+
+/*** end of user guide ***/
+
+message LundaoStatus {
+    required bool canFight = 1;
+    required int64 endTime = 2;
+    optional OtherPlayer admireTarget = 3;
+    optional LundaoFightStatus fightStatus = 4;
+    required bool canAdmire = 5;
+}
+
+message AdmireLundao {
+    required int32 ganwu = 1;
+}
+
+message LundaoFightStatus {
+    required int32 ganwuToday = 1;
+    required int32 jinxianlingCount = 2;
+    optional OtherPlayer topPlayer = 3;
+    optional int32 topPlayerGanwu = 4;
+    repeated LundaoPositionStatus positions = 5;
+}
+
+message LundaoPositionStatus {
+    required int32 position = 1;
+    optional OtherPlayer player = 2;
+    optional int32 occupiedMinutes = 3;
+    optional int32 debuffValue = 4;
+    optional int32 ganwu = 5;
+}
+
+message AttackLundao {
+    required bool emptyPosition = 1; // 是否占据一个空位置
+    required LundaoStatus status = 2;
+    required bool needRefresh = 3; // 排名发生变化
+}
+
+message OtherPlayer {
+    required int64 actorTypeId = 1;
+    required string name = 2;
+    required int32 battlePower = 3;
+    required int32 level = 4;
+    required int64 actorId = 5;
+}
+
+message Ganwu {
+    repeated Award award = 1;
+}
+
+message TakeCommentAward {
+    repeated Award award = 1;
+}
+
+message TakeDownloadAward {
+}
+
+/** 红包 **/
+
+message Redbag {
+    required int64 id = 1;
+    required string senderName = 2;
+    required bool isSystem = 3; // 是否系统发送
+    required int32 count = 4; // 剩余多少个
+    required int64 senderId = 5; // 发送者id, 如果是系统则为0
+    optional int64 senderTypeId = 6; // 如果是系统红包，没有头像
+    optional int32 remainingSeconds = 7; // 玩家的红包不显示倒计时
+}
+
+message RedbagStatus {
+    repeated Redbag bags = 1;
+    optional string richName = 2;
+    optional int32 richDollar = 3;
+    optional string luckyName = 4;
+    optional int32 luckyDollar = 5;
+}
+
+message DistributeRedbag {
+    required RedbagStatus status = 1;
+    repeated Award awards = 2;
+}
+
+message OpenRedbag {
+    required RedbagStatus status = 1;
+    repeated Award awards = 2;
+}
+
+/** end of 红包 **/
+
+/** 月卡 **/
+
+message MonthVipStatus {
+    required int32 vipDollarNeeded = 1;
+    required int32 vipLastDays = 2;
+    required bool activated = 3;
+    optional int32 accDollar = 4;
+    optional int32 remainingDays = 5;
+    repeated Award preview = 6;
+    required bool canTakeAward = 7;
+}
+
+message TakeDailyMonthVipAward {
+    required MonthVipStatus status = 1;
+    repeated Award awards = 2;
+}
+
+/** end of 月卡 **/
+
+message DessembleEquip {
+    required int64 equipId = 1;
+    repeated Award awards = 2;
+}
+
+message CombineEquip {
+    repeated Award awards = 2;
+}
+
+message DessembleMagic {
+    required int64 magicId = 1;
+    repeated Award awards = 2;
+}
+
+enum ArenaOpponentStatus {
+    Arena_CanChallenge = 0;
+    Arena_CanFightBack = 1;
+    Arena_God = 2;
+    Arena_Loser = 3;
+}
+
+enum EquipPart {
+    EQUIP_UNEQUIPED = 0;
+    WEAPON = 1;
+    ARMER = 2;
+    MISC = 3;
+}
+
+enum MagicPart {
+    MAGIC_UNEQUIPED = 0;
+    GENIUS = 1;
+    MAGIC1 = 2;
+    MAGIC2 = 3;
+}
+
+enum BookPart {
+    BOOK_UNEQUIPED = 0;
+    BOOK_1 = 1;
+    BOOK_2 = 2;
+    BOOK_3 = 3;
+    BOOK_4 = 4;
+    BOOK_5 = 5;
+    BOOK_6 = 6;
+    BOOK_7 = 7;
+}
+
+enum MagicCategory {
+    ATTACK = 1;
+    INTERNAL = 2;
+    HYBRID = 3;
+}
+
+enum BuffType {
+    Buff_Attack = 0;
+    Buff_Defense = 1;
+    Buff_Hp = 2;
+    Buff_Magic = 3;
+}
+
+enum BattleType {
+    BattleType_Level = 0;
+    BattleType_Arena = 1;
+    BattleType_Liudao = 2;
+    BattleType_Robbery = 3;
+    BattleType_Temple = 4;
+    BattleType_GhostLord = 5;
+    BattleType_WuYueZhiZun = 6;
+    BattleType_Lundao = 7;
+    BattleType_Sect = 8;
+}
+
+enum LoginError {
+    LoginSuccess = 0;
+    InvalidCredential = 1;
+    AccountLocked = 2;
+}
+
+enum CreateAccountError {
+    Account_NOERROR = 0;
+    NameAlreadyExist = 1;
+    InvalidName = 2;
+    HasSentitiveWord = 3;
+}
+
+enum BattleActionType {
+    NoAction = 0;
+    BATTLE_ATTACK = 1;
+    BATTLE_MAGIC = 2;
+    BATTLE_HURT = 3;
+    BATTLE_ZHUJUEJI = 4;
+    BATTLE_BUFF = 5;
+    BATTLE_DEBUFF = 6;
+    BATTLE_REVIVE = 7;
+}
+
+enum ProtoError {
+    // user error
+    NoError = 0;
+    GeneralErr = 1;
+    //	NotEnoughCoin = 2;
+    //	NotEnoughDollar = 3;
+    //	EquipLevelReachCharacterLimit = 4;
+
+    // mail
+    MailSubjectTooLong = 11;
+    MailContentTooLong = 12;
+    MailSendTooFrequent = 13;
+    MailTargetNotFound = 14;
+    MailBlackList = 15;
+
+    // friend
+    FriendTargetNotFound = 21;
+    FriendCanNotAddSelf = 22;
+    FriendAlreadyAdded = 23;
+    FriendLimitReached = 24;
+
+    // likely malicious commands
+    //	TargetNotFound = 1001;
+    //	MagicToSwallowNotFound = 1002;
+    //	InvalidNpcPosition = 1003;
+    //	MagicPositionWrong = 1004;
+}
+
+enum EntityType {
+    None = 0;
+    EntitySpirit = 2;
+    EntityMagic = 3;
+    EntityEquip = 5;
+    EntityBook = 6;
+    EntityItem = 7;
+    EntityHorse = 8;
+    EntityActor = 10;
+    EntityMagicFragment = 12;
+    Coin = 101;
+    Stamina = 102;
+    Qi = 103;
+    Exp = 104;
+    Dollar = 105;
+    Merit = 106;
+    ArenaTime = 107;
+    GodStamina = 108;
+    ArenaScore = 109;
+    Zhihui = 110;
+}
+
+enum MailType {
+    Normal = 0;
+    ArenaDefenseSuccess = 1;
+    ArenaDefenseFailed = 2;
+    NewFriend = 3;
+    AlreadyFriend = 4;
+    NoFriend = 5;
+    System = 6;
+    RobberyDefenseSuccess = 7;
+    RobberyDefenseFailed = 8;
+    LundaoFailure = 9;
+}
+
+enum ClassFilterType {
+    Filter_None = 0;
+    Filter_LowerThanYi = 1;
+    Filter_LowerThanJia = 2;
+    Filter_All = 3;
+}
+
+enum MifaBuffType {
+    MIFA_None = 0;
+    MIFA_Attack_Inc = 1;
+    MIFA_LIANJI = 2;
+}
+
+enum ArenaFirstAchievedAwardLevel {
+    R1 = 1;
+    R10 = 2;
+    R50 = 4;
+    R100 = 8;
+    R200 = 16;
+    R500 = 32;
+    R1000 = 64;
+}
+
+enum FriendGroup {
+    Group_Friend = 0;
+    Group_RobberyEnemy = 1;
+    Group_ArenaEnemy = 2;
+    Group_Fan = 3;
+}
+
+// 获取单笔充值实际奖励
+message TakeOnceTopUpAwards {
+    repeated Award awards = 1; // 实际奖励列表
+    required GetAllOnceTopUpAwards status = 2; // 领取之后列表状态
+}
+
+// 奖励具体信息
+message OnceTopUpAwards {
+    required int32 dollar = 1;
+    required int32 takeCount = 2; // 已经领取次数
+    required int32 totalTopUpCount = 3; // 总有效充值次数
+    required int32 maxCount = 4; // 领取次数上限
+    repeated Award awards = 5;
+}
+
+// 获取所有单笔充值奖励信息
+message GetAllOnceTopUpAwards {
+    required int32 remainingSeconds = 1;
+    repeated OnceTopUpAwards awards = 2;
+}
+
+// 神农鼎炼丹奖励
+message RefiningElixir {
+    repeated Award awards = 1; // 奖励列表
+}
+
+// 获取新手福利活动奖励列表
+message GetNewcomerAwardList {
+    repeated NewcomerAward award = 1;
+    required int32 LoginDayCount = 2;
+}
+
+message NewcomerAward {
+    required int32 LoginDayIndex = 1; // 第几天
+    required bool IsTaken = 2; // 是否被领取
+    required bool CanTake = 3; // 是否可以领取
+    repeated Award awards = 4; // 奖励预览
+}
+
+// 领取新手福利活动奖励
+message TakeNewcomerAward {
+    repeated Award awards = 1; // 奖励预览
+    required GetNewcomerAwardList status = 2; // 领取后状态
+}
+
+// VIP商店物品列表
+message GetVIPShopItems {
+    repeated VIPShopItem itemList = 1;
+}
+
+// VIP商店物品
+message VIPShopItem {
+    required int32 vipLv = 1; // VIP等级
+    required bool isbought = 2; // 当前等级的是否已经购买
+    required bool canBuy = 3; // 是否可以购买当前等级的物品
+    required int32 cost = 4; // 当前等级商品的价格
+    required Award awardPreview = 5; // 商品预览列表
+}
+
+// 购买VIP商店物品
+message BuyVIPShopItem {
+    repeated Award items = 1; // 购买的物品预览
+    required GetVIPShopItems status = 2; // 购买后状态
+}
+
+// 仙山状态
+message GetTianShanStatus {
+    required int32 currentTianShanIndex = 1; // 当前可探索的仙山
+    required int32 todayFreeExploreTimes = 2; // 今天免费探索次数
+    required int32 allFreeExploreTimes = 3; // 总的免费探索次数
+    required int32 dollarExploreCost = 4; // 每次元宝探索消耗
+}
+
+// 探索仙山
+message ExploreTianShan {
+    repeated Award awards = 1; // 奖励预览
+    required GetTianShanStatus status = 2; // 探索后状态
+}
+
+message GetCurrentFateInfo {
+    required int64 fateID = 1; // 签的ID
+    required bool feeFateUsed = 2; // 免费抽签机会是否已经被使用
+}
+
+message TakeFate {
+    required int64 fateID = 1; // 签的ID
+    required bool feeFateUsed = 2; // 免费抽签机会是否已经被使用
+}
+
+message ExplainFate {
+    required int64 fateID = 1; // 签的ID
+    required bool feeFateUsed = 2; // 免费抽签机会是否已经被使用
+}
+
+message GetActorRankInfo {
+    repeated ActorRankInfo actorList = 1; // 仙友列表
+}
+
+message ActorRankInfo {
+    required int64 actorID = 1; // 仙友ID
+    required bool canUpgrade = 2; // 可否升阶
+    required bool canReduce = 3; // 可否降阶
+}
+
+message UpgradeActorRank {
+    required bool isSuccess = 1; // 是否成功
+    required int64 originalActorId = 2; // 原仙友ID
+    required int64 newActorId = 3; // 新仙友ID
+}
+
+message ReduceActorRank {
+    required bool isSuccess = 1; // 是否成功
+    required int64 originalActorId = 2; // 原仙友ID
+    required int64 newActorId = 3; // 新仙友ID
+    repeated Award items = 4; // 降阶获得的降阶丹
+}
+
+message TakeTreasureAwards {
+    repeated Award newItems = 1; // 获得的物品
+    repeated Award costItems = 2; // 消耗的物品
+    required GetTreasureAwardsList status = 3; // 兑换后活动的最新状态
+}
+
+message GetTreasureAwardsList {
+    repeated TreasureAwardInfo rules = 1; // 兑换公式
+    required int64 remainingSeconds = 2; // 活动结束时间
+}
+
+message TreasureAwardInfo {
+    required int32 index = 1; // 从1开始的序号
+    required int32 totalTakeCount = 2; // 总的可兑换次数
+    required int32 takenCount = 3; // 已经领取次数
+    required Award newItems = 4; // 获得的物品
+    repeated Award costItems = 5; // 消耗的物品
+}
+
+message GemSaleList {
+    required int32 GemCount = 1; // 天宫宝玉数量
+    required int64 remainingSeconds = 2; // 活动结束时间
+    repeated GemItem ShopItems = 3; // 仙界商人出售的物品列表
+}
+
+message GemItem {
+    required int64 id = 1; // 序号
+    required bool hasBought = 2; // 是否已经购买
+    required int32 price = 3; // 购买此物品需要消耗的天宫宝玉
+    required Award award = 4; // 物品预览
+}
+
+message BuyGemShopItem {
+    repeated Award newItems = 1; // 获得的物品
+    required GemSaleList status = 2; // 商店最新状态
+}
+
+message EquipEvolve {
+    required bool isSuccess = 1; // 是否成功
+    required Equip newEquip = 2; // 新的装备
+}
+
+message DessembleBook {
+    required int64 bookId = 1;
+    repeated Award awards = 2;
+}
+
+message TianYuanCollect {
+    required int64 id = 1; // 天缘ID
+    required bool hasTakenAward = 2; // 是否已经领取对应奖励
+    required bool canTakeAward = 3; // 是否可以领取对应奖励
+    repeated int64 existsNpcs = 4; // 已经拥有的NPC列表
+}
+
+message TianYuanCollectStatus {
+    repeated TianYuanCollect collectInfo = 1; // 天缘列表
+}
+
+message TakeTianYuanCollectAward {
+    repeated Award awards = 1; // 奖励预览
+    required TianYuanCollectStatus status = 2; // 最新天缘收集情况
+}
+
+message SelectSect {
+    required int32 newSectType = 1; // 选择成功后的教派
+}
+
+message ChangeSect {
+    required int32 newSectType = 1; // 转换之后的教派
+    required int32 oldSectType = 2; // 转换之前的教派
+    required int32 nowMapIndex = 3; // 当前所在地图
+}
+
+message ChangeTempleMap {
+    required int64 newMap = 1; // 转换之后的地图
+    required int64 oldMap = 2; // 转换之前的地图
+    repeated MapTempleCount status = 3; // 地图信息
+}
+
+message ClearChangeTempleMapTime {
+    required bool isSuccess = 1; // 是否成功
+}
+
+message OtherTempleListInfo {
+    repeated CharacterSectInfo temples = 1; // 神庙列表
+    required MapTempleCount templeInfo = 2; // 当前地图神庙信息
+}
+
+message GetSectRankInfo {
+    repeated CharacterSectInfo temples = 1; // 神庙列表
+    required int64 nextRefreshDate = 2; // 下次刷新时间
+    required SectCreditAward status = 3; // 声望奖励信息
+}
+
+message TakeSectCreditAward {
+    repeated Award awardView = 1; // 本次获得的奖励预览
+    required SectCreditAward status = 2; // 声望奖励信息
+}
+
+message SectCreditAward {
+    required bool hasTakenAllAwards = 1; // 本周所有奖励是否全部领取
+    required bool canTakeNextAward = 2; // 下一个声望奖励是否可以领取
+    required int32 nextAwardNeedCredit = 3; // 下次奖励还需要的声望值
+    repeated Award nextAwardView = 4; // 下次奖励预览
+}
+
+message GetSectAllJobInfo {
+    repeated CharacterSectInfo temples = 1; // 神庙列表
+    required int64 nextRefreshDate = 2; // 下次刷新时间
+}
+
+message CharacterSectInfo {
+    required int64 id = 1; // 玩家ID
+    required string name = 2; // 玩家名称
+    required int32 lv = 3; // 玩家等级
+    required int32 battlePower = 4; // 玩家战力
+    required int32 templeLv = 5; // 神庙等级
+    required int32 templeDefence = 6; // 神庙城防值
+    required int64 mapOfTemple = 7; // 神庙所在地图
+    required int32 sectType = 8; // 当前教派
+    required int64 sectCredit = 9; // 教派声望
+    required int64 sectFeats = 10; // 教派功勋
+    required string sectJob = 11; // 教派职位
+    required string sectTitle = 12; // 教派称号
+    required int64 costTaoFaLing = 13; // 攻打消耗讨伐令数量
+    required int32 distance = 14; // 距离
+    required int32 sectCreditRank = 15; // 教派声望排名
+    required int32 sectTitleID = 17; // 教派称号ID
+    required int32 sectTitleLv = 18; // 教派称号等级
+    optional int32 rankAwardFeatsView = 19; // 声望排名奖励显示值
+    required int32 sectJobID = 20; // 教派职位ID
+    required string serverName = 21; // 服务器名称
+    required int32 serverId = 22; // 服务器ID
+}
+
+message SectShopItem {
+    required int32 index = 1; // 序号
+    required int64 needFeat = 2; // 需要功勋
+    repeated Award awardView = 3; // 道具预览
+}
+
+message GetSectShopItemList {
+    repeated SectShopItem shopItems = 1; // 商城内道具列表
+    required int64 nowFeats = 2; // 现有功勋值
+}
+
+message BuySectShopItem {
+    repeated Award newItems = 1; // 获得的物品
+    required GetSectShopItemList status = 2; // 购买后刷新状态
+}
+
+message AttackTemple {
+    required bool isSuccess = 1; // 是否胜利
+    required int32 stars = 2; // 战斗星级数
+    required int32 getCredit = 3; // 获得的声望
+    required int32 getFeat = 4; // 获得的功勋
+    required int32 NowTaoFaLingCount = 5; // 剩余讨伐令
+    required CharacterSectInfo defenderInfo = 6; // 防守方信息
+}
+
+message NewTitle {
+    required int32 newTitleLv = 1; // 新的称号等级
+    required int32 newTitleID = 2; // 新的称号ID
+    required string newTitleName = 3; // 新的称号名称
+}
+
+message TakeSectTitleAward {
+    required int64 getMerit = 1; // 获得的功德
+    required int64 getCoin = 2; // 获得的银两
+    required int64 getFeat = 3; // 获得的功勋
+}
+
+message BuyTaoFaLing {
+    required int32 taoFaLingCount = 1; // 购买后讨伐令数量
+    required int32 todayBuyTaoFaLingTimes = 2; // 今日购买讨伐令次数
+    required int32 costDollar = 3; // 消耗的元宝
+}
+
+message GetMapTempleCount {
+    repeated MapTempleCount maps = 1; // 地图列表
+}
+
+message MapTempleCount {
+    required int32 mapIndex = 1; // 地图
+    required int32 templeCount = 2; // 神庙数量
+}
+
+message SectAttackReportList {
+    repeated SectAttackReport reports = 1; //战报列表
+}
+
+message SectAttackReport {
+    required int32 attackTime = 1; // 攻击时间
+    required int64 attacker = 2; // 攻击者ID
+    required string attackerName = 3; // 攻击者名称
+    required string report = 4; // 内容
+    required int32 serverId = 5; // 攻击者所在服务器ID
+    required int64 id = 6; // 战报唯一ID
+    required bool isStrikeback = 7; // 是否已反击
+}
+
+message SectStrikebackResult {
+    required int64 id = 1; // 战报ID
+    required bool isStrikeback = 2; // 是否已反击
+}
+
+message SectStrikeback {
+    required CharacterSectInfo targetInfo = 1; // 反击目标的信息
+    required int64 reportId = 2; // 战报ID
+}
+
+message AttackTempleNeedRefresh {
+}
+
+message SectTempleReturnToBase {
+    required int32 oldMap = 1;
+    required int32 newMap = 2;
+}
+
+message AlchemistStatus {
+    required int32 level = 1;
+    required int32 exp = 2;
+}
+
+message MakeAlchemist {
+    required int64 id = 1;
+    required AlchemistStatus status = 2;
+    repeated Award award = 3;
+}
+
+message TakeBelieverRankAward {
+    required bool success = 1;
+    repeated Award award = 2;
+}
+
+message TopUpGood {
+    required string id = 1;
+    required int32 price = 2;
+    required int32 dollar = 3;
+    required int32 vipExp = 4;
+    required bool firstTopUp = 5;
+}
+
+message TopUpGoodList {
+    repeated TopUpGood goods = 1;
+}

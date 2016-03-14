@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2013-3-7 下午12:17:51
  */
 package com.absir.bean.inject;
@@ -14,61 +14,66 @@ import java.util.Set;
 
 /**
  * @author absir
- * 
  */
 public class InjectAdapter {
 
-	/** Instance */
-	private static InjectAdapter Instance;
+    /**
+     * Instance
+     */
+    private static InjectAdapter Instance;
 
-	/** fields */
-	Set<Field> fields = new HashSet<Field>();
+    /**
+     * fields
+     */
+    Set<Field> fields = new HashSet<Field>();
 
-	/** methods */
-	Set<Method> methods = new HashSet<Method>();
+    /**
+     * methods
+     */
+    Set<Method> methods = new HashSet<Method>();
 
-	/**
-	 * @return the instance
-	 */
-	public static InjectAdapter getInstance() {
-		return Instance;
-	}
+    /**
+     * @return the instance
+     */
+    public static InjectAdapter getInstance() {
+        return Instance;
+    }
 
-	/**
-	 * @param field
-	 */
-	public static void inject(Field field) {
-		if (Instance == null) {
-			Instance = new InjectAdapter();
-		}
+    /**
+     * @param field
+     */
+    public static void inject(Field field) {
+        if (Instance == null) {
+            Instance = new InjectAdapter();
+        }
 
-		if (Instance.fields.add(field)) {
-			field.setAccessible(true);
-		}
-	}
+        if (Instance.fields.add(field)) {
+            field.setAccessible(true);
+        }
+    }
 
-	/**
-	 * @param method
-	 */
-	public static void inject(Method method) {
-		if (Instance == null) {
-			Instance = new InjectAdapter();
-		}
+    /**
+     * @param method
+     */
+    public static void inject(Method method) {
+        if (Instance == null) {
+            Instance = new InjectAdapter();
+        }
 
-		if (Instance.methods.add(method)) {
-			method.setAccessible(true);
-		}
-	}
+        if (Instance.methods.add(method)) {
+            method.setAccessible(true);
+        }
+    }
 
-	/**
-	 * 
-	 */
-	protected static void clear() {
-		if (Instance != null) {
-			Instance.fields.clear();
-			Instance.methods.clear();
-		}
+    /**
+     *
+     */
+    protected static void clear() {
+        if (Instance != null) {
+            Instance.fields.clear();
+            Instance.methods.clear();
+        }
 
-		Instance = null;
-	}
+        Instance = null;
+    }
 }

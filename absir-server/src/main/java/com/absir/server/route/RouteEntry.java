@@ -1,17 +1,11 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2013-12-23 下午4:28:08
  */
 package com.absir.server.route;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 import com.absir.core.kernel.KernelLang;
 import com.absir.server.in.IDispatcher;
@@ -19,317 +13,330 @@ import com.absir.server.in.Input;
 import com.absir.server.in.Interceptor;
 import com.absir.server.on.OnPut;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * @author absir
- * 
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class RouteEntry {
 
-	/** routeEntries */
-	private List<RouteEntry> routeEntries;
+    /**
+     * interceptors
+     */
+    protected List<Interceptor> interceptors;
+    /**
+     * routeEntries
+     */
+    private List<RouteEntry> routeEntries;
+    /**
+     * beforeMethods
+     */
+    private List<RouteMethod> beforeMethods;
 
-	/** interceptors */
-	protected List<Interceptor> interceptors;
+    /**
+     * afterMethods
+     */
+    private List<RouteMethod> afterMethods;
 
-	/** beforeMethods */
-	private List<RouteMethod> beforeMethods;
+    /**
+     * routeExceptions
+     */
+    private List<RouteException> routeExceptions;
 
-	/** afterMethods */
-	private List<RouteMethod> afterMethods;
+    /**
+     * @param routeEntries
+     */
+    private static void addRouteEntries(RouteEntry routeEntry, List<RouteEntry> routeEntries) {
+        if (routeEntries != null) {
+            for (RouteEntry entry : routeEntries) {
+                if (entry.interceptors != null) {
+                    for (Interceptor interceptor : entry.interceptors) {
+                        routeEntry.addInterceptor(interceptor);
+                    }
+                }
 
-	/** routeExceptions */
-	private List<RouteException> routeExceptions;
+                if (entry.beforeMethods != null) {
+                    for (RouteMethod routeMethod : entry.beforeMethods) {
+                        routeEntry.addBeforeMethod(routeMethod);
+                    }
+                }
 
-	/**
-	 * @return the routeEntries
-	 */
-	public List<RouteEntry> getRouteEntries() {
-		return routeEntries;
-	}
+                if (entry.afterMethods != null) {
+                    for (RouteMethod routeMethod : entry.afterMethods) {
+                        routeEntry.addAfterMethod(routeMethod);
+                    }
+                }
 
-	/**
-	 * @return the interceptors
-	 */
-	public List<Interceptor> getInterceptors() {
-		return interceptors;
-	}
+                if (entry.routeExceptions != null) {
+                    for (RouteException routeException : entry.routeExceptions) {
+                        routeEntry.addRouteException(routeException);
+                    }
+                }
 
-	/**
-	 * @return the beforeMethods
-	 */
-	public List<RouteMethod> getBeforeMethods() {
-		return beforeMethods;
-	}
+                addRouteEntries(routeEntry, entry.routeEntries);
+            }
+        }
+    }
 
-	/**
-	 * @return the afterMethods
-	 */
-	public List<RouteMethod> getAfterMethods() {
-		return afterMethods;
-	}
+    /**
+     * @param input
+     * @param routeEntry
+     * @return
+     * @throws Exception
+     */
+    public static OnPut intercept(Input input, RouteEntry routeEntry) throws Throwable {
+        if (routeEntry == null) {
+            return invoke(input, routeEntry);
 
-	/**
-	 * @return the routeExceptions
-	 */
-	public List<RouteException> getRouteExceptions() {
-		return routeExceptions;
-	}
+        } else {
+            List<Interceptor> interceptors = routeEntry.interceptors;
+            return routeEntry.intercept(interceptors == null ? null : interceptors.iterator(), input);
+        }
+    }
 
-	/**
-	 * @return
-	 */
-	protected RouteEntry getRouteEntry() {
-		if (interceptors == null && beforeMethods == null && afterMethods == null && routeExceptions == null) {
-			if (routeEntries == null || routeEntries.isEmpty()) {
-				return null;
-			}
+    /**
+     * @param input
+     * @param routeEntry
+     * @return
+     * @throws Throwable
+     */
+    public static OnPut invoke(Input input, RouteEntry routeEntry) throws Throwable {
+        IDispatcher dispatcher = input.getDispatcher();
+        RouteAction routeAction = input.getRouteAction();
+        if (dispatcher == null || routeAction == null) {
+            return null;
+        }
 
-			if (routeEntries.size() == 1) {
-				return routeEntries.get(0).getRouteEntry();
-			}
-		}
+        Object routeBean = routeAction.getRouteEntity().getRouteBean(input);
+        OnPut onPut = dispatcher.onPut(input, routeBean);
+        try {
+            onPut.open();
+            invoke(routeBean, onPut, routeEntry);
+            if (onPut.getReturnThrowable() != null) {
+                throw onPut.getReturnThrowable();
+            }
 
-		if (routeEntries != KernelLang.NULL_LIST_SET) {
-			addRouteEntries(this, routeEntries);
-			routeEntries = KernelLang.NULL_LIST_SET;
+            dispatcher.resolveReturnedValue(routeBean, onPut);
 
-			if (beforeMethods != null) {
-				beforeMethods = beforeMethods.isEmpty() ? null : Collections.unmodifiableList(beforeMethods);
-			}
+        } catch (Throwable e) {
+            if (e instanceof InvocationTargetException) {
+                e = e.getCause();
+            }
 
-			if (afterMethods != null) {
-				afterMethods = afterMethods.isEmpty() ? null : Collections.unmodifiableList(afterMethods);
-			}
+            onPut.setReturnThrowable(e);
+            if (!dispatcher.returnThrowable(e, routeBean, onPut)) {
+                throw e;
+            }
 
-			if (routeExceptions != null) {
-				routeExceptions = routeExceptions.isEmpty() ? null : Collections.unmodifiableList(routeExceptions);
-			}
-		}
+        } finally {
+            OnPut.close();
+        }
 
-		return this;
-	}
+        return onPut;
+    }
 
-	/**
-	 * @param routeEntries
-	 */
-	private static void addRouteEntries(RouteEntry routeEntry, List<RouteEntry> routeEntries) {
-		if (routeEntries != null) {
-			for (RouteEntry entry : routeEntries) {
-				if (entry.interceptors != null) {
-					for (Interceptor interceptor : entry.interceptors) {
-						routeEntry.addInterceptor(interceptor);
-					}
-				}
+    /**
+     * @param routeBean
+     * @param onPut
+     * @param routeEntry
+     * @throws Throwable
+     */
+    public static void invoke(Object routeBean, OnPut onPut, RouteEntry routeEntry) throws Throwable {
+        if (routeEntry == null) {
+            RouteAction routeAction = onPut.getInput().getRouteAction();
+            if (routeAction != null) {
+                routeAction.getRouteMethod().invoke(routeBean, onPut);
+            }
 
-				if (entry.beforeMethods != null) {
-					for (RouteMethod routeMethod : entry.beforeMethods) {
-						routeEntry.addBeforeMethod(routeMethod);
-					}
-				}
+        } else {
+            List<RouteMethod> routeMethods = routeEntry.beforeMethods;
+            if (routeMethods != null) {
+                for (RouteMethod routeMethod : routeMethods) {
+                    routeMethod.invoke(routeBean, onPut);
+                }
+            }
 
-				if (entry.afterMethods != null) {
-					for (RouteMethod routeMethod : entry.afterMethods) {
-						routeEntry.addAfterMethod(routeMethod);
-					}
-				}
+            invoke(routeBean, onPut, null);
+            routeMethods = routeEntry.afterMethods;
+            if (routeMethods != null) {
+                for (RouteMethod routeMethod : routeMethods) {
+                    routeMethod.invoke(routeBean, onPut);
+                }
+            }
+        }
+    }
 
-				if (entry.routeExceptions != null) {
-					for (RouteException routeException : entry.routeExceptions) {
-						routeEntry.addRouteException(routeException);
-					}
-				}
+    /**
+     * @return the routeEntries
+     */
+    public List<RouteEntry> getRouteEntries() {
+        return routeEntries;
+    }
 
-				addRouteEntries(routeEntry, entry.routeEntries);
-			}
-		}
-	}
+    /**
+     * @return the interceptors
+     */
+    public List<Interceptor> getInterceptors() {
+        return interceptors;
+    }
 
-	/**
-	 * @param routeEntry
-	 */
-	protected void addRouteEntries(RouteEntry routeEntry) {
-		if (routeEntries == null) {
-			routeEntries = new ArrayList<RouteEntry>();
+    /**
+     * @return the beforeMethods
+     */
+    public List<RouteMethod> getBeforeMethods() {
+        return beforeMethods;
+    }
 
-		} else if (routeEntries.contains(routeEntry)) {
-			return;
-		}
+    /**
+     * @return the afterMethods
+     */
+    public List<RouteMethod> getAfterMethods() {
+        return afterMethods;
+    }
 
-		routeEntries.add(routeEntry);
-	}
+    /**
+     * @return the routeExceptions
+     */
+    public List<RouteException> getRouteExceptions() {
+        return routeExceptions;
+    }
 
-	/**
-	 * @param interceptor
-	 */
-	protected void addInterceptor(Interceptor interceptor) {
-		if (interceptors == null) {
-			interceptors = new ArrayList<Interceptor>();
+    /**
+     * @return
+     */
+    protected RouteEntry getRouteEntry() {
+        if (interceptors == null && beforeMethods == null && afterMethods == null && routeExceptions == null) {
+            if (routeEntries == null || routeEntries.isEmpty()) {
+                return null;
+            }
 
-		} else if (interceptors.contains(interceptor)) {
-			return;
-		}
+            if (routeEntries.size() == 1) {
+                return routeEntries.get(0).getRouteEntry();
+            }
+        }
 
-		interceptors.add(interceptor);
-	}
+        if (routeEntries != KernelLang.NULL_LIST_SET) {
+            addRouteEntries(this, routeEntries);
+            routeEntries = KernelLang.NULL_LIST_SET;
 
-	/**
-	 * @param routeMethod
-	 */
-	protected void addBeforeMethod(RouteMethod routeMethod) {
-		if (beforeMethods == null) {
-			beforeMethods = new ArrayList<RouteMethod>();
-		}
+            if (beforeMethods != null) {
+                beforeMethods = beforeMethods.isEmpty() ? null : Collections.unmodifiableList(beforeMethods);
+            }
 
-		beforeMethods.add(routeMethod);
-	}
+            if (afterMethods != null) {
+                afterMethods = afterMethods.isEmpty() ? null : Collections.unmodifiableList(afterMethods);
+            }
 
-	/**
-	 * @param routeMethod
-	 */
-	protected void addAfterMethod(RouteMethod routeMethod) {
-		if (afterMethods == null) {
-			afterMethods = new ArrayList<RouteMethod>();
-		}
+            if (routeExceptions != null) {
+                routeExceptions = routeExceptions.isEmpty() ? null : Collections.unmodifiableList(routeExceptions);
+            }
+        }
 
-		afterMethods.add(routeMethod);
-	}
+        return this;
+    }
 
-	/**
-	 * @param routeException
-	 */
-	protected void addRouteException(RouteException routeException) {
-		if (routeExceptions == null) {
-			routeExceptions = new ArrayList<RouteException>();
-		}
+    /**
+     * @param routeEntry
+     */
+    protected void addRouteEntries(RouteEntry routeEntry) {
+        if (routeEntries == null) {
+            routeEntries = new ArrayList<RouteEntry>();
 
-		routeExceptions.add(routeException);
-	}
+        } else if (routeEntries.contains(routeEntry)) {
+            return;
+        }
 
-	/**
-	 * @return
-	 */
-	public IRoute getIRoute() {
-		if (interceptors != null) {
-			for (Interceptor interceptor : interceptors) {
-				if (interceptor instanceof IRoute) {
-					return (IRoute) interceptor;
-				}
-			}
-		}
+        routeEntries.add(routeEntry);
+    }
 
-		if (routeEntries != null) {
-			for (RouteEntry routeEntry : routeEntries) {
-				IRoute iRoute = routeEntry.getIRoute();
-				if (iRoute != null) {
-					return iRoute;
-				}
-			}
-		}
+    /**
+     * @param interceptor
+     */
+    protected void addInterceptor(Interceptor interceptor) {
+        if (interceptors == null) {
+            interceptors = new ArrayList<Interceptor>();
 
-		return null;
-	}
+        } else if (interceptors.contains(interceptor)) {
+            return;
+        }
 
-	/**
-	 * @param input
-	 * @param iterator
-	 * @return
-	 * @throws Exception
-	 */
-	public OnPut intercept(Iterator<Interceptor> iterator, Input input) throws Throwable {
-		if (iterator == null || !iterator.hasNext()) {
-			return invoke(input, this);
+        interceptors.add(interceptor);
+    }
 
-		} else {
-			return iterator.next().intercept(iterator, input);
-		}
-	}
+    /**
+     * @param routeMethod
+     */
+    protected void addBeforeMethod(RouteMethod routeMethod) {
+        if (beforeMethods == null) {
+            beforeMethods = new ArrayList<RouteMethod>();
+        }
 
-	/**
-	 * @param input
-	 * @param routeEntry
-	 * @return
-	 * @throws Exception
-	 */
-	public static OnPut intercept(Input input, RouteEntry routeEntry) throws Throwable {
-		if (routeEntry == null) {
-			return invoke(input, routeEntry);
+        beforeMethods.add(routeMethod);
+    }
 
-		} else {
-			List<Interceptor> interceptors = routeEntry.interceptors;
-			return routeEntry.intercept(interceptors == null ? null : interceptors.iterator(), input);
-		}
-	}
+    /**
+     * @param routeMethod
+     */
+    protected void addAfterMethod(RouteMethod routeMethod) {
+        if (afterMethods == null) {
+            afterMethods = new ArrayList<RouteMethod>();
+        }
 
-	/**
-	 * @param input
-	 * @param routeEntry
-	 * @return
-	 * @throws Throwable
-	 */
-	public static OnPut invoke(Input input, RouteEntry routeEntry) throws Throwable {
-		IDispatcher dispatcher = input.getDispatcher();
-		RouteAction routeAction = input.getRouteAction();
-		if (dispatcher == null || routeAction == null) {
-			return null;
-		}
+        afterMethods.add(routeMethod);
+    }
 
-		Object routeBean = routeAction.getRouteEntity().getRouteBean(input);
-		OnPut onPut = dispatcher.onPut(input, routeBean);
-		try {
-			onPut.open();
-			invoke(routeBean, onPut, routeEntry);
-			if (onPut.getReturnThrowable() != null) {
-				throw onPut.getReturnThrowable();
-			}
+    /**
+     * @param routeException
+     */
+    protected void addRouteException(RouteException routeException) {
+        if (routeExceptions == null) {
+            routeExceptions = new ArrayList<RouteException>();
+        }
 
-			dispatcher.resolveReturnedValue(routeBean, onPut);
+        routeExceptions.add(routeException);
+    }
 
-		} catch (Throwable e) {
-			if (e instanceof InvocationTargetException) {
-				e = e.getCause();
-			}
+    /**
+     * @return
+     */
+    public IRoute getIRoute() {
+        if (interceptors != null) {
+            for (Interceptor interceptor : interceptors) {
+                if (interceptor instanceof IRoute) {
+                    return (IRoute) interceptor;
+                }
+            }
+        }
 
-			onPut.setReturnThrowable(e);
-			if (!dispatcher.returnThrowable(e, routeBean, onPut)) {
-				throw e;
-			}
+        if (routeEntries != null) {
+            for (RouteEntry routeEntry : routeEntries) {
+                IRoute iRoute = routeEntry.getIRoute();
+                if (iRoute != null) {
+                    return iRoute;
+                }
+            }
+        }
 
-		} finally {
-			OnPut.close();
-		}
+        return null;
+    }
 
-		return onPut;
-	}
+    /**
+     * @param input
+     * @param iterator
+     * @return
+     * @throws Exception
+     */
+    public OnPut intercept(Iterator<Interceptor> iterator, Input input) throws Throwable {
+        if (iterator == null || !iterator.hasNext()) {
+            return invoke(input, this);
 
-	/**
-	 * @param routeBean
-	 * @param onPut
-	 * @param routeEntry
-	 * @throws Throwable
-	 */
-	public static void invoke(Object routeBean, OnPut onPut, RouteEntry routeEntry) throws Throwable {
-		if (routeEntry == null) {
-			RouteAction routeAction = onPut.getInput().getRouteAction();
-			if (routeAction != null) {
-				routeAction.getRouteMethod().invoke(routeBean, onPut);
-			}
-
-		} else {
-			List<RouteMethod> routeMethods = routeEntry.beforeMethods;
-			if (routeMethods != null) {
-				for (RouteMethod routeMethod : routeMethods) {
-					routeMethod.invoke(routeBean, onPut);
-				}
-			}
-
-			invoke(routeBean, onPut, null);
-			routeMethods = routeEntry.afterMethods;
-			if (routeMethods != null) {
-				for (RouteMethod routeMethod : routeMethods) {
-					routeMethod.invoke(routeBean, onPut);
-				}
-			}
-		}
-	}
+        } else {
+            return iterator.next().intercept(iterator, input);
+        }
+    }
 }

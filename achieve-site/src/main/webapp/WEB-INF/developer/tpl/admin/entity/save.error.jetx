@@ -1,0 +1,4 @@
+{
+"statusCode": 300,
+"message": "\${message ? ${Pag::isI18n() ? "message.lang ? Pag::lang(message.lang) : message.value" : "message.value"}  : ${Pag::getLang("保存失败", false)}}"
+}

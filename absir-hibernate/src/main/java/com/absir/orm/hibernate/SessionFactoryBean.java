@@ -1,27 +1,11 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-1-22 上午9:49:44
  */
 package com.absir.orm.hibernate;
-
-import java.lang.reflect.Method;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import org.hibernate.SessionFactory;
-import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
-import org.hibernate.internal.SessionFactoryImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.absir.bean.basis.Basis;
 import com.absir.bean.basis.BeanFactory;
@@ -37,263 +21,297 @@ import com.absir.orm.hibernate.boost.EntityAssoc.AssocEntity;
 import com.absir.orm.hibernate.boost.EntityAssoc.AssocField;
 import com.absir.orm.hibernate.boost.EntityAssoc.EntityAssocEntity;
 import com.absir.orm.value.JePermission;
+import org.hibernate.SessionFactory;
+import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
+import org.hibernate.internal.SessionFactoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Method;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * @author absir
- * 
  */
 @Basis
 @Bean
 public class SessionFactoryBean implements IBeanFactoryStopping {
 
-	/** LOGGER */
-	protected static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryBean.class);
+    /**
+     * LOGGER
+     */
+    protected static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryBean.class);
 
-	/** driverShared */
-	@Value("driver.shared")
-	private boolean driverShared;
+    /**
+     * driverShared
+     */
+    @Value("driver.shared")
+    private boolean driverShared;
 
-	/** stoppingCommands */
-	@Value("driver.stopping.command")
-	private Set<String> driverStoppingCommand;
+    /**
+     * stoppingCommands
+     */
+    @Value("driver.stopping.command")
+    private Set<String> driverStoppingCommand;
 
-	/** sessionFactory */
-	private SessionFactoryImpl sessionFactory;
+    /**
+     * sessionFactory
+     */
+    private SessionFactoryImpl sessionFactory;
 
-	/** nameMapSessionFactory */
-	private Map<String, SessionFactoryImpl> nameMapSessionFactory = new HashMap<String, SessionFactoryImpl>();
+    /**
+     * nameMapSessionFactory
+     */
+    private Map<String, SessionFactoryImpl> nameMapSessionFactory = new HashMap<String, SessionFactoryImpl>();
 
-	/** sessionFactoryMapName */
-	private Map<SessionFactoryImpl, String> sessionFactoryMapName = new HashMap<SessionFactoryImpl, String>();
+    /**
+     * sessionFactoryMapName
+     */
+    private Map<SessionFactoryImpl, String> sessionFactoryMapName = new HashMap<SessionFactoryImpl, String>();
 
-	@Value(value = "entity.assoc.depth")
-	private int assocDepth = 8;
+    @Value(value = "entity.assoc.depth")
+    private int assocDepth = 8;
 
-	/** nameMapPermissions */
-	private Map<String, JePermission[]> nameMapPermissions = new HashMap<String, JePermission[]>();
+    /**
+     * nameMapPermissions
+     */
+    private Map<String, JePermission[]> nameMapPermissions = new HashMap<String, JePermission[]>();
 
-	/** nameMapAssocEntities */
-	private Map<String, List<AssocEntity>> nameMapAssocEntities = new HashMap<String, List<AssocEntity>>();
+    /**
+     * nameMapAssocEntities
+     */
+    private Map<String, List<AssocEntity>> nameMapAssocEntities = new HashMap<String, List<AssocEntity>>();
 
-	/** nameMapAssocFields */
-	private Map<String, List<AssocField>> nameMapAssocFields = new HashMap<String, List<AssocField>>();
+    /**
+     * nameMapAssocFields
+     */
+    private Map<String, List<AssocField>> nameMapAssocFields = new HashMap<String, List<AssocField>>();
 
-	/** nameMapEntityAssocEntity */
-	private Map<String, EntityAssocEntity> nameMapEntityAssocEntity = new HashMap<String, EntityAssocEntity>();
+    /**
+     * nameMapEntityAssocEntity
+     */
+    private Map<String, EntityAssocEntity> nameMapEntityAssocEntity = new HashMap<String, EntityAssocEntity>();
 
-	/** entityNameMapJpaEntityName */
-	private Map<String, String> entityNameMapJpaEntityName = new HashMap<String, String>();
+    /**
+     * entityNameMapJpaEntityName
+     */
+    private Map<String, String> entityNameMapJpaEntityName = new HashMap<String, String>();
 
-	/** jpaEntityNameMapEntityClassFactory */
-	private Map<String, Entry<Class<?>, SessionFactory>> jpaEntityNameMapEntityClassFactory = new HashMap<String, Entry<Class<?>, SessionFactory>>();
+    /**
+     * jpaEntityNameMapEntityClassFactory
+     */
+    private Map<String, Entry<Class<?>, SessionFactory>> jpaEntityNameMapEntityClassFactory = new HashMap<String, Entry<Class<?>, SessionFactory>>();
 
-	/**
-	 * @param name
-	 * @param sessionFactory
-	 */
-	protected void setSessionFactory(String name, SessionFactoryImpl sessionFactory) {
-		if (KernelString.isEmpty(name)) {
-			this.sessionFactory = sessionFactory;
+    /**
+     * @param sessionFactory
+     * @return
+     */
+    public static ConnectionProvider getConnectionProvider(SessionFactoryImpl sessionFactory) {
+        try {
+            Object connectionProvider = KernelObject.declaredGet(
+                    sessionFactory.getJdbcServices().getBootstrapJdbcConnectionAccess(), "connectionProvider");
+            return connectionProvider == null || !(connectionProvider instanceof ConnectionProvider) ? null
+                    : (ConnectionProvider) connectionProvider;
 
-		} else {
-			nameMapSessionFactory.put(name, sessionFactory);
-			sessionFactoryMapName.put(sessionFactory, name);
-		}
-	}
+        } catch (Exception e) {
+            if (Environment.getEnvironment() == Environment.DEVELOP) {
+                e.printStackTrace();
+            }
+        }
 
-	/**
-	 * @return the sessionFactory
-	 */
-	public SessionFactoryImpl getSessionFactory() {
-		return sessionFactory;
-	}
+        return null;
+    }
 
-	/**
-	 * @param name
-	 * @return
-	 */
-	public SessionFactory getNameMapSessionFactory(String name) {
-		return name == null ? sessionFactory : nameMapSessionFactory.get(name);
-	}
+    /**
+     * @param connectionProvider
+     */
+    public static void stopConnectionProvider(SessionFactoryImpl sessionFactory) {
+        if (sessionFactory == null) {
+            return;
+        }
 
-	/**
-	 * @param sessionFactory
-	 * @return
-	 */
-	public String getSessionFactoryMapName(SessionFactory sessionFactory) {
-		return sessionFactoryMapName.get(sessionFactory);
-	}
+        try {
+            sessionFactory.close();
 
-	/**
-	 * @return
-	 */
-	public Set<String> getNameMapSessionFactoryNames() {
-		return nameMapSessionFactory.keySet();
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-	/**
-	 * @return the assocDepth
-	 */
-	public int getAssocDepth() {
-		return assocDepth;
-	}
+        ConnectionProvider connectionProvider = getConnectionProvider(sessionFactory);
+        if (connectionProvider == null) {
+            return;
+        }
 
-	/**
-	 * @return the nameMapPermissions
-	 */
-	public Map<String, JePermission[]> getNameMapPermissions() {
-		return nameMapPermissions;
-	}
+        Method method = KernelReflect.declaredMethod(connectionProvider.getClass(), "close");
+        if (method == null) {
+            method = KernelReflect.declaredMethod(connectionProvider.getClass(), "stop");
+            if (method == null) {
+                method = KernelReflect.declaredMethod(connectionProvider.getClass(), "destory");
+            }
+        }
 
-	/**
-	 * @return the nameMapAssocEntities
-	 */
-	public Map<String, List<AssocEntity>> getNameMapAssocEntities() {
-		return nameMapAssocEntities;
-	}
+        if (method == null) {
+            LOGGER.info("stop " + connectionProvider + " failed");
 
-	/**
-	 * @return the nameMapAssocFields
-	 */
-	public Map<String, List<AssocField>> getNameMapAssocFields() {
-		return nameMapAssocFields;
-	}
+        } else {
+            try {
+                LOGGER.info("stop " + connectionProvider + " at " + method.getName());
+                method.invoke(connectionProvider);
 
-	/**
-	 * @return the nameMapEntityAssocEntity
-	 */
-	public Map<String, EntityAssocEntity> getNameMapEntityAssocEntity() {
-		return nameMapEntityAssocEntity;
-	}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-	/**
-	 * @return the entityNameMapJpaEntityName
-	 */
-	public Map<String, String> getEntityNameMapJpaEntityName() {
-		return entityNameMapJpaEntityName;
-	}
+        Object ds = KernelObject.declaredGet(connectionProvider, "ds");
+        if (ds != null) {
+            KernelObject.declaredSend(ds, "close", true);
+        }
+    }
 
-	/**
-	 * @return the jpaEntityNameMapEntityClassFactory
-	 */
-	public Map<String, Entry<Class<?>, SessionFactory>> getJpaEntityNameMapEntityClassFactory() {
-		return jpaEntityNameMapEntityClassFactory;
-	}
+    /**
+     * @param name
+     * @param sessionFactory
+     */
+    protected void setSessionFactory(String name, SessionFactoryImpl sessionFactory) {
+        if (KernelString.isEmpty(name)) {
+            this.sessionFactory = sessionFactory;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-	 */
-	@Override
-	public int getOrder() {
-		return 2048;
-	}
+        } else {
+            nameMapSessionFactory.put(name, sessionFactory);
+            sessionFactoryMapName.put(sessionFactory, name);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.absir.bean.config.IBeanFactoryStopping#stopping(com.absir.bean.basis
-	 * .BeanFactory)
-	 */
-	@Override
-	public void stopping(BeanFactory beanFactory) {
-		LOGGER.info("stop begin");
-		stopConnectionProvider(sessionFactory);
-		for (SessionFactoryImpl sessionFactory : sessionFactoryMapName.keySet()) {
-			stopConnectionProvider(sessionFactory);
-		}
+    /**
+     * @return the sessionFactory
+     */
+    public SessionFactoryImpl getSessionFactory() {
+        return sessionFactory;
+    }
 
-		Environment.setStarted(false);
-		if (!driverShared) {
-			Enumeration<Driver> enumeration = DriverManager.getDrivers();
-			while (enumeration.hasMoreElements()) {
-				Driver driver = enumeration.nextElement();
-				try {
-					DriverManager.deregisterDriver(driver);
+    /**
+     * @param name
+     * @return
+     */
+    public SessionFactory getNameMapSessionFactory(String name) {
+        return name == null ? sessionFactory : nameMapSessionFactory.get(name);
+    }
 
-				} catch (Exception e) {
-					LOGGER.error("deregisterDriver " + driver, e);
-				}
-			}
-		}
+    /**
+     * @param sessionFactory
+     * @return
+     */
+    public String getSessionFactoryMapName(SessionFactory sessionFactory) {
+        return sessionFactoryMapName.get(sessionFactory);
+    }
 
-		if (driverStoppingCommand != null) {
-			for (String stoppingCommand : driverStoppingCommand) {
-				KernelClass.invokeCommandString(stoppingCommand);
-			}
+    /**
+     * @return
+     */
+    public Set<String> getNameMapSessionFactoryNames() {
+        return nameMapSessionFactory.keySet();
+    }
 
-			driverStoppingCommand = null;
-		}
+    /**
+     * @return the assocDepth
+     */
+    public int getAssocDepth() {
+        return assocDepth;
+    }
 
-		LOGGER.info("stop complete");
-	}
+    /**
+     * @return the nameMapPermissions
+     */
+    public Map<String, JePermission[]> getNameMapPermissions() {
+        return nameMapPermissions;
+    }
 
-	/**
-	 * @param sessionFactory
-	 * @return
-	 */
-	public static ConnectionProvider getConnectionProvider(SessionFactoryImpl sessionFactory) {
-		try {
-			Object connectionProvider = KernelObject.declaredGet(
-					sessionFactory.getJdbcServices().getBootstrapJdbcConnectionAccess(), "connectionProvider");
-			return connectionProvider == null || !(connectionProvider instanceof ConnectionProvider) ? null
-					: (ConnectionProvider) connectionProvider;
+    /**
+     * @return the nameMapAssocEntities
+     */
+    public Map<String, List<AssocEntity>> getNameMapAssocEntities() {
+        return nameMapAssocEntities;
+    }
 
-		} catch (Exception e) {
-			if (Environment.getEnvironment() == Environment.DEVELOP) {
-				e.printStackTrace();
-			}
-		}
+    /**
+     * @return the nameMapAssocFields
+     */
+    public Map<String, List<AssocField>> getNameMapAssocFields() {
+        return nameMapAssocFields;
+    }
 
-		return null;
-	}
+    /**
+     * @return the nameMapEntityAssocEntity
+     */
+    public Map<String, EntityAssocEntity> getNameMapEntityAssocEntity() {
+        return nameMapEntityAssocEntity;
+    }
 
-	/**
-	 * @param connectionProvider
-	 */
-	public static void stopConnectionProvider(SessionFactoryImpl sessionFactory) {
-		if (sessionFactory == null) {
-			return;
-		}
+    /**
+     * @return the entityNameMapJpaEntityName
+     */
+    public Map<String, String> getEntityNameMapJpaEntityName() {
+        return entityNameMapJpaEntityName;
+    }
 
-		try {
-			sessionFactory.close();
+    /**
+     * @return the jpaEntityNameMapEntityClassFactory
+     */
+    public Map<String, Entry<Class<?>, SessionFactory>> getJpaEntityNameMapEntityClassFactory() {
+        return jpaEntityNameMapEntityClassFactory;
+    }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
+     */
+    @Override
+    public int getOrder() {
+        return 2048;
+    }
 
-		ConnectionProvider connectionProvider = getConnectionProvider(sessionFactory);
-		if (connectionProvider == null) {
-			return;
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.absir.bean.config.IBeanFactoryStopping#stopping(com.absir.bean.basis
+     * .BeanFactory)
+     */
+    @Override
+    public void stopping(BeanFactory beanFactory) {
+        LOGGER.info("stop begin");
+        stopConnectionProvider(sessionFactory);
+        for (SessionFactoryImpl sessionFactory : sessionFactoryMapName.keySet()) {
+            stopConnectionProvider(sessionFactory);
+        }
 
-		Method method = KernelReflect.declaredMethod(connectionProvider.getClass(), "close");
-		if (method == null) {
-			method = KernelReflect.declaredMethod(connectionProvider.getClass(), "stop");
-			if (method == null) {
-				method = KernelReflect.declaredMethod(connectionProvider.getClass(), "destory");
-			}
-		}
+        Environment.setStarted(false);
+        if (!driverShared) {
+            Enumeration<Driver> enumeration = DriverManager.getDrivers();
+            while (enumeration.hasMoreElements()) {
+                Driver driver = enumeration.nextElement();
+                try {
+                    DriverManager.deregisterDriver(driver);
 
-		if (method == null) {
-			LOGGER.info("stop " + connectionProvider + " failed");
+                } catch (Exception e) {
+                    LOGGER.error("deregisterDriver " + driver, e);
+                }
+            }
+        }
 
-		} else {
-			try {
-				LOGGER.info("stop " + connectionProvider + " at " + method.getName());
-				method.invoke(connectionProvider);
+        if (driverStoppingCommand != null) {
+            for (String stoppingCommand : driverStoppingCommand) {
+                KernelClass.invokeCommandString(stoppingCommand);
+            }
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+            driverStoppingCommand = null;
+        }
 
-		Object ds = KernelObject.declaredGet(connectionProvider, "ds");
-		if (ds != null) {
-			KernelObject.declaredSend(ds, "close", true);
-		}
-	}
+        LOGGER.info("stop complete");
+    }
 }

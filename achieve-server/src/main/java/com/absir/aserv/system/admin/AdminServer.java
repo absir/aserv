@@ -1,15 +1,11 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-4-6 下午1:06:37
  */
 package com.absir.aserv.system.admin;
-
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map.Entry;
 
 import com.absir.aserv.menu.MenuContextUtils;
 import com.absir.aserv.system.bean.value.JeRoleLevel;
@@ -36,97 +32,103 @@ import com.absir.server.value.Before;
 import com.absir.server.value.Interceptors;
 import com.absir.server.value.Mapping;
 
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map.Entry;
+
 /**
  * @author absir
- * 
+ *
  */
 @Interceptors(AdminServer.Route.class)
 public abstract class AdminServer {
 
-	/** route */
-	private static String route = "admin";
+    /**
+     * remember
+     */
+    @Value("admin.login.remember")
+    protected static boolean remember = true;
+    /**
+     * roleLevel
+     */
+    @Value("admin.login.level")
+    protected static int roleLevel = JeRoleLevel.ROLE_ADMIN.ordinal();
+    /**
+     * route
+     */
+    private static String route = "admin";
 
-	/** remember */
-	@Value("admin.login.remember")
-	protected static boolean remember = true;
+    /**
+     * @return
+     */
+    public static String getRoute() {
+        return route;
+    }
 
-	/** roleLevel */
-	@Value("admin.login.level")
-	protected static int roleLevel = JeRoleLevel.ROLE_ADMIN.ordinal();
+    /**
+     * @throws Exception
+     */
+    @Before
+    protected SecurityContext onAuthentication(Input input) throws Exception {
+        SecurityContext securityContext = SecurityService.ME.autoLogin("admin", true, JeRoleLevel.ROLE_ADMIN.ordinal(), input);
+        if (securityContext == null || !securityContext.getUser().isActivation()) {
+            ServerResolverRedirect.redirect(MenuContextUtils.getAdminRoute() + "login", false, input);
+        }
 
-	/**
-	 * @return
-	 */
-	public static String getRoute() {
-		return route;
-	}
+        return securityContext;
+    }
 
-	/**
-	 * @throws Exception
-	 * 
-	 */
-	@Before
-	protected SecurityContext onAuthentication(Input input) throws Exception {
-		SecurityContext securityContext = SecurityService.ME.autoLogin("admin", true, JeRoleLevel.ROLE_ADMIN.ordinal(), input);
-		if (securityContext == null || !securityContext.getUser().isActivation()) {
-			ServerResolverRedirect.redirect(MenuContextUtils.getAdminRoute() + "/login", false, input);
-		}
+    /**
+     * @param onPut
+     */
+    @After
+    protected void onView(OnPut onPut) {
+        if (onPut.getReturnedResolver() == null) {
+            RouteAction routeAction = onPut.getInput().getRouteAction();
+            if (routeAction != null) {
+                Class<?> returnType = routeAction.getRouteMethod().getMethod().getReturnType();
+                if (returnType == void.class || returnType == String.class) {
+                    if (returnType == void.class || onPut.getReturnValue() == null) {
+                        String routeView = routeAction.getRouteView();
+                        if (routeView == null) {
+                            routeView = HelperFileName.normalizeNoEndSeparator(new String(onPut.getInput().getRouteMatcher().getMapping()));
+                            routeView = routeView.replaceFirst(route, "admin");
+                            routeAction.setRouteView(routeView);
+                        }
 
-		return securityContext;
-	}
+                        onPut.setReturnValue(routeView);
+                    }
 
-	/**
-	 * @param onPut
-	 */
-	@After
-	protected void onView(OnPut onPut) {
-		if (onPut.getReturnedResolver() == null) {
-			RouteAction routeAction = onPut.getInput().getRouteAction();
-			if (routeAction != null) {
-				Class<?> returnType = routeAction.getRouteMethod().getMethod().getReturnType();
-				if (returnType == void.class || returnType == String.class) {
-					if (returnType == void.class || onPut.getReturnValue() == null) {
-						String routeView = routeAction.getRouteView();
-						if (routeView == null) {
-							routeView = HelperFileName.normalizeNoEndSeparator(new String(onPut.getInput().getRouteMatcher().getMapping()));
-							routeView = routeView.replaceFirst(route, "admin");
-							routeAction.setRouteView(routeView);
-						}
+                    onPut.setReturnedResolver(ReturnedResolverView.ME);
+                }
+            }
+        }
+    }
 
-						onPut.setReturnValue(routeView);
-					}
+    /**
+     * @author absir
+     */
+    public static class Route extends TransactionIntercepter implements IRoute {
 
-					onPut.setReturnedResolver(ReturnedResolverView.ME);
-				}
-			}
-		}
-	}
+        /**
+         * @param route
+         */
+        @Inject(type = InjectType.Selectable)
+        private void setRoute(@Value(value = "webmvc.admin.route") String route) {
+            AdminServer.route = route;
+        }
 
-	/**
-	 * @author absir
-	 * 
-	 */
-	public static class Route extends TransactionIntercepter implements IRoute {
-
-		/**
-		 * @param route
-		 */
-		@Inject(type = InjectType.Selectable)
-		private void setRoute(@Value(value = "webmvc.admin.route") String route) {
-			AdminServer.route = route;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see com.absir.server.route.IRoute#routeMapping(java.lang.String,
-		 * java.util.Map.Entry, java.lang.reflect.Method, java.util.List,
-		 * java.util.List, java.util.List)
-		 */
-		@Override
-		public void routeMapping(String name, Entry<Mapping, List<String>> mapping, Method method, List<String> parameterPathNames, List<String> mappings, List<InMethod> inMethods) {
-			RouteMapping.routeMapping(AdminServer.route, name, mapping, method, method.getName(), KernelString.implode(KernelArray.repeat('*', parameterPathNames.size()), '/'),
-					KernelCollection.toArray(parameterPathNames, String.class), mappings, inMethods);
-		}
-	}
+        /*
+         * (non-Javadoc)
+         *
+         * @see com.absir.server.route.IRoute#routeMapping(java.lang.String,
+         * java.util.Map.Entry, java.lang.reflect.Method, java.util.List,
+         * java.util.List, java.util.List)
+         */
+        @Override
+        public void routeMapping(String name, Entry<Mapping, List<String>> mapping, Method method, List<String> parameterPathNames, List<String> mappings, List<InMethod> inMethods) {
+            RouteMapping.routeMapping(AdminServer.route, name, mapping, method, method.getName(), KernelString.implode(KernelArray.repeat('*', parameterPathNames.size()), '/'),
+                    KernelCollection.toArray(parameterPathNames, String.class), mappings, inMethods);
+        }
+    }
 }

@@ -1,4 +1,4 @@
-<%@ include file="../../common/edit.jsp"%>
+<%@ include file="../../common/edit.jsp" %>
 <%
-	input.removeAttr("name");
+    input.removeAttr("name");
 %>

@@ -1,39 +1,54 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2013-12-24 上午10:47:07
  */
 package com.absir.server.in;
 
 /**
  * @author absir
- * 
  */
 public enum InMethod {
 
-	/** GET */
-	GET,
+    /**
+     * GET
+     */
+    GET,
 
-	/** POST */
-	POST,
+    /**
+     * POST
+     */
+    POST,
 
-	/** HEAD */
-	HEAD,
+    /**
+     * HEAD
+     */
+    HEAD,
 
-	/** TRACE */
-	TRACE,
+    /**
+     * TRACE
+     */
+    TRACE,
 
-	/** PUT */
-	PUT,
+    /**
+     * PUT
+     */
+    PUT,
 
-	/** DELETE */
-	DELETE,
+    /**
+     * DELETE
+     */
+    DELETE,
 
-	/** OPTIONS */
-	OPTIONS,
+    /**
+     * OPTIONS
+     */
+    OPTIONS,
 
-	/** CONNECT */
-	CONNECT,
+    /**
+     * CONNECT
+     */
+    CONNECT,
 }

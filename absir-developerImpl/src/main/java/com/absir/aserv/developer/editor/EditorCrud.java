@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-4-30 下午5:23:31
  */
 package com.absir.aserv.developer.editor;
@@ -13,43 +13,43 @@ import com.absir.property.PropertyResolverAbstract;
 
 /**
  * @author absir
- * 
+ *
  */
 @Bean
 public class EditorCrud extends PropertyResolverAbstract<EditorObject, JaCrud> {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-	 * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-	 */
-	@Override
-	public EditorObject getPropertyObjectAnnotation(EditorObject propertyObject, JaCrud annotation) {
-		if (propertyObject == null) {
-			propertyObject = new EditorObject();
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
+     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
+     */
+    @Override
+    public EditorObject getPropertyObjectAnnotation(EditorObject propertyObject, JaCrud annotation) {
+        if (propertyObject == null) {
+            propertyObject = new EditorObject();
+        }
 
-		propertyObject.setCrud(annotation);
-		return propertyObject;
-	}
+        propertyObject.setCrud(annotation);
+        return propertyObject;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-	 * (com.absir.property.PropertyObject, java.lang.String)
-	 */
-	@Override
-	public EditorObject getPropertyObjectAnnotationValue(EditorObject propertyObject, String annotationValue) {
-		if (propertyObject == null) {
-			propertyObject = new EditorObject();
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
+     * (com.absir.property.PropertyObject, java.lang.String)
+     */
+    @Override
+    public EditorObject getPropertyObjectAnnotationValue(EditorObject propertyObject, String annotationValue) {
+        if (propertyObject == null) {
+            propertyObject = new EditorObject();
+        }
 
-		propertyObject.setCrudValue(annotationValue);
-		return propertyObject;
-	}
+        propertyObject.setCrudValue(annotationValue);
+        return propertyObject;
+    }
 
 }

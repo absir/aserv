@@ -1,19 +1,11 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014年10月9日 下午2:57:07
  */
 package com.absir.aserv.system.bean;
-
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-
-import org.hibernate.Session;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.absir.aserv.crud.CrudHandler;
 import com.absir.aserv.crud.value.ICrudBean;
@@ -21,147 +13,190 @@ import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.base.JbBean;
 import com.absir.aserv.system.bean.proxy.JiPass;
-import com.absir.aserv.system.bean.value.JaCrud;
+import com.absir.aserv.system.bean.value.*;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
-import com.absir.aserv.system.bean.value.JaEdit;
-import com.absir.aserv.system.bean.value.JaLang;
-import com.absir.aserv.system.bean.value.JaModel;
-import com.absir.aserv.system.bean.value.JaName;
 import com.absir.aserv.system.crud.DateCrudFactory;
 import com.absir.aserv.system.crud.UploadCrudFactory;
-import com.absir.aserv.system.dao.BeanDao;
+import com.absir.orm.value.JaColum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.Cacheable;
+import javax.persistence.Entity;
+import javax.persistence.Index;
 
 /**
  * @author absir
- *
  */
-@MaEntity(parent = { @MaMenu("附件管理") }, name = "上传")
+@MaEntity(parent = {@MaMenu("附件管理")}, name = "上传")
 @JaModel(desc = true)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 public class JUpload extends JbBean implements JiPass, ICrudBean {
 
-	@JaLang("文件路径")
-	@JaEdit(groups = { JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST })
-	@Column(unique = true)
-	private String filePath;
+    @JaLang("目录路径")
+    @JaColum(indexs = @Index(columnList = "dirPath,filename", unique = true))
+    private String dirPath;
 
-	@JaLang(value = "文件类型")
-	@JaEdit(groups = JaEdit.GROUP_LIST)
-	private String fileType;
+    @JaLang("文件名称")
+    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
+    private String filename;
 
-	@JaLang(value = "关联用户", tag = "assocUser")
-	@JaEdit(groups = JaEdit.GROUP_LIST)
-	@JaName(value = "JUser")
-	private long userId;
+    /**
+     * NULL为文件夹
+     */
+    @JaLang(value = "文件类型")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private String fileType;
 
-	@JaLang("创建时间")
-	@JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
-	@JaCrud(value = "dateCrudFactory", cruds = { Crud.CREATE }, factory = DateCrudFactory.class)
-	private long createTime;
+    @JaLang("图片")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private boolean imaged;
 
-	@JaLang("过期时间")
-	@JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
-	private long passTime;
+    @JaLang("文件大小")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private long fileSize;
 
-	/**
-	 * @return the filePath
-	 */
-	public String getFilePath() {
-		return filePath;
-	}
+    @JaLang(value = "关联用户", tag = "assocUser")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    @JaName(value = "JUser")
+    private long userId;
 
-	/**
-	 * @param filePath
-	 *            the filePath to set
-	 */
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
-	}
+    @JaLang("创建时间")
+    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
+    @JaCrud(value = "dateCrudFactory", cruds = {Crud.CREATE}, factory = DateCrudFactory.class)
+    private long createTime;
 
-	/**
-	 * @return the fileType
-	 */
-	public String getFileType() {
-		return fileType;
-	}
+    @JaLang("过期时间")
+    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
+    private long passTime;
 
-	/**
-	 * @param fileType
-	 *            the fileType to set
-	 */
-	public void setFileType(String fileType) {
-		this.fileType = fileType;
-	}
+    /**
+     * @return
+     */
+    public String getDirPath() {
+        if (dirPath == null) {
+            dirPath = "";
+        }
 
-	/**
-	 * @return the userId
-	 */
-	public long getUserId() {
-		return userId;
-	}
+        return dirPath;
+    }
 
-	/**
-	 * @param userId
-	 *            the userId to set
-	 */
-	public void setUserId(long userId) {
-		this.userId = userId;
-	}
+    /**
+     * @param dirPath
+     */
+    public void setDirPath(String dirPath) {
+        this.dirPath = dirPath;
+    }
 
-	/**
-	 * @return the createTime
-	 */
-	public long getCreateTime() {
-		return createTime;
-	}
+    /**
+     * @return
+     */
+    public String getFilename() {
+        return filename;
+    }
 
-	/**
-	 * @param createTime
-	 *            the createTime to set
-	 */
-	public void setCreateTime(long createTime) {
-		this.createTime = createTime;
-	}
+    /**
+     * @param filename
+     */
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 
-	/**
-	 * @return the passTime
-	 */
-	public long getPassTime() {
-		return passTime;
-	}
+    /**
+     * @return the fileType
+     */
+    public String getFileType() {
+        return fileType;
+    }
 
-	/**
-	 * @param passTime
-	 *            the passTime to set
-	 */
-	public void setPassTime(long passTime) {
-		this.passTime = passTime;
-	}
+    /**
+     * @param fileType the fileType to set
+     */
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.absir.aserv.crud.value.ICrudBean#proccessCrud(com.absir.aserv
-	 * .system.bean.value.JaCrud.Crud, com.absir.aserv.crud.CrudHandler)
-	 */
-	@Override
-	public void proccessCrud(Crud crud, CrudHandler handler) {
-		if (crud == Crud.DELETE) {
-			Session session = BeanDao.getSession();
-			session.flush();
-			try {
-				session.delete(this);
-				session.flush();
-				UploadCrudFactory.ME.delete(filePath);
+    /**
+     * @return
+     */
+    public boolean isImaged() {
+        return imaged;
+    }
 
-			} catch (Exception e) {
-				session.cancelQuery();
-				passTime = 0;
-				session.merge(this);
-			}
-		}
-	}
+    /**
+     * @param imaged
+     */
+    public void setImaged(boolean imaged) {
+        this.imaged = imaged;
+    }
+
+    /**
+     * @return
+     */
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    /**
+     * @param fileSize
+     */
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    /**
+     * @return the userId
+     */
+    public long getUserId() {
+        return userId;
+    }
+
+    /**
+     * @param userId the userId to set
+     */
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    /**
+     * @return the createTime
+     */
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * @param createTime the createTime to set
+     */
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    /**
+     * @return the passTime
+     */
+    public long getPassTime() {
+        return passTime;
+    }
+
+    /**
+     * @param passTime the passTime to set
+     */
+    public void setPassTime(long passTime) {
+        this.passTime = passTime;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.absir.aserv.crud.value.ICrudBean#proccessCrud(com.absir.aserv
+     * .system.bean.value.JaCrud.Crud, com.absir.aserv.crud.CrudHandler)
+     */
+    @Override
+    public void proccessCrud(Crud crud, CrudHandler handler) {
+        UploadCrudFactory.ME.crud(this, crud, handler);
+    }
 }

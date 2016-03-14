@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-1-24 下午1:37:53
  */
 package com.absir.context.schedule.value;
@@ -14,24 +14,24 @@ import java.lang.annotation.Target;
 
 /**
  * @author absir
- * 
+ *
  */
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Schedule {
 
-	/**
-	 * @return
-	 */
-	public String cron() default "";
+    /**
+     * @return
+     */
+    public String cron() default "";
 
-	/**
-	 * @return
-	 */
-	public long fixedDelay() default 0;
+    /**
+     * @return
+     */
+    public long fixedDelay() default 0;
 
-	/**
-	 * @return
-	 */
-	public long initialDelay() default 0;
+    /**
+     * @return
+     */
+    public long initialDelay() default 0;
 }

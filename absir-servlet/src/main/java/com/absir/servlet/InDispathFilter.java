@@ -1,24 +1,11 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-1-8 下午4:47:28
  */
 package com.absir.servlet;
-
-import java.io.IOException;
-import java.net.URLDecoder;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.absir.bean.basis.BeanFactory;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -29,205 +16,219 @@ import com.absir.server.in.InMethod;
 import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
 
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLDecoder;
+
 /**
  * @author absir
- * 
  */
 public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServletResponse> implements Filter {
 
-	/** servletContext */
-	private static ServletContext servletContext;
+    /**
+     * REQUEST_INPUT
+     */
+    public static final String REQUEST_INPUT = InDispathFilter.class.getName() + "@REQUEST_INPUT";
+    /**
+     * servletContext
+     */
+    private static ServletContext servletContext;
+    /**
+     * contextResourcePath
+     */
+    private static String contextResourcePath;
+    /**
+     * contextPath
+     */
+    private static String contextPath;
+    /**
+     * contextPathLength
+     */
+    private int contextPathLength;
+    /**
+     * uriContextPath
+     */
+    private String uriContextPath;
+    /**
+     * uriContextPathLength
+     */
+    private int uriContextPathLength;
+    /**
+     * urlDecode
+     */
+    private boolean urlDecode;
 
-	/** contextResourcePath */
-	private static String contextResourcePath;
+    /**
+     * @return the servletContext
+     */
+    public static ServletContext getServletContext() {
+        return servletContext;
+    }
 
-	/** contextPath */
-	private static String contextPath;
+    /**
+     * @return the contextResourcePath
+     */
+    public static String getContextResourcePath() {
+        return contextResourcePath;
+    }
 
-	/** contextPathLength */
-	private int contextPathLength;
+    /**
+     * @return the contextPath
+     */
+    public static String getContextPath() {
+        return contextPath;
+    }
 
-	/** uriContextPath */
-	private String uriContextPath;
+    /**
+     * @param request
+     * @return
+     */
+    public static final Input getInput(ServletRequest request) {
+        return (Input) request.getAttribute(REQUEST_INPUT);
+    }
 
-	/** uriContextPathLength */
-	private int uriContextPathLength;
+    /*
+     * (non-Javadoc)
+     *
+     * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
+     */
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        servletContext = filterConfig.getServletContext();
+        contextResourcePath = servletContext.getRealPath("/");
+        contextPath = filterConfig.getInitParameter("contextPath");
+        if (contextPath == null) {
+            BeanFactory beanFactory = BeanFactoryUtils.get();
+            if (beanFactory != null) {
+                contextPath = KernelDyna.to(beanFactory.getBeanConfig().getValue("contextPath"), String.class);
+            }
 
-	/** urlDecode */
-	private boolean urlDecode;
+            if (contextPath == null) {
+                contextPath = filterConfig.getServletContext().getContextPath();
+            }
+        }
 
-	/**
-	 * @return the servletContext
-	 */
-	public static ServletContext getServletContext() {
-		return servletContext;
-	}
+        contextPathLength = contextPath.length();
+        uriContextPath = filterConfig.getInitParameter("uri");
+        uriContextPathLength = uriContextPath == null ? -1 : (contextPathLength + uriContextPath.length());
+        String urlDecodeing = filterConfig.getInitParameter("urlDecode");
+        if (urlDecodeing == null) {
+            BeanFactory beanFactory = BeanFactoryUtils.get();
+            if (beanFactory != null) {
+                urlDecodeing = KernelDyna.to(beanFactory.getBeanConfig().getValue("urlDecode"), String.class);
+            }
+        }
 
-	/**
-	 * @return the contextResourcePath
-	 */
-	public static String getContextResourcePath() {
-		return contextResourcePath;
-	}
+        if (urlDecodeing != null) {
+            urlDecode = KernelDyna.to(urlDecodeing, boolean.class);
+        }
+    }
 
-	/**
-	 * @return the contextPath
-	 */
-	public static String getContextPath() {
-		return contextPath;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
+     * javax.servlet.ServletResponse, javax.servlet.FilterChain)
+     */
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        try {
+            if (!(request instanceof HttpServletRequest && response instanceof HttpServletResponse && on(getUri(request),
+                    (HttpServletRequest) request, (HttpServletResponse) response))) {
+                chain.doFilter(request, response);
+            }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
-	 */
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		servletContext = filterConfig.getServletContext();
-		contextResourcePath = servletContext.getRealPath("/");
-		contextPath = filterConfig.getInitParameter("contextPath");
-		if (contextPath == null) {
-			BeanFactory beanFactory = BeanFactoryUtils.get();
-			if (beanFactory != null) {
-				contextPath = KernelDyna.to(beanFactory.getBeanConfig().getValue("contextPath"), String.class);
-			}
+        } catch (Throwable e) {
+            throw new ServletException(e);
+        }
+    }
 
-			if (contextPath == null) {
-				contextPath = filterConfig.getServletContext().getContextPath();
-			}
-		}
+    /**
+     * @param request
+     * @return
+     */
+    private String getUri(ServletRequest request) {
+        if (request instanceof HttpServletRequest) {
+            String uri = ((HttpServletRequest) request).getRequestURI();
+            int length = uri.length();
+            if (length >= contextPathLength) {
+                if (length == uriContextPathLength && uri.endsWith(uriContextPath)) {
+                    String u = request.getParameter("uri");
+                    return u == null ? "u" : u;
+                }
 
-		contextPathLength = contextPath.length();
-		uriContextPath = filterConfig.getInitParameter("uri");
-		uriContextPathLength = uriContextPath == null ? -1 : (contextPathLength + uriContextPath.length());
-		String urlDecodeing = filterConfig.getInitParameter("urlDecode");
-		if (urlDecodeing == null) {
-			BeanFactory beanFactory = BeanFactoryUtils.get();
-			if (beanFactory != null) {
-				urlDecodeing = KernelDyna.to(beanFactory.getBeanConfig().getValue("urlDecode"), String.class);
-			}
-		}
+                return length == contextPathLength ? "" : uri.substring(contextPathLength + 1);
+            }
+        }
 
-		if (urlDecodeing != null) {
-			urlDecode = KernelDyna.to(urlDecodeing, boolean.class);
-		}
-	}
+        return request.getParameter("uri");
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
-	 * javax.servlet.ServletResponse, javax.servlet.FilterChain)
-	 */
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		try {
-			if (!(request instanceof HttpServletRequest && response instanceof HttpServletResponse && on(getUri(request),
-					(HttpServletRequest) request, (HttpServletResponse) response))) {
-				chain.doFilter(request, response);
-			}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.server.in.IDispatcher#getInMethod(java.lang.Object)
+     */
+    @Override
+    public InMethod getInMethod(HttpServletRequest req) {
+        if (req instanceof HttpServletRequest) {
+            try {
+                return InMethod.valueOf(((HttpServletRequest) req).getMethod().toUpperCase());
 
-		} catch (Throwable e) {
-			throw new ServletException(e);
-		}
-	}
+            } catch (Exception e) {
+            }
+        }
 
-	/**
-	 * @param request
-	 * @return
-	 */
-	private String getUri(ServletRequest request) {
-		if (request instanceof HttpServletRequest) {
-			String uri = ((HttpServletRequest) request).getRequestURI();
-			int length = uri.length();
-			if (length >= contextPathLength) {
-				if (length == uriContextPathLength && uri.endsWith(uriContextPath)) {
-					String u = request.getParameter("uri");
-					return u == null ? "u" : u;
-				}
+        return InMethod.GET;
+    }
 
-				return length == contextPathLength ? "" : uri.substring(contextPathLength + 1);
-			}
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.server.in.IDispatcher#decodeUri(java.lang.String,
+     * java.lang.Object)
+     */
+    @Override
+    public String decodeUri(String uri, HttpServletRequest req) {
+        if (urlDecode) {
+            return uri;
+        }
 
-		return request.getParameter("uri");
-	}
+        try {
+            String enc = req.getCharacterEncoding();
+            if (enc == null) {
+                enc = ContextUtils.getCharset().displayName();
+            }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.server.in.IDispatcher#getInMethod(java.lang.Object)
-	 */
-	@Override
-	public InMethod getInMethod(HttpServletRequest req) {
-		if (req instanceof HttpServletRequest) {
-			try {
-				return InMethod.valueOf(((HttpServletRequest) req).getMethod().toUpperCase());
+            return URLDecoder.decode(uri, enc);
 
-			} catch (Exception e) {
-			}
-		}
+        } catch (Exception e) {
+            return uri;
+        }
+    }
 
-		return InMethod.GET;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.server.in.InDispatcher#input(java.lang.String,
+     * com.absir.server.in.InMethod, java.util.Map, java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    protected Input input(String uri, InMethod inMethod, InModel model, HttpServletRequest req, HttpServletResponse res) {
+        Input input = new InputRequest(uri, inMethod, model, req, res);
+        req.setAttribute(REQUEST_INPUT, input);
+        return input;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.server.in.IDispatcher#decodeUri(java.lang.String,
-	 * java.lang.Object)
-	 */
-	@Override
-	public String decodeUri(String uri, HttpServletRequest req) {
-		if (urlDecode) {
-			return uri;
-		}
-
-		try {
-			String enc = req.getCharacterEncoding();
-			if (enc == null) {
-				enc = ContextUtils.getCharset().displayName();
-			}
-
-			return URLDecoder.decode(uri, enc);
-
-		} catch (Exception e) {
-			return uri;
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.server.in.InDispatcher#input(java.lang.String,
-	 * com.absir.server.in.InMethod, java.util.Map, java.lang.Object,
-	 * java.lang.Object)
-	 */
-	@Override
-	protected Input input(String uri, InMethod inMethod, InModel model, HttpServletRequest req, HttpServletResponse res) {
-		Input input = new InputRequest(uri, inMethod, model, req, res);
-		req.setAttribute(REQUEST_INPUT, input);
-		return input;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.Filter#destroy()
-	 */
-	@Override
-	public void destroy() {
-	}
-
-	/** REQUEST_INPUT */
-	public static final String REQUEST_INPUT = InDispathFilter.class.getName() + "@REQUEST_INPUT";
-
-	/**
-	 * @param request
-	 * @return
-	 */
-	public static final Input getInput(ServletRequest request) {
-		return (Input) request.getAttribute(REQUEST_INPUT);
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see javax.servlet.Filter#destroy()
+     */
+    @Override
+    public void destroy() {
+    }
 }

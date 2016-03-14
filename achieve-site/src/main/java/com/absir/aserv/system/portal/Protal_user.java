@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014年9月29日 下午2:59:39
  */
 package com.absir.aserv.system.portal;
@@ -21,59 +21,60 @@ import com.absir.server.value.Server;
 
 /**
  * @author absir
- *
  */
 @Server
 public class Protal_user {
 
-	/** TAG */
-	protected static final String TAG = "LA";
+    /**
+     * TAG
+     */
+    protected static final String TAG = "LA";
 
-	/**
-	 * 用户注册
-	 * 
-	 * @param user
-	 */
-	public void register(Input input) {
-		if (!Pag.CONFIGURE.isAllowRegister()) {
-			throw new ServerException(ServerStatus.ON_DENIED);
-		}
+    /**
+     * 用户注册
+     *
+     * @param input
+     */
+    public void register(Input input) {
+        if (!Pag.CONFIGURE.isAllowRegister()) {
+            throw new ServerException(ServerStatus.ON_DENIED);
+        }
 
-		JUser user = ParameterResolverBinder.getBinderObject(null, JUser.class, 1, input);
-		if (Pag.CONFIGURE.getVerifyTime() > 0) {
-			user.setActivation(false);
+        JUser user = ParameterResolverBinder.getBinderObject(null, JUser.class, 1, input);
+        if (Pag.CONFIGURE.getVerifyTime() > 0) {
+            user.setActivation(false);
 
-		} else {
-			user.setActivation(true);
-		}
+        } else {
+            user.setActivation(true);
+        }
 
-		user.setDisabled(Pag.CONFIGURE.isRegisterDisable());
-		CrudServiceUtils.merge("JUser", null, user, true, null,
-				input.getBinderData().getBinderResult().getPropertyFilter());
-		SecurityService.ME.setUserBase(user, input);
-		// 通知激活
-		if (!user.isActivation()) {
-			VerifierService.ME.persistVerifier(user, TAG, user.getId().toString(), Pag.CONFIGURE.getVerifyTime());
-		}
-	}
+        user.setDisabled(Pag.CONFIGURE.isRegisterUserDisable());
+        CrudServiceUtils.merge("JUser", null, user, true, null,
+                input.getBinderData().getBinderResult().getPropertyFilter());
+        SecurityService.ME.setUserBase(user, input);
+        // 通知激活
+        if (!user.isActivation()) {
+            VerifierService.ME.persistVerifier(user, TAG, user.getId().toString(), Pag.CONFIGURE.getVerifyTime());
+        }
+    }
 
-	/**
-	 * 发送激活
-	 * 
-	 * @param verifierId
-	 */
-	public void activate(@Param String verifierId) {
+    /**
+     * 发送激活
+     *
+     * @param verifierId
+     */
+    public void activate(@Param String verifierId) {
 
-	}
+    }
 
-	/**
-	 * 用户激活
-	 * 
-	 * @param verifierId
-	 */
-	public void activation(@Param String verifierId) {
-		if (Pag.CONFIGURE.getVerifyTime() <= 0) {
+    /**
+     * 用户激活
+     *
+     * @param verifierId
+     */
+    public void activation(@Param String verifierId) {
+        if (Pag.CONFIGURE.getVerifyTime() <= 0) {
 
-		}
-	}
+        }
+    }
 }

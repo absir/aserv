@@ -1,13 +1,11 @@
 /**
  * Copyright 2015 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2015年11月6日 下午4:10:58
  */
 package com.absir.data.json;
-
-import java.io.IOException;
 
 import com.absir.data.value.IProto;
 import com.baidu.bjf.remoting.protobuf.Codec;
@@ -17,26 +15,27 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
+import java.io.IOException;
+
 /**
  * @author absir
- *
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class ProtoJsonSerializer extends JsonSerializer<IProto> {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.fasterxml.jackson.databind.JsonSerializer#serialize(java.lang.Object,
-	 * com.fasterxml.jackson.core.JsonGenerator,
-	 * com.fasterxml.jackson.databind.SerializerProvider)
-	 */
-	@Override
-	public void serialize(IProto value, JsonGenerator jgen, SerializerProvider provider)
-			throws IOException, JsonProcessingException {
-		Codec codec = ProtobufProxy.create(value.getClass());
-		jgen.writeObject(codec.encode(value));
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.fasterxml.jackson.databind.JsonSerializer#serialize(java.lang.Object,
+     * com.fasterxml.jackson.core.JsonGenerator,
+     * com.fasterxml.jackson.databind.SerializerProvider)
+     */
+    @Override
+    public void serialize(IProto value, JsonGenerator jgen, SerializerProvider provider)
+            throws IOException, JsonProcessingException {
+        Codec codec = ProtobufProxy.create(value.getClass());
+        jgen.writeObject(codec.encode(value));
+    }
 
 }

@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-6-17 下午4:33:10
  */
 package com.absir.bean.inject.value;
@@ -14,19 +14,18 @@ import java.lang.annotation.Target;
 
 /**
  * @author absir
- * 
  */
-@Target({ ElementType.TYPE, ElementType.FIELD, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Inject {
 
-	/**
-	 * @return
-	 */
-	String value() default "";
+    /**
+     * @return
+     */
+    String value() default "";
 
-	/**
-	 * @return
-	 */
-	InjectType type() default InjectType.Required;
+    /**
+     * @return
+     */
+    InjectType type() default InjectType.Required;
 }

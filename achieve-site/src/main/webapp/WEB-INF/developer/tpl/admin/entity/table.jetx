@@ -1,0 +1,56 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+#include("/WEB-INF/developer/macors/option.jetx")
+${Scenario::set("list", request)}
+<thead>
+<tr>
+    <th width="26"><input type="checkbox" class="checkboxCtrl" data-group="ids" data-toggle="icheck"></th>
+    #tag script()
+    #set(element = document.appendElement("tr"))
+    ##<!--table header
+    #for(field : entityModel.getGroupFields("list"))
+        #set(identifier = "<th class=\"th_" + field.getNodeName())
+        #if(!generator.append(identifier, element))
+            #set(node = identifier + "\">" + Pag::getLangName(field.getCaption()) + "</th>")
+            #set(node = ScripteNode::append(element, node).get(0))
+            #set(width = field.getMetas().get("width"))
+            #if(width != null)
+                ${node.attr("width", width.toString()).voidValue()}
+            #end
+            #if(!fieldNotOrder && field.isCanOrder())
+                ${node.attr("data-order-field", field.getName()).voidValue()}
+                ${node.addClass("${orderFieldMap." + field.getName() + " ?! ''}").voidValue()}
+            #end
+        #end
+    #end
+    ##-->
+    #end
+    ${element.html() + "\r\n"}
+</tr>
+</thead>
+<tbody>
+\#for(entity : entities)
+\#set(id=EntityStatics::getPrimary(entity, "${entityModel.getPrimary().getName()}"))
+<tr data-id="\${id}">
+    <td><input type="checkbox" name="ids" data-toggle="icheck" value="\${id}"></td>
+    #tag script()
+    #set(element = document.appendElement("tr"))
+    ##<!--table body
+    #for(field : entityModel.getGroupFields("list"))
+        #set(identifier = "<td class=\"td_" + field.getNodeName())
+        #if(!generator.append(identifier, element))
+            #set(node = identifier + "\">" + "${entity." + field.getName() + "}</td>")
+            #set(nodes = ScripteNode::append(element, node))
+            #set(node = nodes.get(0))
+            ${DeveloperUtils::includeExist("list", field.getTypes(), request)}
+        #end
+    #end
+    ${DeveloperUtils::includeExist("list", entityModel.getJoEntity().getEntityName(), request)}
+    ##-->
+    #end
+    ${element.html() + "\r\n"}
+</tr>
+\#end
+</tbody>
+${Scenario::pop(request).voidValue()}

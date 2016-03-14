@@ -1,20 +1,11 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2013-12-18 下午5:40:49
  */
 package com.absir.server.in;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.lang.reflect.Type;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
 
 import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -32,330 +23,345 @@ import com.absir.server.route.RouteMatcher;
 import com.absir.server.route.returned.ReturnedResolver;
 import com.absir.server.route.returned.ReturnedResolverView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.lang.reflect.Type;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * @author absir
- * 
  */
 @SuppressWarnings("rawtypes")
 @Inject
 public abstract class Input extends Bean<Serializable> implements IAttributes {
 
-	/** GET */
-	public final static IGet GET = BeanFactoryUtils.get(IGet.class);
+    /**
+     * GET
+     */
+    public final static IGet GET = BeanFactoryUtils.get(IGet.class);
+    /**
+     * resourceBundle
+     */
+    protected Map<String, String> resourceBundle;
+    /**
+     * binderData
+     */
+    protected BinderData binderData;
+    /**
+     * model
+     */
+    private InModel model;
+    /**
+     * locale
+     */
+    private Locale locale;
+    /**
+     * localCode
+     */
+    private Integer localCode;
+    /**
+     * dispatcher
+     */
+    private IDispatcher dispatcher;
+    /**
+     * routeMatcher
+     */
+    private RouteMatcher routeMatcher;
 
-	/** model */
-	private InModel model;
+    /**
+     * @param model
+     */
+    public Input(InModel model) {
+        this.model = model;
+    }
 
-	/** locale */
-	private Locale locale;
+    /**
+     * @return the model
+     */
+    public InModel getModel() {
+        return model;
+    }
 
-	/** localCode */
-	private Integer localCode;
+    /**
+     * @return the locale
+     */
+    public Locale getLocale() {
+        if (locale == null) {
+            locale = LangBundle.ME.getLocale(getLocalCode());
+        }
 
-	/** resourceBundle */
-	protected Map<String, String> resourceBundle;
+        return locale;
+    }
 
-	/** dispatcher */
-	private IDispatcher dispatcher;
+    /**
+     * @return
+     */
+    public Integer getLocalCode() {
+        if (localCode == null) {
+            localCode = GET == null ? null : GET.getLocaleCode(this);
+            if (localCode == null) {
+                localCode = 0;
+            }
+        }
 
-	/** routeMatcher */
-	private RouteMatcher routeMatcher;
+        return localCode;
+    }
 
-	/** binderData */
-	protected BinderData binderData;
+    /**
+     * @param code
+     */
+    public void setLocaleCode(Integer code) {
+        locale = LangBundle.ME.getLocale(code);
+        if (locale == LangBundle.ME.getLocale()) {
+            code = 0;
+        }
 
-	/**
-	 * @param model
-	 */
-	public Input(InModel model) {
-		this.model = model;
-	}
+        localCode = code;
+    }
 
-	/**
-	 * @return the model
-	 */
-	public InModel getModel() {
-		return model;
-	}
+    /**
+     * @param lang
+     * @return
+     */
+    public String getLang(String lang) {
+        Locale locale = getLocale();
+        if (resourceBundle == null) {
+            resourceBundle = LangBundle.ME.getResourceBundle(locale);
+        }
 
-	/**
-	 * @return the locale
-	 */
-	public Locale getLocale() {
-		if (locale == null) {
-			locale = LangBundle.ME.getLocale(getLocalCode());
-		}
+        return LangBundle.ME.getLangResource(lang, resourceBundle, locale);
+    }
 
-		return locale;
-	}
+    /**
+     * @param lang
+     * @return
+     */
+    public String getLangValue(String lang) {
+        return getLangValue(lang, lang);
+    }
 
-	/**
-	 * @return
-	 */
-	public Integer getLocalCode() {
-		if (localCode == null) {
-			localCode = GET == null ? null : GET.getLocaleCode(this);
-			if (localCode == null) {
-				localCode = 0;
-			}
-		}
+    /**
+     * @param lang
+     * @param value
+     * @return
+     */
+    public String getLangValue(String lang, String value) {
+        LangBundle.ME.getResourceBundle().put(lang, value);
+        return getLang(lang);
+    }
 
-		return localCode;
-	}
+    /**
+     * @param name
+     * @param beanName
+     * @param toClass
+     * @return
+     */
+    public <T> T get(String name, String beanName, Class<T> toClass) {
+        return BeanConfigImpl.getMapValue(model, name, beanName, toClass);
+    }
 
-	/**
-	 * @param code
-	 */
-	public void setLocaleCode(Integer code) {
-		locale = LangBundle.ME.getLocale(code);
-		if (locale == LangBundle.ME.getLocale()) {
-			code = 0;
-		}
+    /**
+     * @param name
+     * @param beanName
+     * @param toType
+     * @return
+     */
+    public Object get(String name, String beanName, Type toType) {
+        return BeanConfigImpl.getMapValue(model, name, beanName, toType);
+    }
 
-		localCode = code;
-	}
+    /**
+     * @return the dispatcher
+     */
+    public IDispatcher getDispatcher() {
+        return dispatcher;
+    }
 
-	/**
-	 * @param lang
-	 * @return
-	 */
-	public String getLang(String lang) {
-		Locale locale = getLocale();
-		if (resourceBundle == null) {
-			resourceBundle = LangBundle.ME.getResourceBundle(locale);
-		}
+    /**
+     * @param dispatcher the dispatcher to set
+     */
+    public void setDispatcher(IDispatcher dispatcher) {
+        this.dispatcher = dispatcher;
+    }
 
-		return LangBundle.ME.getLangResource(lang, resourceBundle, locale);
-	}
+    /**
+     * @return the routeMatcher
+     */
+    public RouteMatcher getRouteMatcher() {
+        return routeMatcher;
+    }
 
-	/**
-	 * @param lang
-	 * @return
-	 */
-	public String getLangValue(String lang) {
-		return getLangValue(lang, lang);
-	}
+    /**
+     * @param routeMatcher the routeMatcher to set
+     */
+    public void setRouteMatcher(RouteMatcher routeMatcher) {
+        this.routeMatcher = routeMatcher;
+    }
 
-	/**
-	 * @param lang
-	 * @param value
-	 * @return
-	 */
-	public String getLangValue(String lang, String value) {
-		LangBundle.ME.getResourceBundle().put(lang, value);
-		return getLang(lang);
-	}
+    /**
+     * @return
+     */
+    public RouteAction getRouteAction() {
+        return routeMatcher == null ? null : routeMatcher.getRouteAction();
+    }
 
-	/**
-	 * @param name
-	 * @param beanName
-	 * @param toClass
-	 * @return
-	 */
-	public <T> T get(String name, String beanName, Class<T> toClass) {
-		return BeanConfigImpl.getMapValue(model, name, beanName, toClass);
-	}
+    /**
+     * @return
+     */
+    public RouteEntry getRouteEntry() {
+        RouteAction routeAction = getRouteAction();
+        return routeAction == null ? null : routeAction.getRouteEntry();
+    }
 
-	/**
-	 * @param name
-	 * @param beanName
-	 * @param toType
-	 * @return
-	 */
-	public Object get(String name, String beanName, Type toType) {
-		return BeanConfigImpl.getMapValue(model, name, beanName, toType);
-	}
+    /**
+     * @param iterator
+     * @return
+     * @throws Throwable
+     */
+    public OnPut intercept(Iterator<Interceptor> iterator) throws Throwable {
+        RouteEntry routeEntry = getRouteEntry();
+        return routeEntry == null ? null : routeEntry.intercept(iterator, this);
+    }
 
-	/**
-	 * @return the dispatcher
-	 */
-	public IDispatcher getDispatcher() {
-		return dispatcher;
-	}
+    /**
+     * @return
+     */
+    public BinderData getBinderData() {
+        if (binderData == null) {
+            binderData = new BinderData();
+        }
 
-	/**
-	 * @param dispatcher
-	 *            the dispatcher to set
-	 */
-	public void setDispatcher(IDispatcher dispatcher) {
-		this.dispatcher = dispatcher;
-	}
+        return binderData;
+    }
 
-	/**
-	 * @return the routeMatcher
-	 */
-	public RouteMatcher getRouteMatcher() {
-		return routeMatcher;
-	}
+    /**
+     * @return
+     */
+    protected Locale getLocaled() {
+        return LangBundle.ME.getLocale();
+    }
 
-	/**
-	 * @param routeMatcher
-	 *            the routeMatcher to set
-	 */
-	public void setRouteMatcher(RouteMatcher routeMatcher) {
-		this.routeMatcher = routeMatcher;
-	}
+    /**
+     * @return
+     */
+    public abstract String getUri();
 
-	/**
-	 * @return
-	 */
-	public RouteAction getRouteAction() {
-		return routeMatcher == null ? null : routeMatcher.getRouteAction();
-	}
+    /**
+     * @return
+     */
+    public abstract InMethod getMethod();
 
-	/**
-	 * @return
-	 */
-	public RouteEntry getRouteEntry() {
-		RouteAction routeAction = getRouteAction();
-		return routeAction == null ? null : routeAction.getRouteEntry();
-	}
+    /**
+     * @param status
+     */
+    public abstract void setStatus(int status);
 
-	/**
-	 * @param iterator
-	 * @return
-	 * @throws Throwable
-	 */
-	public OnPut intercept(Iterator<Interceptor> iterator) throws Throwable {
-		RouteEntry routeEntry = getRouteEntry();
-		return routeEntry == null ? null : routeEntry.intercept(iterator, this);
-	}
+    /**
+     * @return
+     */
+    public boolean isDebug() {
+        return BeanFactoryUtils.getEnvironment() != Environment.PRODUCT && paramDebug();
+    }
 
-	/**
-	 * @return
-	 */
-	public BinderData getBinderData() {
-		if (binderData == null) {
-			binderData = new BinderData();
-		}
+    /**
+     * @return
+     */
+    public abstract boolean paramDebug();
 
-		return binderData;
-	}
+    /**
+     * @return
+     */
+    public abstract String getAddress();
 
-	/**
-	 * @return
-	 */
-	protected Locale getLocaled() {
-		return LangBundle.ME.getLocale();
-	}
+    /**
+     * @param name
+     * @return
+     */
+    public abstract String getParam(String name);
 
-	/**
-	 * @return
-	 */
-	public abstract String getUri();
+    /**
+     * @param name
+     * @return
+     */
+    public abstract String[] getParams(String name);
 
-	/**
-	 * @return
-	 */
-	public abstract InMethod getMethod();
+    /**
+     * @return
+     */
+    public abstract Map<String, Object> getParamMap();
 
-	/**
-	 * @param status
-	 */
-	public abstract void setStatus(int status);
+    /**
+     * @return
+     * @throws IOException
+     */
+    public abstract InputStream getInputStream() throws IOException;
 
-	/**
-	 * @return
-	 */
-	public boolean isDebug() {
-		return BeanFactoryUtils.getEnvironment() != Environment.PRODUCT && paramDebug();
-	}
+    /**
+     * @return
+     */
+    public abstract String getInput();
 
-	/**
-	 * @return
-	 */
-	public abstract boolean paramDebug();
+    /**
+     * @param charset
+     */
+    public abstract void setCharacterEncoding(String charset);
 
-	/**
-	 * @return
-	 */
-	public abstract String getAddress();
+    /**
+     * @param contentType
+     * @param charset
+     */
+    public void setContentTypeCharset(String contentType, String charset) {
+        setCharacterEncoding(charset);
+        setContentTypeCharset(contentType + ";" + charset);
+    }
 
-	/**
-	 * @param name
-	 * @return
-	 */
-	public abstract String getParam(String name);
+    public abstract void setContentTypeCharset(String contentTypeCharset);
 
-	/**
-	 * @param name
-	 * @return
-	 */
-	public abstract String[] getParams(String name);
+    /**
+     * @return
+     * @throws IOException
+     */
+    public abstract OutputStream getOutputStream() throws IOException;
 
-	/**
-	 * @return
-	 */
-	public abstract Map<String, Object> getParamMap();
+    /**
+     * @param string
+     * @throws IOException
+     */
+    public void write(String string) throws IOException {
+        OutputStream outputStream = getOutputStream();
+        if (outputStream == null) {
+            write(string.getBytes(ContextUtils.getCharset()));
 
-	/**
-	 * @return
-	 * @throws IOException
-	 */
-	public abstract InputStream getInputStream() throws IOException;
+        } else {
+            HelperIO.write(string, outputStream);
+        }
+    }
 
-	/**
-	 * @return
-	 */
-	public abstract String getInput();
+    /**
+     * @param b
+     * @throws IOException
+     */
+    public void write(byte b[]) throws IOException {
+        write(b, 0, b.length);
+    }
 
-	/**
-	 * @param charset
-	 */
-	public abstract void setCharacterEncoding(String charset);
+    /**
+     * @param b
+     * @param off
+     * @param len
+     * @throws IOException
+     */
+    public abstract void write(byte b[], int off, int len) throws IOException;
 
-	/**
-	 * @param contentType
-	 * @param charset
-	 */
-	public void setContentTypeCharset(String contentType, String charset) {
-		setCharacterEncoding(charset);
-		setContentTypeCharset(contentType + ";" + charset);
-	}
-
-	public abstract void setContentTypeCharset(String contentTypeCharset);
-
-	/**
-	 * @return
-	 * @throws IOException
-	 */
-	public abstract OutputStream getOutputStream() throws IOException;
-
-	/**
-	 * @param string
-	 * @throws IOException
-	 */
-	public void write(String string) throws IOException {
-		OutputStream outputStream = getOutputStream();
-		if (outputStream == null) {
-			write(string.getBytes(ContextUtils.getCharset()));
-
-		} else {
-			HelperIO.write(string, outputStream);
-		}
-	}
-
-	/**
-	 * @param b
-	 * @throws IOException
-	 */
-	public void write(byte b[]) throws IOException {
-		write(b, 0, b.length);
-	}
-
-	/**
-	 * @param b
-	 * @param off
-	 * @param len
-	 * @throws IOException
-	 */
-	public abstract void write(byte b[], int off, int len) throws IOException;
-
-	/**
-	 * @param returnValue
-	 * @return
-	 */
-	public ReturnedResolver<?> getReturnedResolver(OnPut onPut) {
-		return ReturnedResolverView.ME;
-	}
+    /**
+     * @param onPut
+     * @return
+     */
+    public ReturnedResolver<?> getReturnedResolver(OnPut onPut) {
+        return ReturnedResolverView.ME;
+    }
 }

@@ -1,13 +1,12 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-4-6 下午1:17:33
  */
 package com.absir.aserv.system.admin;
 
-import com.absir.aserv.menu.MenuContextUtils;
 import com.absir.aserv.system.asset.Asset_verify;
 import com.absir.aserv.system.bean.value.JeRoleLevel;
 import com.absir.aserv.system.helper.HelperInput;
@@ -24,93 +23,98 @@ import com.absir.server.value.Nullable;
 import com.absir.server.value.Param;
 import com.absir.server.value.Server;
 
+import static com.absir.aserv.menu.MenuContextUtils.getAdminRoute;
+
 /**
  * @author absir
- * 
  */
 @Base
 @Server
 public class Admin_login extends AdminServer {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.absir.aserv.system.admin.AdminServer#checkLogin(com.absir.server
-	 * .in.Input)
-	 */
-	@Override
-	protected SecurityContext onAuthentication(Input input) throws Exception {
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.absir.aserv.system.admin.AdminServer#checkLogin(com.absir.server
+     * .in.Input)
+     */
+    @Override
+    protected SecurityContext onAuthentication(Input input) throws Exception {
+        return null;
+    }
 
-	/**
-	 * 登陆界面
-	 * 
-	 * @param input
-	 * @return
-	 */
-	public String route(Input input) {
-		input.getModel().put("remember", remember);
-		return HelperInput.isAjax(input) ? "admin/login.timeout" : "admin/login";
-	}
+    /**
+     * 登陆界面
+     *
+     * @param input
+     * @return
+     */
+    public String route(Input input) {
+        input.getModel().put("remember", remember);
+        if (HelperInput.isAjax(input)) {
+            return "admin/login.timeout";
+        }
 
-	/**
-	 * AJAX登录
-	 * 
-	 * @param input
-	 * @return
-	 */
-	public String ajax(Input input) {
-		input.getModel().put("remember", remember);
-		return "admin/login.ajax";
-	}
+        return "admin/login";
+    }
 
-	/**
-	 * 注销登录
-	 * 
-	 * @param input
-	 * @return
-	 * @throws Exception
-	 */
-	public void out(Input input) throws Exception {
-		SecurityService.ME.logout("admin", input);
-		ServerResolverRedirect.redirect(MenuContextUtils.getAdminRoute() + "/login", false, input);
-	}
+    /**
+     * AJAX登录
+     *
+     * @param input
+     * @return
+     */
+    public String ajax(Input input) {
+        input.getModel().put("remember", remember);
+        return "admin/login.ajax";
+    }
 
-	/**
-	 * 登录处理
-	 * 
-	 * @param username
-	 * @param password
-	 * @param remember
-	 * @param input
-	 * @return
-	 * @throws Exception
-	 */
-	@Mapping(method = InMethod.POST)
-	public String route(@Param String username, @Param String password, @Param @Nullable long remember, Input input) throws Exception {
-		try {
-			SecurityService.ME.logout("admin", input);
-			if (!HelperInput.isAjax(input) && !Asset_verify.verifyInput(input)) {
-				throw new ServerException(ServerStatus.NO_VERIFY);
-			}
+    /**
+     * 注销登录
+     *
+     * @param input
+     * @return
+     * @throws Exception
+     */
+    public void out(Input input) throws Exception {
+        SecurityService.ME.logout("admin", input);
+        ServerResolverRedirect.redirect(getAdminRoute() + "login", false, input);
+    }
 
-			SecurityService.ME.login(username, password, remember, JeRoleLevel.ROLE_ADMIN.ordinal(), "admin", input);
+    /**
+     * 登录处理
+     *
+     * @param username
+     * @param password
+     * @param remember
+     * @param input
+     * @return
+     * @throws Exception
+     */
+    @Mapping(method = InMethod.POST)
+    public String route(@Param String username, @Param String password, @Param @Nullable long remember, Input input) throws Exception {
+        try {
+            SecurityService.ME.logout("admin", input);
+            if (!HelperInput.isAjax(input) && !Asset_verify.verifyInput(input)) {
+                throw new ServerException(ServerStatus.NO_VERIFY);
+            }
 
-		} catch (ServerException e) {
-			if (HelperInput.isAjax(input)) {
-				return "admin/login.failed";
-			}
+            SecurityService.ME.login(username, password, remember, JeRoleLevel.ROLE_ADMIN.ordinal(), "admin", input);
 
-			input.getModel().put("error", e);
-			return "admin/login";
-		}
+        } catch (ServerException e) {
+            input.getModel().put("error", e);
+            if (HelperInput.isAjax(input)) {
+                return "admin/login.failed";
+            }
 
-		if (!HelperInput.isAjax(input)) {
-			ServerResolverRedirect.redirect(MenuContextUtils.getAdminRoute() + "/main", false, input);
-		}
+            return "admin/login";
+        }
 
-		return "admin/login.success";
-	}
+        if (!HelperInput.isAjax(input)) {
+            ServerResolverRedirect.redirect(getAdminRoute() + "main", false, input);
+        }
+
+        return "admin/login.success";
+    }
 }

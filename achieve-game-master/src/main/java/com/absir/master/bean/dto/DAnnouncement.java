@@ -1,18 +1,18 @@
 /**
  * Copyright 2015 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2015年5月5日 下午8:18:38
  */
 package com.absir.master.bean.dto;
 
+import com.absir.aserv.system.bean.value.JaEdit;
+import com.absir.aserv.system.bean.value.JaLang;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
-
-import com.absir.aserv.system.bean.value.JaEdit;
-import com.absir.aserv.system.bean.value.JaLang;
 
 /**
  * @author absir
@@ -22,27 +22,27 @@ import com.absir.aserv.system.bean.value.JaLang;
 @MappedSuperclass
 public class DAnnouncement {
 
-	@JaLang("标题")
-	@JaEdit(groups = JaEdit.GROUP_LIST)
-	public String title;
+    @JaLang("标题")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    public String title;
 
-	@JaLang("内容")
-	@JaEdit(types = "text")
-	@Column(length = 10240)
-	public String content;
+    @JaLang("内容")
+    @JaEdit(types = "text")
+    @Column(length = 10240)
+    public String content;
 
-	/**
-	 * @return the title
-	 */
-	public String getTitle() {
-		return title;
-	}
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
 
-	/**
-	 * @return the content
-	 */
-	public String getContent() {
-		return content;
-	}
+    /**
+     * @return the content
+     */
+    public String getContent() {
+        return content;
+    }
 
 }

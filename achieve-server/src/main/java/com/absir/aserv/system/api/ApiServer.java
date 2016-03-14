@@ -1,16 +1,11 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-4-3 下午5:58:37
  */
 package com.absir.aserv.system.api;
-
-import java.util.Iterator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.security.SecurityContext;
@@ -28,184 +23,189 @@ import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.Input;
 import com.absir.server.in.Interceptor;
 import com.absir.server.on.OnPut;
-import com.absir.server.value.Before;
-import com.absir.server.value.Interceptors;
-import com.absir.server.value.Mapping;
-import com.absir.server.value.NoBody;
-import com.absir.server.value.OnException;
+import com.absir.server.value.*;
 import com.absir.servlet.InputRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Iterator;
 
 /**
  * @author absir
- * 
+ *
  */
 @Mapping("/api")
 @Interceptors(ApiServer.Route.class)
 public abstract class ApiServer {
 
-	/** LOGGER */
-	private static final Logger LOGGER = LoggerFactory.getLogger(ApiServer.class);
+    /**
+     * LOGGER
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiServer.class);
 
-	/**
-	 * 统一返回类型 权限判断
-	 * 
-	 * @param input
-	 * @throws Throwable
-	 */
-	@Bodys
-	@NoBody
-	@Before
-	protected SecurityContext onAuthentication(Input input) throws Throwable {
-		return SecurityService.ME == null ? null : SecurityService.ME.getSecurityContext(input);
-	}
+    /**
+     * 统一返回类型 权限判断
+     *
+     * @param input
+     * @throws Throwable
+     */
+    @Bodys
+    @NoBody
+    @Before
+    protected SecurityContext onAuthentication(Input input) throws Throwable {
+        return SecurityService.ME == null ? null : SecurityService.ME.getSecurityContext(input);
+    }
 
-	/**
-	 * 消息对象
-	 * 
-	 * @author absir
-	 * 
-	 */
-	public static class MessageCode {
+    /**
+     * 统一异常返回
+     *
+     * @param e
+     * @return
+     */
+    @Bodys
+    @OnException(Throwable.class)
+    protected Object onException(Throwable e, Input input) {
+        input.setStatus(ServerStatus.ON_ERROR.getCode());
+        if (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP) {
+            e.printStackTrace();
+        }
 
-		/** message */
-		public String message;
+        if (BeanFactoryUtils.getEnvironment().compareTo(Environment.DEBUG) <= 0 || input.isDebug()
+                || !(e instanceof ServerException)) {
+            LOGGER.debug("on server " + input.getUri(), e);
+        }
 
-		/** error */
-		public int code;
+        if (e instanceof ServerException) {
+            ServerException exception = (ServerException) e;
+            Object data = exception.getExceptionData();
+            if (exception.getServerStatus() == ServerStatus.ON_CODE) {
+                return data == null ? "fail" : data;
+            }
 
-		/**
-		 * 
-		 */
-		public MessageCode() {
+            if (data != null && data instanceof MessageCode) {
+                return data;
+            }
 
-		}
+            MessageCode messageCode = new MessageCode();
+            messageCode.setServerException(exception);
+            return messageCode;
+        }
 
-		/**
-		 * @param e
-		 */
-		public MessageCode(Throwable e) {
-			if (e instanceof ServerException) {
-				setServerException((ServerException) e);
+        return new MessageCode(e);
+    }
 
-			} else {
-				setThrowable(e);
-			}
-		}
+    /**
+     * 消息对象
+     *
+     * @author absir
+     */
+    public static class MessageCode {
 
-		/**
-		 * @param e
-		 */
-		public void setThrowable(Throwable e) {
-			message = e.toString();
-			code = ServerStatus.ON_ERROR.getCode();
-		}
+        /**
+         * message
+         */
+        public String message;
 
-		/**
-		 * @param e
-		 */
-		public void setServerException(ServerException e) {
-			message = e.toString();
-			code = e.getServerStatus().getCode();
-		}
-	}
+        /**
+         * error
+         */
+        public int code;
 
-	/**
-	 * 统一异常返回
-	 * 
-	 * @param e
-	 * @return
-	 */
-	@Bodys
-	@OnException(Throwable.class)
-	protected Object onException(Throwable e, Input input) {
-		input.setStatus(ServerStatus.ON_ERROR.getCode());
-		if (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP) {
-			e.printStackTrace();
-		}
+        /**
+         *
+         */
+        public MessageCode() {
 
-		if (BeanFactoryUtils.getEnvironment().compareTo(Environment.DEBUG) <= 0 || input.isDebug()
-				|| !(e instanceof ServerException)) {
-			LOGGER.debug("on server " + input.getUri(), e);
-		}
+        }
 
-		if (e instanceof ServerException) {
-			ServerException exception = (ServerException) e;
-			Object data = exception.getExceptionData();
-			if (exception.getServerStatus() == ServerStatus.ON_CODE) {
-				return data == null ? "fail" : data;
-			}
+        /**
+         * @param e
+         */
+        public MessageCode(Throwable e) {
+            if (e instanceof ServerException) {
+                setServerException((ServerException) e);
 
-			if (data != null && data instanceof MessageCode) {
-				return data;
-			}
+            } else {
+                setThrowable(e);
+            }
+        }
 
-			MessageCode messageCode = new MessageCode();
-			messageCode.setServerException(exception);
-			return messageCode;
-		}
+        /**
+         * @param e
+         */
+        public void setThrowable(Throwable e) {
+            message = e.toString();
+            code = ServerStatus.ON_ERROR.getCode();
+        }
 
-		return new MessageCode(e);
-	}
+        /**
+         * @param e
+         */
+        public void setServerException(ServerException e) {
+            message = e.toString();
+            code = e.getServerStatus().getCode();
+        }
+    }
 
-	/**
-	 * @author absir
-	 * 
-	 */
-	@Base
-	@Bean
-	public static class Route implements Interceptor {
+    /**
+     * @author absir
+     */
+    @Base
+    @Bean
+    public static class Route implements Interceptor {
 
-		/** ME */
-		public static final Route ME = BeanFactoryUtils.get(Route.class);
+        /**
+         * ME
+         */
+        public static final Route ME = BeanFactoryUtils.get(Route.class);
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see com.absir.server.in.Interceptor#intercept(java.util.Iterator,
-		 * com.absir.server.in.Input)
-		 */
-		@Override
-		public OnPut intercept(Iterator<Interceptor> iterator, Input input) throws Throwable {
-			autoLogin(input);
-			return input.intercept(iterator);
-		}
+        /*
+         * (non-Javadoc)
+         *
+         * @see com.absir.server.in.Interceptor#intercept(java.util.Iterator,
+         * com.absir.server.in.Input)
+         */
+        @Override
+        public OnPut intercept(Iterator<Interceptor> iterator, Input input) throws Throwable {
+            autoLogin(input);
+            return input.intercept(iterator);
+        }
 
-		/**
-		 * @param input
-		 */
-		public void autoLogin(Input input) {
-			if (SecurityService.ME != null) {
-				SecurityContext securityContext = SecurityService.ME.autoLogin("api", true, -1, input);
-				if (securityContext == null && input instanceof InputRequest) {
-					InputRequest inputRequest = (InputRequest) input;
-					JiUserBase userBase = getInputUserBase(inputRequest);
-					if (userBase != null) {
-						SecurityManager securityManager = SecurityService.ME.getSecurityManager("api");
-						long remember = securityManager.getSessionExpiration();
-						if (remember < securityManager.getSessionLife()) {
-							remember = securityManager.getSessionLife();
-						}
+        /**
+         * @param input
+         */
+        public void autoLogin(Input input) {
+            if (SecurityService.ME != null) {
+                SecurityContext securityContext = SecurityService.ME.autoLogin("api", true, -1, input);
+                if (securityContext == null && input instanceof InputRequest) {
+                    InputRequest inputRequest = (InputRequest) input;
+                    JiUserBase userBase = getInputUserBase(inputRequest);
+                    if (userBase != null) {
+                        SecurityManager securityManager = SecurityService.ME.getSecurityManager("api");
+                        long remember = securityManager.getSessionExpiration();
+                        if (remember < securityManager.getSessionLife()) {
+                            remember = securityManager.getSessionLife();
+                        }
 
-						SecurityService.ME.loginUser(securityManager, userBase, remember, inputRequest);
-					}
-				}
-			}
-		}
+                        SecurityService.ME.loginUser(securityManager, userBase, remember, inputRequest);
+                    }
+                }
+            }
+        }
 
-		/**
-		 * @param input
-		 * @return
-		 */
-		protected JiUserBase getInputUserBase(InputRequest inputRequest) {
-			return IdentityServiceLocal.getUserBase(inputRequest.getRequest().getHeader("identity"));
-		}
-	}
+        /**
+         * @param input
+         * @return
+         */
+        protected JiUserBase getInputUserBase(InputRequest inputRequest) {
+            return IdentityServiceLocal.getUserBase(inputRequest.getRequest().getHeader("identity"));
+        }
+    }
 
-	/**
-	 * @author absir
-	 * 
-	 */
-	public static class TransactionRoute extends TransactionIntercepter {
+    /**
+     * @author absir
+     */
+    public static class TransactionRoute extends TransactionIntercepter {
 
-	}
+    }
 }

@@ -1,18 +1,11 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-5-23 下午12:55:09
  */
 package com.absir.aserv.system.service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.hibernate.Session;
 
 import com.absir.aserv.crud.CrudUtils;
 import com.absir.aserv.crud.ICrudSupply;
@@ -47,560 +40,572 @@ import com.absir.orm.transaction.value.Transaction;
 import com.absir.orm.value.JoEntity;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
+import org.hibernate.Session;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author absir
- * 
+ *
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 @Base
 @Bean
 public class EntityService {
 
-	/** ME */
-	public static final EntityService ME = BeanFactoryUtils.get(EntityService.class);
+    /**
+     * ME
+     */
+    public static final EntityService ME = BeanFactoryUtils.get(EntityService.class);
 
-	/** dictCache */
-	DCacheOpen<String, JDict> dictCache;
+    /**
+     * dictCache
+     */
+    DCacheOpen<String, JDict> dictCache;
 
-	/** entityNameMapRecycle */
-	private Map<String, Boolean> entityNameMapRecycle = new HashMap<String, Boolean>();
+    /**
+     * entityNameMapRecycle
+     */
+    private Map<String, Boolean> entityNameMapRecycle = new HashMap<String, Boolean>();
 
-	/**
-	 * @return the dictCache
-	 */
-	public DCacheOpen<String, JDict> getDictCache() {
-		return dictCache;
-	}
+    /**
+     * @return the dictCache
+     */
+    public DCacheOpen<String, JDict> getDictCache() {
+        return dictCache;
+    }
 
-	/**
-	 * 初始化
-	 */
-	@Inject
-	protected void inject() {
-		dictCache = new DCacheOpen<String, JDict>(JDict.class, null);
-		ME.reloadEntity();
-	}
+    /**
+     * 初始化
+     */
+    @Inject
+    protected void inject() {
+        dictCache = new DCacheOpen<String, JDict>(JDict.class, null);
+        ME.reloadEntity();
+    }
 
-	/**
-	 * 重载实体
-	 */
-	@Schedule(cron = "0 0,30 * * * *")
-	@Transaction(readOnly = true)
-	protected void reloadEntity() {
-		Session session = BeanDao.getSession();
-		dictCache.reloadCache(session);
-	}
+    /**
+     * 重载实体
+     */
+    @Schedule(cron = "0 0,30 * * * *")
+    @Transaction(readOnly = true)
+    protected void reloadEntity() {
+        Session session = BeanDao.getSession();
+        dictCache.reloadCache(session);
+    }
 
-	/**
-	 * @param entityName
-	 * @return
-	 */
-	public ICrudSupply getCrudSupply(String entityName) {
-		ICrudSupply crudSupply = CrudService.ME.getCrudSupply(entityName);
-		if (crudSupply == null) {
-			throw new ServerException(ServerStatus.NO_PARAM, entityName + " not exists!");
-		}
+    /**
+     * @param entityName
+     * @return
+     */
+    public ICrudSupply getCrudSupply(String entityName) {
+        ICrudSupply crudSupply = CrudService.ME.getCrudSupply(entityName);
+        if (crudSupply == null) {
+            throw new ServerException(ServerStatus.NO_PARAM, entityName + " not exists!");
+        }
 
-		return crudSupply;
-	}
+        return crudSupply;
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param id
-	 * @return
-	 */
-	public Object find(String entityName, ICrudSupply crudSupply, JiUserBase user, Object id) {
-		return crudSupply.get(entityName,
-				DynaBinder.to(AccessServiceUtils.selectCondition(entityName, user, null),
-						crudSupply.getIdentifierType(entityName)),
-				AccessServiceUtils.selectCondition(entityName, user, null));
-	}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param id
+     * @return
+     */
+    public Object find(String entityName, ICrudSupply crudSupply, JiUserBase user, Object id) {
+        return crudSupply.get(entityName,
+                DynaBinder.to(AccessServiceUtils.selectCondition(entityName, user, null),
+                        crudSupply.getIdentifierType(entityName)),
+                AccessServiceUtils.selectCondition(entityName, user, null));
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param condition
-	 * @param ids
-	 * @return
-	 */
-	public List list(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition, Object[] ids) {
-		return crudSupply.list(entityName, AccessServiceUtils.selectCondition(entityName, user, condition,
-				CrudServiceUtils.ids(entityName, ids, crudSupply, null)), null, 0, 0);
-	}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param condition
+     * @param ids
+     * @return
+     */
+    public List list(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition, Object[] ids) {
+        return crudSupply.list(entityName, AccessServiceUtils.selectCondition(entityName, user, condition,
+                CrudServiceUtils.ids(entityName, ids, crudSupply, null)), null, 0, 0);
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param condition
-	 * @param jdbcCondition
-	 * @param queue
-	 * @param firstResult
-	 * @param maxResults
-	 * @return
-	 */
-	public List list(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition,
-			JdbcCondition jdbcCondition, String queue, int firstResult, int maxResults) {
-		return crudSupply.list(entityName, AccessServiceUtils.selectCondition(entityName,
-				crudSupply.getEntityClass(entityName), user, condition, jdbcCondition), queue, firstResult, maxResults);
-	}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param condition
+     * @param jdbcCondition
+     * @param queue
+     * @param firstResult
+     * @param maxResults
+     * @return
+     */
+    public List list(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition,
+                     JdbcCondition jdbcCondition, String queue, int firstResult, int maxResults) {
+        return crudSupply.list(entityName, AccessServiceUtils.selectCondition(entityName,
+                crudSupply.getEntityClass(entityName), user, condition, jdbcCondition), queue, firstResult, maxResults);
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param condition
-	 * @param jdbcCondition
-	 * @param queue
-	 * @param jdbcPage
-	 * @return
-	 */
-	public List list(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition,
-			JdbcCondition jdbcCondition, String queue, JdbcPage jdbcPage) {
-		if (queue == null) {
-			JoEntity entity = new JoEntity(entityName, crudSupply.getEntityClass(entityName));
-			DModel model = CrudUtils.getCrudModel(entity);
-			if (model.isDesc()) {
-				queue = "ORDER BY o." + crudSupply.getIdentifierName(entityName) + " DESC";
-			}
-		}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param condition
+     * @param jdbcCondition
+     * @param queue
+     * @param jdbcPage
+     * @return
+     */
+    public List list(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition,
+                     JdbcCondition jdbcCondition, String queue, JdbcPage jdbcPage) {
+        if (queue == null) {
+            JoEntity entity = new JoEntity(entityName, crudSupply.getEntityClass(entityName));
+            DModel model = CrudUtils.getCrudModel(entity);
+            if (model.isDesc()) {
+                queue = "ORDER BY o." + crudSupply.getIdentifierName(entityName) + " DESC";
+            }
+        }
 
-		return crudSupply.list(entityName, AccessServiceUtils.selectCondition(entityName,
-				crudSupply.getEntityClass(entityName), user, condition, jdbcCondition), queue, jdbcPage);
-	}
+        return crudSupply.list(entityName, AccessServiceUtils.selectCondition(entityName,
+                crudSupply.getEntityClass(entityName), user, condition, jdbcCondition), queue, jdbcPage);
+    }
 
-	/**
-	 * @param entityName
-	 * @param entityObject
-	 * @param crudSupply
-	 * @param user
-	 * @param filter
-	 * @return
-	 */
-	public Object persist(String entityName, Object entityObject, ICrudSupply crudSupply, JiUserBase user,
-			PropertyFilter filter) {
-		return merge(entityName, crudSupply.create(entityName), entityObject, crudSupply, true, user, filter);
-	}
+    /**
+     * @param entityName
+     * @param entityObject
+     * @param crudSupply
+     * @param user
+     * @param filter
+     * @return
+     */
+    public Object persist(String entityName, Object entityObject, ICrudSupply crudSupply, JiUserBase user,
+                          PropertyFilter filter) {
+        return merge(entityName, crudSupply.create(entityName), entityObject, crudSupply, true, user, filter);
+    }
 
-	/**
-	 * @param entityName
-	 * @param entity
-	 * @param entityObject
-	 * @param crudSupply
-	 * @param create
-	 * @param user
-	 * @param filter
-	 * @return
-	 */
-	public Object merge(String entityName, Object entity, Object entityObject, ICrudSupply crudSupply, boolean create,
-			JiUserBase user, PropertyFilter filter) {
-		if (entityObject == null || !(entityObject instanceof Map)) {
-			if (entityObject.getClass() != crudSupply.getEntityClass(entityName)) {
-				return null;
-			}
+    /**
+     * @param entityName
+     * @param entity
+     * @param entityObject
+     * @param crudSupply
+     * @param create
+     * @param user
+     * @param filter
+     * @return
+     */
+    public Object merge(String entityName, Object entity, Object entityObject, ICrudSupply crudSupply, boolean create,
+                        JiUserBase user, PropertyFilter filter) {
+        if (entityObject == null || !(entityObject instanceof Map)) {
+            if (entityObject.getClass() != crudSupply.getEntityClass(entityName)) {
+                return null;
+            }
 
-			entityObject = BinderUtils.getEntityMap(entityObject);
-		}
+            entityObject = BinderUtils.getEntityMap(entityObject);
+        }
 
-		Map<String, Object> crudRecord = create ? null
-				: CrudUtils.crudRecord(new JoEntity(entityName, entity.getClass()), entity, filter);
-		BinderData binderData = new BinderData();
-		BinderResult binderResult = binderData.getBinderResult();
-		binderResult.setValidation(true);
-		binderResult.setPropertyFilter(filter);
-		binderData.mapBind((Map) entityObject, entity);
-		if (binderResult.hashErrors()) {
-			throw new ServerException(ServerStatus.NO_PARAM, "bind entity " + entityName + " from " + entityObject
-					+ ", has errors = " + binderResult.getPropertyErrors());
-		}
+        Map<String, Object> crudRecord = create ? null
+                : CrudUtils.crudRecord(new JoEntity(entityName, entity.getClass()), entity, filter);
+        BinderData binderData = new BinderData();
+        BinderResult binderResult = binderData.getBinderResult();
+        binderResult.setValidation(true);
+        binderResult.setPropertyFilter(filter);
+        binderData.mapBind((Map) entityObject, entity);
+        if (binderResult.hashErrors()) {
+            throw new ServerException(ServerStatus.NO_PARAM, "bind entity " + entityName + " from " + entityObject
+                    + ", has errors = " + binderResult.getPropertyErrors());
+        }
 
-		CrudService.ME.merge(entityName, crudRecord, entity, crudSupply, create, user, filter);
-		return entity;
-	}
+        CrudService.ME.merge(entityName, crudRecord, entity, crudSupply, create, user, filter);
+        return entity;
+    }
 
-	/**
-	 * @param entityName
-	 * @param identifierName
-	 * @param propertyMap
-	 * @return
-	 */
-	private Object getIdentifier(String entityName, String identifierName, Map propertyMap) {
-		Object id = propertyMap.get(identifierName);
-		if (id == null) {
-			throw new ServerException(ServerStatus.NO_PARAM,
-					"can not find " + entityName + " from id = " + identifierName);
-		}
+    /**
+     * @param entityName
+     * @param identifierName
+     * @param propertyMap
+     * @return
+     */
+    private Object getIdentifier(String entityName, String identifierName, Map propertyMap) {
+        Object id = propertyMap.get(identifierName);
+        if (id == null) {
+            throw new ServerException(ServerStatus.NO_PARAM,
+                    "can not find " + entityName + " from id = " + identifierName);
+        }
 
-		return id;
-	}
+        return id;
+    }
 
-	/**
-	 * @param entityName
-	 * @param id
-	 * @param crudSupply
-	 * @param jdbcCondition
-	 * @return
-	 */
-	private Object find(String entityName, Object id, ICrudSupply crudSupply, JdbcCondition jdbcCondition) {
-		Object entity = CrudServiceUtils.find(crudSupply, entityName, id, jdbcCondition);
-		if (entity == null) {
-			throw new ServerException(ServerStatus.NO_PARAM, "can not find " + entityName + " from id = " + id);
-		}
+    /**
+     * @param entityName
+     * @param id
+     * @param crudSupply
+     * @param jdbcCondition
+     * @return
+     */
+    private Object find(String entityName, Object id, ICrudSupply crudSupply, JdbcCondition jdbcCondition) {
+        Object entity = CrudServiceUtils.find(crudSupply, entityName, id, jdbcCondition);
+        if (entity == null) {
+            throw new ServerException(ServerStatus.NO_PARAM, "can not find " + entityName + " from id = " + id);
+        }
 
-		return entity;
-	}
+        return entity;
+    }
 
-	/**
-	 * @param entityName
-	 * @param identifierName
-	 * @param identifierType
-	 * @param propertyMap
-	 * @param crudSupply
-	 * @param user
-	 * @param filter
-	 * @param jdbcCondition
-	 * @return
-	 */
-	private Object update(String entityName, String identifierName, Class identifierType, Map propertyMap,
-			ICrudSupply crudSupply, JiUserBase user, PropertyFilter filter, JdbcCondition jdbcCondition) {
-		Object id = DynaBinderUtils.to(getIdentifier(entityName, identifierName, propertyMap), identifierType);
-		if (id == null) {
-			throw new ServerException(ServerStatus.NO_PARAM,
-					"can not update " + entityName + " from id = " + identifierType);
-		}
+    /**
+     * @param entityName
+     * @param identifierName
+     * @param identifierType
+     * @param propertyMap
+     * @param crudSupply
+     * @param user
+     * @param filter
+     * @param jdbcCondition
+     * @return
+     */
+    private Object update(String entityName, String identifierName, Class identifierType, Map propertyMap,
+                          ICrudSupply crudSupply, JiUserBase user, PropertyFilter filter, JdbcCondition jdbcCondition) {
+        Object id = DynaBinderUtils.to(getIdentifier(entityName, identifierName, propertyMap), identifierType);
+        if (id == null) {
+            throw new ServerException(ServerStatus.NO_PARAM,
+                    "can not update " + entityName + " from id = " + identifierType);
+        }
 
-		Object entity = find(entityName, id, crudSupply, jdbcCondition);
-		propertyMap.remove(identifierName);
-		return merge(entityName, entity, propertyMap, crudSupply, false, user, filter);
-	}
+        Object entity = find(entityName, id, crudSupply, jdbcCondition);
+        propertyMap.remove(identifierName);
+        return merge(entityName, entity, propertyMap, crudSupply, false, user, filter);
+    }
 
-	/**
-	 * @param entityName
-	 * @param identifierName
-	 * @param identifierType
-	 * @param propertyMap
-	 * @param crudSupply
-	 * @param user
-	 * @param filter
-	 * @param jdbcCondition
-	 * @return
-	 */
-	private Object merge(String entityName, String identifierName, Class identifierType, Map propertyMap,
-			ICrudSupply crudSupply, JiUserBase user, PropertyFilter filter, JdbcCondition jdbcCondition) {
-		try {
-			Object id = DynaBinderUtils.to(getIdentifier(entityName, identifierName, propertyMap), identifierType);
-			if (id != null) {
-				Object entity = CrudServiceUtils.find(crudSupply, entityName, id, null);
-				if (entity == null) {
-					entity = BeanServiceUtils.similarEntity(entityName, propertyMap);
-				}
+    /**
+     * @param entityName
+     * @param identifierName
+     * @param identifierType
+     * @param propertyMap
+     * @param crudSupply
+     * @param user
+     * @param filter
+     * @param jdbcCondition
+     * @return
+     */
+    private Object merge(String entityName, String identifierName, Class identifierType, Map propertyMap,
+                         ICrudSupply crudSupply, JiUserBase user, PropertyFilter filter, JdbcCondition jdbcCondition) {
+        try {
+            Object id = DynaBinderUtils.to(getIdentifier(entityName, identifierName, propertyMap), identifierType);
+            if (id != null) {
+                Object entity = CrudServiceUtils.find(crudSupply, entityName, id, null);
+                if (entity == null) {
+                    entity = BeanServiceUtils.similarEntity(entityName, propertyMap);
+                }
 
-				if (entity != null) {
-					id = crudSupply.getIdentifier(entityName, entity);
-					entity = CrudServiceUtils.find(crudSupply, entityName, id, jdbcCondition);
-					if (entity != null) {
-						return merge(entityName, entity, propertyMap, crudSupply, false, user, filter);
-					}
-				}
+                if (entity != null) {
+                    id = crudSupply.getIdentifier(entityName, entity);
+                    entity = CrudServiceUtils.find(crudSupply, entityName, id, jdbcCondition);
+                    if (entity != null) {
+                        return merge(entityName, entity, propertyMap, crudSupply, false, user, filter);
+                    }
+                }
 
-				return merge(entityName, crudSupply.create(entityName), propertyMap, crudSupply, false, user, filter);
-			}
+                return merge(entityName, crudSupply.create(entityName), propertyMap, crudSupply, false, user, filter);
+            }
 
-		} catch (ServerException e) {
-		}
+        } catch (ServerException e) {
+        }
 
-		return persist(entityName, propertyMap, crudSupply, user, filter);
-	}
+        return persist(entityName, propertyMap, crudSupply, user, filter);
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param entityList
-	 * @param filter
-	 * @return
-	 */
-	public List insert(String entityName, ICrudSupply crudSupply, JiUserBase user, List<?> entityList,
-			PropertyFilter filter) {
-		List<Object> entities = new ArrayList<Object>();
-		for (Object entityObject : entityList) {
-			entities.add(persist(entityName, entityObject, crudSupply, user, filter));
-		}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param entityList
+     * @param filter
+     * @return
+     */
+    public List insert(String entityName, ICrudSupply crudSupply, JiUserBase user, List<?> entityList,
+                       PropertyFilter filter) {
+        List<Object> entities = new ArrayList<Object>();
+        for (Object entityObject : entityList) {
+            entities.add(persist(entityName, entityObject, crudSupply, user, filter));
+        }
 
-		return entities;
-	}
+        return entities;
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param entityObject
-	 * @param filter
-	 * @return
-	 */
-	public Object update(String entityName, ICrudSupply crudSupply, JiUserBase user, Object entityObject,
-			PropertyFilter filter) {
-		if (entityObject == null || !(entityObject instanceof Map)) {
-			if (entityObject.getClass() != crudSupply.getEntityClass(entityName)) {
-				return null;
-			}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param entityObject
+     * @param filter
+     * @return
+     */
+    public Object update(String entityName, ICrudSupply crudSupply, JiUserBase user, Object entityObject,
+                         PropertyFilter filter) {
+        if (entityObject == null || !(entityObject instanceof Map)) {
+            if (entityObject.getClass() != crudSupply.getEntityClass(entityName)) {
+                return null;
+            }
 
-			entityObject = BinderUtils.getEntityMap(entityObject);
-		}
+            entityObject = BinderUtils.getEntityMap(entityObject);
+        }
 
-		return update(entityName, crudSupply.getIdentifierName(entityName), crudSupply.getIdentifierType(entityName),
-				(Map) entityObject, crudSupply, user, filter,
-				AccessServiceUtils.updateCondition(entityName, user, null));
-	}
+        return update(entityName, crudSupply.getIdentifierName(entityName), crudSupply.getIdentifierType(entityName),
+                (Map) entityObject, crudSupply, user, filter,
+                AccessServiceUtils.updateCondition(entityName, user, null));
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param entityList
-	 * @param filter
-	 * @return
-	 */
-	public List update(String entityName, ICrudSupply crudSupply, JiUserBase user, List<?> entityList,
-			PropertyFilter filter) {
-		Class entityClass = null;
-		String identifierName = crudSupply.getIdentifierName(entityName);
-		Class identifierType = crudSupply.getIdentifierType(entityName);
-		JdbcCondition jdbcCondition = AccessServiceUtils.updateCondition(entityName, user, null);
-		List<Object> conditions = jdbcCondition == null ? null : new ArrayList<Object>(jdbcCondition.getConditions());
-		List<Object> entities = new ArrayList<Object>();
-		for (Object entityObject : entityList) {
-			if (entityObject == null || !(entityObject instanceof Map)) {
-				if (entityClass == null) {
-					entityClass = crudSupply.getEntityClass(entityName);
-				}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param entityList
+     * @param filter
+     * @return
+     */
+    public List update(String entityName, ICrudSupply crudSupply, JiUserBase user, List<?> entityList,
+                       PropertyFilter filter) {
+        Class entityClass = null;
+        String identifierName = crudSupply.getIdentifierName(entityName);
+        Class identifierType = crudSupply.getIdentifierType(entityName);
+        JdbcCondition jdbcCondition = AccessServiceUtils.updateCondition(entityName, user, null);
+        List<Object> conditions = jdbcCondition == null ? null : new ArrayList<Object>(jdbcCondition.getConditions());
+        List<Object> entities = new ArrayList<Object>();
+        for (Object entityObject : entityList) {
+            if (entityObject == null || !(entityObject instanceof Map)) {
+                if (entityClass == null) {
+                    entityClass = crudSupply.getEntityClass(entityName);
+                }
 
-				if (entityObject.getClass() != entityClass) {
-					continue;
-				}
+                if (entityObject.getClass() != entityClass) {
+                    continue;
+                }
 
-				entityObject = BinderUtils.getEntityMap(entityObject);
-			}
+                entityObject = BinderUtils.getEntityMap(entityObject);
+            }
 
-			entities.add(update(entityName, identifierName, identifierType, (Map) entityObject, crudSupply, user,
-					filter, jdbcCondition));
-			if (jdbcCondition != null) {
-				jdbcCondition.setConditions(new ArrayList<Object>(conditions));
-			}
-		}
+            entities.add(update(entityName, identifierName, identifierType, (Map) entityObject, crudSupply, user,
+                    filter, jdbcCondition));
+            if (jdbcCondition != null) {
+                jdbcCondition.setConditions(new ArrayList<Object>(conditions));
+            }
+        }
 
-		return entities;
-	}
+        return entities;
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param entityObject
-	 * @param filter
-	 * @return
-	 */
-	public Object merge(String entityName, ICrudSupply crudSupply, JiUserBase user, Object entityObject,
-			PropertyFilter filter) {
-		if (entityObject == null || !(entityObject instanceof Map)) {
-			if (entityObject.getClass() != crudSupply.getEntityClass(entityName)) {
-				return null;
-			}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param entityObject
+     * @param filter
+     * @return
+     */
+    public Object merge(String entityName, ICrudSupply crudSupply, JiUserBase user, Object entityObject,
+                        PropertyFilter filter) {
+        if (entityObject == null || !(entityObject instanceof Map)) {
+            if (entityObject.getClass() != crudSupply.getEntityClass(entityName)) {
+                return null;
+            }
 
-			entityObject = BinderUtils.getEntityMap(entityObject);
-		}
+            entityObject = BinderUtils.getEntityMap(entityObject);
+        }
 
-		return merge(entityName, crudSupply.getIdentifierName(entityName), crudSupply.getIdentifierType(entityName),
-				(Map) entityObject, crudSupply, user, filter,
-				AccessServiceUtils.updateCondition(entityName, user, null));
-	}
+        return merge(entityName, crudSupply.getIdentifierName(entityName), crudSupply.getIdentifierType(entityName),
+                (Map) entityObject, crudSupply, user, filter,
+                AccessServiceUtils.updateCondition(entityName, user, null));
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param entityList
-	 * @param filter
-	 * @return
-	 */
-	public List merge(String entityName, ICrudSupply crudSupply, JiUserBase user, List<?> entityList,
-			PropertyFilter filter) {
-		Class entityClass = null;
-		String identifierName = crudSupply.getIdentifierName(entityName);
-		Class identifierType = crudSupply.getIdentifierType(entityName);
-		JdbcCondition jdbcCondition = AccessServiceUtils.updateCondition(entityName, user, null);
-		List<Object> conditions = jdbcCondition == null ? null : new ArrayList<Object>(jdbcCondition.getConditions());
-		List<Object> entities = new ArrayList<Object>();
-		for (Object entityObject : entityList) {
-			if (entityObject == null || !(entityObject instanceof Map)) {
-				if (entityClass == null) {
-					entityClass = crudSupply.getEntityClass(entityName);
-				}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param entityList
+     * @param filter
+     * @return
+     */
+    public List merge(String entityName, ICrudSupply crudSupply, JiUserBase user, List<?> entityList,
+                      PropertyFilter filter) {
+        Class entityClass = null;
+        String identifierName = crudSupply.getIdentifierName(entityName);
+        Class identifierType = crudSupply.getIdentifierType(entityName);
+        JdbcCondition jdbcCondition = AccessServiceUtils.updateCondition(entityName, user, null);
+        List<Object> conditions = jdbcCondition == null ? null : new ArrayList<Object>(jdbcCondition.getConditions());
+        List<Object> entities = new ArrayList<Object>();
+        for (Object entityObject : entityList) {
+            if (entityObject == null || !(entityObject instanceof Map)) {
+                if (entityClass == null) {
+                    entityClass = crudSupply.getEntityClass(entityName);
+                }
 
-				if (entityObject.getClass() != entityClass) {
-					continue;
-				}
+                if (entityObject.getClass() != entityClass) {
+                    continue;
+                }
 
-				entityObject = BinderUtils.getEntityMap(entityObject);
-			}
+                entityObject = BinderUtils.getEntityMap(entityObject);
+            }
 
-			entities.add(merge(entityName, identifierName, identifierType, (Map) entityObject, crudSupply, user, filter,
-					jdbcCondition));
-			if (jdbcCondition != null) {
-				jdbcCondition.setConditions(new ArrayList<Object>(conditions));
-			}
-		}
+            entities.add(merge(entityName, identifierName, identifierType, (Map) entityObject, crudSupply, user, filter,
+                    jdbcCondition));
+            if (jdbcCondition != null) {
+                jdbcCondition.setConditions(new ArrayList<Object>(conditions));
+            }
+        }
 
-		return entities;
-	}
+        return entities;
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param id
-	 * @return
-	 */
-	public Object delete(String entityName, ICrudSupply crudSupply, JiUserBase user, Object id) {
-		return CrudServiceUtils.delete(crudSupply, entityName, id,
-				AccessServiceUtils.deleteCondition(entityName, user, null), user);
-	}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param id
+     * @return
+     */
+    public Object delete(String entityName, ICrudSupply crudSupply, JiUserBase user, Object id) {
+        return CrudServiceUtils.delete(crudSupply, entityName, id,
+                AccessServiceUtils.deleteCondition(entityName, user, null), user);
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param ids
-	 * @return
-	 */
-	public List delete(String entityName, ICrudSupply crudSupply, JiUserBase user, Object[] ids) {
-		return CrudService.ME.delete(entityName, getCrudSupply(entityName), AccessServiceUtils
-				.deleteCondition(entityName, user, CrudServiceUtils.ids(entityName, ids, crudSupply, null)), user);
-	}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param ids
+     * @return
+     */
+    public List delete(String entityName, ICrudSupply crudSupply, JiUserBase user, Object[] ids) {
+        return CrudService.ME.delete(entityName, getCrudSupply(entityName), AccessServiceUtils
+                .deleteCondition(entityName, user, CrudServiceUtils.ids(entityName, ids, crudSupply, null)), user);
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param jdbcCondition
-	 * @return
-	 */
-	public List delete(String entityName, ICrudSupply crudSupply, JiUserBase user, JdbcCondition jdbcCondition) {
-		return CrudService.ME.delete(entityName, crudSupply,
-				AccessServiceUtils.deleteCondition(entityName, user, jdbcCondition), user);
-	}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param jdbcCondition
+     * @return
+     */
+    public List delete(String entityName, ICrudSupply crudSupply, JiUserBase user, JdbcCondition jdbcCondition) {
+        return CrudService.ME.delete(entityName, crudSupply,
+                AccessServiceUtils.deleteCondition(entityName, user, jdbcCondition), user);
+    }
 
-	/**
-	 * @param entityName
-	 * @return
-	 */
-	public boolean getEntityNameRecycle(String entityName) {
-		Boolean recyle = entityNameMapRecycle.get(entityName);
-		if (recyle == null) {
-			synchronized (entityNameMapRecycle) {
-				recyle = entityNameMapRecycle.get(entityName);
-				if (recyle == null) {
-					Class<?> recycleClass = SessionFactoryUtils.getEntityClass(entityName + JpRecycleBase.RECYCLE);
-					if (recycleClass == null || JbRecycleBase.class.isAssignableFrom(JpRecycleBase.class)) {
-						recyle = false;
+    /**
+     * @param entityName
+     * @return
+     */
+    public boolean getEntityNameRecycle(String entityName) {
+        Boolean recyle = entityNameMapRecycle.get(entityName);
+        if (recyle == null) {
+            synchronized (entityNameMapRecycle) {
+                recyle = entityNameMapRecycle.get(entityName);
+                if (recyle == null) {
+                    Class<?> recycleClass = SessionFactoryUtils.getEntityClass(entityName + JpRecycleBase.RECYCLE);
+                    if (recycleClass == null || JbRecycleBase.class.isAssignableFrom(JpRecycleBase.class)) {
+                        recyle = false;
 
-					} else {
-						Class<?> entityClass = SessionFactoryUtils.getEntityClass(entityName);
-						JaRecycle jaRecycle = entityClass == null ? null
-								: KernelClass.fetchAnnotation(entityClass, JaRecycle.class);
-						recyle = !(jaRecycle == null || !jaRecycle.value());
-					}
+                    } else {
+                        Class<?> entityClass = SessionFactoryUtils.getEntityClass(entityName);
+                        JaRecycle jaRecycle = entityClass == null ? null
+                                : KernelClass.fetchAnnotation(entityClass, JaRecycle.class);
+                        recyle = !(jaRecycle == null || !jaRecycle.value());
+                    }
 
-					entityNameMapRecycle.put(entityName, recyle);
-				}
-			}
-		}
+                    entityNameMapRecycle.put(entityName, recyle);
+                }
+            }
+        }
 
-		return recyle;
-	}
+        return recyle;
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param condition
-	 * @param modelMap
-	 */
-	public void changed(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition,
-			Map<String, Object> modelMap) {
-		if (!modelMap.containsKey("updateTime")) {
-			modelMap.put("updateTime", System.currentTimeMillis());
-		}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param condition
+     * @param modelMap
+     */
+    public void changed(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition,
+                        Map<String, Object> modelMap) {
+        if (!modelMap.containsKey("updateTime")) {
+            modelMap.put("updateTime", System.currentTimeMillis());
+        }
 
-		// KernelString.capitalize(entityName)
-		modelMap.put(entityName, list(entityName, crudSupply, user, condition, null, null, 0, 0));
-		if (getEntityNameRecycle(entityName)) {
-			entityName += JpRecycleBase.RECYCLE;
-			List recycles = list(entityName, getCrudSupply(entityName), user, condition, null, null, 0, 0);
-			if (recycles.size() > 0 && recycles.get(0).getClass().getSuperclass() != JbRecycleBase.class) {
-				List<JbRecycleBase> recycleBases = recycles;
-				recycles = new ArrayList<JbRecycleBase>();
-				for (JbRecycleBase recycleBase : recycleBases) {
-					JbRecycleBase recycle = new JbRecycleBase();
-					recycle.setId(recycleBase.getId());
-					recycle.setUpdateTime(recycle.getUpdateTime());
-					recycles.add(recycle);
-				}
-			}
+        // KernelString.capitalize(entityName)
+        modelMap.put(entityName, list(entityName, crudSupply, user, condition, null, null, 0, 0));
+        if (getEntityNameRecycle(entityName)) {
+            entityName += JpRecycleBase.RECYCLE;
+            List recycles = list(entityName, getCrudSupply(entityName), user, condition, null, null, 0, 0);
+            if (recycles.size() > 0 && recycles.get(0).getClass().getSuperclass() != JbRecycleBase.class) {
+                List<JbRecycleBase> recycleBases = recycles;
+                recycles = new ArrayList<JbRecycleBase>();
+                for (JbRecycleBase recycleBase : recycleBases) {
+                    JbRecycleBase recycle = new JbRecycleBase();
+                    recycle.setId(recycleBase.getId());
+                    recycle.setUpdateTime(recycle.getUpdateTime());
+                    recycles.add(recycle);
+                }
+            }
 
-			modelMap.put(entityName, recycles);
-		}
-	}
+            modelMap.put(entityName, recycles);
+        }
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param condition
-	 * @param modelMap
-	 * @param entityMap
-	 * @param filter
-	 */
-	public void sync(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition,
-			Map<String, Object> modelMap, Map<?, ?> entityMap, PropertyFilter filter) {
-		Object entityList = entityMap.get("delete");
-		if (entityList != null && entityList instanceof List) {
-			delete(entityName, crudSupply, user, (List<?>) entityList);
-		}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param condition
+     * @param modelMap
+     * @param entityMap
+     * @param filter
+     */
+    public void sync(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition,
+                     Map<String, Object> modelMap, Map<?, ?> entityMap, PropertyFilter filter) {
+        Object entityList = entityMap.get("delete");
+        if (entityList != null && entityList instanceof List) {
+            delete(entityName, crudSupply, user, (List<?>) entityList);
+        }
 
-		entityList = entityMap.get("merge");
-		if (entityList != null && entityList instanceof List) {
-			merge(entityName, crudSupply, user, (List<?>) entityList, filter);
-		}
+        entityList = entityMap.get("merge");
+        if (entityList != null && entityList instanceof List) {
+            merge(entityName, crudSupply, user, (List<?>) entityList, filter);
+        }
 
-		entityList = entityMap.get("insert");
-		if (entityList != null && entityList instanceof List) {
-			insert(entityName, crudSupply, user, (List<?>) entityList, filter);
-		}
+        entityList = entityMap.get("insert");
+        if (entityList != null && entityList instanceof List) {
+            insert(entityName, crudSupply, user, (List<?>) entityList, filter);
+        }
 
-		entityList = entityMap.get("update");
-		if (entityList != null && entityList instanceof List) {
-			update(entityName, crudSupply, user, (List<?>) entityList, filter);
-		}
+        entityList = entityMap.get("update");
+        if (entityList != null && entityList instanceof List) {
+            update(entityName, crudSupply, user, (List<?>) entityList, filter);
+        }
 
-		changed(entityName, crudSupply, user, condition, modelMap);
-	}
+        changed(entityName, crudSupply, user, condition, modelMap);
+    }
 
-	/**
-	 * @param entityName
-	 * @param crudSupply
-	 * @param user
-	 * @param modelMap
-	 * @param entityList
-	 * @param filter
-	 */
-	public void mirror(String entityName, ICrudSupply crudSupply, JiUserBase user, Map<String, Object> modelMap,
-			List<?> entityList, PropertyFilter filter) {
-		CrudService.ME.delete(entityName, crudSupply, AccessServiceUtils.deleteCondition(entityName, user, null), user);
-		insert(entityName, crudSupply, user, entityList, filter);
-	}
+    /**
+     * @param entityName
+     * @param crudSupply
+     * @param user
+     * @param modelMap
+     * @param entityList
+     * @param filter
+     */
+    public void mirror(String entityName, ICrudSupply crudSupply, JiUserBase user, Map<String, Object> modelMap,
+                       List<?> entityList, PropertyFilter filter) {
+        CrudService.ME.delete(entityName, crudSupply, AccessServiceUtils.deleteCondition(entityName, user, null), user);
+        insert(entityName, crudSupply, user, entityList, filter);
+    }
 }

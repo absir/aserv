@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-7-19 下午12:50:38
  */
 package com.absir.aserv.jdbc;
@@ -12,285 +12,295 @@ import java.util.List;
 
 /**
  * @author absir
- * 
  */
 public class JdbcCondition extends JdbcAlias {
 
-	/** conditions */
-	private List<Object> conditions = new ArrayList<Object>();
+    /**
+     * conditions
+     */
+    private List<Object> conditions = new ArrayList<Object>();
 
-	/** cacheConditionProperties */
-	private List<List<ConditionProperty>> cacheConditionProperties = new ArrayList<List<ConditionProperty>>();
+    /**
+     * cacheConditionProperties
+     */
+    private List<List<ConditionProperty>> cacheConditionProperties = new ArrayList<List<ConditionProperty>>();
 
-	/** conditionProperties */
-	private List<ConditionProperty> conditionProperties = new ArrayList<ConditionProperty>();
+    /**
+     * conditionProperties
+     */
+    private List<ConditionProperty> conditionProperties = new ArrayList<ConditionProperty>();
 
-	/**
-	 * @return the conditions
-	 */
-	public List<Object> getConditions() {
-		return conditions;
-	}
+    /**
+     * @param conditions
+     * @return
+     */
+    public static List<Object> getConditionList(List<Object> conditions) {
+        List<Object> conditionList = new ArrayList<Object>();
+        setConditionList(conditions, conditionList);
+        return conditionList;
+    }
 
-	/**
-	 * @param conditions
-	 *            the conditions to set
-	 */
-	public void setConditions(List<Object> conditions) {
-		this.conditions = conditions;
-	}
+    /**
+     * @param conditions
+     * @param conditionList
+     */
+    private static void setConditionList(List<Object> conditions, List<Object> conditionList) {
+        for (Object condition : conditions) {
+            if (condition instanceof Conditions) {
+                int left = conditionList.size();
+                setConditionList((Conditions) condition, conditionList);
+                int right = conditionList.size() - 2;
+                if (right >= left) {
+                    String glue = ((Conditions) condition).glue;
+                    if (right == left) {
+                        if (glue != null) {
+                            conditionList.set(left, glue + conditionList.get(left));
+                        }
 
-	/**
-	 * @return
-	 */
-	public List<Object> getConditionList() {
-		return getConditionList(conditions);
-	}
+                    } else {
+                        conditionList.set(left, (glue == null ? "(" : glue + " (") + conditionList.get(left));
+                        conditionList.set(right, conditionList.get(right) + ")");
+                    }
+                }
 
-	/**
-	 * @return
-	 */
-	public String getPropertyAlias() {
-		if (conditionProperties.size() > 0) {
-			String alias = conditionProperties.get(conditionProperties.size() - 1).alias;
-			if (alias != null) {
-				return alias;
-			}
+            } else {
+                conditionList.add(condition);
+            }
+        }
+    }
 
-			for (ConditionProperty conditionProperty : conditionProperties) {
-				alias = conditionProperty.getPropertyAlias(this, alias);
-			}
+    /**
+     * @return the conditions
+     */
+    public List<Object> getConditions() {
+        return conditions;
+    }
 
-			return alias;
-		}
+    /**
+     * @param conditions the conditions to set
+     */
+    public void setConditions(List<Object> conditions) {
+        this.conditions = conditions;
+    }
 
-		return ALIAS;
-	}
+    /**
+     * @return
+     */
+    public List<Object> getConditionList() {
+        return getConditionList(conditions);
+    }
 
-	/**
-	 * @param right
-	 * @return
-	 */
-	public String getPropertyAlias(int right) {
-		List<ConditionProperty> conditionProperties = this.conditionProperties;
-		int size = cacheConditionProperties.size();
-		while ((right -= conditionProperties.size()) > 0 && size > 0) {
-			conditionProperties = cacheConditionProperties.get(--size);
-		}
+    /**
+     * @return
+     */
+    public String getPropertyAlias() {
+        if (conditionProperties.size() > 0) {
+            String alias = conditionProperties.get(conditionProperties.size() - 1).alias;
+            if (alias != null) {
+                return alias;
+            }
 
-		if (right < 0) {
-			right = -right - 1;
-			String alias = conditionProperties.get(right).alias;
-			if (alias != null) {
-				return alias;
-			}
+            for (ConditionProperty conditionProperty : conditionProperties) {
+                alias = conditionProperty.getPropertyAlias(this, alias);
+            }
 
-			for (int i = 0; i <= right; i++) {
-				alias = conditionProperties.get(i).getPropertyAlias(this, alias);
-			}
+            return alias;
+        }
 
-			return alias;
-		}
+        return ALIAS;
+    }
 
-		return ALIAS;
-	}
+    /**
+     * @param right
+     * @return
+     */
+    public String getPropertyAlias(int right) {
+        List<ConditionProperty> conditionProperties = this.conditionProperties;
+        int size = cacheConditionProperties.size();
+        while ((right -= conditionProperties.size()) > 0 && size > 0) {
+            conditionProperties = cacheConditionProperties.get(--size);
+        }
 
-	/**
-	 * @return
-	 */
-	public String getCurrentPropertyAlias() {
-		if (conditionProperties.size() > 0) {
-			return conditionProperties.get(conditionProperties.size() - 1).alias;
-		}
+        if (right < 0) {
+            right = -right - 1;
+            String alias = conditionProperties.get(right).alias;
+            if (alias != null) {
+                return alias;
+            }
 
-		return ALIAS;
-	}
+            for (int i = 0; i <= right; i++) {
+                alias = conditionProperties.get(i).getPropertyAlias(this, alias);
+            }
 
-	/**
-	 * @param conditionProperty
-	 */
-	public void openProperty(ConditionProperty conditionProperty) {
-		conditionProperties.add(conditionProperty);
-	}
+            return alias;
+        }
 
-	/**
-	 * 
-	 */
-	public void reopenAlias() {
-		cacheConditionProperties.add(conditionProperties);
-		conditionProperties = new ArrayList<ConditionProperty>();
-	}
+        return ALIAS;
+    }
 
-	/**
-	 * 
-	 */
-	public void closeProperty() {
-		if (conditionProperties.size() > 0) {
-			conditionProperties.remove(conditionProperties.size() - 1);
+    /**
+     * @return
+     */
+    public String getCurrentPropertyAlias() {
+        if (conditionProperties.size() > 0) {
+            return conditionProperties.get(conditionProperties.size() - 1).alias;
+        }
 
-		} else {
-			if (cacheConditionProperties.size() > 0) {
-				conditionProperties = cacheConditionProperties.remove(cacheConditionProperties.size() - 1);
-			}
-		}
-	}
+        return ALIAS;
+    }
 
-	/**
-	 * 
-	 */
-	public void clearAlias() {
-		cacheConditionProperties.clear();
-		conditionProperties.clear();
-	}
+    /**
+     * @param conditionProperty
+     */
+    public void openProperty(ConditionProperty conditionProperty) {
+        conditionProperties.add(conditionProperty);
+    }
 
-	/**
-	 * @author absir
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public static class Conditions extends ArrayList<Object> {
+    /**
+     *
+     */
+    public void reopenAlias() {
+        cacheConditionProperties.add(conditionProperties);
+        conditionProperties = new ArrayList<ConditionProperty>();
+    }
 
-		/** glue */
-		private String glue;
+    /**
+     *
+     */
+    public void closeProperty() {
+        if (conditionProperties.size() > 0) {
+            conditionProperties.remove(conditionProperties.size() - 1);
 
-		/** parent */
-		private List<Object> parent;
+        } else {
+            if (cacheConditionProperties.size() > 0) {
+                conditionProperties = cacheConditionProperties.remove(cacheConditionProperties.size() - 1);
+            }
+        }
+    }
 
-		/**
-		 * @param parent
-		 */
-		public Conditions(List<Object> parent) {
-			this.parent = parent;
-			parent.add(this);
-		}
+    /**
+     *
+     */
+    public void clearAlias() {
+        cacheConditionProperties.clear();
+        conditionProperties.clear();
+    }
 
-		/**
-		 * @param parent
-		 */
-		public Conditions(String glue, List<Object> parent) {
-			this(parent);
-			this.glue = glue;
-		}
+    /**
+     * @author absir
+     */
+    @SuppressWarnings("serial")
+    public static class Conditions extends ArrayList<Object> {
 
-		/**
-		 * @param glue
-		 * @param parent
-		 * @param index
-		 */
-		public Conditions(String glue, List<Object> parent, int index) {
-			this.parent = parent;
-			parent.add(index, this);
-			this.glue = glue;
-		}
+        /**
+         * glue
+         */
+        private String glue;
 
-		/**
-		 * @param glue
-		 * @param parent
-		 * @param conditions
-		 */
-		public Conditions(String glue, List<Object> parent, List<Object> conditions) {
-			this(glue, parent);
-			addAll(conditions);
-		}
+        /**
+         * parent
+         */
+        private List<Object> parent;
 
-		/**
-		 * @return the glue
-		 */
-		public String getGlue() {
-			return glue;
-		}
+        /**
+         * @param parent
+         */
+        public Conditions(List<Object> parent) {
+            this.parent = parent;
+            parent.add(this);
+        }
 
-		/**
-		 * @return the parent
-		 */
-		public List<Object> getParent() {
-			return parent;
-		}
-	}
+        /**
+         * @param parent
+         */
+        public Conditions(String glue, List<Object> parent) {
+            this(parent);
+            this.glue = glue;
+        }
 
-	/**
-	 * @param conditions
-	 * @return
-	 */
-	public static List<Object> getConditionList(List<Object> conditions) {
-		List<Object> conditionList = new ArrayList<Object>();
-		setConditionList(conditions, conditionList);
-		return conditionList;
-	}
+        /**
+         * @param glue
+         * @param parent
+         * @param index
+         */
+        public Conditions(String glue, List<Object> parent, int index) {
+            this.parent = parent;
+            parent.add(index, this);
+            this.glue = glue;
+        }
 
-	/**
-	 * @param conditions
-	 * @param conditionList
-	 */
-	private static void setConditionList(List<Object> conditions, List<Object> conditionList) {
-		for (Object condition : conditions) {
-			if (condition instanceof Conditions) {
-				int left = conditionList.size();
-				setConditionList((Conditions) condition, conditionList);
-				int right = conditionList.size() - 2;
-				if (right >= left) {
-					String glue = ((Conditions) condition).glue;
-					if (right == left) {
-						if (glue != null) {
-							conditionList.set(left, glue + conditionList.get(left));
-						}
+        /**
+         * @param glue
+         * @param parent
+         * @param conditions
+         */
+        public Conditions(String glue, List<Object> parent, List<Object> conditions) {
+            this(glue, parent);
+            addAll(conditions);
+        }
 
-					} else {
-						conditionList.set(left, (glue == null ? "(" : glue + " (") + conditionList.get(left));
-						conditionList.set(right, conditionList.get(right) + ")");
-					}
-				}
+        /**
+         * @return the glue
+         */
+        public String getGlue() {
+            return glue;
+        }
 
-			} else {
-				conditionList.add(condition);
-			}
-		}
-	}
+        /**
+         * @return the parent
+         */
+        public List<Object> getParent() {
+            return parent;
+        }
+    }
 
-	/**
-	 * @author absir
-	 * 
-	 */
-	public static class ConditionProperty {
+    /**
+     * @author absir
+     */
+    public static class ConditionProperty {
 
-		/** alias */
-		protected String alias;
+        /**
+         * alias
+         */
+        protected String alias;
 
-		/** propertyName */
-		protected String propertyName;
+        /**
+         * propertyName
+         */
+        protected String propertyName;
 
-		/**
-		 * @param propertyName
-		 */
-		public ConditionProperty(String propertyName) {
-			this.propertyName = propertyName;
-		}
+        /**
+         * @param propertyName
+         */
+        public ConditionProperty(String propertyName) {
+            this.propertyName = propertyName;
+        }
 
-		/**
-		 * @return the alias
-		 */
-		public String getAlias() {
-			return alias;
-		}
+        /**
+         * @return the alias
+         */
+        public String getAlias() {
+            return alias;
+        }
 
-		/**
-		 * @return the propertyName
-		 */
-		public String getPropertyName() {
-			return propertyName;
-		}
+        /**
+         * @return the propertyName
+         */
+        public String getPropertyName() {
+            return propertyName;
+        }
 
-		/**
-		 * @param jdbcAlias
-		 * @param alias
-		 * @return
-		 */
-		public String getPropertyAlias(JdbcAlias jdbcAlias, String alias) {
-			if (this.alias == null) {
-				this.alias = jdbcAlias.getAliasProperyName(alias, propertyName);
-			}
+        /**
+         * @param jdbcAlias
+         * @param alias
+         * @return
+         */
+        public String getPropertyAlias(JdbcAlias jdbcAlias, String alias) {
+            if (this.alias == null) {
+                this.alias = jdbcAlias.getAliasProperyName(alias, propertyName);
+            }
 
-			return this.alias;
-		}
-	}
+            return this.alias;
+        }
+    }
 }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<div class="bjui-pageHeader">
+    <form id="pagerForm" data-toggle="ajaxsearch" action="\${ADMIN_ROUTE}entity/list/\${entityName}" method="post">
+        <input type="hidden" name="pageIndex" value="\${page.pageIndex}"/>
+        <input type="hidden" name="pageSize" value="\${page.pageSize}"/>
+        <input type="hidden" name="orderField" value="\${orderField}"/>
+        <input type="hidden" name="orderDirection" value="\${orderDirection}"/>
+        ##<input type="hidden" name="searchConditions" value="\${searchConditions}"/>
+
+        <div class="bjui-searchBar">
+            #include("bar.jetx")
+        </div>
+        <div class="bjui-moreSearch">
+            ${Pag::includeGen("search/" + entityName + ".jetx", "search.jetx")}
+            \#include("../search/" + entityName + ".jetx")
+        </div>
+    </form>
+</div>
+<div class="bjui-pageContent tableContent">
+    <table class="table table-bordered table-hover table-striped table-top">
+        ${Pag::includeGen("table/" + entityName + ".jetx", "table.jetx")}
+        \#include("../table/" + entityName + ".jetx")
+    </table>
+</div>
+<div class="bjui-pageFooter">
+    <div class="pages">
+        <span>${Pag::getLang("每页")}</span>
+
+        <div class="selectPagesize">
+            <select data-toggle="selectpicker" data-toggle-change="changepagesize">
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+            </select>
+        </div>
+        <span>${Pag::getLang("条，共")} \${page.totalCount} ${Pag::getLang("条")}</span>
+    </div>
+    <div class="pagination-box" data-toggle="pagination" data-total="\${page.totalCount}" data-page-size="\${page.pageSize}" data-page-current="\${page.pageIndex}">
+    </div>
+</div>

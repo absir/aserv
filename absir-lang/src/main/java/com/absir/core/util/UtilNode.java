@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2014-1-23 下午8:46:00
  */
 package com.absir.core.util;
@@ -11,226 +11,230 @@ import com.absir.core.kernel.KernelList.Orderable;
 
 /**
  * @author absir
- * 
  */
 public class UtilNode<T> {
 
-	/** element */
-	protected T element;
+    /**
+     * element
+     */
+    protected T element;
 
-	/** previous */
-	protected UtilNode<T> previous;
+    /**
+     * previous
+     */
+    protected UtilNode<T> previous;
 
-	/** next */
-	protected UtilNode<T> next;
+    /**
+     * next
+     */
+    protected UtilNode<T> next;
 
-	/**
-	 * 
-	 */
-	public UtilNode() {
-	}
+    /**
+     *
+     */
+    public UtilNode() {
+    }
 
-	/**
-	 * @param element
-	 */
-	public UtilNode(T element) {
-		this.element = element;
-	}
+    /**
+     * @param element
+     */
+    public UtilNode(T element) {
+        this.element = element;
+    }
 
-	/**
-	 * @return the element
-	 */
-	public T getElement() {
-		return element;
-	}
+    /**
+     * @param orderableHeader
+     * @param orderable
+     */
+    public static <T extends Orderable> void insertOrderableNode(UtilNode<T> orderableHeader, T orderable) {
+        insertOrderableNode(orderableHeader, new UtilNode<T>(orderable));
+    }
 
-	/**
-	 * @param element
-	 *            the element to set
-	 */
-	public void setElement(T element) {
-		this.element = element;
-	}
+    /**
+     * @param orderableHeader
+     * @param orderableNode
+     */
+    public static <T extends Orderable> void insertOrderableNode(UtilNode<T> orderableHeader,
+                                                                 UtilNode<T> orderableNode) {
+        int order = orderableNode.element.getOrder();
+        UtilNode<T> orderableNodeNext;
+        while (true) {
+            orderableNodeNext = orderableHeader.getNext();
+            if (orderableNodeNext == null || order <= orderableNodeNext.getElement().getOrder()) {
+                orderableHeader.afterAdd(orderableNode);
+                break;
+            }
 
-	/**
-	 * @return the previous
-	 */
-	public UtilNode<T> getPrevious() {
-		return previous;
-	}
+            orderableHeader = orderableNodeNext;
+        }
+    }
 
-	/**
-	 * @return the next
-	 */
-	public UtilNode<T> getNext() {
-		return next;
-	}
+    /**
+     * @param orderableHeader
+     * @param orderable
+     */
+    public static <T extends Orderable> void insertOrderableNodeFooter(UtilNode<T> orderableFooter, T orderable) {
+        insertOrderableNodeFooter(orderableFooter, new UtilNode<T>(orderable));
+    }
 
-	/**
-	 * @param node
-	 */
-	public void beforeAdd(UtilNode<T> node) {
-		if (previous != null) {
-			previous.next = node;
-		}
+    /**
+     * @param orderableFooter
+     * @param orderableNode
+     */
+    public static <T extends Orderable> void insertOrderableNodeFooter(UtilNode<T> orderableFooter,
+                                                                       UtilNode<T> orderableNode) {
+        int order = orderableNode.element.getOrder();
+        UtilNode<T> orderableNodePre;
+        while (true) {
+            if (orderableFooter.getElement() == null || orderableFooter.getElement().getOrder() <= order) {
+                orderableFooter.afterAdd(orderableNode);
+                break;
+            }
 
-		node.previous = previous;
-		node.next = this;
-		previous = node;
-	}
+            orderableNodePre = orderableFooter.getPrevious();
+            if (orderableNodePre == null) {
+                orderableFooter.beforeAdd(orderableNode);
+                break;
+            }
 
-	/**
-	 * @param node
-	 */
-	public void afterAdd(UtilNode<T> node) {
-		if (next != null) {
-			next.previous = node;
-		}
+            orderableFooter = orderableNodePre;
+        }
+    }
 
-		node.previous = this;
-		node.next = next;
-		next = node;
-	}
+    /**
+     * @param orderableNode
+     */
+    public static <T extends Orderable> void sortOrderableNode(UtilNode<T> orderableNode) {
+        int order = orderableNode.getElement().getOrder();
+        UtilNode<T> orderableNodeCompare = orderableNode.getNext();
+        if (orderableNodeCompare == null || order <= orderableNodeCompare.getElement().getOrder()) {
+            orderableNodeCompare = orderableNode;
+            T orderableCompare;
+            while (true) {
+                orderableNodeCompare = orderableNodeCompare.getPrevious();
+                orderableCompare = orderableNodeCompare.getElement();
+                if (orderableCompare == null || order >= orderableCompare.getOrder()) {
+                    orderableNodeCompare.afterInsert(orderableNode);
+                    break;
+                }
+            }
 
-	/**
-	 * 
-	 */
-	public void remove() {
-		if (previous != null) {
-			previous.next = next;
-		}
+        } else {
+            UtilNode<T> orderableNodeNext = orderableNode.getNext();
+            while (true) {
+                if (order <= orderableNodeCompare.getElement().getOrder()) {
+                    orderableNodeCompare.beforeInsert(orderableNode);
+                    break;
+                }
 
-		if (next != null) {
-			next.previous = previous;
-		}
-	}
+                orderableNodeNext = orderableNodeCompare.getNext();
+                if (orderableNodeNext == null) {
+                    orderableNodeCompare.afterInsert(orderableNode);
+                    break;
+                }
 
-	/**
-	 * @param node
-	 */
-	public void beforeInsert(UtilNode<T> node) {
-		node.remove();
-		beforeAdd(node);
-	}
+                orderableNodeCompare = orderableNodeNext;
+            }
+        }
+    }
 
-	/**
-	 * @param node
-	 */
-	public void afterInsert(UtilNode<T> node) {
-		node.remove();
-		afterAdd(node);
-	}
+    /**
+     * @param orderableNodeHeader
+     */
+    public static <T extends Orderable> void sortOrderableNodeAll(UtilNode<T> orderableNodeHeader) {
+        if (orderableNodeHeader.getElement() == null) {
+            orderableNodeHeader = orderableNodeHeader.getNext();
+            if (orderableNodeHeader == null) {
+                return;
+            }
+        }
 
-	/**
-	 * @param orderableHeader
-	 * @param orderable
-	 */
-	public static <T extends Orderable> void insertOrderableNode(UtilNode<T> orderableHeader, T orderable) {
-		insertOrderableNode(orderableHeader, new UtilNode<T>(orderable));
-	}
+        while (orderableNodeHeader != null) {
+            sortOrderableNode(orderableNodeHeader);
+            orderableNodeHeader = orderableNodeHeader.getNext();
+        }
+    }
 
-	/**
-	 * @param orderableHeader
-	 * @param orderableNode
-	 */
-	public static <T extends Orderable> void insertOrderableNode(UtilNode<T> orderableHeader,
-			UtilNode<T> orderableNode) {
-		int order = orderableNode.element.getOrder();
-		UtilNode<T> orderableNodeNext;
-		while (true) {
-			orderableNodeNext = orderableHeader.getNext();
-			if (orderableNodeNext == null || order <= orderableNodeNext.getElement().getOrder()) {
-				orderableHeader.afterAdd(orderableNode);
-				break;
-			}
+    /**
+     * @return the element
+     */
+    public T getElement() {
+        return element;
+    }
 
-			orderableHeader = orderableNodeNext;
-		}
-	}
+    /**
+     * @param element the element to set
+     */
+    public void setElement(T element) {
+        this.element = element;
+    }
 
-	/**
-	 * @param orderableHeader
-	 * @param orderable
-	 */
-	public static <T extends Orderable> void insertOrderableNodeFooter(UtilNode<T> orderableFooter, T orderable) {
-		insertOrderableNodeFooter(orderableFooter, new UtilNode<T>(orderable));
-	}
+    /**
+     * @return the previous
+     */
+    public UtilNode<T> getPrevious() {
+        return previous;
+    }
 
-	/**
-	 * @param orderableFooter
-	 * @param orderableNode
-	 */
-	public static <T extends Orderable> void insertOrderableNodeFooter(UtilNode<T> orderableFooter,
-			UtilNode<T> orderableNode) {
-		int order = orderableNode.element.getOrder();
-		UtilNode<T> orderableNodePre;
-		while (true) {
-			if (orderableFooter.getElement() == null || orderableFooter.getElement().getOrder() <= order) {
-				orderableFooter.afterAdd(orderableNode);
-				break;
-			}
+    /**
+     * @return the next
+     */
+    public UtilNode<T> getNext() {
+        return next;
+    }
 
-			orderableNodePre = orderableFooter.getPrevious();
-			if (orderableNodePre == null) {
-				orderableFooter.beforeAdd(orderableNode);
-				break;
-			}
+    /**
+     * @param node
+     */
+    public void beforeAdd(UtilNode<T> node) {
+        if (previous != null) {
+            previous.next = node;
+        }
 
-			orderableFooter = orderableNodePre;
-		}
-	}
+        node.previous = previous;
+        node.next = this;
+        previous = node;
+    }
 
-	/**
-	 * @param orderableNode
-	 */
-	public static <T extends Orderable> void sortOrderableNode(UtilNode<T> orderableNode) {
-		int order = orderableNode.getElement().getOrder();
-		UtilNode<T> orderableNodeCompare = orderableNode.getNext();
-		if (orderableNodeCompare == null || order <= orderableNodeCompare.getElement().getOrder()) {
-			orderableNodeCompare = orderableNode;
-			T orderableCompare;
-			while (true) {
-				orderableNodeCompare = orderableNodeCompare.getPrevious();
-				orderableCompare = orderableNodeCompare.getElement();
-				if (orderableCompare == null || order >= orderableCompare.getOrder()) {
-					orderableNodeCompare.afterInsert(orderableNode);
-					break;
-				}
-			}
+    /**
+     * @param node
+     */
+    public void afterAdd(UtilNode<T> node) {
+        if (next != null) {
+            next.previous = node;
+        }
 
-		} else {
-			UtilNode<T> orderableNodeNext = orderableNode.getNext();
-			while (true) {
-				if (order <= orderableNodeCompare.getElement().getOrder()) {
-					orderableNodeCompare.beforeInsert(orderableNode);
-					break;
-				}
+        node.previous = this;
+        node.next = next;
+        next = node;
+    }
 
-				orderableNodeNext = orderableNodeCompare.getNext();
-				if (orderableNodeNext == null) {
-					orderableNodeCompare.afterInsert(orderableNode);
-					break;
-				}
+    /**
+     *
+     */
+    public void remove() {
+        if (previous != null) {
+            previous.next = next;
+        }
 
-				orderableNodeCompare = orderableNodeNext;
-			}
-		}
-	}
+        if (next != null) {
+            next.previous = previous;
+        }
+    }
 
-	/**
-	 * @param orderableNodeHeader
-	 */
-	public static <T extends Orderable> void sortOrderableNodeAll(UtilNode<T> orderableNodeHeader) {
-		if (orderableNodeHeader.getElement() == null) {
-			orderableNodeHeader = orderableNodeHeader.getNext();
-			if (orderableNodeHeader == null) {
-				return;
-			}
-		}
+    /**
+     * @param node
+     */
+    public void beforeInsert(UtilNode<T> node) {
+        node.remove();
+        beforeAdd(node);
+    }
 
-		while (orderableNodeHeader != null) {
-			sortOrderableNode(orderableNodeHeader);
-			orderableNodeHeader = orderableNodeHeader.getNext();
-		}
-	}
+    /**
+     * @param node
+     */
+    public void afterInsert(UtilNode<T> node) {
+        node.remove();
+        afterAdd(node);
+    }
 }

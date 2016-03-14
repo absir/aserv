@@ -1,0 +1,15 @@
+\#tag script()
+##<!--
+\#if(error.serverStatus == ServerStatus::NO_VERIFY)
+    \#return('${Pag::getLang("验证码错误")}')
+\#else
+    \#if(error.exceptionData == null)
+        \#return('${Pag::getLang("用户不存在")}')
+    \#elseif(error.exceptionData.lastErrorLogin > TIME)
+        \#return('${Pag::getLang("登录次数过多，请稍后")}')
+    \#else
+        \#return('${Pag::getLang("用户密码错误")}')
+    \#end
+\#end
+##-->
+\#end

@@ -1,34 +1,16 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2013-7-9 下午3:36:15
  */
 package com.absir.aserv.system.crud;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.fileupload.FileItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.absir.aserv.crud.CrudHandler;
-import com.absir.aserv.crud.CrudProperty;
-import com.absir.aserv.crud.ICrudFactory;
-import com.absir.aserv.crud.ICrudProcessor;
-import com.absir.aserv.crud.ICrudProcessorInput;
+import com.absir.aserv.crud.*;
 import com.absir.aserv.developer.Pag;
 import com.absir.aserv.dyna.DynaBinderUtils;
+import com.absir.aserv.menu.MenuContextUtils;
 import com.absir.aserv.support.developer.JCrudField;
 import com.absir.aserv.system.bean.JUpload;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
@@ -36,17 +18,16 @@ import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.aserv.system.crud.value.IUploadProcessor;
 import com.absir.aserv.system.crud.value.IUploadRule;
 import com.absir.aserv.system.crud.value.UploadRule;
+import com.absir.aserv.system.dao.BeanDao;
+import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.helper.HelperRandom;
 import com.absir.aserv.system.helper.HelperString;
+import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
+import com.absir.aserv.system.service.utils.SecurityServiceUtils;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
-import com.absir.bean.inject.value.Bean;
-import com.absir.bean.inject.value.Inject;
-import com.absir.bean.inject.value.InjectType;
-import com.absir.bean.inject.value.Orders;
-import com.absir.bean.inject.value.Started;
-import com.absir.bean.inject.value.Value;
+import com.absir.bean.inject.value.*;
 import com.absir.client.helper.HelperClient;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.helper.HelperFile;
@@ -60,443 +41,732 @@ import com.absir.property.PropertyErrors;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.Input;
+import com.absir.servlet.InDispathFilter;
 import com.absir.servlet.InputRequest;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
+import org.apache.commons.fileupload.FileUploadException;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author absir
- * 
  */
 @Base
 @Bean
 public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<FileItem> {
 
-	/** ME */
-	public static final UploadCrudFactory ME = BeanFactoryUtils.get(UploadCrudFactory.class);
+    /**
+     * ME
+     */
+    public static final UploadCrudFactory ME = BeanFactoryUtils.get(UploadCrudFactory.class);
 
-	/** RECORD */
-	public static final String RECORD = "UPLOAD@";
+    /**
+     * RECORD
+     */
+    public static final String RECORD = "UPLOAD@";
+    /**
+     * DATE_FORMAT
+     */
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
+    /**
+     * LOGGER
+     */
+    protected static final Logger LOGGER = LoggerFactory.getLogger(UploadCrudFactory.class);
+    /**
+     * uploadUrl
+     */
+    private static String uploadUrl;
+    /**
+     * uploadPath
+     */
+    private static String uploadPath;
+    /**
+     * uploadPassTime
+     */
+    @Value(value = "upload.passTime")
+    private static long uploadPassTime = 3600000;
+    /**
+     * imageExtension
+     */
+    @Value("upload.image.extension")
+    private String imageExtension = "gif|jpg|jpeg|png|bmp";
+    /**
+     * managerDir
+     */
+    @Value("upload.manager.dir")
+    private String managerDir = "";
+    /**
+     * uploadProcessors
+     */
+    @Orders
+    @Inject(type = InjectType.Selectable)
+    private IUploadProcessor[] uploadProcessors;
 
-	/** LOGGER */
-	protected static final Logger LOGGER = LoggerFactory.getLogger(UploadCrudFactory.class);
+    /**
+     * @return
+     */
+    public static String getUploadUrl() {
+        return uploadUrl;
+    }
 
-	/** uploadUrl */
-	private static String uploadUrl;
+    /**
+     * @return
+     */
+    public static String getUploadPath() {
+        return uploadPath;
+    }
 
-	/** uploadPath */
-	private static String uploadPath;
+    /**
+     * @return the uploadPassTime
+     */
+    public static long getUploadPassTime() {
+        return uploadPassTime;
+    }
 
-	/** uploadPassTime */
-	@Value(value = "upload.passTime")
-	private static long uploadPassTime = 3600000;
+    /**
+     * @param input
+     * @param name
+     * @return
+     */
+    public static FileItem getUploadFile(InputRequest input, String name) {
+        List<FileItem> fileItems = input.parseParameterMap().get(name);
+        return fileItems == null || fileItems.isEmpty() ? null : fileItems.get(0);
+    }
 
-	/**
-	 * @return
-	 */
-	public static String getUploadUrl() {
-		return uploadUrl;
-	}
+    /**
+     * @param field
+     * @param file
+     * @param parameters
+     * @param errors
+     */
+    public static void verifyMultipartFile(String field, FileItem file, Object[] parameters, PropertyErrors errors) {
+        String extension = HelperFileName.getExtension(file.getName()).toLowerCase();
+        if (KernelString.isEmpty(extension)) {
+            errors.rejectValue(field, "error file type", null);
+            return;
+        }
 
-	/**
-	 * @return
-	 */
-	public static String getUploadPath() {
-		return uploadPath;
-	}
+        if (parameters.length > 0) {
+            Object uploadVerify = parameters[0];
+            if (!(uploadVerify instanceof MultipartUploader)) {
+                synchronized (parameters) {
+                    if (!(parameters[0] instanceof MultipartUploader)) {
+                        parameters[0] = uploadVerify = new MultipartUploader(parameters);
+                    }
+                }
+            }
 
-	/**
-	 * @return the uploadPassTime
-	 */
-	public static long getUploadPassTime() {
-		return uploadPassTime;
-	}
+            ((MultipartUploader) uploadVerify).verify(extension, field, file, errors);
 
-	/**
-	 * @param name
-	 * @param fileItem
-	 * @return
-	 */
-	public static FileItem getUploadFile(InputRequest input, String name) {
-		List<FileItem> fileItems = input.parseParameterMap().get(name);
-		return fileItems == null || fileItems.isEmpty() ? null : fileItems.get(0);
-	}
+        } else {
+            if (!Pag.CONFIGURE.getUploadExtension().contains(extension)) {
+                errors.rejectValue(field, "error file type", null);
+                return;
+            }
 
-	/**
-	 * @param uploadUrl
-	 * @param uploadPath
-	 */
-	@Started
-	protected void setUploadUrl(@Value(value = "resource.upload.url", defaultValue = "upload") String uploadUrl, @Value(value = "resource.upload.path", defaultValue = "upload") String uploadPath) {
-		if (KernelString.isEmpty(uploadPath)) {
-			return;
-		}
+            if (Pag.CONFIGURE.getUploadSize() < file.getSize()) {
+                errors.rejectValue(field, "max file size", null);
+                return;
+            }
+        }
+    }
 
-		UploadCrudFactory.uploadUrl = uploadUrl;
-		UploadCrudFactory.uploadPath = HelperFileName.normalizeNoEndSeparator(BeanFactoryUtils.getBeanConfig().getResourcePath() + uploadPath) + "/";
-	}
+    /**
+     * @return
+     */
+    public String getImageExtension() {
+        return imageExtension;
+    }
 
-	/** DATE_FORMAT */
-	public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
+    /**
+     * @return
+     */
+    public String getManagerDir() {
+        return managerDir;
+    }
 
-	/**
-	 * @param hashCode
-	 * @return
-	 */
-	public String randUploadFile(int hashCode) {
-		Date date = new Date();
-		return DATE_FORMAT.format(date) + '/' + HelperRandom.randSecondId((int) date.getTime(), 16, hashCode);
-	}
+    /**
+     * @param uploadUrl
+     * @param uploadPath
+     */
+    @Started
+    protected void setUploadUrl(@Value(value = "resource.upload.url", defaultValue = "@") String
+                                        uploadUrl, @Value(value = "resource.upload.path", defaultValue = "@") String uploadPath) {
+        if (KernelString.isEmpty(uploadPath)) {
+            return;
+        }
 
-	/**
-	 * @param uploadFile
-	 * @param inputStream
-	 * @throws IOException
-	 */
-	public void upload(String uploadFile, InputStream inputStream) throws IOException {
-		HelperFile.write(new File(uploadPath + uploadFile), inputStream);
-	}
+        if (KernelString.isEmpty(uploadUrl) || uploadUrl.equals("@")) {
+            uploadUrl = MenuContextUtils.getSiteRoute() + "upload/";
 
-	/**
-	 * @param uploadFile
-	 */
-	public void delete(String uploadFile) {
-		HelperFile.deleteQuietly(new File(uploadPath + uploadFile));
-	}
+        } else {
+            if (uploadUrl.indexOf(':') <= 0) {
+                uploadUrl = HelperFileName.concat(MenuContextUtils.getSiteRoute(), uploadUrl);
+            }
+        }
 
-	/**
-	 * 远程下载
-	 * 
-	 * @param url
-	 * @param defaultExtension
-	 * @param user
-	 * @return
-	 */
-	public String remoteDownload(String url, String defaultExtension, JiUserBase user) {
-		String extension = HelperFileName.getExtension(url);
-		if (KernelString.isEmpty(extension)) {
-			extension = defaultExtension;
-			if (KernelString.isEmpty(extension)) {
-				return null;
-			}
-		}
+        if (KernelString.isEmpty(uploadPath) || uploadPath.equals("@")) {
+            uploadPath = InDispathFilter.getContextResourcePath() + "upload/";
 
-		try {
-			return uploadExtension(extension, HelperClient.openConnection((HttpURLConnection) (new URL(url)).openConnection()), user);
+        } else {
+            uploadPath = HelperFileName.concat(InDispathFilter.getContextResourcePath(), uploadPath);
+        }
 
-		} catch (Throwable e) {
-			return null;
-		}
-	}
+        UploadCrudFactory.uploadUrl = uploadUrl;
+        UploadCrudFactory.uploadPath = uploadPath;
+    }
 
-	/** uploadProcessors */
-	@Orders
-	@Inject(type = InjectType.Selectable)
-	private IUploadProcessor[] uploadProcessors;
+    /**
+     * @param hashCode
+     * @return
+     */
 
-	/**
-	 * 上传扩展名内容
-	 * 
-	 * @param extension
-	 * @param inputStream
-	 * @param user
-	 * @return
-	 * @throws IOException
-	 */
-	public String uploadExtension(String extension, InputStream inputStream, JiUserBase user) throws IOException {
-		extension = extension.toLowerCase();
-		if (Pag.CONFIGURE.getUploadSize() < inputStream.available()) {
-			throw new ServerException(ServerStatus.ON_DENIED, "size");
-		}
+    public String randUploadFile(int hashCode) {
+        Date date = new Date();
+        return DATE_FORMAT.format(date) + '/' + HelperRandom.randSecendBuidler((int) date.getTime(), 16, hashCode);
+    }
 
-		if (!Pag.CONFIGURE.getUploadExtension().contains(extension)) {
-			throw new ServerException(ServerStatus.ON_DENIED, "extension");
-		}
+    /**
+     * @param uploadFile
+     * @param inputStream
+     * @throws IOException
+     */
+    public void upload(String uploadFile, InputStream inputStream) throws IOException {
+        HelperFile.write(new File(uploadPath + uploadFile), inputStream);
+    }
 
-		JUpload upload = new JUpload();
-		upload.setFilePath(extension);
-		if (uploadProcessors != null) {
-			for (IUploadProcessor uploadProcessor : uploadProcessors) {
-				inputStream = uploadProcessor.process(upload, inputStream);
-				if (upload.getFileType() != null) {
-					break;
-				}
-			}
+    /**
+     * @param uploadFile
+     */
+    public void delete(String uploadFile) {
+        HelperFile.deleteQuietly(new File(uploadPath + uploadFile));
+    }
 
-			if (inputStream == null) {
-				throw new ServerException(ServerStatus.ON_DENIED, "process");
-			}
-		}
+    /**
+     * 远程下载
+     *
+     * @param url
+     * @param defaultExtension
+     * @param user
+     * @return
+     */
+    public String remoteDownload(String url, String defaultExtension, JiUserBase user) {
+        String extension = HelperFileName.getExtension(url);
+        if (KernelString.isEmpty(extension)) {
+            extension = defaultExtension;
+            if (KernelString.isEmpty(extension)) {
+                return null;
+            }
+        }
 
-		extension = upload.getFilePath();
-		String uploadFile = randUploadFile(inputStream.hashCode()) + '.' + extension;
-		upload(uploadFile, inputStream);
-		if (upload.getFileType() == null) {
-			upload.setFileType(extension);
-		}
+        try {
+            return uploadExtension(extension, HelperClient.openConnection((HttpURLConnection) (new URL(url)).openConnection()), user);
 
-		long contextTime = ContextUtils.getContextTime();
-		upload.setCreateTime(contextTime);
-		upload.setPassTime(contextTime + uploadPassTime);
-		if (user != null) {
-			upload.setUserId(user.getUserId());
-		}
+        } catch (Throwable e) {
+            return null;
+        }
+    }
 
-		return uploadFile;
-	}
 
-	/**
-	 * @author absir
-	 * 
-	 */
-	public static class MultipartUploader {
+    /**
+     * 上传扩展名内容
+     *
+     * @param extension
+     * @param inputStream
+     * @param user
+     * @return
+     * @throws IOException
+     */
+    public String uploadExtension(String extension, InputStream inputStream, JiUserBase user) throws IOException {
+        if (KernelString.isEmpty(extension)) {
+            throw new ServerException(ServerStatus.ON_DENIED, "extension");
+        }
 
-		/** minSize */
-		private long minSize;
+        extension = extension.toLowerCase();
+        if (!Pag.CONFIGURE.getUploadExtension().contains(extension)) {
+            throw new ServerException(ServerStatus.ON_DENIED, "extension");
+        }
 
-		/** maxSize */
-		private long maxSize;
+        long fileSize = inputStream.available();
+        if (Pag.CONFIGURE.getUploadSize() < fileSize) {
+            throw new ServerException(ServerStatus.ON_DENIED, "size");
+        }
 
-		/** extensions */
-		private String[] extensions;
+        JUpload upload = new JUpload();
+        upload.setFileType(extension);
+        upload.setFileSize(fileSize);
+        inputStream = uploadProcessor(extension, upload, inputStream);
+        String uploadFile = randUploadFile(inputStream.hashCode()) + '.' + extension;
+        upload(uploadFile, inputStream);
+        long contextTime = ContextUtils.getContextTime();
+        upload.setCreateTime(contextTime);
+        upload.setPassTime(contextTime + uploadPassTime);
+        if (user != null) {
+            upload.setUserId(user.getUserId());
+        }
 
-		/** ruleName */
-		private String ruleName;
+        upload.setFilename(uploadFile);
+        CrudServiceUtils.merge("JUpload", null, upload, true, user, null);
+        return uploadFile;
+    }
 
-		/** ided */
-		private boolean ided;
+    /**
+     * 上传文件处理(加水印,压缩,加密等)
+     *
+     * @param extension
+     * @param upload
+     * @param inputStream
+     * @return
+     */
+    protected InputStream uploadProcessor(String extension, JUpload upload, InputStream inputStream) {
+        if (uploadProcessors != null) {
+            for (IUploadProcessor uploadProcessor : uploadProcessors) {
+                inputStream = uploadProcessor.process(extension, upload, inputStream);
+                if (upload.getFileType() != null) {
+                    break;
+                }
+            }
 
-		/**
-		 * @param parameters
-		 */
-		public MultipartUploader(Object[] parameters) {
-			int last = parameters.length - 1;
-			if (last > 2) {
-				last = 2;
-			}
+            if (inputStream == null) {
+                throw new ServerException(ServerStatus.ON_DENIED, "process");
+            }
+        }
 
-			for (int i = 0; last >= 0; i++, last--) {
-				switch (i) {
-				case 0:
-					Object extension = parameters[last];
-					if (extension instanceof String && !"".equals(extension)) {
-						extensions = ((String) extension).toLowerCase().split(",");
-					}
-					break;
+        return inputStream;
+    }
 
-				case 1:
-					maxSize = (long) (KernelDyna.to(parameters[last], float.class) * 1024);
-					break;
+    /**
+     * 创建数据库目录
+     *
+     * @param dirPath
+     * @param userId
+     * @param createTime
+     */
+    protected void createDirpath(String dirPath, long userId, long createTime) {
+        dirPath = HelperFileName.getFullPathNoEndSeparator(dirPath);
+        String dir = HelperFileName.getPath(dirPath);
+        if (KernelString.isEmpty(dir)) {
+            dir = "";
 
-				case 3:
-					minSize = (long) (KernelDyna.to(parameters[last], float.class) * 1024);
-					break;
+        } else {
+            dirPath = dirPath.substring(dir.length());
+        }
 
-				default:
-					break;
-				}
-			}
-		}
+        if (BeanService.ME.selectQuerySingle("SELECT o.id FROM JUpload o WHERE o.dirPath = ? AND o.filename = ?", dir, dirPath) == null) {
+            JUpload upload = new JUpload();
+            upload.setDirPath(dir);
+            upload.setFilename(dirPath);
+            upload.setUserId(userId);
+            upload.setCreateTime(createTime);
+            BeanService.ME.persist(upload);
+            if (dir != "") {
+                createDirpath(dir, userId, createTime);
+            }
+        }
+    }
 
-		/**
-		 * @param field
-		 * @param file
-		 * @param errors
-		 */
-		public void verify(String field, FileItem file, PropertyErrors errors) {
-			if (extensions != null && !KernelArray.contain(extensions, HelperFileName.getExtension(file.getName()).toLowerCase())) {
-				errors.rejectValue(field, "error file type", null);
-				return;
-			}
+    /**
+     * JUpload实体处理
+     *
+     * @param upload
+     * @param crud
+     * @param handler
+     */
+    public void crud(JUpload upload, Crud crud, CrudHandler handler) {
+        if (KernelString.isEmpty(upload.getFileType())) {
+            return;
+        }
 
-			if (maxSize > 0 && file.getSize() > maxSize) {
-				errors.rejectValue(field, "max file size", null);
-				return;
-			}
+        if (crud == Crud.CREATE) {
+            upload.setImaged(imageExtension.contains(upload.getFileType()));
+            String filename = upload.getFilename();
+            String dirPath = HelperFileName.getPath(filename);
+            if (KernelString.isEmpty(dirPath)) {
+                upload.setDirPath("");
 
-			if (minSize > 0 && file.getSize() < minSize) {
-				errors.rejectValue(field, "min file size", null);
-				return;
-			}
-		}
-	}
+            } else {
+                createDirpath(dirPath, SecurityServiceUtils.getUserId(), System.currentTimeMillis());
+                upload.setDirPath(dirPath);
+                upload.setFilename(filename.substring(dirPath.length()));
+            }
 
-	/**
-	 * @param field
-	 * @param file
-	 * @param parameters
-	 * @param errors
-	 */
-	public static void verifyMultipartFile(String field, FileItem file, Object[] parameters, PropertyErrors errors) {
-		if (parameters.length > 0) {
-			Object uploadVerify = parameters[0];
-			if (!(uploadVerify instanceof MultipartUploader)) {
-				synchronized (parameters) {
-					if (!(parameters[0] instanceof MultipartUploader)) {
-						parameters[0] = uploadVerify = new MultipartUploader(parameters);
-					}
-				}
-			}
+        } else if (crud == Crud.DELETE) {
+            Session session = BeanDao.getSession();
+            Iterator iterate = QueryDaoUtils.createQueryArray(session, "SELECT o.id FROM JUploadCite o WHERE o.upload.id = ?", upload.getId()).iterate();
+            if (iterate.hasNext()) {
+                session.cancelQuery();
+                upload.setPassTime(0);
+                session.merge(upload);
+            }
+        }
+    }
 
-			((MultipartUploader) uploadVerify).verify(field, file, errors);
-		}
-	}
+    /**
+     * 上传文件
+     *
+     * @param user
+     * @param request
+     * @return
+     */
+    public List<String> uploads(JiUserBase user, HttpServletRequest request) throws IOException, FileUploadException {
+        List<String> paths = new ArrayList<String>();
+        FileItemIterator iterator = InputRequest.SERVLET_FILE_UPLOAD_DEFAULT.getItemIterator(request);
+        while (iterator.hasNext()) {
+            FileItemStream fileItem = iterator.next();
+            if (!KernelString.isEmpty(fileItem.getName())) {
+                paths.add(UploadCrudFactory.ME.uploadExtension(HelperFileName.getExtension(fileItem.getName()), fileItem.openStream(), user));
+            }
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.aserv.crud.ICrudProcessorRequest#isMultipart()
-	 */
-	@Override
-	public boolean isMultipart() {
-		return true;
-	}
+        return paths;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.aserv.crud.ICrudProcessorInput#crud(com.absir.aserv
-	 * .crud.CrudProperty, com.absir.property.PropertyErrors,
-	 * com.absir.aserv.crud.CrudHandler,
-	 * com.absir.aserv.system.bean.proxy.JiUserBase,
-	 * com.absir.server.in.Input)
-	 */
-	@Override
-	public FileItem crud(CrudProperty crudProperty, PropertyErrors errors, CrudHandler handler, JiUserBase user, Input input) {
-		if (handler.getCrud() != Crud.DELETE) {
-			String field = handler.getFilter().getPropertyPath();
-			if (input instanceof InputRequest) {
-				FileItem file = getUploadFile((InputRequest) input, field + "_file");
-				if (file != null && !KernelString.isEmpty(file.getName())) {
-					verifyMultipartFile(field, file, crudProperty.getjCrud().getParameters(), errors);
-					return file;
-				}
-			}
-		}
+    /**
+     * 获取管理文件路径
+     *
+     * @param path
+     * @return
+     */
+    public String getDirPath(String path) {
+        if (KernelString.isEmpty(path) || path.equals("/")) {
+            path = "";
 
-		return null;
-	}
+        } else {
+            if (path.charAt(0) == '/') {
+                path = path.substring(1);
+            }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.aserv.crud.ICrudProcessorRequest#crud(com.absir.aserv
-	 * .crud.CrudProperty, java.lang.Object, com.absir.aserv.crud.CrudHandler,
-	 * com.absir.aserv.system.bean.proxy.JiUserBase, java.lang.Object)
-	 */
-	@Override
-	public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, FileItem requestBody) {
-		if (requestBody == null) {
-			if (handler.getCrudRecord() != null) {
-				String uploadFile = (String) crudProperty.get(entity);
-				if (!KernelString.isEmpty(uploadFile)) {
-					handler.getCrudRecord().put(RECORD + uploadFile, Boolean.TRUE);
-				}
-			}
+            if (path.charAt(path.length() - 1) != '/') {
+                path = path + '/';
+            }
+        }
 
-		} else {
-			Field field = crudProperty.getAccessor().getField();
-			if (field != null && field.getType().isAssignableFrom(FileItem.class)) {
-				crudProperty.set(entity, requestBody);
-				return;
-			}
+        if (!KernelString.isEmpty(managerDir)) {
+            path = managerDir + path;
+        }
 
-			String uploadFile = (String) crudProperty.get(entity);
-			if (!KernelString.isEmpty(uploadFile)) {
-				if (handler.getCrudRecord() == null || !handler.getCrudRecord().containsKey(RECORD + uploadFile)) {
-					delete(uploadFile);
-				}
-			}
+        return path;
+    }
 
-			InputStream uploadStream = null;
-			String extensionName = HelperFileName.getExtension(requestBody.getName());
-			try {
-				Object[] parameters = crudProperty.getjCrud().getParameters();
-				MultipartUploader multipartUploader = parameters.length == 0 ? null : (MultipartUploader) parameters[0];
-				if (multipartUploader != null) {
-					if (multipartUploader.ruleName == null) {
-						String ruleName = null;
-						Accessor accessor = crudProperty.getAccessor();
-						if (accessor != null) {
-							UploadRule uploadRule = accessor.getAnnotation(UploadRule.class, false);
-							if (uploadRule != null) {
-								ruleName = uploadRule.value();
-								multipartUploader.ided = ruleName.contains(":id");
-								if (KernelString.isEmpty(HelperFileName.getPath(ruleName))) {
-									ruleName = "data/" + ruleName;
-								}
-							}
-						}
+    /**
+     * 文件管理
+     *
+     * @param path
+     * @param order
+     * @return
+     */
+    public List<JUpload> list(String path, String order) {
+        path = getDirPath(path);
+        String listHql = null;
+        if (order != null) {
+            order = order.toLowerCase();
+            if (order.equals("name")) {
+                listHql = "SELECT o FROM JUpload o WHERE o.dirPath = ? ORDER BY o.filename";
 
-						multipartUploader.ruleName = ruleName == null ? "" : ruleName;
-					}
+            } else if (order.equals("type")) {
+                listHql = "SELECT o FROM JUpload o WHERE o.dirPath = ? ORDER BY o.fileType";
 
-					if ("".equals(multipartUploader.ruleName)) {
-						multipartUploader = null;
+            } else if (order.equals("size")) {
+                listHql = "SELECT o FROM JUpload o WHERE o.dirPath = ? ORDER BY o.fileSize";
+            }
+        }
 
-					} else {
-						String identity = "";
-						if (multipartUploader.ided) {
-							Object id = CrudServiceUtils.identifier(handler.getCrudEntity().getJoEntity().getEntityName(), entity, handler.isCreate());
-							if (id != null) {
-								identity = DynaBinderUtils.getParamFromValue(id);
-							}
-						}
+        if (listHql == null) {
+            listHql = "SELECT o FROM JUpload o WHERE o.dirPath = ?";
+        }
 
-						uploadFile = HelperString.replaceEach(multipartUploader.ruleName, new String[] { ":name", ":id", ":ext" }, new String[] { crudProperty.getName(), identity, extensionName });
-					}
-				}
+        return (List<JUpload>) BeanService.ME.selectQuery(listHql, path);
+    }
 
-				if (multipartUploader == null && entity instanceof IUploadRule) {
-					IUploadRule uploadRule = (IUploadRule) entity;
-					uploadFile = uploadRule.getUploadRuleName(crudProperty.getName(), extensionName);
-					if (uploadFile != null) {
-						uploadStream = uploadRule.proccessInputStream(crudProperty.getName(), requestBody.getInputStream(), extensionName);
-					}
-				}
+    /**
+     * 检测文件夹是否为空
+     *
+     * @param path
+     * @return
+     */
+    public boolean isEmpty(String path) {
+        path = getDirPath(path);
+        return BeanService.ME.selectQuerySingle("SELECT o.id FROM JUpload o WHERE o.dirPath = ?", path) == null;
+    }
 
-				if (KernelString.isEmpty(uploadFile)) {
-					uploadFile = randUploadFile(requestBody.hashCode()) + "." + HelperFileName.getExtension(requestBody.getName());
-				}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.aserv.crud.ICrudProcessorRequest#isMultipart()
+     */
+    @Override
+    public boolean isMultipart() {
+        return true;
+    }
 
-				if (uploadStream == null) {
-					uploadStream = requestBody.getInputStream();
-				}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.aserv.crud.ICrudProcessorInput#crud(com.absir.aserv
+     * .crud.CrudProperty, com.absir.property.PropertyErrors,
+     * com.absir.aserv.crud.CrudHandler,
+     * com.absir.aserv.system.bean.proxy.JiUserBase,
+     * com.absir.server.in.Input)
+     */
+    @Override
+    public FileItem crud(CrudProperty crudProperty, PropertyErrors errors, CrudHandler handler, JiUserBase user, Input input) {
+        if (handler.getCrud() != Crud.DELETE) {
+            String field = handler.getFilter().getPropertyPath();
+            if (input instanceof InputRequest) {
+                FileItem file = getUploadFile((InputRequest) input, field + "_file");
+                if (file != null && !KernelString.isEmpty(file.getName())) {
+                    verifyMultipartFile(field, file, crudProperty.getjCrud().getParameters(), errors);
+                    return file;
+                }
+            }
+        }
 
-				upload(uploadFile, uploadStream);
+        return null;
+    }
 
-			} catch (IOException e) {
-				LOGGER.error("upload error", e);
-			}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.aserv.crud.ICrudProcessorRequest#crud(com.absir.aserv
+     * .crud.CrudProperty, java.lang.Object, com.absir.aserv.crud.CrudHandler,
+     * com.absir.aserv.system.bean.proxy.JiUserBase, java.lang.Object)
+     */
+    @Override
+    public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, FileItem requestBody) {
+        if (requestBody == null) {
+            if (handler.getCrudRecord() != null) {
+                String uploadFile = (String) crudProperty.get(entity);
+                if (!KernelString.isEmpty(uploadFile)) {
+                    handler.getCrudRecord().put(RECORD + uploadFile, Boolean.TRUE);
+                }
+            }
 
-			crudProperty.set(entity, uploadFile);
-		}
-	}
+        } else {
+            Field field = crudProperty.getAccessor().getField();
+            if (field != null && field.getType().isAssignableFrom(FileItem.class)) {
+                crudProperty.set(entity, requestBody);
+                return;
+            }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.aserv.crud.ICrudProcessor#crud(com.absir.aserv.crud
-	 * .CrudProperty, java.lang.Object, com.absir.aserv.crud.CrudHandler,
-	 * com.absir.aserv.system.bean.proxy.JiUserBase)
-	 */
-	@Override
-	public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user) {
-		if (crudHandler.getCrud() == Crud.DELETE) {
-			String uploadFile = (String) crudProperty.get(entity);
-			if (!KernelString.isEmpty(uploadFile)) {
-				delete(uploadFile);
-			}
-		}
-	}
+            String uploadFile = (String) crudProperty.get(entity);
+            if (!KernelString.isEmpty(uploadFile)) {
+                if (handler.getCrudRecord() == null || !handler.getCrudRecord().containsKey(RECORD + uploadFile)) {
+                    delete(uploadFile);
+                }
+            }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.absir.aserv.crud.ICrudFactory#getProcessor(com.absir.aserv.support
-	 * .entity.value.JoEntity, com.absir.aserv.support.developer.JCrudField)
-	 */
-	@Override
-	public ICrudProcessor getProcessor(JoEntity joEntity, JCrudField crudField) {
-		return ME;
-	}
+            InputStream uploadStream = null;
+            String extensionName = HelperFileName.getExtension(requestBody.getName());
+            try {
+                Object[] parameters = crudProperty.getjCrud().getParameters();
+                MultipartUploader multipartUploader = parameters.length == 0 ? null : (MultipartUploader) parameters[0];
+                if (multipartUploader != null) {
+                    if (multipartUploader.ruleName == null) {
+                        String ruleName = null;
+                        Accessor accessor = crudProperty.getAccessor();
+                        if (accessor != null) {
+                            UploadRule uploadRule = accessor.getAnnotation(UploadRule.class, false);
+                            if (uploadRule != null) {
+                                ruleName = uploadRule.value();
+                                multipartUploader.ided = ruleName.contains(":id");
+                                if (KernelString.isEmpty(HelperFileName.getPath(ruleName))) {
+                                    ruleName = "entity/" + ruleName;
+                                }
+                            }
+                        }
+
+                        multipartUploader.ruleName = ruleName == null ? "" : ruleName;
+                    }
+
+                    if ("".equals(multipartUploader.ruleName)) {
+                        multipartUploader = null;
+
+                    } else {
+                        String identity = "";
+                        if (multipartUploader.ided) {
+                            Object id = CrudServiceUtils.identifier(handler.getCrudEntity().getJoEntity().getEntityName(), entity, handler.isCreate());
+                            if (id != null) {
+                                identity = DynaBinderUtils.getParamFromValue(id);
+                            }
+                        }
+
+                        uploadFile = HelperString.replaceEach(multipartUploader.ruleName, new String[]{":name", ":id", ":ext"}, new String[]{crudProperty.getName(), identity, extensionName});
+                    }
+                }
+
+                if (multipartUploader == null && entity instanceof IUploadRule) {
+                    IUploadRule uploadRule = (IUploadRule) entity;
+                    uploadFile = uploadRule.getUploadRuleName(crudProperty.getName(), extensionName);
+                    if (uploadFile != null) {
+                        uploadStream = uploadRule.proccessInputStream(crudProperty.getName(), requestBody.getInputStream(), extensionName);
+                    }
+                }
+
+                if (KernelString.isEmpty(uploadFile)) {
+                    uploadFile = randUploadFile(requestBody.hashCode()) + '.' + extensionName;
+                }
+
+                if (uploadStream == null) {
+                    uploadStream = requestBody.getInputStream();
+                }
+
+                uploadStream = uploadProcessor(extensionName, null, uploadStream);
+                upload(uploadFile, uploadStream);
+
+            } catch (IOException e) {
+                LOGGER.error("upload error", e);
+            }
+
+            crudProperty.set(entity, uploadFile);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.aserv.crud.ICrudProcessor#crud(com.absir.aserv.crud
+     * .CrudProperty, java.lang.Object, com.absir.aserv.crud.CrudHandler,
+     * com.absir.aserv.system.bean.proxy.JiUserBase)
+     */
+    @Override
+    public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user) {
+        if (crudHandler.getCrud() == Crud.DELETE) {
+            String uploadFile = (String) crudProperty.get(entity);
+            if (!KernelString.isEmpty(uploadFile)) {
+                delete(uploadFile);
+            }
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.absir.aserv.crud.ICrudFactory#getProcessor(com.absir.aserv.support
+     * .entity.value.JoEntity, com.absir.aserv.support.developer.JCrudField)
+     */
+    @Override
+    public ICrudProcessor getProcessor(JoEntity joEntity, JCrudField crudField) {
+        return ME;
+    }
+
+    /**
+     * @author absir
+     */
+    public static class MultipartUploader {
+
+        /**
+         * minSize
+         */
+        private long minSize;
+
+        /**
+         * maxSize
+         */
+        private long maxSize;
+
+        /**
+         * extensions
+         */
+        private String[] extensions;
+
+        /**
+         * ruleName
+         */
+        private String ruleName;
+
+        /**
+         * ided
+         */
+        private boolean ided;
+
+        /**
+         * @param parameters
+         */
+        public MultipartUploader(Object[] parameters) {
+            int last = parameters.length - 1;
+            if (last > 2) {
+                last = 2;
+            }
+
+            for (int i = 0; last >= 0; i++, last--) {
+                switch (i) {
+                    case 0:
+                        Object extension = parameters[last];
+                        if (extension instanceof String && !"".equals(extension)) {
+                            extensions = ((String) extension).toLowerCase().split(",");
+                        }
+                        break;
+
+                    case 1:
+                        maxSize = (long) (KernelDyna.to(parameters[last], float.class) * 1024);
+                        break;
+
+                    case 3:
+                        minSize = (long) (KernelDyna.to(parameters[last], float.class) * 1024);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
+        /**
+         * @param extension
+         * @param field
+         * @param file
+         * @param errors
+         */
+        public void verify(String extension, String field, FileItem file, PropertyErrors errors) {
+            if (extensions != null) {
+                if (!KernelArray.contain(extensions, extension)) {
+                    errors.rejectValue(field, "error file type", null);
+                    return;
+                }
+
+            } else {
+                if (!Pag.CONFIGURE.getUploadExtension().contains(extension)) {
+                    errors.rejectValue(field, "error file type", null);
+                    return;
+                }
+            }
+
+
+            if (maxSize > 0) {
+                if (file.getSize() > maxSize) {
+                    errors.rejectValue(field, "max file size", null);
+                    return;
+                }
+
+            } else {
+                if (Pag.CONFIGURE.getUploadSize() < file.getSize()) {
+                    errors.rejectValue(field, "max file size", null);
+                    return;
+                }
+            }
+
+            if (minSize > 0 && file.getSize() < minSize) {
+                errors.rejectValue(field, "min file size", null);
+                return;
+            }
+        }
+    }
 }

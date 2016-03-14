@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2014-3-13 下午5:16:36
  */
 package com.absir.aop.value;
@@ -14,14 +14,13 @@ import java.lang.annotation.Target;
 
 /**
  * @author absir
- * 
  */
-@Target({ ElementType.TYPE })
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Impl {
 
-	/**
-	 * @return
-	 */
-	String value() default "";
+    /**
+     * @return
+     */
+    String value() default "";
 }

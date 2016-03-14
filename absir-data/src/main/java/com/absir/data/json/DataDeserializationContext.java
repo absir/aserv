@@ -1,163 +1,159 @@
 /**
  * Copyright 2015 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2015年11月6日 下午5:20:05
  */
 package com.absir.data.json;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelList;
 import com.absir.core.kernel.KernelList.Orderable;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.BeanDeserializer;
 import com.fasterxml.jackson.databind.deser.DefaultDeserializationContext;
 import com.fasterxml.jackson.databind.deser.DeserializerCache;
 import com.fasterxml.jackson.databind.deser.DeserializerFactory;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author absir
- *
  */
-@SuppressWarnings({ "serial" })
+@SuppressWarnings({"serial"})
 public class DataDeserializationContext extends DefaultDeserializationContext {
 
-	/**
-	 * @author absir
-	 *
-	 */
-	public static interface JsonDeserializerResolver extends Orderable {
+    /**
+     * resolvers
+     */
+    private List<JsonDeserializerResolver> resolvers;
 
-		/**
-		 * @param type
-		 * @return
-		 */
-		public JsonDeserializer<Object> forJavaType(Class<?> type);
+    /**
+     * Default constructor for a blueprint object, which will use the standard
+     * {@link DeserializerCache}, given factory.
+     */
+    public DataDeserializationContext(DeserializerFactory df) {
+        super(df, null);
+    }
 
-	}
+    protected DataDeserializationContext(DataDeserializationContext src, DeserializationConfig config, JsonParser jp,
+                                         InjectableValues values) {
+        super(src, config, jp, values);
+        resolvers = src.resolvers;
+    }
 
-	/** resolvers */
-	private List<JsonDeserializerResolver> resolvers;
+    protected DataDeserializationContext(DataDeserializationContext src) {
+        super(src);
+        resolvers = src.resolvers;
+    }
 
-	/**
-	 * @param resolver
-	 */
-	public void addJsonDeserializerResolver(JsonDeserializerResolver resolver) {
-		if (resolvers == null) {
-			resolvers = new ArrayList<JsonDeserializerResolver>();
-		}
+    protected DataDeserializationContext(DataDeserializationContext src, DeserializerFactory factory) {
+        super(src, factory);
+        resolvers = src.resolvers;
+    }
 
-		resolvers.add(resolver);
-	}
+    /**
+     * @param resolver
+     */
+    public void addJsonDeserializerResolver(JsonDeserializerResolver resolver) {
+        if (resolvers == null) {
+            resolvers = new ArrayList<JsonDeserializerResolver>();
+        }
 
-	/**
-	 * 
-	 */
-	public void addJsonDeserializerResolverDone() {
-		KernelList.sortOrderable(resolvers);
-	}
+        resolvers.add(resolver);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.fasterxml.jackson.databind.deser.DefaultDeserializationContext#
-	 * deserializerInstance(com.fasterxml.jackson.databind.introspect.Annotated,
-	 * java.lang.Object)
-	 */
-	@Override
-	public JsonDeserializer<Object> deserializerInstance(Annotated ann, Object deserDef) throws JsonMappingException {
-		if (resolvers != null) {
-			Class<?> rawClass = KernelClass.rawClass(ann.getGenericType());
-			if (KernelClass.isCustomClass(rawClass)) {
-				for (JsonDeserializerResolver resolver : resolvers) {
-					JsonDeserializer<Object> deserializer = resolver.forJavaType(rawClass);
-					if (deserializer != null) {
-						return deserializer;
-					}
-				}
-			}
-		}
+    /**
+     *
+     */
+    public void addJsonDeserializerResolverDone() {
+        KernelList.sortOrderable(resolvers);
+    }
 
-		return super.deserializerInstance(ann, deserDef);
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.fasterxml.jackson.databind.deser.DefaultDeserializationContext#
+     * deserializerInstance(com.fasterxml.jackson.databind.introspect.Annotated,
+     * java.lang.Object)
+     */
+    @Override
+    public JsonDeserializer<Object> deserializerInstance(Annotated ann, Object deserDef) throws JsonMappingException {
+        if (resolvers != null) {
+            Class<?> rawClass = KernelClass.rawClass(ann.getGenericType());
+            if (KernelClass.isCustomClass(rawClass)) {
+                for (JsonDeserializerResolver resolver : resolvers) {
+                    JsonDeserializer<Object> deserializer = resolver.forJavaType(rawClass);
+                    if (deserializer != null) {
+                        return deserializer;
+                    }
+                }
+            }
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.fasterxml.jackson.databind.DeserializationContext#
-	 * handleSecondaryContextualization(com.fasterxml.jackson.databind.
-	 * JsonDeserializer, com.fasterxml.jackson.databind.BeanProperty)
-	 */
-	@Override
-	public JsonDeserializer<?> handleSecondaryContextualization(JsonDeserializer<?> deser, BeanProperty prop)
-			throws JsonMappingException {
-		if (resolvers != null) {
-			if (deser.getClass() == BeanDeserializer.class) {
-				BeanDeserializer deserializer = (BeanDeserializer) deser;
-				Class<?> type = deserializer.handledType();
-				for (JsonDeserializerResolver resolver : resolvers) {
-					JsonDeserializer<Object> jsonDeserializer = resolver.forJavaType(type);
-					if (jsonDeserializer != null) {
-						return jsonDeserializer;
-					}
-				}
-			}
-		}
+        return super.deserializerInstance(ann, deserDef);
+    }
 
-		return super.handleSecondaryContextualization(deser, prop);
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.fasterxml.jackson.databind.DeserializationContext#
+     * handleSecondaryContextualization(com.fasterxml.jackson.databind.
+     * JsonDeserializer, com.fasterxml.jackson.databind.BeanProperty)
+     */
+    @Override
+    public JsonDeserializer<?> handleSecondaryContextualization(JsonDeserializer<?> deser, BeanProperty prop)
+            throws JsonMappingException {
+        if (resolvers != null) {
+            if (deser.getClass() == BeanDeserializer.class) {
+                BeanDeserializer deserializer = (BeanDeserializer) deser;
+                Class<?> type = deserializer.handledType();
+                for (JsonDeserializerResolver resolver : resolvers) {
+                    JsonDeserializer<Object> jsonDeserializer = resolver.forJavaType(type);
+                    if (jsonDeserializer != null) {
+                        return jsonDeserializer;
+                    }
+                }
+            }
+        }
 
-	/**
-	 * Default constructor for a blueprint object, which will use the standard
-	 * {@link DeserializerCache}, given factory.
-	 */
-	public DataDeserializationContext(DeserializerFactory df) {
-		super(df, null);
-	}
+        return super.handleSecondaryContextualization(deser, prop);
+    }
 
-	protected DataDeserializationContext(DataDeserializationContext src, DeserializationConfig config, JsonParser jp,
-			InjectableValues values) {
-		super(src, config, jp, values);
-		resolvers = src.resolvers;
-	}
+    @Override
+    public DefaultDeserializationContext copy() {
+        if (getClass() != DataDeserializationContext.class) {
+            return super.copy();
+        }
 
-	protected DataDeserializationContext(DataDeserializationContext src) {
-		super(src);
-		resolvers = src.resolvers;
-	}
+        return new DataDeserializationContext(this);
+    }
 
-	protected DataDeserializationContext(DataDeserializationContext src, DeserializerFactory factory) {
-		super(src, factory);
-		resolvers = src.resolvers;
-	}
+    @Override
+    public DefaultDeserializationContext createInstance(DeserializationConfig config, JsonParser jp,
+                                                        InjectableValues values) {
+        return new DataDeserializationContext(this, config, jp, values);
+    }
 
-	@Override
-	public DefaultDeserializationContext copy() {
-		if (getClass() != DataDeserializationContext.class) {
-			return super.copy();
-		}
+    @Override
+    public DefaultDeserializationContext with(DeserializerFactory factory) {
+        return new DataDeserializationContext(this, factory);
+    }
 
-		return new DataDeserializationContext(this);
-	}
+    /**
+     * @author absir
+     */
+    public static interface JsonDeserializerResolver extends Orderable {
 
-	@Override
-	public DefaultDeserializationContext createInstance(DeserializationConfig config, JsonParser jp,
-			InjectableValues values) {
-		return new DataDeserializationContext(this, config, jp, values);
-	}
+        /**
+         * @param type
+         * @return
+         */
+        public JsonDeserializer<Object> forJavaType(Class<?> type);
 
-	@Override
-	public DefaultDeserializationContext with(DeserializerFactory factory) {
-		return new DataDeserializationContext(this, factory);
-	}
+    }
 }

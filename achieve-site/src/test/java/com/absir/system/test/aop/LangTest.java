@@ -1,15 +1,11 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014年9月11日 上午10:12:34
  */
 package com.absir.system.test.aop;
-
-import javax.persistence.Embeddable;
-
-import org.junit.Test;
 
 import com.absir.aserv.crud.CrudHandler;
 import com.absir.aserv.crud.value.ICrudBean;
@@ -19,6 +15,9 @@ import com.absir.aserv.lang.value.Langs;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.core.base.IBase;
 import com.absir.system.test.AbstractTestInject;
+import org.junit.Test;
+
+import javax.persistence.Embeddable;
 
 /**
  * @author absir
@@ -26,79 +25,79 @@ import com.absir.system.test.AbstractTestInject;
  */
 public class LangTest extends AbstractTestInject {
 
-	@Embeddable
-	public static class LangEmbed {
+    @Test
+    public void test() throws Throwable {
+        try {
+            LangBean langBean = new LangBean();
+            langBean.id = 3L;
+            langBean.name = "测试";
+            langBean.getLangEmbed().name = "测试子";
+            langBean = LangBundleImpl.ME.getLangProxy("LangBean", langBean);
 
-		public String name;
+            CrudHandler crudHandler = new CrudHandler(null, null, null, null, langBean) {
+            };
+            ((ICrudBean) langBean).proccessCrud(Crud.CREATE, crudHandler);
 
-		/**
-		 * @return the name
-		 */
-		@Langs
-		public String getName() {
-			return name;
-		}
-	}
+            ((ILangBase) langBean).setLang("name", 33, "test");
+            ((ILangBase) langBean.getLangEmbed()).setLang("name", 33, "test123333");
+            ((ICrudBean) langBean).proccessCrud(Crud.CREATE, crudHandler);
+            ((ICrudBean) langBean.getLangEmbed()).proccessCrud(Crud.CREATE, crudHandler);
 
-	public static class LangBean extends LangEmbed implements IBase<Long> {
+            ILangBase langBase = (ILangBase) langBean.getLangEmbed();
+            System.out.println(langBase.getLang("name", 33, String.class));
 
-		public Long id;
+            langBean = new LangBean();
+            langBean.id = 3L;
+            langBean.name = "测试";
+            langBean.name = "测试子";
+            langBean = LangBundleImpl.ME.getLangProxy("LangBean", langBean);
 
-		public LangEmbed langEmbed = new LangEmbed();
+            System.out.println(langBean.getName());
+            System.out.println(langBean.getLangEmbed().getName());
+            System.out.println(((ILangBase) langBean).getLang("name", 33, String.class));
+            langBase = (ILangBase) langBean.getLangEmbed();
+            System.out.println(langBase.getLang("name", 33, String.class));
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see com.absir.core.base.IBase#getId()
-		 */
-		@Override
-		public Long getId() {
-			return id;
-		}
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
 
-		/**
-		 * @return the langEmbed
-		 */
-		public LangEmbed getLangEmbed() {
-			return langEmbed;
-		}
-	}
+    @Embeddable
+    public static class LangEmbed {
 
-	@Test
-	public void test() throws Throwable {
-		try {
-			LangBean langBean = new LangBean();
-			langBean.id = 3L;
-			langBean.name = "测试";
-			langBean.getLangEmbed().name = "测试子";
-			langBean = LangBundleImpl.ME.getLangProxy("LangBean", langBean);
+        public String name;
 
-			CrudHandler crudHandler = new CrudHandler(null, null, null, null, langBean) {
-			};
-			((ICrudBean) langBean).proccessCrud(Crud.CREATE, crudHandler);
+        /**
+         * @return the name
+         */
+        @Langs
+        public String getName() {
+            return name;
+        }
+    }
 
-			((ILangBase) langBean).setLang("name", 33, "test");
-			((ILangBase) langBean.getLangEmbed()).setLang("name", 33, "test123333");
-			((ICrudBean) langBean).proccessCrud(Crud.CREATE, crudHandler);
-			((ICrudBean) langBean.getLangEmbed()).proccessCrud(Crud.CREATE, crudHandler);
+    public static class LangBean extends LangEmbed implements IBase<Long> {
 
-			ILangBase langBase = (ILangBase) langBean.getLangEmbed();
-			System.out.println(langBase.getLang("name", 33, String.class));
+        public Long id;
 
-			langBean = new LangBean();
-			langBean.id = 3L;
-			langBean.name = "测试";
-			langBean.name = "测试子";
-			langBean = LangBundleImpl.ME.getLangProxy("LangBean", langBean);
+        public LangEmbed langEmbed = new LangEmbed();
 
-			System.out.println(langBean.getName());
-			System.out.println(langBean.getLangEmbed().getName());
-			System.out.println(((ILangBase) langBean).getLang("name", 33, String.class));
-			langBase = (ILangBase) langBean.getLangEmbed();
-			System.out.println(langBase.getLang("name", 33, String.class));
+        /*
+         * (non-Javadoc)
+         *
+         * @see com.absir.core.base.IBase#getId()
+         */
+        @Override
+        public Long getId() {
+            return id;
+        }
 
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
+        /**
+         * @return the langEmbed
+         */
+        public LangEmbed getLangEmbed() {
+            return langEmbed;
+        }
+    }
 }

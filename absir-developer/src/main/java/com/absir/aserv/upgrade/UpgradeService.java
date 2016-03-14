@@ -7,19 +7,6 @@
  */
 package com.absir.aserv.upgrade;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.absir.aserv.init.InitBeanFactory;
 import com.absir.aserv.system.bean.JConfigure;
 import com.absir.aserv.system.bean.JEmbedSS;
@@ -40,40 +27,33 @@ import com.absir.core.helper.HelperFileName;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.kernel.KernelUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author absir
- *
  */
 @Base
 @Bean
 public class UpgradeService {
 
-    /** LOGGER */
-    protected static final Logger LOGGER = LoggerFactory.getLogger(UpgradeService.class);
-
     /**
-     * @author absir
-     *
+     * ME
      */
-    public interface IUpgradeReStart {
-
-        /**
-         * @throws Throwable
-         */
-        public void start() throws Throwable;
-
-        /**
-         * @throws Throwable
-         */
-        public void stop() throws Throwable;
-
-    }
-
-    /** ME */
     public static final UpgradeService ME = BeanFactoryUtils.get(UpgradeService.class);
-
-    /** START_DONE */
+    /**
+     * START_DONE
+     */
     public static final IUpgradeReStart START_DONE = new IUpgradeReStart() {
 
         @Override
@@ -84,20 +64,28 @@ public class UpgradeService {
         public void stop() throws Throwable {
         }
     };
-
-    /** upgradeResource */
+    /**
+     * LOGGER
+     */
+    protected static final Logger LOGGER = LoggerFactory.getLogger(UpgradeService.class);
+    /**
+     * upgradeResource
+     */
     @Value(value = "upgrade.resource", defaultValue = "${resourcePath}upgrade/")
     private String upgradeResource;
-
-    /** upgradeDestination */
+    /**
+     * upgradeDestination
+     */
     @Value(value = "upgrade.destination", defaultValue = "${classPath}../../")
     private String upgradeDestination;
-
-    /** restartCommand */
+    /**
+     * restartCommand
+     */
     @Value(value = "upgrade.restart")
     private String restartCommand;
-
-    /** backupCommand */
+    /**
+     * backupCommand
+     */
     @Value(value = "upgrade.backup")
     private String backupCommand;
 
@@ -165,7 +153,7 @@ public class UpgradeService {
         Map<String, Object> versionMap = getVersionMap(upgradeFile);
         if (versionMap != null) {
             long time = System.currentTimeMillis();
-            String versionFile = HelperRandom.randSecondId(time, 8, upgradeFile.hashCode());
+            String versionFile = HelperRandom.randSecendId(time, 8, upgradeFile.hashCode());
             try {
                 HelperFile.copyFile(upgradeFile, new File(versionFile));
                 version.setVersion(KernelDyna.to(versionMap.get("version"), String.class));
@@ -281,7 +269,7 @@ public class UpgradeService {
     public void restartUpgrade(InputStream inputStream) throws IOException {
         Object stopDone = stop();
         File upgradeFile = new File(BeanFactoryUtils.getBeanConfig().getResourcePath() + "upgrade/"
-                + HelperRandom.randSecondId() + ".upgrd");
+                + HelperRandom.randSecendId() + ".upgrd");
         try {
             HelperFile.write(upgradeFile, inputStream);
             upgrade(new ZipInputStream(new FileInputStream(upgradeFile)));
@@ -328,7 +316,6 @@ public class UpgradeService {
 
     /**
      * @throws IOException
-     *
      */
     @Async
     @Schedule(cron = "0 0 5 * * *")
@@ -336,5 +323,22 @@ public class UpgradeService {
         if (!KernelString.isEmpty(backupCommand)) {
             Runtime.getRuntime().exec(backupCommand);
         }
+    }
+
+    /**
+     * @author absir
+     */
+    public interface IUpgradeReStart {
+
+        /**
+         * @throws Throwable
+         */
+        public void start() throws Throwable;
+
+        /**
+         * @throws Throwable
+         */
+        public void stop() throws Throwable;
+
     }
 }

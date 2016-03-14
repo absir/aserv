@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-3-13 下午8:39:03
  */
 package com.absir.server.value;
@@ -14,14 +14,13 @@ import java.lang.annotation.Target;
 
 /**
  * @author absir
- * 
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface View {
 
-	/**
-	 * @return
-	 */
-	String value() default "";
+    /**
+     * @return
+     */
+    String value() default "";
 }

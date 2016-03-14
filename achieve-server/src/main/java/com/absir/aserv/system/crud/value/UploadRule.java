@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014年7月14日 下午4:50:14
  */
 package com.absir.aserv.system.crud.value;
@@ -16,13 +16,13 @@ import java.lang.annotation.Target;
  * @author absir
  *
  */
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UploadRule {
 
-	/**
-	 * @return
-	 */
-	String value();
+    /**
+     * @return
+     */
+    String value();
 
 }

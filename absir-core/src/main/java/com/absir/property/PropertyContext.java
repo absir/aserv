@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014-1-6 下午5:30:37
  */
 package com.absir.property;
@@ -13,113 +13,128 @@ import com.absir.property.value.Prop;
 
 /**
  * @author absir
- * 
  */
 @SuppressWarnings("rawtypes")
 public class PropertyContext implements Orderable {
 
-	/** propertyObject */
-	PropertyObject propertyObject;
+    /**
+     * propertyObject
+     */
+    PropertyObject propertyObject;
 
-	/** name */
-	String name;
+    /**
+     * name
+     */
+    String name;
 
-	/** order */
-	int order;
+    /**
+     * order
+     */
+    int order;
 
-	/** include */
-	int include;
+    /**
+     * include
+     */
+    int include;
 
-	/** exclude */
-	int exclude;
+    /**
+     * exclude
+     */
+    int exclude;
 
-	/** beanName */
-	String beanName;
+    /**
+     * beanName
+     */
+    String beanName;
 
-	/** ignore */
-	boolean ignore;
+    /**
+     * ignore
+     */
+    boolean ignore;
 
-	/** factoryClass */
-	Class<? extends PropertyFactory> factoryClass;
+    /**
+     * factoryClass
+     */
+    Class<? extends PropertyFactory> factoryClass;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-	 */
-	@Override
-	public int getOrder() {
-		return order;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
+     */
+    @Override
+    public int getOrder() {
+        return order;
+    }
 
-	/**
-	 * @param prop
-	 */
-	public void prop(Prop prop) {
-		if (prop != null) {
-			if (!KernelString.isEmpty(prop.name())) {
-				name = prop.name();
-			}
+    /**
+     * @param prop
+     */
+    public void prop(Prop prop) {
+        if (prop != null) {
+            if (!KernelString.isEmpty(prop.name())) {
+                name = prop.name();
+            }
 
-			order = prop.orderProp() ? prop.order() : (order + prop.order());
-			include = prop.includeProp() ? prop.include() : (include | prop.include());
-			exclude = prop.excludeProp() ? prop.exclude() : (exclude | prop.exclude());
-			if (prop.ignore() != 0) {
-				ignore = prop.ignore() > 0 ? true : false;
-			}
+            order = prop.orderProp() ? prop.order() : (order + prop.order());
+            include = prop.includeProp() ? prop.include() : (include | prop.include());
+            exclude = prop.excludeProp() ? prop.exclude() : (exclude | prop.exclude());
+            if (prop.ignore() != 0) {
+                ignore = prop.ignore() > 0 ? true : false;
+            }
 
-			if (prop.factoryClass() != PropertyFactory.class) {
-				if (prop.factoryClass() == PropertyFactory.Void.class) {
-					factoryClass = null;
+            if (prop.factoryClass() != PropertyFactory.class) {
+                if (prop.factoryClass() == PropertyFactory.Void.class) {
+                    factoryClass = null;
 
-				} else {
-					factoryClass = prop.factoryClass();
-				}
-			}
-		}
-	}
+                } else {
+                    factoryClass = prop.factoryClass();
+                }
+            }
+        }
+    }
 
-	/**
-	 * @return the propertyObject
-	 */
-	public Object getPropertyObject() {
-		return propertyObject;
-	}
+    /**
+     * @return the propertyObject
+     */
+    public Object getPropertyObject() {
+        return propertyObject;
+    }
 
-	/**
-	 * @param name
-	 * @param property
-	 * @return
-	 */
-	public Object getPropertyData(String name, Property property) {
-		return propertyObject == null ? null : propertyObject.getPropertyData(name, property);
-	}
+    /**
+     * @param name
+     * @param property
+     * @return
+     */
+    public Object getPropertyData(String name, Property property) {
+        return propertyObject == null ? null : propertyObject.getPropertyData(name, property);
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @return the include
-	 */
-	public int getInclude() {
-		return include;
-	}
+    /**
+     * @return the include
+     */
+    public int getInclude() {
+        return include;
+    }
 
-	/**
-	 * @return the exclude
-	 */
-	public int getExclude() {
-		return exclude;
-	}
+    /**
+     * @return the exclude
+     */
+    public int getExclude() {
+        return exclude;
+    }
 
-	/**
-	 * @return the beanName
-	 */
-	public String getBeanName() {
-		return beanName;
-	}
+    /**
+     * @return the beanName
+     */
+    public String getBeanName() {
+        return beanName;
+    }
 }

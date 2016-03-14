@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <title>${page_title}</title>
+    <!-- bootstrap - css -->
+    <link href="${SITE_STATIC}/jui/themes/css/bootstrap.min.css" rel="stylesheet">
+    <!-- core - css -->
+    <link href="${SITE_STATIC}/jui/themes/css/style.css" rel="stylesheet">
+    <link href="${SITE_STATIC}/jui/themes/blue/core.css" id="bjui-link-theme" rel="stylesheet">
+    <!-- plug - css -->
+    <link href="${SITE_STATIC}/jui/plugins/niceValidator/jquery.validator.css" rel="stylesheet">
+    <link href="${SITE_STATIC}/jui/plugins/bootstrapSelect/bootstrap-select.css" rel="stylesheet">
+    <link href="${SITE_STATIC}/jui/themes/css/FA/css/font-awesome.min.css" rel="stylesheet">
+    <!--[if lte IE 7]>
+    <link href="${SITE_STATIC}/jui/themes/css/ie7.css" rel="stylesheet"><![endif]-->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries --><!--[if lte IE 9]>
+    <script src="${SITE_STATIC}/jui/other/html5shiv.min.js"></script>
+    <script src="${SITE_STATIC}/jui/other/respond.min.js"></script><![endif]-->
+    <!-- jquery -->
+    <script src="${SITE_STATIC}/jui/js/jquery-1.11.3.min.js"></script>
+    <script src="${SITE_STATIC}/jui/js/jquery.cookie.js"></script>
+    <script src="${SITE_STATIC}/jui/plugins/bootstrap.min.js"></script>
+    <!--[if lte IE 9]>
+    <script src="${SITE_STATIC}/jui/other/jquery.iframe-transport.js"></script><![endif]-->${page_header}
+</head>
+<body class="${body_class}">
+${bodyContent}
+</body>
+${page_footer}
+</html>

@@ -1,0 +1,8 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+${input.attr('type', 'checkbox')}
+${input.attr('data-toggle', 'icheck')}
+${input.removeAttr('value')}
+${input.attr("${" + inputval+ " ? 'checked' : 'u'}", '1')}

@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2014年12月29日 下午9:33:15
  */
 package com.absir.core.util;
@@ -14,33 +14,34 @@ import java.io.InputStream;
 
 /**
  * @author absir
- *
  */
 public class UtilInputStream extends InputStream {
 
-	/** dataInput */
-	DataInput dataInput;
+    /**
+     * dataInput
+     */
+    DataInput dataInput;
 
-	/**
-	 * @param dataInput
-	 */
-	public UtilInputStream(DataInput dataInput) {
-		this.dataInput = dataInput;
-	}
+    /**
+     * @param dataInput
+     */
+    public UtilInputStream(DataInput dataInput) {
+        this.dataInput = dataInput;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.io.InputStream#read()
-	 */
-	@Override
-	public int read() throws IOException {
-		try {
-			return dataInput.readByte() & 0xff;
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.io.InputStream#read()
+     */
+    @Override
+    public int read() throws IOException {
+        try {
+            return dataInput.readByte() & 0xff;
 
-		} catch (EOFException e) {
-			return -1;
-		}
-	}
+        } catch (EOFException e) {
+            return -1;
+        }
+    }
 
 }

@@ -1,0 +1,21 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+#set(joEntity = field.getCrudField().getJoEntity())
+#include('../suggest.jetx', {
+joEntity : joEntity,
+entity : 'suggest'
+}, 'suggests')
+
+#tag layout_block("shtml")
+\#if(${nodeval})
+\#set(suggest = ${iselect ? ("EntityStatics::find('" + joEntity.getEntityName() + "', " + nodeval + ", INPUT)") : nodeval})
+\#if(suggest)
+${suggests}
+\#end
+\#end
+#end
+
+${node.empty().voidValue()}
+${node.appendChild(ScripteNode::node(shtml)).voidValue()}

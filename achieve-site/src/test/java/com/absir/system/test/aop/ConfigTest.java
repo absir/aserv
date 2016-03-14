@@ -1,15 +1,11 @@
 /**
  * Copyright 2014 ABSir's Studio
- * 
+ * <p/>
  * All right reserved
- *
+ * <p/>
  * Create on 2014年9月11日 上午10:12:34
  */
 package com.absir.system.test.aop;
-
-import java.lang.reflect.Method;
-
-import org.junit.Test;
 
 import com.absir.aserv.advice.MethodAfter;
 import com.absir.aserv.system.crud.UploadCrudFactory;
@@ -18,6 +14,9 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.client.helper.HelperJson;
 import com.absir.core.kernel.KernelObject;
 import com.absir.system.test.AbstractTestInject;
+import org.junit.Test;
+
+import java.lang.reflect.Method;
 
 /**
  * @author absir
@@ -25,51 +24,51 @@ import com.absir.system.test.AbstractTestInject;
  */
 public class ConfigTest extends AbstractTestInject {
 
-	@Bean
-	public static class AdviceBean {
+    @Test
+    public void test() throws Throwable {
+        AdviceBean.ME.peek("TTT");
+    }
 
-		public static final AdviceBean ME = BeanFactoryUtils.get(AdviceBean.class);
+    @Bean
+    public static class AdviceBean {
 
-		public void peek(String name) {
-			try {
-				Object configMap = KernelObject.declaredGet(BeanFactoryUtils.getBeanConfig(), "configMap");
-				System.out.println(HelperJson.encode(configMap));
+        public static final AdviceBean ME = BeanFactoryUtils.get(AdviceBean.class);
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+        public void peek(String name) {
+            try {
+                Object configMap = KernelObject.declaredGet(BeanFactoryUtils.getBeanConfig(), "configMap");
+                System.out.println(HelperJson.encode(configMap));
 
-	}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
-	@Bean
-	public static class TestAdvice extends MethodAfter {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see com.absir.aserv.advice.IMethodAdvice#matching(java.lang.Class,
-		 * java.lang.reflect.Method)
-		 */
-		@Override
-		public boolean matching(Class<?> beanType, Method method) {
-			return AdviceBean.class.isAssignableFrom(beanType) || UploadCrudFactory.class.isAssignableFrom(beanType);
-		}
+    }
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see com.absir.aserv.advice.MethodAfter#advice(java.lang.Object,
-		 * java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
-		 */
-		@Override
-		public void advice(Object proxy, Object returnValue, Method method, Object[] args) {
-			System.out.println("after:" + proxy + returnValue + method);
-		}
-	}
+    @Bean
+    public static class TestAdvice extends MethodAfter {
+        /*
+         * (non-Javadoc)
+         *
+         * @see com.absir.aserv.advice.IMethodAdvice#matching(java.lang.Class,
+         * java.lang.reflect.Method)
+         */
+        @Override
+        public boolean matching(Class<?> beanType, Method method) {
+            return AdviceBean.class.isAssignableFrom(beanType) || UploadCrudFactory.class.isAssignableFrom(beanType);
+        }
 
-	@Test
-	public void test() throws Throwable {
-		AdviceBean.ME.peek("TTT");
-	}
+        /*
+         * (non-Javadoc)
+         *
+         * @see com.absir.aserv.advice.MethodAfter#advice(java.lang.Object,
+         * java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
+         */
+        @Override
+        public void advice(Object proxy, Object returnValue, Method method, Object[] args) {
+            System.out.println("after:" + proxy + returnValue + method);
+        }
+    }
 
 }

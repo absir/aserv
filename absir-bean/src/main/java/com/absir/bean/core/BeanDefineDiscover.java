@@ -1,11 +1,16 @@
 /**
  * Copyright 2013 ABSir's Studio
- * 
+ * <p>
  * All right reserved
- *
+ * <p>
  * Create on 2013-12-23 下午4:31:39
  */
 package com.absir.bean.core;
+
+import com.absir.bean.basis.ParamName;
+import com.absir.core.kernel.KernelString;
+import com.thoughtworks.paranamer.AdaptiveParanamer;
+import com.thoughtworks.paranamer.Paranamer;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
@@ -14,122 +19,122 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.absir.bean.basis.ParamName;
-import com.absir.core.kernel.KernelString;
-import com.thoughtworks.paranamer.AdaptiveParanamer;
-import com.thoughtworks.paranamer.Paranamer;
-
 /**
  * @author absir
- * 
  */
 public class BeanDefineDiscover {
 
-	/** Instance */
-	public static BeanDefineDiscover Instance;
+    /**
+     * Instance
+     */
+    public static BeanDefineDiscover Instance;
 
-	/** MethodOrCtorMapParameterNames */
-	private static Map<AccessibleObject, String[]> MethodOrCtorMapParameterNames = new HashMap<AccessibleObject, String[]>();
+    /**
+     * MethodOrCtorMapParameterNames
+     */
+    private static Map<AccessibleObject, String[]> MethodOrCtorMapParameterNames = new HashMap<AccessibleObject, String[]>();
 
-	/** adaptiveParanamer */
-	protected Paranamer adaptiveParanamer = new AdaptiveParanamer();
+    /**
+     * adaptiveParanamer
+     */
+    protected Paranamer adaptiveParanamer = new AdaptiveParanamer();
 
-	/**
-	 * 
-	 */
-	private BeanDefineDiscover() {
-	}
+    /**
+     *
+     */
+    private BeanDefineDiscover() {
+    }
 
-	/**
-	 * @param methodOrCtor
-	 * @param annotations
-	 * @return
-	 */
-	public String[] getParamterNames(AccessibleObject methodOrCtor) {
-		if (adaptiveParanamer == null) {
-			adaptiveParanamer = new AdaptiveParanamer();
-		}
+    /**
+     *
+     */
+    public static void open() {
+        if (Instance == null) {
+            Instance = new BeanDefineDiscover();
+        }
+    }
 
-		return adaptiveParanamer.lookupParameterNames(methodOrCtor, false);
-	}
+    /**
+     * @param methodOrCtor
+     * @return
+     */
+    public static String[] paramterNames(AccessibleObject methodOrCtor) {
+        return paramterNames(methodOrCtor, methodOrCtor instanceof Method ? ((Method) methodOrCtor).getParameterAnnotations() : ((Constructor<?>) methodOrCtor).getParameterAnnotations());
+    }
 
-	/**
-	 * 
-	 */
-	public static void open() {
-		if (Instance == null) {
-			Instance = new BeanDefineDiscover();
-		}
-	}
+    /**
+     * @param methodOrCtor
+     * @param parameterAnnotations
+     * @return
+     */
+    public static String[] paramterNames(AccessibleObject methodOrCtor, Annotation[][] parameterAnnotations) {
+        if (parameterAnnotations == null || parameterAnnotations.length == 0) {
+            return null;
+        }
 
-	/**
-	 * @param methodOrCtor
-	 * @return
-	 */
-	public static String[] paramterNames(AccessibleObject methodOrCtor) {
-		return paramterNames(methodOrCtor, methodOrCtor instanceof Method ? ((Method) methodOrCtor).getParameterAnnotations() : ((Constructor<?>) methodOrCtor).getParameterAnnotations());
-	}
+        String[] parameterNames = MethodOrCtorMapParameterNames.get(methodOrCtor);
+        if (parameterNames == null) {
+            if (Instance != null) {
+                parameterNames = Instance.getParamterNames(methodOrCtor);
+            }
 
-	/**
-	 * @param methodOrCtor
-	 * @param parameterAnnotations
-	 * @return
-	 */
-	public static String[] paramterNames(AccessibleObject methodOrCtor, Annotation[][] parameterAnnotations) {
-		if (parameterAnnotations == null || parameterAnnotations.length == 0) {
-			return null;
-		}
+            int length = parameterAnnotations.length;
+            if (parameterNames == null) {
+                parameterNames = new String[length];
 
-		String[] parameterNames = MethodOrCtorMapParameterNames.get(methodOrCtor);
-		if (parameterNames == null) {
-			if (Instance != null) {
-				parameterNames = Instance.getParamterNames(methodOrCtor);
-			}
+            } else if (parameterNames.length != length) {
+                String[] names = parameterNames;
+                parameterNames = new String[length];
+                int nameLength = length;
+                if (nameLength > names.length) {
+                    nameLength = names.length;
+                }
 
-			int length = parameterAnnotations.length;
-			if (parameterNames == null) {
-				parameterNames = new String[length];
+                for (int i = 0; i < nameLength; i++) {
+                    parameterNames[i] = names[i];
+                }
+            }
 
-			} else if (parameterNames.length != length) {
-				String[] names = parameterNames;
-				parameterNames = new String[length];
-				int nameLength = length;
-				if (nameLength > names.length) {
-					nameLength = names.length;
-				}
+            for (int i = 0; i < length; i++) {
+                for (Annotation annotation : parameterAnnotations[i]) {
+                    if (annotation instanceof ParamName) {
+                        String name = ((ParamName) annotation).value();
+                        if (!KernelString.isEmpty(name)) {
+                            parameterNames[i] = name;
+                        }
 
-				for (int i = 0; i < nameLength; i++) {
-					parameterNames[i] = names[i];
-				}
-			}
+                        break;
+                    }
+                }
+            }
 
-			for (int i = 0; i < length; i++) {
-				for (Annotation annotation : parameterAnnotations[i]) {
-					if (annotation instanceof ParamName) {
-						String name = ((ParamName) annotation).value();
-						if (!KernelString.isEmpty(name)) {
-							parameterNames[i] = name;
-						}
+            MethodOrCtorMapParameterNames.put(methodOrCtor, parameterNames);
+        }
 
-						break;
-					}
-				}
-			}
+        return parameterNames;
+    }
 
-			MethodOrCtorMapParameterNames.put(methodOrCtor, parameterNames);
-		}
+    /**
+     *
+     */
+    public static void clear() {
+        if (Instance != null) {
+            Instance.adaptiveParanamer = null;
+        }
 
-		return parameterNames;
-	}
+        MethodOrCtorMapParameterNames.clear();
+    }
 
-	/**
-	 * 
-	 */
-	public static void clear() {
-		if (Instance != null) {
-			Instance.adaptiveParanamer = null;
-		}
+    /**
+     * @param methodOrCtor
+     * @param annotations
+     * @return
+     */
+    public String[] getParamterNames(AccessibleObject methodOrCtor) {
+        if (adaptiveParanamer == null) {
+            adaptiveParanamer = new AdaptiveParanamer();
+        }
 
-		MethodOrCtorMapParameterNames.clear();
-	}
+        return adaptiveParanamer.lookupParameterNames(methodOrCtor, false);
+    }
 }
