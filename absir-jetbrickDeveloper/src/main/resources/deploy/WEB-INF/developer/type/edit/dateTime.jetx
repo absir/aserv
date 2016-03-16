@@ -1,0 +1,17 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+#tag layout_block("shtml")
+<input name="${input.attr('name')}" value="\${${inputval}}" type="hidden" class="dateTimeInput"/>
+#end
+${input.before(ScripteNode::node(shtml)).voidValue()}
+${input.removeAttr('name')}
+${input.removeAttr('value')}
+${input.attr('data-toggle', 'datepicker')}
+${input.attr('data-width', '200')}
+
+#set(dateFmt = field.getMetas().get("dateFmt"))
+${input.attr('data-pattern' , dateFmt ?! 'yyyy-MM-dd hh:mm:ss')}
+
+${input.parent().addClass('dateTime')}

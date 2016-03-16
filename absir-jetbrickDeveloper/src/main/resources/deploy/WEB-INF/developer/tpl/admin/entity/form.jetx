@@ -1,0 +1,351 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+#include("/WEB-INF/developer/macors/option.jetx")
+${Scenario::set("edit", request)}
+#tag script()
+#set(element = document.appendElement("div"))
+##<!--form body
+#set(readonly = "${create ? 'edit' : ' readonly'}")
+##编辑实体主键
+#for(field : entityModel.getPrimaries())
+    #set(identifier = 'name="' + field.getName() + '"')
+    #if(!generator.append(identifier, element))
+        #if(field.isGenerated())
+            ##自增长主键
+            #tag layout_block("node")
+            <p class="p_group_flow">
+                <label>${Pag::getLangName(field.getCaption())}:</label>
+                <input ${identifier} type="text" size="20" readonly="readonly" value="\${entity.${field.getName()}}"/>
+            </p>
+            #end
+            #set(nodes = ScripteNode::append(element, node))
+        #else
+            ##一般主键
+            #tag layout_block("node")
+            <p class="p_group_flow">
+		        <label>${Pag::getLangName(field.getCaption())}:</label>
+		        <input ${identifier} type="text" size="20" value="\${entity.${field.getName()}}" />
+	        </p>
+            #end
+            #set(nodes = ScripteNode::append(element, node))
+            ${nodes.get(0).getElementsByTag("input").get(0).attr(readonly, "true").voidValue()}
+            ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
+        #end
+    #end
+#end
+
+// 编辑其他字段
+#set(subtableFields = new ArrayList())
+#set(subtableSubFields = new LinkedHashMap())
+#set(subFieldCurrent = null)
+#for(field : entityModel.getFields())
+    #if(field.getTypes().size() > 0 && "subtable".equals(field.getTypes().get(0)))
+        ##关联实体字段
+        #if(field.getValueField() != null && field.getCrudField().getKeyJoEntity() != null && field.getCrudField().getKeyJoEntity().getEntityName() == null)
+            ##不支持map.key实体
+            #continue;
+        #end
+        ${subtableFields.add(field)}
+    #else
+        ##关联实体索引字段
+	    #set(subField = field.getMetas().get("subField"))
+	    #if(subField != null)
+	        #set(subFieldCurrent = subField.isEmpty() ? null : subField)
+	    #end
+	    #if(subFieldCurrent != null)
+	        #set(fields = subtableSubFields.get(subFieldCurrent))
+	        #if(fields == null)
+			    #set(fields = new ArrayList())
+			    ${subtableSubFields.put(subFieldCurrent, fields)}
+			#end
+			${fields.add(field)}
+		    #continue
+		#else
+		    #set(identifier = 'name="' + field.getName() + '"')
+		    #if(!generator.append(identifier, element))
+		        #tag layout_block("node")
+                <p class="p_group_flow">
+		            <label>${Pag::getLangName(field.getCaption())}:</label>
+		            <input ${identifier} type="text" size="20" value="\${entity.${field.getName()}}" />
+	            </p>
+                #end
+                #set(nodes = ScripteNode::append(element, node))
+                ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
+		    #end
+	    #end
+    #end
+#end
+##编辑一般字段结束
+${DeveloperUtils::includeExist("edit", entityModel.getJoEntity().getEntityName(), request)}
+#tag scriptEcho()
+${element.html() + "\r\n"}
+#end
+##编辑关联实体
+##subtableFields 关联实体List 或 Map
+##subtableSubFields 选项属性
+#if(subtableFields.size() > 0 || subtableSubFields.size() > 0)
+    #tag scriptEcho()
+    <div class="divider"></div>
+
+    #end
+
+    ##选项头部
+    #set(entity = request.getAttribute("entity"))
+    #tag scriptEcho()
+    <div class="tabs">
+        <ul class="nav nav-tabs" role="tablist">
+
+    #end
+            ##编辑选项属性遍历(header)
+            #set(pan_un_active = true)
+            #for(subField : subtableSubFields)
+                #set(identifier = '<li class="li_' + subField.key + '"')
+                #if(pan_un_active)
+                    #set(pan_un_active = false)
+                    #set(identifier = '<li class="li_' + subField.key + ' active"')
+                #end
+                #if(!generator.print(identifier, out))
+                    #set(capition = subField.value[0].getMetas().get("subFieldLang"))
+                    #tag scriptEcho()
+                    ${identifier}><a href="#" role="tab" data-toggle="tab"><span>${capition ? Pag::getLangName(capition) : Pag::getLang(subField.key)}</span></a></li>
+
+                    #end
+                #end
+            #end
+
+            ##编辑关联实体遍历(header)
+            #for(field : subtableFields)
+                #set(identifier = '<li class="li_' + field.getNodeName() + '"')
+                #if(pan_un_active)
+                    #set(pan_un_active = false)
+                    #set(identifier = '<li class="li_' + field.getNodeName() + ' active"')
+                #end
+                #if(!generator.print(identifier, out))
+                    #tag scriptEcho()
+                    ${identifier}><a href="#" role="tab" data-toggle="tab"><span>${Pag::getLangName(field.getCaption())}</span></a></li>
+
+                    #end
+                #end
+            #end
+    #tag scriptEcho()
+        </ul>
+		<div class="tab-content">
+
+	#end
+
+        #set(pan_un_active = true)
+        ##编辑选项属性遍历(form)
+        #set(pan_un_active = true)
+        #for(subField : subtableSubFields)
+            #set(element = document.appendElement("div"))
+            #set(identifier = '<div class="tab-pane"')
+            #if(pan_un_active)
+                 #set(pan_un_active = false)
+                 #set(identifier = '<div class="tab-pane active"')
+            #end
+
+            #if(!generator.print(identifier, out))
+
+                #tag scriptEcho()
+                    ${identifier}>
+
+                #end
+
+                #for(field : subField.value)
+                    #set(identifier = 'name="' + field.getName() + '"')
+                    #if(!generator.append(identifier, element))
+                        ##关联字段
+                        #tag layout_block("node")
+                        <p class="p_group_flow">
+                            <label>${Pag::getLangName(field.getCaption())}:</label>
+                            <input ${identifier} type="text" size="20" value="\${entity.${field.getName()}}" />
+                        </p>
+                        #end
+                        #set(nodes = ScripteNode::append(element, node))
+                        ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
+                    #end
+                #end
+
+                #tag scriptEcho()
+                    ${element.html() + "\r\n"}
+                    </div>
+
+                #end
+
+            #end
+        #end
+
+        ##编辑关联实体遍历(table)
+        ${Scenario::set("subtable", request)}
+        ${request.setAttribute("subtable", true)}
+        #for(field : subtableFields)
+            ##选项内容开始
+            #set(identifier = '<div class="unitBox tab-pane"')
+            #if(pan_un_active)
+                 #set(pan_un_active = false)
+                 #set(identifier = '<div class="unitBox tab-pane active"')
+            #end
+            #if(!generator.print(identifier, out))
+                #set(subtableNum = KernelDyna::to(field.getMetas().get("subtableNum"), int::class))
+
+                #tag scriptEcho()
+                ${identifier} >
+
+                #end
+
+                #if(field.getMappedBy() == null)
+                    #tag scriptEcho()
+                    \#set(entities = entity.${field.getName()})
+                    #end
+                    ##编辑元素集合属性
+                    #set(element = document.appendElement("tr"))
+                    #set(archetype_map = 0)
+
+                    ##关联实体表头
+                    #tag scriptEcho()
+                    <input name="!subtables" type="hidden" value="${field.getName()}" />
+                    <table class="table table-bordered table-hover table-striped itemDetail" width="100%" addButton="${subtableNum > 0 || !(field.getCrudField().getKeyJoEntity() == null && field.getValueField() == null) ? "" : Pag::getLang("添加纪录")}">
+                        <thead>
+                            <tr>
+                    #end
+                                #set(archetype_key = false)
+                                #set(archetype_map = 0)
+                                #if(field.getValueField() != null)
+                                    ##显示拥有map.key
+                                    #set(archetype_key = true)
+                                    #set(archetype_map = 2)
+                                    #if(field.getCrudField().getKeyJoEntity() == null || field.getCrudField().getKeyJoEntity().getEntityName() != null)
+                                        ##map.key为简单类型
+                                        #tag scriptEcho()
+                                        <th>${field.getMetas().containsKey("key") ? field.getMetas().get("key") : Pag::getLang("键值")}</th>
+                                        #end
+                                        #set(identifier = 'name="' + field.getName() + '[\'!for_key\']"')
+                                        #if(!generator.append(identifier, element)) {
+                                            #tag layout_block("node")
+                                            <td><input ${identifier} type="text" style="width:80%" value="\${entity.key}"></td>
+                                            #end
+                                            #set(nodes = ScripteNode::append(element, node))
+                                            ${DeveloperUtils::includeExist("subtable", field.getTypes(), request)}
+                                        #end
+                                    #end
+                                #end
+
+                                #if(field.getCrudField().getJoEntity() == null || field.getCrudField().getJoEntity().getEntityName() != null)
+                                    ##map或array为简单类型
+                                    #set(map_value = archetype_key ? '.value' : '')
+                                    #tag scriptEcho()
+                                    <th>${Pag::getLang("内容")}</th>
+                                    #end
+                                    #set(identifier = 'name="' + field.getName() + (map_value ? "['!!for_key']" : "[${for_index}]") + '"')
+                                    #if(!generator.append(identifier, element))
+                                        #tag layout_block("node")
+                                        <td><input ${identifier} type="text" style="width:80%" value="\${entity${map_value}}"></td>
+                                        #end
+                                        #set(nodes = ScripteNode::append(element, node))
+                                        ${DeveloperUtils::includeExist("subtable", map_value ? field.getValueField().getTypes() : field.getTypes(), request)}
+                                    #end
+
+                                #else
+                                    ##map或array为实体类型
+                                    #set(map_value = archetype_key ? '.value' : '')
+                                    #set(archetype_map = archetype_key ? 3 :1)
+                                    #for(field : DeveloperModel::forEntityNameClass(field.getCrudField().getJoEntity(), request).getEntityModel().getFields())
+                                        #tag scriptEcho()
+                                        <th>${Pag::getLangName(field.getCaption())}</th>
+                                        #end
+                                        #set(identifier = 'name="' + field.getName() + (map_value ? "['!!for_key']" : "[${for_index}]") + "." + field.getName() + '"')
+                                        #if(!generator.append(identifier, element)) {
+                                            #tag layout_block("node")
+                                            <td><input ${identifier} type="text" style="width:80%" value="\${entity${map_value}.${field.getName()} ?! ''}"></td>
+                                            #end
+                                            #set(nodes = ScripteNode::append(element, node))
+                                            ${DeveloperUtils::includeExist("subtable", field.getTypes(), request)}
+                                        #end
+                                    #end
+                                #end
+
+                                ${DeveloperUtils::includeExist("subtable", entityModel.getJoEntity().getEntityName(), request)}
+
+                    #tag scriptEcho()
+                                <th width="100">
+                                    <span style="position:relative;">
+                                        <input type="text" value="1" class="form-control num-add" size="2.5">
+                                        <a href="javascript:;" class="row-add" data-toggle="ab_add_item"><i class="fa fa-plus-square"></i></a>
+                                    </span>
+                                </th>
+                            </tr>
+                            #tag layout_block("node")
+                            <td>
+                                <a href="javascript:;" class="btn btn-red row-del" data-toggle="ab_remove_item">${Pag::getLang("删")}</a>
+                            </td>
+                            #end
+                    #end
+                            #set(nodes = ScripteNode::append(element, node))
+                            #set(element_html = element.html())
+                            #for(doc : element.select('[name]'))
+                                ${doc.attr('aname', doc.attr('name')).voidValue()}
+                                ${doc.removeAttr('name').voidValue()}
+                            #end
+                    #tag scriptEcho()
+                            <tr class="archetype">
+                                <!--archetype
+                                ##编辑元素集合属性(完成)
+                                ${DeveloperUtils::includeExist("edit", entityModel.getJoEntity().getEntityName(), request)}
+                                \#set(for_index = Pag::getForIndex())
+                                \#set(for_entity = entity)
+                                \#set(entity = Pag::getForEntityMap(${archetype_map}))
+                                ${element.html() + "\r\n"}
+                                \#set(entity = for_entity)
+                                archetype--${'>'}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            \#for(entity : entities)
+                                ##\#set(for_index = for.index)
+                            <tr>
+                                ${element_html}
+                            </tr>
+                            \#end
+                        </tbody>
+                    </table>
+                    #end
+
+                #else
+                    #tag scriptEcho()
+                    <div class="ab_mapped_load">
+                    #end
+                    ##编辑关联集合属性(subtable, mappedBy)
+                    #set(subJoEntity = field.getCrudField().getJoEntity())
+                    ${request.setAttribute("subJoEntity", subJoEntity)}
+                    ${request.setAttribute("subField", field)}
+                    ${Pag::includeGen("mapped/" + entityName + '.' + field.getName() + ".jetx", "mapped.entity.jetx")}
+                    #tag scriptEcho()
+                    \#include("../mapped/${entityName}.${field.getName()}.jetx")
+                    #end
+                    ##编辑关联集合属性(完成)
+                    #tag scriptEcho()
+                    </div>
+                    #end
+                #end
+
+                ##选项内容完成
+                #tag scriptEcho()
+                </div>
+
+                #end
+
+            #end
+        #end
+        ${Scenario::pop(request).voidValue()}
+
+    ##选项尾部
+	#tag scriptEcho()
+	    </div>
+	</div>
+	#end
+
+#end
+##-->
+#end
+${Scenario::pop(request).voidValue()}

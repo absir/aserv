@@ -16,6 +16,7 @@ import com.absir.context.core.ContextUtils;
 import com.absir.context.lang.LangBundle;
 import com.absir.core.base.Environment;
 import com.absir.core.helper.HelperIO;
+import com.absir.core.kernel.KernelDyna;
 import com.absir.server.on.OnPut;
 import com.absir.server.route.RouteAction;
 import com.absir.server.route.RouteEntry;
@@ -36,7 +37,7 @@ import java.util.Map;
 @Inject
 public abstract class Input extends Bean<Serializable> implements IAttributes {
 
-    public final static IGet GET = BeanFactoryUtils.get(IGet.class);
+    protected IFacade facade;
 
     protected Map<String, String> resourceBundle;
 
@@ -62,6 +63,18 @@ public abstract class Input extends Bean<Serializable> implements IAttributes {
         return model;
     }
 
+    public IFacade getFacade() {
+        if (facade == null) {
+            facade = InFacadeFactory.forFacade(this);
+        }
+
+        return facade;
+    }
+
+    public boolean isIFacade() {
+        return getFacade() == InFacadeFactory.I_FACADE;
+    }
+
     public Locale getLocale() {
         if (locale == null) {
             locale = LangBundle.ME.getLocale(getLocalCode());
@@ -72,7 +85,14 @@ public abstract class Input extends Bean<Serializable> implements IAttributes {
 
     public Integer getLocalCode() {
         if (localCode == null) {
-            localCode = GET == null ? null : GET.getLocaleCode(this);
+            localCode = KernelDyna.to(getFacade().getSession("localCode"), Integer.class);
+            if (localCode == null) {
+                localCode = getFacade().getLocaleCode();
+                if (localCode != null) {
+                    getFacade().setSession("localCode", localCode);
+                }
+            }
+
             if (localCode == null) {
                 localCode = 0;
             }
@@ -158,6 +178,19 @@ public abstract class Input extends Bean<Serializable> implements IAttributes {
         return LangBundle.ME.getLocale();
     }
 
+    public final String getAddress() {
+        if (address == null) {
+            address = getFacade().getAddress();
+            if (address != null) {
+                address = getRemoteAddr();
+            }
+        }
+
+        return address;
+    }
+
+    public abstract String getRemoteAddr();
+
     public abstract String getUri();
 
     public abstract InMethod getMethod();
@@ -169,19 +202,6 @@ public abstract class Input extends Bean<Serializable> implements IAttributes {
     }
 
     public abstract boolean paramDebug();
-
-    public final String getAddress() {
-        if (address == null) {
-            address = GET == null ? null : GET.getAddress(this);
-            if (address != null) {
-                address = getRemoteAddr();
-            }
-        }
-
-        return address;
-    }
-
-    public abstract String getRemoteAddr();
 
     public abstract String getParam(String name);
 

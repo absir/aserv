@@ -1,0 +1,28 @@
+{
+"moveup_dir_path": "${Pag::getPath(path)}",
+"current_url": "\${Pag::uploadUrl(path)}",
+"current_dir_path": "\${path}",
+"file_list":[
+\#for(file : files)
+
+{
+\#set(filePath = file.dirPath + file.filename)
+
+\#if(file.fileType)
+"is_dir": 0,
+"filesize": \${file.fileSize},
+"filetype": "\${file.fileType}",
+"is_photo": "\${file.imaged}",
+\#else
+
+"is_dir": 1,
+"has_file": "\${Pag::isEmptyUpload(filePath)}",
+"dir_path": "\${dir_path}",
+\#end
+"filename": "\${file.filename}",
+"datetime": "\${Pag::dateValue(file.createTime)}"
+},
+
+\#end
+]
+}

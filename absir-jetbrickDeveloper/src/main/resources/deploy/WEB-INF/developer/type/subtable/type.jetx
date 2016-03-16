@@ -1,0 +1,3 @@
+${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
+${input.removeAttr('size')}
+${input.removeAttr('data-width')}

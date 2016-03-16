@@ -1,0 +1,8 @@
+#macro suggest(String label, String name, String help)
+<label class="control-label" for="${name}">${label}:</label>
+<div class="controls">
+    <input id="${name}" name="${name}" type="text" class="input-xlarge"/>
+
+    <p class="help-block">${help}</p>
+</div>
+#end

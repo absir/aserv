@@ -1,0 +1,5 @@
+{
+"statusCode": 200,
+"message": ${Pag::getLang("登录成功", false)},
+"closeCurrent": true
+}

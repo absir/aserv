@@ -1,0 +1,37 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+#include("/WEB-INF/developer/macors/option.jetx")
+${Scenario::set("mapped", request)}
+#set(subEntityModel = DeveloperModel::getModelEntity(subJoEntity))
+\#set(entities = entity.${subField.getName()})
+<div class="bjui-pageHeader">
+    <div class="pull-right">
+        \#if(AuthServiceUtils::insertPermission("${subJoEntity.getEntityName()}", USER))
+        <button type="button" class="btn-blue" data-url="\${ADMIN_ROUTE}entity/edit/${subJoEntity.getEntityName()}?${subField.getMappedBy()}=\${EntityStatics::getPrimary(entity, '${entityModel.getPrimary().getName()}')}" data-toggle="dialog" data-icon="plus">
+            ${Pag::getLang("添加")}
+        </button>
+        \#end
+        \#if(AuthServiceUtils::updatePermission("${subJoEntity.getEntityName()}", USER))
+        <button type="button" class="btn-blue" data-url="\${ADMIN_ROUTE}entity/edit/${subJoEntity.getEntityName()}/{#bjui-selected}" data-warn="${Pag::getLang('请选择一条记录！')}" data-toggle="dialog" data-id="${entityName}_edit" data-icon="edit" data-unit-box="true">
+            ${Pag::getLang("编辑")}
+        </button>
+        \#end
+        \#if(AuthServiceUtils::deletePermission("${subJoEntity.getEntityName()}", USER))
+        <button type="button" class="btn-blue" data-url="\${ADMIN_ROUTE}entity/delete/${subJoEntity.getEntityName()}" data-toggle="doajaxchecked" data-confirm-msg="${Pag::getLang('确定要删除选中项吗？')}" data-icon="remove"
+                data-idname="ids" data-group="ids">
+            ${Pag::getLang("删除选中行")}
+        </button>
+        \#end
+        <button type="button" class="btn-blue" data-url="\${ADMIN_ROUTE}entity/mapped/${entityName}/${id}/${subField.getName()}" data-toggle="ajaxload" data-target=".ab_mapped_load" data-icon="refresh">
+            ${Pag::getLang("刷新")}
+        </button>
+    </div>
+</div>
+\#set(entities = entity.${subField.name})
+<table class="table table-bordered table-hover table-striped table-top">
+    ${request.setAttribute("fieldNotOrder", true)}
+    #set(entityModel = subEntityModel)
+    #include("table.jetx")
+</table>
+${Scenario::pop(request).voidValue()}

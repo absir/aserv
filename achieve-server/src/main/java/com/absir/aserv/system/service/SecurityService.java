@@ -27,7 +27,7 @@ import com.absir.core.kernel.KernelLang.CallbackTemplate;
 import com.absir.core.kernel.KernelString;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
-import com.absir.server.in.IGet;
+import com.absir.server.in.IFacade;
 import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
 import com.absir.servlet.InputRequest;
@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Configure
-public abstract class SecurityService implements ISecurityService, ISecurity, IGet {
+public abstract class SecurityService implements ISecurityService, ISecurity, IFacade {
 
     public static final SecurityService ME = BeanFactoryUtils.get(SecurityService.class);
 
@@ -160,12 +160,11 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IG
     public SecurityContext autoLogin(String name, boolean remember, int roleLevel, Input input) {
         SecurityContext securityContext = getSecurityContext(input);
         if (securityContext == null) {
-            if (input instanceof InputRequest) {
-                InputRequest inputRequest = (InputRequest) input;
+            if (!input.isIFacade()) {
                 SecurityManager securityManager = getSecurityManager(name);
-                String sessionId = inputRequest.getSession(securityManager.getSessionKey());
+                String sessionId = input.getFacade().getSessionValue(securityManager.getSessionKey());
                 if (sessionId == null && remember) {
-                    sessionId = inputRequest.getCookie(securityManager.getSessionKey());
+                    sessionId = input.getFacade().getCookie(securityManager.getSessionKey());
                 }
 
                 if (sessionId != null) {

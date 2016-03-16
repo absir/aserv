@@ -232,17 +232,16 @@ public class InputRequest extends Input {
         getOutputStream().write(b, off, len);
     }
 
-    public String getSession(String name) {
+    public Object getSession(String name) {
         HttpSession session = request.getSession(false);
         if (session == null) {
             return null;
         }
 
-        Object value = session.getAttribute(name);
-        return value == null ? null : value.toString();
+        return session.getAttribute(name);
     }
 
-    public void setSession(String name, String value) {
+    public void setSession(String name, Object value) {
         request.getSession().setAttribute(name, value);
     }
 
