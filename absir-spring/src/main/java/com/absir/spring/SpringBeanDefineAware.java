@@ -7,15 +7,14 @@
  */
 package com.absir.spring;
 
-import com.absir.bean.basis.Basis;
-import com.absir.bean.basis.BeanConfig;
-import com.absir.bean.basis.BeanSupply;
+import com.absir.bean.basis.*;
+import com.absir.bean.config.IBeanDefineProcessor;
 import com.absir.bean.config.IBeanFactoryAware;
 import com.absir.bean.core.BeanFactoryImpl;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Stopping;
+import com.absir.spring.annotation.ASpring;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.util.StringValueResolver;
 
 import java.util.Collection;
 
@@ -24,18 +23,25 @@ import java.util.Collection;
  */
 @Basis
 @Bean
-public class SpringBeanDefineAware implements IBeanFactoryAware {
+public class SpringBeanDefineAware implements IBeanFactoryAware, IBeanDefineProcessor {
 
     /**
-     * CONTEXT
+     * context
      */
-    public static final ClassPathXmlApplicationContext CONTEXT = new ClassPathXmlApplicationContext();
+    private static ClassPathXmlApplicationContext context;
+
+    /**
+     * @return
+     */
+    public static ClassPathXmlApplicationContext getContext() {
+        return context;
+    }
 
     /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
+         * (non-Javadoc)
+         *
+         * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
+         */
     @Override
     public int getOrder() {
         return 0;
@@ -50,19 +56,23 @@ public class SpringBeanDefineAware implements IBeanFactoryAware {
      */
     @Override
     public void beforeRegister(BeanFactoryImpl beanFactory) {
+        if (context != null) {
+            return;
+        }
+
         final BeanConfig beanConfig = beanFactory.getBeanConfig();
         String[] locations = beanConfig.getExpressionObject("spring.locations", null, String[].class);
         if (locations == null) {
-            locations = new String[]{beanConfig.getClassPath() + "spring/*.xml"};
+            locations = new String[]{"classpath:/spring/*.xml"};
         }
 
-        CONTEXT.setConfigLocations(locations);
+        context = new ClassPathXmlApplicationContext(locations, false);
         beanFactory.addBeanSupply(new BeanSupply() {
 
             @Override
             public <T> Collection<T> getBeanObjects(Class<T> beanType) {
                 try {
-                    return CONTEXT.getBeansOfType(beanType).values();
+                    return context.getBeansOfType(beanType).values();
 
                 } catch (Exception e) {
                     return null;
@@ -72,7 +82,7 @@ public class SpringBeanDefineAware implements IBeanFactoryAware {
             @Override
             public <T> T getBeanObject(String beanName, Class<T> beanType) {
                 try {
-                    return CONTEXT.getBean(beanName, beanType);
+                    return context.getBean(beanName, beanType);
 
                 } catch (Exception e) {
                     return null;
@@ -82,7 +92,7 @@ public class SpringBeanDefineAware implements IBeanFactoryAware {
             @Override
             public <T> T getBeanObject(Class<T> beanType) {
                 try {
-                    return CONTEXT.getBean(beanType);
+                    return context.getBean(beanType);
 
                 } catch (Exception e) {
                     return null;
@@ -92,7 +102,7 @@ public class SpringBeanDefineAware implements IBeanFactoryAware {
             @Override
             public Object getBeanObject(String beanName) {
                 try {
-                    return CONTEXT.getBean(beanName);
+                    return context.getBean(beanName);
 
                 } catch (Exception e) {
                     return null;
@@ -100,15 +110,8 @@ public class SpringBeanDefineAware implements IBeanFactoryAware {
             }
         });
 
-        CONTEXT.refresh();
-        CONTEXT.getBeanFactory().resolveAliases(new StringValueResolver() {
-            @Override
-            public String resolveStringValue(String s) {
-                return beanConfig.getExpression(s, true);
-            }
-        });
-
-        CONTEXT.start();
+        context.refresh();
+        context.start();
     }
 
     /*
@@ -127,6 +130,19 @@ public class SpringBeanDefineAware implements IBeanFactoryAware {
      */
     @Stopping
     protected void stopping() {
-        CONTEXT.stop();
+        if (context != null) {
+            context.stop();
+            context.close();
+            context = null;
+        }
+    }
+
+    @Override
+    public BeanDefine getBeanDefine(BeanFactory beanFactory, BeanDefine beanDefine) {
+        if (beanDefine.getBeanType().getAnnotation(ASpring.class) != null) {
+            beanDefine = new SpringBeanDefineWrapper(beanDefine);
+        }
+
+        return beanDefine;
     }
 }

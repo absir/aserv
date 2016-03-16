@@ -82,6 +82,16 @@ public class PasswordCrudFactory implements ICrudFactory {
         return HelperEncrypt.encryptionMD5(password, salt == null ? null : salt.getBytes());
     }
 
+    /**
+     * @param password
+     * @param salt
+     * @param saltCount
+     * @return
+     */
+    public static String getPasswordEncrypt(String password, String salt, int saltCount) {
+        return HelperEncrypt.encryptionMD5(password, salt == null ? null : salt.getBytes(), 0);
+    }
+
     /*
      * (non-Javadoc)
      *

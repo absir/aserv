@@ -16,8 +16,8 @@
     <!-- main logger -->
     <appender name="main" class="org.apache.log4j.RollingFileAppender">
         <param name="File" value="${classPath}/logs/main.log"/>
-        <param name="MaxFileSize" value="1024KB"/>
-        <param name="MaxBackupIndex" value="10240"/>
+        <param name="MaxFileSize" value="4096KB"/>
+        <param name="MaxBackupIndex" value="32"/>
         <param name="Encoding" value="utf-8"/>
         <param name="DatePattern" value="yyyy-MM-dd H:M:S"/>
         <layout class="org.apache.log4j.PatternLayout">
@@ -32,8 +32,8 @@
     <!-- error logger -->
     <appender name="error" class="org.apache.log4j.RollingFileAppender">
         <param name="File" value="${classPath}/logs/error.log"/>
-        <param name="MaxFileSize" value="1024KB"/>
-        <param name="MaxBackupIndex" value="128"/>
+        <param name="MaxFileSize" value="4096KB"/>
+        <param name="MaxBackupIndex" value="32"/>
         <param name="Encoding" value="utf-8"/>
         <param name="DatePattern" value="yyyy-MM-dd H:M:S"/>
         <layout class="org.apache.log4j.PatternLayout">

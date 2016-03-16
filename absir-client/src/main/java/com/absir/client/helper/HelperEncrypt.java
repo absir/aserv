@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-4-3 下午5:18:30
  */
 package com.absir.client.helper;
@@ -76,11 +76,30 @@ public class HelperEncrypt {
      * @return
      */
     public static String encryption(String algorithm, byte[] inBuffer, byte[] secrets) {
+        return encryption(algorithm, inBuffer, secrets, 1);
+    }
+
+    /**
+     * @param algorithm
+     * @param inBuffer
+     * @param secrets
+     * @param count
+     * @return
+     */
+    public static String encryption(String algorithm, byte[] inBuffer, byte[] secrets, int count) {
         try {
             MessageDigest mdInst = MessageDigest.getInstance(algorithm);
-            mdInst.update(inBuffer);
-            byte[] outBuffer = mdInst.digest();
-            return hexDigit(outBuffer, secrets);
+            while (true) {
+                mdInst.update(inBuffer);
+                mdInst.update(secrets);
+                inBuffer = mdInst.digest();
+                mdInst.reset();
+                if (--count <= 0) {
+                    break;
+                }
+            }
+
+            return hexDigit(inBuffer, secrets);
 
         } catch (Exception e) {
             if (Environment.getEnvironment() == Environment.DEVELOP) {
@@ -174,20 +193,30 @@ public class HelperEncrypt {
     }
 
     /**
+     * @param string
+     * @param secrets
+     * @param count
+     * @return
+     */
+    public static String encryptionMD5(String string, byte[] secrets, int count) {
+        return encryption("MD5", string.getBytes(), secrets, 0);
+    }
+
+    /**
      * @param mode
-     * @param secrect
+     * @param secret
      * @param length
      * @return
      */
-    public static SecretKeySpec getSecretKeySpec(String mode, String secrect, int length) {
+    public static SecretKeySpec getSecretKeySpec(String mode, String secret, int length) {
         byte[] data = null;
-        if (secrect == null) {
-            secrect = "";
+        if (secret == null) {
+            secret = "";
         }
 
-        if (length > 0 && length != secrect.length()) {
+        if (length > 0 && length != secret.length()) {
             StringBuffer sb = new StringBuffer(length);
-            sb.append(secrect);
+            sb.append(secret);
             while (sb.length() < length) {
                 sb.append('0');
             }
@@ -199,7 +228,7 @@ public class HelperEncrypt {
             data = sb.toString().getBytes(KernelCharset.UTF8);
 
         } else {
-            data = secrect.getBytes(KernelCharset.UTF8);
+            data = secret.getBytes(KernelCharset.UTF8);
         }
 
         return new SecretKeySpec(data, mode);
@@ -207,25 +236,25 @@ public class HelperEncrypt {
 
     /**
      * @param mode
-     * @param cliperMode
+     * @param cipherMode
      * @param inBuffer
-     * @param secrect
+     * @param secret
      * @return
      */
-    public static byte[] encrypt(String mode, String cliperMode, byte[] inBuffer, String secrect) {
-        return encrypt(getSecretKeySpec(mode, secrect, 0), cliperMode, inBuffer);
+    public static byte[] encrypt(String mode, String cipherMode, byte[] inBuffer, String secret) {
+        return encrypt(getSecretKeySpec(mode, secret, 0), cipherMode, inBuffer);
     }
 
     /**
-     * @param secrectKeySpec
-     * @param modeCiper
+     * @param secretKeySpec
+     * @param cipherMode
      * @param inBuffer
      * @return
      */
-    public static byte[] encrypt(SecretKeySpec secrectKeySpec, String cliperMode, byte[] inBuffer) {
+    public static byte[] encrypt(SecretKeySpec secretKeySpec, String cipherMode, byte[] inBuffer) {
         try {
-            Cipher cipher = Cipher.getInstance(cliperMode);
-            cipher.init(Cipher.ENCRYPT_MODE, secrectKeySpec);
+            Cipher cipher = Cipher.getInstance(cipherMode);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
             return cipher.doFinal(inBuffer);
 
         } catch (Exception e) {
@@ -239,25 +268,25 @@ public class HelperEncrypt {
 
     /**
      * @param mode
-     * @param cliperMode
+     * @param cipherMode
      * @param inBuffer
-     * @param secrect
+     * @param secret
      * @return
      */
-    public static byte[] decrypt(String mode, String cliperMode, byte[] inBuffer, String secrect) {
-        return decrypt(getSecretKeySpec(mode, secrect, 0), cliperMode, inBuffer);
+    public static byte[] decrypt(String mode, String cipherMode, byte[] inBuffer, String secret) {
+        return decrypt(getSecretKeySpec(mode, secret, 0), cipherMode, inBuffer);
     }
 
     /**
-     * @param secrectKeySpec
+     * @param secretKeySpec
      * @param inBuffer
      * @param content
      * @return
      */
-    public static byte[] decrypt(SecretKeySpec secrectKeySpec, String inBuffer, byte[] content) {
+    public static byte[] decrypt(SecretKeySpec secretKeySpec, String inBuffer, byte[] content) {
         try {
             Cipher cipher = Cipher.getInstance(inBuffer);
-            cipher.init(Cipher.DECRYPT_MODE, secrectKeySpec);
+            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
             return cipher.doFinal(content);
 
         } catch (Exception e) {
@@ -271,75 +300,75 @@ public class HelperEncrypt {
 
     /**
      * @param inBuffer
-     * @param secrect
+     * @param secret
      * @return
      */
-    public static byte[] aesEncrypt(byte[] inBuffer, String secrect) {
-        return encrypt("AES", AES_CIPHER_MODE, inBuffer, secrect);
+    public static byte[] aesEncrypt(byte[] inBuffer, String secret) {
+        return encrypt("AES", AES_CIPHER_MODE, inBuffer, secret);
     }
 
     /**
-     * @param secrectKeySpec
+     * @param secretKeySpec
      * @param inBuffer
      * @return
      */
-    public static byte[] aesEncrypt(SecretKeySpec secrectKeySpec, byte[] inBuffer) {
-        return encrypt(secrectKeySpec, AES_CIPHER_MODE, inBuffer);
-    }
-
-    /**
-     * @param inBuffer
-     * @param secrect
-     * @return
-     */
-    public static byte[] aesDecrypt(byte[] inBuffer, String secrect) {
-        return decrypt("AES", AES_CIPHER_MODE, inBuffer, secrect);
-    }
-
-    /**
-     * @param secrectKeySpec
-     * @param inBuffer
-     * @return
-     */
-    public static byte[] aesDecrypt(SecretKeySpec secrectKeySpec, byte[] inBuffer) {
-        return decrypt(secrectKeySpec, AES_CIPHER_MODE, inBuffer);
+    public static byte[] aesEncrypt(SecretKeySpec secretKeySpec, byte[] inBuffer) {
+        return encrypt(secretKeySpec, AES_CIPHER_MODE, inBuffer);
     }
 
     /**
      * @param inBuffer
-     * @param secrect
+     * @param secret
      * @return
      */
-    public static String aesEncryptBase64(String inBuffer, String secrect) {
-        return aesEncryptBase64(inBuffer, getSecretKeySpec("AES", secrect, 16));
+    public static byte[] aesDecrypt(byte[] inBuffer, String secret) {
+        return decrypt("AES", AES_CIPHER_MODE, inBuffer, secret);
+    }
+
+    /**
+     * @param secretKeySpec
+     * @param inBuffer
+     * @return
+     */
+    public static byte[] aesDecrypt(SecretKeySpec secretKeySpec, byte[] inBuffer) {
+        return decrypt(secretKeySpec, AES_CIPHER_MODE, inBuffer);
     }
 
     /**
      * @param inBuffer
-     * @param secrect
+     * @param secret
      * @return
      */
-    public static String aesEncryptBase64(String inBuffer, SecretKeySpec secrectKeySpec) {
-        byte[] buffer = aesEncrypt(secrectKeySpec, inBuffer.getBytes(KernelCharset.getDefault()));
+    public static String aesEncryptBase64(String inBuffer, String secret) {
+        return aesEncryptBase64(inBuffer, getSecretKeySpec("AES", secret, 16));
+    }
+
+    /**
+     * @param inBuffer
+     * @param secretKeySpec
+     * @return
+     */
+    public static String aesEncryptBase64(String inBuffer, SecretKeySpec secretKeySpec) {
+        byte[] buffer = aesEncrypt(secretKeySpec, inBuffer.getBytes(KernelCharset.getDefault()));
         return buffer == null ? null : Base64.encodeBase64String(buffer);
     }
 
     /**
      * @param inBuffer
-     * @param secrect
+     * @param secret
      * @return
      */
-    public static String aesDecryptBase64(String inBuffer, String secrect) {
-        return aesDecryptBase64(inBuffer, getSecretKeySpec("AES", secrect, 16));
+    public static String aesDecryptBase64(String inBuffer, String secret) {
+        return aesDecryptBase64(inBuffer, getSecretKeySpec("AES", secret, 16));
     }
 
     /**
      * @param inBuffer
-     * @param secrect
+     * @param secretKeySpec
      * @return
      */
-    public static String aesDecryptBase64(String inBuffer, SecretKeySpec secrectKeySpec) {
-        byte[] buffer = aesDecrypt(secrectKeySpec, Base64.decodeBase64(inBuffer));
+    public static String aesDecryptBase64(String inBuffer, SecretKeySpec secretKeySpec) {
+        byte[] buffer = aesDecrypt(secretKeySpec, Base64.decodeBase64(inBuffer));
         return buffer == null ? null : new String(buffer, KernelCharset.getDefault());
     }
 }
