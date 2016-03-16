@@ -33,22 +33,13 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 @Basis
 @Bean
 public class SessionFactoryScanner implements IBeanDefineSupply, IBeanDefineScanner {
 
-    /**
-     * entityClasses
-     */
     private List<Class<?>> entityClasses = new ArrayList<Class<?>>();
 
-    /**
-     * @param sessionFactoryBoost
-     */
     @Inject
     private void setSessionFactoryBoost(SessionFactoryBoost sessionFactoryBoost) {
         BeanFactory beanFactory = BeanFactoryUtils.get();
@@ -129,23 +120,11 @@ public class SessionFactoryScanner implements IBeanDefineSupply, IBeanDefineScan
         EntityAssoc.boost(SessionFactoryUtils.get());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return -256;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanDefineSupply#getBeanDefines(com.absir.bean
-     * .core.BeanFactoryImpl, java.lang.Class)
-     */
     @Override
     public List<BeanDefine> getBeanDefines(BeanFactoryImpl beanFactory, Class<?> beanType) {
         if (beanType.getAnnotation(Entity.class) != null) {

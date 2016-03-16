@@ -14,22 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author absir
- */
 public class ValidatorObject implements PropertyObject<List<Validator>> {
 
-    /**
-     * validators
-     */
     private List<Validator> validators;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.property.PropertyObject#getPropertyData(java.lang.String,
-     * com.absir.property.Property)
-     */
     @Override
     public List<Validator> getPropertyData(String name, Property property) {
         if (validators != null) {
@@ -41,9 +29,6 @@ public class ValidatorObject implements PropertyObject<List<Validator>> {
         return validators;
     }
 
-    /**
-     * @param validator
-     */
     public void addValidator(Validator validator) {
         if (validators == null) {
             validators = new ArrayList<Validator>();
@@ -55,10 +40,6 @@ public class ValidatorObject implements PropertyObject<List<Validator>> {
         validators.add(validator);
     }
 
-    /**
-     * @param validatorClass
-     * @return
-     */
     public Validator removeValidatorClass(Class<?> validatorClass) {
         if (validators != null) {
             Iterator<Validator> iterator = validators.iterator();

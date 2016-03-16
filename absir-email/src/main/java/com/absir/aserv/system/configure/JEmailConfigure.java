@@ -16,9 +16,6 @@ import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.service.utils.EmailServiceUtils;
 
-/**
- * @author absir
- */
 @MaEntity(parent = {@MaMenu("接口配置")}, name = "邮件")
 public class JEmailConfigure extends JConfigureBase implements ICrudBean {
 
@@ -43,62 +40,34 @@ public class JEmailConfigure extends JConfigureBase implements ICrudBean {
     @JaLang("密码")
     private String password;
 
-    /**
-     * @return the smtp
-     */
     public String getSmtp() {
         return smtp;
     }
 
-    /**
-     * @return the port
-     */
     public int getPort() {
         return port;
     }
 
-    /**
-     * @return the starttls
-     */
     public boolean isStarttls() {
         return starttls;
     }
 
-    /**
-     * @return the from
-     */
     public String getFrom() {
         return from;
     }
 
-    /**
-     * @return the anyone
-     */
     public boolean isAnyone() {
         return anyone;
     }
 
-    /**
-     * @return the username
-     */
     public String getUsername() {
         return username;
     }
 
-    /**
-     * @return the password
-     */
     public String getPassword() {
         return password;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.crud.value.ICrudBean#proccessCrud(com.absir.aserv
-     * .system.bean.value.JaCrud.Crud, com.absir.aserv.crud.CrudHandler)
-     */
     @Override
     public void proccessCrud(Crud crud, CrudHandler handler) {
         if (crud == Crud.UPDATE) {

@@ -12,19 +12,8 @@ import com.absir.core.kernel.KernelLang.BreakException;
 
 import java.lang.reflect.Type;
 
-/**
- * @author absir
- */
 public interface BinderConvert extends DynaConvert {
 
-    /**
-     * @param obj
-     * @param name
-     * @param toType
-     * @param breakException
-     * @return
-     * @throws BreakException
-     */
     public Object to(Object obj, String name, Type toType, BreakException breakException) throws Exception;
 
 }

@@ -38,32 +38,18 @@ import java.util.*;
 @Configure
 public class DeveloperUtils {
 
-    /**
-     * DIY
-     */
     protected static final String DIY = DeveloperUtils.class.getName() + "@DIY";
-    /**
-     * DEVELOPER
-     */
+
     private static final String DEVELOPER = "developer/";
-    /**
-     * DEVELOPER_LENGTH
-     */
+
     private static final int DEVELOPER_LENGTH = DEVELOPER.length();
     @Value("developer.suffix")
     protected static String suffix = getSuffix();
-    /**
-     * Generator_Map_Tokens
-     */
+
     private static Map<String, Object> Generator_Map_Token = new HashMap<String, Object>();
-    /**
-     * Generator_Tokens
-     */
+
     private static Set<Object> Generator_Tokens = new HashSet<Object>();
 
-    /**
-     * @return
-     */
     private static String getSuffix() {
         IRenderSuffix renderSuffix = BeanFactoryUtils.get(IRenderSuffix.class);
         if (renderSuffix == null) {
@@ -80,10 +66,6 @@ public class DeveloperUtils {
         return suffix;
     }
 
-    /**
-     * @param generaterPath
-     * @return
-     */
     public static String getGeneraterPath(String generaterPath) {
         int prefix = generaterPath.indexOf("/", 1) + 1;
         if (generaterPath.startsWith(DEVELOPER, prefix)) {
@@ -93,10 +75,6 @@ public class DeveloperUtils {
         return generaterPath;
     }
 
-    /**
-     * @param includePath
-     * @return
-     */
     public static String getDeveloperPath(String includePath) {
         int prefix = includePath.indexOf("/", 1) + 1;
         if (includePath.startsWith(DEVELOPER, prefix)) {
@@ -106,19 +84,10 @@ public class DeveloperUtils {
         return includePath.substring(0, prefix) + DEVELOPER + includePath.substring(prefix);
     }
 
-    /**
-     * @param filepath
-     */
     public static void clearToken(String filepath) {
         UtilAbsir.clearToken(filepath, Generator_Map_Token);
     }
 
-    /**
-     * @param filepath
-     * @param includePath
-     * @param renders
-     * @throws IOException
-     */
     protected static void generateRenders(String filepath, String includePath, Object... renders) throws IOException {
         ServletRequest request = KernelArray.getAssignable(renders, ServletRequest.class);
         if (request != null) {
@@ -126,21 +95,10 @@ public class DeveloperUtils {
         }
     }
 
-    /**
-     * @param request
-     * @param diy
-     */
     public static void diy(ServletRequest request, boolean diy) {
         request.setAttribute(DIY, diy);
     }
 
-    /**
-     * @param filePath    generate to file
-     * @param includePath template file
-     * @param request
-     * @param renders
-     * @throws IOException
-     */
     public static void generate(String filePath, String includePath, ServletRequest request, Object... renders) throws IOException {
         if (IRender.ME == null) {
             return;
@@ -292,42 +250,18 @@ public class DeveloperUtils {
         }
     }
 
-    /**
-     * @param filepath
-     * @param renders
-     * @throws IOException
-     */
     public static void generate(String filepath, Object... renders) throws IOException {
         generate(filepath, IRender.ME.getPath(renders), renders);
     }
 
-    /**
-     * @param filepath
-     * @param includePath
-     * @param renders
-     * @throws IOException
-     */
     public static void generate(String filepath, String includePath, Object... renders) throws IOException {
         generateRenders(IRender.ME.getFullPath(filepath, renders), includePath, renders);
     }
 
-    /**
-     * @param option
-     * @param types
-     * @param renders
-     * @throws IOException
-     */
     public static void includeExist(String option, List<String> types, Object... renders) throws IOException {
         includeExist(option, types, new String[]{"/WEB-INF/developer/type/"}, renders);
     }
 
-    /**
-     * @param option
-     * @param types
-     * @param relativePaths
-     * @param renders
-     * @throws IOException
-     */
     public static void includeExist(String option, List<String> types, String[] relativePaths, Object... renders)
             throws IOException {
         ServletRequest request = KernelArray.getAssignable(renders, ServletRequest.class);
@@ -348,23 +282,10 @@ public class DeveloperUtils {
         }
     }
 
-    /**
-     * @param option
-     * @param entityName
-     * @param renders
-     * @throws IOException
-     */
     public static void includeExist(String option, String entityName, Object... renders) throws IOException {
         includeExist(option, entityName, new String[]{"/WEB-INF/developer/bean/"}, renders);
     }
 
-    /**
-     * @param option
-     * @param entityName
-     * @param relativePaths
-     * @param renders
-     * @throws IOException
-     */
     public static void includeExist(String option, String entityName, String[] relativePaths, Object... renders) throws IOException {
         for (String relativePath : relativePaths) {
             RenderUtils.includeExist(relativePath + option + "/" + entityName + suffix, renders);

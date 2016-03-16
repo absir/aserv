@@ -33,82 +33,39 @@ import java.sql.DriverManager;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @Basis
 @Bean
 public class SessionFactoryBean implements IBeanFactoryStopping {
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryBean.class);
 
-    /**
-     * driverShared
-     */
     @Value("driver.shared")
     private boolean driverShared;
 
-    /**
-     * stoppingCommands
-     */
     @Value("driver.stopping.command")
     private Set<String> driverStoppingCommand;
 
-    /**
-     * sessionFactory
-     */
     private SessionFactoryImpl sessionFactory;
 
-    /**
-     * nameMapSessionFactory
-     */
     private Map<String, SessionFactoryImpl> nameMapSessionFactory = new HashMap<String, SessionFactoryImpl>();
 
-    /**
-     * sessionFactoryMapName
-     */
     private Map<SessionFactoryImpl, String> sessionFactoryMapName = new HashMap<SessionFactoryImpl, String>();
 
     @Value(value = "entity.assoc.depth")
     private int assocDepth = 8;
 
-    /**
-     * nameMapPermissions
-     */
     private Map<String, JePermission[]> nameMapPermissions = new HashMap<String, JePermission[]>();
 
-    /**
-     * nameMapAssocEntities
-     */
     private Map<String, List<AssocEntity>> nameMapAssocEntities = new HashMap<String, List<AssocEntity>>();
 
-    /**
-     * nameMapAssocFields
-     */
     private Map<String, List<AssocField>> nameMapAssocFields = new HashMap<String, List<AssocField>>();
 
-    /**
-     * nameMapEntityAssocEntity
-     */
     private Map<String, EntityAssocEntity> nameMapEntityAssocEntity = new HashMap<String, EntityAssocEntity>();
 
-    /**
-     * entityNameMapJpaEntityName
-     */
     private Map<String, String> entityNameMapJpaEntityName = new HashMap<String, String>();
 
-    /**
-     * jpaEntityNameMapEntityClassFactory
-     */
     private Map<String, Entry<Class<?>, SessionFactory>> jpaEntityNameMapEntityClassFactory = new HashMap<String, Entry<Class<?>, SessionFactory>>();
 
-    /**
-     * @param sessionFactory
-     * @return
-     */
     public static ConnectionProvider getConnectionProvider(SessionFactoryImpl sessionFactory) {
         try {
             Object connectionProvider = KernelObject.declaredGet(
@@ -125,9 +82,6 @@ public class SessionFactoryBean implements IBeanFactoryStopping {
         return null;
     }
 
-    /**
-     * @param connectionProvider
-     */
     public static void stopConnectionProvider(SessionFactoryImpl sessionFactory) {
         if (sessionFactory == null) {
             return;
@@ -172,10 +126,6 @@ public class SessionFactoryBean implements IBeanFactoryStopping {
         }
     }
 
-    /**
-     * @param name
-     * @param sessionFactory
-     */
     protected void setSessionFactory(String name, SessionFactoryImpl sessionFactory) {
         if (KernelString.isEmpty(name)) {
             this.sessionFactory = sessionFactory;
@@ -186,102 +136,55 @@ public class SessionFactoryBean implements IBeanFactoryStopping {
         }
     }
 
-    /**
-     * @return the sessionFactory
-     */
     public SessionFactoryImpl getSessionFactory() {
         return sessionFactory;
     }
 
-    /**
-     * @param name
-     * @return
-     */
     public SessionFactory getNameMapSessionFactory(String name) {
         return name == null ? sessionFactory : nameMapSessionFactory.get(name);
     }
 
-    /**
-     * @param sessionFactory
-     * @return
-     */
     public String getSessionFactoryMapName(SessionFactory sessionFactory) {
         return sessionFactoryMapName.get(sessionFactory);
     }
 
-    /**
-     * @return
-     */
     public Set<String> getNameMapSessionFactoryNames() {
         return nameMapSessionFactory.keySet();
     }
 
-    /**
-     * @return the assocDepth
-     */
     public int getAssocDepth() {
         return assocDepth;
     }
 
-    /**
-     * @return the nameMapPermissions
-     */
     public Map<String, JePermission[]> getNameMapPermissions() {
         return nameMapPermissions;
     }
 
-    /**
-     * @return the nameMapAssocEntities
-     */
     public Map<String, List<AssocEntity>> getNameMapAssocEntities() {
         return nameMapAssocEntities;
     }
 
-    /**
-     * @return the nameMapAssocFields
-     */
     public Map<String, List<AssocField>> getNameMapAssocFields() {
         return nameMapAssocFields;
     }
 
-    /**
-     * @return the nameMapEntityAssocEntity
-     */
     public Map<String, EntityAssocEntity> getNameMapEntityAssocEntity() {
         return nameMapEntityAssocEntity;
     }
 
-    /**
-     * @return the entityNameMapJpaEntityName
-     */
     public Map<String, String> getEntityNameMapJpaEntityName() {
         return entityNameMapJpaEntityName;
     }
 
-    /**
-     * @return the jpaEntityNameMapEntityClassFactory
-     */
     public Map<String, Entry<Class<?>, SessionFactory>> getJpaEntityNameMapEntityClassFactory() {
         return jpaEntityNameMapEntityClassFactory;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return 2048;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanFactoryStopping#stopping(com.absir.bean.basis
-     * .BeanFactory)
-     */
     @Override
     public void stopping(BeanFactory beanFactory) {
         LOGGER.info("stop begin");

@@ -23,15 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class PropertySupply<O extends PropertyObject<T>, T> {
 
-    /**
-     * supplySize
-     */
     private static int supplySize;
 
     // 初始化属性参数空间
@@ -43,30 +37,16 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
         }
     }
 
-    /**
-     * ingoreAnnotationClass
-     */
     protected Class<? extends Annotation> ingoreAnnotationClass;
-    /**
-     * supplyIndex
-     */
+
     private int supplyIndex;
 
-    /**
-     * propertyResolvers
-     */
     private PropertyResolver[] propertyResolvers;
 
-    /**
-     * @return the supplySize
-     */
     protected static int getSupplySize() {
         return supplySize;
     }
 
-    /**
-     * @param propertyResolvers
-     */
     @Inject(type = InjectType.Selectable)
     public void setPropertyResolvers(PropertyResolver[] propertyResolvers) {
         List<PropertyResolver> propertyResolveList = new ArrayList<PropertyResolver>();
@@ -88,39 +68,20 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
         ingoreAnnotationClass = getIngoreAnnotationClass();
     }
 
-    /**
-     * @return the supplyIndex
-     */
     public int getSupplyIndex() {
         return supplyIndex;
     }
 
-    /**
-     * @return
-     */
     public abstract Class<? extends Annotation> getIngoreAnnotationClass();
 
-    /**
-     * @param beanClass
-     * @return
-     */
     public final Map<String, PropertyData> getPropertyMap(Class<?> beanClass) {
         return PropertyUtils.getPropertyMap(beanClass, this).getNameMapPropertyData();
     }
 
-    /**
-     * @param propertyData
-     * @return
-     */
     public final T getPropertyObject(PropertyData propertyData) {
         return (T) propertyData.getPropertyDatas()[supplyIndex];
     }
 
-    /**
-     * @param propertyObject
-     * @param field
-     * @return
-     */
     public O getPropertyObject(O propertyObject, Field field) {
         if (propertyResolvers != null) {
             PropertyObject propertyObj = propertyObject;
@@ -134,11 +95,6 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
         return propertyObject;
     }
 
-    /**
-     * @param propertyObject
-     * @param method
-     * @return
-     */
     public O getPropertyObjectGetter(O propertyObject, Method method) {
         if (propertyResolvers != null) {
             PropertyObject propertyObj = propertyObject;
@@ -158,11 +114,6 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
         return propertyObject;
     }
 
-    /**
-     * @param propertyObject
-     * @param method
-     * @return
-     */
     public O getPropertyObjectSetter(O propertyObject, Method method) {
         if (propertyResolvers != null) {
             PropertyObject propertyObj = propertyObject;
@@ -182,11 +133,6 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
         return propertyObject;
     }
 
-    /**
-     * @param propertyObject
-     * @param propertyInfos
-     * @return
-     */
     public O getPropertyObject(O propertyObject, PropertyInfo[] propertyInfos) {
         if (propertyResolvers != null) {
             PropertyObject propertyObj = propertyObject;

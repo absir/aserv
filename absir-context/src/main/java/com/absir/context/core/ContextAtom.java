@@ -12,45 +12,22 @@ import com.absir.core.util.UtilAtom;
 
 import java.util.concurrent.locks.Condition;
 
-/**
- * @author absir
- */
 public class ContextAtom extends UtilAtom {
 
-    /**
-     * maxAtom
-     */
     private int maxAtom;
 
-    /**
-     * maxAwait
-     */
     private boolean maxAwait;
 
-    /**
-     * maxCondition
-     */
     private Condition maxCondition = lock.newCondition();
 
-    /**
-     *
-     */
     public ContextAtom() {
         this(Integer.MAX_VALUE);
     }
 
-    /**
-     * @param maxAtom
-     */
     public ContextAtom(int maxAtom) {
         this.maxAtom = maxAtom;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.util.UtilAtom#increment()
-     */
     @Override
     public void increment() {
         lock.lock();
@@ -70,11 +47,6 @@ public class ContextAtom extends UtilAtom {
         lock.unlock();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.util.UtilAtom#decrement()
-     */
     @Override
     public void decrement() {
         lock.lock();

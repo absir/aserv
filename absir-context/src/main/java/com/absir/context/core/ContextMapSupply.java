@@ -20,35 +20,17 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 @Bean
 public class ContextMapSupply extends PropertySupply<CompareObject, CompareAbstract> {
 
-    /**
-     * compareObject
-     */
     private CompareObject compareObject = new CompareObject();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.property.PropertySupply#getIngoreAnnotationClass()
-     */
     @Override
     public Class<? extends Annotation> getIngoreAnnotationClass() {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertySupply#getPropertyObject(com.absir.property
-     * .PropertyObject, java.lang.reflect.Field)
-     */
     @Override
     public CompareObject getPropertyObject(CompareObject propertyObject, Field field) {
         if (propertyObject == null) {
@@ -60,13 +42,6 @@ public class ContextMapSupply extends PropertySupply<CompareObject, CompareAbstr
         return super.getPropertyObject(propertyObject, field);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertySupply#getPropertyObjectGetter(java.lang.Object
-     * , java.lang.reflect.Method)
-     */
     @Override
     public CompareObject getPropertyObjectGetter(CompareObject propertyObject, Method method) {
         if (propertyObject == null) {
@@ -83,13 +58,6 @@ public class ContextMapSupply extends PropertySupply<CompareObject, CompareAbstr
         return super.getPropertyObjectGetter(propertyObject, method);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertySupply#getPropertyObject(java.lang.Object,
-     * com.absir.property.value.PropertyInfo[])
-     */
     @Override
     public CompareObject getPropertyObject(CompareObject propertyObject, PropertyInfo[] propertyInfos) {
         for (PropertyInfo propertyInfo : propertyInfos) {

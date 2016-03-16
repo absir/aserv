@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-5-3 下午1:35:42
  */
 package com.absir.core.util;
@@ -23,19 +23,11 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 public class UtilPackage {
 
-    /**
-     * CLASS_SUFFIX_NAME
-     */
     public static String CLASS_SUFFIX_NAME = ".class";
-    /**
-     * CLASS_FILE_FILTER
-     */
+
     public static final FileFilter CLASS_FILE_FILTER = new FileFilter() {
 
         @Override
@@ -43,9 +35,7 @@ public class UtilPackage {
             return file.getName().endsWith(CLASS_SUFFIX_NAME);
         }
     };
-    /**
-     * CLASS_DIR_FILE_FILTER
-     */
+
     public static final FileFilter CLASS_DIR_FILE_FILTER = new FileFilter() {
 
         @Override
@@ -53,16 +43,9 @@ public class UtilPackage {
             return file.isDirectory() || file.getName().endsWith(CLASS_SUFFIX_NAME);
         }
     };
-    /**
-     * CLASS_SUFFIX_LENGTH
-     */
+
     public static int CLASS_SUFFIX_LENGTH = CLASS_SUFFIX_NAME.length();
 
-    /**
-     * @param packageName
-     * @param iterator
-     * @return
-     */
     public static List<Class> findClasses(String packageName, boolean iterator) {
         final List<Class> classes = new ArrayList<Class>();
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -82,11 +65,6 @@ public class UtilPackage {
         return classes;
     }
 
-    /**
-     * @param packageName
-     * @param iterator
-     * @param callback
-     */
     public static void findClasses(String packageName, boolean iterator, final CallbackBreak<String> callback) {
         String packageDir = packageName.replace('.', '/');
         try {
@@ -109,13 +87,6 @@ public class UtilPackage {
         }
     }
 
-    /**
-     * @param jarUrl
-     * @param iterator
-     * @param callback
-     * @throws IOException
-     * @throws BreakException
-     */
     public static void findClasses(String packageDir, URL jarUrl, boolean iterator,
                                    final CallbackBreak<String> callback) throws IOException, BreakException {
         if ("jar".equals(jarUrl.getProtocol())) {
@@ -124,13 +95,6 @@ public class UtilPackage {
         }
     }
 
-    /**
-     * @param jarFile
-     * @param iterator
-     * @param callback
-     * @throws IOException
-     * @throws BreakException
-     */
     public static void findClasses(String packageDir, JarFile jarFile, boolean iterator,
                                    final CallbackBreak<String> callback) throws IOException, BreakException {
         Enumeration<JarEntry> entries = jarFile.entries();
@@ -152,13 +116,6 @@ public class UtilPackage {
         }
     }
 
-    /**
-     * @param packageName
-     * @param packagePath
-     * @param iterator
-     * @param callback
-     * @throws BreakException
-     */
     public static void findClasses(String packageName, String packagePath, boolean iterator,
                                    final CallbackBreak<String> callback) throws BreakException {
         File packageDir = new File(packagePath);

@@ -27,19 +27,10 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- *
- */
 public class TestXlsExport extends AbstractTest {
 
-    /**
-     * EXPORT_PATH
-     */
     public static final String EXPORT_PATH = "/Users/absir/Desktop/";
-    /**
-     * mapArray
-     */
+
     private Object[] mapArray = new Object[]{new HashMap<Object, Object>(), new HashMap<Object, Object>()};
 
     @Test
@@ -53,20 +44,12 @@ public class TestXlsExport extends AbstractTest {
         hssfWorkbook.write(outputStream);
     }
 
-    /**
-     * @param beanClass
-     * @return
-     */
     private <T> T newXlsBean(Class<T> beanClass) {
         T bean = KernelClass.newInstance(beanClass);
         initXlsBean(bean, new HashSet<Class<?>>());
         return bean;
     }
 
-    /**
-     * @param bean
-     * @param caches
-     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void initXlsBean(final Object bean, final Set<Class<?>> caches) {
         if (bean == null) {

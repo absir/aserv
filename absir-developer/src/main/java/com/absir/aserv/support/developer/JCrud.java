@@ -14,59 +14,30 @@ import com.absir.core.kernel.KernelString;
 
 import java.io.Serializable;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("serial")
 public class JCrud implements Serializable {
 
-    /**
-     * value
-     */
     protected String value;
 
-    /**
-     * value
-     */
     protected Class<?> factory;
 
-    /**
-     * parameters
-     */
     protected Object[] parameters;
 
-    /** cruds */
     protected JaCrud.Crud[] cruds;
 
-    /**
-     *
-     */
     public JCrud() {
     }
 
-    /**
-     * @param crud
-     */
     public JCrud(JaCrud crud) {
         setJaCrud(crud);
     }
 
-    /**
-     * @param crud
-     */
     public void setJaCrud(JaCrud crud) {
         if (crud != null) {
             setJaCrud(crud.value(), crud.factory(), KernelArray.toArray(crud.parameters()), crud.cruds());
         }
     }
 
-    /**
-     * @param value
-     * @param factory
-     * @param parameters
-     * @param cruds
-     */
     public void setJaCrud(String value, Class<?> factory, Object[] parameters, JaCrud.Crud[] cruds) {
         this.value = value;
         this.factory = factory;
@@ -74,9 +45,6 @@ public class JCrud implements Serializable {
         this.cruds = cruds;
     }
 
-    /**
-     * @param crudValue
-     */
     public void setJaCrudValue(String crudValue) {
         if (!KernelString.isEmpty(crudValue)) {
             String[] params = crudValue.split(",");
@@ -100,30 +68,18 @@ public class JCrud implements Serializable {
         }
     }
 
-    /**
-     * @return the value
-     */
     public String getValue() {
         return value;
     }
 
-    /**
-     * @return the factory
-     */
     public Class<?> getFactory() {
         return factory;
     }
 
-    /**
-     * @return the parameters
-     */
     public Object[] getParameters() {
         return parameters;
     }
 
-    /**
-     * @return the cruds
-     */
     public JaCrud.Crud[] getCruds() {
         return cruds;
     }

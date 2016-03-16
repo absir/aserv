@@ -16,9 +16,6 @@ import com.absir.orm.value.JaField;
 
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- */
 @MappedSuperclass
 public class JbUser extends JbBean implements JiDeveloper {
 
@@ -35,44 +32,26 @@ public class JbUser extends JbBean implements JiDeveloper {
     @JaEdit(groups = {JaEdit.GROUP_LIST})
     private boolean disabled;
 
-    /**
-     * @return the developer
-     */
     public boolean isDeveloper() {
         return developer;
     }
 
-    /**
-     * @param developer the developer to set
-     */
     public void setDeveloper(boolean developer) {
         this.developer = developer;
     }
 
-    /**
-     * @return the activation
-     */
     public boolean isActivation() {
         return activation;
     }
 
-    /**
-     * @param activation the activation to set
-     */
     public void setActivation(boolean activation) {
         this.activation = activation;
     }
 
-    /**
-     * @return the disabled
-     */
     public boolean isDisabled() {
         return disabled;
     }
 
-    /**
-     * @param disabled the disabled to set
-     */
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }

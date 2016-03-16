@@ -13,20 +13,9 @@ import com.absir.property.PropertyResolverAbstract;
 
 import javax.persistence.GeneratedValue;
 
-/**
- * @author absir
- *
- */
 @Bean
 public class EditorGenerated extends PropertyResolverAbstract<EditorObject, GeneratedValue> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-     */
     @Override
     public EditorObject getPropertyObjectAnnotation(EditorObject propertyObject, GeneratedValue annotation) {
         if (propertyObject == null) {
@@ -37,13 +26,6 @@ public class EditorGenerated extends PropertyResolverAbstract<EditorObject, Gene
         return propertyObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-     * (com.absir.property.PropertyObject, java.lang.String)
-     */
     @Override
     public EditorObject getPropertyObjectAnnotationValue(EditorObject propertyObject, String annotationValue) {
         if (propertyObject == null) {

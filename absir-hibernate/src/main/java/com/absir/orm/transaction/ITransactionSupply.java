@@ -9,20 +9,11 @@ package com.absir.orm.transaction;
 
 import java.util.Map;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 public interface ITransactionSupply {
 
-    /**
-     * @return
-     */
     public TransactionContext getTransactionContext();
 
-    /**
-     * @return
-     */
     public Map<String, TransactionContext> getNameMapTransactionContext();
 
 }

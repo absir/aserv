@@ -15,49 +15,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class PropertyHolder {
 
-    /**
-     * propertyDatas
-     */
     private int propertyDatas;
 
-    /**
-     * nameMapPropertyData
-     */
     private Map<String, PropertyData> nameMapPropertyData = new LinkedHashMap<String, PropertyData>();
 
-    /**
-     * @return the propertyDatas
-     */
     public int getPropertyDatas() {
         return propertyDatas;
     }
 
-    /**
-     * @return the nameMapPropertyData
-     */
     public Map<String, PropertyData> getNameMapPropertyData() {
         return nameMapPropertyData;
     }
 
-    /**
-     * @param propertyIndex
-     * @return
-     */
     protected boolean holded(int propertyIndex) {
         return (propertyDatas & (0x01 << propertyIndex)) != 0;
     }
 
-    /**
-     * @param propertyIndex
-     * @param propertyMap
-     * @param propertyTree
-     */
     protected synchronized void doHolded(int propertyIndex, Class<?> beanClass, Map<String, Object> propertyMap, boolean propertyTree) {
         if (!holded(propertyIndex)) {
             propertyDatas |= 0x01 << propertyIndex;

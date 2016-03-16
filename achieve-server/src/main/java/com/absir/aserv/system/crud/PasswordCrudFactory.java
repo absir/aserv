@@ -19,15 +19,8 @@ import com.absir.property.PropertyErrors;
 import com.absir.server.in.Input;
 import com.absir.servlet.InputRequest;
 
-/**
- * @author absir
- *
- */
 public class PasswordCrudFactory implements ICrudFactory {
 
-    /**
-     * PASSWORD_PROCESSOR
-     */
     private final ICrudProcessor PASSWORD_PROCESSOR = new ICrudProcessorInput<String>() {
 
         @Override
@@ -48,13 +41,6 @@ public class PasswordCrudFactory implements ICrudFactory {
             return null;
         }
 
-        /**
-         * @param crudProperty
-         * @param entity
-         * @param handler
-         * @param user
-         * @param requestBody
-         */
         @Override
         public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, String requestBody) {
             if (!KernelString.isEmpty(requestBody)) {
@@ -73,32 +59,14 @@ public class PasswordCrudFactory implements ICrudFactory {
         }
     };
 
-    /**
-     * @param password
-     * @param salt
-     * @return
-     */
     public static String getPasswordEncrypt(String password, String salt) {
         return HelperEncrypt.encryptionMD5(password, salt == null ? null : salt.getBytes());
     }
 
-    /**
-     * @param password
-     * @param salt
-     * @param saltCount
-     * @return
-     */
     public static String getPasswordEncrypt(String password, String salt, int saltCount) {
         return HelperEncrypt.encryptionMD5(password, salt == null ? null : salt.getBytes(), 0);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.crud.ICrudFactory#getProcessor(com.absir.aserv.support
-     * .entity.value.JoEntity, com.absir.aserv.support.developer.JCrudField)
-     */
     @Override
     public ICrudProcessor getProcessor(JoEntity joEntity, JCrudField crudField) {
         return PASSWORD_PROCESSOR;

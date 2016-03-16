@@ -10,10 +10,6 @@ package com.absir.server.socket.resolver;
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
 
-/**
- * @author absir
- *
- */
 @Base
 @Bean
 public class InputSessionResolver extends SocketSessionResolver {

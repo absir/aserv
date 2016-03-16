@@ -14,24 +14,11 @@ import com.absir.validator.value.Email;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-/**
- * @author absir
- */
 @Bean
 public class ValidatorEmail extends PropertyResolverAbstract<ValidatorObject, Email> {
 
-    /**
-     * PATTERN
-     */
     public static final Pattern PATTERN = Pattern.compile("^(\\w)+(\\.\\w+)*@(\\w)+((\\.\\w+)+)$");
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotation(ValidatorObject propertyObject, Email annotation) {
         if (propertyObject == null) {
@@ -58,13 +45,6 @@ public class ValidatorEmail extends PropertyResolverAbstract<ValidatorObject, Em
         return propertyObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-     * (com.absir.property.PropertyObject, java.lang.String)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotationValue(ValidatorObject propertyObject, String annotationValue) {
         return getPropertyObjectAnnotation(propertyObject, null);

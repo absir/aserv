@@ -30,17 +30,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 
-/**
- * @author absir
- *
- */
 @Mapping("/api")
 @Interceptors(ApiServer.Route.class)
 public abstract class ApiServer {
 
-    /**
-     * LOGGER
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiServer.class);
 
     /**
@@ -101,26 +94,14 @@ public abstract class ApiServer {
      */
     public static class MessageCode {
 
-        /**
-         * message
-         */
         public String message;
 
-        /**
-         * error
-         */
         public int code;
 
-        /**
-         *
-         */
         public MessageCode() {
 
         }
 
-        /**
-         * @param e
-         */
         public MessageCode(Throwable e) {
             if (e instanceof ServerException) {
                 setServerException((ServerException) e);
@@ -130,50 +111,29 @@ public abstract class ApiServer {
             }
         }
 
-        /**
-         * @param e
-         */
         public void setThrowable(Throwable e) {
             message = e.toString();
             code = ServerStatus.ON_ERROR.getCode();
         }
 
-        /**
-         * @param e
-         */
         public void setServerException(ServerException e) {
             message = e.toString();
             code = e.getServerStatus().getCode();
         }
     }
 
-    /**
-     * @author absir
-     */
     @Base
     @Bean
     public static class Route implements Interceptor {
 
-        /**
-         * ME
-         */
         public static final Route ME = BeanFactoryUtils.get(Route.class);
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.server.in.Interceptor#intercept(java.util.Iterator,
-         * com.absir.server.in.Input)
-         */
         @Override
         public OnPut intercept(Iterator<Interceptor> iterator, Input input) throws Throwable {
             autoLogin(input);
             return input.intercept(iterator);
         }
 
-        /**
-         * @param input
-         */
         public void autoLogin(Input input) {
             if (SecurityService.ME != null) {
                 SecurityContext securityContext = SecurityService.ME.autoLogin("api", true, -1, input);
@@ -187,24 +147,17 @@ public abstract class ApiServer {
                             remember = securityManager.getSessionLife();
                         }
 
-                        SecurityService.ME.loginUser(securityManager, userBase, remember, inputRequest);
+                        SecurityService.ME.loginUserRequest(securityManager, userBase, remember, inputRequest);
                     }
                 }
             }
         }
 
-        /**
-         * @param input
-         * @return
-         */
         protected JiUserBase getInputUserBase(InputRequest inputRequest) {
             return IdentityServiceLocal.getUserBase(inputRequest.getRequest().getHeader("identity"));
         }
     }
 
-    /**
-     * @author absir
-     */
     public static class TransactionRoute extends TransactionIntercepter {
 
     }

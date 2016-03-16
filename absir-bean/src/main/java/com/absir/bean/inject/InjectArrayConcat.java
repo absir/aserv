@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2014-1-10 下午4:17:59
  */
 package com.absir.bean.inject;
@@ -16,38 +16,18 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 public class InjectArrayConcat extends InjectInvoker {
 
-    /**
-     * field
-     */
     Field field;
 
-    /**
-     * componentClass
-     */
     Class<?> componentClass;
 
-    /**
-     * @param field
-     * @param value
-     */
     public InjectArrayConcat(Field field, InjectConcat injectConcat) {
         this.field = field;
         componentClass = field.getType().getComponentType();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.inject.InjectInvoker#invoke(com.absir.bean.basis.BeanFactory
-     * , java.lang.Object)
-     */
     @Override
     public void invoke(BeanFactory beanFactory, Object beanObject) {
         ArrayList<Object> values = DynaBinder.to(KernelReflect.get(beanObject, field), ArrayList.class);

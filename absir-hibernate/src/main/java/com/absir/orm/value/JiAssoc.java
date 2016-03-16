@@ -10,9 +10,6 @@ package com.absir.orm.value;
 import javax.persistence.Id;
 import java.io.Serializable;
 
-/**
- * @author absir
- */
 public interface JiAssoc {
 
     /**

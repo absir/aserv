@@ -12,21 +12,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- *
- */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface XaReferenced {
 
-    /**
-     * @return
-     */
     boolean key() default true;
 
-    /**
-     *
-     */
     boolean value() default true;
 }

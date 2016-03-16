@@ -43,27 +43,15 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
 public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
 
-    /**
-     * ME
-     */
     public static final MasterSlaveService ME = BeanFactoryUtils.get(MasterSlaveService.class);
-    /**
-     * LOGGER
-     */
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(MasterSlaveService.class);
 
-    /**
-     * @param entityClass
-     */
     public static <T extends JbBeanTargets> void addEntityMerge(Class<T> entityClass) {
         L2CacheCollectionService.ME.addEntityMerges(entityClass, new IEntityMerge<T>() {
 
@@ -77,16 +65,9 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
         });
     }
 
-    /**
-     * @param eids
-     * @return
-     */
     @DataQuery("SELECT o.host.id FROM JSlaveServer o WHERE o.id IN (:p0)")
     public abstract String[] getTargetIds(long[] eids);
 
-    /**
-     *
-     */
     @Transaction
     @Inject
     public void initService() {
@@ -94,9 +75,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
                 .executeUpdate();
     }
 
-    /**
-     * @param id
-     */
     @Transaction
     public void unRegisterSlave(String id) {
         if (Environment.isStarted()) {
@@ -301,20 +279,10 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
                 ContextUtils.getContextTime() - UtilAbsir.WEEK_TIME).executeUpdate();
     }
 
-    /**
-     * @return
-     */
     @Transaction
     @DataQuery("SELECT o FROM JSlaveServer o WHERE o.synched = TRUE ORDER BY o.id DESC")
     public abstract List<JSlaveServer> getServers();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.orm.hibernate.boost.IEntityMerge#merge(java.lang.String,
-     * java.lang.Object, com.absir.orm.hibernate.boost.IEntityMerge.MergeType,
-     * java.lang.Object)
-     */
     @Override
     public void merge(String entityName, JSlaveServer entity,
                       com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType, Object mergeEvent) {

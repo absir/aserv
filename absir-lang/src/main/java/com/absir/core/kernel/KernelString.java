@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-3-5 下午2:31:23
  */
 package com.absir.core.kernel;
@@ -12,21 +12,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes"})
 public abstract class KernelString {
 
-    /**
-     * SEQUENCE_SIZE
-     */
     public static final int SEQUENCE_SIZE = 'z' - 'a' + 1;
 
-    /**
-     * @param object
-     * @return null or String
-     */
     public static String valueOf(Object object) {
         if (object == null) {
             return null;
@@ -36,42 +26,22 @@ public abstract class KernelString {
         }
     }
 
-    /**
-     * @param string
-     * @return
-     */
     public static boolean empty(String string) {
         return string.length() == 0;
     }
 
-    /**
-     * @param string
-     * @return
-     */
     public static boolean isEmpty(String string) {
         return string == null || empty(string);
     }
 
-    /**
-     * @param chr
-     * @return
-     */
     public static boolean capitalize(char chr) {
         return chr >= 'A' && chr <= 'Z';
     }
 
-    /**
-     * @param chr
-     * @return
-     */
     public static boolean unCapitalize(char chr) {
         return chr >= 'a' && chr <= 'z';
     }
 
-    /**
-     * @param string
-     * @return
-     */
     public static String capitalize(String string) {
         char chr = string.charAt(0);
         if (capitalize(chr)) {
@@ -88,10 +58,6 @@ public abstract class KernelString {
         return new String(data);
     }
 
-    /**
-     * @param string
-     * @return
-     */
     public static String unCapitalize(String string) {
         char chr = string.charAt(0);
         if (unCapitalize(chr)) {
@@ -108,10 +74,6 @@ public abstract class KernelString {
         return new String(data);
     }
 
-    /**
-     * @param string
-     * @return
-     */
     public static int indexUncapitalizeOf(String string) {
         int length = string.length();
         for (int i = 0; i < length; i++) {
@@ -123,10 +85,6 @@ public abstract class KernelString {
         return -1;
     }
 
-    /**
-     * @param string
-     * @return
-     */
     public static int lastIndexCapitalizeOf(String string) {
         int last = string.length() - 1;
         for (; last >= 0; last--) {
@@ -138,26 +96,14 @@ public abstract class KernelString {
         return -1;
     }
 
-    /**
-     * @param string
-     * @return
-     */
     public static String lastCapitalizeString(String string) {
         return rightString(string, string.length() - lastIndexCapitalizeOf(string));
     }
 
-    /**
-     * @param string
-     * @return
-     */
     public static String subLastCapitalizeString(String string) {
         return subLastString(string, lastIndexCapitalizeOf(string));
     }
 
-    /**
-     * @param string
-     * @return
-     */
     public static String camelUncapitalize(String string) {
         int length = string.length();
         int underline = 0;
@@ -192,10 +138,6 @@ public abstract class KernelString {
         return stringBuilder == null ? string : stringBuilder.toString();
     }
 
-    /**
-     * @param string
-     * @return
-     */
     public static String camelUnderline(String string) {
         int length = string.length();
         int capitalize = 0;
@@ -231,34 +173,18 @@ public abstract class KernelString {
         return stringBuilder == null ? string : stringBuilder.toString();
     }
 
-    /**
-     * @param string
-     * @return
-     */
     public static String camelInvertUnderline(String string) {
         int index = lastIndexCapitalizeOf(string);
         return camelUnderline(index > 0 ? KernelString.unCapitalize(rightString(string, string.length() - index))
                 + leftString(string, index) : string);
     }
 
-    /**
-     * @param stringBuilder
-     * @param value
-     * @param repeatCount
-     */
     public static void repeatString(StringBuilder stringBuilder, String value, int repeatCount) {
         while (repeatCount-- > 0) {
             stringBuilder.append(value);
         }
     }
 
-    /**
-     * @param prefix
-     * @param value
-     * @param repeatCount
-     * @param suffix
-     * @return
-     */
     public static String repeateString(Object prefix, String value, int repeatCount, Object suffix) {
         StringBuilder stringBuilder = new StringBuilder();
         if (prefix != null) {
@@ -273,18 +199,10 @@ public abstract class KernelString {
         return stringBuilder.toString();
     }
 
-    /**
-     * @param value
-     * @return
-     */
     public static String transferred(String value) {
         return '"' + value.replace("\"", "\\\"") + '"';
     }
 
-    /**
-     * @param value
-     * @return
-     */
     public static String unTransferred(String value) {
         value = value.trim();
         int length = value.length();
@@ -335,10 +253,6 @@ public abstract class KernelString {
         return quotation == 1 ? '"' + stringBuilder.toString() : stringBuilder.toString();
     }
 
-    /**
-     * @param stringBuilder
-     * @param chr
-     */
     public static void appendTransferred(StringBuilder stringBuilder, char chr) {
         switch (chr) {
             case 't':
@@ -364,11 +278,6 @@ public abstract class KernelString {
         }
     }
 
-    /**
-     * @param string
-     * @param index
-     * @return
-     */
     public static String lastString(String string, int index) {
         if (index >= 0) {
             return string.substring(index + 1);
@@ -377,11 +286,6 @@ public abstract class KernelString {
         return string;
     }
 
-    /**
-     * @param string
-     * @param index
-     * @return
-     */
     public static String subLastString(String string, int index) {
         if (index >= 0) {
             string = string.substring(0, index);
@@ -390,29 +294,14 @@ public abstract class KernelString {
         return string;
     }
 
-    /**
-     * @param string
-     * @param ch
-     * @return
-     */
     public static String lastString(String string, char ch) {
         return lastString(string, string.lastIndexOf(ch));
     }
 
-    /**
-     * @param string
-     * @param ch
-     * @return
-     */
     public static String subLastString(String string, char ch) {
         return subLastString(string, string.lastIndexOf(ch));
     }
 
-    /**
-     * @param string
-     * @param length
-     * @return
-     */
     public static String leftString(String string, int length) {
         if (length <= 0) {
             return KernelLang.NULL_STRING;
@@ -421,11 +310,6 @@ public abstract class KernelString {
         return string.substring(0, length);
     }
 
-    /**
-     * @param string
-     * @param length
-     * @return
-     */
     public static String leftSubString(String string, int length) {
         if (length <= 0) {
             return string;
@@ -434,11 +318,6 @@ public abstract class KernelString {
         return string.substring(length);
     }
 
-    /**
-     * @param string
-     * @param length
-     * @return
-     */
     public static String rightString(String string, int length) {
         if (length <= 0) {
             return KernelLang.NULL_STRING;
@@ -452,11 +331,6 @@ public abstract class KernelString {
         return string.substring(length);
     }
 
-    /**
-     * @param string
-     * @param length
-     * @return
-     */
     public static String rightSubString(String string, int length) {
         if (length <= 0) {
             return string;
@@ -470,11 +344,6 @@ public abstract class KernelString {
         return string.substring(0, length);
     }
 
-    /**
-     * @param str
-     * @param strs
-     * @return
-     */
     public static boolean startStrings(String str, String[] strs) {
         if (strs == null) {
             return false;
@@ -489,11 +358,6 @@ public abstract class KernelString {
         return false;
     }
 
-    /**
-     * @param str
-     * @param strs
-     * @return
-     */
     public static boolean matchStrings(String str, String[] strs) {
         if (strs == null) {
             return false;
@@ -508,12 +372,6 @@ public abstract class KernelString {
         return false;
     }
 
-    /**
-     * @param string
-     * @param target
-     * @param replacement
-     * @return
-     */
     public static String replaceLast(String string, String target, String replacement) {
         if (isEmpty(string) || isEmpty(target)) {
             return string;
@@ -523,10 +381,6 @@ public abstract class KernelString {
         return string.substring(0, index) + replacement + string.substring(index + target.length());
     }
 
-    /**
-     * @param sequence
-     * @return
-     */
     public static String getSequenceString(int sequence) {
         StringBuilder stringBuilder = new StringBuilder();
         while ((sequence -= SEQUENCE_SIZE) > SEQUENCE_SIZE) {
@@ -540,10 +394,6 @@ public abstract class KernelString {
         return stringBuilder.toString();
     }
 
-    /**
-     * @param sequence
-     * @return
-     */
     public static String nextSequenceString(String sequence) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(rightSubString(sequence, 1));
@@ -558,22 +408,10 @@ public abstract class KernelString {
         return stringBuilder.toString();
     }
 
-    /**
-     * @param str
-     * @param to
-     * @return
-     */
     public static int compare(String str, String to) {
         return compare(str, to, str.length(), to.length());
     }
 
-    /**
-     * @param str
-     * @param to
-     * @param m
-     * @param n
-     * @return
-     */
     public static int compare(String str, String to, int m, int n) {
         if (m == 0) {
             return n;
@@ -604,11 +442,6 @@ public abstract class KernelString {
         return matrix[m][n];
     }
 
-    /**
-     * @param str
-     * @param to
-     * @return
-     */
     public static float similar(String str, String to) {
         if (str == to) {
             return 1;
@@ -627,35 +460,14 @@ public abstract class KernelString {
         return 1.0f - (float) compare(str, to, m, n) / Math.max(str.length(), to.length());
     }
 
-    /**
-     * @param array
-     * @param glues
-     * @return
-     */
     public static String implode(Object[] array, Object... glues) {
         return implode(array, null, null, glues);
     }
 
-    /**
-     * @param array
-     * @param imploder
-     * @param target
-     * @param glues
-     * @return
-     */
     public static String implode(Object[] array, ImplodeBuilder imploder, Object target, Object... glues) {
         return implodeOffset(array, 0, 0, imploder, target, glues);
     }
 
-    /**
-     * @param array
-     * @param beganIndex
-     * @param endIndex
-     * @param imploder
-     * @param target
-     * @param glues
-     * @return
-     */
     public static String implodeOffset(Object[] array, int beganIndex, int endIndex, ImplodeBuilder imploder, Object target,
                                        Object... glues) {
         int length = array.length;
@@ -694,22 +506,10 @@ public abstract class KernelString {
         return builder.toString();
     }
 
-    /**
-     * @param collection
-     * @param glues
-     * @return
-     */
     public static String implode(Collection collection, Object... glues) {
         return implode(collection, null, null, glues);
     }
 
-    /**
-     * @param collection
-     * @param imploder
-     * @param target
-     * @param glues
-     * @return
-     */
     public static String implode(Collection collection, ImplodeBuilder imploder, Object target, Object... glues) {
         StringBuilder builder = new StringBuilder();
         Object glue = null;
@@ -737,22 +537,10 @@ public abstract class KernelString {
         return builder.toString();
     }
 
-    /**
-     * @param map
-     * @param glues
-     * @return
-     */
     public static String implode(Map map, Object... glues) {
         return implode(map, null, null, glues);
     }
 
-    /**
-     * @param map
-     * @param imploder
-     * @param target
-     * @param glues
-     * @return
-     */
     public static String implode(Map<?, ?> map, ImplodeBuilder imploder, Object target, Object... glues) {
         StringBuilder builder = new StringBuilder();
         Object glue = null;
@@ -796,14 +584,6 @@ public abstract class KernelString {
         return builder.toString();
     }
 
-    /**
-     * @param imploder
-     * @param builder
-     * @param glue
-     * @param index
-     * @param value
-     * @param target
-     */
     protected static void implode(ImplodeBuilder imploder, StringBuilder builder, int index, Object value, Object target,
                                   Object glue) {
         value = imploder.glue(builder, glue, index, value, target);
@@ -816,22 +596,10 @@ public abstract class KernelString {
         }
     }
 
-    /**
-     * @param iterator
-     * @param glues
-     * @return
-     */
     public static String implodeIterator(Iterator iterator, Object... glues) {
         return implodeIterator(iterator, null, null, glues);
     }
 
-    /**
-     * @param collection
-     * @param imploder
-     * @param target
-     * @param glues
-     * @return
-     */
     public static String implodeIterator(Iterator iterator, ImplodeBuilder imploder, Object target, Object... glues) {
         StringBuilder builder = new StringBuilder();
         Object glue = null;
@@ -861,19 +629,8 @@ public abstract class KernelString {
         return builder.toString();
     }
 
-    /**
-     * @author absir
-     */
     public static interface ImplodeBuilder {
 
-        /**
-         * @param builder
-         * @param glue
-         * @param index
-         * @param value
-         * @param target
-         * @return
-         */
         public Object glue(StringBuilder builder, Object glue, int index, Object value, Object target);
     }
 }

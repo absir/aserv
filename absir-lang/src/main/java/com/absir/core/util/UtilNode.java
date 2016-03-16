@@ -1,59 +1,33 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2014-1-23 下午8:46:00
  */
 package com.absir.core.util;
 
 import com.absir.core.kernel.KernelList.Orderable;
 
-/**
- * @author absir
- */
 public class UtilNode<T> {
 
-    /**
-     * element
-     */
     protected T element;
 
-    /**
-     * previous
-     */
     protected UtilNode<T> previous;
 
-    /**
-     * next
-     */
     protected UtilNode<T> next;
 
-    /**
-     *
-     */
     public UtilNode() {
     }
 
-    /**
-     * @param element
-     */
     public UtilNode(T element) {
         this.element = element;
     }
 
-    /**
-     * @param orderableHeader
-     * @param orderable
-     */
     public static <T extends Orderable> void insertOrderableNode(UtilNode<T> orderableHeader, T orderable) {
         insertOrderableNode(orderableHeader, new UtilNode<T>(orderable));
     }
 
-    /**
-     * @param orderableHeader
-     * @param orderableNode
-     */
     public static <T extends Orderable> void insertOrderableNode(UtilNode<T> orderableHeader,
                                                                  UtilNode<T> orderableNode) {
         int order = orderableNode.element.getOrder();
@@ -69,18 +43,10 @@ public class UtilNode<T> {
         }
     }
 
-    /**
-     * @param orderableHeader
-     * @param orderable
-     */
     public static <T extends Orderable> void insertOrderableNodeFooter(UtilNode<T> orderableFooter, T orderable) {
         insertOrderableNodeFooter(orderableFooter, new UtilNode<T>(orderable));
     }
 
-    /**
-     * @param orderableFooter
-     * @param orderableNode
-     */
     public static <T extends Orderable> void insertOrderableNodeFooter(UtilNode<T> orderableFooter,
                                                                        UtilNode<T> orderableNode) {
         int order = orderableNode.element.getOrder();
@@ -101,9 +67,6 @@ public class UtilNode<T> {
         }
     }
 
-    /**
-     * @param orderableNode
-     */
     public static <T extends Orderable> void sortOrderableNode(UtilNode<T> orderableNode) {
         int order = orderableNode.getElement().getOrder();
         UtilNode<T> orderableNodeCompare = orderableNode.getNext();
@@ -138,9 +101,6 @@ public class UtilNode<T> {
         }
     }
 
-    /**
-     * @param orderableNodeHeader
-     */
     public static <T extends Orderable> void sortOrderableNodeAll(UtilNode<T> orderableNodeHeader) {
         if (orderableNodeHeader.getElement() == null) {
             orderableNodeHeader = orderableNodeHeader.getNext();
@@ -155,37 +115,22 @@ public class UtilNode<T> {
         }
     }
 
-    /**
-     * @return the element
-     */
     public T getElement() {
         return element;
     }
 
-    /**
-     * @param element the element to set
-     */
     public void setElement(T element) {
         this.element = element;
     }
 
-    /**
-     * @return the previous
-     */
     public UtilNode<T> getPrevious() {
         return previous;
     }
 
-    /**
-     * @return the next
-     */
     public UtilNode<T> getNext() {
         return next;
     }
 
-    /**
-     * @param node
-     */
     public void beforeAdd(UtilNode<T> node) {
         if (previous != null) {
             previous.next = node;
@@ -196,9 +141,6 @@ public class UtilNode<T> {
         previous = node;
     }
 
-    /**
-     * @param node
-     */
     public void afterAdd(UtilNode<T> node) {
         if (next != null) {
             next.previous = node;
@@ -209,9 +151,6 @@ public class UtilNode<T> {
         next = node;
     }
 
-    /**
-     *
-     */
     public void remove() {
         if (previous != null) {
             previous.next = next;
@@ -222,17 +161,11 @@ public class UtilNode<T> {
         }
     }
 
-    /**
-     * @param node
-     */
     public void beforeInsert(UtilNode<T> node) {
         node.remove();
         beforeAdd(node);
     }
 
-    /**
-     * @param node
-     */
     public void afterInsert(UtilNode<T> node) {
         node.remove();
         afterAdd(node);

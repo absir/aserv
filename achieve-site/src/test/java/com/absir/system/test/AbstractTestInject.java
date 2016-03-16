@@ -11,19 +11,10 @@ import com.absir.bean.core.BeanDefineDiscover;
 import com.absir.bean.core.BeanFactoryProvider;
 import org.junit.After;
 
-/**
- * @author absir
- */
 public class AbstractTestInject extends AbstractTest {
 
-    /**
-     * beanFactoryProvider
-     */
     private BeanFactoryProvider beanFactoryProvider;
 
-    /**
-     *
-     */
     public AbstractTestInject() {
         beanFactoryProvider = new BeanFactoryProvider(null, null, null);
         BeanDefineDiscover.open();
@@ -31,9 +22,6 @@ public class AbstractTestInject extends AbstractTest {
         beanFactoryProvider.started();
     }
 
-    /**
-     *
-     */
     @After
     public void after() {
         beanFactoryProvider.stopping();

@@ -21,21 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class CrudContextUtils extends CrudUtils {
 
-    /**
-     * Jo_Entity_Map_Mutilpart
-     */
     private final static Map<JoEntity, Boolean> Jo_Entity_Map_Mutilpart = new HashMap<JoEntity, Boolean>();
 
-    /**
-     * @param joEntity
-     * @return
-     */
     public static boolean isMultipart(JoEntity joEntity) {
         Boolean mutilpart = Jo_Entity_Map_Mutilpart.get(joEntity);
         if (mutilpart == null) {
@@ -51,10 +41,6 @@ public abstract class CrudContextUtils extends CrudUtils {
         return mutilpart;
     }
 
-    /**
-     * @param crudEntity
-     * @return
-     */
     private static boolean isMultipart(CrudEntity crudEntity) {
         if (crudEntity == null) {
             return false;
@@ -83,16 +69,6 @@ public abstract class CrudContextUtils extends CrudUtils {
         return false;
     }
 
-    /**
-     * @param crud
-     * @param crudRecord
-     * @param joEntity
-     * @param entity
-     * @param user
-     * @param filter
-     * @param errors
-     * @param input
-     */
     public static void crud(JaCrud.Crud crud, Map<String, Object> crudRecord, JoEntity joEntity, Object entity, final JiUserBase user, PropertyFilter filter, final PropertyErrors errors,
                             final Input input) {
         CrudEntity crudEntity = getCrudEntity(joEntity);
@@ -160,14 +136,6 @@ public abstract class CrudContextUtils extends CrudUtils {
         crud(entity, crudEntity, crudInvoker);
     }
 
-    /**
-     * @param crud
-     * @param crudRecord
-     * @param joEntity
-     * @param entity
-     * @param user
-     * @param filter
-     */
     public static void crud(JaCrud.Crud crud, Map<String, Object> crudRecord, JoEntity joEntity, Object entity, JiUserBase user, PropertyFilter filter) {
         crud(crud, crudRecord, joEntity, entity, user, filter, null, null);
     }

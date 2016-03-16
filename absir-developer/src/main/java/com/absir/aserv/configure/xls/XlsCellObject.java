@@ -10,38 +10,17 @@ package com.absir.aserv.configure.xls;
 import com.absir.core.base.IBase;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 
-/**
- * @author absir
- *
- */
 public class XlsCellObject extends XlsCellBase {
 
-    /**
-     * obj
-     */
     private Object obj;
 
-    /**
-     * xlsBase
-     */
     private XlsBase xlsBase;
 
-    /**
-     * @param obj
-     * @param xlsBase
-     */
     public XlsCellObject(Object obj, XlsBase xlsBase) {
         this.obj = obj;
         this.xlsBase = xlsBase;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.configure.xls.XlsCell#wirteHssfCell(org.apache.poi.
-     * hssf.usermodel.HSSFCell)
-     */
     @Override
     public void wirteHssfCell(HSSFCell hssfCell) {
         if (obj != null) {

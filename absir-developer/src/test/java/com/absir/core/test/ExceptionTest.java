@@ -4,9 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/**
- * Created by absir on 16/2/25.
- */
 @RunWith(value = JUnit4.class)
 public class ExceptionTest {
 

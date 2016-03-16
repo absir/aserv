@@ -31,40 +31,18 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 public class BeanProviderContext extends BeanFactoryProvider {
 
-    /**
-     * contextFilenames
-     */
     private Map<String, Boolean> contextFilenames = new HashMap<String, Boolean>();
 
-    /**
-     * beanNameMapAtInjectInvokers
-     */
     private Map<String, List<Entry<String, InjectInvoker>>> beanNameMapAtInjectInvokers = new HashMap<String, List<Entry<String, InjectInvoker>>>();
 
-    /**
-     * @param includePackages
-     * @param excludePackages
-     * @param unMatchPatterns
-     */
     public BeanProviderContext(Collection<String> includePackages, Collection<String> excludePackages,
                                Collection<String> unMatchPatterns) {
         super(includePackages, excludePackages, unMatchPatterns);
     }
 
-    /**
-     * @param filename
-     * @param beanFactory
-     * @param beanDefineNames
-     * @param beanDefines
-     * @param contextFilenames
-     * @param beanNameMapAtInjectInvokers
-     */
     public static void registerBeanDefine(String filename, BeanFactory beanFactory, Set<String> beanDefineNames,
                                           List<BeanDefine> beanDefines, Map<String, Boolean> contextFilenames,
                                           Map<String, List<Entry<String, InjectInvoker>>> beanNameMapAtInjectInvokers) {
@@ -125,14 +103,6 @@ public class BeanProviderContext extends BeanFactoryProvider {
         }
     }
 
-    /**
-     * @param noded
-     * @param element
-     * @param beanFactory
-     * @param beanDefineNames
-     * @param beanNameMapAtInjectInvokers
-     * @return
-     */
     public static BeanDefine registerBeanDefine(boolean noded, Element element, BeanFactory beanFactory,
                                                 Set<String> beanDefineNames, Map<String, List<Entry<String, InjectInvoker>>> beanNameMapAtInjectInvokers) {
         Iterator<Element> iterator = element.elementIterator();
@@ -172,14 +142,6 @@ public class BeanProviderContext extends BeanFactoryProvider {
         return new BeanDefineSingleton(element.getText());
     }
 
-    /**
-     * @param beanElement
-     * @param root
-     * @param beanFactory
-     * @param beanDefineNames
-     * @param beanNameMapAtInjectInvokers
-     * @return
-     */
     public static BeanDefine registerBeanDefineBean(Element beanElement, boolean root, BeanFactory beanFactory,
                                                     Set<String> beanDefineNames, Map<String, List<Entry<String, InjectInvoker>>> beanNameMapAtInjectInvokers) {
         Class<?> beanType = null;
@@ -275,13 +237,6 @@ public class BeanProviderContext extends BeanFactoryProvider {
         return BeanDefineObject.getBeanDefine(beanType, beanDefine);
     }
 
-    /**
-     * @param arrayElement
-     * @param beanFactory
-     * @param beanDefineNames
-     * @param beanNameMapAtInjectInvokers
-     * @return
-     */
     public static BeanDefineArray registerBeanDefineArray(Element arrayElement, BeanFactory beanFactory,
                                                           Set<String> beanDefineNames, Map<String, List<Entry<String, InjectInvoker>>> beanNameMapAtInjectInvokers) {
         BeanDefineArray beanDefineArray = new BeanDefineArray();
@@ -294,13 +249,6 @@ public class BeanProviderContext extends BeanFactoryProvider {
         return beanDefineArray;
     }
 
-    /**
-     * @param MapElement
-     * @param beanFactory
-     * @param beanDefineNames
-     * @param beanNameMapAtInjectInvokers
-     * @return
-     */
     public static BeanDefineMap registerBeanDefineMap(Element MapElement, BeanFactory beanFactory, Set<String> beanDefineNames,
                                                       Map<String, List<Entry<String, InjectInvoker>>> beanNameMapAtInjectInvokers) {
         BeanDefineMap beanDefineMap = new BeanDefineMap();
@@ -315,26 +263,12 @@ public class BeanProviderContext extends BeanFactoryProvider {
         return beanDefineMap;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.core.BeanFactoryProvider#scan(com.absir.bean.core.BeanScanner
-     * , java.util.Collection, java.lang.Object[])
-     */
     @Override
     public synchronized void scan(BeanScanner beanScanner, Collection<Class<?>> beanTypes, Object... beanNameAndObjects) {
         super.scan(beanScanner, beanTypes, beanNameAndObjects);
         BeanFactoryStopping.addStopping(getBeanFactory(), getBeanFactoryStoppings());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.core.BeanFactoryProvider#loadBeanConfig(com.absir.bean
-     * .basis.BeanConfig, java.util.Set, java.util.Set, java.util.Map)
-     */
     @Override
     public void loadBeanConfig(final BeanConfig beanConfig, Set<String> propertyFilenames, Set<String> loadedPropertyFilenames,
                                Map<String, CallbackTemplate<String>> beanConfigTemplates) {
@@ -357,13 +291,6 @@ public class BeanProviderContext extends BeanFactoryProvider {
         });
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.core.BeanFactoryProvider#registerBeanDefine(com.absir.
-     * bean.core.BeanFactoryImpl, java.util.Set)
-     */
     @Override
     protected void registerBeanDefine(BeanFactoryImpl beanFactory, Set<String> beanDefineNames) {
         super.registerBeanDefine(beanFactory, beanDefineNames);
@@ -379,14 +306,6 @@ public class BeanProviderContext extends BeanFactoryProvider {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.core.BeanFactoryProvider#processorBeanDefineObject(com
-     * .absir.bean.core.BeanFactoryImpl, com.absir.bean.basis.BeanDefine,
-     * java.lang.Object)
-     */
     @Override
     protected void processorBeanDefineObject(BeanFactoryImpl beanFactory, BeanDefine beanDefine, Object beanObject) {
         super.processorBeanDefineObject(beanFactory, beanDefine, beanObject);

@@ -21,9 +21,6 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-/**
- * @author absir
- */
 @MaEntity(parent = {@MaMenu("菜单管理")}, name = "引用")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
@@ -41,30 +38,18 @@ public class JMenuCite extends JbBase {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private JMenu menu;
 
-    /**
-     * @return the id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * @return the menu
-     */
     public JMenu getMenu() {
         return menu;
     }
 
-    /**
-     * @param menu the menu to set
-     */
     public void setMenu(JMenu menu) {
         this.menu = menu;
     }

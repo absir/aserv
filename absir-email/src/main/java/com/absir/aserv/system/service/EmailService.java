@@ -20,26 +20,14 @@ import javax.mail.internet.MimeMessage;
 import java.util.Calendar;
 import java.util.Properties;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class EmailService {
 
-    /**
-     * emailConfigure
-     */
     public static final JEmailConfigure emailConfigure = JConfigureUtils.getConfigure(JEmailConfigure.class);
 
-    /**
-     * session
-     */
     private Session session;
 
-    /**
-     * @return
-     */
     protected Session createSession() {
         Properties props = new Properties();
         props.put("mail.smtp.host", emailConfigure.getSmtp());
@@ -55,16 +43,10 @@ public class EmailService {
         }
     }
 
-    /**
-     *
-     */
     public void clearSession() {
         session = null;
     }
 
-    /**
-     * @return
-     */
     public Session getSession() {
         Session session = this.session;
         if (session == null) {
@@ -80,11 +62,6 @@ public class EmailService {
         return session;
     }
 
-    /**
-     * @return
-     * @throws MessagingException
-     * @throws AddressException
-     */
     public MimeMessage createMimeMessage() throws AddressException, MessagingException {
         MimeMessage mimeMessage = new MimeMessage(getSession());
         mimeMessage.setFrom(new InternetAddress(emailConfigure.getFrom()));
@@ -92,24 +69,12 @@ public class EmailService {
         return mimeMessage;
     }
 
-    /**
-     * @param to
-     * @return
-     * @throws AddressException
-     * @throws MessagingException
-     */
     public MimeMessage createMimeMessage(String to) throws AddressException, MessagingException {
         MimeMessage mimeMessage = createMimeMessage();
         mimeMessage.setRecipient(RecipientType.TO, new InternetAddress(to));
         return mimeMessage;
     }
 
-    /**
-     * @param tos
-     * @return
-     * @throws AddressException
-     * @throws MessagingException
-     */
     public MimeMessage createMimeMessage(String[] tos) throws AddressException, MessagingException {
         MimeMessage mimeMessage = createMimeMessage();
         int length = tos.length;
@@ -122,37 +87,18 @@ public class EmailService {
         return mimeMessage;
     }
 
-    /**
-     * @param mimeMessage
-     * @throws MessagingException
-     */
     public void sendMimeMessage(MimeMessage mimeMessage) throws MessagingException {
         Transport.send(mimeMessage, mimeMessage.getRecipients(RecipientType.TO));
     }
 
-    /**
-     * @author absir
-     */
     public static class SimpleAuthenticator extends Authenticator {
 
-        /**
-         * passwordAuthentication
-         */
         private PasswordAuthentication passwordAuthentication;
 
-        /**
-         * @param username
-         * @param password
-         */
         public SimpleAuthenticator(String username, String password) {
             passwordAuthentication = new PasswordAuthentication(username, password);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see javax.mail.Authenticator#getPasswordAuthentication()
-         */
         @Override
         protected PasswordAuthentication getPasswordAuthentication() {
             return passwordAuthentication;

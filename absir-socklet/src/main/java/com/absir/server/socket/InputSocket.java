@@ -31,87 +31,37 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @Configure
 public abstract class InputSocket extends Input {
 
-    /**
-     * NONE_RESPONSE
-     */
     public static final String NONE_RESPONSE = "";
 
-    /**
-     * NONE_RESPONSE_BYTES
-     */
     public static final byte[] NONE_RESPONSE_BYTES = NONE_RESPONSE.getBytes();
 
-    /**
-     * selSession
-     */
     private SelSession selSession;
 
-    /**
-     * socketChannel
-     */
     private SocketChannel socketChannel;
 
-    /**
-     * uri
-     */
     private String uri;
 
-    /**
-     * status
-     */
     private int status = ServerStatus.ON_SUCCESS.getCode();
 
-    /**
-     * flag
-     */
     private byte flag;
 
-    /**
-     * input
-     */
     private int callbackIndex;
 
-    /**
-     * inputStream
-     */
     private byte[] inputBuffer;
 
-    /**
-     * inputPos
-     */
     private int inputPos;
 
-    /**
-     * inputCount
-     */
     private int inputCount;
 
-    /**
-     * inputStream
-     */
     private InputStream inputStream;
 
-    /**
-     * input
-     */
     private String input;
 
-    /**
-     * outputStream
-     */
     private OutputStream outputStream;
 
-    /**
-     * @param model
-     * @param inputSocketAtt
-     * @param socketChannel
-     */
     public InputSocket(InModel model, InputSocketAtt inputSocketAtt, SocketChannel socketChannel) {
         super(model);
         this.socketChannel = socketChannel;
@@ -128,22 +78,10 @@ public abstract class InputSocket extends Input {
         inputStream = inputSocketAtt.inputStream;
     }
 
-    /**
-     * @param socketChannel
-     * @param buffer
-     * @return
-     */
     public static boolean writeBuffer(SocketChannel socketChannel, byte[] buffer) {
         return writeBuffer(socketChannel, buffer, 0, buffer.length);
     }
 
-    /**
-     * @param socketChannel
-     * @param buffer
-     * @param offset
-     * @param length
-     * @return
-     */
     public static boolean writeBuffer(SocketChannel socketChannel, byte[] buffer, int offset, int length) {
         try {
             SocketNIO.writeTimeout(socketChannel, ByteBuffer.wrap(buffer, offset, length));
@@ -156,46 +94,17 @@ public abstract class InputSocket extends Input {
         return false;
     }
 
-    /**
-     * @param bufferResolver
-     * @param selSession
-     * @param socketChannel
-     * @param flag
-     * @param callbackIndex
-     * @param bytes
-     * @return
-     */
     public static boolean writeByteBuffer(SocketBufferResolver bufferResolver, SelSession selSession,
                                           SocketChannel socketChannel, int callbackIndex, byte[] bytes) {
         return writeByteBuffer(bufferResolver, selSession, socketChannel, (byte) 0, callbackIndex, bytes, 0,
                 bytes.length);
     }
 
-    /**
-     * @param bufferResolver
-     * @param selSession
-     * @param socketChannel
-     * @param flag
-     * @param callbackIndex
-     * @param bytes
-     * @return
-     */
     public static boolean writeByteBuffer(SocketBufferResolver bufferResolver, SelSession selSession,
                                           SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes) {
         return writeByteBuffer(bufferResolver, selSession, socketChannel, flag, callbackIndex, bytes, 0, bytes.length);
     }
 
-    /**
-     * @param bufferResolver
-     * @param selSession
-     * @param socketChannel
-     * @param flag
-     * @param callbackIndex
-     * @param bytes
-     * @param offset
-     * @param length
-     * @return
-     */
     public static boolean writeByteBuffer(SocketBufferResolver bufferResolver, SelSession selSession,
                                           SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes, int offset, int length) {
         int headerLength = flag == 0 ? 0 : callbackIndex == 0 ? 1 : 5;
@@ -230,9 +139,6 @@ public abstract class InputSocket extends Input {
         return false;
     }
 
-    /**
-     * @return the socketChannel
-     */
     public SocketChannel getSocketChannel() {
         return socketChannel;
     }
@@ -267,61 +173,31 @@ public abstract class InputSocket extends Input {
         return inputBuffer == null && inputStream == null ? InMethod.GET : InMethod.POST;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.Input#setStatus(int)
-     */
     @Override
     public void setStatus(int status) {
         this.status = status;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.Input#paramDebug()
-     */
     @Override
     public boolean paramDebug() {
         return (flag & SocketAdapter.DEBUG_FLAG) != 0;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.Input#getAddress()
-     */
     @Override
-    public String getAddress() {
+    public String getRemoteAddr() {
         return socketChannel.socket().getLocalAddress().getHostAddress();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.Input#getParams(java.lang.String)
-     */
     @Override
     public String[] getParams(String name) {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.Input#getInputStream()
-     */
     @Override
     public InputStream getInputStream() throws IOException {
         return inputBuffer == null ? null : new ByteArrayInputStream(inputBuffer, inputPos, inputCount);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.Input#getInput()
-     */
     @Override
     public String getInput() {
         if (input == null) {
@@ -344,37 +220,19 @@ public abstract class InputSocket extends Input {
         return input;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.Input#setContentTypeCharset(java.lang.String)
-     */
     @Override
     public void setContentTypeCharset(String contentTypeCharset) {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.Input#setCharacterEncoding(java.lang.String)
-     */
     @Override
     public void setCharacterEncoding(String charset) {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.Input#getOutputStream()
-     */
     @Override
     public OutputStream getOutputStream() throws IOException {
         return outputStream;
     }
 
-    /**
-     *
-     */
     public void readyOutputStream() {
         if (outputStream == null && selSession != null) {
             boolean sended = false;
@@ -439,14 +297,8 @@ public abstract class InputSocket extends Input {
         }
     }
 
-    /**
-     * @return
-     */
     public abstract SocketBufferResolver getSocketBufferResolver();
 
-    /**
-     * @param flag
-     */
     protected byte writeFlag(byte flag) {
         if (status != ServerStatus.ON_SUCCESS.getCode()) {
             flag |= SocketAdapter.ERROR_FLAG;
@@ -461,44 +313,20 @@ public abstract class InputSocket extends Input {
                 len);
     }
 
-    /**
-     * @author absir
-     */
     public static class InputSocketAtt {
 
-        /**
-         * id
-         */
         protected Serializable id;
 
-        /**
-         * buffer
-         */
         protected byte[] buffer;
 
-        /**
-         * flag
-         */
         protected byte flag;
 
-        /**
-         * callbackIndex
-         */
         protected int callbackIndex;
 
-        /**
-         * url
-         */
         protected String url;
 
-        /**
-         * postDataLength
-         */
         protected int postDataLength;
 
-        /**
-         * inputStream
-         */
         protected InputStream inputStream;
 
         /**
@@ -507,32 +335,14 @@ public abstract class InputSocket extends Input {
         protected InputSocketAtt() {
         }
 
-        /**
-         * @param id
-         * @param buffer
-         * @param selSession
-         */
         public InputSocketAtt(Serializable id, byte[] buffer, SelSession selSession) {
             this(id, buffer, 0, selSession, null);
         }
 
-        /**
-         * @param id
-         * @param buffer
-         * @param selSession
-         * @param inputStream
-         */
         public InputSocketAtt(Serializable id, byte[] buffer, SelSession selSession, InputStream inputStream) {
             this(id, buffer, 0, selSession, inputStream);
         }
 
-        /**
-         * @param id
-         * @param buffer
-         * @param off
-         * @param selSession
-         * @param inputStream
-         */
         public InputSocketAtt(Serializable id, byte[] buffer, int off, SelSession selSession, InputStream inputStream) {
             this.id = id;
             this.buffer = buffer;
@@ -557,51 +367,30 @@ public abstract class InputSocket extends Input {
             this.inputStream = inputStream;
         }
 
-        /**
-         * @return the id
-         */
         public Serializable getId() {
             return id;
         }
 
-        /**
-         * @return the url
-         */
         public String getUrl() {
             return url;
         }
 
-        /**
-         * @return the flag
-         */
         public byte getFlag() {
             return flag;
         }
 
-        /**
-         * @return
-         */
         public InMethod getMethod() {
             return (flag & (SocketAdapter.STREAM_FLAG | SocketAdapter.POST_FLAG)) == 0 ? InMethod.GET : InMethod.POST;
         }
 
-        /**
-         * @return the callbackIndex
-         */
         public int getCallbackIndex() {
             return callbackIndex;
         }
 
-        /**
-         * @return the buffer
-         */
         public byte[] getBuffer() {
             return buffer;
         }
 
-        /**
-         * @return the postDataLength
-         */
         public int getPostDataLength() {
             return postDataLength;
         }

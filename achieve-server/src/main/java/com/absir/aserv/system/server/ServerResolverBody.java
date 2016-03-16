@@ -41,37 +41,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @Base
 @Bean
 public class ServerResolverBody extends ReturnedResolverBody implements ParameterResolver<Object>, ParameterResolverMethod, IServerResolverBody, IBodyConverter {
 
-    /**
-     * ME
-     */
     public static final ServerResolverBody ME = BeanFactoryUtils.get(ServerResolverBody.class);
-    /**
-     * BODY_OBJECT_NAME
-     */
+
     protected static final String BODY_OBJECT_NAME = ServerResolverBody.class.getName() + "@BODY_OBJECT_NAME";
-    /**
-     * objectMapper
-     */
+
     protected ObjectMapper objectMapper;
 
-    /**
-     * @return the objectMapper
-     */
     public ObjectMapper getObjectMapper() {
         return objectMapper;
     }
 
-    /**
-     * @param bodyConverters
-     */
     @Inject(type = InjectType.Selectable)
     protected void initResolver(IBodyConverter[] bodyConverters) {
         super.initResolver(bodyConverters);
@@ -81,13 +64,6 @@ public class ServerResolverBody extends ReturnedResolverBody implements Paramete
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.returned.ReturnedResolverBody#getBodyConverter
-     * (com.absir.server.in.Input)
-     */
     @Override
     public IBodyConverter getBodyConverter(Input input) {
         Object converter = input.getAttribute(BODY_CONVERTER_NAME);
@@ -114,41 +90,15 @@ public class ServerResolverBody extends ReturnedResolverBody implements Paramete
         return (IBodyConverter) converter;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.route.parameter.ParameterResolver#getParameter(int,
-     * java.lang.String[], java.lang.Class<?>[],
-     * java.lang.annotation.Annotation[][], java.lang.reflect.Method)
-     */
     @Override
     public Object getParameter(int i, String[] parameterNames, Class<?>[] parameterTypes, Annotation[][] annotations, Method method) {
         return getParameter(this, i, parameterNames, parameterTypes, annotations, method, true);
     }
 
-    /**
-     * @param body
-     * @param i
-     * @param parameterNames
-     * @param parameterTypes
-     * @param annotations
-     * @param method
-     * @return
-     */
     public Object getParameter(IServerResolverBody body, int i, String[] parameterNames, Class<?>[] parameterTypes, Annotation[][] annotations, Method method) {
         return getParameter(body, i, parameterNames, parameterTypes, annotations, method, false);
     }
 
-    /**
-     * @param body
-     * @param i
-     * @param parameterNames
-     * @param parameterTypes
-     * @param annotations
-     * @param method
-     * @param defaultBody
-     * @return
-     */
     protected Object getParameter(IServerResolverBody body, int i, String[] parameterNames, Class<?>[] parameterTypes, Annotation[][] annotations, Method method, boolean defaultBody) {
         Integer value = body.getBodyParameter(i, parameterNames, parameterTypes, annotations, method);
         if (defaultBody || value != null) {
@@ -159,43 +109,17 @@ public class ServerResolverBody extends ReturnedResolverBody implements Paramete
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.server.IServerResolverBody#getBodyParameter(int,
-     * java.lang.String[], java.lang.Class[],
-     * java.lang.annotation.Annotation[][], java.lang.reflect.Method)
-     */
     @Override
     public Integer getBodyParameter(int i, String[] parameterNames, Class<?>[] parameterTypes, Annotation[][] annotations, Method method) {
         Body body = KernelArray.getAssignable(annotations[i], Body.class);
         return body == null ? null : body.value();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.parameter.ParameterResolver#getParameterValue(
-     * com.absir.server.on.OnPut, java.lang.Object, java.lang.Class,
-     * java.lang.String, com.absir.server.route.RouteMethod)
-     */
     @Override
     public Object getParameterValue(OnPut onPut, Object parameter, Class<?> parameterType, String beanName, RouteMethod routeMethod) throws Exception {
         return getParameterValue(this, onPut, parameter, parameterType, beanName, routeMethod);
     }
 
-    /**
-     * @param body
-     * @param onPut
-     * @param parameter
-     * @param parameterType
-     * @param beanName
-     * @param routeMethod
-     * @return
-     * @throws Exception
-     */
     public Object getParameterValue(IServerResolverBody body, OnPut onPut, Object parameter, Class<?> parameterType, String beanName, RouteMethod routeMethod) throws Exception {
         if (parameter instanceof Result) {
             Object bodyObject = onPut.getInput().getAttribute(BODY_OBJECT_NAME);
@@ -216,14 +140,6 @@ public class ServerResolverBody extends ReturnedResolverBody implements Paramete
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.server.IServerResolverBody#getBodyParameterValue
-     * (com.absir.server.on.OnPut, int, java.lang.Class, java.lang.String,
-     * com.absir.server.route.RouteMethod)
-     */
     @Override
     public Object getBodyParameterValue(OnPut onPut, int group, Class<?> parameterType, String beanName, RouteMethod routeMethod) throws Exception {
         Input input = onPut.getInput();
@@ -236,13 +152,6 @@ public class ServerResolverBody extends ReturnedResolverBody implements Paramete
         return inputStream == null ? converter.readBodyParameterValue(onPut, group, input.getInput(), parameterType) : converter.readBodyParameterValue(onPut, group, inputStream, parameterType);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.parameter.ParameterResolverMethod#resolveMethods
-     * (java.lang.Object, java.util.List)
-     */
     @Override
     public List<InMethod> resolveMethods(Object parameter, List<InMethod> inMethods) {
         if (inMethods == null) {
@@ -256,13 +165,6 @@ public class ServerResolverBody extends ReturnedResolverBody implements Paramete
         return inMethods;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.returned.ReturnedResolver#resolveReturnedValue
-     * (java.lang.Object, java.lang.Object, com.absir.server.on.OnPut)
-     */
     @Override
     public void resolveReturnedValue(Object returnValue, Integer returned, OnPut onPut) throws Exception {
         if (returnValue != null) {
@@ -279,57 +181,26 @@ public class ServerResolverBody extends ReturnedResolverBody implements Paramete
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return 0;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.route.body.IBodyConverter#getContentTypes()
-     */
     @Override
     public String[] getContentTypes() {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.server.IServerBodyConverter#readBodyParameterValue
-     * (com.absir.server.on.OnPut, int, java.lang.String, java.lang.Class)
-     */
     @Override
     public Object readBodyParameterValue(OnPut onPut, int group, String input, Class<?> parameterType) throws Exception {
         return objectMapper.readValue(input, parameterType);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.server.IServerBodyConverter#readBodyParameterValue
-     * (com.absir.server.on.OnPut, int, java.io.InputStream, java.lang.Class)
-     */
     @Override
     public Object readBodyParameterValue(OnPut onPut, int group, InputStream inputStream, Class<?> parameterType) throws Exception {
         return objectMapper.readValue(inputStream, parameterType);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.server.IServerBodyConverter#writeAsBytes(com
-     * .absir.server.on.OnPut, java.lang.Object)
-     */
     @Override
     public byte[] writeAsBytes(OnPut onPut, Object returnValue) throws Exception {
         if (returnValue.getClass() == String.class) {
@@ -339,13 +210,6 @@ public class ServerResolverBody extends ReturnedResolverBody implements Paramete
         return objectMapper.writeValueAsBytes(returnValue);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.server.IServerBodyConverter#writeValue(com.absir
-     * .server.on.OnPut, java.lang.Object, java.io.OutputStream)
-     */
     @Override
     public void writeValue(OnPut onPut, Object returnValue, OutputStream outputStream) throws Exception {
         if (returnValue.getClass() == String.class) {

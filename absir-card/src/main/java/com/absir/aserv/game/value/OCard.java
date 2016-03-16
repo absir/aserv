@@ -9,9 +9,6 @@ package com.absir.aserv.game.value;
 
 import java.io.Serializable;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class OCard<C extends OCard, F extends OFight> extends OObject<C> {
 
@@ -20,32 +17,18 @@ public abstract class OCard<C extends OCard, F extends OFight> extends OObject<C
     // 暂停回合数
     protected int paused;
 
-    /**
-     * @param id
-     */
     public OCard(Serializable id) {
         super(id);
     }
 
-    /**
-     * @return the paused
-     */
     public int getPaused() {
         return paused;
     }
 
-    /**
-     * @param paused the paused to set
-     */
     protected void setPaused(int paused) {
         this.paused = paused;
     }
 
-    /**
-     * @param target
-     * @param paused
-     * @param result
-     */
     public void paused(C target, int paused, IResult result) {
         addReportDetail(target, PAUSED, paused);
         paused += this.paused;
@@ -73,11 +56,6 @@ public abstract class OCard<C extends OCard, F extends OFight> extends OObject<C
      */
     public abstract F currentFight();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.game.value.OObject#atk()
-     */
     @Override
     public boolean atk() {
         return paused == 0 || --paused == 0;
@@ -98,11 +76,6 @@ public abstract class OCard<C extends OCard, F extends OFight> extends OObject<C
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.game.value.OObject#fetchTarget()
-     */
     @Override
     public C fetchTarget() {
         for (OCard card : inTarget() ? currentFight().getCards() : currentFight().getTargetCards()) {
@@ -120,13 +93,6 @@ public abstract class OCard<C extends OCard, F extends OFight> extends OObject<C
         return target;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.game.value.OObject#addReportDetail(com.absir.aserv
-     * .game.value.OObject, java.lang.String, java.lang.Object)
-     */
     @Override
     public void addReportDetail(C target, String effect, Object parameters) {
         currentFight().addReportDetail(getId(), target == null ? null : new Serializable[]{target.getId()}, effect, parameters);

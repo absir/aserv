@@ -21,22 +21,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author absir
- *
- */
 public class HelperQuery {
 
-    /**
-     * NAME_PATTERN
-     */
     private static final Pattern NAME_PATTERN = Pattern.compile("o\\.(.*?)([\\s|=|>|<]+)", Pattern.CASE_INSENSITIVE);
 
-    /**
-     * @param entityClass
-     * @param field
-     * @return
-     */
     public static Class<?> getFieldType(Class<?> entityClass, Field field) {
         Class<?> fieldType = field.getType();
         if (fieldType == Serializable.class && "id".equals(field.getName()) && IBase.class.isAssignableFrom(entityClass)) {
@@ -46,11 +34,6 @@ public class HelperQuery {
         return fieldType;
     }
 
-    /**
-     * @param entityClass
-     * @param conditions
-     * @return
-     */
     public static FilterTemplate<Object> getConditionFilter(Class<?> entityClass, List<Object> conditions) {
         int size = conditions.size();
         if (size == 0) {
@@ -98,10 +81,6 @@ public class HelperQuery {
         }
     }
 
-    /**
-     * @param cls
-     * @return
-     */
     private static Class<?> getNumberClass(Class<?> cls) {
         if (Date.class.isAssignableFrom(cls)) {
             return int.class;
@@ -111,12 +90,6 @@ public class HelperQuery {
         return KernelClass.getMatchNumberClass(cls);
     }
 
-    /**
-     * @param field
-     * @param matcher
-     * @param value
-     * @return
-     */
     private static FilterTemplate<Object> getConditionFilter(final Field field, Class<?> fieldType, Matcher matcher, final Object value) {
         if (value == null) {
             if (!Object.class.isAssignableFrom(fieldType)) {
@@ -362,11 +335,6 @@ public class HelperQuery {
         };
     }
 
-    /**
-     * @param entityClass
-     * @param orderQueue
-     * @return
-     */
     public static Comparator<Object> getComparator(Class<?> entityClass, String orderQueue) {
         if (KernelString.isEmpty(orderQueue)) {
             return null;
@@ -413,13 +381,6 @@ public class HelperQuery {
         }
     }
 
-    /**
-     * @param field
-     * @param fieldType
-     * @param matcher
-     * @param orderStr
-     * @return
-     */
     private static Comparator<Object> getComparator(final Field field, Class<?> fieldType, Matcher matcher, String orderStr) {
         final boolean opt = matcher.end() < orderStr.length() - 3 && orderStr.substring(matcher.end()).toUpperCase().indexOf("DESC") >= 0;
         if (String.class.isAssignableFrom(fieldType)) {

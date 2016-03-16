@@ -1,20 +1,15 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2014年8月27日 上午10:11:20
  */
 package com.absir.server.in;
 
-/**
- * @author absir
- */
 public interface IGet {
 
-    /**
-     * @param input
-     * @return
-     */
+    public String getAddress(Input input);
+
     public Integer getLocaleCode(Input input);
 }

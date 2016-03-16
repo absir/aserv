@@ -9,10 +9,6 @@ package com.absir.aserv.system.bean.base;
 
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- *
- */
 @MappedSuperclass
 public class JbSuggest extends JbPermission {
 

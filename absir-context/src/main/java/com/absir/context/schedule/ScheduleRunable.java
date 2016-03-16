@@ -9,9 +9,6 @@ package com.absir.context.schedule;
 
 import com.absir.core.util.UtilSchelduer.NextRunable;
 
-/**
- * @author absir
- */
 public interface ScheduleRunable extends NextRunable {
 
 }

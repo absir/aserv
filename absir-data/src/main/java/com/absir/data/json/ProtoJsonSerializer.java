@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年11月6日 下午4:10:58
  */
 package com.absir.data.json;
@@ -17,20 +17,9 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class ProtoJsonSerializer extends JsonSerializer<IProto> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.fasterxml.jackson.databind.JsonSerializer#serialize(java.lang.Object,
-     * com.fasterxml.jackson.core.JsonGenerator,
-     * com.fasterxml.jackson.databind.SerializerProvider)
-     */
     @Override
     public void serialize(IProto value, JsonGenerator jgen, SerializerProvider provider)
             throws IOException, JsonProcessingException {

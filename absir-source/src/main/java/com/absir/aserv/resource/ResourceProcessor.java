@@ -9,28 +9,12 @@ package com.absir.aserv.resource;
 
 import java.io.File;
 
-/**
- * @author absir
- */
 public interface ResourceProcessor {
 
-    /**
-     * @param scanner
-     * @return
-     */
     public boolean supports(ResourceScanner scanner);
 
-    /**
-     * @param directoryFile
-     * @param scanner
-     * @return
-     */
     public boolean supportsDirectory(File directoryFile, ResourceScanner scanner);
 
-    /**
-     * @param resourceFile
-     * @param scanner
-     */
     public void doProcessor(File resourceFile, ResourceScanner scanner);
 
 }

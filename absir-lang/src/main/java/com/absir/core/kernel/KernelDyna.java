@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-3-5 下午2:31:23
  */
 package com.absir.core.kernel;
@@ -11,84 +11,37 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class KernelDyna {
 
-    /**
-     * BYTE_ZERO
-     */
     public static final Byte BYTE_ZERO = Byte.valueOf((byte) 0);
 
-    /**
-     * SHORT_ZERO
-     */
     public static final Short SHORT_ZERO = Short.valueOf((short) 0);
 
-    /**
-     * INTEGER_ZERO
-     */
     public static final Integer INTEGER_ZERO = Integer.valueOf((int) 0);
 
-    /**
-     * LONG_ZERO
-     */
     public static final Long LONG_ZERO = Long.valueOf((long) 0);
 
-    /**
-     * FLOAT_ZERO
-     */
     public static final Float FLOAT_ZERO = Float.valueOf((float) 0);
 
-    /**
-     * DOUBLE_ZERO
-     */
     public static final Double DOUBLE_ZERO = Double.valueOf((double) 0);
 
-    /**
-     * BOOLEAN_ZERO
-     */
     public static final Boolean BOOLEAN_ZERO = Boolean.valueOf(false);
 
-    /**
-     * CHARACTER_ZERO
-     */
     public static final Character CHARACTER_ZERO = Character.valueOf((char) 0);
 
-    /**
-     * DATE_ZERO
-     */
     public static final Date DATE_ZERO = new Date((long) 0);
 
-    /**
-     * DATE_FORMAT
-     */
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    /**
-     * DATE_FORMAT_DAY
-     */
     public static final DateFormat DATE_FORMAT_DAY = new SimpleDateFormat("yyyy-MM-dd");
 
-    /**
-     * DATE_FORMAT_TIME
-     */
     public static final DateFormat DATE_FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
 
-    /**
-     * DATE_FORMAT_ARRAY
-     */
     public static final DateFormat[] DATE_FORMAT_ARRAY = new DateFormat[]{DATE_FORMAT, DATE_FORMAT_DAY, DATE_FORMAT_TIME, DateFormat.getDateTimeInstance(),
             DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG), DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM),
             new SimpleDateFormat("EEE MMM d hh:mm:ss a z yyyy"), new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy"), new SimpleDateFormat("MM/dd/yy hh:mm:ss a"), new SimpleDateFormat("MM/dd/yy")};
 
-    /**
-     * @param obj
-     * @param toClass
-     * @return
-     */
     public static <T> T to(Object obj, Class<T> toClass) {
         if (obj == null) {
             return nullTo(toClass);
@@ -114,10 +67,6 @@ public abstract class KernelDyna {
         return nullTo(toClass);
     }
 
-    /**
-     * @param toClass
-     * @return
-     */
     public static <T> T nullTo(Class<T> toClass) {
         if (toClass == byte.class) {
             return (T) BYTE_ZERO;
@@ -147,11 +96,6 @@ public abstract class KernelDyna {
         return null;
     }
 
-    /**
-     * @param num
-     * @param toClass
-     * @return
-     */
     public static <T> T numberTo(Number num, Class<T> toClass) {
         if (toClass == Byte.class || toClass == byte.class) {
             return (T) (Object) num.byteValue();
@@ -190,11 +134,6 @@ public abstract class KernelDyna {
         return null;
     }
 
-    /**
-     * @param date
-     * @param toClass
-     * @return
-     */
     public static <T> T dateTo(Date date, Class<T> toClass) {
         if (toClass == Byte.class || toClass == byte.class) {
             return (T) (Object) ((Long) date.getTime()).byteValue();
@@ -227,10 +166,6 @@ public abstract class KernelDyna {
         return null;
     }
 
-    /**
-     * @param em
-     * @param toClass
-     */
     public static <T> T enumTo(Enum em, Class<T> toClass) {
         if (toClass == Byte.class || toClass == byte.class) {
             return (T) (Object) ((Integer) em.ordinal()).byteValue();
@@ -263,19 +198,10 @@ public abstract class KernelDyna {
         return null;
     }
 
-    /**
-     * @param date
-     * @return
-     */
     public static String toString(Date date) {
         return toString(date, 0);
     }
 
-    /**
-     * @param date
-     * @param type
-     * @return
-     */
     public static String toString(Date date, int type) {
         try {
             return DATE_FORMAT_ARRAY[type].format(date);
@@ -285,19 +211,10 @@ public abstract class KernelDyna {
         }
     }
 
-    /**
-     * @param em
-     * @return
-     */
     public static String toString(Enum em) {
         return em.name();
     }
 
-    /**
-     * @param str
-     * @param toClass
-     * @return
-     */
     public static <T> T stringTo(String str, Class<T> toClass) {
         if (KernelString.empty(str)) {
             return nullTo(toClass);
@@ -306,11 +223,6 @@ public abstract class KernelDyna {
         return stringTo(str, toClass, null);
     }
 
-    /**
-     * @param str
-     * @param toClass
-     * @return
-     */
     public static Object stringNull(String str, Class<?> toClass) {
         if (toClass == byte.class) {
             return toByte(str, null);
@@ -340,12 +252,6 @@ public abstract class KernelDyna {
         return stringTo(str, toClass);
     }
 
-    /**
-     * @param str
-     * @param toClass
-     * @param dynas
-     * @return
-     */
     public static <T> T stringTo(String str, Class<T> toClass, boolean[] dynas) {
         if (toClass == byte.class) {
             return (T) toByte(str);
@@ -409,19 +315,10 @@ public abstract class KernelDyna {
         return null;
     }
 
-    /**
-     * @param str
-     * @return
-     */
     public static Byte toByte(String str) {
         return toByte(str, BYTE_ZERO);
     }
 
-    /**
-     * @param str
-     * @param defaultValue
-     * @return
-     */
     public static Byte toByte(String str, Byte defaultValue) {
         try {
             return Byte.valueOf(str);
@@ -436,19 +333,10 @@ public abstract class KernelDyna {
         }
     }
 
-    /**
-     * @param str
-     * @return
-     */
     public static Short toShort(String str) {
         return toShort(str, SHORT_ZERO);
     }
 
-    /**
-     * @param str
-     * @param defaultValue
-     * @return
-     */
     public static Short toShort(String str, Short defaultValue) {
         try {
             return Short.valueOf(str);
@@ -463,19 +351,10 @@ public abstract class KernelDyna {
         }
     }
 
-    /**
-     * @param str
-     * @return
-     */
     public static Integer toInteger(String str) {
         return toInteger(str, INTEGER_ZERO);
     }
 
-    /**
-     * @param str
-     * @param defaultValue
-     * @return
-     */
     public static Integer toInteger(String str, Integer defaultValue) {
         try {
             return Integer.valueOf(str);
@@ -490,19 +369,10 @@ public abstract class KernelDyna {
         }
     }
 
-    /**
-     * @param str
-     * @return
-     */
     public static Long toLong(String str) {
         return toLong(str, LONG_ZERO);
     }
 
-    /**
-     * @param str
-     * @param defaultValue
-     * @return
-     */
     public static Long toLong(String str, Long defaultValue) {
         try {
             return Long.valueOf(str);
@@ -517,19 +387,10 @@ public abstract class KernelDyna {
         }
     }
 
-    /**
-     * @param str
-     * @return
-     */
     public static Float toFloat(String str) {
         return toFloat(str, FLOAT_ZERO);
     }
 
-    /**
-     * @param str
-     * @param defaultValue
-     * @return
-     */
     public static Float toFloat(String str, Float defaultValue) {
         try {
             return Float.valueOf(str);
@@ -539,19 +400,10 @@ public abstract class KernelDyna {
         }
     }
 
-    /**
-     * @param str
-     * @return
-     */
     public static Double toDouble(String str) {
         return toDouble(str, DOUBLE_ZERO);
     }
 
-    /**
-     * @param str
-     * @param defaultValue
-     * @return
-     */
     public static Double toDouble(String str, Double defaultValue) {
         try {
             return Double.valueOf(str);
@@ -561,19 +413,10 @@ public abstract class KernelDyna {
         }
     }
 
-    /**
-     * @param str
-     * @return
-     */
     public static Boolean toBoolean(String str) {
         return toBoolean(str, BOOLEAN_ZERO);
     }
 
-    /**
-     * @param str
-     * @param defaultValue
-     * @return
-     */
     public static Boolean toBoolean(String str, Boolean defaultValue) {
         try {
             return Float.valueOf(str).floatValue() != 0;
@@ -588,19 +431,10 @@ public abstract class KernelDyna {
         }
     }
 
-    /**
-     * @param str
-     * @return
-     */
     public static Character toCharacter(String str) {
         return toCharacter(str, CHARACTER_ZERO);
     }
 
-    /**
-     * @param str
-     * @param defaultValue
-     * @return
-     */
     public static Character toCharacter(String str, Character defaultValue) {
         try {
             return Character.valueOf(str.charAt(0));
@@ -615,27 +449,14 @@ public abstract class KernelDyna {
         }
     }
 
-    /**
-     * @param obj
-     * @return
-     */
     public static Date toDate(Object obj) {
         return to(obj, Date.class);
     }
 
-    /**
-     * @param str
-     * @return
-     */
     public static Date toDate(String str) {
         return toDate(str, DATE_ZERO);
     }
 
-    /**
-     * @param str
-     * @param defaultValue
-     * @return
-     */
     public static Date toDate(String str, Date defaultValue) {
         for (DateFormat dateFormat : DATE_FORMAT_ARRAY) {
             try {
@@ -653,11 +474,6 @@ public abstract class KernelDyna {
         }
     }
 
-    /**
-     * @param str
-     * @param enumType
-     * @return
-     */
     public static Enum toEnum(String str, Class<? extends Enum> enumType) {
         try {
             return Enum.valueOf(enumType, str);
@@ -672,11 +488,6 @@ public abstract class KernelDyna {
         }
     }
 
-    /**
-     * @param num
-     * @param enumType
-     * @return
-     */
     public static Enum toEnum(Number num, Class<? extends Enum> enumType) {
         try {
             return enumType.getEnumConstants()[num.intValue()];

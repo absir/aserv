@@ -14,17 +14,9 @@ import org.hibernate.proxy.HibernateProxy;
 import java.io.Serializable;
 import java.util.Collection;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("rawtypes")
 public class HelperBase {
 
-    /**
-     * @param base
-     * @return
-     */
     public static Serializable getLazyId(IBase base) {
         if (base == null) {
             return null;
@@ -38,10 +30,6 @@ public class HelperBase {
         }
     }
 
-    /**
-     * @param bases
-     * @return
-     */
     public static Serializable[] getBaseIds(IBase[] bases) {
         int length = bases.length;
         Serializable[] ids = new Serializable[length];
@@ -52,10 +40,6 @@ public class HelperBase {
         return ids;
     }
 
-    /**
-     * @param bases
-     * @return
-     */
     public static Serializable[] getBaseIds(Collection<? extends IBase> bases) {
         Serializable[] ids = new Serializable[bases.size()];
         int i = 0;
@@ -66,11 +50,6 @@ public class HelperBase {
         return ids;
     }
 
-    /**
-     * @param bases
-     * @param crudSupply
-     * @return
-     */
     public static Object[] getBaseIds(String entityName, Collection<?> bases, ICrudSupply crudSupply) {
         Object[] ids = new Serializable[bases.size()];
         int i = 0;

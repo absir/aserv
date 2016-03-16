@@ -27,37 +27,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 @Configure
 public abstract class Developer {
 
-    /**
-     * CLASS_FILE_EXTENSION
-     */
     public static final String CLASS_FILE_EXTENSION = ".class";
-    /**
-     * RUNTIME_PATH
-     */
+
     public static final String RUNTIME_PATH = "META-RUNTIME/";
-    /**
-     * RUMTIME_LISTENERS
-     */
+
     private static final List<CallbackTemplate<Entry<String, File>>> RUMTIME_LISTENERS = new ArrayList<CallbackTemplate<Entry<String, File>>>();
 
-    /**
-     * @return
-     */
     public static boolean isDeveloper() {
         return IDeveloper.ME != null;
     }
 
-    /**
-     * @param cls
-     * @return
-     */
     public static File getClassFile(Class cls) {
         File file = new File(cls.getResource(cls.getSimpleName().concat(CLASS_FILE_EXTENSION)).getFile());
         if (!file.exists()) {
@@ -67,40 +50,24 @@ public abstract class Developer {
         return file;
     }
 
-    /**
-     * @param joEntity
-     * @return
-     */
     public static Long lastModified(JoEntity joEntity) {
         return getClassFile(joEntity.getClass()).lastModified();
     }
 
-    /**
-     * @param listener
-     */
     public synchronized static void addListener(CallbackTemplate<Entry<String, File>> listener) {
         RUMTIME_LISTENERS.add(listener);
     }
 
-    /**
-     * @param listener
-     */
     public synchronized static void removeListener(CallbackTemplate<Entry<String, File>> listener) {
         RUMTIME_LISTENERS.remove(listener);
     }
 
-    /**
-     * @param entry
-     */
     public static void doEntry(Entry<String, File> entry) {
         for (CallbackTemplate<Entry<String, File>> listener : RUMTIME_LISTENERS) {
             listener.doWith(entry);
         }
     }
 
-    /**
-     * @param file
-     */
     public static void doEntry(File file) {
         if (!RUMTIME_LISTENERS.isEmpty()) {
             String path = file.getPath();
@@ -111,21 +78,11 @@ public abstract class Developer {
         }
     }
 
-    /**
-     * @param file
-     * @param data
-     * @throws IOException
-     */
     public static void writeEntry(File file, CharSequence data) throws IOException {
         HelperFile.write(file, data);
         doEntry(file);
     }
 
-    /**
-     * @param File
-     * @param data
-     * @throws IOException
-     */
     public static void writeGenerate(String filePath, CharSequence data) throws IOException {
         File file = new File(IRender.ME.getRealPath(filePath));
         HelperFile.write(file, data);
@@ -134,19 +91,10 @@ public abstract class Developer {
         }
     }
 
-    /**
-     * @param cls
-     * @param propertyName
-     * @return
-     */
     private static File getRuntimeFile(String runtimeName) {
         return new File(BeanFactoryUtils.getBeanConfig().getClassPath() + RUNTIME_PATH + runtimeName);
     }
 
-    /**
-     * @param runtimeName
-     * @return
-     */
     public static Object getRuntime(String runtimeName) {
         try {
             return KernelObject.unserialize(UtilFile.read(getRuntimeFile(runtimeName)));
@@ -160,10 +108,6 @@ public abstract class Developer {
         }
     }
 
-    /**
-     * @param runtimeName
-     * @param value
-     */
     public synchronized static void setRuntime(String runtimeName, Object value) {
         if (value == null) {
             return;

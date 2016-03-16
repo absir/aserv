@@ -7,22 +7,10 @@
  */
 package com.absir.property;
 
-/**
- * @author absir
- */
 public interface PropertyConvert {
 
-    /**
-     * @param propertyValue
-     * @return
-     */
     public Object getValue(Object propertyValue);
 
-    /**
-     * @param value
-     * @param beanName
-     * @return
-     */
     public Object getPropertyValue(Object value, String beanName);
 
 }

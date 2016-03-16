@@ -25,20 +25,10 @@ import com.absir.server.value.Server;
 
 import static com.absir.aserv.menu.MenuContextUtils.getAdminRoute;
 
-/**
- * @author absir
- */
 @Base
 @Server
 public class Admin_login extends AdminServer {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.admin.AdminServer#checkLogin(com.absir.server
-     * .in.Input)
-     */
     @Override
     protected SecurityContext onAuthentication(Input input) throws Exception {
         return null;

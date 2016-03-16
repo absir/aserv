@@ -7,15 +7,7 @@
  */
 package com.absir.aserv.advice;
 
-/**
- * @author absir
- */
 public abstract class AdviceInvoker {
 
-    /**
-     * @param value
-     * @return
-     * @throws Throwable
-     */
     public abstract Object invoke(Object value) throws Throwable;
 }

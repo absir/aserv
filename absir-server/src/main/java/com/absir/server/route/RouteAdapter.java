@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-12-25 上午10:43:47
  */
 package com.absir.server.route;
@@ -24,16 +24,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class RouteAdapter implements IBeanFactoryStarted {
 
-    /**
-     * IN_MATCHER_COMPARATOR
-     */
     public static final Comparator<InMatcher> IN_MATCHER_COMPARATOR = new Comparator<InMatcher>() {
 
         @Override
@@ -53,9 +47,7 @@ public class RouteAdapter implements IBeanFactoryStarted {
             return compare;
         }
     };
-    /**
-     * ROUTE_MATCHER_COMPARATOR
-     */
+
     public static final Comparator<RouteMatcher> ROUTE_MATCHER_COMPARATOR = new Comparator<RouteMatcher>() {
 
         @Override
@@ -71,17 +63,11 @@ public class RouteAdapter implements IBeanFactoryStarted {
         }
 
     };
-    /**
-     * LOGGER
-     */
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(RouteAdapter.class);
-    /**
-     * started
-     */
+
     private boolean started;
-    /**
-     * routeMatchers
-     */
+
     private List<RouteMatcher> routeMatchers = new ArrayList<RouteMatcher>();
 
     /**
@@ -106,23 +92,14 @@ public class RouteAdapter implements IBeanFactoryStarted {
         return compare;
     }
 
-    /**
-     * @return the started
-     */
     public boolean isStarted() {
         return started;
     }
 
-    /**
-     * @param started the started to set
-     */
     public void setStarted(boolean started) {
         this.started = started;
     }
 
-    /**
-     * @return the routeMatchers
-     */
     public List<RouteMatcher> getRouteMatchers() {
         return routeMatchers;
     }
@@ -301,31 +278,16 @@ public class RouteAdapter implements IBeanFactoryStarted {
         }
     }
 
-    /**
-     * @param matchers
-     */
     public void registerAllMatcher(List<RouteMatcher> matchers) {
         Collections.sort(matchers, ROUTE_MATCHER_COMPARATOR);
         routeMatchers = matchers;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return 2048;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanFactoryStarted#started(com.absir.bean.basis
-     * .BeanFactory)
-     */
     @Override
     public void started(BeanFactory beanFactory) {
         LOGGER.info("started server");

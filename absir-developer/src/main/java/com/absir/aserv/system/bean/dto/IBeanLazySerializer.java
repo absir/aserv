@@ -16,20 +16,9 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("rawtypes")
 public class IBeanLazySerializer extends JsonSerializer<IBase> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.codehaus.jackson.map.JsonSerializer#serialize(java.lang.Object,
-     * org.codehaus.jackson.JsonGenerator,
-     * org.codehaus.jackson.map.SerializerProvider)
-     */
     @Override
     public void serialize(IBase value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
         jgen.writeObject(HelperBase.getLazyId(value));

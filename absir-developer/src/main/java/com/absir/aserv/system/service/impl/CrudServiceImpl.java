@@ -24,32 +24,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes"})
 @Bean
 public class CrudServiceImpl implements CrudService {
 
-    /**
-     * crudSupports
-     */
     @Inject(type = InjectType.Selectable)
     private ICrudSupply[] crudSupplies;
 
-    /**
-     * entityNameMap
-     */
     private Map<String, ICrudSupply> entityNameMapCrudSupply = new HashMap<String, ICrudSupply>();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.service.CrudService#getCrudSupport(java.lang
-     * .String)
-     */
     @Override
     public ICrudSupply getCrudSupply(String entityName) {
         ICrudSupply crudSupply = entityNameMapCrudSupply.get(entityName);
@@ -65,29 +48,12 @@ public class CrudServiceImpl implements CrudService {
         return crudSupply;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.service.CrudService#merge(java.lang.String,
-     * java.util.Map, java.lang.Object, com.absir.aserv.crud.ICrudSupply,
-     * boolean, com.absir.aserv.system.bean.proxy.JiUserBase,
-     * com.absir.core.kernel.KernelLang.PropertyFilter)
-     */
     @Override
     public void merge(String entityName, Map<String, Object> crudRecord, Object entity, ICrudSupply crudSupply, boolean create, JiUserBase user, PropertyFilter filter) {
         CrudUtils.crud(create ? Crud.CREATE : Crud.UPDATE, crudRecord, new JoEntity(entityName, entity.getClass()), entity, filter, user);
         crudSupply.mergeEntity(entityName, entity, create);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.service.CrudService#delete(java.lang.String,
-     * java.io.Serializable, com.absir.aserv.crud.ICrudSupply,
-     * com.absir.aserv.jdbc.JdbcCondition,
-     * com.absir.aserv.system.bean.proxy.JiUserBase)
-     */
     @Override
     public Object delete(String entityName, Serializable id, ICrudSupply crudSupply, JdbcCondition jdbcCondition, JiUserBase user) {
         Object entity = crudSupply.get(entityName, id, jdbcCondition);
@@ -100,14 +66,6 @@ public class CrudServiceImpl implements CrudService {
         return entity;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.service.CrudService#delete(java.lang.String,
-     * com.absir.aserv.crud.ICrudSupply, com.absir.aserv.jdbc.JdbcCondition,
-     * com.absir.aserv.system.bean.proxy.JiUserBase)
-     */
     @Override
     public List delete(String entityName, ICrudSupply crudSupply, JdbcCondition jdbcCondition, JiUserBase user) {
         JoEntity joEntity = null;

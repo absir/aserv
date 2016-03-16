@@ -28,74 +28,34 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
 public class LangBundle {
 
-    /**
-     * ME
-     */
     public static final LangBundle ME = BeanFactoryUtils.get(LangBundle.class);
 
-    /**
-     * i18n
-     */
     private static boolean i18n;
 
-    /**
-     * langResource
-     */
     @Value(value = "lang.resouce", defaultValue = "${classPath}lang/")
     protected String langResource;
 
-    /**
-     * reloadTime
-     */
     protected long reloadTime;
 
-    /**
-     * reloadRunable
-     */
     protected CronFixDelayRunable reloadRunable;
 
-    /**
-     * local
-     */
     protected Locale locale;
 
-    /**
-     * localeCode
-     */
     protected Integer localeCode;
 
-    /**
-     * codeMaplocale
-     */
     protected Map<Integer, Locale> codeMaplocale;
 
-    /**
-     * resourceBundle
-     */
     protected Map<String, String> resourceBundle;
 
-    /**
-     * resourceLangs
-     */
     protected Map<String, String> resourceLangs = new HashMap<String, String>();
 
-    /**
-     * localeMapResourceBunlde
-     */
     protected Map<Locale, Map<String, String>> localeMapResourceBunlde = new HashMap<Locale, Map<String, String>>();
 
-    /**
-     * @param locale
-     * @return
-     */
     public static Locale getLocaleFromString(String locale) {
         if (locale != null) {
             String[] locales = locale.split("_");
@@ -109,16 +69,10 @@ public class LangBundle {
         return null;
     }
 
-    /**
-     * @return the i18n
-     */
     public static boolean isI18n() {
         return i18n;
     }
 
-    /**
-     * @return the i18n
-     */
     @Inject
     protected void setI18n(@Value(value = "lang.i18n", defaultValue = "0") boolean i18n) {
         LangBundle.i18n = i18n;
@@ -188,9 +142,6 @@ public class LangBundle {
         }
     }
 
-    /**
-     * @param reloadTime the reloadTime to set
-     */
     public void setReloadTime(long reloadTime) {
         if (this.reloadTime != reloadTime) {
             this.reloadTime = reloadTime;
@@ -215,16 +166,10 @@ public class LangBundle {
         }
     }
 
-    /**
-     * @return
-     */
     public Locale getLocale() {
         return locale;
     }
 
-    /**
-     * @return
-     */
     public Locale getLocale(Integer code) {
         if (code != null && codeMaplocale != null) {
             Locale locale = codeMaplocale.get(code);
@@ -236,25 +181,14 @@ public class LangBundle {
         return locale;
     }
 
-    /**
-     * @return
-     */
     public Integer getLocaleCode() {
         return localeCode;
     }
 
-    /**
-     * @param code
-     * @return
-     */
     public boolean isLocaleCode(Integer code) {
         return code == null || code == 0 || code.equals(localeCode);
     }
 
-    /**
-     * @param locale
-     * @return
-     */
     public Integer getLocaleCode(Locale locale) {
         if (locale == null || codeMaplocale == null) {
             return null;
@@ -279,16 +213,10 @@ public class LangBundle {
         return code == 0 ? localeCode : code;
     }
 
-    /**
-     * @return the codeMaplocale
-     */
     public Map<Integer, Locale> getCodeMaplocale() {
         return codeMaplocale;
     }
 
-    /**
-     * @return
-     */
     public Map<String, String> getResourceBundle() {
         if (reloadTime < 0) {
             return getResourceBundle(locale);
@@ -301,10 +229,6 @@ public class LangBundle {
         return resourceBundle;
     }
 
-    /**
-     * @param name
-     * @param lang
-     */
     public void setResourceLang(String name, String lang) {
         Map<String, String> resourceBundle = getResourceBundle();
         if (!resourceBundle.containsKey(name)) {
@@ -313,10 +237,6 @@ public class LangBundle {
         }
     }
 
-    /**
-     * @param locale
-     * @return
-     */
     public Map<String, String> getResourceBundle(Locale locale) {
         Map<String, String> resourceBundle = localeMapResourceBunlde.get(locale);
         if (resourceBundle != null) {
@@ -378,28 +298,15 @@ public class LangBundle {
         return resourceBundle;
     }
 
-    /**
-     *
-     */
     public void clearResouceBundle() {
         resourceBundle = null;
         localeMapResourceBunlde.clear();
     }
 
-    /**
-     * @param lang
-     * @param locale
-     * @return
-     */
     public String getLangResource(String lang, Locale locale) {
         return getLangResource(lang, getResourceBundle(locale), locale);
     }
 
-    /**
-     * @param lang
-     * @param locale
-     * @return
-     */
     public String getLangResource(String lang, Map<String, String> resourceBundle, Locale locale) {
         String value = resourceBundle.get(lang);
         if (value == null) {

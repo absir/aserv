@@ -18,32 +18,14 @@ import javax.servlet.ServletResponse;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- */
 @Bean
 public class ParameterResovlerResponse implements ParameterResolver<Object> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.route.parameter.ParameterResolver#getParameter(int,
-     * java.lang.String[], java.lang.Class<?>[],
-     * java.lang.annotation.Annotation[][], java.lang.reflect.Method)
-     */
     @Override
     public Object getParameter(int i, String[] parameterNames, Class<?>[] parameterTypes, Annotation[][] annotations, Method method) {
         return ServletResponse.class.isAssignableFrom(parameterTypes[i]) ? Boolean.TRUE : null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.parameter.ParameterResolver#getParameterValue(
-     * com.absir.server.on.OnPut, java.lang.Object, java.lang.Class,
-     * java.lang.String, com.absir.server.route.RouteMethod)
-     */
     @Override
     public Object getParameterValue(OnPut onPut, Object parameter, Class<?> parameterType, String beanName, RouteMethod routeMethod) throws Exception {
         Input input = onPut.getInput();

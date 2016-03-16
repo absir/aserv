@@ -48,23 +48,11 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class EntityField extends DBField {
 
-    /**
-     * embedd
-     */
     protected boolean embedd;
 
-    /**
-     * @param name
-     * @param property
-     * @param editorObject
-     * @param joEntity
-     */
     public EntityField(String name, Property property, EditorObject editorObject, JoEntity joEntity) {
         // set properties
         crudField.setName(name);
@@ -445,12 +433,6 @@ public class EntityField extends DBField {
         }
     }
 
-    /**
-     * @param name
-     * @param joEntity
-     * @param fieldScope
-     * @param entityModel
-     */
     public static void addEntityFieldScope(String name, JoEntity joEntity, Collection<IField> fieldScope, EntityModel entityModel) {
         String identifierName = null;
         String entityName = joEntity.getEntityName();
@@ -541,11 +523,6 @@ public class EntityField extends DBField {
         }
     }
 
-    /**
-     * @param property
-     * @param editorObject
-     * @return
-     */
     private static boolean isTransientField(Property property, EditorObject editorObject) {
         if (editorObject != null) {
             if (editorObject.getEdit() != null) {
@@ -567,11 +544,6 @@ public class EntityField extends DBField {
         return true;
     }
 
-    /**
-     * @param property
-     * @param editorObject
-     * @return
-     */
     private static boolean isMappedByField(Property property, EditorObject editorObject) {
         OneToMany oneToMany = property.getAccessor().getAnnotation(OneToMany.class, true);
         ManyToMany manyToMany = property.getAccessor().getAnnotation(ManyToMany.class, true);
@@ -586,9 +558,6 @@ public class EntityField extends DBField {
         return true;
     }
 
-    /**
-     * @param cascadeTypes
-     */
     protected void setCrudCascadeTypes(CascadeType[] cascadeTypes) {
         if (cascadeTypes == null) {
             crudField.setCruds(CrudEntity.ALL);
@@ -617,10 +586,6 @@ public class EntityField extends DBField {
         }
     }
 
-    /**
-     * @param fieldType
-     * @return
-     */
     protected boolean typeFieldType(Class<?> fieldType) {
         if (Boolean.class.isAssignableFrom(fieldType) || boolean.class.isAssignableFrom(fieldType)) {
             types.add("option");
@@ -639,11 +604,6 @@ public class EntityField extends DBField {
         return true;
     }
 
-    /**
-     * @param validators
-     * @param fieldScope
-     * @param entityModel
-     */
     public void addEntityFieldScope(List<Validator> validators, Collection<IField> fieldScope, EntityModel entityModel) {
         // set validators
         if (validators != null) {

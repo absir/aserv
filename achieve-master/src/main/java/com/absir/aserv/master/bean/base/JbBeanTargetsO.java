@@ -15,10 +15,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- *
- */
 @MappedSuperclass
 public class JbBeanTargetsO extends JbBeanTargets implements JiActive {
 
@@ -40,61 +36,34 @@ public class JbBeanTargetsO extends JbBeanTargets implements JiActive {
     @JaEdit(groups = JaEdit.GROUP_LIST, types = "dateTime")
     private long passTime;
 
-    /**
-     * @return the serverId
-     */
     public long getServerId() {
         return serverId;
     }
 
-    /**
-     * @param serverId the serverId to set
-     */
     public void setServerId(long serverId) {
         this.serverId = serverId;
     }
 
-    /**
-     * @return the openId
-     */
     public long getOpenId() {
         return openId;
     }
 
-    /**
-     * @param openId
-     *            the openId to set
-     */
     public void setOpenId(long openId) {
         this.openId = openId;
     }
 
-    /**
-     * @return the beginTime
-     */
     public long getBeginTime() {
         return beginTime;
     }
 
-    /**
-     * @param beginTime
-     *            the beginTime to set
-     */
     public void setBeginTime(long beginTime) {
         this.beginTime = beginTime;
     }
 
-    /**
-     * @return the passTime
-     */
     public long getPassTime() {
         return passTime;
     }
 
-    /**
-     * @param passTime
-     *            the passTime to set
-     */
     public void setPassTime(long passTime) {
         this.passTime = passTime;
     }

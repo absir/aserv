@@ -11,19 +11,8 @@ import com.absir.aop.AopProxyHandler;
 
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- */
 public abstract class MethodThrowable extends MethodAdvice {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.advice.IMethodAdvice#before(com.absir.aserv.advice
-     * .AdviceInvoker, java.lang.Object, java.lang.reflect.Method,
-     * java.lang.Object[])
-     */
     @Override
     public Object before(AdviceInvoker invoker, Object proxy, Method method, Object[] args) throws Throwable {
         try {
@@ -34,12 +23,5 @@ public abstract class MethodThrowable extends MethodAdvice {
         }
     }
 
-    /**
-     * @param proxy
-     * @param returnValue
-     * @param method
-     * @param args
-     * @return
-     */
     public abstract Object advice(Object proxy, Method method, Object[] args, Throwable e) throws Throwable;
 }

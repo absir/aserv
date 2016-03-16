@@ -22,16 +22,9 @@ import org.hibernate.Session;
 
 import java.util.HashSet;
 
-/**
- * @author absir
- *
- */
 @Bean
 public class InitialTask {
 
-    /**
-     *
-     */
     @Started
     @Transaction(rollback = Throwable.class)
     protected void started() {
@@ -43,11 +36,6 @@ public class InitialTask {
         }
     }
 
-    /**
-     * @param id
-     * @param rolename
-     * @return
-     */
     private JUserRole inserUserRole(Long id, String rolename) {
         Session session = BeanDao.getSession();
         JUserRole userRole = BeanDao.get(session, JUserRole.class, id);
@@ -61,12 +49,6 @@ public class InitialTask {
         return userRole;
     }
 
-    /**
-     * @param username
-     * @param password
-     * @param userRole
-     * @param developer
-     */
     private void insertUser(String username, String password, JUserRole userRole, boolean developer) {
         JUser user = JUserDao.ME.findByUsername(username);
         if (user == null) {

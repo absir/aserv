@@ -36,34 +36,17 @@ import org.hibernate.proxy.HibernateProxy;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Configure
 public abstract class CrudUtils {
 
-    /**
-     * Entity_Name_Map_Crud_Entity
-     */
     private static final Map<JoEntity, CrudEntity> Jo_Entity_Map_Crud_Entity = new HashMap<JoEntity, CrudEntity>();
 
-    /**
-     * Jo_Entity_Map_Crud_Model
-     */
     private static final Map<JoEntity, DModel> Jo_Entity_Map_Crud_Model = new HashMap<JoEntity, DModel>();
 
-    /**
-     * Jo_Entity_Map_Crud_Fields
-     */
     private static final Map<String, String[]> Jo_Entity_Map_Crud_Fields = new HashMap<String, String[]>();
     private static Map<Class<? extends Enum>, Map<String, String[]>> enumMapMetaMap = new HashMap<Class<? extends Enum>, Map<String, String[]>>();
 
-    /**
-     * @param entityName
-     * @param entityClass
-     * @return
-     */
     public static JoEntity newJoEntity(String entityName, Class<?> entityClass) {
         if (entityName == null) {
             while (AopProxy.class.isAssignableFrom(entityClass) || HibernateProxy.class.isAssignableFrom(entityClass)) {
@@ -89,12 +72,6 @@ public abstract class CrudUtils {
         return new JoEntity(entityName, entityClass);
     }
 
-    /**
-     * @param joEntity
-     * @param entity
-     * @param filter
-     * @return
-     */
     public static Map<String, Object> crudRecord(JoEntity joEntity, Object entity, PropertyFilter filter) {
         if (entity == null) {
             return null;
@@ -137,13 +114,6 @@ public abstract class CrudUtils {
         return record;
     }
 
-    /**
-     * @param crud
-     * @param joEntity
-     * @param entity
-     * @param filter
-     * @param user
-     */
     public static void crud(JaCrud.Crud crud, Map<String, Object> crudRecord, JoEntity joEntity, Object entity,
                             PropertyFilter filter, final JiUserBase user) {
         CrudEntity crudEntity = getCrudEntity(joEntity);
@@ -178,11 +148,6 @@ public abstract class CrudUtils {
         crud(entity, crudEntity, crudInvoker);
     }
 
-    /**
-     * @param entity
-     * @param crudEntity
-     * @param crudInvoker
-     */
     protected static void crud(Object entity, CrudEntity crudEntity, CrudInvoker crudInvoker) {
         if (crudEntity != null) {
             PropertyFilter filter = crudInvoker.filter;
@@ -241,18 +206,10 @@ public abstract class CrudUtils {
         }
     }
 
-    /**
-     * @param joEntity
-     * @return
-     */
     public static Boolean getCrudFilter(JoEntity joEntity) {
         return getCrudModel(joEntity).isFilter();
     }
 
-    /**
-     * @param joEntity
-     * @return
-     */
     public static DModel getCrudModel(JoEntity joEntity) {
         DModel model = Jo_Entity_Map_Crud_Model.get(joEntity);
         if (model == null) {
@@ -283,10 +240,6 @@ public abstract class CrudUtils {
         return model;
     }
 
-    /**
-     * @param enumClass
-     * @return
-     */
     public static Map<String, String[]> getEnumMetaMap(Class<? extends Enum> enumClass) {
         Map<String, String[]> enumMap = enumMapMetaMap.get(enumClass);
         if (enumMap == null) {
@@ -307,11 +260,6 @@ public abstract class CrudUtils {
         return enumMap;
     }
 
-    /**
-     * @param joEntity
-     * @param group
-     * @return
-     */
     public static String[] getGroupFields(JoEntity joEntity, String group) {
         String crudFieldsKey = joEntity.getEntityName() + joEntity.getClass() + "/" + group;
         String[] fields = Jo_Entity_Map_Crud_Fields.get(crudFieldsKey);
@@ -340,10 +288,6 @@ public abstract class CrudUtils {
         return fields;
     }
 
-    /**
-     * @param joEntity
-     * @return
-     */
     public static CrudEntity getCrudEntity(JoEntity joEntity) {
         CrudEntity crudEntity = Jo_Entity_Map_Crud_Entity.get(joEntity);
         if (crudEntity != null) {
@@ -357,11 +301,6 @@ public abstract class CrudUtils {
         return crudEntity.isCrudEntityNone() ? null : crudEntity;
     }
 
-    /**
-     * @param joEntity
-     * @param name
-     * @return
-     */
     public static CrudProperty getCrudProperty(JoEntity joEntity, String name) {
         CrudEntity crudEntity = getCrudEntity(joEntity);
         if (crudEntity != null && crudEntity.crudProperties != null) {
@@ -375,11 +314,6 @@ public abstract class CrudUtils {
         return null;
     }
 
-    /**
-     * @param joEntity
-     * @param name
-     * @return
-     */
     public static CrudPropertyReference getCrudPropertyReference(JoEntity joEntity, String name) {
         CrudEntity crudEntity = getCrudEntity(joEntity);
         if (crudEntity != null && crudEntity.crudPropertyReferences != null) {
@@ -393,12 +327,6 @@ public abstract class CrudUtils {
         return null;
     }
 
-    /**
-     * @param joEntity
-     * @param fieldComponentTypes
-     * @param index
-     * @return
-     */
     protected static CrudEntity generateCrudEntity(JoEntity joEntity, Class<?>[] fieldComponentTypes, int index) {
         if (fieldComponentTypes != null && joEntity.getEntityClass() == KernelArray.get(fieldComponentTypes, index)) {
             return generateCrudEntity(joEntity);
@@ -407,10 +335,6 @@ public abstract class CrudUtils {
         return null;
     }
 
-    /**
-     * @param joEntity
-     * @return
-     */
     private static CrudEntity generateCrudEntity(JoEntity joEntity) {
         CrudEntity crudEntity = Jo_Entity_Map_Crud_Entity.get(joEntity);
         if (crudEntity != null) {
@@ -437,12 +361,6 @@ public abstract class CrudUtils {
         return crudEntity;
     }
 
-    /**
-     * @param joEntity
-     * @param crudEntity
-     * @param crudField
-     * @param entityClass
-     */
     private static void addCrudEntityProperty(JoEntity joEntity, CrudEntity crudEntity, JCrudField crudField, Class<?> entityClass) {
         ICrudProcessor crudProcessor = getCrudProcessor(joEntity, crudField);
         if (crudProcessor == null && crudField.getJoEntity() == null && crudField.getKeyJoEntity() == null) {
@@ -526,11 +444,6 @@ public abstract class CrudUtils {
         }
     }
 
-    /**
-     * @param joEntity
-     * @param crudField
-     * @return
-     */
     private static ICrudProcessor getCrudProcessor(JoEntity joEntity, JCrudField crudField) {
         if (crudField.getjCrud() == null) {
             return null;
@@ -541,154 +454,72 @@ public abstract class CrudUtils {
         return crudFactory == null ? null : crudFactory.getProcessor(joEntity, crudField);
     }
 
-    /**
-     * @author absir
-     */
     private static class CrudPropertyNone extends CrudProperty {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.crud.CrudProperty#getName()
-         */
         @Override
         public String getName() {
             return null;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.crud.CrudProperty#get(java.lang.Object)
-         */
         @Override
         public Object get(Object entity) {
             return null;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.crud.CrudProperty#set(java.lang.Object,
-         * java.lang.Object)
-         */
         @Override
         public void set(Object entity, Object propertyValue) {
         }
     }
 
-    /**
-     * @author absir
-     */
     private static class CrudPropertyName extends CrudProperty {
 
-        /**
-         * name
-         */
         private String name;
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.crud.CrudProperty#getName()
-         */
         @Override
         public String getName() {
             return name;
         }
-
-		/*
-         * (non-Javadoc)
-		 *
-		 * @see com.absir.aserv.crud.CrudProperty#get(java.lang.Object)
-		 */
 
         @Override
         public Object get(Object entity) {
             return ((Map) entity).get(name);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.crud.CrudProperty#set(java.lang.Object,
-         * java.lang.Object)
-         */
         @Override
         public void set(Object entity, Object propertyValue) {
             ((Map) entity).put(name, propertyValue);
         }
     }
 
-    /**
-     * @author absir
-     */
     private static class CrudPropertyAccessor extends CrudProperty {
 
-        /**
-         * name
-         */
         private String name;
 
-        /**
-         * accessor
-         */
         private Accessor accessor;
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.crud.CrudProperty#getName()
-         */
         @Override
         public String getName() {
             return name;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.crud.CrudProperty#get(java.lang.Object)
-         */
         @Override
         public Object get(Object entity) {
             return accessor.get(entity);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.crud.CrudProperty#set(java.lang.Object,
-         * java.lang.Object)
-         */
         @Override
         public void set(Object entity, Object propertyValue) {
             accessor.set(entity, propertyValue);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.crud.CrudProperty#getAccessor()
-         */
         @Override
         public Accessor getAccessor() {
             return accessor;
         }
     }
 
-    /**
-     * @author absir
-     */
     private static class CrudPropertyEntity extends CrudPropertyReference {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.crud.CrudPropertyReference#crud(java.lang.Object,
-         * com.absir.aserv.crud.CrudHandler.CrudInvoker)
-         */
         @Override
         protected void crud(Object entity, CrudInvoker crudInvoker) {
             if (KernelArray.contain(cruds, crudInvoker.crud)) {
@@ -700,19 +531,8 @@ public abstract class CrudUtils {
         }
     }
 
-
-    /**
-     * @author absir
-     */
     private static class CrudPropertyCollection extends CrudPropertyReference {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.crud.CrudPropertyReference#crud(java.lang.Object,
-         * com.absir.aserv.crud.CrudHandler.CrudInvoker)
-         */
         @Override
         protected void crud(Object entity, CrudInvoker crudInvoker) {
             if (KernelArray.contain(cruds, crudInvoker.crud)) {
@@ -732,18 +552,8 @@ public abstract class CrudUtils {
         }
     }
 
-    /**
-     * @author absir
-     */
     private static class CrudPropertyArray extends CrudPropertyReference {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.crud.CrudPropertyReference#crud(java.lang.Object,
-         * com.absir.aserv.crud.CrudHandler.CrudInvoker)
-         */
         @Override
         protected void crud(Object entity, CrudInvoker crudInvoker) {
             if (KernelArray.contain(cruds, crudInvoker.crud)) {
@@ -763,23 +573,10 @@ public abstract class CrudUtils {
         }
     }
 
-    /**
-     * @author absir
-     */
     protected static class CrudPropertyMap extends CrudPropertyReference {
 
-        /**
-         * keyCrudEntity
-         */
         protected CrudEntity keyCrudEntity;
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.crud.CrudPropertyReference#crud(java.lang.Object,
-         * com.absir.aserv.crud.CrudHandler.CrudInvoker)
-         */
         @Override
         protected void crud(Object entity, CrudInvoker crudInvoker) {
             if (KernelArray.contain(cruds, crudInvoker.crud)) {

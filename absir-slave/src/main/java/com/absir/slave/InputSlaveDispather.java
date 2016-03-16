@@ -26,20 +26,10 @@ import com.absir.slave.resolver.SlaveBufferResolver;
 
 import java.nio.channels.SocketChannel;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class InputSlaveDispather extends InDispatcher<InputSlaveAtt, SocketChannel> implements ISlaveCallback {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.client.SocketAdapter.CallbackAdapte#doWith(com.absir.client.
-     * SocketAdapter, int, byte[])
-     */
     @Override
     public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
         if (buffer.length > 1) {
@@ -61,54 +51,26 @@ public class InputSlaveDispather extends InDispatcher<InputSlaveAtt, SocketChann
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return 0;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.slave.ISlaveCallback#getCallbackIndex()
-     */
     @Override
     public int getCallbackIndex() {
         return 1;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.IDispatcher#getInMethod(java.lang.Object)
-     */
     @Override
     public InMethod getInMethod(InputSlaveAtt req) {
         return req.getMethod();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.IDispatcher#decodeUri(java.lang.String,
-     * java.lang.Object)
-     */
     @Override
     public String decodeUri(String uri, InputSlaveAtt req) {
         return uri;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.InDispatcher#input(java.lang.String,
-     * com.absir.server.in.InMethod, com.absir.server.in.InModel,
-     * java.lang.Object, java.lang.Object)
-     */
     @Override
     protected Input input(String uri, InMethod inMethod, InModel model, InputSlaveAtt req, SocketChannel res) {
         InputSlave input = new InputSlave(model, req, res);
@@ -116,13 +78,6 @@ public class InputSlaveDispather extends InDispatcher<InputSlaveAtt, SocketChann
         return input;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.in.InDispatcher#resolveReturnedValue(java.lang.Object,
-     * com.absir.server.on.OnPut)
-     */
     @Override
     public void resolveReturnedValue(Object routeBean, OnPut onPut) throws Throwable {
         if (onPut.getReturnValue() == null) {

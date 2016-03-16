@@ -7,14 +7,8 @@
  */
 package com.absir.aserv.game.value;
 
-/**
- * @author absir
- */
 public interface ILevelExp extends ILevel, IExp {
 
-    /**
-     * @param exp
-     */
     public void setExp(int exp);
 
 }

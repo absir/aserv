@@ -19,37 +19,19 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 public abstract class ConfigureUtils {
 
-    /**
-     * LOGGER
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigureUtils.class);
 
-    /**
-     * Configure_Class_Map_Bean
-     */
     private static Map<Class<? extends ConfigureBase>, ConfigureBase> Configure_Class_Map_Bean = new HashMap<Class<? extends ConfigureBase>, ConfigureBase>();
 
-    /**
-     * @param file
-     * @return
-     */
     public static Map<String, Object> readPropertyMap(File file) {
         Map<String, Object> propertyMap = new HashMap<String, Object>();
         BeanConfigImpl.readProperties(BeanFactoryUtils.getBeanConfig(), propertyMap, file, null);
         return BinderUtils.getDataMap(propertyMap);
     }
 
-    /**
-     * @param cls
-     * @return
-     */
     public <T extends ConfigureBase> T getConfigure(Class<T> cls) {
         T configure = (T) Configure_Class_Map_Bean.get(cls);
         if (configure == null) {
@@ -72,9 +54,6 @@ public abstract class ConfigureUtils {
         return configure;
     }
 
-    /**
-     * @param cls
-     */
     public <T extends ConfigureBase> void clearConfigure(Class<T> cls) {
         synchronized (cls) {
             Configure_Class_Map_Bean.remove(cls);

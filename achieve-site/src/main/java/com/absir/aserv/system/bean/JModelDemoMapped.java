@@ -7,9 +7,6 @@ import com.absir.orm.value.JaEntity;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
-/**
- * Created by absir on 16/2/5.
- */
 @JaEntity
 @Entity
 public class JModelDemoMapped extends JbBean {

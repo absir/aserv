@@ -12,21 +12,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JaNames {
 
-    /**
-     * @return
-     */
     public String value() default "";
 
-    /**
-     * @return
-     */
     public String key() default "";
 
 }

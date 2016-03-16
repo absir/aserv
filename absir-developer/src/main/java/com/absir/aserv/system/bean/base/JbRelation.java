@@ -19,16 +19,10 @@ public class JbRelation extends JbAssoc {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private long relateId;
 
-    /**
-     * @return the relateId
-     */
     public long getRelateId() {
         return relateId;
     }
 
-    /**
-     * @param relateId the relateId to set
-     */
     public void setRelateId(long relateId) {
         this.relateId = relateId;
     }

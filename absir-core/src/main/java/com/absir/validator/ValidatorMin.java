@@ -14,17 +14,9 @@ import com.absir.validator.value.Min;
 
 import java.util.Map;
 
-/**
- * @author absir
- */
 @Bean
 public class ValidatorMin extends PropertyResolverAbstract<ValidatorObject, Min> {
 
-    /**
-     * @param propertyObject
-     * @param min
-     * @return
-     */
     public ValidatorObject getPropertyObjectMin(ValidatorObject propertyObject, final int min) {
         if (propertyObject == null) {
             propertyObject = new ValidatorObject();
@@ -54,25 +46,11 @@ public class ValidatorMin extends PropertyResolverAbstract<ValidatorObject, Min>
         return propertyObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotation(ValidatorObject propertyObject, Min annotation) {
         return getPropertyObjectMin(propertyObject, annotation.value());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-     * (com.absir.property.PropertyObject, java.lang.String)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotationValue(ValidatorObject propertyObject, String annotationValue) {
         return getPropertyObjectMin(propertyObject, DynaBinder.to(annotationValue, int.class));

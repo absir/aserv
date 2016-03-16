@@ -17,35 +17,18 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @SuppressWarnings("serial")
 public class JoEntity implements Serializable {
 
-    /**
-     * Jo_Entity_Map_Token
-     */
     private static final Map<JoEntity, Object> Jo_Entity_Map_Token = new HashMap<JoEntity, Object>();
-    /**
-     * entityName
-     */
+
     private String entityName;
-    /**
-     * entityClass
-     */
+
     private Class<?> entityClass;
 
-    /**
-     *
-     */
     public JoEntity() {
     }
 
-    /**
-     * @param entityName
-     * @param entityClass
-     */
     public JoEntity(String entityName, Class<?> entityClass) {
         if (entityName == null) {
             entityClass = entityClass(entityClass);
@@ -60,10 +43,6 @@ public class JoEntity implements Serializable {
         this.entityClass = entityClass;
     }
 
-    /**
-     * @param entityClass
-     * @return
-     */
     public static Class<?> entityClass(Class<?> entityClass) {
         while (AopProxy.class.isAssignableFrom(entityClass) || HibernateProxy.class.isAssignableFrom(entityClass)) {
             entityClass = entityClass.getSuperclass();
@@ -72,66 +51,36 @@ public class JoEntity implements Serializable {
         return entityClass;
     }
 
-    /**
-     * @return the entityName
-     */
     public String getEntityName() {
         return entityName;
     }
 
-    /**
-     * @param entityName the entityName to set
-     */
     protected void setEntityName(String entityName) {
         this.entityName = entityName;
     }
 
-    /**
-     * @return the entityClass
-     */
     public Class<?> getEntityClass() {
         return entityClass;
     }
 
-    /**
-     * @param entityClass the entityClass to set
-     */
     protected void setEntityClass(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 
-    /**
-     * @return
-     */
     public Object getEntityToken() {
         return entityClass == null ? UtilAbsir.getToken(entityName, Jo_Entity_Map_Token) : entityClass;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return entityName + ":" + entityClass;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return KernelObject.hashCode(entityName) + KernelObject.hashCode(entityClass);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

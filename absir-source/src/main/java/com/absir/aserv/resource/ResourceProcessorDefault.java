@@ -21,32 +21,15 @@ import org.hibernate.Session;
 import java.io.File;
 import java.io.FileInputStream;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class ResourceProcessorDefault implements ResourceProcessor {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.resource.ResourceProcessor#supports(com.absir.aserv
-     * .resource.ResourceScanner)
-     */
     @Override
     public boolean supports(ResourceScanner scanner) {
         return scanner instanceof ResourceScannerDefault;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.resource.ResourceProcessor#supportsDirectory(java.io
-     * .File, com.absir.aserv.resource.ResourceScanner)
-     */
     @Override
     public boolean supportsDirectory(File directoryFile, ResourceScanner scanner) {
         Session session = BeanDao.getSession();
@@ -75,13 +58,6 @@ public class ResourceProcessorDefault implements ResourceProcessor {
         return modified;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.resource.ResourceProcessor#doProcessor(java.io.File,
-     * com.absir.aserv.resource.ResourceScanner)
-     */
     @Override
     public void doProcessor(File resourceFile, ResourceScanner scanner) {
         Session session = BeanDao.getSession();

@@ -26,10 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author absir
- *
- */
 @Base
 @Server
 public class api_master extends ApiMaster {

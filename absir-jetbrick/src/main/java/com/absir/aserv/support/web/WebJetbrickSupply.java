@@ -64,51 +64,28 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 @Basis
 @Bean
 public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
 
-    /**
-     * ECHO_NAME
-     */
     public static final String ECHO_NAME = WebJetbrickSupply.class.getName() + "@ECHO_NAME";
-    /**
-     * OUT_NAME
-     */
+
     public static final String OUT_NAME = WebJetbrickSupply.class.getName() + "@OUT_NAME";
-    /**
-     * userContextField
-     */
+
     protected static Field userContextField = KernelReflect.declaredField(ValueStack.class, "userContext");
-    /**
-     * engine
-     */
+
     private static JetEngine engine;
-    /**
-     * variableResolverBean
-     */
+
     private static VariableResolverBean variableResolverBean;
-    /**
-     * resourceLoaderRoot
-     */
+
     private static String resourceLoaderRoot;
-    /**
-     * highlightSpan
-     */
+
     @Value(value = "<span ${web.view.highlight}>")
     private static String highlightSpan = "<span class=\"highlight\">";
-    /**
-     * configures
-     */
+
     private Configure[] configures = Configure.values();
 
-    /**
-     * @return
-     */
     public static JetEngine getEngine() {
         if (engine == null) {
             Properties configProperties = new Properties();
@@ -145,9 +122,6 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         return engine;
     }
 
-    /**
-     * @return
-     */
     public static VariableResolverBean getVariableResolverBean() {
         if (variableResolverBean == null) {
             variableResolverBean = new VariableResolverBean(getEngine());
@@ -156,9 +130,6 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         return variableResolverBean;
     }
 
-    /**
-     * @return
-     */
     public static String getResourceLoaderRoot() {
         if (resourceLoaderRoot == null) {
             try {
@@ -182,11 +153,6 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         return resourceLoaderRoot;
     }
 
-    /**
-     * @param obj
-     * @param highlight
-     * @return
-     */
     @BaMethod
     public static Object highlight(Object obj, String highlight) {
         if (obj != null) {
@@ -196,26 +162,15 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         return obj;
     }
 
-    /**
-     * @param obj
-     */
     @BaMethod
     public static void voidValue(Object obj) {
     }
 
-    /**
-     * @param obj
-     * @return
-     * @throws IOException
-     */
     @BaMethod
     public static String jsonValue(Object obj) throws IOException {
         return HelperJson.encode(obj);
     }
 
-    /**
-     * @param obj
-     */
     @BaMethod
     public static void echoValue(Object obj) {
         if (obj != null) {
@@ -223,18 +178,11 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         }
     }
 
-    /**
-     * @return
-     */
     @BaFunction
     public static StringBuilder echo() {
         return echo(true);
     }
 
-    /**
-     * @param force
-     * @return
-     */
     @BaFunction
     public static StringBuilder echo(boolean force) {
         InterpretContext ctx = InterpretContext.current();
@@ -254,39 +202,21 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         }
     }
 
-    /**
-     *
-     */
     @BaFunction
     public static void clear() {
         InterpretContext.current().getValueStack().setLocal(ECHO_NAME, null);
     }
 
-    /**
-     * @return
-     * @throws IOException
-     */
     @BaFunction
     public static InterpretContext getContext() throws IOException {
         return InterpretContext.current();
     }
 
-    /**
-     * @param include
-     * @return
-     * @throws IOException
-     */
     @BaFunction
     public static String pagInclude(String include) throws IOException {
         return pagInclude(include, include);
     }
 
-    /**
-     * @param generate
-     * @param include
-     * @return
-     * @throws IOException
-     */
     @BaFunction
     public static String pagInclude(String generate, String include) throws IOException {
         InterpretContext ctx = InterpretContext.current();
@@ -294,10 +224,6 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         return Pag.getIncludeGen(generate, include, userContext, ctx.getValueStack().getValue(JetWebContext.REQUEST));
     }
 
-    /**
-     * @param ctx
-     * @throws IOException
-     */
     @BaFunction
     public static void echoClear(JetTagContext ctx) throws IOException {
         InterpretContext context = ctx.getInterpretContext();
@@ -309,19 +235,11 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         }
     }
 
-    /**
-     * @param ctx
-     * @throws IOException
-     */
     @BaTag
     public static void exp(JetTagContext ctx) throws IOException {
         ctx.invoke();
     }
 
-    /**
-     * @param ctx
-     * @throws IOException
-     */
     @BaTag
     public static void script(JetTagContext ctx) throws IOException {
         InterpretContext context = ctx.getInterpretContext();
@@ -332,10 +250,6 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         context.setWriter(originWriter);
     }
 
-    /**
-     * @param ctx
-     * @throws IOException
-     */
     @BaTag
     public static void scriptEcho(JetTagContext ctx) throws IOException {
         InterpretContext context = ctx.getInterpretContext();
@@ -346,10 +260,6 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         context.setWriter(originWriter);
     }
 
-    /**
-     * @param ctx
-     * @param name
-     */
     @BaTag
     public static void scenario(JetTagContext ctx, String name) {
         Object request = ctx.getValueStack().getValue(JetWebContext.REQUEST);
@@ -360,20 +270,11 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         }
     }
 
-    /**
-     * @param ctx
-     * @param file
-     */
     @BaTag
     public static void layout(JetTagContext ctx, String file) {
         layout(ctx, file, null);
     }
 
-    /**
-     * @param ctx
-     * @param file
-     * @param parameters
-     */
     @BaTag
     public static void layout(JetTagContext ctx, String file, Map<String, Object> parameters) {
         ctx.getValueStack().setLocal("bodyContent", ctx.getBodyContent());
@@ -381,20 +282,11 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         ctx.getInterpretContext().doIncludeCall(file, parameters, null);
     }
 
-    /**
-     * @param ctx
-     * @param file
-     */
     @BaTag
     public static void preLayout(JetTagContext ctx, String file) {
         preLayout(ctx, file, null);
     }
 
-    /**
-     * @param ctx
-     * @param file
-     * @param parameters
-     */
     @BaTag
     public static void preLayout(JetTagContext ctx, String file, Map<String, Object> parameters) {
         ctx.getValueStack().setLocal("bodyContent", new TagWrapper(ctx));
@@ -402,8 +294,6 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         ctx.getInterpretContext().doIncludeCall(file, parameters, null);
     }
 
-    /**
-     */
     @InjectOrder(1)
     @Started
     protected void startedEngine() {
@@ -416,12 +306,6 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.inject.IMethodSupport#getInject(com.absir.bean.basis.
-     * BeanScope , com.absir.bean.basis.BeanDefine, java.lang.reflect.Method)
-     */
     @Override
     public ConfigureFound getInject(BeanScope beanScope, BeanDefine beanDefine, Method method) {
         for (Configure configure : configures) {
@@ -437,14 +321,6 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.inject.IMethodSupport#getInjectInvoker(java.lang.Object,
-     * java.lang.reflect.Method, java.lang.reflect.Method, java.lang.Object,
-     * java.util.Map)
-     */
     @Override
     public InjectInvoker getInjectInvoker(ConfigureFound inject, Method method, Method beanMethod, Object beanObject,
                                           Map<Method, Set<Object>> methodMapInjects) {
@@ -452,19 +328,11 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         return null;
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @return
-     */
     public Object getter(Object obj, String name) {
         Accessor accessor = UtilAccessor.getAccessorObj(obj, name);
         return accessor == null ? null : accessor.get(obj);
     }
 
-    /**
-     * @author absir
-     */
     protected static enum Configure {
 
         METHOD {
@@ -521,54 +389,24 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
             }
         },;
 
-        /**
-         * @param method
-         * @return
-         */
         public abstract Object find(Method method);
 
-        /**
-         * @param found
-         * @return
-         */
         public abstract String findName(Object found);
 
-        /**
-         * @param name
-         * @param object
-         * @param webItSupply
-         */
         public abstract void process(String name, final Object object, Object found, final Method method,
                                      WebJetbrickSupply webItSupply);
     }
 
-    /**
-     * @author absir
-     */
     public static class TagWrapper {
 
-        /**
-         * context
-         */
         private JetTagContext context;
 
-        /**
-         * bodyContent
-         */
         private String bodyContent;
 
-        /**
-         * @param tagContext
-         */
         public TagWrapper(JetTagContext tagContext) {
             context = tagContext;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#toString()
-         */
         @Override
         public String toString() {
             if (bodyContent == null) {
@@ -579,25 +417,12 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         }
     }
 
-    /**
-     * @author absir
-     */
     protected class ConfigureFound {
 
-        /**
-         * jetbrickConfigure
-         */
         protected Configure configure;
 
-        /**
-         * found
-         */
         protected Object found;
 
-        /**
-         * @param object
-         * @param method
-         */
         protected void process(Object object, Method method) {
             String name = configure.findName(found);
             if (KernelString.isEmpty(name)) {

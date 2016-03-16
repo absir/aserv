@@ -30,78 +30,40 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author absir
- */
 public class SocketServer {
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(SocketServer.class);
-    /**
-     * acceptDebug
-     */
+
     protected static boolean acceptDebug;
-    /**
-     * closeDebug
-     */
+
     protected static boolean closeDebug;
-    /**
-     * sessionDelay
-     */
+
     private static long sessionDelay = 5000;
-    /**
-     * globalSelSessionMap
-     */
+
     private static ConcurrentHashMap<SocketChannel, SelSession> globalSelSessionMap;
-    /**
-     * keysField
-     */
+
     private static Field keysField;
-    /**
-     * selectionKeyOpt
-     */
+
     private static int selectionKeyOpt;
-    /**
-     * maxAcceptTime
-     */
+
     protected long maxAcceptTime;
-    /**
-     * maxIdleTime
-     */
+
     protected long maxIdleTime;
-    /**
-     * port
-     */
+
     protected int port;
-    /**
-     * serverSocket
-     */
+
     protected ServerSocketChannel serverSocketChannel;
-    /**
-     * serverSelector
-     */
+
     protected Selector serverSelector;
-    /**
-     * socketBufferResolver
-     */
+
     protected IBufferResolver socketBufferResolver;
-    /**
-     * socketSessionResolver
-     */
+
     protected ISessionResolver socketSessionResolver;
 
-    /**
-     * @return the sessionDelay
-     */
     public static final long getSessionDelay() {
         return sessionDelay;
     }
 
-    /**
-     * @param sessionDelay the sessionDelay to set
-     */
     public static void setSessionDelay(long sessionDelay) {
         if (sessionDelay < 1000) {
             sessionDelay = 1000;
@@ -110,19 +72,11 @@ public class SocketServer {
         SocketServer.sessionDelay = sessionDelay;
     }
 
-    /**
-     *
-     */
     public static synchronized void startSelSessionMap() {
         if (globalSelSessionMap == null) {
             globalSelSessionMap = new ConcurrentHashMap<SocketChannel, SelSession>();
             Thread globalSelectorThread = new Thread() {
 
-                /*
-                 * (non-Javadoc)
-                 *
-                 * @see java.lang.Thread#run()
-                 */
                 @Override
                 public void run() {
                     try {
@@ -180,27 +134,14 @@ public class SocketServer {
         }
     }
 
-    /**
-     * @param socketChannel
-     * @return
-     */
     public static SelSession forSession(SocketChannel socketChannel) {
         return globalSelSessionMap.get(socketChannel);
     }
 
-    /**
-     * @param selSession
-     * @throws Throwable
-     */
     public static void sessionClose(SelSession selSession) throws Throwable {
         sessionClose(selSession, selSession.getSocketChannel());
     }
 
-    /**
-     * @param selSession
-     * @param socketChannel
-     * @throws Throwable
-     */
     public static void sessionClose(SelSession selSession, SocketChannel socketChannel) throws Throwable {
         try {
             socketChannel.close();
@@ -224,16 +165,10 @@ public class SocketServer {
         }
     }
 
-    /**
-     * @return
-     */
     public static Collection<SelSession> allSelSession() {
         return globalSelSessionMap.values();
     }
 
-    /**
-     * @param server
-     */
     public static void closeAllSocketChannelServer(SocketServer server) {
         Entry<SocketChannel, SelSession> entry;
         SelSession selSession;
@@ -257,37 +192,22 @@ public class SocketServer {
         }
     }
 
-    /**
-     * @return the acceptDebug
-     */
     public static final boolean isAcceptDebug() {
         return acceptDebug;
     }
 
-    /**
-     * @param acceptDebug the acceptDebug to set
-     */
     public static void setAcceptDebug(boolean acceptDebug) {
         SocketServer.acceptDebug = acceptDebug;
     }
 
-    /**
-     * @return the closeDebug
-     */
     public static final boolean isCloseDebug() {
         return closeDebug;
     }
 
-    /**
-     * @param closeDebug the closeDebug to set
-     */
     public static void setCloseDebug(boolean closeDebug) {
         SocketServer.closeDebug = closeDebug;
     }
 
-    /**
-     * @param socketChannel
-     */
     public static void close(SocketChannel socketChannel) {
         try {
             if (globalSelSessionMap != null && socketChannel.isRegistered()) {
@@ -307,10 +227,6 @@ public class SocketServer {
         }
     }
 
-    /**
-     * @param selSession
-     * @param socketChannel
-     */
     public static void close(SelSession selSession, SocketChannel socketChannel) {
         if (selSession == null) {
             close(socketChannel);
@@ -328,19 +244,11 @@ public class SocketServer {
         }
     }
 
-    /**
-     * @param socketChannel
-     * @return
-     */
     public static SelectionKey selectionKey(SocketChannel socketChannel) {
         SelectionKey[] keys = selectionKeys(socketChannel);
         return keys == null || keys.length == 0 ? null : keys[0];
     }
 
-    /**
-     * @param socketChannel
-     * @return
-     */
     public static SelectionKey[] selectionKeys(SocketChannel socketChannel) {
         if (socketChannel.isRegistered()) {
             if (selectionKeyOpt < 0) {
@@ -364,16 +272,6 @@ public class SocketServer {
         return null;
     }
 
-    /**
-     * @param resolver
-     * @param socketChannel
-     * @param headerLength
-     * @param headerBytes
-     * @param bytes
-     * @param offset
-     * @param length
-     * @return
-     */
     public static byte[] getWriteByteBuffer(IBufferResolver resolver, SocketChannel socketChannel, int headerLength,
                                             byte[] headerBytes, byte[] bytes, int offset, int length) {
         byte[] headers = resolver.createByteHeader(headerLength);
@@ -405,51 +303,30 @@ public class SocketServer {
         return bytes;
     }
 
-    /**
-     * @return the port
-     */
     public int getPort() {
         return port;
     }
 
-    /**
-     * @return the serverSocketChannel
-     */
     public ServerSocketChannel getServerSocketChannel() {
         return serverSocketChannel;
     }
 
-    /**
-     * @return
-     */
     public boolean isClosed() {
         return serverSelector == null;
     }
 
-    /**
-     * @return the maxAcceptTime
-     */
     public long getMaxAcceptTime() {
         return maxAcceptTime;
     }
 
-    /**
-     * @return the maxIdleTime
-     */
     public long getMaxIdleTime() {
         return maxIdleTime;
     }
 
-    /**
-     * @return the socketBufferResolver
-     */
     public IBufferResolver getSocketBufferResolver() {
         return socketBufferResolver;
     }
 
-    /**
-     * @return the socketSessionResolver
-     */
     public ISessionResolver getSocketSessionResolver() {
         return socketSessionResolver;
     }

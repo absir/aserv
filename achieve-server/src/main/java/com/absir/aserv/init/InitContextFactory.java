@@ -15,16 +15,10 @@ import com.absir.core.kernel.KernelString;
 
 import javax.servlet.ServletContext;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class InitContextFactory extends InitBeanFactory {
 
-    /**
-     * @param servletContext
-     */
     @Inject(type = InjectType.Selectable)
     protected void setServletContext(ServletContext servletContext) {
         // 全局链接参数

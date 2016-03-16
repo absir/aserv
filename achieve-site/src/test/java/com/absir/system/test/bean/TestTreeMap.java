@@ -15,10 +15,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.Serializable;
 
-/**
- * @author absir
- *
- */
 public class TestTreeMap extends AbstractTest {
 
     @Test
@@ -35,11 +31,6 @@ public class TestTreeMap extends AbstractTest {
 
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.system.bean.proxy.JiBase#getId()
-         */
         @Override
         public String getId() {
             return "123";

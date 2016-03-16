@@ -12,12 +12,7 @@ import com.absir.core.base.Base;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 
-/**
- * @author absir
- *
- */
 @MappedSuperclass
 public abstract class JbBase extends Base<Serializable> {
-
 
 }

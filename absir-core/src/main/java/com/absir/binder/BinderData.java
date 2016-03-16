@@ -24,58 +24,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Inject
 public class BinderData extends DynaBinder {
 
-    /**
-     * binderSupply
-     */
     protected static BinderSupply binderSupply = BeanFactoryUtils.get(BinderSupply.class);
 
-    /**
-     * validatorSupply
-     */
     protected static ValidatorSupply validatorSupply = BeanFactoryUtils.get(ValidatorSupply.class);
 
-    /**
-     * binderResult
-     */
     private BinderResult binderResult = new BinderResult();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#getConverts()
-     */
     @Override
     public List<BinderConvert> getConverts() {
         return (List<BinderConvert>) converts;
     }
 
-    /**
-     * @return the binderResult
-     */
     public BinderResult getBinderResult() {
         return binderResult;
     }
 
-    /**
-     * @param binderResult the binderResult to set
-     */
     public void setBinderResult(BinderResult binderResult) {
         this.binderResult = binderResult;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#bindTo(java.lang.Object,
-     * java.lang.String, java.lang.reflect.Type)
-     */
     @Override
     protected Object bindTo(Object obj, String name, Type toType) {
         Object toObject = null;
@@ -98,11 +69,6 @@ public class BinderData extends DynaBinder {
         return toObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#newInstance(java.lang.Class)
-     */
     @Override
     protected <T> T newInstance(Class<T> toClass) {
         T toObj = super.newInstance(toClass);
@@ -113,24 +79,12 @@ public class BinderData extends DynaBinder {
         return toObj;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#nullTo(java.lang.Class,
-     * java.lang.Object)
-     */
     @Override
     protected <T> T nullTo(Class<T> toClass, Object obj) {
         addPropertyError("Fail to convert", obj);
         return KernelDyna.nullTo(toClass);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#bindTo(java.lang.Object,
-     * java.lang.String, java.lang.Class)
-     */
     @Override
     protected <T> T bindTo(Object obj, String name, Class<T> toClass) {
         Object toObject = null;
@@ -153,23 +107,11 @@ public class BinderData extends DynaBinder {
         return super.bindTo(obj, name, toClass);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#bindConvert(java.lang.Object,
-     * java.lang.String, java.lang.Class)
-     */
     @Override
     protected <T> T bindConvert(Object obj, String name, Class<T> toClass) {
         return bindConvert(obj, name, toClass, DynaBinder.INSTANCE.getConverts(), new BreakException[1]);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#mapBindConvert(java.util.Map,
-     * java.lang.String, java.lang.Class)
-     */
     @Override
     protected <T> T mapBindConvert(Map<?, ?> map, String name, Class<T> toClass) {
         BreakException[] breakExceptions = new BreakException[1];
@@ -181,12 +123,6 @@ public class BinderData extends DynaBinder {
         return toObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#mapBind(java.util.Map,
-     * java.lang.Object)
-     */
     @Override
     public void mapBind(Map<?, ?> map, Object toObject) {
         if (map == null) {
@@ -234,22 +170,12 @@ public class BinderData extends DynaBinder {
         }
     }
 
-    /**
-     * @param array
-     * @param name
-     * @param toClass
-     * @return
-     */
     public <T> T arrayBind(Object[] array, String name, Class<T> toClass) {
         T toObject = newInstance(toClass);
         arrayBind(array, toObject);
         return toObject;
     }
 
-    /**
-     * @param array
-     * @param toObject
-     */
     public void arrayBind(Object[] array, Object toObject) {
         if (array == null) {
             return;
@@ -290,12 +216,6 @@ public class BinderData extends DynaBinder {
         }
     }
 
-    /**
-     * @param value
-     * @param propertyData
-     * @param property
-     * @param toObject
-     */
     protected void bindValue(Object value, PropertyData propertyData, Property property, Object toObject) {
         value = binderSupply.bindValue(propertyData, value, null, this, property.getAccessor().get(toObject));
         try {
@@ -327,12 +247,6 @@ public class BinderData extends DynaBinder {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#bindArray(java.lang.Object,
-     * java.lang.String, java.lang.Class, java.lang.reflect.Type)
-     */
     @Override
     protected <T> T bindArray(Object obj, String name, Class<T> toClass, Type toType) {
         String propertyPath = binderResult.getPropertyPath();
@@ -341,13 +255,6 @@ public class BinderData extends DynaBinder {
         return toObj;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#bindCollection(java.lang.Object,
-     * java.lang.String, java.lang.Class, java.lang.reflect.Type,
-     * java.util.Collection)
-     */
     @Override
     protected <T extends Collection> T bindCollection(Object obj, String name, Class<T> toClass, Type toType, Collection toObject) {
         String propertyPath = binderResult.getPropertyPath();
@@ -356,13 +263,6 @@ public class BinderData extends DynaBinder {
         return toObj;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#bindMap(java.util.Map,
-     * java.lang.String, java.lang.String, java.lang.Class,
-     * java.lang.reflect.Type, java.lang.reflect.Type, java.util.Map)
-     */
     @Override
     protected <T extends Map> T bindMap(Map obj, String name, String keyName, Class<T> toClass, Type toType, Type keyType, Map toObject) {
         String propertyPath = binderResult.getPropertyPath();
@@ -371,30 +271,16 @@ public class BinderData extends DynaBinder {
         return toObj;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#bindArrayTo(int)
-     */
     @Override
     protected void bindArrayTo(int index) {
         binderResult.setPropertyPath(binderResult.getPropertyPath() + '[' + index + ']');
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#bindMapTo(java.lang.Object)
-     */
     @Override
     protected void bindMapTo(Object key) {
         binderResult.setPropertyPath(binderResult.getPropertyPath() + "['" + key + "']");
     }
 
-    /**
-     * @param errorMessage
-     * @param errorObject
-     */
     protected void addPropertyError(String errorMessage, Object errorObject) {
         PropertyError propertyError = new PropertyError();
         propertyError.setPropertyPath(binderResult.getPropertyPath());

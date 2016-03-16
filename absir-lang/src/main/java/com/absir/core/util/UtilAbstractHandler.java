@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-3-8 下午12:43:09
  */
 package com.absir.core.util;
@@ -12,17 +12,8 @@ import com.absir.core.kernel.KernelLang;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- */
 public abstract class UtilAbstractHandler implements InvocationHandler {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object,
-     * java.lang.reflect.Method, java.lang.Object[])
-     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
         String methodName = method.getName();
@@ -53,31 +44,14 @@ public abstract class UtilAbstractHandler implements InvocationHandler {
         return null;
     }
 
-    /**
-     * @param proxy
-     * @param arg
-     * @return
-     */
     protected boolean equals(Object proxy, Object arg) {
         return proxy.equals(arg);
     }
 
-    /**
-     * @param proxy
-     * @param methodName
-     * @param args
-     * @return
-     */
     protected Object invoke(Object proxy, String methodName, Object[] args) {
         return KernelLang.NULL_OBJECT;
     }
 
-    /**
-     * @param proxy
-     * @param method
-     * @param args
-     * @return
-     */
     protected Object invokeMethod(Object proxy, Method method, Object[] args) {
         return KernelLang.NULL_OBJECT;
     }

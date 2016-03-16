@@ -9,10 +9,6 @@ package com.absir.aserv.system.helper;
 
 import org.apache.commons.lang3.EnumUtils;
 
-/**
- * @author absir
- *
- */
 public class HelperEnum extends EnumUtils {
 
 }

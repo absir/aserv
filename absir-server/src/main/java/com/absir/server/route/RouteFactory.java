@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-12-20 上午10:50:39
  */
 package com.absir.server.route;
@@ -41,17 +41,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Basis
 @Bean
 public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMethodEntry<Object> {
 
-    /**
-     * ME
-     */
     public static final RouteFactory ME = BeanFactoryUtils.get(RouteFactory.class);
 
     @Inject
@@ -61,51 +55,26 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
     @Orders
     ParameterResolver[] parameterResolvers;
 
-    /**
-     * parameterResolverPath
-     */
     ParameterResolverPath parameterResolverPath = new ParameterResolverPath();
 
     @Inject(type = InjectType.Selectable)
     @Orders
     ReturnedResolver[] returnedResolvers;
 
-    /**
-     * methodMapRouteMethod
-     */
     private Map<Method, RouteMethod> methodMapRouteMethod = new HashMap<Method, RouteMethod>();
 
-    /**
-     * beanTypeMapRouteEntry
-     */
     private Map<Class<?>, RouteEntry> beanTypeMapRouteEntry = new HashMap<Class<?>, RouteEntry>();
 
-    /**
-     * @param method
-     * @return
-     */
     public static boolean isMethodServering(Method method) {
         return Modifier.isPublic(method.getModifiers()) && !(Modifier.isStatic(method.getModifiers())
                 || method.getName().charAt(0) == '_' || method.getAnnotation(Close.class) != null);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return -1;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanDefineSupply#getBeanDefines(com.absir.bean
-     * .core.BeanFactoryImpl, java.lang.Class)
-     */
     @Override
     public List<BeanDefine> getBeanDefines(BeanFactoryImpl beanFactory, Class<?> beanType) {
         if (!BeanDefineOriginal.isAbstractBeanType(beanType)) {
@@ -122,12 +91,6 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.inject.IMethodFactory#getMethod(java.lang.Class,
-     * java.lang.reflect.Method)
-     */
     @Override
     public Object getMethod(Class<?> beanType, Method method) {
         Before before = method.getAnnotation(Before.class);
@@ -148,12 +111,6 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.inject.IMethodEntry#setMethodEntry(java.lang.Object,
-     * java.lang.Class, java.lang.reflect.Method, java.lang.reflect.Method)
-     */
     @Override
     public void setMethodEntry(Object define, Class<?> beanType, Method beanMethod, Method method) {
         RouteEntry routeEntry = beanTypeMapRouteEntry.get(beanType);
@@ -189,10 +146,6 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
         }
     }
 
-    /**
-     * @param beanType
-     * @return
-     */
     protected RouteEntry getRouteEntry(Class<?> beanType) {
         RouteEntry routeEntry = beanTypeMapRouteEntry.get(beanType);
         if (routeEntry == null) {
@@ -218,25 +171,10 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
         return routeEntry;
     }
 
-    /**
-     * @param beanType
-     * @param beanMethod
-     * @param method
-     * @return
-     */
     protected RouteMethod getRouteMethod(Class<?> beanType, Method beanMethod, Method method) {
         return getRouteMethod(beanType, beanMethod, method, null, null, null);
     }
 
-    /**
-     * @param beanType
-     * @param beanMethod
-     * @param method
-     * @param parameterPathNames
-     * @param parameterPathIndexs
-     * @param parameterPathAnnotations
-     * @return
-     */
     protected RouteMethod getRouteMethod(Class<?> beanType, Method beanMethod, Method method,
                                          List<String> parameterPathNames, List<Integer> parameterPathIndexs,
                                          List<Annotation[]> parameterPathAnnotations) {
@@ -318,24 +256,10 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
         return routeMethod;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanFactoryAware#beforeRegister(com.absir.bean
-     * .core.BeanFactoryImpl)
-     */
     @Override
     public void beforeRegister(BeanFactoryImpl beanFactory) {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanFactoryAware#afterRegister(com.absir.bean.
-     * core.BeanFactoryImpl)
-     */
     @Override
     public void afterRegister(BeanFactoryImpl beanFactory) {
         List<BeanDefine> beanDefines = beanFactory.getBeanDefineList(RouteDefine.class);
@@ -437,12 +361,6 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
         routeMapping.getRouteAdapter().registerAllMatcher();
     }
 
-    /**
-     * @param beanObject
-     * @param beanDefine
-     * @param routeDefine
-     * @return
-     */
     protected RouteEntity getRouteEntity(final Object beanObject, final BeanDefine beanDefine,
                                          RouteDefine routeDefine) {
         if (routeDefine.getOnScope() == OnScope.MULTI) {

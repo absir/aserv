@@ -26,43 +26,22 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
-/**
- * @author absir
- */
 public class SocketAdapterSel extends SocketAdapter {
 
-    /**
-     * PIPED_STREAM_TIMEOUT
-     */
     public static final long PIPED_STREAM_TIMEOUT = 30000;
-    /**
-     * POST_BUFF_LEN
-     */
+
     public static final int POST_BUFF_LEN = 1024;
-    /**
-     * buffSize
-     */
+
     private static int buffSize = 1024;
-    /**
-     * selector
-     */
+
     private static Selector selector;
-    /**
-     * atom
-     */
+
     private static UtilAtom atom;
-    /**
-     * utilPipedStream
-     */
+
     private UtilPipedStream pipedStream;
-    /**
-     * utilActivePool
-     */
+
     private UtilActivePool activePool;
 
-    /**
-     * @param buffSize the buffSize to set
-     */
     public static void setBuffSize(int size) {
         if (size < 16) {
             size = 16;
@@ -71,9 +50,6 @@ public class SocketAdapterSel extends SocketAdapter {
         buffSize = size;
     }
 
-    /**
-     * @return
-     */
     protected static Selector getAdapterSelector() {
         if (selector == null) {
             try {
@@ -155,9 +131,6 @@ public class SocketAdapterSel extends SocketAdapter {
         return selector;
     }
 
-    /**
-     * @return
-     */
     public UtilPipedStream getPipedStream() {
         if (pipedStream == null) {
             pipedStream = new UtilPipedStream(PIPED_STREAM_TIMEOUT);
@@ -166,9 +139,6 @@ public class SocketAdapterSel extends SocketAdapter {
         return pipedStream;
     }
 
-    /**
-     * @return the activePool
-     */
     public UtilActivePool getActivePool() {
         if (activePool == null) {
             activePool = new UtilActivePool();
@@ -177,11 +147,6 @@ public class SocketAdapterSel extends SocketAdapter {
         return activePool;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.client.SocketAdapter#close()
-     */
     @Override
     public void close() {
         super.close();
@@ -195,11 +160,6 @@ public class SocketAdapterSel extends SocketAdapter {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.client.SocketAdapter#sendData(byte[], int, int)
-     */
     @Override
     public boolean sendData(byte[] buffer, int offset, int length) {
         Socket socket = getSocket();
@@ -227,20 +187,10 @@ public class SocketAdapterSel extends SocketAdapter {
         return super.sendData(buffer, offset, length);
     }
 
-    /**
-     * @param hashIndex
-     * @return
-     */
     protected NextOutputStream createNextOutputStream(int hashIndex) {
         return getPipedStream().createNextOutputStream(hashIndex);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.client.SocketAdapter#receiveCallback(int, byte[], byte,
-     * java.lang.Integer)
-     */
     @Override
     public void receiveCallback(int offset, byte[] buffer, byte flag, Integer callbackIndex) {
         if ((flag & STREAM_CLOSE_FLAG) != 0 && buffer.length == offset + 4) {
@@ -270,12 +220,6 @@ public class SocketAdapterSel extends SocketAdapter {
         super.receiveCallback(offset, buffer, flag, callbackIndex);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.client.SocketAdapter#receiveCallback(com.absir.client.
-     * SocketAdapter.CallbackAdapte, int, byte[], byte, java.lang.Integer)
-     */
     @Override
     public void receiveCallback(CallbackAdapte callbackAdapte, int offset, byte[] buffer, byte flag,
                                 Integer callbackIndex) {
@@ -336,11 +280,6 @@ public class SocketAdapterSel extends SocketAdapter {
         super.receiveCallback(callbackAdapte, offset, buffer, flag, callbackIndex);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.client.SocketAdapter#receiveSocketChannelStart()
-     */
     @Override
     public synchronized void receiveSocketChannelStart() {
         if (receiveStarted) {
@@ -362,10 +301,6 @@ public class SocketAdapterSel extends SocketAdapter {
         }
     }
 
-    /**
-     * @param socketChannel
-     * @throws IOException
-     */
     protected void registerSelector(SocketChannel socketChannel) throws IOException {
         socketChannel.configureBlocking(false);
         Selector selector = getAdapterSelector();
@@ -379,22 +314,10 @@ public class SocketAdapterSel extends SocketAdapter {
         }
     }
 
-    /**
-     * @return
-     */
     protected int getPostBuffLen() {
         return 1024;
     }
 
-    /**
-     * @param dataBytes
-     * @param head
-     * @param debug
-     * @param callbackIndex
-     * @param inputStream
-     * @param callbackTimeout
-     * @return
-     */
     protected RegisteredRunable sendStream(byte[] dataBytes, boolean head, boolean debug, final int callbackIndex,
                                            final InputStream inputStream, final CallbackTimeout callbackTimeout, final long timeout) {
         connect();
@@ -531,17 +454,8 @@ public class SocketAdapterSel extends SocketAdapter {
         }
     }
 
-    /**
-     * @author absir
-     */
     public static interface CallbackAdapteStream extends CallbackAdapte {
 
-        /**
-         * @param adapter
-         * @param offset
-         * @param buffer
-         * @param inputStream
-         */
         public void doWith(SocketAdapter adapter, int offset, byte[] buffer, InputStream inputStream);
     }
 

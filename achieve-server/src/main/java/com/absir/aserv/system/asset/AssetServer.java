@@ -9,9 +9,6 @@ package com.absir.aserv.system.asset;
 
 import com.absir.server.value.Mapping;
 
-/**
- * @author absir
- */
 @Mapping("/asset")
 public abstract class AssetServer {
 

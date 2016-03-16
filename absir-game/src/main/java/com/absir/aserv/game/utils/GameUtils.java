@@ -11,15 +11,9 @@ import com.absir.aserv.game.value.*;
 
 import java.util.List;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class GameUtils {
 
-    /**
-     * LEVEL_EXP_CXT
-     */
     static final LevelExpCxt LEVEL_EXP_CXT = new LevelExpCxt();
 
     /**
@@ -82,11 +76,6 @@ public abstract class GameUtils {
         return exp;
     }
 
-    /**
-     * @param iLevelExp
-     * @param iExps
-     * @param maxLevel
-     */
     public static void modifyExp(int exp, ILevelExp iLevelExp, List<? extends IExp> iExps, int maxLevel) {
         modifyExp(exp, iLevelExp, LEVEL_EXP_CXT, iExps, maxLevel);
     }

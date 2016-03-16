@@ -11,24 +11,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- */
 public abstract class ResourceScanner {
 
-    /**
-     * @return the scanPath
-     */
     public abstract String getScanPath();
 
-    /**
-     * @return the resourceProcessors
-     */
     public abstract List<ResourceProcessor> getResourceProcessors();
 
-    /**
-     *
-     */
     public final void startScanner() {
         if (getScanPath() == null || getResourceProcessors() == null) {
             return;
@@ -40,17 +28,10 @@ public abstract class ResourceScanner {
         }
     }
 
-    /**
-     * @param scanFile
-     */
     protected void doScanner(File scanFile) {
         scanDirectory(scanFile, getResourceProcessors());
     }
 
-    /**
-     * @param directory
-     * @param resourceProcessors
-     */
     private void scanDirectory(File directory, List<ResourceProcessor> resourceProcessors) {
         List<ResourceProcessor> directoryProcessors = null;
         for (ResourceProcessor resourceProcessor : resourceProcessors) {

@@ -23,39 +23,19 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 public class JConfigureBase implements IBase<Serializable> {
 
-    /**
-     * fieldMapConfigure
-     */
     protected transient Map<Field, JConfigure> fieldMapConfigure = new HashMap<Field, JConfigure>();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.base.IBase#getId()
-     */
     @Override
     public Serializable getId() {
         return 0;
     }
 
-    /**
-     * @param id
-     * @return
-     */
     protected String getIdentitier() {
         return InitBeanFactory.ME.getAppCode() + getClass().getName() + "@" + getId();
     }
 
-    /**
-     * @param value
-     * @param fieldType
-     * @return
-     */
     protected Object set(String value, Field field) {
         Class<? extends Serializable> identifierType = SessionFactoryUtils.getIdentifierType(null, field.getType(), SessionFactoryUtils.get().getSessionFactory());
         if (identifierType == null) {
@@ -66,18 +46,10 @@ public class JConfigureBase implements IBase<Serializable> {
         }
     }
 
-    /**
-     * @param fieldName
-     * @param locale
-     * @return
-     */
     protected String getFieldKey(String fieldName, Locale locale) {
         return fieldName + '@' + locale;
     }
 
-    /**
-     *
-     */
     public final void merge() {
         for (Entry<Field, JConfigure> entry : fieldMapConfigure.entrySet()) {
             JConfigure configure = entry.getValue();
@@ -87,9 +59,6 @@ public class JConfigureBase implements IBase<Serializable> {
         mergeConfigures(fieldMapConfigure.values());
     }
 
-    /**
-     * @param configure
-     */
     protected void mergeConfigures(Collection<JConfigure> configures) {
         BeanService.ME.mergers(configures);
     }

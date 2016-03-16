@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-6-13 下午2:27:29
  */
 package com.absir.bean.core;
@@ -25,65 +25,32 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 public class BeanFactoryImpl implements BeanFactory {
 
-    /**
-     * Instance
-     */
     private static BeanFactoryImpl Instance;
-    /**
-     * beanConfig
-     */
+
     private final BeanConfig beanConfig;
-    /**
-     * beanNameMapBeanDefine
-     */
+
     private final Map<String, BeanDefine> beanNameDefineMap;
-    /**
-     * beanDefineAwares
-     */
+
     private final List<IBeanDefineAware> beanDefineAwares;
-    /**
-     * beanObjectProcessors
-     */
+
     private final List<IBeanDefineProcessor> beanDefineProcessors;
-    /**
-     * beanObjectProcessors
-     */
+
     private final List<IBeanObjectProcessor> beanObjectProcessors;
-    /**
-     * beanSoftReferenceAwares
-     */
+
     private final List<IBeanSoftReferenceAware> beanSoftReferenceAwares;
-    /**
-     * beanSoftReferenceSet
-     */
+
     private final Set<BeanSoftReference> beanSoftReferenceSet = Collections
             .newSetFromMap(new ConcurrentHashMap<BeanSoftReference, Boolean>());
-    /**
-     * beanNameDefineMapStack
-     */
+
     private final Map<String, Stack<BeanDefine>> beanNameDefineMapStack = new ConcurrentHashMap<String, Stack<BeanDefine>>();
-    /**
-     * beanFactoryImpl
-     */
+
     private BeanFactoryImpl beanFactoryImpl;
-    /**
-     * beanSupplies
-     */
+
     private List<BeanSupply> beanSupplies;
 
-    /**
-     * @param beanConfig
-     * @param beanNameDefineMap
-     * @param beanDefineAwares
-     * @param beanObjectProcessors
-     * @param beanSoftReferenceAwares
-     */
     protected BeanFactoryImpl(BeanConfig beanConfig, ConcurrentHashMap<String, BeanDefine> beanNameDefineMap,
                               List<IBeanDefineAware> beanDefineAwares, List<IBeanDefineProcessor> beanDefineProcessors,
                               List<IBeanObjectProcessor> beanObjectProcessors, List<IBeanSoftReferenceAware> beanSoftReferenceAwares) {
@@ -97,17 +64,10 @@ public class BeanFactoryImpl implements BeanFactory {
         this.beanSoftReferenceAwares = beanSoftReferenceAwares;
     }
 
-    /**
-     * @return the Instance
-     */
     protected static BeanFactoryImpl getInstance() {
         return Instance;
     }
 
-    /**
-     * @param beanClass
-     * @return
-     */
     public static Class<?> getBeanType(Class<?> beanClass) {
         if (beanClass.isArray()) {
             return beanClass.getComponentType();
@@ -116,10 +76,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return beanClass;
     }
 
-    /**
-     * @param beanType
-     * @return
-     */
     public static Class<?> getBeanType(Type beanType) {
         Class<?> beanClass = KernelClass.rawClass(beanType);
         if (Collection.class.isAssignableFrom(beanClass)) {
@@ -138,9 +94,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return getBeanType(beanClass);
     }
 
-    /**
-     * @return
-     */
     public static BeanFactoryImpl getBeanFactoryImpl(BeanFactory beanFactory) {
         while (beanFactory != null) {
             if (beanFactory instanceof BeanFactoryImpl) {
@@ -158,11 +111,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return null;
     }
 
-    /**
-     * @param beanDefine
-     * @param beanDefineClass
-     * @return
-     */
     public static <T extends BeanDefine> T getBeanDefine(BeanDefine beanDefine, Class<T> beanDefineClass) {
         while (beanDefine != null) {
             if (beanDefineClass.isAssignableFrom(beanDefine.getClass())) {
@@ -179,11 +127,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return null;
     }
 
-    /**
-     * @param beanDefine
-     * @param define
-     * @return
-     */
     public static boolean containBeanDefine(BeanDefine beanDefine, BeanDefine define) {
         while (beanDefine != null) {
             if (beanDefine == define) {
@@ -201,9 +144,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return false;
     }
 
-    /**
-     * @param beanFactoryImpl the beanFactoryImpl to set
-     */
     public void setBeanFactoryImpl(BeanFactoryImpl beanFactoryImpl) {
         BeanFactoryImpl self = this;
         while (true) {
@@ -217,9 +157,6 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
-    /**
-     * @param beanSupply
-     */
     public void addBeanSupply(BeanSupply beanSupply) {
         if (beanSupplies == null) {
             beanSupplies = new ArrayList<BeanSupply>();
@@ -228,21 +165,11 @@ public class BeanFactoryImpl implements BeanFactory {
         beanSupplies.add(beanSupply);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanFactory#getBeanConfig()
-     */
     @Override
     public BeanConfig getBeanConfig() {
         return beanConfig;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanFactory#getBeanObject(java.lang.String)
-     */
     @Override
     public Object getBeanObject(String beanName) {
         BeanDefine beanDefine = getBeanDefine(beanName);
@@ -268,11 +195,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return beanFactoryImpl == null ? null : beanFactoryImpl.getBeanObject(beanName);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanFactory#getBeanObject(java.lang.Class)
-     */
     @Override
     public <T> T getBeanObject(Class<T> beanType) {
         Iterator<Entry<String, BeanDefine>> iterator = beanNameDefineMap.entrySet().iterator();
@@ -301,23 +223,11 @@ public class BeanFactoryImpl implements BeanFactory {
         return beanFactoryImpl == null ? null : beanFactoryImpl.getBeanObject(beanType);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanFactory#getBeanObject(java.lang.String,
-     * java.lang.Class)
-     */
     @Override
     public <T> T getBeanObject(String beanName, Class<T> beanType) {
         return getBeanObject(beanName, beanType, false);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanFactory#getBeanObject(java.lang.String,
-     * java.lang.Class, boolean)
-     */
     @Override
     public <T> T getBeanObject(String beanName, Class<T> beanType, boolean forcible) {
         if (beanType.isArray()) {
@@ -348,13 +258,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return (T) beanObject;
     }
 
-    /**
-     * @param beanObject
-     * @param beanName
-     * @param beanType
-     * @param max
-     * @return
-     */
     private Object getBeanObject(Object beanObject, String beanName, Class<?> beanType, float max) {
         Iterator<Entry<String, BeanDefine>> iterator = beanNameDefineMap.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -397,12 +300,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return beanObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanFactory#getBeanObject(java.lang.String,
-     * java.lang.reflect.Type, boolean)
-     */
     @Override
     public Object getBeanObject(String beanName, Type beanType, boolean forcible) {
         Class<?> beanClass = KernelClass.rawClass(beanType);
@@ -466,20 +363,11 @@ public class BeanFactoryImpl implements BeanFactory {
         return getBeanObject(beanName, beanClass, forcible);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanFactory#getBeanObjects(java.lang.Class)
-     */
     @Override
     public <T> List<T> getBeanObjects(Class<T> beanType) {
         return (List<T>) getBeanObjects(getBeanDefines(beanType), beanType);
     }
 
-    /**
-     * @param beanDefines
-     * @return
-     */
     private <T> List<T> getBeanObjects(List<BeanDefine> beanDefines, Class<T> beanType) {
         List<T> beanObjects = new ArrayList<T>();
         for (BeanDefine beanDefine : beanDefines) {
@@ -508,10 +396,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return beanObjects;
     }
 
-    /**
-     * @param beanDefineMap
-     * @return
-     */
     private Map<String, Object> getBeanObjectMap(Map<String, BeanDefine> beanDefineMap) {
         Iterator<Entry<String, BeanDefine>> iterator = beanDefineMap.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -542,10 +426,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return beanObjects;
     }
 
-    /**
-     * @param filter
-     * @param beanObjects
-     */
     private <T> void addBeanObjects(FilterTemplate<BeanDefine> filter, List<Object> beanObjects) {
         try {
             Iterator<Entry<String, BeanDefine>> iterator = beanNameDefineMap.entrySet().iterator();
@@ -571,12 +451,6 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanFactory#getBeanDefine(java.lang.String,
-     * java.lang.Class, boolean)
-     */
     @Override
     public BeanDefine getBeanDefine(String beanName, Class<?> beanType) {
         if (beanName != null) {
@@ -594,13 +468,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return getBeanDefine(null, beanName, beanType, -1.0f);
     }
 
-    /**
-     * @param beanObject
-     * @param beanName
-     * @param beanType
-     * @param max
-     * @return
-     */
     private BeanDefine getBeanDefine(BeanDefine beanObject, String beanName, Class<?> beanType, float max) {
         Iterator<Entry<String, BeanDefine>> iterator = beanNameDefineMap.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -626,12 +493,6 @@ public class BeanFactoryImpl implements BeanFactory {
                 : beanFactoryImpl.getBeanDefine(beanObject, beanName, beanType, max);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanFactory#getBeanDefines(java.lang.String,
-     * java.lang.Class, boolean)
-     */
     @Override
     public List<BeanDefine> getBeanDefines(Class<?> beanType) {
         List<BeanDefine> beanDefines = new ArrayList<BeanDefine>();
@@ -639,10 +500,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return beanDefines;
     }
 
-    /**
-     * @param beanType
-     * @param beanDefines
-     */
     private void addBeanDefines(Class<?> beanType, List<BeanDefine> beanDefines) {
         for (Entry<String, BeanDefine> entry : beanNameDefineMap.entrySet()) {
             BeanDefine beanDefine = entry.getValue();
@@ -656,20 +513,12 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
-    /**
-     * @param beanDefineClass
-     * @return
-     */
     public <T extends BeanDefine> List<BeanDefine> getBeanDefineList(Class<T> beanDefineClass) {
         List<BeanDefine> beanDefineList = new ArrayList<BeanDefine>();
         addBeanDefineList(beanDefineClass, beanDefineList);
         return beanDefineList;
     }
 
-    /**
-     * @param beanDefineClass
-     * @param beanDefineList
-     */
     private <T extends BeanDefine> void addBeanDefineList(Class<T> beanDefineClass, List<BeanDefine> beanDefineList) {
         for (Entry<String, BeanDefine> entry : beanNameDefineMap.entrySet()) {
             BeanDefine beanDefine = entry.getValue();
@@ -683,11 +532,6 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanFactory#getBeanDefines(java.lang.Class)
-     */
     @Override
     public Map<String, BeanDefine> getBeanDefineMap(Class<?> beanType) {
         Map<String, BeanDefine> beanDefineMap = new HashMap<String, BeanDefine>();
@@ -695,10 +539,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return beanDefineMap;
     }
 
-    /**
-     * @param beanType
-     * @param beanDefineMap
-     */
     public void addBeanDefineMap(Class<?> beanType, Map<String, BeanDefine> beanDefineMap) {
         Iterator<Entry<String, BeanDefine>> iterator = beanNameDefineMap.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -713,20 +553,12 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
-    /**
-     * @param filter
-     * @return
-     */
     public Map<String, BeanDefine> getBeanDefineMap(FilterTemplate<BeanDefine> filter) {
         Map<String, BeanDefine> beanDefineMap = new HashMap<String, BeanDefine>();
         addBeanDefines(filter, beanDefineMap);
         return beanDefineMap;
     }
 
-    /**
-     * @param filter
-     * @param beanDefineMap
-     */
     public void addBeanDefines(FilterTemplate<BeanDefine> filter, Map<String, BeanDefine> beanDefineMap) {
         try {
             Iterator<Entry<String, BeanDefine>> iterator = beanNameDefineMap.entrySet().iterator();
@@ -745,12 +577,6 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#getSoftReferenceBeans(java.lang.Class)
-     */
     @Override
     public <T> List<T> getSoftReferenceBeans(Class<T> beanType) {
         List<Object> beans = new ArrayList<Object>();
@@ -758,10 +584,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return (List<T>) beans;
     }
 
-    /**
-     * @param beanType
-     * @param beans
-     */
     private <T> void addSoftReferenceBeans(Class<T> beanType, List<Object> beans) {
         Iterator<BeanSoftReference> iterator = beanSoftReferenceSet.iterator();
         while (iterator.hasNext()) {
@@ -782,13 +604,6 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#getSoftReferenceBeans(com.absir.core
-     * .kernel.KernelLang.FilterTemplate)
-     */
     @Override
     public List<Object> getSoftReferenceBeans(FilterTemplate<Object> filter) {
         List<Object> beans = new ArrayList<Object>();
@@ -796,10 +611,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return beans;
     }
 
-    /**
-     * @param filter
-     * @param beans
-     */
     private <T> void addSoftReferenceBeans(FilterTemplate<Object> filter, List<Object> beans) {
         try {
             Iterator<BeanSoftReference> iterator = beanSoftReferenceSet.iterator();
@@ -824,13 +635,6 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#processBeanDefine(com.absir.bean.basis
-     * .BeanDefine)
-     */
     @Override
     public BeanDefine processBeanDefine(BeanDefine beanDefine) {
         BeanDefine define;
@@ -844,26 +648,11 @@ public class BeanFactoryImpl implements BeanFactory {
         return beanDefine;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#processBeanObject(com.absir.bean.basis
-     * .BeanScope, com.absir.bean.basis.BeanDefine, java.lang.Object)
-     */
     @Override
     public void processBeanObject(BeanScope beanScope, BeanDefine beanDefine, Object beanObject) {
         processBeanObject(beanScope, beanDefine, beanObject, null);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#processBeanObject(com.absir.bean.basis
-     * .BeanScope, com.absir.bean.basis.BeanDefine, java.lang.Object,
-     * java.lang.Object)
-     */
     @Override
     public void processBeanObject(BeanScope beanScope, BeanDefine beanDefine, Object beanObject, Object beanProxy) {
         if (beanObject == null) {
@@ -887,47 +676,21 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#registerBeanObject(java.lang.Object)
-     */
     @Override
     public BeanDefine registerBeanObject(Object beanObject) {
         return registerBeanObject(null, beanObject);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#registerBeanObject(java.lang.String,
-     * java.lang.Object)
-     */
     @Override
     public BeanDefine registerBeanObject(String beanName, Object beanObject) {
         return registerBeanObject(beanName, BeanScope.SINGLETON, beanObject);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#registerBeanObject(java.lang.String,
-     * com.absir.bean.basis.BeanScope, java.lang.Object)
-     */
     @Override
     public BeanDefine registerBeanObject(String beanName, BeanScope beanScope, Object beanObject) {
         return registerBeanObject(beanObject.getClass(), beanName, beanScope, beanObject);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanFactory#registerBeanObject(java.lang.Class,
-     * java.lang.String, com.absir.bean.basis.BeanScope, java.lang.Object)
-     */
     @Override
     public BeanDefine registerBeanObject(Class<?> beanType, String beanName, BeanScope beanScope, Object beanObject) {
         if (beanType == null || !beanType.isAssignableFrom(beanObject.getClass())) {
@@ -1070,46 +833,21 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#unRegisterBeanObject(java.lang.Object)
-     */
     @Override
     public void unRegisterBeanObject(Object beanObject) {
         unRegisterBeanObjectAll(null, beanObject);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#unRegisterBeanObject(java.lang.String)
-     */
     @Override
     public void unRegisterBeanObject(String beanName) {
         unRegisterBeanDefine(beanName, null, null);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#unRegisterBeanObject(java.lang.String,
-     * java.lang.Object)
-     */
     @Override
     public void unRegisterBeanObject(String beanName, Object beanObject) {
         unRegisterBeanDefine(beanName, beanObject, null);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#unRegisterBeanType(java.lang.Class<?>[])
-     */
     @Override
     public void unRegisterBeanType(Class<?>... beanTypes) {
         if (beanTypes.length == 0) {
@@ -1127,13 +865,6 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#unRegisterWithoutBeanType(java.lang.
-     * Class[])
-     */
     @Override
     public void unRegisterWithoutBeanType(Class<?>... beanTypes) {
         if (beanTypes.length == 0) {
@@ -1254,12 +985,6 @@ public class BeanFactoryImpl implements BeanFactory {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.basis.BeanFactory#registerBeanSoftObject(java.lang.Object)
-     */
     @Override
     public void registerBeanSoftObject(Object beanObject) {
         if (!beanSoftReferenceSet.contains(beanObject)) {
@@ -1278,12 +1003,6 @@ public class BeanFactoryImpl implements BeanFactory {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanFactory#unRegisterBeanSoftObject(java.lang.
-     * Object )
-     */
     @Override
     public void unRegisterBeanSoftObject(Object beanObject) {
         unRegisterBeanSoftReference(beanObject);

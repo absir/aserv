@@ -14,20 +14,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- */
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Value {
 
-    /**
-     * @return
-     */
     String value() default "";
 
-    /**
-     * @return
-     */
     String defaultValue() default KernelLang.NULL_STRING;
 }

@@ -18,9 +18,6 @@ import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class OObject<T extends OObject> implements JiBase {
 
@@ -54,86 +51,50 @@ public abstract class OObject<T extends OObject> implements JiBase {
     // 对象编号
     private Serializable id;
 
-    /**
-     * @param id
-     */
     public OObject(Serializable id) {
         this.id = id;
     }
 
-    /**
-     * @return the id
-     */
     public Serializable getId() {
         return id;
     }
 
-    /**
-     * @return the frozen
-     */
     public boolean isFrozen() {
         return frozen;
     }
 
-    /**
-     * @param frozen the frozen to set
-     */
     public void setFrozen(boolean frozen) {
         this.frozen = frozen;
     }
 
-    /**
-     * @return the invincible
-     */
     public boolean isInvincible() {
         return invincible;
     }
 
-    /**
-     * @param invincible the invincible to set
-     */
     public void setInvincible(boolean invincible) {
         this.invincible = invincible;
     }
 
-    /**
-     * @return the target
-     */
     public T getTarget() {
         return target;
     }
 
-    /**
-     * @param target the target to set
-     */
     public void setTarget(T target) {
         this.target = target;
     }
 
-    /**
-     * @return the hp
-     */
     public int getHp() {
         return hp;
     }
 
-    /**
-     * @param hp the hp to set
-     */
     protected void setHp(int hp) {
         this.hp = hp;
     }
 
-    /**
-     * @return the maxHp
-     */
     public int getMaxHp() {
         return maxHp;
     }
 
-    /**
-     * @param maxHp the maxHp to set
-     */
     public void setMaxHp(int maxHp) {
         if (maxHp != this.maxHp) {
             addReportDetail(null, MAX_HP, maxHp);
@@ -141,23 +102,14 @@ public abstract class OObject<T extends OObject> implements JiBase {
         }
     }
 
-    /**
-     * @return the atk
-     */
     public int getAtk() {
         return atk;
     }
 
-    /**
-     * @param atk the atk to set
-     */
     public void setAtk(int atk) {
         this.atk = atk;
     }
 
-    /**
-     * @return the buffs
-     */
     public Queue<OBuff> getBuffs() {
         return buffs;
     }
@@ -192,11 +144,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
         }
     }
 
-    /**
-     * @param iterator
-     * @param oBuff
-     * @param result
-     */
     protected final void buffResult(Iterator<OBuff> iterator, OBuff oBuff, IResult result) {
         if (result.isDone()) {
             result.setDone(false);
@@ -314,13 +261,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
         return damage;
     }
 
-    /**
-     * @param from
-     * @param atk
-     * @param damageFrom
-     * @param result
-     * @return
-     */
     public final int damage(T from, int atk, Object damageFrom, IResult result) {
         // 防御BUFF
         if (buffs != null) {
@@ -470,12 +410,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
         return treat;
     }
 
-    /**
-     * @param hp
-     * @param hpFrom
-     * @param result
-     * @return
-     */
     public final int treat(int hp, Object hpFrom, IResult result) {
         // 治疗收益BUFF
         if (buffs != null) {
@@ -496,11 +430,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
         return treat(hp, result);
     }
 
-    /**
-     * @param hp
-     * @param result
-     * @return
-     */
     public final int treat(int hp, IResult result) {
         if (hp < 0) {
             return 0;

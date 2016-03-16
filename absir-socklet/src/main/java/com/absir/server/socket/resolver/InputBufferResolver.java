@@ -11,17 +11,10 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 
-/**
- * @author absir
- *
- */
 @Base
 @Bean
 public class InputBufferResolver extends SocketBufferResolver {
 
-    /**
-     * ME
-     */
     public static final InputBufferResolver ME = BeanFactoryUtils.get(InputBufferResolver.class);
 
 }

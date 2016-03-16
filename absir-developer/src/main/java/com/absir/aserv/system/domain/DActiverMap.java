@@ -15,20 +15,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- *
- */
 public abstract class DActiverMap<T extends IBase<? extends Serializable>, K> {
 
-    /**
-     * onlineActiveContexts
-     */
     private Map<Serializable, K> onlineActiveContexts;
 
-    /**
-     *
-     */
     public DActiverMap() {
         onlineActiveContexts = createActiveContexts();
         if (onlineActiveContexts == null) {
@@ -36,58 +26,26 @@ public abstract class DActiverMap<T extends IBase<? extends Serializable>, K> {
         }
     }
 
-    /**
-     * @return the onlineActiveContexts
-     */
     public Map<Serializable, K> getOnlineActiveContexts() {
         return onlineActiveContexts;
     }
 
-    /**
-     * @return
-     */
     protected abstract Map<Serializable, K> createActiveContexts();
 
-    /**
-     * @return
-     */
     protected Map<Serializable, K> createActiveContextMap() {
         return new LinkedHashMap<Serializable, K>();
     }
 
-    /**
-     * @param activeContext
-     * @return
-     */
     protected abstract boolean isClosed(K activeContext);
 
-    /**
-     * @param active
-     * @return
-     */
     protected abstract K createActiveContext(T active);
 
-    /**
-     * @param active
-     * @param activeContext
-     * @return
-     */
     protected abstract K updateActiveContext(T active, K activeContext);
 
-    /**
-     * @param id
-     * @param activeContext
-     */
     protected abstract void closeActiveContext(Serializable id, K activeContext);
 
-    /**
-     * @param hasClosed
-     */
     protected abstract void reloadAllActiveContext(boolean hasClosed);
 
-    /**
-     * @param actives
-     */
     public void setActives(Collection<T> actives) {
         boolean hasClosed = false;
         Map<Serializable, K> onlineActiveContextMap = createActiveContextMap();
@@ -127,9 +85,6 @@ public abstract class DActiverMap<T extends IBase<? extends Serializable>, K> {
         reloadAllActiveContext(hasClosed);
     }
 
-    /**
-     * @param onlineActiveContextMap
-     */
     public void setActiveContextMap(Map<Serializable, K> onlineActiveContextMap) {
         onlineActiveContexts = onlineActiveContextMap;
     }

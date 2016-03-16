@@ -15,18 +15,10 @@ import com.absir.validator.value.ValidatorIngore;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class ValidatorSupply extends PropertySupply<ValidatorObject, List<Validator>> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.property.PropertySupply#getIngoreAnnotationClass()
-     */
     @Override
     public Class<? extends Annotation> getIngoreAnnotationClass() {
         return ValidatorIngore.class;

@@ -21,29 +21,15 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.nio.channels.SocketChannel;
 
-/**
- * @author absir
- */
 public class InputSlave extends InputSocket {
 
-    /**
-     * socketAdapter
-     */
     protected SocketAdapter socketAdapter;
 
-    /**
-     * @param model
-     * @param inputSocketAtt
-     */
     public InputSlave(InModel model, InputSlaveAtt inputSocketAtt, SocketChannel socketChannel) {
         super(model, inputSocketAtt, inputSocketAtt.socketAdapter.getSocket().getChannel());
         this.socketAdapter = inputSocketAtt.socketAdapter;
     }
 
-    /**
-     * @param input
-     * @return
-     */
     public static boolean onAuthentication(Input input) {
         if (input instanceof InputSlave) {
             return true;
@@ -70,56 +56,28 @@ public class InputSlave extends InputSocket {
         return false;
     }
 
-    /**
-     * @return the socketAdapter
-     */
     public SocketAdapter getSocketAdapter() {
         return socketAdapter;
     }
 
-    /**
-     * @param socketAdapter the socketAdapter to set
-     */
     public void setSocketAdapter(SocketAdapter socketAdapter) {
         this.socketAdapter = socketAdapter;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.socket.InputSocket#writeFlag(byte)
-     */
     @Override
     protected byte writeFlag(byte flag) {
         return (byte) (super.writeFlag(flag) | SocketAdapter.RESPONSE_FLAG);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.socket.InputSocketImpl#getSocketBufferResolver()
-     */
     @Override
     public SocketBufferResolver getSocketBufferResolver() {
         return SlaveBufferResolver.ME;
     }
 
-    /**
-     * @author absir
-     */
     public static class InputSlaveAtt extends InputSocketAtt {
 
-        /**
-         * socketAdapter
-         */
         protected SocketAdapter socketAdapter;
 
-        /**
-         * @param id
-         * @param buffer
-         * @param inputStream
-         * @param socketAdapter
-         */
         public InputSlaveAtt(Serializable id, byte[] buffer, InputStream inputStream, SocketAdapter socketAdapter) {
             super(id, buffer, 5, null, inputStream);
             this.socketAdapter = socketAdapter;

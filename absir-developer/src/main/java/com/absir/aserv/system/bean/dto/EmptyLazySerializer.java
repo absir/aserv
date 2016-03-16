@@ -15,19 +15,8 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.io.IOException;
 
-/**
- * @author absir
- *
- */
 public class EmptyLazySerializer extends JsonSerializer<Object> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.codehaus.jackson.map.JsonSerializer#serialize(java.lang.Object,
-     * org.codehaus.jackson.JsonGenerator,
-     * org.codehaus.jackson.map.SerializerProvider)
-     */
     @Override
     public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
         if (value == null || value instanceof HibernateProxy) {

@@ -18,19 +18,12 @@ import com.absir.server.in.Input;
 import com.absir.server.value.*;
 import com.absir.servlet.InputRequest;
 
-/**
- * @author absir
- *
- */
 @Base(environment = Environment.DEVELOP)
 @Interceptors(TransactionIntercepter.class)
 @Mapping("/developer")
 @Server
 public class Developer_route {
 
-    /**
-     * @return
-     */
     @Body
     public Object route(Input input) {
         if (input instanceof InputRequest) {
@@ -40,19 +33,12 @@ public class Developer_route {
         return BeanFactoryUtils.getBeanConfig().getClassPath();
     }
 
-    /**
-     * @param hql
-     * @return
-     */
     @Body
     public Object update(@Param String hql, Input input) {
         TransactionIntercepter.open(input, "", BeanService.TRANSACTION_READ_WRITE);
         return BeanDao.getSession().createQuery(hql).executeUpdate();
     }
 
-    /**
-     * @param hql
-     */
     @Body
     @Transaction(readOnly = true)
     public Object list(@Param String hql, Input input) {

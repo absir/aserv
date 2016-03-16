@@ -13,37 +13,17 @@ import org.hibernate.*;
 import org.hibernate.context.spi.CurrentSessionContext;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "serial"})
 public class JSessionContext implements CurrentSessionContext, ISessionContext {
 
-    /**
-     * sessionFactory
-     */
     private SessionFactoryImplementor sessionFactory;
 
-    /**
-     * transactionContext
-     */
     private JTransactionContext transactionContext;
 
-    /**
-     * @param sessionFactory
-     */
     public JSessionContext(SessionFactoryImplementor sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
-    /**
-     * @param sessionFactory
-     * @param transactionAttributeBefore
-     * @param transactionAttribute
-     * @param jTransactionSession
-     * @return
-     */
     public static ISessionHolder open(SessionFactory sessionFactory, ISessionHolder sessionHolder, TransactionAttribute transactionAttribute, final JTransactionSession jTransactionSession) {
         TransactionHolder transactionHolder = new TransactionHolder(sessionHolder, transactionAttribute) {
 
@@ -129,11 +109,6 @@ public class JSessionContext implements CurrentSessionContext, ISessionContext {
         return transactionHolder;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.context.spi.CurrentSessionContext#currentSession()
-     */
     @Override
     public Session currentSession() throws HibernateException {
         if (transactionContext == null) {
@@ -150,11 +125,6 @@ public class JSessionContext implements CurrentSessionContext, ISessionContext {
         return session == null ? null : session.getSession();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.orm.transaction.ISessionContext#get(java.lang.String)
-     */
     @Override
     public TransactionContext get(String name) {
         if (transactionContext == null) {
@@ -164,14 +134,6 @@ public class JSessionContext implements CurrentSessionContext, ISessionContext {
         return transactionContext;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.orm.transaction.ISessionContext#open(com.absir.orm.transaction
-     * .ISessionHolder, com.absir.orm.transaction.TransactionAttribute,
-     * com.absir.orm.transaction.TransactionSession)
-     */
     @Override
     public ISessionHolder open(ISessionHolder sessionHolder, TransactionAttribute transactionAttribute, TransactionSession transactionSession) {
         return open(sessionFactory, sessionHolder, transactionAttribute, (JTransactionSession) transactionSession);

@@ -11,15 +11,8 @@ import com.absir.aserv.system.bean.base.JbStragety;
 
 import javax.persistence.Entity;
 
-/**
- * @author absir
- *
- */
 public interface JpStrategy {
 
-    /**
-     * @author absir
-     */
     @Entity
     class Strategy extends JbStragety {
 

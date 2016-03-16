@@ -14,10 +14,6 @@ import com.absir.aserv.system.bean.value.JaLang;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- *
- */
 @MappedSuperclass
 public class JbVerifier extends JbBase implements JiPass {
 
@@ -30,35 +26,19 @@ public class JbVerifier extends JbBase implements JiPass {
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
     private long passTime;
 
-    /**
-     * @return the id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.bean.proxy.JiPass#getPassTime()
-     */
     @Override
     public long getPassTime() {
         return passTime;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.bean.proxy.JiPass#setPassTime(long)
-     */
     @Override
     public void setPassTime(long passTime) {
         this.passTime = passTime;

@@ -9,14 +9,7 @@ package com.absir.aserv.system.bean.proxy;
 
 import java.util.Collection;
 
-/**
- * @author absir
- *
- */
 public interface JiTree<T> {
 
-    /**
-     * @return
-     */
     public Collection<T> getChildren();
 }

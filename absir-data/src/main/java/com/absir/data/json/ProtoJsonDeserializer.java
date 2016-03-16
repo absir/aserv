@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年11月6日 下午4:11:30
  */
 package com.absir.data.json;
@@ -17,31 +17,14 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
 
-/**
- * @author absir
- */
 public class ProtoJsonDeserializer<T extends IProto> extends JsonDeserializer<T> {
 
-    /**
-     * sClass
-     */
     private Class<T> sClass;
 
-    /**
-     * @param sClass
-     */
     public ProtoJsonDeserializer(Class<T> sClass) {
         this.sClass = sClass;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml
-     * .jackson.core.JsonParser,
-     * com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public T deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
         Object ob = jp.getEmbeddedObject();

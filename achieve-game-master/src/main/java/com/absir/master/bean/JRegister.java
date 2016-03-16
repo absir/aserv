@@ -23,9 +23,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.io.Serializable;
 
-/**
- * @author absir
- */
 @SuppressWarnings("serial")
 @MaEntity(parent = {@MaMenu("账号管理")}, name = "注册")
 @Entity
@@ -53,72 +50,42 @@ public class JRegister extends JbBase implements Serializable {
     @JaLang("平台用户编号")
     private long platformUserId;
 
-    /**
-     * @return the id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * @return the password
-     */
     public String getPassword() {
         return password;
     }
 
-    /**
-     * @param password the password to set
-     */
     public void setPassword(String password) {
         this.password = password;
     }
 
-    /**
-     * @return the salt
-     */
     public String getSalt() {
         return salt;
     }
 
-    /**
-     * @param salt the salt to set
-     */
     public void setSalt(String salt) {
         this.salt = salt;
     }
 
-    /**
-     * @return the email
-     */
     public String getEmail() {
         return email;
     }
 
-    /**
-     * @param email the email to set
-     */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /**
-     * @return the platformUserId
-     */
     public long getPlatformUserId() {
         return platformUserId;
     }
 
-    /**
-     * @param platformUserId the platformUserId to set
-     */
     public void setPlatformUserId(long platformUserId) {
         this.platformUserId = platformUserId;
     }

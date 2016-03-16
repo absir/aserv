@@ -28,25 +28,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- *
- */
 public abstract class ActiveService<T extends JiActive, K> extends ContextService implements IEntityMerge<T> {
 
-    /**
-     * TYPE_VARIABLE
-     */
     public static final TypeVariable<?> TYPE_VARIABLE = ActiveService.class.getTypeParameters()[0];
 
-    /**
-     * activer
-     */
     protected DActiver<T> activer;
 
-    /**
-     * activerMap
-     */
     protected DActiverMap<T, K> activerMap;
 
     /**
@@ -79,56 +66,25 @@ public abstract class ActiveService<T extends JiActive, K> extends ContextServic
         }
     }
 
-    /**
-     * @return
-     */
     protected abstract ActiveService<T, K> getInstance();
 
-    /**
-     * @return
-     */
     protected Map<Serializable, K> createActiveContexts() {
         return null;
     }
 
-    /**
-     * @param activeContext
-     * @return
-     */
     protected abstract boolean isClosed(K activeContext);
 
-    /**
-     * @param active
-     * @return
-     */
     protected abstract K createActiveContext(T active);
 
-    /**
-     * @param active
-     * @param activeContext
-     * @return
-     */
     protected K updateActiveContext(T active, K activeContext) {
         return activeContext;
     }
 
-    /**
-     * @param id
-     * @param activeContext
-     */
     protected abstract void closeActiveContext(Serializable id, K activeContext);
 
-    /**
-     * @param hasClosed
-     */
     protected void reloadAllActiveContext(boolean hasClosed) {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.context.core.ContextService#step(long)
-     */
     @Override
     public void step(long contextTime) {
         if (activer != null && activer.stepNext(contextTime)) {
@@ -136,13 +92,6 @@ public abstract class ActiveService<T extends JiActive, K> extends ContextServic
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.orm.hibernate.boost.IEntityMerge#merge(java.lang.String,
-     * java.lang.Object, com.absir.orm.hibernate.boost.IEntityMerge.MergeType,
-     * java.lang.Object)
-     */
     @Override
     public void merge(String entityName, T entity, com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType,
                       Object mergeEvent) {
@@ -151,9 +100,6 @@ public abstract class ActiveService<T extends JiActive, K> extends ContextServic
         }
     }
 
-    /**
-     * @param contextTime
-     */
     @Async(notifier = true)
     @Transaction(readOnly = true)
     public void reloadActives(long contextTime) {
@@ -162,9 +108,6 @@ public abstract class ActiveService<T extends JiActive, K> extends ContextServic
         }
     }
 
-    /**
-     *
-     */
     @Stopping
     public void stopping() {
         if (activerMap != null) {
@@ -177,32 +120,13 @@ public abstract class ActiveService<T extends JiActive, K> extends ContextServic
         activerMap = null;
     }
 
-    /**
-     * @param <T>
-     * @param <K>
-     * @author absir
-     */
     public static abstract class ActiveServiceData<T extends JiActive, K> extends ActiveService<T, K> {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.system.service.ActiveService#isClosed(java.lang
-         * .Object)
-         */
         @Override
         protected boolean isClosed(K activeContext) {
             return false;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.system.service.ActiveService#closeActiveContext
-         * (java.io.Serializable, java.lang.Object)
-         */
         @Override
         protected void closeActiveContext(Serializable id, K activeContext) {
         }
@@ -211,25 +135,12 @@ public abstract class ActiveService<T extends JiActive, K> extends ContextServic
     public static abstract class ActiveServiceSingle<T extends JiActive, K>
             extends ActiveServiceData<T, ObjectEntry<T, K>> {
 
-        /**
-         * singleEntry
-         */
         private ObjectEntry<T, K> singleEntry;
 
-        /**
-         * @return the singleEntry
-         */
         public ObjectEntry<T, K> getSingleEntry() {
             return singleEntry;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.system.service.ActiveService#createActiveContext
-         * (com.absir.aserv.system.bean.value.JiActive)
-         */
         @Override
         protected ObjectEntry<T, K> createActiveContext(T active) {
             singleEntry = new ObjectEntry<T, K>(active, createActiveContextSingle(active));
@@ -238,26 +149,12 @@ public abstract class ActiveService<T extends JiActive, K> extends ContextServic
 
         protected abstract K createActiveContextSingle(T active);
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.system.service.ActiveService#updateActiveContext
-         * (com.absir.aserv.system.bean.value.JiActive, java.lang.Object)
-         */
         @Override
         protected ObjectEntry<T, K> updateActiveContext(T active, ObjectEntry<T, K> activeContext) {
             activeContext.setKey(active);
             return activeContext;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.system.service.ActiveService.ActiveServiceData#
-         * closeActiveContext(java.io.Serializable, java.lang.Object)
-         */
         @Override
         protected void closeActiveContext(Serializable id, ObjectEntry<T, K> activeContext) {
             super.closeActiveContext(id, activeContext);
@@ -269,77 +166,33 @@ public abstract class ActiveService<T extends JiActive, K> extends ContextServic
         }
     }
 
-    /**
-     * @author absir
-     */
     protected class ActiveMap extends DActiverMap<T, K> {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.system.domain.DActiverMap#createActiveContexts()
-         */
         @Override
         protected Map<Serializable, K> createActiveContexts() {
             return ActiveService.this.createActiveContexts();
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.system.domain.DActiverMap#isClosed(com.absir.core
-         * .base.IBase)
-         */
         @Override
         protected boolean isClosed(K activeContext) {
             return ActiveService.this.isClosed(activeContext);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.system.domain.DActiverMap#createActiveContext(com
-         * .absir.core.base.IBase)
-         */
         @Override
         protected K createActiveContext(T active) {
             return ActiveService.this.createActiveContext(active);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.system.domain.DActiverMap#updateActiveContext(com
-         * .absir.core.base.IBase, java.lang.Object)
-         */
         @Override
         protected K updateActiveContext(T active, K activeContext) {
             return ActiveService.this.updateActiveContext(active, activeContext);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.system.domain.DActiverMap#closeActiveContext(java
-         * .lang.Object)
-         */
         @Override
         protected void closeActiveContext(Serializable id, K activeContext) {
             ActiveService.this.closeActiveContext(id, activeContext);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.system.domain.DActiverMap#reloadAllActiveContext
-         * (boolean)
-         */
         @Override
         protected void reloadAllActiveContext(boolean hasClosed) {
             ActiveService.this.reloadAllActiveContext(hasClosed);

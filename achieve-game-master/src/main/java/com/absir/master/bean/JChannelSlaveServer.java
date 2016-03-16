@@ -22,9 +22,6 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 
-/**
- * @author absir
- */
 @MaEntity(parent = {@MaMenu("节点管理")}, name = "渠道", value = @MaMenu(order = -126))
 @JaModel(desc = true)
 @Entity
@@ -44,44 +41,26 @@ public class JChannelSlaveServer extends JbBean {
     @JaColum(indexs = @Index(columnList = "channel"))
     private String channel;
 
-    /**
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name the name to set
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * @return the server
-     */
     public JSlaveServer getServer() {
         return server;
     }
 
-    /**
-     * @param server the server to set
-     */
     public void setServer(JSlaveServer server) {
         this.server = server;
     }
 
-    /**
-     * @return the channel
-     */
     public String getChannel() {
         return channel;
     }
 
-    /**
-     * @param channel the channel to set
-     */
     public void setChannel(String channel) {
         this.channel = channel;
     }

@@ -12,9 +12,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes"})
 public abstract class OFight<C extends OCard, R extends OReportResult> {
 
@@ -22,23 +19,14 @@ public abstract class OFight<C extends OCard, R extends OReportResult> {
     @JsonIgnore
     protected R reportResult;
 
-    /**
-     *
-     */
     public OFight() {
         reportResult = createReportResult();
     }
 
-    /**
-     * @return the report
-     */
     public R getReportResult() {
         return reportResult;
     }
 
-    /**
-     * @param time
-     */
     public synchronized final OReport step(long time) {
         reportResult.began(time);
         for (OCard card : getCards()) {
@@ -72,12 +60,6 @@ public abstract class OFight<C extends OCard, R extends OReportResult> {
      */
     public abstract C[] getTargetCards();
 
-    /**
-     * @param card
-     * @param targets
-     * @param effect
-     * @param parameters
-     */
     public void addReportDetail(Serializable self, Serializable[] targets, String effect, Object parameters) {
         OReportDetail reportDetail = createReportDetail();
         reportDetail.setSelf(self);

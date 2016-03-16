@@ -20,78 +20,37 @@ import net.sf.cglib.proxy.MethodProxy;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 @Basis
 @Bean
 public class DataCacheMethodDefine extends AopMethodDefineAbstract<DataCacheInterceptor, ObjectTemplate<Object>, String> {
 
-    /**
-     * DATA_CACHE_EMPTY
-     */
     private static final Object DATA_CACHE_EMPTY = new Object();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aop.AopMethodDefine#getAopInterceptor(com.absir.bean.basis.
-     * BeanDefine, java.lang.Object)
-     */
     @Override
     public DataCacheInterceptor getAopInterceptor(BeanDefine beanDefine, Object beanObject) {
         return BeanFactoryImpl.getBeanDefine(beanDefine, AopImplDefine.class) == null ? null : new DataCacheInterceptor();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aop.AopMethodDefine#getAopInterceptor(java.lang.Object,
-     * java.lang.Class)
-     */
     @Override
     public ObjectTemplate<Object> getAopInterceptor(String variable, Class<?> beanType) {
         DataCache dataCache = beanType.getAnnotation(DataCache.class);
         return dataCache == null || !dataCache.cacheable() ? null : new ObjectTemplate<Object>(DATA_CACHE_EMPTY);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aop.AopMethodDefine#getAopInterceptor(java.lang.Object,
-     * java.lang.Object, java.lang.Class, java.lang.reflect.Method)
-     */
     @Override
     public ObjectTemplate<Object> getAopInterceptor(ObjectTemplate<Object> interceptor, String variable, Class<?> beanType, Method method) {
         DataCache dataCache = beanType.getAnnotation(DataCache.class);
         return dataCache == null ? interceptor : dataCache.cacheable() ? interceptor == null ? new ObjectTemplate<Object>(DATA_CACHE_EMPTY) : interceptor : null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return 1024;
     }
 
-    /**
-     * @author absir
-     */
     public static class DataCacheInterceptor extends AopInterceptorAbstract<ObjectTemplate<Object>> {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aop.AopInterceptor#before(java.lang.Object,
-         * java.util.Iterator, java.lang.Object, com.absir.aop.AopProxyHandler,
-         * java.lang.reflect.Method, java.lang.Object[],
-         * net.sf.cglib.proxy.MethodProxy)
-         */
         @Override
         public Object before(Object proxy, Iterator<AopInterceptor> iterator, ObjectTemplate<Object> interceptor, AopProxyHandler proxyHandler, Method method, Object[] args, MethodProxy methodProxy)
                 throws Throwable {

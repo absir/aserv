@@ -9,20 +9,10 @@ package com.absir.aserv.system.bean.value;
 
 import java.io.Serializable;
 
-/**
- * @author absir
- *
- */
 public interface JiEmbed extends Serializable {
 
-    /**
-     * @return
-     */
     public Object getEid();
 
-    /**
-     * @return
-     */
     public Object getMid();
 
 }

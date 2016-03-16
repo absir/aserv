@@ -9,10 +9,6 @@ package com.absir.aserv.system.bean.proxy;
 
 import com.absir.aserv.system.bean.value.JiRoleLevel;
 
-/**
- * @author absir
- *
- */
 public interface JpUserBase extends JiUserBase, JiRoleLevel {
 
 }

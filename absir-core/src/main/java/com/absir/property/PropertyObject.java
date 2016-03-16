@@ -7,15 +7,7 @@
  */
 package com.absir.property;
 
-/**
- * @author absir
- */
 public interface PropertyObject<T> {
 
-    /**
-     * @param name
-     * @param property
-     * @return
-     */
     public T getPropertyData(String name, Property property);
 }

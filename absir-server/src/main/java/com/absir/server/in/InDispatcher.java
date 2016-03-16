@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-12-30 下午7:12:07
  */
 package com.absir.server.in;
@@ -20,9 +20,6 @@ import com.absir.server.route.returned.ReturnedResolver;
 
 import java.util.List;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Configure
 public abstract class InDispatcher<T, R> implements IDispatcher<T> {
@@ -30,20 +27,10 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
     @Inject
     private static RouteAdapter routeAdapter;
 
-    /**
-     * @return the routeAdapter
-     */
     public static RouteAdapter getRouteAdapter() {
         return routeAdapter;
     }
 
-    /**
-     * @param uri
-     * @param req
-     * @param res
-     * @return
-     * @throws Exception
-     */
     public boolean on(String uri, T req, R res) throws Throwable {
         Object[] routes = routeAdapter.route(uri, this, req);
         if (routes != null) {
@@ -72,45 +59,19 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
         return false;
     }
 
-    /**
-     * @param input
-     * @param routeMatcher
-     * @return
-     * @throws Throwable
-     */
     public boolean on(Input input, RouteMatcher routeMatcher) throws Throwable {
         input.setDispatcher(this);
         input.setRouteMatcher(routeMatcher);
         return RouteEntry.intercept(input, input.getRouteEntry()) != null;
     }
 
-    /**
-     * @param uri
-     * @param inMethod
-     * @param model
-     * @param req
-     * @param res
-     * @return
-     */
     protected abstract Input input(String uri, InMethod inMethod, InModel model, T req, R res);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.IDispatcher#onPut(com.absir.server.in.Input,
-     * java.lang.Object)
-     */
     @Override
     public OnPut onPut(Input input, Object routeBean) {
         return new OnPut(input);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.IDispatcher#returnThrowable(java.lang.Throwable,
-     * java.lang.Object, com.absir.server.on.OnPut)
-     */
     @Override
     public boolean returnThrowable(Throwable e, Object routeBean, OnPut onPut) throws Throwable {
         RouteEntry routeEntry = onPut.getInput().getRouteEntry();
@@ -129,13 +90,6 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.in.IDispatcher#resolveReturnedValue(java.lang.Object,
-     * com.absir.server.on.OnPut)
-     */
     @Override
     public void resolveReturnedValue(Object routeBean, OnPut onPut) throws Throwable {
         ReturnedResolver returnedResolver = onPut.getReturnedResolver();

@@ -9,16 +9,9 @@ package com.absir.aserv.system.bean.type;
 
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("serial")
 public class JtJsonList extends JtJsonValue {
 
-    /**
-     * @throws ClassNotFoundException
-     */
     public JtJsonList() throws ClassNotFoundException {
         super(List.class.getName());
     }

@@ -16,9 +16,6 @@ import com.absir.validator.value.NotEmpty;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- */
 @MappedSuperclass
 public class JbUserRole extends JbBean implements JiUserRole {
 
@@ -29,16 +26,10 @@ public class JbUserRole extends JbBean implements JiUserRole {
     @Length(min = 2, max = 12)
     private String rolename;
 
-    /**
-     * @return the rolename
-     */
     public String getRolename() {
         return rolename;
     }
 
-    /**
-     * @param rolename the rolename to set
-     */
     public void setRolename(String rolename) {
         this.rolename = rolename;
     }

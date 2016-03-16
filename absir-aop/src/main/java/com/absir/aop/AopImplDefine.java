@@ -17,32 +17,14 @@ import com.absir.core.kernel.KernelString;
 
 import java.util.List;
 
-/**
- * @author absir
- */
 public class AopImplDefine extends BeanDefineAbstractor {
 
-    /**
-     * beanType
-     */
     private Class<?> beanType;
 
-    /**
-     * beanScope
-     */
     private BeanScope beanScope;
 
-    /**
-     * implName
-     */
     private String implName;
 
-    /**
-     * @param beanName
-     * @param beanType
-     * @param beanScope
-     * @param implName
-     */
     public AopImplDefine(String beanName, Class<?> beanType, BeanScope beanScope, String implName) {
         this.beanName = beanName;
         this.beanType = beanType;
@@ -50,69 +32,35 @@ public class AopImplDefine extends BeanDefineAbstractor {
         this.implName = KernelString.isEmpty(implName) ? null : implName;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanDefine#getBeanType()
-     */
     @Override
     public Class<?> getBeanType() {
         return beanType;
     }
 
-    /**
-     * @return the name
-     */
     public String getName() {
         return implName;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanDefine#getBeanScope()
-     */
     @Override
     public BeanScope getBeanScope() {
         return beanScope;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanDefine#getBeanComponent()
-     */
     @Override
     public Object getBeanComponent() {
         return beanType;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.core.BeanDefineAbstractor#preloadBeanDefine()
-     */
     @Override
     public void preloadBeanDefine() {
         KernelClass.forName(beanType.getName());
     }
 
-    /**
-     * @param beanDefine
-     * @param cls
-     * @return
-     */
     private boolean circleBeanDefine(BeanDefine beanDefine, Class<?> cls) {
         return beanType == beanDefine.getBeanType()
                 || !(BeanFactoryImpl.getBeanDefine(beanDefine, AopImplDefine.class) == null || beanDefine.getBeanType() == cls);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanDefine#getBeanObject(com.absir.bean.basis.
-     * BeanFactory)
-     */
     @Override
     public Object getBeanObject(BeanFactory beanFactory) {
         BeanDefine beanDefine = null;

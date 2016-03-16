@@ -10,67 +10,34 @@ package com.absir.orm.transaction;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelObject;
 
-/**
- * @author absir
- */
 public abstract class TransactionContext<T extends TransactionSession> {
 
-    /**
-     * transactionSessionLocal
-     */
     protected ThreadLocal<T> transactionSessionLocal = new ThreadLocal<T>();
 
-    /**
-     * @return
-     */
     public String getName() {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         return KernelObject.hashCode(getName());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
         return this == obj;
     }
 
-    /**
-     * @return
-     */
     public abstract T createTransactionSession();
 
-    /**
-     * @return
-     */
     public T getTransactionSession() {
         return transactionSessionLocal.get();
     }
 
-    /**
-     * @param transactionAttribute
-     */
     public TransactionSession add(TransactionAttribute transactionAttribute) {
         return add(transactionAttribute, false);
     }
 
-    /**
-     * @param transactionAttribute
-     * @param addition
-     * @return
-     */
     public TransactionSession add(TransactionAttribute transactionAttribute, boolean addition) {
         T transactionSession = transactionSessionLocal.get();
         if (transactionSession == null) {
@@ -82,11 +49,6 @@ public abstract class TransactionContext<T extends TransactionSession> {
         return transactionSession;
     }
 
-    /**
-     * @param e
-     * @param throwable
-     * @return
-     */
     public Throwable closeCurrent(Throwable e, Throwable throwable) {
         T transactionSession = transactionSessionLocal.get();
         if (transactionSession != null) {

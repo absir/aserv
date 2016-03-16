@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2014-1-16 上午10:25:39
  */
 package com.absir.bean.core;
@@ -18,22 +18,10 @@ import com.absir.core.util.UtilPackage;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/**
- * @author absir
- */
 public class BeanScanner {
 
-    /**
-     * ABSIR_BEAN_PACKAGE
-     */
     private static String ABSIR_BEAN_PACKAGE = "com.absir";
 
-    /**
-     * @param beanTypes
-     * @param includePackages
-     * @param excludePackages
-     * @param filtPatterns
-     */
     public final void scanBeanTypes(Collection<Class<?>> beanTypes, Set<String> includePackages, Set<String> excludePackages, Set<String> filtPatterns) {
         List<String> unPackageNames = getunPackageNames(excludePackages);
         List<String> packageNames = new ArrayList<String>();
@@ -54,10 +42,6 @@ public class BeanScanner {
         scanBeanTypes(beanTypes, KernelCollection.toArray(unPackageNames, String.class), KernelCollection.toArray(packageNames, String.class), KernelCollection.toArray(unPatterns, Pattern.class));
     }
 
-    /**
-     * @param excludePackages
-     * @return
-     */
     private List<String> getunPackageNames(Set<String> excludePackages) {
         List<String> unPackageNames = new ArrayList<String>();
         for (String excludePackage : excludePackages) {
@@ -77,11 +61,6 @@ public class BeanScanner {
         return unPackageNames;
     }
 
-    /**
-     * @param packageNames
-     * @param includePackage
-     * @param unPackageNames
-     */
     private void addPackageNames(List<String> packageNames, String includePackage, List<String> unPackageNames) {
         int size = packageNames.size();
         for (int i = 0; i < size; i++) {
@@ -104,12 +83,6 @@ public class BeanScanner {
         packageNames.add(includePackage);
     }
 
-    /**
-     * @param beanTypes
-     * @param unPackageNames
-     * @param packageNames
-     * @param unPatterns
-     */
     protected void scanBeanTypes(Collection<Class<?>> beanTypes, final String[] unPackageNames, final String[] packageNames, final Pattern[] unPatterns) {
         final Set<String> classnames = new HashSet<String>();
         scanBeanTypes(packageNames, new CallbackBreak<String>() {
@@ -135,11 +108,6 @@ public class BeanScanner {
         }
     }
 
-    /**
-     * @param packageNames
-     * @param callbackTemplate
-     * @return
-     */
     protected void scanBeanTypes(String[] packageNames, CallbackBreak<String> callbackBreak) {
         for (String packageName : packageNames) {
             UtilPackage.findClasses(packageName, true, callbackBreak);

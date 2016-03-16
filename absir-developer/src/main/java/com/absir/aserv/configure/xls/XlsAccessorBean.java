@@ -27,39 +27,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 public class XlsAccessorBean extends XlsAccessor {
 
-    /**
-     * beanClass
-     */
     protected Class<?> beanClass;
 
-    /**
-     * accessors
-     */
     protected List<XlsAccessor> accessors;
 
-    /**
-     * @param field
-     * @param cls
-     * @param beanClass
-     */
     public XlsAccessorBean(Field field, Class<?> cls, Class<?> beanClass) {
         super(field, cls, beanClass);
         this.beanClass = beanClass;
     }
 
-    /**
-     * @param field
-     * @param cls
-     * @param beanClass
-     * @param xlsBase
-     */
     public XlsAccessorBean(Field field, Class<?> cls, Class<?> beanClass, XlsBase xlsBase) {
         this(field, cls, beanClass);
         if (!xlsBase.is(beanClass)) {
@@ -70,18 +49,10 @@ public class XlsAccessorBean extends XlsAccessor {
         }
     }
 
-    /**
-     * @return the accessors
-     */
     public List<XlsAccessor> getAccessors() {
         return accessors;
     }
 
-    /**
-     * @param beanClass
-     * @param xlsBase
-     * @return
-     */
     protected List<XlsAccessor> getXlsAccessors(final Class<?> beanClass, final XlsBase xlsBase) {
         final List<XlsAccessor> xlsAccessors = new ArrayList<XlsAccessor>();
         for (Field field : HelperAccessor.getFields(beanClass, XaIgnore.class)) {
@@ -127,11 +98,6 @@ public class XlsAccessorBean extends XlsAccessor {
         return xlsAccessors.size() == 0 ? null : xlsAccessors;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#isMulti()
-     */
     @Override
     public boolean isMulti() {
         if (accessors != null) {
@@ -145,11 +111,6 @@ public class XlsAccessorBean extends XlsAccessor {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#getColumnCount()
-     */
     @Override
     public int getColumnCount() {
         if (accessors == null) {
@@ -164,12 +125,6 @@ public class XlsAccessorBean extends XlsAccessor {
         return column;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#readHssfSheet(org.apache
-     * .poi.hssf.usermodel.HSSFSheet, java.util.List, int, int, int)
-     */
     @Override
     public int readHssfSheet(HSSFSheet hssfSheet, List<Object> cells, int firstRow, int firstColumn, int lastRow) {
         if (accessors != null) {
@@ -193,16 +148,6 @@ public class XlsAccessorBean extends XlsAccessor {
         return readHssfSheet(hssfSheet, cells, accessors, firstRow, firstColumn, lastRow);
     }
 
-    /**
-     * @param hssfSheet
-     * @param cells
-     * @param accessors
-     * @param firstRow
-     * @param firstColumn
-     * @param lastRow
-     * @param readRow
-     * @return
-     */
     protected int readHssfSheet(HSSFSheet hssfSheet, List<Object> cells, List<XlsAccessor> accessors, int firstRow, int firstColumn, int lastRow) {
         if (accessors == null) {
             return super.readHssfSheet(hssfSheet, cells, firstRow, firstColumn, lastRow);
@@ -220,27 +165,11 @@ public class XlsAccessorBean extends XlsAccessor {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.configure.xls.XlsAccessor#setObject(java.lang.Object ,
-     * java.lang.Object, com.absir.aserv.configure.xls.XlsBase,
-     * com.absir.core.kernel.KernelLang.ObjectTemplate)
-     */
     @Override
     public void setObject(Object obj, Object cell, XlsBase xlsBase, ObjectTemplate<Boolean> empty) {
         getAccessor().set(obj, readObject(beanClass, cell, accessors, xlsBase, empty));
     }
 
-    /**
-     * @param beanClass
-     * @param cell
-     * @param accessors
-     * @param xlsBase
-     * @param empty
-     * @return
-     */
     protected Object readObject(Class<?> beanClass, Object cell, List<XlsAccessor> accessors, XlsBase xlsBase, ObjectTemplate<Boolean> empty) {
         if (accessors == null) {
             HSSFCell hssfCell = (HSSFCell) cell;
@@ -264,12 +193,6 @@ public class XlsAccessorBean extends XlsAccessor {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessorUtils.XlsAccessorBean#
-     * getHeader()
-     */
     @Override
     public XlsCell getHeader() {
         if (accessors != null) {
@@ -287,12 +210,6 @@ public class XlsAccessorBean extends XlsAccessor {
         return super.getHeader();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#writeXlsCells(java.util
-     * .List, java.lang.Object, com.absir.aserv.configure.xls.XlsBase)
-     */
     @Override
     public void writeXlsCells(List<XlsCell> xlsCells, Object obj, XlsBase xlsBase) {
         if (obj != null) {
@@ -302,12 +219,6 @@ public class XlsAccessorBean extends XlsAccessor {
         writeXlsCells(xlsCells, obj, accessors, xlsBase);
     }
 
-    /**
-     * @param xlsCells
-     * @param obj
-     * @param accessors
-     * @param xlsBase
-     */
     protected void writeXlsCells(List<XlsCell> xlsCells, Object obj, List<XlsAccessor> accessors, XlsBase xlsBase) {
         if (obj == null) {
             super.writeXlsCells(xlsCells, obj, xlsBase);

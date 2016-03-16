@@ -22,9 +22,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @MaEntity(parent = {@MaMenu("用户管理")}, name = "权限")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
@@ -46,45 +43,27 @@ public class JMaMenu extends JbBase {
     @ElementCollection
     private Map<Long, JPermission> permissions;
 
-    /**
-     * @return the id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * @return the caption
-     */
     @Langs
     public String getCaption() {
         return caption;
     }
 
-    /**
-     * @param caption the caption to set
-     */
     public void setCaption(String caption) {
         this.caption = caption;
     }
 
-    /**
-     * @return the permissions
-     */
     public Map<Long, JPermission> getPermissions() {
         return permissions;
     }
 
-    /**
-     * @param permissions the permissions to set
-     */
     public void setPermissions(Map<Long, JPermission> permissions) {
         this.permissions = permissions;
     }

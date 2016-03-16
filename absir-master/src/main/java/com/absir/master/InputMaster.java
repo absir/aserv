@@ -16,24 +16,12 @@ import com.absir.server.socket.SocketServerContext.ChannelContext;
 
 import java.nio.channels.SocketChannel;
 
-/**
- * @author absir
- */
 public class InputMaster extends InputSocketImpl {
 
-    /**
-     * @param model
-     * @param inputSocketAtt
-     * @param socketChannel
-     */
     public InputMaster(InModel model, InputSocketAtt inputSocketAtt, SocketChannel socketChannel) {
         super(model, inputSocketAtt, socketChannel);
     }
 
-    /**
-     * @param input
-     * @return
-     */
     public static boolean onAuthentication(Input input) {
         if (input instanceof InputMaster) {
             return true;

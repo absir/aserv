@@ -22,10 +22,6 @@ import org.hibernate.event.spi.PostUpdateEvent;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 public class DActiver<T extends JiActive> {
 
@@ -50,9 +46,6 @@ public class DActiver<T extends JiActive> {
      */
     protected String onlineQueryString;
 
-    /**
-     * @param entityName
-     */
     public DActiver(String entityName) {
         if (entityName == null) {
             entityName = SessionFactoryUtils.getJpaEntityName(KernelClass.argumentClass(getClass()));
@@ -64,61 +57,35 @@ public class DActiver<T extends JiActive> {
         }
     }
 
-    /**
-     * @param nextQueryString
-     * @param onlineQueryString
-     */
     public DActiver(String nextQueryString, String onlineQueryString) {
         this.nextQueryString = nextQueryString;
         this.onlineQueryString = onlineQueryString;
     }
 
-    /**
-     * @return the nextTime
-     */
     public long getNextTime() {
         return nextTime;
     }
 
-    /**
-     * @param nextTime the nextTime to set
-     */
     public void setNextTime(long nextTime) {
         this.nextTime = nextTime;
     }
 
-    /**
-     * @return the nextQueryString
-     */
     public String getNextQueryString() {
         return nextQueryString;
     }
 
-    /**
-     * @param nextQueryString the nextQueryString to set
-     */
     public void setNextQueryString(String nextQueryString) {
         this.nextQueryString = nextQueryString;
     }
 
-    /**
-     * @return the onlineQueryString
-     */
     public String getOnlineQueryString() {
         return onlineQueryString;
     }
 
-    /**
-     * @param onlineQueryString the onlineQueryString to set
-     */
     public void setOnlineQueryString(String onlineQueryString) {
         this.onlineQueryString = onlineQueryString;
     }
 
-    /**
-     * @param entity
-     * @param mergeType
-     */
     public void merge(T entity, MergeType mergeType, Object mergeEvent) {
         long contextTime = ContextUtils.getContextTime();
         if (mergeType == MergeType.DELETE) {
@@ -185,10 +152,6 @@ public class DActiver<T extends JiActive> {
         }
     }
 
-    /**
-     * @param contextTime
-     * @param activity
-     */
     public void setNextActive(long contextTime, T activity) {
         // 最大延时1天更新
         nextTime = contextTime + MAX_NEXT_TIME;
@@ -199,9 +162,6 @@ public class DActiver<T extends JiActive> {
         }
     }
 
-    /**
-     * @param activities
-     */
     public void setOnlineActives(List<T> activities) {
         for (T activity : activities) {
             if (nextTime > activity.getPassTime()) {
@@ -210,10 +170,6 @@ public class DActiver<T extends JiActive> {
         }
     }
 
-    /**
-     * @param contextTime
-     * @return
-     */
     public boolean stepNext(long contextTime) {
         if (nextTime < contextTime) {
             nextTime = Long.MAX_VALUE;
@@ -223,10 +179,6 @@ public class DActiver<T extends JiActive> {
         return false;
     }
 
-    /**
-     * @param contextTime
-     * @return
-     */
     public List<T> reloadActives(long contextTime) {
         Session session = BeanDao.getSession();
         Iterator<T> iterator = QueryDaoUtils.createQueryArray(session, nextQueryString, contextTime).setMaxResults(1).iterate();

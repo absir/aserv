@@ -35,27 +35,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class DeveloperService implements IDeveloper, IDeploy {
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(DeveloperService.class);
 
-    /**
-     * developerWeb
-     */
     @Value("developer.web")
     private static String developerWeb;
 
-    /**
-     * security
-     */
     @Inject(type = InjectType.Selectable)
     private ISecurity security;
 
@@ -114,32 +102,15 @@ public class DeveloperService implements IDeveloper, IDeploy {
         }
     }
 
-    /**
-     * @return the developerWeb
-     */
     public static String getDeveloperWeb() {
         return developerWeb;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.support.developer.IDeveloper#getModelEntity(com.absir
-     * .aserv.support.entity.value.JoEntity)
-     */
     @Override
     public IModel getModelEntity(JoEntity joEntity) {
         return ModelFactory.getModelEntity(joEntity);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.crud.CrudExecutor.ICrudDeveloper#getCrudFields(com.
-     * absir.aserv.support.entity.value.JoEntity)
-     */
     @Override
     public List<JCrudField> getCrudFields(JoEntity joEntity) {
         EntityModel entityModel = ModelFactory.getModelEntity(joEntity);
@@ -165,13 +136,6 @@ public class DeveloperService implements IDeveloper, IDeploy {
         return crudFields;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.crud.CrudUtils.ICrudDeveloper#getGroupFields(com.absir
-     * .aserv.support.entity.value.JoEntity, java.lang.String)
-     */
     @Override
     public String[] getGroupFields(JoEntity joEntity, String group) {
         EntityModel entityModel = ModelFactory.getModelEntity(joEntity);
@@ -192,20 +156,11 @@ public class DeveloperService implements IDeveloper, IDeploy {
         return KernelCollection.toArray(crudFields, String.class);
     }
 
-    /**
-     * @param render
-     * @return
-     */
     public boolean isDeveloper(Object render) {
         JiUserBase user = security.loginRender(render);
         return user != null && user.isDeveloper();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.support.developer.IDeveloper#diy(java.lang.Object)
-     */
     @Override
     public int diy(Object render) {
         if (render != null && render instanceof ServletRequest && security != null) {
@@ -223,25 +178,11 @@ public class DeveloperService implements IDeveloper, IDeploy {
         return 0;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.support.developer.IDeveloper#getDeveloperPath(java.
-     * lang.String)
-     */
     @Override
     public String getDeveloperPath(String includePath) {
         return DeveloperUtils.getDeveloperPath(includePath);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.support.developer.IDeveloper#copyDeveloper(java.io.
-     * File, java.lang.String)
-     */
     @Override
     public void copyDeveloper(File file, String filePath) throws IOException {
         if (developerWeb != null) {
@@ -249,13 +190,6 @@ public class DeveloperService implements IDeveloper, IDeploy {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.support.developer.IDeveloper#generate(java.lang.String,
-     * java.lang.String, java.lang.Object[])
-     */
     @Override
     public void generate(String filepath, String includePath, Object... renders) throws IOException {
         DeveloperUtils.generateRenders(filepath, includePath, renders);

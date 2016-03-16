@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-3-5 下午2:31:23
  */
 package com.absir.core.kernel;
@@ -19,49 +19,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class KernelObject {
 
-    /**
-     * @param value
-     * @param defaultValue
-     * @return
-     */
     public static <T> T getValue(T value, T defaultValue) {
         return value == null ? defaultValue : value;
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param value
-     * @return
-     */
     public static boolean set(Object obj, String name, Object value) {
         return declaredSet(obj, name, 0, false, value);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param value
-     * @return
-     */
     public static boolean declaredSet(Object obj, String name, Object value) {
         return declaredSet(obj, name, 0, true, value);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param ancest
-     * @param declared
-     * @param value
-     * @return
-     */
     public static boolean declaredSet(Object obj, String name, int ancest, boolean declared, Object value) {
         Field field;
         if (obj instanceof Class) {
@@ -75,31 +47,14 @@ public abstract class KernelObject {
         return KernelReflect.set(obj, field, value);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @return
-     */
     public static Object get(Object obj, String name) {
         return declaredGet(obj, name, 0, false);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @return
-     */
     public static Object declaredGet(Object obj, String name) {
         return declaredGet(obj, name, 0, true);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param ancest
-     * @param declared
-     * @return
-     */
     public static Object declaredGet(Object obj, String name, int ancest, boolean declared) {
         Field field;
         if (obj instanceof Class) {
@@ -113,84 +68,31 @@ public abstract class KernelObject {
         return KernelReflect.get(obj, field);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param args
-     * @return
-     */
     public static Object send(Object obj, String name, Object... args) {
         return send(obj, name, 0, true, true, KernelClass.parameterTypes(args), args);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param parameterTypes
-     * @param args
-     * @return
-     */
     public static Object send(Object obj, String name, Class[] parameterTypes, Object... args) {
         return send(obj, name, 0, false, false, parameterTypes, args);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param ancest
-     * @param assignable
-     * @param cacheable
-     * @param parameterTypes
-     * @param args
-     * @return
-     */
     public static Object send(Object obj, String name, int ancest, boolean assignable, boolean cacheable, Class[] parameterTypes,
                               Object... args) {
         return declaredSend(obj, name, ancest, false, assignable, cacheable, parameterTypes, args);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param args
-     * @return
-     */
     public static Object declaredSend(Object obj, String name, Object... args) {
         return declaredSendArray(obj, name, args);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param args
-     * @return
-     */
     public static Object declaredSendArray(Object obj, String name, Object[] args) {
         return declaredSend(obj, name, 0, true, true, true, KernelClass.parameterTypes(args), args);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param parameterTypes
-     * @param args
-     * @return
-     */
     public static Object declaredSend(Object obj, String name, Class[] parameterTypes, Object... args) {
         return declaredSend(obj, name, 0, true, false, false, parameterTypes, args);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param ancest
-     * @param declared
-     * @param assignable
-     * @param cacheable
-     * @param parameterTypes
-     * @param args
-     * @return
-     */
     public static Object declaredSend(Object obj, String name, int ancest, boolean declared, boolean assignable, boolean cacheable,
                                       Class[] parameterTypes, Object... args) {
         Method method;
@@ -205,33 +107,14 @@ public abstract class KernelObject {
         return KernelReflect.invoke(obj, method, args);
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @param value
-     * @return
-     */
     public static boolean setter(Object obj, Field field, Object value) {
         return setter(obj, field.getName(), field.getType(), value);
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @param value
-     * @return
-     */
     public static boolean setter(Object obj, String field, Object value) {
         return setter(obj, field, value.getClass(), value);
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @param fieldType
-     * @param value
-     * @return
-     */
     public static boolean setter(Object obj, String field, Class fieldType, Object value) {
         Method method = KernelClass.setter(obj.getClass(), field, fieldType);
         if (method != null) {
@@ -243,12 +126,6 @@ public abstract class KernelObject {
         return false;
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @param value
-     * @return
-     */
     public static boolean publicSetter(Object obj, Field field, Object value) {
         if (setter(obj, field, value)) {
             return true;
@@ -263,12 +140,6 @@ public abstract class KernelObject {
         return false;
     }
 
-    /**
-     * @param obj
-     * @param fieldName
-     * @param value
-     * @return
-     */
     public static boolean publicSetter(Object obj, String field, Object value) {
         Method method = KernelClass.setter(obj.getClass(), field, value.getClass());
         if (method == null) {
@@ -279,12 +150,6 @@ public abstract class KernelObject {
         }
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @param value
-     * @return
-     */
     public static boolean declaredSetter(Object obj, Field field, Object value) {
         Method method = KernelClass.declaredSetter(obj.getClass(), field);
         if (method == null) {
@@ -299,30 +164,14 @@ public abstract class KernelObject {
         return false;
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @return
-     */
     public static Object getter(Object obj, Field field) {
         return getter(obj, field.getName(), field.getType());
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @return
-     */
     public static Object getter(Object obj, String field) {
         return getter(obj, field, Object.class);
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @param fieldType
-     * @return
-     */
     public static Object getter(Object obj, String field, Class fieldType) {
         Method method = KernelClass.getter(obj.getClass(), field, fieldType);
         if (method != null) {
@@ -332,11 +181,6 @@ public abstract class KernelObject {
         return null;
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @return
-     */
     public static Object publicGetter(Object obj, Field field) {
         Method method = KernelClass.getter(obj.getClass(), field);
         if (method == null) {
@@ -351,11 +195,6 @@ public abstract class KernelObject {
         return null;
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @return
-     */
     public static Object publicGetter(Object obj, String field) {
         Method method = KernelClass.getter(obj.getClass(), field);
         if (method == null) {
@@ -366,11 +205,6 @@ public abstract class KernelObject {
         }
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @return
-     */
     public static Object declaredGetter(Object obj, Field field) {
         Method method = KernelClass.getter(obj.getClass(), field);
         if (method == null) {
@@ -381,11 +215,6 @@ public abstract class KernelObject {
         }
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @return
-     */
     public static Object declaredGetter(Object obj, String field) {
         Method method = KernelClass.getter(obj.getClass(), field);
         if (method == null) {
@@ -396,11 +225,6 @@ public abstract class KernelObject {
         }
     }
 
-    /**
-     * @param obj
-     * @param target
-     * @return
-     */
     public static Object expressGetter(Object obj, String target) {
         if (KernelString.isEmpty(target)) {
             return obj;
@@ -426,11 +250,6 @@ public abstract class KernelObject {
         return obj;
     }
 
-    /**
-     * @param obj
-     * @param toClass
-     * @return
-     */
     public static <T> T cast(Object obj, Class<T> toClass) {
         if (obj != null && toClass.isAssignableFrom(obj.getClass())) {
             return (T) obj;
@@ -439,10 +258,6 @@ public abstract class KernelObject {
         return null;
     }
 
-    /**
-     * @param obj
-     * @return
-     */
     public static <T> T clone(T obj) {
         if (obj == null) {
             return null;
@@ -465,10 +280,6 @@ public abstract class KernelObject {
         return null;
     }
 
-    /**
-     * @param obj
-     * @param clone
-     */
     public static <T> void clone(final T obj, final T clone) {
         if (obj.getClass().isArray()) {
             KernelArray.copy(obj, clone);
@@ -496,10 +307,6 @@ public abstract class KernelObject {
         }
     }
 
-    /**
-     * @param obj
-     * @param copy
-     */
     public static void copy(final Object obj, final Object copy) {
         final Class cls = copy.getClass();
         if (obj.getClass().isArray()) {
@@ -535,10 +342,6 @@ public abstract class KernelObject {
         }
     }
 
-    /**
-     * @param obj
-     * @return
-     */
     public static byte[] serialize(Object obj) {
         try {
             ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -552,10 +355,6 @@ public abstract class KernelObject {
         return null;
     }
 
-    /**
-     * @param buf
-     * @return
-     */
     public static Object unserialize(byte[] buf) {
         try {
             ByteArrayInputStream byteInput = new ByteArrayInputStream(buf);
@@ -570,10 +369,6 @@ public abstract class KernelObject {
         return null;
     }
 
-    /**
-     * @param obj
-     * @return
-     */
     public static <T> T serializeClone(T obj) {
         byte[] buf = serialize(obj);
         if (buf == null) {
@@ -583,10 +378,6 @@ public abstract class KernelObject {
         return (T) unserialize(buf);
     }
 
-    /**
-     * @param obj
-     * @return
-     */
     public static Map<String, Object> getMap(final Object obj) {
         final Map<String, Object> map = new HashMap<String, Object>();
         KernelReflect.doWithDeclaredFields(obj.getClass(), new CallbackBreak<Field>() {
@@ -603,39 +394,20 @@ public abstract class KernelObject {
         return map;
     }
 
-    /**
-     * @param obj
-     * @param map
-     * @return
-     */
     public static void setMap(Object obj, Map<String, Object> map) {
         for (Entry<String, Object> entry : map.entrySet()) {
             publicSetter(obj, entry.getKey(), entry.getValue());
         }
     }
 
-    /**
-     * @param obj
-     * @return
-     */
     public static int hashCode(Object obj) {
         return obj == null ? 1 : obj.hashCode();
     }
 
-    /**
-     * @param obj
-     * @param equal
-     * @return
-     */
     public static boolean equals(Object obj, Object equal) {
         return obj == equal || (obj != null && obj.equals(equal));
     }
 
-    /**
-     * @param obj
-     * @param compare
-     * @return
-     */
     public static int compare(Object obj, Object compare) {
         if (obj == null) {
             return compare == null ? 0 : -1;

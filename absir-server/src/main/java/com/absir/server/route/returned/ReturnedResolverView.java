@@ -19,55 +19,26 @@ import com.absir.server.value.View;
 
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class ReturnedResolverView implements ReturnedResolver<String> {
 
-    /**
-     * ME
-     */
     public static final ReturnedResolverView ME = BeanFactoryUtils.get(ReturnedResolverView.class);
-    /**
-     * ROOT_REGX
-     */
+
     public static final String ROOT_REGX = "^([/\\\\]*)[^/\\\\]*([/\\\\]+)";
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.returned.ReturnedResolver#getReturned(java.lang
-     * .reflect.Method)
-     */
     @Override
     public String getReturned(Method method) {
         View view = method.getAnnotation(View.class);
         return view == null ? null : view.value();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.returned.ReturnedResolver#getReturned(java.lang
-     * .Class)
-     */
     @Override
     public String getReturned(Class<?> beanClass) {
         View view = beanClass.getAnnotation(View.class);
         return view == null ? null : view.value();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.returned.ReturnedResolver#resolveReturnedValue
-     * (java.lang.Object, java.lang.Object, com.absir.server.on.OnPut)
-     */
     @Override
     public void resolveReturnedValue(Object returnValue, String returned, OnPut onPut) throws Exception {
         if (returnValue != null) {
@@ -101,11 +72,6 @@ public class ReturnedResolverView implements ReturnedResolver<String> {
         resolveReturnedView(returned, onPut);
     }
 
-    /**
-     * @param viewValue
-     * @param onPut
-     * @throws Exception
-     */
     public void resolveReturnedView(String view, OnPut onPut) throws Exception {
         onPut.getInput().write(view);
     }

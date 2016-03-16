@@ -35,37 +35,19 @@ import org.hibernate.Session;
 
 import java.util.*;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
 public abstract class MasterChannelService {
 
-    /**
-     * ME
-     */
     public static final MasterChannelService ME = BeanFactoryUtils.get(MasterChannelService.class);
 
-    /**
-     * channelCache
-     */
     private DCacheEntity<JChannel> channelCache;
 
-    /**
-     * channelAnnouncementCache
-     */
     private DCache<JChannelAnnouncement, List<DAnnouncement>> channelAnnouncementCache;
 
-    /**
-     * channelMapServers
-     */
     private Map<String, List<DServer>> channelMapServers;
 
-    /**
-     *
-     */
     @Inject
     protected void inject() {
         channelCache = new DCacheEntity<JChannel>(JChannel.class, null);
@@ -106,12 +88,6 @@ public abstract class MasterChannelService {
         channelMapServers = new HashMap<String, List<DServer>>();
     }
 
-    /**
-     * @param channel
-     * @param version
-     * @param annc
-     * @return
-     */
     protected String getChannelAlias(String channel, String version, boolean annc) {
         JChannel jChannel = channelCache.getCacheValue(channel);
         if (jChannel == null) {
@@ -130,11 +106,6 @@ public abstract class MasterChannelService {
         return channel;
     }
 
-    /**
-     * @param channel
-     * @param version
-     * @return
-     */
     public List<DAnnouncement> getAnnouncements(String channel, String channelCode, String version) {
         List<DAnnouncement> announcements = KernelString.isEmpty(channelCode) ? null
                 : channelAnnouncementCache.getCacheValue(channelCode);
@@ -150,11 +121,6 @@ public abstract class MasterChannelService {
         return channelAnnouncementCache.getCacheValue(alias);
     }
 
-    /**
-     * @param channel
-     * @param version
-     * @return
-     */
     public List<DServer> getServers(String channel, String version) {
         String alias = ME.getChannelAlias(channel, version, false);
         if (alias == null) {
@@ -164,18 +130,10 @@ public abstract class MasterChannelService {
         return findServers(channel);
     }
 
-    /**
-     * @param channel
-     * @return
-     */
     @Transaction
     @DataQuery("SELECT o FROM JSlaveServerChannel o WHERE o.channel = ? AND o.server.synched = TRUE ORDER BY o.id DESC")
     public abstract List<JChannelSlaveServer> getChannelServers(String channel);
 
-    /**
-     * @param channel
-     * @return
-     */
     public List<DServer> findServers(String channel) {
         List<DServer> servers = channelMapServers.get(channel);
         if (servers == null) {
@@ -186,10 +144,6 @@ public abstract class MasterChannelService {
         return servers;
     }
 
-    /**
-     * @param channel
-     * @return
-     */
     @Transaction(readOnly = true)
     public List<DServer> selectServers(String channel) {
         long currentTime = System.currentTimeMillis();

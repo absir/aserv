@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年10月5日 上午10:20:12
  */
 package com.absir.core.util;
@@ -15,39 +15,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author absir
- */
 public class UtilSchelduer<T extends NextRunable> extends Thread {
 
-    /**
-     * addRunables
-     */
     protected List<T> addRunables;
 
-    /**
-     * runableHeader
-     */
     protected UtilNode<T> runableHeader = new UtilNode<T>();
 
-    /**
-     * runableFooter
-     */
     protected UtilNode<T> runableFooter = runableHeader;
 
-    /**
-     * starting
-     */
     protected boolean starting;
 
-    /**
-     * nextRunableTime
-     */
     protected long nextRunableTime;
 
-    /**
-     * @param runable
-     */
     public synchronized void addRunables(T runable) {
         if (addRunables == null) {
             addRunables = new ArrayList<T>();
@@ -60,20 +39,12 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
         }
     }
 
-    /**
-     * @param runable
-     */
     public synchronized void removeRunables(T runable) {
         if (addRunables != null) {
             addRunables.remove(runable);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Thread#start()
-     */
     @Override
     public synchronized void start() {
         if (starting) {
@@ -84,19 +55,11 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
         super.start();
     }
 
-    /**
-     *
-     */
     public synchronized void stopNow() {
         starting = false;
         interrupt();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Runnable#run()
-     */
     @Override
     public void run() {
         while (Environment.isActive() && starting) {
@@ -175,25 +138,16 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
 
     }
 
-    /**
-     * @param e
-     */
     protected void logThrowable(Throwable e) {
         if (Environment.getEnvironment() == Environment.DEVELOP) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * @return
-     */
     protected long getMaxSleepTime() {
         return 10000;
     }
 
-    /**
-     *
-     */
     protected void computeFooter() {
         UtilNode<T> node = runableFooter.previous == null ? runableHeader : runableFooter;
         while (node.next != null) {
@@ -203,17 +157,11 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
         runableFooter = node;
     }
 
-    /**
-     *
-     */
     protected void sortAllRunables() {
         UtilNode.sortOrderableNodeAll(runableHeader);
         computeFooter();
     }
 
-    /**
-     *
-     */
     protected void computeAddFooter() {
         UtilNode<T> node = runableFooter.next;
         if (node != null) {
@@ -221,9 +169,6 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
         }
     }
 
-    /**
-     * @param runableNode
-     */
     protected void removeRunableNode(UtilNode<T> runableNode) {
         if (runableNode == runableFooter) {
             runableFooter = runableFooter.previous;
@@ -232,84 +177,43 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
         runableNode.remove();
     }
 
-    /**
-     * @param runableNode
-     */
     protected void sortNextRunableNode(UtilNode<T> runableNode) {
         UtilNode.sortOrderableNode(runableNode);
         computeAddFooter();
     }
 
-    /**
-     * @param runableNode
-     */
     protected void addNextRunableNode(T runableNode) {
         UtilNode.insertOrderableNodeFooter(runableFooter, runableNode);
         computeAddFooter();
     }
 
-    /**
-     * @author absir
-     */
     public interface NextRunable extends Orderable {
 
-        /**
-         * @param date
-         */
         public void start(Date date);
 
-        /**
-         * @return
-         */
         public long getNextTime();
 
-        /**
-         * @param date
-         */
         public void run(Date date);
     }
 
-    /**
-     * @author absir
-     */
     public static abstract class NextRunableDelay implements NextRunable {
 
-        /**
-         * nextTime
-         */
         protected long nextTime;
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-         */
         @Override
         public int getOrder() {
             return (int) (getNextTime() >> 10);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.core.util.UtilSchelduer.NextRunable#start(java.util.Date)
-         */
         @Override
         public void start(Date date) {
             nextTime += date.getTime();
         }
 
-        /**
-         * @return the nextTime
-         */
         public long getNextTime() {
             return nextTime;
         }
 
-        /**
-         * @param nextTime the nextTime to set
-         */
         public void setNextTime(long nextTime) {
             this.nextTime = nextTime;
         }

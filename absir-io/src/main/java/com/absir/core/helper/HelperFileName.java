@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-4-3 下午5:18:30
  */
 package com.absir.core.helper;
@@ -17,36 +17,17 @@ import java.net.URLDecoder;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 
-/**
- * @author absir
- */
 public class HelperFileName extends FilenameUtils {
 
-    /**
-     * The Unix separator character.
-     */
     public static final char UNIX_SEPARATOR = '/';
 
-    /**
-     * The Windows separator character.
-     */
     public static final char WINDOWS_SEPARATOR = '\\';
 
-    /**
-     * The system separator character.
-     */
     public static final char SYSTEM_SEPARATOR = File.separatorChar;
 
-    /**
-     * The separator character that is the opposite of the system separator.
-     */
     public static final char OTHER_SEPARATOR = SYSTEM_SEPARATOR == WINDOWS_SEPARATOR ? UNIX_SEPARATOR
             : WINDOWS_SEPARATOR;
 
-    /**
-     * @param cls
-     * @return
-     */
     public static String getClassPath(Class<?> cls) {
         String classPath = null;
         if (cls == null) {
@@ -108,10 +89,6 @@ public class HelperFileName extends FilenameUtils {
         return classPath;
     }
 
-    /**
-     * @param resourceURL
-     * @return
-     */
     public static String getResourcePath(URL resourceURL) {
         if (resourceURL == null) {
             return null;
@@ -140,32 +117,16 @@ public class HelperFileName extends FilenameUtils {
         return realPath;
     }
 
-    /**
-     * @param filename
-     * @return
-     */
     public static String unixFilename(String filename) {
         return filename.replace(WINDOWS_SEPARATOR, UNIX_SEPARATOR);
     }
 
-    /**
-     * @param basepath
-     * @param pathNames
-     * @param filename
-     * @return
-     */
     public static String iterateFilename(String basepath, String pathNames, String filename) {
         pathNames = HelperFileName.getFullPathNoEndSeparator(pathNames);
         return HelperFileName.iterateFilename(basepath + SYSTEM_SEPARATOR + pathNames,
                 pathNames.split(Character.toString(UNIX_SEPARATOR)), filename);
     }
 
-    /**
-     * @param basePath
-     * @param pathNames
-     * @param filename
-     * @return
-     */
     public static String iterateFilename(String basePath, String[] pathNames, String filename) {
         int length = basePath.length();
         int last = pathNames.length - 1;
@@ -185,11 +146,6 @@ public class HelperFileName extends FilenameUtils {
         return null;
     }
 
-    /**
-     * @param filename
-     * @param subExtension
-     * @return
-     */
     public static String addFilenameSubExtension(String filename, String subExtension) {
         String extension = getExtension(filename);
         if (KernelString.isEmpty(extension)) {

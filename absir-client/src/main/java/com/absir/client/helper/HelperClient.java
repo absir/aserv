@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2014-4-23 下午1:29:26
  */
 package com.absir.client.helper;
@@ -20,33 +20,16 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 public class HelperClient {
 
-    /**
-     * LOGGER
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(HelperClient.class);
 
-    /**
-     * @param urlConnection
-     * @return
-     * @throws IOException
-     */
     public static InputStream openConnection(HttpURLConnection urlConnection) throws IOException {
         InputStream inputStream = urlConnection.getResponseCode() >= 400 ? null : urlConnection.getInputStream();
         return inputStream == null ? urlConnection.getErrorStream() : inputStream;
     }
 
-    /**
-     * @param urlConnection
-     * @param type
-     * @return
-     * @throws IOException
-     */
     public static <T> T openConnection(HttpURLConnection urlConnection, Class<T> type) throws IOException {
         if (type == null || type == InputStream.class) {
             return (T) openConnection(urlConnection);
@@ -59,23 +42,10 @@ public class HelperClient {
         }
     }
 
-    /**
-     * @param urlConnection
-     * @return
-     * @throws IOException
-     */
     public static <T> T openConnectionJson(HttpURLConnection urlConnection, Class<T> type) throws IOException {
         return HelperJson.OBJECT_MAPPER.reader(type).readValue(openConnection(urlConnection));
     }
 
-    /**
-     * @param url
-     * @param post
-     * @param postParameters
-     * @param type
-     * @return
-     * @throws IOException
-     */
     public static <T> T openConnection(String url, Map<String, String> postParameters, Class<T> type) {
         byte[] postBytes = null;
         if (postParameters != null) {
@@ -94,38 +64,14 @@ public class HelperClient {
         return openConnection(url, postBytes == null ? false : true, postBytes, 0, type);
     }
 
-    /**
-     * @param url
-     * @param post
-     * @param postBytes
-     * @param type
-     * @return
-     */
     public static <T> T openConnection(String url, boolean post, byte[] postBytes, Class<T> type) {
         return openConnection(url, post, postBytes, 0, type);
     }
 
-    /**
-     * @param url
-     * @param post
-     * @param postBytes
-     * @param off
-     * @param type
-     * @return
-     */
     public static <T> T openConnection(String url, boolean post, byte[] postBytes, int off, Class<T> type) {
         return openConnection(url, post, postBytes, off, 0, type);
     }
 
-    /**
-     * @param url
-     * @param post
-     * @param postBytes
-     * @param off
-     * @param len
-     * @return
-     * @throws IOException
-     */
     public static HttpURLConnection openConnection(String url, boolean post, byte[] postBytes, int off, int len)
             throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) (new URL(url)).openConnection();
@@ -149,15 +95,6 @@ public class HelperClient {
         return urlConnection;
     }
 
-    /**
-     * @param url
-     * @param post
-     * @param postBytes
-     * @param offset
-     * @param length
-     * @param type
-     * @return
-     */
     public static <T> T openConnection(String url, boolean post, byte[] postBytes, int off, int len, Class<T> type) {
         try {
             HttpURLConnection urlConnection = openConnection(url, post, postBytes, off, len);
@@ -174,15 +111,6 @@ public class HelperClient {
         return null;
     }
 
-    /**
-     * @param url
-     * @param post
-     * @param postBytes
-     * @param off
-     * @param len
-     * @param type
-     * @return
-     */
     public static <T> DResponse<T> requestConnection(String url, boolean post, byte[] postBytes, int off, int len,
                                                      Class<T> type) {
         DResponse<T> response = null;
@@ -206,25 +134,12 @@ public class HelperClient {
         return response;
     }
 
-    /**
-     * @param <T>
-     * @author absir
-     */
     public static class DResponse<T> {
 
-        /**
-         * code
-         */
         public int code;
 
-        /**
-         * inputStream
-         */
         public InputStream input;
 
-        /**
-         * value
-         */
         public T value;
 
     }

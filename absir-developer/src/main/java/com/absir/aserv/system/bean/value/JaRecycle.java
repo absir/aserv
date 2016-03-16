@@ -7,14 +7,7 @@
  */
 package com.absir.aserv.system.bean.value;
 
-/**
- * @author absir
- *
- */
 public @interface JaRecycle {
 
-    /**
-     * @return
-     */
     boolean value() default true;
 }

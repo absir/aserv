@@ -25,37 +25,22 @@ import com.absir.validator.ValidatorEmail;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.regex.Pattern;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class MasterOpenService {
 
-    /**
-     * ME
-     */
     public static final MasterOpenService ME = BeanFactoryUtils.get(MasterOpenService.class);
 
-    /**
-     * pattern
-     */
     public static final Pattern pattern = Pattern.compile("[^a-zA-Z0-9/_]+");
 
     @Value("master.open.secrect")
     protected String secrect = "absir@qq.com";
 
-    /**
-     * aesSecretKeySpec
-     */
     protected SecretKeySpec aesSecretKeySpec;
 
     @Value("master.open.lifeTime")
     protected long lifeTime = UtilAbsir.DAY_TIME;
 
-    /**
-     *
-     */
     @Inject
     protected void inject() {
         aesSecretKeySpec = HelperEncrypt.getSecretKeySpec("AES", secrect, 16);
@@ -63,15 +48,15 @@ public class MasterOpenService {
 
     /**
      * 注册账号
-     * <p>
+     * <p/>
      * 1 注册成功
-     * <p>
+     * <p/>
      * 2 用户名不正确
-     * <p>
+     * <p/>
      * 3 密码不正确
-     * <p>
+     * <p/>
      * 4 邮箱格式不正确
-     * <p>
+     * <p/>
      * 5 用户名存在
      *
      * @param username
@@ -113,11 +98,11 @@ public class MasterOpenService {
 
     /**
      * 登录账号
-     * <p>
+     * <p/>
      * 1.成功 platform,username,sessionId
-     * <p>
+     * <p/>
      * 2.用户名不存在 2
-     * <p>
+     * <p/>
      * 3.失败 3
      *
      * @param username
@@ -157,13 +142,13 @@ public class MasterOpenService {
 
     /**
      * 修改密码邮箱
-     * <p>
+     * <p/>
      * 1 注册成功
-     * <p>
+     * <p/>
      * 2 用户名存在
-     * <p>
+     * <p/>
      * 3 密码不正确
-     * <p>
+     * <p/>
      * 4 邮箱格式不正确
      *
      * @param username
@@ -213,7 +198,7 @@ public class MasterOpenService {
 
     /**
      * 绑定平台账号
-     * <p>
+     * <p/>
      * 6 账号不存在
      *
      * @param platform

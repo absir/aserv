@@ -1,8 +1,5 @@
 package com.absir.aserv.facade;
 
-/**
- * Created by absir on 16/2/5.
- */
 public class DMessage {
 
     /**

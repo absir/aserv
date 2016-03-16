@@ -30,10 +30,6 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes"})
 @Inject
 public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> extends ContextBean<Long> {
@@ -112,11 +108,6 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
         this.socketChannel = socketChannel;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.context.core.Context#initialize()
-     */
     @Override
     protected void initialize() {
         PlayerService.ME.load(this);
@@ -178,11 +169,6 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
         playerA.setOnlineDay(onlineDay);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.context.core.ContextBean#stepDone(long)
-     */
     @Override
     public boolean stepDone(long contextTime) {
         for (Recovery recovery : recoveries) {
@@ -192,11 +178,6 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
         return super.stepDone(contextTime);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.context.JContext#uninitialize()
-     */
     @Override
     public void uninitialize() {
         long[] recoveryTimes = playerA.getRecoveryTimes();
@@ -246,7 +227,6 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
      * 恢复
      *
      * @author absir
-     *
      */
     public abstract class Recovery implements IBase<Long> {
 
@@ -260,11 +240,6 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
             recoveries.add(this);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.core.base.IBase#getId()
-         */
         @Override
         public Long getId() {
             return recoveryTime;

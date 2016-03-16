@@ -7,19 +7,10 @@
  */
 package com.absir.aserv.game.value;
 
-/**
- * @author absir
- */
 public interface ILevel {
 
-    /**
-     * @return
-     */
     public int getLevel();
 
-    /**
-     * @param level
-     */
     public void setLevel(int level);
 
 }

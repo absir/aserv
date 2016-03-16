@@ -16,143 +16,72 @@ import java.io.InputStream;
 import java.net.Socket;
 import java.util.*;
 
-/**
- * @author absir
- */
 public class SocketAdapter {
 
-    /**
-     * bit
-     */
     public static final byte[] bit = "b".getBytes();
-    /**
-     * ok
-     */
+
     public static final byte[] ok = "ok".getBytes();
-    /**
-     * failed
-     */
+
     public static final byte[] failed = "failed".getBytes();
-    /**
-     * STREAM_FLAG
-     */
+
     public static final byte STREAM_FLAG = 0x01;
-    /**
-     * STREAM_OFF_FLAG
-     */
+
     public static final byte STREAM_CLOSE_FLAG = 0x01 << 1;
-    /**
-     * RESPONSE_FLAG
-     */
+
     public static final byte RESPONSE_FLAG = 0x01 << 2;
-    /**
-     * ERROR_FLAG
-     */
+
     public static final byte ERROR_FLAG = 0x01 << 3;
-    /**
-     * POST_FLAG
-     */
+
     public static final byte POST_FLAG = 0x01 << 4;
-    /**
-     * CALLBACK_FLAG
-     */
+
     public static final byte CALLBACK_FLAG = 0x01 << 5;
-    /**
-     * DEBUG_FLAG
-     */
+
     public static final byte DEBUG_FLAG = 0x01 << 6;
-    /**
-     * LOGGER
-     */
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(SocketAdapter.class);
-    /**
-     * timeoutThread
-     */
+
     private static TimeoutThread timeoutThread;
-    /**
-     * registered
-     */
+
     protected boolean registered;
-    /**
-     * registeredCallback
-     */
+
     protected LinkedList<RegisteredRunable> registeredRunables = new LinkedList<RegisteredRunable>();
-    /**
-     * receiveCallback
-     */
+
     protected CallbackAdapte receiveCallback;
-    /**
-     * receiveCallbacks
-     */
+
     protected Map<Integer, ObjectEntry<CallbackAdapte, CallbackTimeout>> receiveCallbacks = new HashMap<Integer, ObjectEntry<CallbackAdapte, CallbackTimeout>>();
-    /**
-     * receiveStarted
-     */
+
     protected boolean receiveStarted;
-    /**
-     * lengthIndex
-     */
+
     protected int lengthIndex;
-    /**
-     * buffLength
-     */
+
     protected int buffLength;
-    /**
-     * buffer
-     */
+
     protected byte[] buff;
-    /**
-     * buffLengthIndex
-     */
+
     protected int buffLengthIndex;
-    /**
-     * receiveSocket
-     */
+
     protected Socket receiveSocket;
-    /**
-     * retryConnect
-     */
+
     private int retryConnect;
-    /**
-     * socket
-     */
+
     private Socket socket;
-    /**
-     * beats
-     */
+
     private byte[] beats = bit;
-    /**
-     * beatLifeTime
-     */
+
     private long beatLifeTime;
-    /**
-     * callbackConnect
-     */
+
     private CallbackAdapte callbackConnect;
-    /**
-     * callbackDisconnect
-     */
+
     private CallbackAdapte callbackDisconnect;
-    /**
-     * acceptCallback
-     */
+
     private CallbackAdapte acceptCallback;
-    /**
-     * registerCallback
-     */
+
     private CallbackAdapte registerCallback;
-    /**
-     * callbackIndex
-     */
+
     private int callbackIndex;
-    /**
-     * acceptSocket
-     */
+
     private Socket acceptSocket;
 
-    /**
-     * @param e
-     */
     public static void printException(Throwable e) {
         printException(e);
     }
@@ -201,158 +130,90 @@ public class SocketAdapter {
         startTimeout().add(callbackTimeout);
     }
 
-    /**
-     * @return the socket
-     */
     public Socket getSocket() {
         return socket;
     }
 
-    /**
-     * @param socket the socket to set
-     */
     public void setSocket(Socket socket) {
         this.socket = socket;
     }
 
-    /**
-     * @return the beats
-     */
     public byte[] getBeats() {
         return beats;
     }
 
-    /**
-     * @param beats the beats to set
-     */
     public void setBeats(byte[] beats) {
         this.beats = beats;
     }
 
-    /**
-     * @return the beatLifeTime
-     */
     public long getBeatLifeTime() {
         return beatLifeTime;
     }
 
-    /**
-     * @param beatLifeTime the beatLifeTime to set
-     */
     public void setBeatLifeTime(long beatLifeTime) {
         this.beatLifeTime = beatLifeTime;
     }
 
-    /**
-     * @return the callbackConnect
-     */
     public CallbackAdapte getCallbackConnect() {
         return callbackConnect;
     }
 
-    /**
-     * @param callbackConnect the callbackConnect to set
-     */
     public void setCallbackConnect(CallbackAdapte callbackConnect) {
         this.callbackConnect = callbackConnect;
     }
 
-    /**
-     * @return the callbackDisconnect
-     */
     public CallbackAdapte getCallbackDisconnect() {
         return callbackDisconnect;
     }
 
-    /**
-     * @param callbackDisconnect the callbackDisconnect to set
-     */
     public void setCallbackDisconnect(CallbackAdapte callbackDisconnect) {
         this.callbackDisconnect = callbackDisconnect;
     }
 
-    /**
-     * @return the acceptCallback
-     */
     public CallbackAdapte getAcceptCallback() {
         return acceptCallback;
     }
 
-    /**
-     * @param acceptCallback the acceptCallback to set
-     */
     public void setAcceptCallback(CallbackAdapte acceptCallback) {
         this.acceptCallback = acceptCallback;
     }
 
-    /**
-     * @return the registerCallback
-     */
     public CallbackAdapte getRegisterCallback() {
         return registerCallback;
     }
 
-    /**
-     * @param registerCallback the registerCallback to set
-     */
     public void setRegisterCallback(CallbackAdapte registerCallback) {
         this.registerCallback = registerCallback;
     }
 
-    /**
-     * @return the registered
-     */
     public boolean isRegistered() {
         return registered;
     }
 
-    /**
-     * @param registered the registered to set
-     */
     public void setRegistered(boolean registered) {
         this.registered = registered;
     }
 
-    /**
-     * @return the registeredRunables
-     */
     public LinkedList<RegisteredRunable> getRegisteredRunables() {
         return registeredRunables;
     }
 
-    /**
-     * @return the callbackIndex
-     */
     public int getCallbackIndex() {
         return callbackIndex;
     }
 
-    /**
-     * @return the receiveCallback
-     */
     public CallbackAdapte getReceiveCallback() {
         return receiveCallback;
     }
 
-    /**
-     * @param receiveCallback the receiveCallback to set
-     */
     public void setReceiveCallback(CallbackAdapte receiveCallback) {
         this.receiveCallback = receiveCallback;
     }
 
-    /**
-     * @return the receiveCallbacks
-     */
     public Map<Integer, ObjectEntry<CallbackAdapte, CallbackTimeout>> getReceiveCallbacks() {
         return receiveCallbacks;
     }
 
-    /**
-     * @param callbackIndex
-     * @param callbackAdapte
-     * @return
-     */
     public CallbackTimeout putReceiveCallbacks(int callbackIndex, int timeout, CallbackAdapte callbackAdapte) {
         ObjectEntry<CallbackAdapte, CallbackTimeout> entry = new ObjectEntry<CallbackAdapte, CallbackTimeout>(
                 callbackAdapte, null);
@@ -370,23 +231,14 @@ public class SocketAdapter {
         return callbackTimeout;
     }
 
-    /**
-     * @return
-     */
     public int getMinCallbackIndex() {
         return 2048;
     }
 
-    /**
-     * @return
-     */
     public int getMaxBufferLength() {
         return 204800;
     }
 
-    /**
-     * @return
-     */
     public synchronized int generateCallbackIndex() {
         int minCallbackIndex = getMinCallbackIndex();
         while (true) {
@@ -402,16 +254,10 @@ public class SocketAdapter {
         return callbackIndex;
     }
 
-    /**
-     *
-     */
     public void clearRetryConnect() {
         retryConnect = 0;
     }
 
-    /**
-     * @return
-     */
     public boolean isRetryConnectMax() {
         return retryConnect >= 3;
     }
@@ -437,9 +283,6 @@ public class SocketAdapter {
         }
     }
 
-    /**
-     *
-     */
     public void close() {
         if (socket != null) {
             try {
@@ -655,11 +498,6 @@ public class SocketAdapter {
         receiveCallback(offset, buffer, flag);
     }
 
-    /**
-     * @param offset
-     * @param buffer
-     * @param flag
-     */
     public void receiveCallback(int offset, byte[] buffer, byte flag) {
         // 转发请求
         int length = buffer.length;
@@ -717,13 +555,6 @@ public class SocketAdapter {
         }
     }
 
-    /**
-     * @param callbackAdapte
-     * @param offset
-     * @param buffer
-     * @param flag
-     * @param callbackIndex
-     */
     public void receiveCallback(CallbackAdapte callbackAdapte, int offset, byte[] buffer, byte flag,
                                 Integer callbackIndex) {
         callbackAdapte.doWith(this, offset, buffer);
@@ -777,18 +608,6 @@ public class SocketAdapter {
                 callbackIndex, postData, 0, postData == null ? 0 : postData.length);
     }
 
-    /**
-     * @param off
-     * @param dataBytes
-     * @param offset
-     * @param length
-     * @param head
-     * @param debug
-     * @param flag
-     * @param callbackIndex
-     * @param postData
-     * @return
-     */
     public byte[] sendDataBytes(int off, byte[] dataBytes, int dataOff, int dataLen, boolean head, boolean debug,
                                 int flag, int callbackIndex, byte[] postData, int postOff, int postLen) {
         byte headFlag = 0x00;
@@ -860,20 +679,10 @@ public class SocketAdapter {
         return sendDataBytes;
     }
 
-    /**
-     * @param buffer
-     * @return
-     */
     public boolean sendData(byte[] buffer) {
         return sendData(buffer, 0, buffer.length);
     }
 
-    /**
-     * @param buffer
-     * @param offset
-     * @param length
-     * @return
-     */
     public boolean sendData(byte[] buffer, int offset, int length) {
         Socket sendSocket = socket;
         if (sendSocket != null) {
@@ -891,14 +700,6 @@ public class SocketAdapter {
         return false;
     }
 
-    /**
-     * @param dataBytes
-     * @param head
-     * @param debug
-     * @param callbackIndex
-     * @param postData
-     * @return
-     */
     protected RegisteredRunable sendData(byte[] dataBytes, boolean head, boolean debug, int callbackIndex,
                                          byte[] postData) {
         connect();
@@ -920,9 +721,6 @@ public class SocketAdapter {
         return runnable;
     }
 
-    /**
-     * @param socketChannel
-     */
     protected void receiveSocketChannel() {
         receiveSocket = socket;
         clearReceiveBuff();
@@ -951,11 +749,7 @@ public class SocketAdapter {
 
         receiveStarted = true;
         Thread thread = new Thread() {
-            /*
-             * (non-Javadoc)
-             *
-             * @see java.lang.Thread#run()
-             */
+
             @Override
             public void run() {
                 receiveSocketChannel();
@@ -1007,37 +801,17 @@ public class SocketAdapter {
         }
     }
 
-    /**
-     * @author absir
-     */
     public static interface CallbackAdapte {
 
-        /**
-         * @param adapter
-         * @param offset
-         * @param buffer
-         */
         public void doWith(SocketAdapter adapter, int offset, byte[] buffer);
     }
 
-    /**
-     * @author absir
-     */
     public static abstract class RegisteredRunable {
 
-        /**
-         * failed
-         */
         protected boolean failed;
 
-        /**
-         * removed
-         */
         protected boolean removed;
 
-        /**
-         *
-         */
         public void run() {
             if (!removed) {
                 doRun();
@@ -1050,29 +824,14 @@ public class SocketAdapter {
         protected abstract void doRun();
     }
 
-    /**
-     * @author absir
-     */
     public static class CallbackTimeout {
 
-        /**
-         * timeout
-         */
         public long timeout;
 
-        /**
-         * registeredRunable
-         */
         public RegisteredRunable registeredRunable;
 
-        /**
-         * socketAdapter
-         */
         public SocketAdapter socketAdapter;
 
-        /**
-         * callbackIndex
-         */
         public int callbackIndex;
 
         /**
@@ -1094,14 +853,8 @@ public class SocketAdapter {
         }
     }
 
-    /**
-     * @author absir
-     */
     protected static class TimeoutThread extends Thread {
 
-        /**
-         * addTimeouts
-         */
         private final List<CallbackTimeout> addTimeouts = new ArrayList<CallbackTimeout>();
 
         /**
@@ -1109,18 +862,10 @@ public class SocketAdapter {
          */
         private final List<CallbackTimeout> callbackTimeouts = new LinkedList<CallbackTimeout>();
 
-        /**
-         * @param timeout
-         */
         public synchronized void add(CallbackTimeout timeout) {
             addTimeouts.add(timeout);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Thread#run()
-         */
         @Override
         public void run() {
             try {

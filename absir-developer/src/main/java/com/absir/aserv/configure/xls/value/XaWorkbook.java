@@ -12,21 +12,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- *
- */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface XaWorkbook {
 
-    /**
-     * @return
-     */
     String workbook() default "";
 
-    /**
-     * @return
-     */
     int[] sheets() default {0};
 }

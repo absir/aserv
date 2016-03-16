@@ -10,9 +10,6 @@
  * @author absir
  * @author absir
  */
-/**
- * @author absir
- *
- */
+
 @JaProxy
 package com.absir.orm.value;

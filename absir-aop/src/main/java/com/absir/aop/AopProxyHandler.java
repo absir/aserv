@@ -14,25 +14,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class AopProxyHandler {
 
-    /**
-     * VOID
-     */
     public static final Object VOID = new Object();
 
-    /**
-     * AOP_PROXY_METHOD_ZERO
-     */
     private static final Map<String, Integer> AOP_PROXY_METHOD_ZERO = new HashMap<String, Integer>();
 
-    /**
-     * AOP_PROXY_METHOD_ONE
-     */
     private static final Map<String, Integer> AOP_PROXY_METHOD_ONE = new HashMap<String, Integer>();
 
     static {
@@ -45,52 +33,25 @@ public class AopProxyHandler {
         AOP_PROXY_METHOD_ONE.put("equals", 0);
     }
 
-    /**
-     * beanType
-     */
     Class<?> beanType;
 
-    /**
-     * beanObject
-     */
     Object beanObject;
 
-    /**
-     * aopInterceptors
-     */
     List<AopInterceptor> aopInterceptors = new ArrayList<AopInterceptor>();
 
-    /**
-     * @param beanType
-     * @param beanObject
-     */
     public AopProxyHandler(Class<?> beanType, Object beanObject) {
         this.beanType = beanType;
         this.beanObject = beanObject;
     }
 
-    /**
-     * @return the beanObject
-     */
     public Object getBeanObject() {
         return beanObject;
     }
 
-    /**
-     * @return the aopInterceptors
-     */
     public List<AopInterceptor> getAopInterceptors() {
         return aopInterceptors;
     }
 
-    /**
-     * @param proxy
-     * @param method
-     * @param args
-     * @param methodProxy
-     * @return
-     * @throws Throwable
-     */
     public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         if (!Environment.isStarted()) {
             return null;
@@ -131,15 +92,6 @@ public class AopProxyHandler {
         return invoke(proxy, aopInterceptors.iterator(), method, args, methodProxy);
     }
 
-    /**
-     * @param proxy
-     * @param iterator
-     * @param method
-     * @param args
-     * @param methodProxy
-     * @return
-     * @throws Throwable
-     */
     public Object invoke(Object proxy, Iterator<AopInterceptor> iterator, Method method, Object[] args, MethodProxy methodProxy)
             throws Throwable {
         while (iterator.hasNext()) {
@@ -174,14 +126,6 @@ public class AopProxyHandler {
         }
     }
 
-    /**
-     * @param proxy
-     * @param method
-     * @param args
-     * @param methodProxy
-     * @return
-     * @throws Throwable
-     */
     public Object invoke(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         return method.invoke(beanObject, args);
     }

@@ -9,9 +9,6 @@ package com.absir.aserv.game.value;
 
 import com.absir.core.kernel.KernelLang.CloneTemplate;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes"})
 public abstract class OSkill<T extends OObject> implements CloneTemplate<OSkill<T>> {
 
@@ -50,11 +47,6 @@ public abstract class OSkill<T extends OObject> implements CloneTemplate<OSkill<
      */
     public abstract void effect(T self, IResult result);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#clone()
-     */
     @Override
     public OSkill<T> clone() {
         return this;

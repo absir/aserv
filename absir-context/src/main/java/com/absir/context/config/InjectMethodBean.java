@@ -17,43 +17,20 @@ import com.absir.core.dyna.DynaBinder;
 import java.lang.reflect.Method;
 import java.util.List;
 
-/**
- * @author absir
- */
 public class InjectMethodBean extends InjectInvoker {
 
-    /**
-     * method
-     */
     private Method method;
 
-    /**
-     * paramNames
-     */
     private String[] paramNames;
 
-    /**
-     * beanDefineArray
-     */
     private BeanDefineArray beanDefineArray;
 
-    /**
-     * @param method
-     * @param beanDefineArray
-     */
     public InjectMethodBean(Method method, BeanDefineArray beanDefineArray) {
         this.method = method;
         this.paramNames = BeanDefineDiscover.paramterNames(method);
         this.beanDefineArray = paramNames == null ? null : beanDefineArray;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.inject.InjectInvoker#invoke(com.absir.bean.basis.BeanFactory
-     * , java.lang.Object)
-     */
     @Override
     public void invoke(BeanFactory beanFactory, Object beanObject) {
         try {

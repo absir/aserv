@@ -17,31 +17,15 @@ import com.absir.property.PropertySupply;
 
 import java.lang.annotation.Annotation;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class BinderSupply extends PropertySupply<BinderObject, Binder> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.property.PropertySupply#getIngoreAnnotationClass()
-     */
     @Override
     public Class<? extends Annotation> getIngoreAnnotationClass() {
         return BinderIngore.class;
     }
 
-    /**
-     * @param propertyData
-     * @param value
-     * @param toType
-     * @param dynaBinder
-     * @param toValue
-     * @return
-     */
     public Object bindValue(PropertyData propertyData, Object value, Class<?> toType, DynaBinder dynaBinder, Object toValue) {
         if (value != null) {
             Property property = propertyData.getProperty();

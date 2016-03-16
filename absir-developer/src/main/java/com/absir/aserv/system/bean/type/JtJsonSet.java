@@ -9,16 +9,9 @@ package com.absir.aserv.system.bean.type;
 
 import java.util.Set;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("serial")
 public class JtJsonSet extends JtJsonValue {
 
-    /**
-     * @throws ClassNotFoundException
-     */
     public JtJsonSet() throws ClassNotFoundException {
         super(Set.class.getName());
     }

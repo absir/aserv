@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-6-17 下午4:25:30
  */
 package com.absir.bean.inject;
@@ -25,18 +25,12 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"unchecked", "rawtypes"})
 @Basis
 @Bean
 public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply, IBeanDefineAware,
         IBeanObjectProcessor, IBeanFactoryAware, IAdapterSupport, IBeanFactoryStarted, IBeanFactoryStopping {
 
-    /**
-     * OBJECT_INVOKER_COMPARATOR
-     */
     protected static final Comparator<Entry<Object, InjectInvoker>> OBJECT_INVOKER_COMPARATOR = new Comparator<Entry<Object, InjectInvoker>>() {
 
         @Override
@@ -44,54 +38,28 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
             return o1.getValue().getOrder() - o2.getValue().getOrder();
         }
     };
-    /**
-     * Instance
-     */
+
     private static InjectBeanFactory Instance;
-    /**
-     * injectObservers
-     */
+
     private final Set<InjectObserver> injectObservers = Collections
             .newSetFromMap(new ConcurrentHashMap<InjectObserver, Boolean>());
-    /**
-     * injectObserverObjects
-     */
+
     private final Set<InjectObserverObject> injectObserverObjects = Collections
             .newSetFromMap(new ConcurrentHashMap<InjectObserverObject, Boolean>());
-    /**
-     * injectInvokerObserverSoftCaches
-     */
+
     private final Map<InjectObserverSoftObject, List<SoftReference<Object>>> injectInvokerObserverSoftCaches = new ConcurrentHashMap<InjectObserverSoftObject, List<SoftReference<Object>>>();
-    /**
-     * injectInvokerCaches
-     */
+
     private final Map<Class<?>, Object[]> injectInvokerCaches = new HashMap<Class<?>, Object[]>();
-    /**
-     * beanDefining
-     */
+
     private boolean beanDefining;
-    /**
-     * methodDefines
-     */
+
     private IMethodDefine[] methodDefines;
-    /**
-     * typeSupports
-     */
+
     @Inject(type = InjectType.Selectable)
     private ITypeSupport[] typeSupports = new ITypeSupport[]{};
-    /**
-     * fieldSupports
-     */
+
     private IFieldSupport[] fieldSupports = new IFieldSupport[]{new IFieldSupport() {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.bean.inject.IFieldSupport#getInjectInvoker(com.absir.bean
-         * .basis.BeanScope, com.absir.bean.basis.BeanDefine,
-         * java.lang.reflect.Field)
-         */
         @Override
         public InjectInvoker getInjectInvoker(BeanScope beanScope, BeanDefine beanDefine, Field field) {
             Inject inject = field.getAnnotation(Inject.class);
@@ -117,21 +85,13 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
     },
 
     };
-    /**
-     * beanMethods
-     */
+
     private Map<BeanMethod, Method> beanMethods = new HashMap<BeanMethod, Method>();
-    /**
-     * startedInjectInvokers
-     */
+
     private List<Entry<Object, InjectInvoker>> startedInjectInvokers = new ArrayList<Entry<Object, InjectInvoker>>();
-    /**
-     * stoppingInjectInvokers
-     */
+
     private List<Entry<Object, InjectInvoker>> stoppingInjectInvokers = new ArrayList<Entry<Object, InjectInvoker>>();
-    /**
-     * methodInjects
-     */
+
     private IMethodInject[] methodInjects = new IMethodInject[]{new IMethodInject<Started>() {
 
         @Override
@@ -171,19 +131,9 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
             },
 
     };
-    /**
-     * methodSupports
-     */
+
     private IMethodSupport[] methodSupports = new IMethodSupport[]{new IMethodSupport<Object[]>() {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.bean.inject.IMethodSupport#getInject(com.absir.bean.basis
-         * .BeanScope, com.absir.bean.basis.BeanDefine,
-         * java.lang.reflect.Method)
-         */
         @Override
         public Object[] getInject(BeanScope beanScope, BeanDefine beanDefine, Method method) {
             int length = methodInjects.length;
@@ -216,13 +166,6 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
             return injects;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.bean.inject.IMethodSupport#getInjectInvoker(java.lang.
-         * Object , java.lang.reflect.Method, java.lang.reflect.Method,
-         * java.lang.Object, java.util.Map)
-         */
         @Override
         public InjectInvoker getInjectInvoker(Object[] injects, Method method, Method beanMethod, Object beanObject,
                                               Map<Method, Set<Object>> methodMapInjects) {
@@ -267,27 +210,16 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
 
     };
 
-    /**
-     *
-     */
     public InjectBeanFactory(BeanFactory beanFactory) {
         Instance = this;
         beanDefining = true;
         methodDefines = KernelCollection.toArray(beanFactory.getBeanObjects(IMethodDefine.class), IMethodDefine.class);
     }
 
-    /**
-     * @return the Instance
-     */
     public static InjectBeanFactory getInstance() {
         return Instance;
     }
 
-    /**
-     * @param beanType
-     * @param method
-     * @return
-     */
     public Method getBeanMethod(Class<?> beanType, Method method) {
         if (Modifier.isPrivate(method.getModifiers()) || Modifier.isFinal(method.getModifiers())) {
             method.setAccessible(true);
@@ -319,60 +251,32 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
         return method;
     }
 
-    /**
-     * @param fieldSupports
-     */
     @Inject(type = InjectType.Selectable)
     private void setFieldSupports(IFieldSupport[] fieldSupports) {
         this.fieldSupports = KernelArray.concat(this.fieldSupports, fieldSupports);
     }
 
-    /**
-     * @param methodSupports
-     */
     @Inject(type = InjectType.Selectable)
     private void setMethodSupports(IMethodSupport[] methodSupports) {
         this.methodSupports = KernelArray.concat(this.methodSupports, methodSupports);
     }
 
-    /**
-     * @param methodInjects
-     */
     @Inject(type = InjectType.Selectable)
     private void setMethodSupports(IMethodInject[] methodInjects) {
         this.methodInjects = KernelArray.concat(this.methodInjects, methodInjects);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanFactorySupport#supports(com.absir.bean.core
-     * .BeanFactoryImpl)
-     */
     @Override
     public boolean supports(BeanFactoryImpl beanFactory) {
         beanDefining = true;
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return 0;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanDefineSupply#getBeanDefines(com.absir.bean
-     * .core.BeanFactoryImpl, java.lang.Class)
-     */
     @Override
     public List<BeanDefine> getBeanDefines(BeanFactoryImpl beanFactory, Class<?> beanType) {
         Bean bean = beanType.getAnnotation(Bean.class);
@@ -392,12 +296,6 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
         return beanDefines;
     }
 
-    /**
-     * @param beanFactory
-     * @param beanType
-     * @param beanDefine
-     * @return
-     */
     public List<BeanDefine> getBeanDefines(final BeanFactoryImpl beanFactory, final Class<?> beanType,
                                            final BeanDefine beanDefine) {
         final List<BeanDefine> beanDefines = new ArrayList<BeanDefine>();
@@ -487,10 +385,6 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
         return beanDefines;
     }
 
-    /**
-     * @param beanType
-     * @param methodEntry
-     */
     public void getMethodEntries(final Class<?> beanType, final IMethodEntry methodEntry) {
         final Set<Method> beanMethodSet = new HashSet<Method>();
         KernelReflect.doWithDeclaredMethods(beanType, new CallbackBreak<Method>() {
@@ -514,47 +408,21 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
         });
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanDefineAware#registerBeanDefine(com.absir.bean
-     * .core.BeanFactory, com.absir.bean.basis.IBeanDefine)
-     */
     @Override
     public void registerBeanDefine(BeanFactoryImpl beanFactory, BeanDefine beanDefine) {
         changedBeanDefine(beanFactory, beanDefine, true);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanDefineAware#unRegisterBeanDefine(com.absir
-     * .bean.core.BeanFactory, com.absir.bean.basis.IBeanDefine)
-     */
     @Override
     public void unRegisterBeanDefine(BeanFactoryImpl beanFactory, BeanDefine beanDefine) {
         changedBeanDefine(beanFactory, beanDefine, false);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanDefineAware#replaceRegisterBeanDefine(com.
-     * absir.bean.core.BeanFactoryImpl, com.absir.bean.basis.BeanDefine)
-     */
     @Override
     public void replaceRegisterBeanDefine(BeanFactoryImpl beanFactory, BeanDefine beanDefine) {
         changedBeanDefine(beanFactory, beanDefine, true);
     }
 
-    /**
-     * @param beanFactory
-     * @param beanDefine
-     * @param register
-     */
     private void changedBeanDefine(BeanFactoryImpl beanFactory, BeanDefine beanDefine, boolean register) {
         if (injectObservers.size() > 0) {
             for (InjectObserver injectObserver : injectObservers) {
@@ -576,14 +444,6 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanObjectProcessor#processBeanObject(com.absir
-     * .bean.basis.BeanFactory, com.absir.bean.basis.BeanScope,
-     * com.absir.bean.basis.BeanDefine, java.lang.Object, java.lang.Object)
-     */
     @Override
     public void processBeanObject(final BeanFactory beanFactory, final BeanScope beanScope, final BeanDefine beanDefine,
                                   final Object beanObject, final Object beanProxy) {
@@ -781,13 +641,6 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.inject.IAdapterSupport#adapter(com.absir.bean.basis.
-     * BeanFactory, java.lang.Object, java.util.Collection,
-     * java.util.Collection)
-     */
     @Override
     public void adapter(BeanFactory beanFactory, Object beanObject, Collection<Field> fields,
                         Collection<Method> methods) {
@@ -828,24 +681,10 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.android.bean.config.IBeanFactoryAware#beforeRegister(com.absir
-     * .android.bean.core.BeanFactory)
-     */
     @Override
     public void beforeRegister(BeanFactoryImpl beanFactory) {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.android.bean.config.IBeanFactoryAware#started(com.absir.android
-     * .bean.BeanFactory)
-     */
     @Override
     public void afterRegister(BeanFactoryImpl beanFactory) {
         InjectAdapter injectAdapter = InjectAdapter.getInstance();
@@ -865,31 +704,16 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
         }
     }
 
-    /**
-     * @param beanObject
-     * @param injectInvoker
-     */
     public void addStated(Object beanObject, InjectInvoker injectInvoker) {
         if (beanDefining) {
             startedInjectInvokers.add(new ObjectEntry<Object, InjectInvoker>(beanObject, injectInvoker));
         }
     }
 
-    /**
-     * @param beanObject
-     * @param injectInvoker
-     */
     public void addStopping(Object beanObject, InjectInvoker injectInvoker) {
         stoppingInjectInvokers.add(new ObjectEntry<Object, InjectInvoker>(beanObject, injectInvoker));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanFactoryStarted#started(com.absir.bean.basis
-     * .BeanFactory)
-     */
     @Override
     public void started(BeanFactory beanFactory) {
         if (startedInjectInvokers.size() > 0) {
@@ -914,13 +738,6 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
                 IBeanDefineProcessor.class, IBeanObjectProcessor.class);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanFactoryStopping#stopping(com.absir.bean.basis
-     * .BeanFactory)
-     */
     @Override
     public void stopping(BeanFactory beanFactory) {
         Environment.setActive(false);

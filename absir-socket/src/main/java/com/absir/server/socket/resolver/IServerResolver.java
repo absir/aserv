@@ -13,68 +13,22 @@ import com.absir.server.socket.SocketBuffer;
 import java.io.Serializable;
 import java.nio.channels.SocketChannel;
 
-/**
- * @author absir
- *
- */
 public interface IServerResolver {
 
-    /**
-     * MUST NIO
-     *
-     * @param socketChannel
-     * @return
-     * @throws Throwable
-     */
     public long acceptTimeoutNIO(SocketChannel socketChannel) throws Throwable;
 
-    /**
-     * @param socketChannel
-     * @param selSession
-     * @param contextTime
-     */
     public void doBeat(SocketChannel socketChannel, SelSession selSession, long contextTime);
 
-    /**
-     * @param socketChannel
-     * @param selSession
-     * @param buffer
-     * @throws Throwable
-     */
     public void register(SocketChannel socketChannel, SelSession selSession, byte[] buffer) throws Throwable;
 
-    /**
-     * @param socketChannel
-     * @param selSession
-     */
     public void reciveBeatNIO(SocketChannel socketChannel, SelSession selSession);
 
-    /**
-     * MUST NIO
-     *
-     * @param socketChannel
-     * @param selSession
-     * @param socketBuffer
-     * @param buffer
-     * @return
-     */
     public boolean receiveBufferNIO(SocketChannel socketChannel, SelSession selSession, SocketBuffer socketBuffer,
                                     byte[] buffer);
 
-    /**
-     * @param socketChannel
-     * @param selSession
-     * @param socketBuffer
-     * @param buffer
-     */
     public void receiveByteBuffer(SocketChannel socketChannel, SelSession selSession, SocketBuffer socketBuffer,
                                   byte[] buffer);
 
-    /**
-     * @param id
-     * @param socketChannel
-     * @param selSession
-     */
     public void unRegister(Serializable id, SocketChannel socketChannel, SelSession selSession);
 
 }

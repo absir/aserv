@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-6-13 下午4:06:49
  */
 package com.absir.bean.core;
@@ -25,67 +25,29 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class BeanFactoryProvider implements IBeanConfigProvider {
 
-    /**
-     * includePackages
-     */
     private Set<String> includePackages = new HashSet<String>();
 
-    /**
-     * excludePackages
-     */
     private Set<String> excludePackages = new HashSet<String>();
 
-    /**
-     * unMatchPatterns
-     */
     private Set<String> unMatchPatterns = new HashSet<String>();
 
-    /**
-     * beanTypes
-     */
     private Set<Class<?>> beanTypes = new HashSet<Class<?>>();
 
-    /**
-     * beanFactory
-     */
     private BeanFactoryImpl beanFactory;
 
-    /**
-     * beanTypeFilters
-     */
     private List<IBeanTypeFilter> beanTypeFilters = new ArrayList<IBeanTypeFilter>();
 
-    /**
-     * beanDefineSupplies
-     */
     private List<IBeanDefineSupply> beanDefineSupplies = new ArrayList<IBeanDefineSupply>();
 
-    /**
-     * beanDefineProcessors
-     */
     private List<IBeanDefineProcessor> beanDefineProcessors = new ArrayList<IBeanDefineProcessor>();
 
-    /**
-     * beanFactoryStarteds
-     */
     private List<IBeanFactoryStarted> beanFactoryStarteds = new ArrayList<IBeanFactoryStarted>();
 
-    /**
-     * beanFactoryStoppings
-     */
     private List<IBeanFactoryStopping> beanFactoryStoppings = new ArrayList<IBeanFactoryStopping>();
 
-    /**
-     * @param includePackages
-     * @param excludePackages
-     * @param unMatchPatterns
-     */
     public BeanFactoryProvider(Collection<String> includePackages, Collection<String> excludePackages,
                                Collection<String> unMatchPatterns) {
         if (includePackages != null) {
@@ -101,27 +63,14 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
         }
     }
 
-    /**
-     * @param beanType
-     * @return
-     */
     public static boolean filterBeanType(Class<?> beanType) {
         return beanType.isPrimitive() || beanType.isAnonymousClass();
     }
 
-    /**
-     * @param parameter
-     * @return
-     */
     public static List<String> getParameterList(String parameter) {
         return getParameterList(parameter, " ");
     }
 
-    /**
-     * @param parameter
-     * @param split
-     * @return
-     */
     public static List<String> getParameterList(String parameter, String split) {
         if (parameter == null) {
             return null;
@@ -143,10 +92,6 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
         return parameterList;
     }
 
-    /**
-     * @param beanTypes
-     * @return
-     */
     private List<Class<?>> getBeanTypes(Collection<Class<?>> beanTypes) {
         List<Class<?>> beanTypeList = new ArrayList<Class<?>>();
         for (Class<?> beanType : beanTypes) {
@@ -158,32 +103,18 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
         return beanTypeList;
     }
 
-    /**
-     * @return the beanFactory
-     */
     public BeanFactoryImpl getBeanFactory() {
         return beanFactory;
     }
 
-    /**
-     * @return the beanFactoryStarteds
-     */
     public List<IBeanFactoryStarted> getBeanFactoryStarteds() {
         return beanFactoryStarteds;
     }
 
-    /**
-     * @return the beanFactoryStoppings
-     */
     public List<IBeanFactoryStopping> getBeanFactoryStoppings() {
         return beanFactoryStoppings;
     }
 
-    /**
-     * @param beanScanner
-     * @param beanTypes
-     * @param beanNameAndObjects
-     */
     public synchronized void scan(BeanScanner beanScanner, Collection<Class<?>> beanTypes,
                                   Object... beanNameAndObjects) {
         long startTime = System.currentTimeMillis();
@@ -477,9 +408,6 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
         }
     }
 
-    /**
-     *
-     */
     public synchronized void started() {
         BeanFactory beanFactory = BeanFactoryUtils.get();
         for (IBeanFactoryStarted beanFactoryStarted : beanFactoryStarteds) {
@@ -489,9 +417,6 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
         beanFactoryStarteds.clear();
     }
 
-    /**
-     *
-     */
     public synchronized void stopping() {
         BeanFactory beanFactory = BeanFactoryUtils.get();
         for (IBeanFactoryStopping beanFactoryStopping : beanFactoryStoppings) {
@@ -501,20 +426,10 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
         beanFactoryStoppings.clear();
     }
 
-    /**
-     * @return
-     */
     protected BeanConfig getBeanConfig() {
         return new BeanConfigImpl(this);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanConfigProvider#loadBeanConfig(com.absir.bean
-     * .basis.BeanConfig, java.util.Set, java.util.Set, java.util.Map)
-     */
     @Override
     public void loadBeanConfig(final BeanConfig beanConfig, Set<String> propertyFilenames,
                                Set<String> loadedPropertyFilenames, Map<String, CallbackTemplate<String>> beanConfigTemplates) {
@@ -579,10 +494,6 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
         });
     }
 
-    /**
-     * @param beanFactory
-     * @param beanDefineNames
-     */
     protected void registerBeanDefine(BeanFactoryImpl beanFactory, Set<String> beanDefineNames) {
         for (Class<?> beanClass : beanTypes) {
             BeanDefine beanDefine = new InjectBeanDefine(new BeanDefineType(beanClass), BeanScope.SINGLETON);
@@ -591,18 +502,9 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
         }
     }
 
-    /**
-     * @param beanFactory
-     * @param beanDefine
-     * @param beanObject
-     */
     protected void processorBeanDefineObject(BeanFactoryImpl beanFactory, BeanDefine beanDefine, Object beanObject) {
     }
 
-    /**
-     * @param beanType
-     * @return
-     */
     private boolean isSupport(Class<?> beanType) {
         for (IBeanTypeFilter beanTypeFilter : beanTypeFilters) {
             if (beanTypeFilter.filt(beanType)) {
@@ -613,12 +515,6 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
         return true;
     }
 
-    /**
-     * @param beanFactory
-     * @param beanTypes
-     * @param basisTypes
-     * @param collections
-     */
     private void registerBeanTypes(final BeanFactoryImpl beanFactory, final Collection<Class<?>> beanTypes,
                                    final Class<?>[] basisTypes, final Collection[] collections) {
         final List<BeanDefine> beanDefines = new ArrayList<BeanDefine>();

@@ -13,43 +13,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- *
- */
 public class OTargetsActivity<T> {
 
-    /**
-     * singleActivity
-     */
     protected T singleActivity;
 
-    /**
-     * singleActivityMap
-     */
     protected Map<Long, T> singleActivityMap = new HashMap<Long, T>();
 
-    /**
-     * @param serverId
-     * @return
-     */
     public T getSingleActivity(long serverId) {
         T activity = singleActivityMap.get(serverId);
         return activity == null ? singleActivity : activity;
     }
 
-    /**
-     *
-     */
     public void clearActivity() {
         singleActivity = null;
         singleActivityMap.clear();
     }
 
-    /**
-     * @param activity
-     * @return
-     */
     public JbBeanTargets getTargets(T activity) {
         if (activity == null) {
             return null;
@@ -69,21 +48,11 @@ public class OTargetsActivity<T> {
         return null;
     }
 
-    /**
-     * @param oldActivity
-     * @param targets
-     * @return
-     */
     public boolean canOverwrite(T oldActivity, JbBeanTargets targets) {
         JbBeanTargets oldTargets = getTargets(oldActivity);
         return canOverwriteTargets(oldTargets, targets);
     }
 
-    /**
-     * @param oldTargets
-     * @param targets
-     * @return
-     */
     public boolean canOverwriteTargets(JbBeanTargets oldTargets, JbBeanTargets targets) {
         return oldTargets == null
                 || oldTargets.getTargets() == null
@@ -92,10 +61,6 @@ public class OTargetsActivity<T> {
                 .getTargets().length);
     }
 
-    /**
-     * @param targets
-     * @param activity
-     */
     public void addActivity(JbBeanTargets targets, T activity) {
         if (targets == null || targets.getTargets() == null || targets.getTargets().length == 0) {
             singleActivity = activity;

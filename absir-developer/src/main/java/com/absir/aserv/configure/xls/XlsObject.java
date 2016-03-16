@@ -9,10 +9,6 @@ package com.absir.aserv.configure.xls;
 
 import com.absir.property.PropertyObject;
 
-/**
- * @author absir
- *
- */
 public abstract class XlsObject implements PropertyObject<XlsAccessor> {
 
 }

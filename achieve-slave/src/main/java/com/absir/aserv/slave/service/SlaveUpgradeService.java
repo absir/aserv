@@ -32,52 +32,27 @@ import java.io.FileInputStream;
 import java.net.HttpURLConnection;
 import java.util.zip.ZipInputStream;
 
-/**
- * @author absir
- *
- */
 @Base
 @Bean
 public class SlaveUpgradeService {
 
-    /**
-     * ME
-     */
     public static final SlaveUpgradeService ME = BeanFactoryUtils.get(SlaveUpgradeService.class);
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(SlaveUpgradeService.class);
 
     @Value("slave.upgrade.max")
     protected int retryMax = 10;
 
-    /**
-     * retryCount
-     */
     protected int retryCount;
 
-    /** downloaded */
     protected boolean downloaded;
 
-    /**
-     * upgradeSlave
-     */
     protected DUpgradeSlave upgradeSlave;
 
-    /**
-     * slaveUpgrading
-     */
     protected JSlaveUpgrading slaveUpgrading = new JSlaveUpgrading();
-    /**
-     * startUpgraded
-     */
+
     private boolean startUpgraded;
 
-    /**
-     *
-     */
     @Started
     protected void started() {
         commitUpgradeStatus(EUpgradeStatus.START_UPRADE_COMPLETE, false);
@@ -230,9 +205,6 @@ public class SlaveUpgradeService {
         }
     }
 
-    /**
-     * @param slave
-     */
     public void addDUpgradeSlave(DUpgradeSlave slave) {
         commitUpgradeStatus(EUpgradeStatus.READY_DOWNLOADING, false);
         retryCount = 0;
@@ -241,10 +213,6 @@ public class SlaveUpgradeService {
         startUpgraded();
     }
 
-    /**
-     * @param status
-     * @param failed
-     */
     protected void commitUpgradeStatus(EUpgradeStatus status, boolean failed) {
         slaveUpgrading.setUpgradeStatus(status);
         slaveUpgrading.setFailed(failed);

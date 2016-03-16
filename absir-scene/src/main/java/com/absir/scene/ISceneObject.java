@@ -11,9 +11,6 @@ import com.absir.core.base.IBase;
 
 import java.io.Serializable;
 
-/**
- * @author absir
- */
 public interface ISceneObject<ID extends Serializable> extends IBase<ID> {
 
     /**

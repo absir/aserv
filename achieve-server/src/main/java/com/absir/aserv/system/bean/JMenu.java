@@ -22,9 +22,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 import java.util.List;
 
-/**
- * @author absir
- */
 @MaEntity(parent = {@MaMenu("菜单管理")}, name = "菜单")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -70,138 +67,79 @@ public class JMenu extends JbBean implements IMenuBean, JiTree<JMenu> {
     @OrderBy("ordinal")
     private List<JMenu> children;
 
-    /**
-     * @return the parent
-     */
     public JMenu getParent() {
         return parent;
     }
 
-    /**
-     * @param parent the parent to set
-     */
     public void setParent(JMenu parent) {
         this.parent = parent;
     }
 
-    /**
-     * @return the name
-     */
     @Langs
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name the name to set
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * @return the type
-     */
     public String getType() {
         return type;
     }
 
-    /**
-     * @param type the type to set
-     */
     public void setType(String type) {
         this.type = type;
     }
 
-    /**
-     * @return the ordinal
-     */
     public int getOrdinal() {
         return ordinal;
     }
 
-    /**
-     * @param ordinal the ordinal to set
-     */
     public void setOrdinal(int ordinal) {
         this.ordinal = ordinal;
     }
 
-    /**
-     * @return the url
-     */
     public String getUrl() {
         return url;
     }
 
-    /**
-     * @param url the url to set
-     */
     public void setUrl(String url) {
         this.url = url;
     }
 
-    /**
-     * @return the ref
-     */
     public String getRef() {
         return ref;
     }
 
-    /**
-     * @param ref the ref to set
-     */
     public void setRef(String ref) {
         this.ref = ref;
     }
 
-    /**
-     * @return the urlType
-     */
     public MeUrlType getUrlType() {
         return urlType;
     }
 
-    /**
-     * @param urlType the urlType to set
-     */
     public void setUrlType(MeUrlType urlType) {
         this.urlType = urlType;
     }
 
-    /**
-     * @return the icon
-     */
     public String getIcon() {
         return icon;
     }
 
-    /**
-     * @param icon the icon to set
-     */
     public void setIcon(String icon) {
         this.icon = icon;
     }
 
-    /**
-     * @return the children
-     */
     public List<JMenu> getChildren() {
         return children;
     }
 
-    /**
-     * @param children the children to set
-     */
     public void setChildren(List<JMenu> children) {
         this.children = children;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return ordinal;

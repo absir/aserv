@@ -14,19 +14,8 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
-/**
- * @author absir
- *
- */
 public class ObjectSerializer extends JsonSerializer<Object> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.codehaus.jackson.map.JsonSerializer#serialize(java.lang.Object,
-     * org.codehaus.jackson.JsonGenerator,
-     * org.codehaus.jackson.map.SerializerProvider)
-     */
     @Override
     public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
         if (value instanceof Number) {

@@ -12,29 +12,16 @@ import com.absir.orm.value.JePermission;
 
 import javax.persistence.Entity;
 
-/**
- * @author absir
- *
- */
 @JaEntity(permissions = JePermission.SELECT)
 @Entity
 public class JResource extends JbResource {
 
-    /**
-     * fileMd5
-     */
     private String fileMd5;
 
-    /**
-     * @return the fileMd5
-     */
     public String getFileMd5() {
         return fileMd5;
     }
 
-    /**
-     * @param fileMd5 the fileMd5 to set
-     */
     public void setFileMd5(String fileMd5) {
         this.fileMd5 = fileMd5;
     }

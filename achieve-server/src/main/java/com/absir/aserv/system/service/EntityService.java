@@ -47,33 +47,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Base
 @Bean
 public class EntityService {
 
-    /**
-     * ME
-     */
     public static final EntityService ME = BeanFactoryUtils.get(EntityService.class);
 
-    /**
-     * dictCache
-     */
     DCacheOpen<String, JDict> dictCache;
 
-    /**
-     * entityNameMapRecycle
-     */
     private Map<String, Boolean> entityNameMapRecycle = new HashMap<String, Boolean>();
 
-    /**
-     * @return the dictCache
-     */
     public DCacheOpen<String, JDict> getDictCache() {
         return dictCache;
     }
@@ -97,10 +81,6 @@ public class EntityService {
         dictCache.reloadCache(session);
     }
 
-    /**
-     * @param entityName
-     * @return
-     */
     public ICrudSupply getCrudSupply(String entityName) {
         ICrudSupply crudSupply = CrudService.ME.getCrudSupply(entityName);
         if (crudSupply == null) {
@@ -110,13 +90,6 @@ public class EntityService {
         return crudSupply;
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param id
-     * @return
-     */
     public Object find(String entityName, ICrudSupply crudSupply, JiUserBase user, Object id) {
         return crudSupply.get(entityName,
                 DynaBinder.to(AccessServiceUtils.selectCondition(entityName, user, null),
@@ -124,46 +97,17 @@ public class EntityService {
                 AccessServiceUtils.selectCondition(entityName, user, null));
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param condition
-     * @param ids
-     * @return
-     */
     public List list(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition, Object[] ids) {
         return crudSupply.list(entityName, AccessServiceUtils.selectCondition(entityName, user, condition,
                 CrudServiceUtils.ids(entityName, ids, crudSupply, null)), null, 0, 0);
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param condition
-     * @param jdbcCondition
-     * @param queue
-     * @param firstResult
-     * @param maxResults
-     * @return
-     */
     public List list(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition,
                      JdbcCondition jdbcCondition, String queue, int firstResult, int maxResults) {
         return crudSupply.list(entityName, AccessServiceUtils.selectCondition(entityName,
                 crudSupply.getEntityClass(entityName), user, condition, jdbcCondition), queue, firstResult, maxResults);
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param condition
-     * @param jdbcCondition
-     * @param queue
-     * @param jdbcPage
-     * @return
-     */
     public List list(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition,
                      JdbcCondition jdbcCondition, String queue, JdbcPage jdbcPage) {
         if (queue == null) {
@@ -178,29 +122,11 @@ public class EntityService {
                 crudSupply.getEntityClass(entityName), user, condition, jdbcCondition), queue, jdbcPage);
     }
 
-    /**
-     * @param entityName
-     * @param entityObject
-     * @param crudSupply
-     * @param user
-     * @param filter
-     * @return
-     */
     public Object persist(String entityName, Object entityObject, ICrudSupply crudSupply, JiUserBase user,
                           PropertyFilter filter) {
         return merge(entityName, crudSupply.create(entityName), entityObject, crudSupply, true, user, filter);
     }
 
-    /**
-     * @param entityName
-     * @param entity
-     * @param entityObject
-     * @param crudSupply
-     * @param create
-     * @param user
-     * @param filter
-     * @return
-     */
     public Object merge(String entityName, Object entity, Object entityObject, ICrudSupply crudSupply, boolean create,
                         JiUserBase user, PropertyFilter filter) {
         if (entityObject == null || !(entityObject instanceof Map)) {
@@ -227,12 +153,6 @@ public class EntityService {
         return entity;
     }
 
-    /**
-     * @param entityName
-     * @param identifierName
-     * @param propertyMap
-     * @return
-     */
     private Object getIdentifier(String entityName, String identifierName, Map propertyMap) {
         Object id = propertyMap.get(identifierName);
         if (id == null) {
@@ -243,13 +163,6 @@ public class EntityService {
         return id;
     }
 
-    /**
-     * @param entityName
-     * @param id
-     * @param crudSupply
-     * @param jdbcCondition
-     * @return
-     */
     private Object find(String entityName, Object id, ICrudSupply crudSupply, JdbcCondition jdbcCondition) {
         Object entity = CrudServiceUtils.find(crudSupply, entityName, id, jdbcCondition);
         if (entity == null) {
@@ -259,17 +172,6 @@ public class EntityService {
         return entity;
     }
 
-    /**
-     * @param entityName
-     * @param identifierName
-     * @param identifierType
-     * @param propertyMap
-     * @param crudSupply
-     * @param user
-     * @param filter
-     * @param jdbcCondition
-     * @return
-     */
     private Object update(String entityName, String identifierName, Class identifierType, Map propertyMap,
                           ICrudSupply crudSupply, JiUserBase user, PropertyFilter filter, JdbcCondition jdbcCondition) {
         Object id = DynaBinderUtils.to(getIdentifier(entityName, identifierName, propertyMap), identifierType);
@@ -283,17 +185,6 @@ public class EntityService {
         return merge(entityName, entity, propertyMap, crudSupply, false, user, filter);
     }
 
-    /**
-     * @param entityName
-     * @param identifierName
-     * @param identifierType
-     * @param propertyMap
-     * @param crudSupply
-     * @param user
-     * @param filter
-     * @param jdbcCondition
-     * @return
-     */
     private Object merge(String entityName, String identifierName, Class identifierType, Map propertyMap,
                          ICrudSupply crudSupply, JiUserBase user, PropertyFilter filter, JdbcCondition jdbcCondition) {
         try {
@@ -321,14 +212,6 @@ public class EntityService {
         return persist(entityName, propertyMap, crudSupply, user, filter);
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param entityList
-     * @param filter
-     * @return
-     */
     public List insert(String entityName, ICrudSupply crudSupply, JiUserBase user, List<?> entityList,
                        PropertyFilter filter) {
         List<Object> entities = new ArrayList<Object>();
@@ -339,14 +222,6 @@ public class EntityService {
         return entities;
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param entityObject
-     * @param filter
-     * @return
-     */
     public Object update(String entityName, ICrudSupply crudSupply, JiUserBase user, Object entityObject,
                          PropertyFilter filter) {
         if (entityObject == null || !(entityObject instanceof Map)) {
@@ -362,14 +237,6 @@ public class EntityService {
                 AccessServiceUtils.updateCondition(entityName, user, null));
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param entityList
-     * @param filter
-     * @return
-     */
     public List update(String entityName, ICrudSupply crudSupply, JiUserBase user, List<?> entityList,
                        PropertyFilter filter) {
         Class entityClass = null;
@@ -401,14 +268,6 @@ public class EntityService {
         return entities;
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param entityObject
-     * @param filter
-     * @return
-     */
     public Object merge(String entityName, ICrudSupply crudSupply, JiUserBase user, Object entityObject,
                         PropertyFilter filter) {
         if (entityObject == null || !(entityObject instanceof Map)) {
@@ -424,14 +283,6 @@ public class EntityService {
                 AccessServiceUtils.updateCondition(entityName, user, null));
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param entityList
-     * @param filter
-     * @return
-     */
     public List merge(String entityName, ICrudSupply crudSupply, JiUserBase user, List<?> entityList,
                       PropertyFilter filter) {
         Class entityClass = null;
@@ -463,46 +314,21 @@ public class EntityService {
         return entities;
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param id
-     * @return
-     */
     public Object delete(String entityName, ICrudSupply crudSupply, JiUserBase user, Object id) {
         return CrudServiceUtils.delete(crudSupply, entityName, id,
                 AccessServiceUtils.deleteCondition(entityName, user, null), user);
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param ids
-     * @return
-     */
     public List delete(String entityName, ICrudSupply crudSupply, JiUserBase user, Object[] ids) {
         return CrudService.ME.delete(entityName, getCrudSupply(entityName), AccessServiceUtils
                 .deleteCondition(entityName, user, CrudServiceUtils.ids(entityName, ids, crudSupply, null)), user);
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param jdbcCondition
-     * @return
-     */
     public List delete(String entityName, ICrudSupply crudSupply, JiUserBase user, JdbcCondition jdbcCondition) {
         return CrudService.ME.delete(entityName, crudSupply,
                 AccessServiceUtils.deleteCondition(entityName, user, jdbcCondition), user);
     }
 
-    /**
-     * @param entityName
-     * @return
-     */
     public boolean getEntityNameRecycle(String entityName) {
         Boolean recyle = entityNameMapRecycle.get(entityName);
         if (recyle == null) {
@@ -528,13 +354,6 @@ public class EntityService {
         return recyle;
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param condition
-     * @param modelMap
-     */
     public void changed(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition,
                         Map<String, Object> modelMap) {
         if (!modelMap.containsKey("updateTime")) {
@@ -561,15 +380,6 @@ public class EntityService {
         }
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param condition
-     * @param modelMap
-     * @param entityMap
-     * @param filter
-     */
     public void sync(String entityName, ICrudSupply crudSupply, JiUserBase user, DCondition condition,
                      Map<String, Object> modelMap, Map<?, ?> entityMap, PropertyFilter filter) {
         Object entityList = entityMap.get("delete");
@@ -595,14 +405,6 @@ public class EntityService {
         changed(entityName, crudSupply, user, condition, modelMap);
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @param modelMap
-     * @param entityList
-     * @param filter
-     */
     public void mirror(String entityName, ICrudSupply crudSupply, JiUserBase user, Map<String, Object> modelMap,
                        List<?> entityList, PropertyFilter filter) {
         CrudService.ME.delete(entityName, crudSupply, AccessServiceUtils.deleteCondition(entityName, user, null), user);

@@ -46,37 +46,18 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 @Bean
 @Basis
 public class OMenuFactory extends AopMethodDefineAbstract<MenuAopInterceptor, String, String> implements IMenuFactory {
 
-    /**
-     * permissions
-     */
     private Map<String, String> permissions = new HashMap<String, String>();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aop.AopMethodDefine#getAopInterceptor(com.absir.bean.basis.
-     * BeanDefine, java.lang.Object)
-     */
     @Override
     public MenuAopInterceptor getAopInterceptor(BeanDefine beanDefine, Object beanObject) {
         return BeanFactoryImpl.getBeanDefine(beanDefine, RouteDefine.class) == null ? null : new MenuAopInterceptor();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aop.AopMethodDefine#getAopInterceptor(java.lang.Object,
-     * java.lang.Class)
-     */
     @Override
     public String getAopInterceptor(String variable, Class<?> beanType) {
         MaPermission maPermission = beanType.getAnnotation(MaPermission.class);
@@ -100,12 +81,6 @@ public class OMenuFactory extends AopMethodDefineAbstract<MenuAopInterceptor, St
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aop.AopMethodDefine#getAopInterceptor(java.lang.Object,
-     * java.lang.Object, java.lang.Class, java.lang.reflect.Method)
-     */
     @Override
     public String getAopInterceptor(String interceptor, String variable, Class<?> beanType, Method method) {
         MaPermission maPermission = method.getAnnotation(MaPermission.class);
@@ -156,25 +131,11 @@ public class OMenuFactory extends AopMethodDefineAbstract<MenuAopInterceptor, St
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return 0;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.feature.menu.IMenuFactory#proccess(java.lang.String,
-     * com.absir.aserv.feature.menu.MenuBeanRoot,
-     * com.absir.server.route.RouteMatcher,
-     * com.absir.aserv.feature.menu.value.MaFactory)
-     */
     @Override
     public void proccess(String route, MenuBeanRoot menuBeanRoot, RouteMatcher routeMatcher, MaFactory maFactory) {
         if (KernelArray.getAssignable(routeMatcher.getRouteAction().getRouteMethod().getParameterResolvers(), ParameterResolverPath.class) == null) {
@@ -201,19 +162,7 @@ public class OMenuFactory extends AopMethodDefineAbstract<MenuAopInterceptor, St
         }
     }
 
-    /**
-     * @author absir
-     */
     public static class MenuAopInterceptor extends AopInterceptorAbstract<String> {
-
-		/*
-         * (non-Javadoc)
-		 *
-		 * @see com.absir.aop.AopInterceptor#before(java.lang.Object,
-		 * java.util.Iterator, java.lang.Object, com.absir.aop.AopProxyHandler,
-		 * java.lang.reflect.Method, java.lang.Object[],
-		 * net.sf.cglib.proxy.MethodProxy)
-		 */
 
         @Override
         public Object before(Object proxy, Iterator<AopInterceptor> iterator, String interceptor, AopProxyHandler proxyHandler, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {

@@ -12,15 +12,8 @@ import com.absir.aserv.system.bean.value.JaLang;
 
 import javax.persistence.Id;
 
-/**
- * @author absir
- *
- */
 public class JSlaveUpgrading extends JbBase {
 
-    /**
-     * id
-     */
     @JaLang("主机")
     @Id
     private String id;
@@ -31,54 +24,30 @@ public class JSlaveUpgrading extends JbBase {
     @JaLang("失败")
     private boolean failed;
 
-    /**
-     * @return the id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * @return the upgradeStatus
-     */
     public EUpgradeStatus getUpgradeStatus() {
         return upgradeStatus;
     }
 
-    /**
-     * @param upgradeStatus
-     *            the upgradeStatus to set
-     */
     public void setUpgradeStatus(EUpgradeStatus upgradeStatus) {
         this.upgradeStatus = upgradeStatus;
     }
 
-    /**
-     * @return the failed
-     */
     public boolean isFailed() {
         return failed;
     }
 
-    /**
-     * @param failed
-     *            the failed to set
-     */
     public void setFailed(boolean failed) {
         this.failed = failed;
     }
 
-    /**
-     * @author absir
-     *
-     */
     public static enum EUpgradeStatus {
 
         @JaLang("准备下载")READY_DOWNLOADING,

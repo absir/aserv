@@ -15,10 +15,6 @@ import com.absir.orm.value.JaColum;
 
 import javax.persistence.*;
 
-/**
- * @author absir
- *
- */
 @Entity
 public class JMasterSynch extends JbBase {
 
@@ -48,91 +44,50 @@ public class JMasterSynch extends JbBase {
     @JaColum(indexs = @Index(columnList = "synched"))
     private boolean synched;
 
-    /**
-     * @return the id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * @return the masterIndex
-     */
     public int getMasterIndex() {
         return masterIndex;
     }
 
-    /**
-     * @param masterIndex
-     *            the masterIndex to set
-     */
     public void setMasterIndex(int masterIndex) {
         this.masterIndex = masterIndex;
     }
 
-    /**
-     * @return the uri
-     */
     public String getUri() {
         return uri;
     }
 
-    /**
-     * @param uri
-     *            the uri to set
-     */
     public void setUri(String uri) {
         this.uri = uri;
     }
 
-    /**
-     * @return the postData
-     */
     public byte[] getPostData() {
         return postData;
     }
 
-    /**
-     * @param postData
-     *            the postData to set
-     */
     public void setPostData(byte[] postData) {
         this.postData = postData;
     }
 
-    /**
-     * @return the updateTime
-     */
     public long getUpdateTime() {
         return updateTime;
     }
 
-    /**
-     * @param updateTime
-     *            the updateTime to set
-     */
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
     }
 
-    /**
-     * @return the synched
-     */
     public boolean isSynched() {
         return synched;
     }
 
-    /**
-     * @param synched
-     *            the synched to set
-     */
     public void setSynched(boolean synched) {
         this.synched = synched;
     }

@@ -18,10 +18,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Index;
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- *
- */
 @MappedSuperclass
 public abstract class JbPlayer extends JbBean implements ILevelExp {
 
@@ -58,91 +54,50 @@ public abstract class JbPlayer extends JbBean implements ILevelExp {
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
     private long banTime;
 
-    /**
-     * @return the serverId
-     */
     public long getServerId() {
         return serverId;
     }
 
-    /**
-     * @param serverId the serverId to set
-     */
     public void setServerId(long serverId) {
         this.serverId = serverId;
     }
 
-    /**
-     * @return the userId
-     */
     public long getUserId() {
         return userId;
     }
 
-    /**
-     * @param userId
-     *            the userId to set
-     */
     public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    /**
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name
-     *            the name to set
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * @return the platform
-     */
     public String getPlatform() {
         return platform;
     }
 
-    /**
-     * @param platform
-     *            the platform to set
-     */
     public void setPlatform(String platform) {
         this.platform = platform;
     }
 
-    /**
-     * @return the createTime
-     */
     public long getCreateTime() {
         return createTime;
     }
 
-    /**
-     * @param createTime
-     *            the createTime to set
-     */
     public void setCreateTime(long createTime) {
         this.createTime = createTime;
     }
 
-    /**
-     * @return the banTime
-     */
     public long getBanTime() {
         return banTime;
     }
 
-    /**
-     * @param banTime
-     *            the banTime to set
-     */
     public void setBanTime(long banTime) {
         this.banTime = banTime;
     }

@@ -25,33 +25,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 public abstract class CodeJavaMerger {
 
-    /**
-     * JAVA_EXT_NAME
-     */
     protected static final String JAVA_EXT_NAME = ".java";
 
-    /**
-     * @return the javaExtName
-     */
     public String getJavaExtName() {
         return JAVA_EXT_NAME;
     }
 
-    /**
-     * @param className
-     * @return
-     */
     public abstract String getToClassName(String className);
 
-    /**
-     * @param fromDirFile
-     * @param toDirFile
-     */
     public void mergeBaseDir(File fromDirFile, File toDirFile) throws Exception {
         Map<String, File> packageClassNameMapFile = new HashMap<String, File>();
         readFromDir("", fromDirFile, packageClassNameMapFile);
@@ -70,12 +53,6 @@ public abstract class CodeJavaMerger {
         }
     }
 
-    /**
-     * @param packageName
-     * @param fromDirFile
-     * @param packageClassNameMapFile
-     * @throws Exception
-     */
     protected void readFromDir(String packageName, File fromDirFile, Map<String, File> packageClassNameMapFile)
             throws Exception {
         for (File fromFile : fromDirFile.listFiles()) {
@@ -95,12 +72,6 @@ public abstract class CodeJavaMerger {
         }
     }
 
-    /**
-     * @param packageName
-     * @param toDirFile
-     * @param packageClassNameMapFile
-     * @throws Exception
-     */
     protected void writeToDir(String packageName, File toDirFile, Map<String, File> packageClassNameMapFile)
             throws Exception {
         for (File toFile : toDirFile.listFiles()) {
@@ -122,9 +93,6 @@ public abstract class CodeJavaMerger {
         }
     }
 
-    /**
-     * @param type
-     */
     protected void refactorType(Type type) {
         while (type != null) {
             if (type instanceof ReferenceType) {
@@ -144,14 +112,6 @@ public abstract class CodeJavaMerger {
         }
     }
 
-    /**
-     * @param fromClassName
-     * @param className
-     * @param fromCompilationUnit
-     * @param toCompilationUnit
-     * @param toFile
-     * @throws Exception
-     */
     protected void mergeCompilationUnitFile(String fromClassName, String className, CompilationUnit fromCompilationUnit,
                                             CompilationUnit toCompilationUnit, File toFile) throws Exception {
         TypeDeclaration fromType = null;
@@ -201,13 +161,6 @@ public abstract class CodeJavaMerger {
         HelperFile.write(toFile, toCompilationUnit.toString());
     }
 
-    /**
-     * @param fromCompilationUnit
-     * @param toCompilationUnit
-     * @param fromType
-     * @param toType
-     * @param fromFieldMap
-     */
     public abstract void mergeCompilationUnit(CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
                                               TypeDeclaration fromType, TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap);
 }

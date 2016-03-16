@@ -22,10 +22,6 @@ import com.absir.server.value.Server;
 
 import java.io.IOException;
 
-/**
- * @author absir
- *
- */
 @Base
 @Server
 public class api_slave extends ApiSlave {

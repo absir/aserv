@@ -7,24 +7,12 @@
  */
 package com.absir.validator;
 
-/**
- * @author absir
- */
 public abstract class ValidatorValue implements Validator {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.validator.Validator#validateValue(java.lang.Object)
-     */
     @Override
     public final String validate(Object value) {
         return value == null ? null : validateValue(value);
     }
 
-    /**
-     * @param value
-     * @return
-     */
     public abstract String validateValue(Object value);
 }

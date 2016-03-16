@@ -23,9 +23,6 @@ import com.absir.server.value.Server;
 
 import java.util.List;
 
-/**
- * @author absir
- */
 @Base
 @Server
 public class api_open extends ApiServer {

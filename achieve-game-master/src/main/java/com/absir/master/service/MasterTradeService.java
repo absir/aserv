@@ -30,21 +30,12 @@ import com.absir.orm.transaction.value.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class MasterTradeService implements IPayProccessor {
 
-    /**
-     * ME
-     */
     public static final MasterTradeService ME = BeanFactoryUtils.get(MasterTradeService.class);
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(MasterTradeService.class);
 
     /**
@@ -107,17 +98,6 @@ public class MasterTradeService implements IPayProccessor {
         return null;
     }
 
-    /**
-     * @param platform
-     * @param channel
-     * @param serverId
-     * @param playerId
-     * @param index
-     * @param amount
-     * @param tradeNo
-     * @return
-     * @throws Exception
-     */
     @Transaction
     public Object buyValidate(String platform, String channel, long serverId, long playerId, int index, float amount,
                               String tradeNo) throws Exception {

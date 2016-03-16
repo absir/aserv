@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-12-23 下午9:24:27
  */
 package com.absir.server.route;
@@ -19,82 +19,45 @@ import com.absir.server.route.returned.ReturnedResolver;
 import java.lang.reflect.Method;
 import java.util.List;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class RouteMethod {
 
-    /**
-     * parameterTypes
-     */
     Class<?>[] parameterTypes;
-    /**
-     * parameters
-     */
+
     Object[] parameters;
-    /**
-     * parameterResolvers
-     */
+
     ParameterResolver[] parameterResolvers;
-    /**
-     * beanNames
-     */
+
     String[] beanNames;
-    /**
-     * nullables
-     */
+
     boolean[] nullables;
     /**
      * 返回值不作为服务返回值
      */
     boolean noBody;
-    /**
-     * returned
-     */
+
     Object returned;
-    /**
-     * returnedResolver
-     */
+
     ReturnedResolver returnedResolver;
-    /**
-     * method
-     */
+
     private Method method;
 
-    /**
-     * @param beanMethod
-     * @param method
-     */
     protected RouteMethod(Method beanMethod) {
         this.method = beanMethod;
     }
 
-    /**
-     * @return the method
-     */
     public Method getMethod() {
         return method;
     }
 
-    /**
-     * @return the parameterTypes
-     */
     public Class<?>[] getParameterTypes() {
         return parameterTypes;
     }
 
-    /**
-     * @return the parameterResolvers
-     */
     public ParameterResolver[] getParameterResolvers() {
         return parameterResolvers;
     }
 
-    /**
-     * @param inMethods
-     * @return
-     */
     public List<InMethod> resolveMethods(List<InMethod> inMethods) {
         if (parameterResolvers != null) {
             int length = parameterResolvers.length;
@@ -109,11 +72,6 @@ public class RouteMethod {
         return inMethods;
     }
 
-    /**
-     * @param routeBean
-     * @param onPut
-     * @throws Exception
-     */
     public void invoke(Object routeBean, OnPut onPut) throws Throwable {
         int length = beanNames == null ? 0 : beanNames.length;
         Object parameterValue;

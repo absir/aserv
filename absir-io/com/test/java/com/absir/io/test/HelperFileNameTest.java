@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年11月11日 下午3:37:14
  */
 package com.absir.io.test;
@@ -15,9 +15,6 @@ import org.junit.runners.JUnit4;
 
 import java.net.URL;
 
-/**
- * @author absir
- */
 @RunWith(value = JUnit4.class)
 public class HelperFileNameTest {
 
@@ -30,9 +27,6 @@ public class HelperFileNameTest {
         System.out.println(String.class.getResource(""));
     }
 
-    /**
-     * @param url
-     */
     protected void dump(URL url) {
     }
 }

@@ -10,10 +10,6 @@ package com.absir.aserv.system.bean.value;
 import com.absir.aserv.system.bean.JPermission;
 import com.absir.orm.value.JePermission;
 
-/**
- * @author absir
- *
- */
 public enum JeVotePermission {
 
     SELECTABLE {
@@ -47,10 +43,6 @@ public enum JeVotePermission {
         }
     };
 
-    /**
-     * @param permission
-     * @return
-     */
     public static JeVotePermission forPermission(JePermission permission) {
         if (permission == JePermission.UPDATE) {
             return JeVotePermission.UPDATABLE;
@@ -67,16 +59,8 @@ public enum JeVotePermission {
         return JeVotePermission.SELECTABLE;
     }
 
-    /**
-     * @param permission
-     * @return
-     */
     protected abstract JeVote voteFor(JPermission permission);
 
-    /**
-     * @param permission
-     * @return
-     */
     public JeVote getJeVote(JPermission permission) {
         if (permission == null) {
             return JeVote.NONE;

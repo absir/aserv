@@ -14,18 +14,9 @@ import com.absir.validator.value.Range;
 
 import java.util.Map;
 
-/**
- * @author absir
- */
 @Bean
 public class ValidatorRange extends PropertyResolverAbstract<ValidatorObject, Range> {
 
-    /**
-     * @param propertyObject
-     * @param min
-     * @param max
-     * @return
-     */
     public ValidatorObject getPropertyObjectLength(ValidatorObject propertyObject, final float min, final float max) {
         if (propertyObject == null) {
             propertyObject = new ValidatorObject();
@@ -61,25 +52,11 @@ public class ValidatorRange extends PropertyResolverAbstract<ValidatorObject, Ra
         return propertyObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotation(ValidatorObject propertyObject, Range annotation) {
         return getPropertyObjectLength(propertyObject, annotation.min(), annotation.max());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-     * (com.absir.property.PropertyObject, java.lang.String)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotationValue(ValidatorObject propertyObject, String annotationValue) {
         String[] parameters = annotationValue.split(",");

@@ -33,36 +33,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "serial", "unchecked"})
 @Bean
 @Base
 public class L2EntityMergeService
         implements IEventService, PostInsertEventListener, PostUpdateEventListener, PostDeleteEventListener {
 
-    /**
-     * ME
-     */
     public static final L2EntityMergeService ME = BeanFactoryUtils.get(L2EntityMergeService.class);
-    /**
-     * TYPE_VARIABLE
-     */
+
     public static final TypeVariable<?> TYPE_VARIABLE = IEntityMerge.class.getTypeParameters()[0];
-    /**
-     * LOGGER
-     */
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(L2EntityMergeService.class);
-    /**
-     * nameMapEntityMerges
-     */
+
     protected Map<String, UtilLinked<IEntityMerge>> nameMapEntityMerges = new HashMap<String, UtilLinked<IEntityMerge>>();
 
-    /**
-     * @param entityMerges
-     */
     @InjectOrder(value = -1)
     @Started
     protected void loadEntityMerges() {
@@ -85,10 +69,6 @@ public class L2EntityMergeService
         }
     }
 
-    /**
-     * @param name
-     * @return
-     */
     protected UtilLinked<IEntityMerge> getEntityMerges(String name) {
         UtilLinked<IEntityMerge> entityMergs = nameMapEntityMerges.get(name);
         if (entityMergs == null) {
@@ -104,19 +84,10 @@ public class L2EntityMergeService
         return entityMergs;
     }
 
-    /**
-     * @param entityClass
-     * @param entityMerge
-     */
     public <T> void addEntityMerges(Class<T> entityClass, IEntityMerge<T> entityMerge) {
         addEntityMerges(null, entityClass, entityMerge);
     }
 
-    /**
-     * @param entityName
-     * @param entityClass
-     * @param entityMerge
-     */
     public <T> void addEntityMerges(String entityName, Class<T> entityClass, IEntityMerge<T> entityMerge) {
         if (entityName == null) {
             entityName = SessionFactoryUtils.getEntityName(entityClass);
@@ -140,25 +111,11 @@ public class L2EntityMergeService
         getEntityMerges(entityName).add(entityMerge);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.orm.hibernate.boost.IEventService#boost(java.util.Map,
-     * org.hibernate.mapping.PersistentClass, org.hibernate.mapping.Property,
-     * java.lang.reflect.Field, java.lang.String)
-     */
     @Override
     public void boost(Map<String, PersistentClass> classes, PersistentClass persistentClass, Property property,
                       Field field, String referencedEntityName) {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.orm.hibernate.boost.IEventService#setEventListenerRegistry(
-     * org.hibernate.event.service.spi.EventListenerRegistry)
-     */
     @Override
     public void setEventListenerRegistry(EventListenerRegistry eventListenerRegistry) {
         eventListenerRegistry.appendListeners(EventType.POST_COMMIT_INSERT, this);
@@ -166,24 +123,11 @@ public class L2EntityMergeService
         eventListenerRegistry.appendListeners(EventType.POST_COMMIT_DELETE, this);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.hibernate.event.spi.PostInsertEventListener#requiresPostCommitHanding
-     * (org.hibernate.persister.entity.EntityPersister)
-     */
     @Override
     public boolean requiresPostCommitHanding(EntityPersister persister) {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.event.spi.PostDeleteEventListener#onPostDelete(org.
-     * hibernate .event.spi.PostDeleteEvent)
-     */
     @Override
     public void onPostDelete(PostDeleteEvent event) {
         String entityName = event.getPersister().getEntityName();
@@ -201,12 +145,6 @@ public class L2EntityMergeService
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.event.spi.PostUpdateEventListener#onPostUpdate(org.
-     * hibernate .event.spi.PostUpdateEvent)
-     */
     @Override
     public void onPostUpdate(PostUpdateEvent event) {
         String entityName = event.getPersister().getEntityName();
@@ -224,12 +162,6 @@ public class L2EntityMergeService
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.event.spi.PostInsertEventListener#onPostInsert(org.
-     * hibernate .event.spi.PostInsertEvent)
-     */
     @Override
     public void onPostInsert(PostInsertEvent event) {
         String entityName = event.getPersister().getEntityName();

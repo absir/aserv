@@ -11,32 +11,16 @@ import com.absir.orm.transaction.TransactionSession;
 
 import java.util.Stack;
 
-/**
- * @author absir
- *
- */
 public class JTransactionSession extends TransactionSession {
 
-    /**
-     * currentSession
-     */
     JSession currentSession;
 
-    /**
-     * sessionStack
-     */
     private Stack<JSession> sessionStack;
 
-    /**
-     * @return
-     */
     public JSession getCurrentSession() {
         return currentSession;
     }
 
-    /**
-     *
-     */
     public void pushCurrentSession() {
         if (currentSession != null) {
             if (sessionStack == null) {
@@ -48,17 +32,11 @@ public class JTransactionSession extends TransactionSession {
         }
     }
 
-    /**
-     * @param currentSession
-     */
     public void openCurrentSession(JSession currentSession) {
         pushCurrentSession();
         this.currentSession = currentSession;
     }
 
-    /**
-     *
-     */
     public void popCurrentSession() {
         if (currentSession == null && sessionStack != null) {
             if (sessionStack.isEmpty()) {
@@ -74,9 +52,6 @@ public class JTransactionSession extends TransactionSession {
         }
     }
 
-    /**
-     *
-     */
     public JSession closeCurrentSession() {
         JSession jSession = currentSession;
         if (currentSession != null) {

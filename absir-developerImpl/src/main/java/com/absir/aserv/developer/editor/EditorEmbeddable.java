@@ -13,20 +13,9 @@ import com.absir.property.PropertyResolverAbstract;
 
 import javax.persistence.Embedded;
 
-/**
- * @author absir
- *
- */
 @Bean
 public class EditorEmbeddable extends PropertyResolverAbstract<EditorObject, Embedded> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-     */
     @Override
     public EditorObject getPropertyObjectAnnotation(EditorObject propertyObject, Embedded annotation) {
         if (propertyObject == null) {
@@ -37,13 +26,6 @@ public class EditorEmbeddable extends PropertyResolverAbstract<EditorObject, Emb
         return propertyObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-     * (com.absir.property.PropertyObject, java.lang.String)
-     */
     @Override
     public EditorObject getPropertyObjectAnnotationValue(EditorObject propertyObject, String annotationValue) {
         if (propertyObject == null) {

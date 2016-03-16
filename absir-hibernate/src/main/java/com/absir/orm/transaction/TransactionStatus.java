@@ -7,16 +7,10 @@
  */
 package com.absir.orm.transaction;
 
-/**
- * @author absir
- */
 public class TransactionStatus {
 
     TransactionStatus transactionStatus;
 
-    /**
-     * @param e
-     */
     protected void finish(Throwable e) throws Throwable {
 
     }

@@ -19,34 +19,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 public class DeveloperGenerator {
 
-    /**
-     * GENERATOR_STACK_KEY
-     */
     private static final String GENERATOR_STACK_KEY = DeveloperGenerator.class.getName() + "GENERATORS";
-    /**
-     * gDefines
-     */
+
     private List<ObjectEntry<String, Boolean>> gDefines = new ArrayList<ObjectEntry<String, Boolean>>();
 
-    /**
-     * @param request
-     * @return
-     */
     public static DeveloperGenerator getDeveloperGenerator(ServletRequest request) {
         Stack<DeveloperGenerator> generators = (Stack<DeveloperGenerator>) request.getAttribute(GENERATOR_STACK_KEY);
         return generators == null ? null : generators.peek();
     }
 
-    /**
-     * @param request
-     * @return
-     */
     protected static DeveloperGenerator pushDeveloperGenerator(ServletRequest request) {
         if (request == null) {
             return null;
@@ -64,25 +48,15 @@ public class DeveloperGenerator {
 
     }
 
-    /**
-     * @param request
-     */
     protected static void popDeveloperGenerator(ServletRequest request) {
         Stack<DeveloperGenerator> generators = (Stack<DeveloperGenerator>) request.getAttribute(GENERATOR_STACK_KEY);
         generators.pop();
     }
 
-    /**
-     * @param gString
-     */
     protected void addGeneratorDefine(String gDefine) {
         gDefines.add(new ObjectEntry<String, Boolean>(gDefine, false));
     }
 
-    /**
-     * @param identifier
-     * @param out
-     */
     public boolean print(String identifier, JspWriter out) {
         try {
             for (ObjectEntry<String, Boolean> gDefine : gDefines) {
@@ -104,11 +78,6 @@ public class DeveloperGenerator {
         return false;
     }
 
-    /**
-     * @param identifier
-     * @param element
-     * @return
-     */
     public boolean append(String identifier, Element element) {
         try {
             for (ObjectEntry<String, Boolean> gDefine : gDefines) {

@@ -15,38 +15,20 @@ import org.hibernate.SessionFactory;
 import java.util.Collection;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 @Inject
 public abstract class TransactionUtils {
 
-    /**
-     * transactionService
-     */
     private static TransactionService transactionService = BeanFactoryUtils.get(TransactionService.class);
 
-    /**
-     * @return
-     */
     public static TransactionService get() {
         return transactionService;
     }
 
-    /**
-     * @param name
-     * @return
-     */
     public static TransactionContext getTransactionContext(SessionFactory sessionFactory) {
         return transactionService.getNameMapTransactionContext(SessionFactoryUtils.get().getSessionFactoryMapName(sessionFactory));
     }
 
-    /**
-     * @param transactionAttribute
-     * @param transactionAttributes
-     * @param transactionAttributeDefault
-     */
     public static void open(TransactionAttribute transactionAttribute, Collection<Entry<TransactionContext, TransactionAttribute>> transactionAttributes,
                             TransactionAttribute transactionAttributeDefault) {
         if (transactionAttribute != null) {
@@ -64,13 +46,6 @@ public abstract class TransactionUtils {
         }
     }
 
-    /**
-     * @param transactionAttribute
-     * @param transactionAttributes
-     * @param transactionAttributeDefault
-     * @param e
-     * @return
-     */
     public static Throwable close(TransactionAttribute transactionAttribute, Collection<Entry<TransactionContext, TransactionAttribute>> transactionAttributes,
                                   TransactionAttribute transactionAttributeDefault, Throwable e) {
         if (transactionAttributeDefault == null) {

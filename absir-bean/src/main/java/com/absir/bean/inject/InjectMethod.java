@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-6-19 下午2:43:47
  */
 package com.absir.bean.inject;
@@ -20,42 +20,18 @@ import com.absir.core.kernel.KernelString;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- */
 public class InjectMethod extends InjectInvokerObserver {
 
-    /**
-     * method
-     */
     Method method;
 
-    /**
-     * beanMethod
-     */
     Method beanMethod;
 
-    /**
-     * paramNames
-     */
     String[] paramNames;
 
-    /**
-     * valueNames
-     */
     String[] valueNames;
 
-    /**
-     * defaultValues
-     */
     String[] defaultValues;
 
-    /**
-     * @param method
-     * @param beanMethod
-     * @param injectName
-     * @param injectType
-     */
     public InjectMethod(Method method, Method beanMethod, String injectName, InjectType injectType) {
         super(injectType);
         this.method = method;
@@ -83,30 +59,15 @@ public class InjectMethod extends InjectInvokerObserver {
         }
     }
 
-    /**
-     * @return the method
-     */
     public Method getMethod() {
         return method;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.inject.InjectInvoker#parameter(com.absir.bean.basis.
-     * BeanFactory)
-     */
     @Override
     protected Object parameter(BeanFactory beanFactory) {
         return parameter(beanFactory, method.getParameterTypes());
     }
 
-    /**
-     * @param beanFactory
-     * @param beanDefine
-     * @param parameterTypes
-     * @return
-     */
     public Object parameter(BeanFactory beanFactory, Class<?>[] parameterTypes) {
         if (paramNames == null) {
             return KernelLang.NULL_OBJECTS;
@@ -153,31 +114,15 @@ public class InjectMethod extends InjectInvokerObserver {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.inject.InjectInvoker#invokeImpl(java.lang.Object,
-     * java.lang.Object)
-     */
     @Override
     protected void invokeImpl(Object beanObject, Object parameter) {
         BeanDefineMethod.getBeanObject(beanObject, beanMethod, (Object[]) parameter);
     }
 
-    /**
-     * @param beanFactory
-     * @param beanObject
-     * @param parameters
-     */
     public void invoke(BeanFactory beanFactory, Object beanObject, Object... parameters) {
         invoke(new BeanFactoryParameters(beanFactory, parameters), beanObject);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.inject.InjectInvoker#getInjectObserverImpl()
-     */
     @Override
     public InjectObserver getInjectObserverImpl() {
         return paramNames == null ? null : new InjectObserverMethod(this);

@@ -9,24 +9,9 @@ package com.absir.aserv.system.crud.value;
 
 import java.io.InputStream;
 
-/**
- * @author absir
- *
- */
 public interface IUploadRule {
 
-    /**
-     * @param name
-     * @param extensionName
-     * @return
-     */
     public String getUploadRuleName(String name, String extensionName);
 
-    /**
-     * @param name
-     * @param inputStream
-     * @param extensionName
-     * @return
-     */
     public InputStream proccessInputStream(String name, InputStream inputStream, String extensionName);
 }

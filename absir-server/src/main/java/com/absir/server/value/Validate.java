@@ -12,21 +12,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- */
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Validate {
 
-    /**
-     * @return
-     */
     String value() default "";
 
-    /**
-     * @return
-     */
     int group() default 0;
 
 }

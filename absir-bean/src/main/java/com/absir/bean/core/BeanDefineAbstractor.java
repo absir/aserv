@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-12-20 下午1:39:32
  */
 package com.absir.bean.core;
@@ -15,27 +15,14 @@ import com.absir.core.kernel.KernelClass;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- */
 public abstract class BeanDefineAbstractor extends BeanDefineAbstract {
 
-    /**
-     * proccessDelay
-     */
     public static boolean proccessDelay;
-    /**
-     * proccessRunables
-     */
+
     public static List<Runnable> proccessRunables;
-    /**
-     * loaded
-     */
+
     private boolean loaded;
 
-    /**
-     * @param type
-     */
     public static void loadInterfaces(Class<?> type) {
         while (type != null && type != Object.class) {
             for (Class<?> iCls : type.getInterfaces()) {
@@ -98,13 +85,6 @@ public abstract class BeanDefineAbstractor extends BeanDefineAbstract {
         }
     }
 
-    /**
-     * @param beanFactory
-     * @param beanDefine
-     * @param beanDefineRoot
-     * @param beanDefineWrapper
-     * @return
-     */
     public static Object getBeanObject(final BeanFactory beanFactory, BeanDefine beanDefine, BeanDefine beanDefineRoot,
                                        BeanDefine beanDefineWrapper) {
         final Object beanObject = beanDefine.getBeanObject(beanFactory);
@@ -168,18 +148,8 @@ public abstract class BeanDefineAbstractor extends BeanDefineAbstract {
         return beanProxy;
     }
 
-    /**
-     *
-     */
     public abstract void preloadBeanDefine();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanDefine#getBeanObject(com.absir.bean.basis.
-     * BeanFactory, com.absir.bean.basis.BeanDefine,
-     * com.absir.bean.basis.BeanDefine)
-     */
     @Override
     public Object getBeanObject(BeanFactory beanFactory, BeanDefine beanDefineRoot, BeanDefine beanDefineWrapper) {
         if (loaded) {

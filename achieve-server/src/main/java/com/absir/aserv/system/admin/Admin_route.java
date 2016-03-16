@@ -14,10 +14,6 @@ import com.absir.server.in.InModel;
 import com.absir.server.on.OnPut;
 import com.absir.server.value.Server;
 
-/**
- * @author absir
- *
- */
 @Base
 @Server
 public class Admin_route extends AdminServer {

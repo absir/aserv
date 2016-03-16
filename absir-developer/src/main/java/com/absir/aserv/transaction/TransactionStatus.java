@@ -18,36 +18,17 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 public class TransactionStatus {
 
-    /**
-     * transactionOpened
-     */
     private boolean transactionOpened;
 
-    /**
-     * transactionAttribute
-     */
     private TransactionAttribute transactionAttribute;
 
-    /**
-     * transactionOpeneds
-     */
     private Set<String> transactionOpeneds;
 
-    /**
-     * transactionAttributes
-     */
     private Collection<Entry<TransactionContext, TransactionAttribute>> transactionAttributes;
 
-    /**
-     * @param transactionName
-     * @param transactionAttribute
-     */
     public void open(String transactionName, TransactionAttribute transactionAttribute) {
         if (transactionName == null || "".equals(transactionName)) {
             if (!transactionOpened) {
@@ -73,10 +54,6 @@ public class TransactionStatus {
         }
     }
 
-    /**
-     * @param e
-     * @return
-     */
     public Throwable closeCurrent(Throwable e) {
         return TransactionUtils.close(transactionAttribute, transactionAttributes, null, e);
     }

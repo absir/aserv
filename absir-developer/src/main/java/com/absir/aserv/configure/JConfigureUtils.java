@@ -25,52 +25,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"unchecked"})
 public abstract class JConfigureUtils {
 
-    /**
-     * Configure_Class_Map_Instance
-     */
     private static Map<Serializable, JConfigureBase> Configure_Class_Map_Instance = new HashMap<Serializable, JConfigureBase>();
 
-    /**
-     * Configure_Class_Map_Class
-     */
     private static Map<Class<? extends JConfigureBase>, Class<? extends JConfigureBase>> Configure_Class_Map_Class = new HashMap<Class<? extends JConfigureBase>, Class<? extends JConfigureBase>>();
 
-    /**
-     * @param key
-     * @return
-     */
     public static <T> T getOption(String key, Class<T> toClass) {
         JConfigure configure = getConfigureKey(key);
         return DynaBinderUtils.to(configure == null ? null : configure.getValue(), toClass);
     }
 
-    /**
-     * @param key
-     * @param option
-     */
     public static void setOption(String key, Object option) {
         setConfigureKey(key, DynaBinderUtils.to(option, String.class));
     }
 
-    /**
-     * @param key
-     * @return
-     */
     public static JConfigure getConfigureKey(String key) {
         JEmbedSS embedSS = new JEmbedSS(InitBeanFactory.ME.getAppCode(), key);
         return BeanService.ME.get(JConfigure.class, embedSS);
     }
 
-    /**
-     * @param key
-     * @param configure
-     */
     public static void setConfigureKey(String key, String value) {
         JEmbedSS embedSS = new JEmbedSS(InitBeanFactory.ME.getAppCode(), key);
         JConfigure configure = new JConfigure();
@@ -79,17 +54,10 @@ public abstract class JConfigureUtils {
         BeanService.ME.merge(configure);
     }
 
-    /**
-     * @param cls
-     * @param configureClass
-     */
     public static void put(Class<? extends JConfigureBase> cls, Class<? extends JConfigureBase> configureClass) {
         Configure_Class_Map_Class.put(cls, configureClass);
     }
 
-    /**
-     * @param cls
-     */
     public static <T extends JConfigureBase> T getConfigure(Class<T> cls) {
         JConfigureBase configure = Configure_Class_Map_Instance.get(cls);
         if (configure == null) {
@@ -120,9 +88,6 @@ public abstract class JConfigureUtils {
         return (T) configure;
     }
 
-    /**
-     * @param configureBase
-     */
     private static void initConfigure(final JConfigureBase configureBase) {
         String identitier = configureBase.getIdentitier();
         Map<String, JConfigure> configureMap = new HashMap<String, JConfigure>();
@@ -144,21 +109,10 @@ public abstract class JConfigureUtils {
         }
     }
 
-    /**
-     * @param cls
-     * @param args
-     * @return
-     */
     public static <T extends JConfigureBase> String getConfigureId(Class<T> cls, Object... args) {
         return cls.getName() + KernelString.implode(args, ',');
     }
 
-    /**
-     * @param cls
-     * @param configureKey
-     * @param initargs
-     * @return
-     */
     public static <T extends JConfigureBase> T getConfigure(Class<T> cls, String configureKey, Object... initargs) {
         JConfigureBase configure = Configure_Class_Map_Instance.get(configureKey);
         if (configure == null) {
@@ -181,9 +135,6 @@ public abstract class JConfigureUtils {
         return (T) configure;
     }
 
-    /**
-     * @param cls
-     */
     public static <T extends JConfigureBase> void clearConfigure(Class<T> cls) {
         synchronized (cls) {
             JConfigureBase configure = Configure_Class_Map_Instance.get(cls);
@@ -194,17 +145,10 @@ public abstract class JConfigureUtils {
         }
     }
 
-    /**
-     * @param cls
-     * @param initargs
-     */
     public static <T extends JConfigureBase> void clearConfigure(Class<T> cls, Object... initargs) {
         clearConfigure(getConfigureId(cls, initargs));
     }
 
-    /**
-     * @param configureKey
-     */
     public static <T extends JConfigureBase> void clearConfigure(String configureKey) {
         synchronized (JConfigureUtils.class) {
             JConfigureBase configure = Configure_Class_Map_Instance.get(configureKey);
@@ -215,11 +159,6 @@ public abstract class JConfigureUtils {
         }
     }
 
-    /**
-     * @param cls
-     * @param initargs
-     * @return
-     */
     public <T extends JConfigureBase> T getConfigure(Class<T> cls, Object... initargs) {
         return initargs.length == 0 ? getConfigure(cls) : getConfigure(cls, getConfigureId(cls, initargs), initargs);
     }

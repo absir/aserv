@@ -12,94 +12,39 @@ import com.absir.aserv.system.bean.value.JeEditable;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 public interface IField {
 
-    /**
-     * @return
-     */
     public JCrudField getCrudField();
 
-    /**
-     * @return
-     */
     public String getName();
 
-    /**
-     * @return
-     */
     public Class<?> getType();
 
-    /**
-     * @return
-     */
     public IField getValueField();
 
-    /**
-     * @return
-     */
     public String getEntityName();
 
-    /**
-     * @return
-     */
     public String getValueEntityName();
 
-    /**
-     * @return
-     */
     public String getCaption();
 
-    /**
-     * @return
-     */
     public String[] getGroups();
 
-    /**
-     * @return
-     */
     public boolean isGenerated();
 
-    /**
-     * @return
-     */
     public boolean isCanOrder();
 
-    /**
-     * @return
-     */
     public boolean isNullable();
 
-    /**
-     * @return
-     */
     public boolean isCollection();
 
-    /**
-     * @return
-     */
     public String getMappedBy();
 
-    /**
-     * @return
-     */
     public List<String> getTypes();
 
-    /**
-     * @return
-     */
     public JeEditable getEditable();
 
-    /**
-     * @return
-     */
     public Map<String, Object> getMetas();
 
-    /**
-     * @return
-     */
     public Object getDefaultEntity();
 }

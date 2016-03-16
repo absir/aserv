@@ -11,22 +11,13 @@ import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.server.on.OnPut;
 
-/**
- * @author absir
- */
 public abstract class SecurityServiceUtils {
 
-    /**
-     * @return
-     */
     public static JiUserBase getUserBase() {
         OnPut onPut = OnPut.get();
         return onPut == null ? null : SecurityService.ME.getUserBase(onPut.getInput());
     }
 
-    /**
-     * @return
-     */
     public static long getUserId() {
         JiUserBase user = getUserBase();
         return user == null ? 0 : user.getUserId();

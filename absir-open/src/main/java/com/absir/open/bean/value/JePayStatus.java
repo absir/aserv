@@ -9,9 +9,6 @@ package com.absir.open.bean.value;
 
 import com.absir.aserv.system.bean.value.JaLang;
 
-/**
- * @author absir
- */
 public enum JePayStatus {
 
     @JaLang("付款中")PAYING,

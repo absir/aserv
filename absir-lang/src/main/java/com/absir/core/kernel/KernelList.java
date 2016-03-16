@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-3-5 下午2:31:23
  */
 package com.absir.core.kernel;
@@ -12,19 +12,11 @@ import com.absir.core.kernel.KernelLang.FilterTemplate;
 
 import java.util.*;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class KernelList {
 
-    /**
-     * EMPTY_LIST
-     */
     public static final List EMPTY_LIST = new ArrayList();
-    /**
-     * COMPARATOR
-     */
+
     public static final Comparator<Orderable> COMPARATOR = new Comparator<Orderable>() {
 
         @Override
@@ -32,9 +24,7 @@ public abstract class KernelList {
             return lhs.getOrder() - rhs.getOrder();
         }
     };
-    /**
-     * COMPARATOR_DESC
-     */
+
     public static final Comparator<Orderable> COMPARATOR_DESC = new Comparator<Orderable>() {
 
         @Override
@@ -42,9 +32,7 @@ public abstract class KernelList {
             return rhs.getOrder() - lhs.getOrder();
         }
     };
-    /**
-     * COMMON_COMPARATOR
-     */
+
     public static final Comparator COMMON_COMPARATOR = new Comparator() {
 
         @Override
@@ -53,21 +41,10 @@ public abstract class KernelList {
         }
     };
 
-    /**
-     * @param list
-     * @param index
-     * @return
-     */
     public static <T> T get(List<T> list, int index) {
         return get(list, null, index);
     }
 
-    /**
-     * @param list
-     * @param defaultValue
-     * @param index
-     * @return
-     */
     public static <T> T get(List<T> list, T defaultValue, int index) {
         if (index >= 0 && index < list.size()) {
             return list.get(index);
@@ -76,10 +53,6 @@ public abstract class KernelList {
         return defaultValue;
     }
 
-    /**
-     * @param list
-     * @param element
-     */
     public static <T> void addOnly(List<T> list, T element) {
         for (T el : list) {
             if (el == element) {
@@ -90,10 +63,6 @@ public abstract class KernelList {
         list.add(element);
     }
 
-    /**
-     * @param list
-     * @param element
-     */
     public static <T extends Orderable> void addOrder(List<T> list, T element) {
         int order = element.getOrder();
         int size = list.size();
@@ -107,10 +76,6 @@ public abstract class KernelList {
         list.add(element);
     }
 
-    /**
-     * @param list
-     * @param element
-     */
     public static <T extends Orderable> void addOrderOnly(List<T> list, T element) {
         int order = element.getOrder();
         int size = list.size();
@@ -129,32 +94,18 @@ public abstract class KernelList {
         list.add(element);
     }
 
-    /**
-     * @param list
-     */
     public static <T extends Orderable> void sortOrderable(List<T> list) {
         Collections.sort(list, COMPARATOR);
     }
 
-    /**
-     * @param list
-     */
     public static <T extends Orderable> void sortOrderableDesc(List<T> list) {
         Collections.sort(list, COMPARATOR_DESC);
     }
 
-    /**
-     * @param element
-     * @return
-     */
     public static int getOrder(Object element) {
         return element instanceof Orderable ? ((Orderable) element).getOrder() : 0;
     }
 
-    /**
-     * @param list
-     * @param element
-     */
     public static void addOrderObject(List list, Object element) {
         int order = getOrder(element);
         int size = list.size();
@@ -168,19 +119,10 @@ public abstract class KernelList {
         list.add(element);
     }
 
-    /**
-     * @param list
-     */
     public static void sortCommonObjects(List list) {
         Collections.sort(list, COMMON_COMPARATOR);
     }
 
-    /**
-     * @param collection
-     * @param filterTemplate
-     * @param comparator
-     * @return
-     */
     public static <T> List<T> getFilterSortList(Collection<T> collection, FilterTemplate<T> filterTemplate, Comparator<T> comparator) {
         if (filterTemplate == null && comparator == null) {
             return new ArrayList<T>(collection);
@@ -204,9 +146,6 @@ public abstract class KernelList {
         return list;
     }
 
-    /**
-     * @author absir
-     */
     public interface Orderable {
         public int getOrder();
     }

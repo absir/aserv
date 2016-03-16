@@ -24,24 +24,13 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
 public class ParameterResolverBinder implements ParameterResolver<Binder> {
 
-    /**
-     * BINDER_MAP_NAME
-     */
     private static final String BINDER_MAP_NAME = ParameterResolverBinder.class.getName() + "@BINDER_MAP_NAME";
 
-    /**
-     * @param input
-     * @return
-     */
     public static Map<String, Object> getPropertyMap(Input input) {
         Object properties = input.getAttribute(BINDER_MAP_NAME);
         if (properties == null || !(properties instanceof Map)) {
@@ -58,54 +47,22 @@ public class ParameterResolverBinder implements ParameterResolver<Binder> {
         return (Map<String, Object>) properties;
     }
 
-    /**
-     * @param name
-     * @param toClass
-     * @param group
-     * @param input
-     * @return
-     */
     public static <T> T getBinderObject(String name, Class<T> toClass, int group, Input input) {
         BinderData binderData = input.getBinderData();
         binderData.getBinderResult().getPropertyFilter().setGroup(group);
         return binderData.mapBind(getPropertyMap(input), name, toClass);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.route.parameter.ParameterResolver#getParameter(int,
-     * java.lang.String[], java.lang.Class<?>[],
-     * java.lang.annotation.Annotation[][], java.lang.reflect.Method)
-     */
     @Override
     public Binder getParameter(int i, String[] parameterNames, Class<?>[] parameterTypes, Annotation[][] annotations, Method method) {
         return KernelArray.getAssignable(annotations[i], Binder.class);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.parameter.ParameterResolver#getParameterValue(
-     * com.absir.server.on.OnPut, java.lang.Object, java.lang.Class,
-     * java.lang.String, com.absir.server.route.RouteMethod)
-     */
     @Override
     public final Object getParameterValue(OnPut onPut, Binder parameter, Class<?> parameterType, String beanName, RouteMethod routeMethod) {
         return getParameterValue(onPut, parameter.value(), parameter.group(), false, parameterType, beanName, routeMethod);
     }
 
-    /**
-     * @param onPut
-     * @param name
-     * @param group
-     * @param validation
-     * @param parameterType
-     * @param beanName
-     * @param routeMethod
-     * @return
-     */
     public Object getParameterValue(OnPut onPut, String name, int group, boolean validation, Class<?> parameterType, String beanName, RouteMethod routeMethod) {
         Map<String, Object> propertyMap = getPropertyMap(onPut.getInput());
         BinderData binderData = onPut.getBinderData();

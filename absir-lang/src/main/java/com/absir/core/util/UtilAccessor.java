@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-9-22 下午1:38:58
  */
 package com.absir.core.util;
@@ -16,70 +16,31 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class UtilAccessor {
 
-    /**
-     * Accessor_Name_Map_Accessor
-     */
     private static Map<String, Accessor> Accessor_Name_Map_Accessor = new HashMap<String, Accessor>();
 
-    /**
-     * @param obj
-     * @param propertyPath
-     * @return
-     */
     public static Object get(Object obj, String propertyPath) {
         return getAccessorObj(obj, propertyPath).get(obj);
     }
 
-    /**
-     * @param obj
-     * @param propertyPath
-     * @param value
-     */
     public static void set(Object obj, String propertyPath, Object value) {
         getAccessorObj(obj, propertyPath).set(obj, value);
     }
 
-    /**
-     * @param cls
-     * @param property
-     * @return
-     */
     public static Accessor getAccessorProperty(Class<?> cls, String property) {
         return getAccessor(cls, property, KernelReflect.declaredField(cls, property));
     }
 
-    /**
-     * @param cls
-     * @param field
-     * @return
-     */
     public static Accessor getAccessor(Class<?> cls, Field field) {
         return getAccessor(cls, field.getName(), field);
     }
 
-    /**
-     * @param cls
-     * @param property
-     * @param field
-     * @return
-     */
     public static Accessor getAccessor(Class<?> cls, String property, final Field field) {
         return getAccessor(cls, property, field, true);
     }
 
-    /**
-     * @param cls
-     * @param property
-     * @param field
-     * @param cacheable
-     * @return
-     */
     public static Accessor getAccessor(Class<?> cls, String property, final Field field, boolean cacheable) {
         String accessName = getAccessorKey(cls.getName(), property);
         Accessor accessor = Accessor_Name_Map_Accessor.get(accessName);
@@ -101,12 +62,6 @@ public class UtilAccessor {
         return accessor;
     }
 
-    /**
-     * @param cls
-     * @param property
-     * @param field
-     * @return
-     */
     private static Accessor getAccessorField(Class<?> cls, String property, final Field field) {
         Class fieldType = field == null ? null : field.getType();
         final Method getter = KernelClass.declaredGetter(cls, property, fieldType, false);
@@ -153,41 +108,18 @@ public class UtilAccessor {
         };
     }
 
-    /**
-     * @param accessorName
-     * @param propertyPath
-     * @return
-     */
     private static String getAccessorKey(String accessorName, String propertyPath) {
         return accessorName + ":" + propertyPath;
     }
 
-    /**
-     * @param obj
-     * @param propertyPath
-     * @return
-     */
     public static Accessor getAccessorObj(Object obj, String propertyPath) {
         return getAccessor(obj, null, propertyPath.split("\\."), 0);
     }
 
-    /**
-     * @param obj
-     * @param propertyPath
-     * @param accessorName
-     * @return
-     */
     public static Accessor getAccessorObj(Object obj, String propertyPath, String accessorName) {
         return getAccessorObj(obj, propertyPath, accessorName, true);
     }
 
-    /**
-     * @param obj
-     * @param propertyPath
-     * @param accessorName
-     * @param cacheable
-     * @return
-     */
     public static Accessor getAccessorObj(Object obj, String propertyPath, String accessorName, boolean cacheable) {
         if (accessorName == null || obj == null || !cacheable) {
             return getAccessorObj(obj, propertyPath);
@@ -209,42 +141,22 @@ public class UtilAccessor {
         }
     }
 
-    /**
-     * @param propertyPath
-     * @param accessorName
-     */
     public static void clearAccessor(String propertyPath, String accessorName) {
         Accessor_Name_Map_Accessor.remove(getAccessorKey(accessorName, propertyPath));
     }
 
-    /**
-     *
-     */
     public static void clearAll() {
         Accessor_Name_Map_Accessor.clear();
     }
 
-    /**
-     * @param obj
-     * @param accessorWrapper
-     * @param properties
-     * @return
-     */
     private static Accessor getAccessor(Object obj, AccessorWrapper accessorWrapper, final String[] properties, int i) {
         for (; i < properties.length; i++) {
             if (obj == null) {
                 final int index = i;
                 return new AccessorWrapper(accessorWrapper) {
 
-                    /**
-                     * evalAccessor
-                     */
                     private Accessor evalAccessor;
 
-                    /**
-                     * @param obj
-                     * @return
-                     */
                     private Accessor getEvalAccessor(Object obj) {
                         if (evalAccessor == null) {
                             evalAccessor = getAccessor(obj, null, properties, index);
@@ -351,51 +263,22 @@ public class UtilAccessor {
         return accessorWrapper;
     }
 
-    /**
-     * @author absir
-     */
     public static abstract class Accessor {
 
-        /**
-         * @param obj
-         * @return
-         */
         public abstract Object get(Object obj);
 
-        /**
-         * @param obj
-         * @param value
-         * @return
-         */
         public abstract boolean set(Object obj, Object value);
 
-        /**
-         * @return
-         */
         public abstract Field getField();
 
-        /**
-         * @return
-         */
         public abstract Method getGetter();
 
-        /**
-         * @return
-         */
         public abstract Method getSetter();
 
-        /**
-         * @return
-         */
         public Class<?> getDeclaringClass() {
             return getField() == null ? getGetter() == null ? getSetter().getDeclaringClass() : getGetter().getDeclaringClass() : getField().getDeclaringClass();
         }
 
-        /**
-         * @param annotationClass
-         * @param getter
-         * @return
-         */
         public <T extends Annotation> T getAnnotation(Class<T> annotationClass, boolean getter) {
             Method method = getter ? getGetter() : getSetter();
             T annotation = method == null ? null : method.getAnnotation(annotationClass);
@@ -416,36 +299,18 @@ public class UtilAccessor {
         }
     }
 
-    /**
-     * @author absir
-     */
     public static abstract class AccessorWrapper extends Accessor {
 
-        /**
-         * accessor
-         */
         private Accessor accessor;
 
-        /**
-         * @param accessor
-         */
         public AccessorWrapper(Accessor accessor) {
             this.accessor = accessor;
         }
 
-        /**
-         * @param obj
-         * @return
-         */
         private Object eval(Object obj) {
             return accessor == null ? obj : accessor.get(obj);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.core.util.UtilAccessor.Accessor#get(java.lang.Object)
-         */
         @Override
         public Object get(Object obj) {
             obj = eval(obj);
@@ -456,12 +321,6 @@ public class UtilAccessor {
             return evalGet(obj);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.core.util.UtilAccessor.Accessor#set(java.lang.Object,
-         * java.lang.Object)
-         */
         @Override
         public boolean set(Object obj, Object value) {
             obj = eval(obj);
@@ -472,17 +331,8 @@ public class UtilAccessor {
             return evalSet(obj, value);
         }
 
-        /**
-         * @param obj
-         * @return
-         */
         public abstract Object evalGet(Object obj);
 
-        /**
-         * @param obj
-         * @param value
-         * @return
-         */
         public abstract boolean evalSet(Object obj, Object value);
     }
 }

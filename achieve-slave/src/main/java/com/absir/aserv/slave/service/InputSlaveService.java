@@ -15,30 +15,14 @@ import com.absir.client.helper.HelperEncrypt;
 import com.absir.slave.InputSlaveAdapter;
 import com.absir.slave.InputSlaveContext;
 
-/**
- * @author absir
- *
- */
 @Base
 @Bean
 public class InputSlaveService extends InputSlaveContext {
 
-    /**
-     * SLAVE_ID_NAME
-     */
     protected static final String SLAVE_ID_NAME = InputSlaveService.class.getName() + "@SLAVE_ID_NAME";
 
-    /**
-     * slaveId
-     */
     protected String slaveId = JConfigureUtils.getOption(SLAVE_ID_NAME, String.class);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.slave.InputSlaveContext#registerData(com.absir.slave.
-     * InputSlaveAdapter, byte[])
-     */
     @Override
     public byte[] registerData(InputSlaveAdapter adapter, byte[] buffer) {
         String registerKey = HelperEncrypt.encryptionMD5(key, buffer) + ',' + group + ','

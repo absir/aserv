@@ -17,17 +17,9 @@ import com.absir.servlet.InputRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * @author absir
- *
- */
 @Bean
 public class ApiRoute extends Route implements IdentityService {
 
-    /**
-     * @param input
-     * @return
-     */
     protected JiUserBase getInputUserBase(InputRequest inputRequest) {
         HttpServletRequest request = inputRequest.getRequest();
         String identity = request.getHeader("identity");
@@ -39,13 +31,6 @@ public class ApiRoute extends Route implements IdentityService {
         return IdentityServiceLocal.getUserBase(identity);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.service.IdentityService#getUserBase(java.lang
-     * .String[])
-     */
     @Override
     public JiUserBase getUserBase(String[] parameters) {
         if (parameters.length == 2) {

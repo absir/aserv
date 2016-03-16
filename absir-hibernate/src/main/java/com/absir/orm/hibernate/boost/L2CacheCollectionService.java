@@ -25,27 +25,13 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "serial"})
 @Base
 @Bean
 public class L2CacheCollectionService extends L2EntityMergeService {
 
-    /**
-     * collectionMappedByCaches
-     */
     private Map<String, List<MappedByCache>> collectionMappedByCaches = new HashMap<String, List<MappedByCache>>();
 
-    /**
-     * @param classes
-     * @param entityName
-     * @param property
-     * @param field
-     * @param referencedEntityName
-     */
     public void boost(Map<String, PersistentClass> classes, PersistentClass persistentClass, Property property, Field field, String referencedEntityName) {
         if (referencedEntityName == null) {
             return;
@@ -84,10 +70,6 @@ public class L2CacheCollectionService extends L2EntityMergeService {
         mappedByCaches.add(mappedByCache);
     }
 
-    /**
-     * @param field
-     * @return
-     */
     private String getMappedBy(Field field) {
         OneToMany oneToMany = field.getAnnotation(OneToMany.class);
         if (oneToMany != null) {
@@ -102,11 +84,6 @@ public class L2CacheCollectionService extends L2EntityMergeService {
         return null;
     }
 
-    /**
-     * @param property
-     * @param properyIterator
-     * @return
-     */
     private int getProperyIndex(Property property, Iterator properyIterator) {
         int i = 0;
         while (properyIterator.hasNext()) {
@@ -120,13 +97,6 @@ public class L2CacheCollectionService extends L2EntityMergeService {
         return i;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.hibernate.event.spi.PostDeleteEventListener#onPostDelete(org.hibernate
-     * .event.spi.PostDeleteEvent)
-     */
     @Override
     public void onPostDelete(PostDeleteEvent event) {
         super.onPostDelete(event);
@@ -135,13 +105,6 @@ public class L2CacheCollectionService extends L2EntityMergeService {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.hibernate.event.spi.PostUpdateEventListener#onPostUpdate(org.hibernate
-     * .event.spi.PostUpdateEvent)
-     */
     @Override
     public void onPostUpdate(PostUpdateEvent event) {
         super.onPostUpdate(event);
@@ -162,13 +125,6 @@ public class L2CacheCollectionService extends L2EntityMergeService {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.hibernate.event.spi.PostInsertEventListener#onPostInsert(org.hibernate
-     * .event.spi.PostInsertEvent)
-     */
     @Override
     public void onPostInsert(PostInsertEvent event) {
         super.onPostInsert(event);
@@ -177,11 +133,6 @@ public class L2CacheCollectionService extends L2EntityMergeService {
         }
     }
 
-    /**
-     * @param session
-     * @param entity
-     * @param mappedByCaches
-     */
     private void changeds(Session session, Object entity, List<MappedByCache> mappedByCaches) {
         if (mappedByCaches != null) {
             for (MappedByCache mappedByCache : mappedByCaches) {
@@ -190,11 +141,6 @@ public class L2CacheCollectionService extends L2EntityMergeService {
         }
     }
 
-    /**
-     * @param session
-     * @param entity
-     * @param mappedByCache
-     */
     private void changed(Session session, Object entity, MappedByCache mappedByCache) {
         if (entity == null) {
             return;
@@ -208,27 +154,14 @@ public class L2CacheCollectionService extends L2EntityMergeService {
         session.getSessionFactory().getCache().evictCollection(mappedByCache.collectionKey, (Serializable) entity);
     }
 
-    /**
-     * @author absir
-     */
     private static class MappedByCache {
 
-        /**
-         * mappedBy
-         */
         private int mappedBy;
 
-        /**
-         * mapped
-         */
         private Getter mapped;
 
-        /**
-         * id
-         */
         private Getter id;
 
-        /** collectionKey */
         private String collectionKey;
     }
 }

@@ -7,17 +7,8 @@
  */
 package com.absir.aserv.game.value;
 
-/**
- * @author absir
- */
 public interface IBuffAttack<T> extends IBuffFrom<T> {
 
-    /**
-     * @param atk
-     * @param damageFrom
-     * @param result
-     * @return
-     */
     public int attack(int atk, T damageFrom, IResult result);
 
 }

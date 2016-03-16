@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-4-3 下午5:18:30
  */
 package com.absir.core.helper;
@@ -14,37 +14,17 @@ import org.apache.commons.io.IOUtils;
 import java.io.*;
 import java.nio.charset.Charset;
 
-/**
- * @author absir
- */
 public class HelperIO extends IOUtils {
 
-    /**
-     * @param input
-     * @param callback
-     * @throws IOException
-     */
     public static void doWithReadLine(InputStream input, CallbackBreak<String> callback) throws IOException {
         doWithReadLine(input, Charset.defaultCharset(), callback);
     }
 
-    /**
-     * @param input
-     * @param encoding
-     * @param callback
-     * @throws IOException
-     */
     public static void doWithReadLine(InputStream input, String encoding, CallbackBreak<String> callback)
             throws IOException {
         doWithReadLine(input, Charset.forName(encoding), callback);
     }
 
-    /**
-     * @param input
-     * @param encoding
-     * @param callback
-     * @throws IOException
-     */
     public static void doWithReadLine(InputStream input, Charset encoding, CallbackBreak<String> callback)
             throws IOException {
         InputStreamReader reader = null;
@@ -59,11 +39,6 @@ public class HelperIO extends IOUtils {
         }
     }
 
-    /**
-     * @param reader
-     * @param callback
-     * @throws IOException
-     */
     public static void doWithReadLine(Reader reader, CallbackBreak<String> callback) throws IOException {
         if (reader instanceof BufferedReader) {
             doWithReadLine((BufferedReader) reader, callback);
@@ -82,11 +57,6 @@ public class HelperIO extends IOUtils {
         }
     }
 
-    /**
-     * @param reader
-     * @param callback
-     * @throws IOException
-     */
     public static void doWithReadLine(BufferedReader reader, CallbackBreak<String> callback) throws IOException {
         while (true) {
             try {

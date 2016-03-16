@@ -7,14 +7,8 @@
  */
 package com.absir.orm.transaction;
 
-/**
- * @author absir
- */
 public interface ITransactionName {
 
-    /**
-     * @return
-     */
     public String getTransactionName();
 
 }

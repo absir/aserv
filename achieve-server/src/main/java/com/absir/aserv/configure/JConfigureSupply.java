@@ -17,58 +17,29 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.Session;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 @Bean
 @Basis
 @MaSupply(folder = "系统配置", name = "配置", method = "edit", icon = "cogs")
 public class JConfigureSupply extends CrudSupply<JConfigureBase> {
 
-    /**
-     * ME
-     */
     public static final JConfigureSupply ME = BeanFactoryUtils.get(JConfigureSupply.class);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.CrudSupply#put(java.lang.Class,
-     * java.lang.Class)
-     */
     @Override
     protected void put(Class<?> type, Class<?> beanType) {
         JConfigureUtils.put((Class<? extends JConfigureBase>) type, (Class<? extends JConfigureBase>) beanType);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.ICrudSupply#create(java.lang.String)
-     */
     @Override
     public Object create(String entityName) {
         return JConfigureUtils.getConfigure(getEntityClass(entityName));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.ICrudSupply#mergeEntity(java.lang.String,
-     * java.lang.Object, boolean)
-     */
     @Override
     public void mergeEntity(String entityName, Object entity, boolean create) {
         ((JConfigureBase) entity).merge();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.ICrudSupply#deleteEntity(java.lang.String,
-     * java.lang.Object)
-     */
     @Transaction
     @Override
     public void deleteEntity(String entityName, Object entity) {

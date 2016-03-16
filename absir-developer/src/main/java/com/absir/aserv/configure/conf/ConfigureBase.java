@@ -12,16 +12,8 @@ import com.absir.bean.core.BeanFactoryUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-/**
- * @author absir
- *
- */
 public class ConfigureBase {
 
-    /**
-     * @return
-     * @throws FileNotFoundException
-     */
     protected File getConfigureFile() throws FileNotFoundException {
         return new File(BeanFactoryUtils.getBeanConfig().getClassPath() + "conf/" + getClass().getSimpleName() + ".conf");
     }

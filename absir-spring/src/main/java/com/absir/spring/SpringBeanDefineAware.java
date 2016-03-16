@@ -18,42 +18,21 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.Collection;
 
-/**
- * @author absir
- */
 @Basis
 @Bean
 public class SpringBeanDefineAware implements IBeanFactoryAware, IBeanDefineProcessor {
 
-    /**
-     * context
-     */
     private static ClassPathXmlApplicationContext context;
 
-    /**
-     * @return
-     */
     public static ClassPathXmlApplicationContext getContext() {
         return context;
     }
 
-    /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-         */
     @Override
     public int getOrder() {
         return 0;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanFactoryAware#beforeRegister(com.absir.bean
-     * .core.BeanFactoryImpl)
-     */
     @Override
     public void beforeRegister(BeanFactoryImpl beanFactory) {
         if (context != null) {
@@ -114,20 +93,10 @@ public class SpringBeanDefineAware implements IBeanFactoryAware, IBeanDefineProc
         context.start();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanFactoryAware#afterRegister(com.absir.bean.
-     * core.BeanFactoryImpl)
-     */
     @Override
     public void afterRegister(BeanFactoryImpl beanFactory) {
     }
 
-    /**
-     *
-     */
     @Stopping
     protected void stopping() {
         if (context != null) {

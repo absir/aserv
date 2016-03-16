@@ -18,36 +18,17 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 public class XlsAccessorArray extends XlsAccessorBean {
-    /**
-     * @param field
-     * @param beanClass
-     * @param xlsBase
-     */
+
     public XlsAccessorArray(Field field, Class<?> cls, Class<?> beanClass, XlsBase xlsBase) {
         super(field, cls, beanClass, xlsBase);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#isMulti()
-     */
     @Override
     public boolean isMulti() {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#readHssfSheet(org.apache
-     * .poi.hssf.usermodel.HSSFSheet, java.util.List, int, int, int)
-     */
     @Override
     public int readHssfSheet(HSSFSheet hssfSheet, List<Object> cells, int firstRow, int firstColumn, int lastRow) {
         List<Object> list = new ArrayList<Object>();
@@ -59,14 +40,6 @@ public class XlsAccessorArray extends XlsAccessorBean {
         return lastRow;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessorUtils.XlsAccessorBean#
-     * setObject(java.lang.Object, java.lang.Object,
-     * com.absir.aserv.configure.xls.XlsBase,
-     * com.absir.core.kernel.KernelLang.ObjectTemplate)
-     */
     @Override
     public void setObject(Object obj, Object cell, XlsBase xlsBase, ObjectTemplate<Boolean> empty) {
         List<?> cells = (List<?>) cell;
@@ -89,12 +62,6 @@ public class XlsAccessorArray extends XlsAccessorBean {
         getAccessor().set(obj, DynaBinder.INSTANCE.bind(beanList, null, getField().getGenericType()));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#writeXlsCells(java.util
-     * .List, java.lang.Object, com.absir.aserv.configure.xls.XlsBase)
-     */
     @Override
     public void writeXlsCells(List<XlsCell> xlsCells, Object obj, XlsBase xlsBase) {
         if (obj != null) {

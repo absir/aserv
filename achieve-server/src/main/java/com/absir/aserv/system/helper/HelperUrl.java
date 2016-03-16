@@ -9,29 +9,14 @@ package com.absir.aserv.system.helper;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * @author absir
- *
- */
 public class HelperUrl {
 
-    /**
-     * CONTEXT_PATH_URL
-     */
     public static final String CONTEXT_PATH_URL = HelperUrl.class.getName() + "@CONTEXT_PATH_URL";
 
-    /**
-     * @param request
-     * @return
-     */
     public static String getContextUrl(HttpServletRequest request) {
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 
-    /**
-     * @param request
-     * @return
-     */
     public static String getContextPathUrl(HttpServletRequest request) {
         Object pathUrl = request.getAttribute(CONTEXT_PATH_URL);
         if (pathUrl == null && !(pathUrl instanceof String)) {

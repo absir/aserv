@@ -28,10 +28,6 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 
-/**
- * @author absir
- *
- */
 @MaEntity(parent = {@MaMenu("节点管理")}, name = "服务", value = @MaMenu(order = -125))
 @JaModel(desc = true)
 @Entity
@@ -85,177 +81,94 @@ public class JSlaveServer extends JbBean implements ICrudBean {
     @JaColum(indexs = @Index(columnList = "synched"))
     private boolean synched;
 
-    /**
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name the name to set
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * @return the host
-     */
     public JSlave getHost() {
         return host;
     }
 
-    /**
-     * @param host
-     *            the host to set
-     */
     public void setHost(JSlave host) {
         this.host = host;
     }
 
-    /**
-     * @return the port
-     */
     public int getPort() {
         return port;
     }
 
-    /**
-     * @param port
-     *            the port to set
-     */
     public void setPort(int port) {
         this.port = port;
     }
 
-    /**
-     * @return the multiPort
-     */
     public boolean isMultiPort() {
         return multiPort;
     }
 
-    /**
-     * @param multiPort
-     *            the multiPort to set
-     */
     public void setMultiPort(boolean multiPort) {
         this.multiPort = multiPort;
     }
 
-    /**
-     * @return the ip
-     */
     public String getIp() {
         return ip;
     }
 
-    /**
-     * @param ip
-     *            the ip to set
-     */
     public void setIp(String ip) {
         this.ip = ip;
     }
 
-    /**
-     * @return the serverIP
-     */
     public String getServerIP() {
         return serverIP;
     }
 
-    /**
-     * @param serverIP
-     *            the serverIP to set
-     */
     public void setServerIP(String serverIP) {
         this.serverIP = serverIP;
     }
 
-    /**
-     * @return the beginTime
-     */
     public long getBeginTime() {
         return beginTime;
     }
 
-    /**
-     * @param beginTime
-     *            the beginTime to set
-     */
     public void setBeginTime(long beginTime) {
         this.beginTime = beginTime;
     }
 
-    /**
-     * @return the passTime
-     */
     public long getPassTime() {
         return passTime;
     }
 
-    /**
-     * @param passTime
-     *            the passTime to set
-     */
     public void setPassTime(long passTime) {
         this.passTime = passTime;
     }
 
-    /**
-     * @return the updateTime
-     */
     public long getUpdateTime() {
         return updateTime;
     }
 
-    /**
-     * @param updateTime
-     *            the updateTime to set
-     */
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
     }
 
-    /**
-     * @return the closed
-     */
     public boolean isClosed() {
         return closed;
     }
 
-    /**
-     * @param closed
-     *            the closed to set
-     */
     public void setClosed(boolean closed) {
         this.closed = closed;
     }
 
-    /**
-     * @return the synched
-     */
     public boolean isSynched() {
         return synched;
     }
 
-    /**
-     * @param synched
-     *            the synched to set
-     */
     public void setSynched(boolean synched) {
         this.synched = synched;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.crud.value.ICrudBean#proccessCrud(com.absir.aserv
-     * .system.bean.value.JaCrud.Crud, com.absir.aserv.crud.CrudHandler)
-     */
     @Override
     public void proccessCrud(Crud crud, CrudHandler handler) {
         if (crud == Crud.CREATE && host != null) {

@@ -19,32 +19,16 @@ import org.hibernate.SessionFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("rawtypes")
 @Bean
 public class JTransactionSupply implements ITransactionSupply {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.orm.transaction.ITransactionSupply#getTransactionContext()
-     */
     @Override
     public TransactionContext getTransactionContext() {
         SessionFactoryBean sessionFactoryBean = SessionFactoryUtils.get();
         return sessionFactoryBean == null ? null : getSessionContext(null, sessionFactoryBean.getSessionFactory());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.orm.transaction.ITransactionSupply#getNameMapTransactionContext
-     * ()
-     */
     @Override
     public Map<String, TransactionContext> getNameMapTransactionContext() {
         SessionFactoryBean sessionFactoryBean = SessionFactoryUtils.get();
@@ -63,11 +47,6 @@ public class JTransactionSupply implements ITransactionSupply {
         return nameMapTransactionContext;
     }
 
-    /**
-     * @param name
-     * @param sessionFactory
-     * @return
-     */
     private TransactionContext getSessionContext(String name, SessionFactory sessionFactory) {
         if (sessionFactory != null) {
             Object currentSessionContext = KernelObject.declaredGet(sessionFactory, "currentSessionContext");

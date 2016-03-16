@@ -12,31 +12,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- *
- */
 @Target(value = {ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MaEntity {
 
-    /**
-     * @return
-     */
     boolean closed() default false;
 
-    /**
-     * @return
-     */
     MaMenu[] parent() default {};
 
-    /**
-     * @return
-     */
     String name() default "";
 
-    /**
-     * @return
-     */
     MaMenu value() default @MaMenu;
 }

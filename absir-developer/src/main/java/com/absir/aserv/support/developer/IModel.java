@@ -11,56 +11,24 @@ import com.absir.orm.value.JoEntity;
 
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 public interface IModel {
 
-    /**
-     * @return
-     */
     public JoEntity getJoEntity();
 
-    /**
-     * @return
-     */
     public String getCaption();
 
-    /**
-     * @return
-     */
     public Long lastModified();
 
-    /**
-     * @return
-     */
     public boolean isFilter();
 
-    /**
-     * @return
-     */
     public DModel getModel();
 
-    /**
-     * @return
-     */
     public List<JCrud> getjCruds();
 
-    /**
-     * @return
-     */
     public IField getPrimary();
 
-    /**
-     * @return
-     */
     public List<IField> getFields();
 
-    /**
-     * @param group
-     * @return
-     */
     public List<IField> getGroupFields(String group);
 
 }

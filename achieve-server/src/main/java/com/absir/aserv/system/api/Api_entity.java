@@ -42,10 +42,6 @@ import com.absir.server.value.*;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Interceptors(ApiServer.TransactionRoute.class)
 @Base
@@ -110,11 +106,6 @@ public class Api_entity extends ApiServer {
         return EntityServiceUtils.list(entityName, user, null, ids, input);
     }
 
-    /**
-     * @param entityName
-     * @param input
-     * @return
-     */
     public List<Object> list(String entityName, Input input) {
         return list(entityName, 1, input);
     }
@@ -233,21 +224,10 @@ public class Api_entity extends ApiServer {
         }
     }
 
-    /**
-     * @param entityName
-     * @param input
-     * @return
-     */
     public Map<String, Object> changed(String entityName, Input input) {
         return changed(entityName, 0L, input);
     }
 
-    /**
-     * @param entityName
-     * @param updateTime
-     * @param input
-     * @return
-     */
     public Map<String, Object> changed(String entityName, long updateTime, Input input) {
         DCondition condition = new DCondition();
         condition.setUpdateTime(updateTime);
@@ -257,13 +237,6 @@ public class Api_entity extends ApiServer {
         return modelMap;
     }
 
-    /**
-     * @param entityName
-     * @param updateTime
-     * @param pageIndex
-     * @param input
-     * @return
-     */
     public Map<String, Object> changed(String entityName, long updateTime, int pageIndex, Input input) {
         return changed(entityName, updateTime, JdbcPage.PAGE_SIZE, pageIndex, input);
     }
@@ -304,12 +277,6 @@ public class Api_entity extends ApiServer {
         return modelMap;
     }
 
-    /**
-     * @param entityName
-     * @param updateTime
-     * @param input
-     * @return
-     */
     public Map<String, Object> changedId(String entityName, long updateTime, Input input) {
         Map<String, Object> modelMap = changed(entityName, updateTime, input);
         List<IBase> entities = (List<IBase>) modelMap.remove(entityName);
@@ -326,13 +293,6 @@ public class Api_entity extends ApiServer {
         return modelMap;
     }
 
-    /**
-     * @param entityName
-     * @param updateTime
-     * @param pageIndex
-     * @param input
-     * @return
-     */
     public Map<String, Object> changedId(String entityName, long updateTime, int pageIndex, Input input) {
         return changedId(entityName, updateTime, JdbcPage.PAGE_SIZE, pageIndex, input);
     }
@@ -363,11 +323,6 @@ public class Api_entity extends ApiServer {
         return modelMap;
     }
 
-    /**
-     * @param entityNames
-     * @param input
-     * @return
-     */
     public Map<String, Object> changed(@Bodys EntityNames entityNames, Input input) {
         JiUserBase user = SecurityService.ME.getUserBase(input);
         Map<String, Object> modelMap = new HashMap<String, Object>();
@@ -511,23 +466,12 @@ public class Api_entity extends ApiServer {
         return EntityService.ME.delete(entityName, crudSupply, user, ids);
     }
 
-    /**
-     * @param entityName
-     * @param entityMap
-     * @param input
-     * @return
-     */
     public Map<String, Object> sync(String entityName, @Bodys Map<?, ?> entityMap, Input input) {
         Map<String, Object> modelMap = new HashMap<String, Object>();
         sync(entityName, SecurityService.ME.getUserBase(input), entityMap, modelMap, input);
         return modelMap;
     }
 
-    /**
-     * @param entityMaps
-     * @param input
-     * @return
-     */
     public Map<String, Object> syncs(@Bodys Map<String, Map<?, ?>> entityMaps, Input input) {
         JiUserBase user = SecurityService.ME.getUserBase(input);
         Map<String, Object> modelMap = new HashMap<String, Object>();
@@ -559,23 +503,12 @@ public class Api_entity extends ApiServer {
         EntityService.ME.sync(entityName, crudSupply, user, null, modelMap, entityMap, filter);
     }
 
-    /**
-     * @param entityName
-     * @param entityList
-     * @param input
-     * @return
-     */
     public Map<String, Object> mirror(String entityName, @Bodys List<?> entityList, Input input) {
         Map<String, Object> modelMap = new HashMap<String, Object>();
         mirror(entityName, SecurityService.ME.getUserBase(input), entityList, modelMap, input);
         return modelMap;
     }
 
-    /**
-     * @param entityMaps
-     * @param input
-     * @return
-     */
     public Map<String, Object> mirrors(@Bodys Map<String, List<?>> entityMaps, Input input) {
         JiUserBase user = SecurityService.ME.getUserBase(input);
         Map<String, Object> modelMap = new HashMap<String, Object>();
@@ -637,10 +570,6 @@ public class Api_entity extends ApiServer {
         return modelMap;
     }
 
-    /**
-     * @author absir
-     *
-     */
     @Bean
     protected static class Version {
 
@@ -650,45 +579,23 @@ public class Api_entity extends ApiServer {
         @Value("api.version.version")
         public String max = "1.0.0";
 
-        /**
-         * timeZone
-         */
         public int timeZone = Calendar.getInstance().getTimeZone().getRawOffset();
     }
 
-    /**
-     * @author absir
-     */
     public static class Condition {
 
-        /**
-         * condition
-         */
         public DCondition condition;
     }
 
-    /**
-     * @author absir
-     */
     public static class EntityNames extends Condition {
 
-        /**
-         * names
-         */
         public List<String> names;
     }
 
-    /**
-     * @author absir
-     */
     public static class EntityMutiple extends EntityNames {
 
-        /**
-         * syncs
-         */
         public Map<String, Map<?, ?>> syncs;
 
-        /** mirrors */
         public Map<String, List<?>> mirrors;
     }
 }

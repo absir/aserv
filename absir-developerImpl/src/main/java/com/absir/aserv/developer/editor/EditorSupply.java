@@ -15,35 +15,16 @@ import com.absir.property.PropertySupply;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
-/**
- * @author absir
- *
- */
 @Bean
 public class EditorSupply extends PropertySupply<EditorObject, EditorObject> {
 
-    /**
-     * EDITOR_SUPPLY
-     */
     public static final EditorSupply ME = BeanFactoryUtils.get(EditorSupply.class);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.property.PropertySupply#getIngoreAnnotationClass()
-     */
     @Override
     public Class<? extends Annotation> getIngoreAnnotationClass() {
         return JaIngore.class;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertySupply#getPropertyObject(com.absir.property
-     * .PropertyObject, java.lang.reflect.Field)
-     */
     @Override
     public EditorObject getPropertyObject(EditorObject propertyObject, Field field) {
         if (propertyObject == null) {

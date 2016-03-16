@@ -1,15 +1,12 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-6-13 下午3:08:31
  */
 package com.absir.bean.basis;
 
-/**
- * @author absir
- */
 public enum BeanScope {
 
     /**

@@ -15,10 +15,6 @@ import com.absir.aserv.system.bean.value.JaModel;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- *
- */
 @JaModel(desc = true)
 @MappedSuperclass
 public abstract class JbSession extends JbVerifier {
@@ -31,9 +27,13 @@ public abstract class JbSession extends JbVerifier {
     @JaLang("用户名")
     private String username;
 
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    @JaLang(value = "地址")
+    private String address;
+
     @JaEdit(types = "ip", groups = JaEdit.GROUP_LIST)
-    @JaLang(value = "IP地址", tag = "ip")
-    private long address;
+    @JaLang(value = "IP")
+    private long ip;
 
     @JaEdit(groups = JaEdit.GROUP_LIST)
     @JaLang(value = "设备", tag = "device")
@@ -47,91 +47,58 @@ public abstract class JbSession extends JbVerifier {
     @Lob
     private byte[] metas;
 
-    /**
-     * @return the userId
-     */
     public Long getUserId() {
         return userId;
     }
 
-    /**
-     * @param userId the userId to set
-     */
     public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    /**
-     * @return the username
-     */
     public String getUsername() {
         return username;
     }
 
-    /**
-     * @param username
-     *            the username to set
-     */
     public void setUsername(String username) {
         this.username = username;
     }
 
-    /**
-     * @return the address
-     */
-    public long getAddress() {
+    public String getAddress() {
         return address;
     }
 
-    /**
-     * @param address
-     *            the address to set
-     */
-    public void setAddress(long address) {
+    public void setAddress(String address) {
         this.address = address;
     }
 
-    /**
-     * @return the agent
-     */
+    public long getIp() {
+        return ip;
+    }
+
+    public void setIp(long ip) {
+        this.ip = ip;
+    }
+
     public String getAgent() {
         return agent;
     }
 
-    /**
-     * @param agent
-     *            the agent to set
-     */
     public void setAgent(String agent) {
         this.agent = agent;
     }
 
-    /**
-     * @return the lastTime
-     */
     public long getLastTime() {
         return lastTime;
     }
 
-    /**
-     * @param lastTime
-     *            the lastTime to set
-     */
     public void setLastTime(long lastTime) {
         this.lastTime = lastTime;
     }
 
-    /**
-     * @return the metas
-     */
     public byte[] getMetas() {
         return metas;
     }
 
-    /**
-     * @param metas
-     *            the metas to set
-     */
     public void setMetas(byte[] metas) {
         this.metas = metas;
     }

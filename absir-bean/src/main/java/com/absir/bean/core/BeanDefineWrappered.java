@@ -1,22 +1,16 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-12-20 下午12:34:44
  */
 package com.absir.bean.core;
 
 import com.absir.bean.basis.BeanDefine;
 
-/**
- * @author absir
- */
 public class BeanDefineWrappered extends BeanDefineWrapper {
 
-    /**
-     * @param beanDefine
-     */
     public BeanDefineWrappered(BeanDefine beanDefine) {
         super(beanDefine);
     }

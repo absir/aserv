@@ -21,25 +21,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class PropertyUtils {
 
-    /**
-     * TRANSIENT_MODIFIER
-     */
     public static final int TRANSIENT_MODIFIER = Modifier.TRANSIENT | Modifier.STATIC | Modifier.FINAL;
-    /**
-     * Class_Map_Property_Holder
-     */
+
     private static Map<Class<?>, PropertyHolder> Class_Map_Property_Holder = new HashMap<Class<?>, PropertyHolder>();
 
-    /**
-     * @param parameterAnnotations
-     * @return
-     */
     public static String[] paramterBeanNames(Annotation[][] parameterAnnotations) {
         int length = parameterAnnotations.length;
         if (length == 0) {
@@ -63,10 +51,6 @@ public class PropertyUtils {
         return paramterBeanNames;
     }
 
-    /**
-     * @param beanClass
-     * @return
-     */
     public static PropertyHolder getPropertyMap(Class<?> beanClass, PropertySupply propertySupply) {
         PropertyHolder propertyHolder = Class_Map_Property_Holder.get(beanClass);
         int propertyIndex = propertySupply.getSupplyIndex();
@@ -96,11 +80,6 @@ public class PropertyUtils {
         return propertyHolder;
     }
 
-    /**
-     * @param propertyMap
-     * @param name
-     * @return
-     */
     private static PropertyContext getPropertyContext(Map<String, Object> propertyMap, String name) {
         PropertyContext propertyContext = (PropertyContext) propertyMap.get(name);
         if (propertyContext == null) {
@@ -112,12 +91,6 @@ public class PropertyUtils {
         return propertyContext;
     }
 
-    /**
-     * @param propertyMap
-     * @param propertyTree
-     * @param beanClass
-     * @param propertySupply
-     */
     private static void addPropertyMap(Map<String, Object> propertyMap, boolean propertyTree, Class<?> beanClass, PropertySupply propertySupply) {
         if (beanClass == null || beanClass == Object.class) {
             return;

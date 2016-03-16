@@ -20,49 +20,25 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @Configure
 public class EntityOnPut extends RouteEntity {
 
     @Value(value = "onPut.lifeTime")
     private static long lifeTime = 600000;
 
-    /**
-     * beanDefine
-     */
     private BeanDefine beanDefine;
 
-    /**
-     * idMapBeanObject
-     */
     private Map<Serializable, ContextOnPut> idMapBeanObject = new HashMap<Serializable, ContextOnPut>();
 
-    /**
-     * @param beanDefine
-     */
     public EntityOnPut(BeanDefine beanDefine) {
         this.beanDefine = beanDefine;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.route.RouteEntity#getRouteType()
-     */
     @Override
     public Class<?> getRouteType() {
         return beanDefine.getBeanType();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.RouteEntity#getRouteBean(com.absir.server.in.Input
-     * )
-     */
     @Override
     public Object getRouteBean(Input input) {
         Serializable id = input.getId();
@@ -82,42 +58,21 @@ public class EntityOnPut extends RouteEntity {
         return contextOnPut.beanObject;
     }
 
-    /**
-     * @author absir
-     */
     public class ContextOnPut extends ContextBase {
 
-        /**
-         * id
-         */
         private Serializable id;
 
-        /**
-         * beanObject
-         */
         private Object beanObject;
 
-        /**
-         * @param id
-         * @param beanObject
-         */
         public ContextOnPut(Serializable id, Object beanObject) {
             this.id = id;
             this.beanObject = beanObject;
         }
 
-        /**
-         * @return
-         */
         protected long getLifeTime() {
             return lifeTime;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.context.core.ContextBase#uninitialize()
-         */
         @Override
         public void uninitialize() {
             if (isExpiration()) {

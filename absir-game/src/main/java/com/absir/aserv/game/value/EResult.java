@@ -9,9 +9,6 @@ package com.absir.aserv.game.value;
 
 import com.absir.aserv.system.bean.value.JaLang;
 
-/**
- * @author absir
- */
 public enum EResult {
 
     @JaLang("继续战斗")
@@ -26,10 +23,6 @@ public enum EResult {
     @JaLang("战斗失败")
     LOSS,;
 
-    /**
-     * @param eFight
-     * @return
-     */
     public static EResult getReverse(EResult eFight) {
         if (eFight == VICTORY) {
             eFight = LOSS;

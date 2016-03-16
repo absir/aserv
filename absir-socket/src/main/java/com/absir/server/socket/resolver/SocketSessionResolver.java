@@ -19,80 +19,40 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.nio.channels.SocketChannel;
 
-/**
- * @author absir
- *
- */
 public class SocketSessionResolver implements ISessionResolver {
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(SocketSessionResolver.class);
 
-    /**
-     * bufferResolver
-     */
     protected static IBufferResolver bufferResolver;
 
-    /**
-     * serverResolver
-     */
     protected static IServerResolver serverResolver;
 
-    /** beat */
     protected static byte[] beat;
 
-    /**
-     * beatBuffer
-     */
     protected static byte[] beatBuffer;
 
-    /** okBuffer */
     protected static byte[] okBuffer;
 
-    /**
-     * failedBuffer
-     */
     protected static byte[] failedBuffer;
-    /** propertyFilter */
+
     protected PropertyFilter propertyFilter;
 
-    /**
-     * @return the beat
-     */
     public static byte[] getBeat() {
         return beat;
     }
 
-    /**
-     * @return the beatBuffer
-     */
     public static byte[] getBeatBuffer() {
         return beatBuffer;
     }
 
-    /**
-     * @return the okBuffer
-     */
     public static byte[] getOkBuffer() {
         return okBuffer;
     }
 
-    /**
-     * @return the failedBuffer
-     */
     public static byte[] getFailedBuffer() {
         return failedBuffer;
     }
 
-    /**
-     * @param bufferResolver
-     * @param sessionResolver
-     * @param beat
-     * @param ok
-     * @param failed
-     */
     public static void setResolver(IBufferResolver bufferResolver, IServerResolver serverResolver, byte[] beat,
                                    byte[] ok, byte[] failed) {
         SocketSessionResolver.bufferResolver = bufferResolver;
@@ -103,53 +63,26 @@ public class SocketSessionResolver implements ISessionResolver {
         failedBuffer = SocketBufferResolver.createByteBufferFull(bufferResolver, null, 0, failed, 0, failed.length);
     }
 
-    /**
-     * @return the bufferResolver
-     */
     public IBufferResolver getBufferResolver() {
         return bufferResolver;
     }
 
-    /**
-     * @return the serverResolver
-     */
     public IServerResolver getServerResolver() {
         return serverResolver;
     }
 
-    /**
-     * @param selSession
-     * @param socketChannel
-     * @param id
-     * @return
-     */
     protected boolean writeSuccess(SelSession selSession, SocketChannel socketChannel, Serializable id) {
         return SocketBufferResolver.writeBufferTimeout(selSession, socketChannel, okBuffer);
     }
 
-    /**
-     * @param selSession
-     * @param socketChannel
-     * @return
-     */
     protected boolean writeFailed(SelSession selSession, SocketChannel socketChannel) {
         return SocketBufferResolver.writeBufferTimeout(selSession, socketChannel, failedBuffer);
     }
 
-    /**
-     * @param selSession
-     * @param socketChannel
-     * @param id
-     * @return
-     */
     protected boolean writeBeat(SelSession selSession, SocketChannel socketChannel, Serializable id) {
         return SocketBufferResolver.writeBufferTimeout(selSession, socketChannel, beatBuffer);
     }
 
-    /**
-     * @param includes
-     * @param excludes
-     */
     public void setSessionFilters(String[] includes, String[] excludes) {
         PropertyFilter filter = null;
         if (includes != null && includes.length > 0) {
@@ -172,13 +105,6 @@ public class SocketSessionResolver implements ISessionResolver {
         propertyFilter = filter;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketSessionResolver#acceptTimeout(java
-     * .nio.channels.SocketChannel)
-     */
     @Override
     public long acceptTimeout(SocketChannel socketChannel) throws Throwable {
         if (propertyFilter == null || propertyFilter.isMatchPath(socketChannel.socket().getInetAddress().toString())) {
@@ -188,13 +114,6 @@ public class SocketSessionResolver implements ISessionResolver {
         return -1;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketSessionResolver#idle(java.nio.
-     * channels.SocketChannel, com.absir.server.socket.SelSession, long)
-     */
     @Override
     public void idle(final SocketChannel socketChannel, final SelSession selSession, final long contextTime) {
         selSession.retainIdleTimeout();
@@ -209,13 +128,6 @@ public class SocketSessionResolver implements ISessionResolver {
         });
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketSessionResolver#register(java.nio.
-     * channels.SocketChannel, com.absir.server.socket.SelSession)
-     */
     @Override
     public void register(final SocketChannel socketChannel, final SelSession selSession) throws Throwable {
         final SocketBuffer socketBuffer = selSession.getSocketBuffer();
@@ -260,22 +172,10 @@ public class SocketSessionResolver implements ISessionResolver {
         });
     }
 
-    /**
-     * @param socketChannel
-     * @param id
-     * @param buffer
-     * @param socketBuffer
-     */
     protected boolean doDenied(SocketChannel socketChannel, Serializable id, byte[] buffer, SocketBuffer socketBuffer) {
         return id == null || id == SelSession.UN_REGISTER_ID;
     }
 
-    /**
-     * @param socketChannel
-     * @param socketBuffer
-     * @param buffer
-     * @return
-     */
     protected boolean isBeat(SocketChannel socketChannel, SocketBuffer socketBuffer, byte[] buffer) {
         int length = beat.length;
         if (buffer.length == length) {
@@ -291,13 +191,6 @@ public class SocketSessionResolver implements ISessionResolver {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketSessionResolver#receiveByteBuffer(
-     * java.nio.channels.SocketChannel, com.absir.server.socket.SelSession)
-     */
     @Override
     public void receiveByteBuffer(final SocketChannel socketChannel, final SelSession selSession) throws Throwable {
         final SocketBuffer socketBuffer = selSession.getSocketBuffer();
@@ -344,14 +237,6 @@ public class SocketSessionResolver implements ISessionResolver {
         });
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketSessionResolver#unRegister(java.io
-     * .Serializable, java.nio.channels.SocketChannel,
-     * com.absir.server.socket.SelSession)
-     */
     @Override
     public void unRegister(final Serializable id, final SocketChannel socketChannel, final SelSession selSession)
             throws Throwable {

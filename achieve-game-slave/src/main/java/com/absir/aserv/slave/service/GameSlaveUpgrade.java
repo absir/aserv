@@ -15,31 +15,19 @@ import com.absir.bean.inject.value.Bean;
 
 import java.util.Collection;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"unchecked", "rawtypes"})
 @Base
 @Bean
 public class GameSlaveUpgrade extends SlaveUpgradeService {
-    /**
-     *
-     */
+
     protected void kickAll() {
         GameComponent.KickOffAll();
     }
 
-    /**
-     *
-     */
     protected void reloadResoure() {
         JbPlayerContext.COMPONENT.reloadComponent();
     }
 
-    /**
-     * @param unit
-     */
     public void saveAll(int unit) {
         LOGGER.info("saveAll begin");
         LOGGER.info("saveAllPlayer count:" + JbPlayerContext.COMPONENT.PLAYER_CONTEXT_MAP.size());

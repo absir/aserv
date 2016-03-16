@@ -18,23 +18,13 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class JdbcDriver {
 
-    /**
-     * PRAMER_NAME
-     */
     public static final String PRAMER_NAME = "a";
-    /**
-     * CONDITION_PATTERN
-     */
+
     public static final Pattern CONDITION_PATTERN = Pattern.compile("^[\\s]*(AND|OR)[\\s]+", Pattern.CASE_INSENSITIVE);
-    /**
-     * insertImplodeBuilder
-     */
+
     protected ImplodeBuilder insertImplodeBuilder = new ImplodeBuilder() {
 
         @Override
@@ -44,9 +34,7 @@ public class JdbcDriver {
         }
 
     };
-    /**
-     * conditionImplodeBuilder
-     */
+
     protected ImplodeBuilder conditionImplodeBuilder = new ImplodeBuilder() {
 
         @Override
@@ -87,9 +75,7 @@ public class JdbcDriver {
             return builder;
         }
     };
-    /**
-     * updateImplodeBuilder
-     */
+
     protected ImplodeBuilder updateImplodeBuilder = new ImplodeBuilder() {
 
         @Override
@@ -99,48 +85,26 @@ public class JdbcDriver {
         }
     };
 
-    /**
-     * @return
-     */
     public String _argString() {
         return "*";
     }
 
-    /**
-     * @return
-     */
     public String _whereString() {
         return "WHERE";
     }
 
-    /**
-     * @return
-     */
     public String _countString() {
         return "COUNT(*)";
     }
 
-    /**
-     * @param value
-     * @return
-     */
     public String _countString(String value) {
         return "COUNT(" + value + ")";
     }
 
-    /**
-     * @return
-     */
     public String _randString() {
         return "RAND()";
     }
 
-    /**
-     * @param table
-     * @param values
-     * @param parameters
-     * @return
-     */
     public String insertString(String table, Object[] values, Collection parameters) {
         StringBuffer buffer = new StringBuffer();
         String queryString = insertString(values, buffer, parameters);
@@ -148,25 +112,11 @@ public class JdbcDriver {
         return "INSERT INTO " + table + queryString;
     }
 
-    /**
-     * @param values
-     * @param buffer
-     * @param parameters
-     * @return
-     */
     protected String insertString(Object[] values, StringBuffer buffer, Collection parameters) {
         Object[] target = new Object[]{buffer, parameters};
         return KernelString.implode(values, insertImplodeBuilder, target, " , ", " , ");
     }
 
-    /**
-     * @param builder
-     * @param glue
-     * @param index
-     * @param value
-     * @param target
-     * @return
-     */
     protected void insertGlue(StringBuilder builder, Object glue, int index, Object value, Object[] target) {
         if (index == 1) {
             StringBuilder buffer = (StringBuilder) target[0];
@@ -187,21 +137,10 @@ public class JdbcDriver {
         }
     }
 
-    /**
-     * @param conditions
-     * @param parameters
-     * @return
-     */
     public String conditionString(Object[] conditions, Collection parameters) {
         return conditionString(_whereString(), conditions, parameters);
     }
 
-    /**
-     * @param where
-     * @param conditions
-     * @param parameters
-     * @return
-     */
     public String conditionString(String where, Object[] conditions, Collection parameters) {
         String whereString = "";
         if (conditions != null) {
@@ -215,13 +154,6 @@ public class JdbcDriver {
         return whereString;
     }
 
-    /**
-     * @param glue
-     * @param index
-     * @param value
-     * @param target
-     * @return
-     */
     protected String conditionGlue(StringBuilder builder, Object glue, int index, Object value) {
         String str = String.valueOf(value);
         if (str.indexOf(' ') < 0) {
@@ -266,45 +198,20 @@ public class JdbcDriver {
         return str;
     }
 
-    /**
-     * @param table
-     * @param conditions
-     * @param parameters
-     * @return
-     */
     public String deleteString(String table, Object[] conditions, Collection parameters) {
         String queryString = conditionString(conditions, parameters);
         return "DELETE FROM " + table + queryString;
     }
 
-    /**
-     * @param table
-     * @param values
-     * @param conditions
-     * @param parameters
-     * @return
-     */
     public String updateString(String table, Object[] values, Object[] conditions, Collection parameters) {
         String queryString = updateString(values, parameters);
         return "UPDATE " + table + " SET " + queryString + conditionString(conditions, parameters);
     }
 
-    /**
-     * @param values
-     * @param parameters
-     * @return
-     */
     protected String updateString(Object[] values, Collection parameters) {
         return KernelString.implode(values, updateImplodeBuilder, parameters, " , ", " = ");
     }
 
-    /**
-     * @param builder
-     * @param glue
-     * @param index
-     * @param value
-     * @param target
-     */
     protected void updateGlue(StringBuilder builder, Object glue, int index, Object value, Collection target) {
         if (index == 1) {
             target.add(value);
@@ -318,32 +225,11 @@ public class JdbcDriver {
         builder.append(value);
     }
 
-    /**
-     * @param table
-     * @param args
-     * @param conditions
-     * @param queue
-     * @param firstResult
-     * @param maxResults
-     * @param parameters
-     * @return
-     */
     public String selectString(String table, String args, Object[] conditions, String queue, int firstResult, int maxResults,
                                Collection parameters) {
         return selectString(table, args, null, conditions, queue, firstResult, maxResults, parameters);
     }
 
-    /**
-     * @param table
-     * @param args
-     * @param joinAlias
-     * @param conditions
-     * @param queue
-     * @param firstResult
-     * @param maxResults
-     * @param parameters
-     * @return
-     */
     public String selectString(String table, String args, String joinAlias, Object[] conditions, String queue, int firstResult,
                                int maxResults, Collection parameters) {
         String queryString = "SELECT "

@@ -13,10 +13,6 @@ import com.absir.aserv.system.bean.value.JaLang;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- *
- */
 @MappedSuperclass
 public class JbBeanLL extends JbBase {
 
@@ -24,16 +20,10 @@ public class JbBeanLL extends JbBase {
     @Id
     private JEmbedLL id;
 
-    /**
-     * @return the id
-     */
     public JEmbedLL getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(JEmbedLL id) {
         this.id = id;
     }

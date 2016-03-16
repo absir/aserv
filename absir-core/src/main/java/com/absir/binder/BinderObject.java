@@ -10,33 +10,18 @@ package com.absir.binder;
 import com.absir.property.Property;
 import com.absir.property.PropertyObject;
 
-/**
- * @author absir
- */
 public class BinderObject implements PropertyObject<Binder> {
 
     private Binder binder;
 
-    /**
-     * @return the binder
-     */
     public Binder getBinder() {
         return binder;
     }
 
-    /**
-     * @param binder the binder to set
-     */
     public void setBinder(Binder binder) {
         this.binder = binder;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.property.PropertyObject#getPropertyData(java.lang.String,
-     * com.absir.property.Property)
-     */
     @Override
     public Binder getPropertyData(String name, Property property) {
         return binder;

@@ -14,35 +14,18 @@ import org.hibernate.Session;
 
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 public class DActiverRepetition<T extends JiActiveRepetition> extends DActiver<T> {
 
-    /**
-     * repeated
-     */
     private boolean repeated;
 
-    /**
-     * allQueryString
-     */
     private String allQueryString;
 
-    /**
-     * @param entityName
-     */
     public DActiverRepetition(String entityName) {
         super(entityName);
         allQueryString = "SELECT o FROM " + entityName + " o WHERE o.beginTime <= ? AND o.passTime <= ?";
     }
 
-    /**
-     * @param contextTime
-     * @return
-     */
     public List<T> reloadActives(long contextTime) {
         if (!repeated) {
             repeated = true;

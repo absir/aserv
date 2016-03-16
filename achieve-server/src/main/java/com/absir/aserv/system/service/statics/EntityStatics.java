@@ -29,26 +29,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class EntityStatics {
 
-    /**
-     * @param entity
-     * @param primary
-     * @return
-     */
     public static String getPrimary(Object entity, String primary) {
         return DynaBinderUtils.getParamFromValue(UtilAccessor.get(entity, primary));
     }
 
-    /**
-     * @param entities
-     * @param primary
-     * @return
-     */
     public static String[] getPrimarys(Collection<?> entities, String primary) {
         if (entities == null || entities.size() == 0) {
             return null;
@@ -64,12 +51,6 @@ public class EntityStatics {
         return primaries;
     }
 
-    /**
-     * @param entityName
-     * @param entity
-     * @param primary
-     * @return
-     */
     public static String urlPrimary(String entityName, Object entity, String primary) {
         primary = getPrimary(entity, primary);
         try {
@@ -80,10 +61,6 @@ public class EntityStatics {
         }
     }
 
-    /**
-     * @param id
-     * @return
-     */
     public static Object paramId(Object id) {
         if (id == null) {
             return null;
@@ -107,21 +84,10 @@ public class EntityStatics {
         return id;
     }
 
-    /**
-     * @param entityName
-     * @param id
-     * @return
-     */
     public static Object find(String entityName, Object id) {
         return find(entityName, id, Pag.getInput());
     }
 
-    /**
-     * @param entityName
-     * @param id
-     * @param input
-     * @return
-     */
     public static Object find(String entityName, Object id, IAttributes input) {
         if (id == null || (id = paramId(id)) == null) {
             return null;
@@ -137,21 +103,10 @@ public class EntityStatics {
         return entity;
     }
 
-    /**
-     * @param entityName
-     * @param ids
-     * @return
-     */
     public static List<Object> list(String entityName, Object ids) {
         return list(entityName, ids, Pag.getInput());
     }
 
-    /**
-     * @param entityName
-     * @param ids
-     * @param input
-     * @return
-     */
     public static List<Object> list(String entityName, Object ids, IAttributes input) {
         if (ids == null) {
             return null;
@@ -186,11 +141,6 @@ public class EntityStatics {
         return entityList;
     }
 
-    /**
-     * @param entityName
-     * @param input
-     * @return
-     */
     public static List list(String entityName, IAttributes input) {
         String entitiesKey = EntityStatics.class.getName() + "-" + entityName + "@LIST";
         List entities = (List) input.getAttribute(entitiesKey);
@@ -202,9 +152,6 @@ public class EntityStatics {
         return entities;
     }
 
-    /**
-     * @param input
-     */
     public static void searchConditionMap(IAttributes input) {
         Object searchConditionMap = input.getAttribute("searchConditionMap");
         if (searchConditionMap == null) {
@@ -216,19 +163,10 @@ public class EntityStatics {
         }
     }
 
-    /**
-     * @param entityName
-     * @return
-     */
     public static String suggest(String entityName) {
         return "SUGGEST@" + entityName;
     }
 
-    /**
-     * @param entityName
-     * @param input
-     * @return
-     */
     public static List suggest(String entityName, IAttributes input) {
         String entitiesKey = EntityStatics.class.getName() + "-" + entityName + "@SUGGEST";
         List entities = (List) input.getAttribute(entitiesKey);
@@ -240,12 +178,6 @@ public class EntityStatics {
         return entities;
     }
 
-    /**
-     * @param entityName
-     * @param condition
-     * @param input
-     * @return
-     */
     public static List suggest(String entityName, JdbcCondition condition, IAttributes input) {
         if (condition == null || condition.getConditions().isEmpty()) {
             return suggest(entityName, input);
@@ -261,29 +193,14 @@ public class EntityStatics {
         return entities;
     }
 
-    /**
-     * @param entityName
-     * @param fieldName
-     * @return
-     */
     public static String getSharedRuntimeName(String entityName, String fieldName) {
         return UtilRuntime.getRuntimeName(EntityStatics.class, entityName + "-" + fieldName + "@SHARED");
     }
 
-    /**
-     * @param entityName
-     * @param fieldName
-     * @param inpute
-     */
     public static Object getSharedObject(String entityName, String fieldName, IAttributes inpute) {
         return getSharedObject(getSharedRuntimeName(entityName, fieldName), inpute);
     }
 
-    /**
-     * @param runtimeName
-     * @param attributes
-     * @return
-     */
     public static Object getSharedObject(String runtimeName, IAttributes attributes) {
         Object shared = attributes.getAttribute(runtimeName);
         if (shared == null) {
@@ -294,21 +211,11 @@ public class EntityStatics {
         return shared;
     }
 
-    /**
-     * @param runtimeName
-     * @param value
-     * @param value
-     * @param attributes
-     */
     public static void setSharedObject(String runtimeName, Object value, IAttributes attributes) {
         attributes.setAttribute(runtimeName, value);
         Developer.setRuntime(runtimeName, value);
     }
 
-    /**
-     * @param uploadPath
-     * @return
-     */
     public static String getUploadUrl(String uploadPath) {
         return UploadCrudFactory.getUploadUrl() + uploadPath;
     }

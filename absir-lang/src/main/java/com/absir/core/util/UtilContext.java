@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年10月5日 下午8:43:45
  */
 package com.absir.core.util;
@@ -13,50 +13,26 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.*;
 
-/**
- * @author absir
- */
 public class UtilContext {
 
-    /**
-     * currentDate
-     */
     protected static Date currentDate;
-    /**
-     * currentTime
-     */
+
     protected static long currentTime;
-    /**
-     * currentShort
-     */
+
     protected static int currentShort;
-    /**
-     * currentCalendar
-     */
+
     protected static Calendar currentCalendar = computeCalendar();
-    /**
-     * idleThread
-     */
+
     protected static Thread idleThread;
-    /**
-     * warnIdlePool
-     */
+
     protected static boolean warnIdlePool;
-    /**
-     * minIdleCount
-     */
+
     protected static int minIdlePool = 2;
-    /**
-     * threadPoolExecutor
-     */
+
     private static ThreadPoolExecutor threadPoolExecutor;
-    /**
-     * rejectedThreadPoolExecutor
-     */
+
     private static ThreadPoolExecutor rejectedThreadPoolExecutor;
-    /**
-     * rejectedExecutionHandler
-     */
+
     private static RejectedExecutionHandler rejectedExecutionHandler = new RejectedExecutionHandler() {
 
         @Override
@@ -71,9 +47,6 @@ public class UtilContext {
         }
     };
 
-    /**
-     * @return
-     */
     protected static Calendar computeCalendar() {
         final Runnable runnable = new Runnable() {
 
@@ -93,11 +66,7 @@ public class UtilContext {
         };
 
         Thread thread = new Thread() {
-            /*
-             * (non-Javadoc)
-             *
-             * @see java.lang.Thread#run()
-             */
+
             @Override
             public void run() {
                 while (Environment.isStarted()) {
@@ -119,58 +88,34 @@ public class UtilContext {
         return currentCalendar;
     }
 
-    /**
-     * @return the currentCalendar
-     */
     public final static Calendar getCurrentCalendar() {
         return currentCalendar;
     }
 
-    /**
-     * @return the currentDate
-     */
     public final static Date getCurrentDate() {
         return currentDate;
     }
 
-    /**
-     * @return the currentTime
-     */
     public final static long getCurrentTime() {
         return currentTime;
     }
 
-    /**
-     * @return the currentShort
-     */
     public final static int getCurrentShort() {
         return currentShort;
     }
 
-    /**
-     * @return the warnIdlePool
-     */
     public static final boolean isWarnIdlePool() {
         return warnIdlePool;
     }
 
-    /**
-     * @return the minIdlePool
-     */
     public static int getMinIdlePool() {
         return minIdlePool;
     }
 
-    /**
-     * @param minIdlePool the minIdlePool to set
-     */
     public static void setMinIdlePool(int minIdlePool) {
         UtilContext.minIdlePool = minIdlePool;
     }
 
-    /**
-     * @return the threadPoolExecutor
-     */
     public static ThreadPoolExecutor getThreadPoolExecutor() {
         if (threadPoolExecutor == null) {
             setThreadPoolExecutor(new ThreadPoolExecutor(32, 128, 90000, TimeUnit.MILLISECONDS,
@@ -180,9 +125,6 @@ public class UtilContext {
         return threadPoolExecutor;
     }
 
-    /**
-     * @param threadPoolExecutor the threadPoolExecutor to set
-     */
     public static synchronized void setThreadPoolExecutor(ThreadPoolExecutor poolExecutor) {
         if (threadPoolExecutor != null) {
             throw new RuntimeException("threadPoolExecutor exist");
@@ -190,11 +132,7 @@ public class UtilContext {
 
         if (idleThread == null) {
             idleThread = new Thread() {
-                /*
-                 * (non-Javadoc)
-                 *
-                 * @see java.lang.Thread#run()
-                 */
+
                 @Override
                 public void run() {
                     while (Environment.isStarted()) {
@@ -225,9 +163,6 @@ public class UtilContext {
         threadPoolExecutor = poolExecutor;
     }
 
-    /**
-     * @param command
-     */
     public static final void executeSecurity(Runnable command) {
         try {
             threadPoolExecutor.execute(command);
@@ -236,9 +171,6 @@ public class UtilContext {
         }
     }
 
-    /**
-     * @return the threadPoolExecutor
-     */
     protected static ThreadPoolExecutor getRejectThreadPoolExecutor() {
         if (rejectedThreadPoolExecutor == null) {
             setRejectThreadPoolExecutor(
@@ -248,9 +180,6 @@ public class UtilContext {
         return rejectedThreadPoolExecutor;
     }
 
-    /**
-     * @param threadPoolExecutor the threadPoolExecutor to set
-     */
     public static synchronized void setRejectThreadPoolExecutor(ThreadPoolExecutor poolExecutor) {
         if (rejectedThreadPoolExecutor != null) {
             throw new RuntimeException("rejectedThreadPoolExecutor exist");
@@ -259,9 +188,6 @@ public class UtilContext {
         rejectedThreadPoolExecutor = poolExecutor;
     }
 
-    /**
-     *
-     */
     public static void stop() {
         if (threadPoolExecutor != null) {
             threadPoolExecutor.shutdownNow();
@@ -272,9 +198,6 @@ public class UtilContext {
         }
     }
 
-    /**
-     * @author absir
-     */
     public static interface RunableGuaranted extends Runnable {
     }
 }

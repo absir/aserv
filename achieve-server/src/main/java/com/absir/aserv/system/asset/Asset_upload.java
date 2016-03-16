@@ -22,34 +22,19 @@ import org.apache.commons.fileupload.FileItem;
 
 import java.io.IOException;
 
-/**
- * @author absir
- */
 public class Asset_upload extends AssetServer {
 
-    /**
-     * @param input
-     */
     @Before
     public void onAuthentication(@Nullable @Param String name, Input input) {
         SecurityService.ME.autoLogin(name, true, 0, input);
     }
 
-    /**
-     * @param file
-     * @param input
-     * @throws IOException
-     */
     @Body
     @MaPermission(RichCrudFactory.UPLOAD)
     public String upload(@Param FileItem file, Input input) throws IOException {
         return UploadCrudFactory.ME.uploadExtension(HelperFileName.getExtension(file.getName()), file.getInputStream(), SecurityService.ME.getUserBase(input));
     }
 
-    /**
-     * @param files
-     * @throws IOException
-     */
     @Body
     @MaPermission(RichCrudFactory.UPLOAD)
     public String[] upload(@Param FileItem[] files, Input input) throws IOException {

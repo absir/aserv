@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2014-2-12 上午9:44:01
  */
 package com.absir.proto.test;
@@ -14,9 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/**
- * @author absir
- */
 @RunWith(value = JUnit4.class)
 public class UtilMsgTest {
 
@@ -66,30 +63,18 @@ public class UtilMsgTest {
         private byte[] testdd;
         private String name;
 
-        /**
-         * @return the testdd
-         */
         public byte[] getTestdd() {
             return testdd;
         }
 
-        /**
-         * @param testdd the testdd to set
-         */
         public void setTestdd(byte[] testdd) {
             this.testdd = testdd;
         }
 
-        /**
-         * @return the name
-         */
         public String getName() {
             return name;
         }
 
-        /**
-         * @param name the name to set
-         */
         public void setName(String name) {
             this.name = name;
         }

@@ -10,29 +10,12 @@ package com.absir.aserv.lang;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JeEditable;
 
-/**
- * @author absir
- */
 public interface ILangBase {
 
-    /**
-     * @param fieldName
-     * @param locale
-     * @param type
-     * @return
-     */
     public <T> T getLang(String fieldName, Integer locale, Class<T> type);
 
-    /**
-     * @param fieldName
-     * @param locale
-     * @param value
-     */
     public void setLang(String fieldName, Integer locale, Object value);
 
-    /**
-     * @param value
-     */
     @JaEdit(editable = JeEditable.DISABLE)
     public void setLangValues(String[] values);
 

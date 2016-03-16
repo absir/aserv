@@ -22,27 +22,15 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Inject
 @Configure
 public abstract class ContextUtils implements IBeanDefineEager {
 
-    /**
-     * charset
-     */
     private static Charset charset;
 
-    /**
-     * contextFactory
-     */
     private static ContextFactory contextFactory = BeanFactoryUtils.get(ContextFactory.class);
 
-    /**
-     * scheduleFactory
-     */
     private static ScheduleFactory scheduleFactory = BeanFactoryUtils.get(ScheduleFactory.class);
 
     static {
@@ -74,54 +62,30 @@ public abstract class ContextUtils implements IBeanDefineEager {
         });
     }
 
-    /**
-     * @return the charset
-     */
     public static Charset getCharset() {
         return charset;
     }
 
-    /**
-     * @return the contextFactory
-     */
     public static ContextFactory getContextFactory() {
         return contextFactory;
     }
 
-    /**
-     * @return the scheduleFactory
-     */
     public static ScheduleFactory getScheduleFactory() {
         return scheduleFactory;
     }
 
-    /**
-     * @return
-     */
     public static long getContextTime() {
         return contextFactory.getContextTime();
     }
 
-    /**
-     * @return
-     */
     public static ThreadPoolExecutor getThreadPoolExecutor() {
         return contextFactory.getThreadPoolExecutor();
     }
 
-    /**
-     * @param ctxClass
-     * @param id
-     */
     public static <T extends Context<ID>, ID extends Serializable> T getContext(Class<T> ctxClass, ID id) {
         return contextFactory.getContext(ctxClass, id, ctxClass, true);
     }
 
-    /**
-     * @param ctxClass
-     * @param id
-     * @return
-     */
     public static <T extends Context<ID>, ID extends Serializable> T findContext(Class<T> ctxClass, ID id) {
         Map<Serializable, Context> contextMap = contextFactory.findContextMap(ctxClass);
         if (contextMap != null) {

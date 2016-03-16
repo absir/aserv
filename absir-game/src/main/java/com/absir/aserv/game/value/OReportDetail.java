@@ -28,25 +28,13 @@ public class OReportDetail {
     // 战斗效果结果数据
     private Object effectData;
 
-    /**
-     *
-     */
     public OReportDetail() {
     }
 
-    /**
-     * @param effectData
-     */
     public OReportDetail(Object effectData) {
         this.effectData = effectData;
     }
 
-    /**
-     * @param self
-     * @param targets
-     * @param effect
-     * @param effectData
-     */
     public OReportDetail(Serializable self, Serializable[] targets, String effect, Object effectData) {
         this.self = self;
         this.targets = targets;
@@ -54,58 +42,34 @@ public class OReportDetail {
         this.effectData = effectData;
     }
 
-    /**
-     * @return the self
-     */
     public Serializable getSelf() {
         return self;
     }
 
-    /**
-     * @param self the self to set
-     */
     public void setSelf(Serializable self) {
         this.self = self;
     }
 
-    /**
-     * @return the targets
-     */
     public Serializable[] getTargets() {
         return targets;
     }
 
-    /**
-     * @param targets the targets to set
-     */
     public void setTargets(Serializable[] targets) {
         this.targets = targets;
     }
 
-    /**
-     * @return the effect
-     */
     public String getEffect() {
         return effect;
     }
 
-    /**
-     * @param effect the effect to set
-     */
     public void setEffect(String effect) {
         this.effect = effect;
     }
 
-    /**
-     * @return the effectData
-     */
     public Object getEffectData() {
         return effectData;
     }
 
-    /**
-     * @param effectData the effectData to set
-     */
     public void setEffectData(Object effectData) {
         this.effectData = effectData;
     }

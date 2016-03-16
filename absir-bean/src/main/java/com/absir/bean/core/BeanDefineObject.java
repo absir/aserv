@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年1月27日 下午12:10:45
  */
 package com.absir.bean.core;
@@ -16,42 +16,21 @@ import com.absir.core.kernel.KernelReflect;
 
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 public class BeanDefineObject extends BeanDefineAbstractor {
 
-    /**
-     * beanMethod
-     */
     private Method beanMethod;
 
-    /**
-     * beanType
-     */
     private Class<?> beanType;
 
-    /**
-     * beanDefine
-     */
     private BeanDefine beanDefine;
 
-    /**
-     * @param method
-     * @param beanDefine
-     */
     public BeanDefineObject(Method method, BeanDefine beanDefine) {
         beanMethod = method;
         beanType = method.getReturnType();
         this.beanDefine = beanDefine;
     }
 
-    /**
-     * @param beanType
-     * @param beanDefine
-     * @return
-     */
     public static BeanDefine getBeanDefine(Class<?> beanType, BeanDefine beanDefine) {
         if (BeanFactory.class.isAssignableFrom(beanType)) {
             Method method = KernelReflect.method(beanType, "getBeanObject");
@@ -63,52 +42,26 @@ public class BeanDefineObject extends BeanDefineAbstractor {
         return beanDefine;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanDefine#getBeanType()
-     */
     @Override
     public Class<?> getBeanType() {
         return beanType;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanDefine#getBeanScope()
-     */
     @Override
     public BeanScope getBeanScope() {
         return beanDefine.getBeanScope();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanDefine#getBeanComponent()
-     */
     @Override
     public Object getBeanComponent() {
         return beanMethod;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.core.BeanDefineAbstractor#preloadBeanDefine()
-     */
     @Override
     public void preloadBeanDefine() {
         KernelClass.forName(beanMethod.getDeclaringClass().getName());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanDefine#getBeanObject(com.absir.bean.basis.
-     * BeanFactory)
-     */
     @Override
     public Object getBeanObject(BeanFactory beanFactory) {
         IBeanObject factoryBean = (IBeanObject) beanDefine.getBeanObject(beanFactory);

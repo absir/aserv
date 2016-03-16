@@ -7,16 +7,8 @@
  */
 package com.absir.aserv.system.bean.value;
 
-/**
- * @author absir
- *
- */
 public interface JiActiveRepetition extends JiActive {
 
-    /**
-     * @param contextTime
-     * @return
-     */
     public long getNextPassTime(long contextTime);
 
 }

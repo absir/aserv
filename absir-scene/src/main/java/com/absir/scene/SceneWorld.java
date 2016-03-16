@@ -7,9 +7,6 @@
  */
 package com.absir.scene;
 
-/**
- * @author absir
- */
 public class SceneWorld {
 
 }

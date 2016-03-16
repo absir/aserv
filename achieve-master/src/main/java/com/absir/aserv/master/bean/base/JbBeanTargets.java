@@ -15,10 +15,6 @@ import com.absir.aserv.system.bean.value.JaName;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- *
- */
 @MappedSuperclass
 public class JbBeanTargets extends JbBean {
 
@@ -32,31 +28,18 @@ public class JbBeanTargets extends JbBean {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String description;
 
-    /**
-     * @return the targets
-     */
     public long[] getTargets() {
         return targets;
     }
 
-    /**
-     * @param targets the targets to set
-     */
     public void setTargets(long[] targets) {
         this.targets = targets;
     }
 
-    /**
-     * @return the description
-     */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * @param description
-     *            the description to set
-     */
     public void setDescription(String description) {
         this.description = description;
     }

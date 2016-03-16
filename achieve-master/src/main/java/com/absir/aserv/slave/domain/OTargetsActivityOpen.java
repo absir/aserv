@@ -23,49 +23,23 @@ import org.hibernate.Session;
 
 import java.util.*;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends JbBeanTargetsOpen> {
 
-    /**
-     * targetsClass
-     */
     protected Class<T> targetsClass;
 
-    /**
-     * targetsOpenClass
-     */
     protected Class<O> targetsOpenClass;
 
-    /**
-     * targetsName
-     */
     protected String targetsName;
 
-    /**
-     * targetsOpenName
-     */
     protected String targetsOpenName;
 
-    /**
-     * targetsActivity
-     */
     protected OTargetsActivity<List<O>> targetsActivity = new OTargetsActivity<List<O>>();
-    /**
-     * selectAllOpenQuery
-     */
+
     protected String selectAllOpenQuery;
-    /**
-     * selectServerActivityQuery
-     */
+
     protected String selectServerActivityQuery;
 
-    /**
-     *
-     */
     public OTargetsActivityOpen() {
         Class[] classes = KernelClass.argumentClasses(getClass(), true);
         targetsClass = classes[0];
@@ -91,16 +65,10 @@ public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends J
         });
     }
 
-    /**
-     * @return the targetsClass
-     */
     public Class<T> getTargetsClass() {
         return targetsClass;
     }
 
-    /**
-     *
-     */
     protected void initQueryString() {
         selectAllOpenQuery = "SELECT o FROM " + targetsOpenName + " o WHERE o.openLifeDay > 0";
         selectServerActivityQuery = "SELECT o FROM " + targetsName + " o WHERE o.serverId = ?";
@@ -124,9 +92,6 @@ public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends J
         }
     }
 
-    /**
-     * @param activity
-     */
     protected void addActivity(O activity) {
         synchronized (targetsActivity) {
             if (activity.getTargets() == null || activity.getTargets().length == 0) {
@@ -141,11 +106,6 @@ public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends J
         }
     }
 
-    /**
-     * @param activities
-     * @param activity
-     * @return
-     */
     protected List<O> mergeActivities(List<O> activities, O activity) {
         if (activities == null) {
             activities = new ArrayList<O>();
@@ -177,17 +137,8 @@ public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends J
         return activities;
     }
 
-    /**
-     * @return
-     */
     protected abstract T createActivity();
 
-    /**
-     * @param targets
-     * @param calendar
-     * @param act
-     * @param activity
-     */
     protected void setActivity(long[] targets, Calendar calendar, T act, O activity) {
         setActivityEmbed(act, activity);
         act.setTargets(targets);
@@ -199,10 +150,6 @@ public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends J
         calendar.add(Calendar.DAY_OF_YEAR, -(activity.getOpenSubDay() + activity.getOpenLifeDay()));
     }
 
-    /**
-     * @param act
-     * @param activity
-     */
     protected abstract void setActivityEmbed(T act, O activity);
 
     /**

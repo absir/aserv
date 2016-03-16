@@ -17,37 +17,18 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
-/**
- * @author absir
- */
 public class WebResponseWrapper extends HttpServletResponseWrapper {
 
-    /**
-     * writer
-     */
     private Writer writer;
 
-    /**
-     * jspWriter
-     */
     private JspWriter jspWriter;
 
-    /**
-     * printWriter
-     */
     private PrintWriter printWriter;
 
-    /**
-     * @param response
-     */
     public WebResponseWrapper(ServletResponse response) {
         this(response, null);
     }
 
-    /**
-     * @param response
-     * @param jspWriter
-     */
     public WebResponseWrapper(ServletResponse response, JspWriter jspWriter) {
         super((HttpServletResponse) response);
         writer = jspWriter;
@@ -59,31 +40,16 @@ public class WebResponseWrapper extends HttpServletResponseWrapper {
         this.printWriter = new PrintWriter(writer);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see javax.servlet.ServletResponseWrapper#getWriter()
-     */
     @Override
     public PrintWriter getWriter() throws IOException {
         return printWriter;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see javax.servlet.ServletResponseWrapper#getOutputStream()
-     */
     @Override
     public ServletOutputStream getOutputStream() throws IOException {
         throw new IllegalStateException();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see javax.servlet.ServletResponseWrapper#resetBuffer()
-     */
     @Override
     public void resetBuffer() {
         if (jspWriter == null) {
@@ -99,9 +65,6 @@ public class WebResponseWrapper extends HttpServletResponseWrapper {
         }
     }
 
-    /**
-     * @return
-     */
     public String getContent() {
         return writer.toString();
     }

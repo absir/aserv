@@ -16,10 +16,6 @@ import org.junit.Test;
 
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- *
- */
 public class AdviceTest extends AbstractTestInject {
 
     public static void main(String... args) throws Throwable {
@@ -44,23 +40,12 @@ public class AdviceTest extends AbstractTestInject {
 
     @Bean
     public static class TestAdvice extends MethodAfter {
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.advice.IMethodAdvice#matching(java.lang.Class,
-         * java.lang.reflect.Method)
-         */
+
         @Override
         public boolean matching(Class<?> beanType, Method method) {
             return AdviceBean.class.isAssignableFrom(beanType) || UploadCrudFactory.class.isAssignableFrom(beanType);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.advice.MethodAfter#advice(java.lang.Object,
-         * java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
-         */
         @Override
         public void advice(Object proxy, Object returnValue, Method method, Object[] args) {
             System.out.println("after:" + proxy + returnValue + method);

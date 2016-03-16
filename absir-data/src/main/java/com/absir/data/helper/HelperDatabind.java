@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年4月9日 上午10:33:24
  */
 package com.absir.data.helper;
@@ -30,26 +30,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 public class HelperDatabind {
 
-    /**
-     * DESERIALIZATION_CONTEXT
-     */
     public static final DataDeserializationContext DESERIALIZATION_CONTEXT = new DataDeserializationContext(
             BeanDeserializerFactory.instance);
 
-    /**
-     * OBJECT_MAPPER
-     */
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper(null, null, DESERIALIZATION_CONTEXT);
 
-    /**
-     * MESSAGE_PACK_FACTORY
-     */
     public static final MessagePackFactory MESSAGE_PACK_FACTORY = new MessagePackFactory();
 
     static {
@@ -79,11 +67,6 @@ public class HelperDatabind {
         });
     }
 
-    /**
-     * @param outputStream
-     * @param object
-     * @throws IOException
-     */
     public static void write(OutputStream outputStream, Object object) throws IOException {
         if (object == null) {
             return;
@@ -101,11 +84,6 @@ public class HelperDatabind {
         }
     }
 
-    /**
-     * @param outputStream
-     * @param objects
-     * @throws IOException
-     */
     public static void writeArray(OutputStream outputStream, Object... objects) throws IOException {
         JsonGenerator generator = MESSAGE_PACK_FACTORY.createGenerator(outputStream);
         generator.writeStartArray();
@@ -117,11 +95,6 @@ public class HelperDatabind {
         generator.flush();
     }
 
-    /**
-     * @param object
-     * @return
-     * @throws IOException
-     */
     public static byte[] writeAsBytes(Object object) throws IOException {
         if (object == null) {
             return null;
@@ -136,35 +109,18 @@ public class HelperDatabind {
         return outputStream.toByteArray();
     }
 
-    /**
-     * @param objects
-     * @return
-     * @throws IOException
-     */
     public static byte[] writeAsBytesArray(Object... objects) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         writeArray(outputStream, objects);
         return outputStream.toByteArray();
     }
 
-    /**
-     * @param parser
-     * @param toType
-     * @return
-     * @throws IOException
-     */
     public static Object read(JsonParser parser, Type toType) throws IOException {
         parser.nextToken();
         parser.nextToken();
         return OBJECT_MAPPER.readValue(parser, OBJECT_MAPPER.constructType(toType));
     }
 
-    /**
-     * @param parser
-     * @param toTypes
-     * @return
-     * @throws IOException
-     */
     public static Object[] readArray(JsonParser parser, Type... toTypes) throws IOException {
         parser.nextToken();
         parser.nextToken();
@@ -177,12 +133,6 @@ public class HelperDatabind {
         return objects;
     }
 
-    /**
-     * @param inputStream
-     * @param toClass
-     * @return
-     * @throws IOException
-     */
     public static <T> T read(InputStream inputStream, Class<T> toClass) throws IOException {
         if (toClass == byte[].class) {
             return (T) HelperIO.toByteArray(inputStream);
@@ -192,12 +142,6 @@ public class HelperDatabind {
         return (T) read(parser, toClass);
     }
 
-    /**
-     * @param inputStream
-     * @param toType
-     * @return
-     * @throws IOException
-     */
     public static Object read(InputStream inputStream, Type toType) throws IOException {
         if (toType == byte[].class) {
             return HelperIO.toByteArray(inputStream);
@@ -206,22 +150,10 @@ public class HelperDatabind {
         return read(MESSAGE_PACK_FACTORY.createParser(inputStream), toType);
     }
 
-    /**
-     * @param inputStream
-     * @param toTypes
-     * @return
-     * @throws IOException
-     */
     public static Object[] readArray(InputStream inputStream, Type... toTypes) throws IOException {
         return readArray(MESSAGE_PACK_FACTORY.createParser(inputStream), toTypes);
     }
 
-    /**
-     * @param bytes
-     * @param toType
-     * @return
-     * @throws IOException
-     */
     public static Object read(byte[] bytes, Type toType) throws IOException {
         if (bytes == null) {
             return null;
@@ -230,14 +162,6 @@ public class HelperDatabind {
         return read(bytes, 0, bytes.length, toType);
     }
 
-    /**
-     * @param bytes
-     * @param off
-     * @param len
-     * @param toType
-     * @return
-     * @throws IOException
-     */
     public static Object read(byte[] bytes, int off, int len, Type toType) throws IOException {
         if (toType == byte[].class) {
             return bytes;
@@ -246,24 +170,10 @@ public class HelperDatabind {
         return read(MESSAGE_PACK_FACTORY.createParser(bytes, off, len), toType);
     }
 
-    /**
-     * @param bytes
-     * @param toTypes
-     * @return
-     * @throws IOException
-     */
     public static Object[] readArray(byte[] bytes, Type... toTypes) throws IOException {
         return readArray(bytes, 0, bytes.length, toTypes);
     }
 
-    /**
-     * @param bytes
-     * @param off
-     * @param len
-     * @param toTypes
-     * @return
-     * @throws IOException
-     */
     public static Object[] readArray(byte[] bytes, int off, int len, Type... toTypes) throws IOException {
         if (len <= 0) {
             len = bytes.length;

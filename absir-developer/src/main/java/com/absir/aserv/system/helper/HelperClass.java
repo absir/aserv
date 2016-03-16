@@ -9,22 +9,11 @@ package com.absir.aserv.system.helper;
 
 import java.io.File;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("rawtypes")
 public class HelperClass {
 
-    /**
-     * CLASS_FILE_EXTENSION
-     */
     public static final String CLASS_FILE_EXTENSION = ".class";
 
-    /**
-     * @param cls
-     * @return
-     */
     public static File getClassFile(Class cls) {
         File file = new File(cls.getResource(cls.getSimpleName().concat(CLASS_FILE_EXTENSION)).getFile());
         if (!file.exists()) {
@@ -34,10 +23,6 @@ public class HelperClass {
         return file;
     }
 
-    /**
-     * @param cls
-     * @return
-     */
     public static Long lastModified(Class cls) {
         return getClassFile(cls).lastModified();
     }

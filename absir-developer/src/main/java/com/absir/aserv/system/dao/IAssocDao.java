@@ -13,10 +13,6 @@ import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.orm.value.JePermission;
 import com.absir.orm.value.JiAssoc;
 
-/**
- * @author absir
- *
- */
 public interface IAssocDao {
 
     /**

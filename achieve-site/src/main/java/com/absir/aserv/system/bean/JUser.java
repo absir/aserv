@@ -27,9 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author absir
- */
 @SuppressWarnings("serial")
 @MaEntity(parent = {@MaMenu("用户管理")}, name = "用户")
 @Entity
@@ -100,123 +97,70 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @Transient
     private transient boolean slient;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.bean.proxy.Proxies.JpUserBase#getUserId()
-     */
     public Long getUserId() {
         return getId();
     }
 
-    /**
-     * @return the password
-     */
     public String getPassword() {
         return password;
     }
 
-    /**
-     * @param password the password to set
-     */
     public void setPassword(String password) {
         this.password = password;
     }
 
-    /**
-     * @return the salt
-     */
     public String getSalt() {
         return salt;
     }
 
-    /**
-     * @param salt the salt to set
-     */
     public void setSalt(String salt) {
         this.salt = salt;
     }
 
-    /**
-     * @return the lastLogin
-     */
     public long getLastLogin() {
         return lastLogin;
     }
 
-    /**
-     * @param lastLogin the lastLogin to set
-     */
     public void setLastLogin(long lastLogin) {
         this.lastLogin = lastLogin;
     }
 
-    /**
-     * @return the errorLogin
-     */
     public int getErrorLogin() {
         return errorLogin;
     }
 
-    /**
-     * @param errorLogin the errorLogin to set
-     */
     public void setErrorLogin(int errorLogin) {
         this.errorLogin = errorLogin;
     }
 
-    /**
-     * @return the lastErrorLogin
-     */
     public long getLastErrorLogin() {
         return lastErrorLogin;
     }
 
-    /**
-     * @param lastErrorLogin the lastErrorLogin to set
-     */
     public void setLastErrorLogin(long lastErrorLogin) {
         this.lastErrorLogin = lastErrorLogin;
     }
 
-    /**
-     * @return the email
-     */
     public String getEmail() {
         return email;
     }
 
-    /**
-     * @param email the email to set
-     */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /**
-     * @return the mobile
-     */
     public String getMobile() {
         return mobile;
     }
 
-    /**
-     * @param mobile the mobile to set
-     */
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
 
-    /**
-     * @return the slient
-     */
     public boolean isSlient() {
         return slient;
     }
 
-    /**
-     * @param slient the slient to set
-     */
     public void setSlient(boolean slient) {
         this.slient = slient;
     }

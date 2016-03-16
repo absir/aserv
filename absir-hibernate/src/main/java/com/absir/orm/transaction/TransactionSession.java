@@ -11,40 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-/**
- * @author absir
- */
 public class TransactionSession {
 
-    /**
-     * addition
-     */
     private boolean addition;
 
-    /**
-     * transactionAttribute
-     */
     private TransactionAttribute transactionAttribute;
 
-    /**
-     * transactionAttributes
-     */
     private List<TransactionAttribute> transactionAttributes;
 
-    /**
-     * sessionHolder
-     */
     private ISessionHolder sessionHolder;
 
-    /**
-     * sessionHolders
-     */
     private Stack<ISessionHolder> sessionHolders;
 
-    /**
-     * @param attribute
-     * @param addition
-     */
     public void add(TransactionAttribute attribute, boolean addition) {
         if (this.addition) {
             if (addition) {
@@ -66,9 +44,6 @@ public class TransactionSession {
         transactionAttribute = attribute;
     }
 
-    /**
-     * @param sessionContext
-     */
     public void open(ISessionContext sessionContext) {
         if (transactionAttribute != null) {
             addition = false;
@@ -85,9 +60,6 @@ public class TransactionSession {
         }
     }
 
-    /**
-     * @param holder
-     */
     private void holder(ISessionHolder holder) {
         if (sessionHolder != null) {
             if (sessionHolders == null) {
@@ -100,10 +72,6 @@ public class TransactionSession {
         sessionHolder = holder;
     }
 
-    /**
-     * @param e
-     * @return
-     */
     public boolean closeCurrent(Throwable e) {
         addition = false;
         if (transactionAttribute == null) {
@@ -136,9 +104,6 @@ public class TransactionSession {
         return isCloseAll();
     }
 
-    /**
-     * @return
-     */
     public boolean isCloseAll() {
         return transactionAttribute == null && sessionHolders == null;
     }

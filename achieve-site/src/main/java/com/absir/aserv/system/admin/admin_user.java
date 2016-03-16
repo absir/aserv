@@ -19,15 +19,9 @@ import com.absir.server.value.Mapping;
 import com.absir.server.value.Param;
 import com.absir.server.value.Server;
 
-/**
- * @author absir
- */
 @Server
 public class admin_user extends AdminServer {
 
-    /**
-     * @param input
-     */
     public void password(Input input) {
         input.getModel().put("userId", SecurityService.ME.getUserBase(input).getUserId());
     }

@@ -7,14 +7,8 @@
  */
 package com.absir.orm.value;
 
-/**
- * @author absir
- */
 public interface JiRelation extends JiAssoc {
 
-    /**
-     * @return
-     */
     public long getRelateId();
 
 }

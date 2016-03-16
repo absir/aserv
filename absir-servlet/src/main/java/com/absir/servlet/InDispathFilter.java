@@ -22,78 +22,40 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 
-/**
- * @author absir
- */
 public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServletResponse> implements Filter {
 
-    /**
-     * REQUEST_INPUT
-     */
     public static final String REQUEST_INPUT = InDispathFilter.class.getName() + "@REQUEST_INPUT";
-    /**
-     * servletContext
-     */
+
     private static ServletContext servletContext;
-    /**
-     * contextResourcePath
-     */
+
     private static String contextResourcePath;
-    /**
-     * contextPath
-     */
+
     private static String contextPath;
-    /**
-     * contextPathLength
-     */
+
     private int contextPathLength;
-    /**
-     * uriContextPath
-     */
+
     private String uriContextPath;
-    /**
-     * uriContextPathLength
-     */
+
     private int uriContextPathLength;
-    /**
-     * urlDecode
-     */
+
     private boolean urlDecode;
 
-    /**
-     * @return the servletContext
-     */
     public static ServletContext getServletContext() {
         return servletContext;
     }
 
-    /**
-     * @return the contextResourcePath
-     */
     public static String getContextResourcePath() {
         return contextResourcePath;
     }
 
-    /**
-     * @return the contextPath
-     */
     public static String getContextPath() {
         return contextPath;
     }
 
-    /**
-     * @param request
-     * @return
-     */
     public static final Input getInput(ServletRequest request) {
         return (Input) request.getAttribute(REQUEST_INPUT);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
-     */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         servletContext = filterConfig.getServletContext();
@@ -126,12 +88,6 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
-     * javax.servlet.ServletResponse, javax.servlet.FilterChain)
-     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
@@ -145,10 +101,6 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
         }
     }
 
-    /**
-     * @param request
-     * @return
-     */
     private String getUri(ServletRequest request) {
         if (request instanceof HttpServletRequest) {
             String uri = ((HttpServletRequest) request).getRequestURI();
@@ -166,11 +118,6 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
         return request.getParameter("uri");
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.IDispatcher#getInMethod(java.lang.Object)
-     */
     @Override
     public InMethod getInMethod(HttpServletRequest req) {
         if (req instanceof HttpServletRequest) {
@@ -184,12 +131,6 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
         return InMethod.GET;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.IDispatcher#decodeUri(java.lang.String,
-     * java.lang.Object)
-     */
     @Override
     public String decodeUri(String uri, HttpServletRequest req) {
         if (urlDecode) {
@@ -209,13 +150,6 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.InDispatcher#input(java.lang.String,
-     * com.absir.server.in.InMethod, java.util.Map, java.lang.Object,
-     * java.lang.Object)
-     */
     @Override
     protected Input input(String uri, InMethod inMethod, InModel model, HttpServletRequest req, HttpServletResponse res) {
         Input input = new InputRequest(uri, inMethod, model, req, res);
@@ -223,11 +157,6 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
         return input;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see javax.servlet.Filter#destroy()
-     */
     @Override
     public void destroy() {
     }

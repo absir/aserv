@@ -12,37 +12,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- *
- */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JaEdit {
 
-    /**
-     * GROUP_SUG
-     */
     public static final String GROUP_SUG = "sug";
 
-    /**
-     * GROUP_SUGGEST
-     */
     public static final String GROUP_SUGGEST = "suggest";
 
-    /**
-     * GROUP_LIST
-     */
     public static final String GROUP_LIST = "list";
 
-    /**
-     * GROUP_SEARCH
-     */
     public static final String GROUP_SEARCH = "search";
 
-    /**
-     * EDIT_SUBTABLE
-     */
     public static final String EDIT_SUBTABLE = "subtable";
 
     /**

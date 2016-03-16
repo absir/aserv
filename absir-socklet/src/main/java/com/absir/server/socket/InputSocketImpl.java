@@ -14,38 +14,18 @@ import com.absir.server.socket.resolver.SocketBufferResolver;
 
 import java.nio.channels.SocketChannel;
 
-/**
- * @author absir
- */
 public class InputSocketImpl extends InputSocket {
 
-    /**
-     * @param model
-     * @param inputSocketAtt
-     * @param socketChannel
-     */
     public InputSocketImpl(InModel model, InputSocketAtt inputSocketAtt, SocketChannel socketChannel) {
         super(model, inputSocketAtt, socketChannel);
     }
 
-    /**
-     * @param socketChannel
-     * @param success
-     * @param callbackIndex
-     * @param bytes
-     * @return
-     */
     public static boolean writeByteBufferSuccess(SelSession selSession, SocketChannel socketChannel, boolean success,
                                                  int callbackIndex, byte[] bytes) {
         return writeByteBuffer(InputBufferResolver.ME, selSession, socketChannel,
                 success == true ? 0 : SocketAdapter.ERROR_FLAG, callbackIndex, bytes);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.socket.InputSocket#getSocketBufferResolver()
-     */
     @Override
     public SocketBufferResolver getSocketBufferResolver() {
         return InputBufferResolver.ME;

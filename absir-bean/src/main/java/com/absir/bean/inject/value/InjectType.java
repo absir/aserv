@@ -7,9 +7,6 @@
  */
 package com.absir.bean.inject.value;
 
-/**
- * @author absir
- */
 public enum InjectType {
 
     /**

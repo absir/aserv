@@ -37,36 +37,20 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
 public class VerifierService {
 
-    /**
-     * ME
-     */
     public static final VerifierService ME = BeanFactoryUtils.get(VerifierService.class);
-    /**
-     * LOGGER
-     */
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(VerifierService.class);
-    /**
-     * clearFixDelay
-     */
+
     @Value("verifier.clear")
     private long clearFixDelay = 8 * 3600000;
-    /**
-     * nameMapCrudEntity
-     */
+
     private Map<String, CrudEntity> nameMapCrudEntity;
 
-    /**
-     * @param dist
-     * @return
-     */
     public String randVerifierId(Object dist) {
         return HelperRandom.randHashId(dist);
     }
@@ -107,9 +91,6 @@ public class VerifierService {
         return iterator.hasNext() ? iterator.next() : null;
     }
 
-    /**
-     * @param nameMapCrudEntity
-     */
     protected void setNameMapCrudEntity(Map<String, CrudEntity> nameMapCrudEntity) {
         this.nameMapCrudEntity = nameMapCrudEntity;
     }

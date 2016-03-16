@@ -7,17 +7,8 @@
  */
 package com.absir.aserv.game.value;
 
-/**
- * @author absir
- */
 public interface IBuffTreatBoost<T> extends IBuffFrom<T> {
 
-    /**
-     * @param hp
-     * @param treatFrom
-     * @param result
-     * @return
-     */
     public int boost(int hp, T treatFrom, IResult result);
 
 }

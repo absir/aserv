@@ -17,21 +17,10 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 
-/**
- * @author absir
- */
 public class InDispathContext extends InDispathFilter {
 
-    /**
-     * logger
-     */
     protected Logger logger;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.servlet.InDispathFilter#init(javax.servlet.FilterConfig)
-     */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
@@ -46,11 +35,6 @@ public class InDispathContext extends InDispathFilter {
         beanProviderContext.started();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see javax.servlet.Servlet#destroy()
-     */
     @Override
     public void destroy() {
         BeanFactoryStopping.stoppingAll();

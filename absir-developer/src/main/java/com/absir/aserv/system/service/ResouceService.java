@@ -7,20 +7,10 @@
  */
 package com.absir.aserv.system.service;
 
-/**
- * @author absir
- *
- */
 public interface ResouceService {
 
-    /**
-     * @return
-     */
     public String getResoucePath();
 
-    /**
-     * @return
-     */
     public String getMvnResoucePath();
 
 }

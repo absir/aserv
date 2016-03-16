@@ -14,43 +14,22 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.core.kernel.KernelString;
 
-/**
- * @author absir
- *
- */
 @Base
 @Bean
 public class SecurityManager {
 
-    /**
-     * error
-     */
     private int error;
 
-    /**
-     * errorTime
-     */
     private long errorTime;
 
-    /**
-     * sessionKey
-     */
     private String sessionKey;
 
-    /** sessionLife */
     private long sessionLife;
 
-    /**
-     * sessionExpiration
-     */
     private long sessionExpiration;
 
-    /** cookiePath */
     private String cookiePath;
 
-    /**
-     *
-     */
     @Inject
     private void initialize() {
         BeanConfig beanConfig = BeanFactoryUtils.getBeanConfig();
@@ -97,44 +76,26 @@ public class SecurityManager {
         }
     }
 
-    /**
-     * @return the error
-     */
     public int getError() {
         return error;
     }
 
-    /**
-     * @return the errorTime
-     */
     public long getErrorTime() {
         return errorTime;
     }
 
-    /**
-     * @return the sessionKey
-     */
     public String getSessionKey() {
         return sessionKey;
     }
 
-    /**
-     * @return the sessionLife
-     */
     public long getSessionLife() {
         return sessionLife;
     }
 
-    /**
-     * @return the sessionExpiration
-     */
     public long getSessionExpiration() {
         return sessionExpiration;
     }
 
-    /**
-     * @return the cookiePath
-     */
     public String getCookiePath() {
         return cookiePath;
     }

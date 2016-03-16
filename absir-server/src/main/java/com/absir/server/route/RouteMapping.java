@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-12-18 下午5:57:40
  */
 package com.absir.server.route;
@@ -28,42 +28,24 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class RouteMapping implements IRoute {
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(RouteMapping.class);
-    /**
-     * PATH_PATTERN
-     */
+
     public static Pattern PATH_PATTERN = Pattern.compile("\\*|\\{((.*?))\\}");
     @Inject
     private RouteAdapter routeAdapter;
     @Value("server.route.suffix")
     private String routeSuffix;
-    /**
-     * routeParameter
-     */
+
     private RouteParameter routeParameter;
-    /**
-     * routeParameterPatterns
-     */
+
     private Map<String, RouteParameter> routeParameterPatterns;
-    /**
-     * routeParameterSplits
-     */
+
     private Map<String, RouteParameter> routeParameterSplits;
 
-    /**
-     * @param matcher
-     * @return
-     */
     public static String getGroupParam(Matcher matcher) {
         String param = matcher.group(2);
         if (param == null) {
@@ -73,19 +55,10 @@ public class RouteMapping implements IRoute {
         return param;
     }
 
-    /**
-     * @param name
-     * @return
-     */
     public static boolean routeEquals(String name) {
         return "route".equals(name);
     }
 
-    /**
-     * @param value
-     * @param routeName
-     * @return
-     */
     private static String routeMapping(String value, String routeName) {
         if (routeName == null) {
             value.replace("${route}" + HelperFileName.UNIX_SEPARATOR, "");
@@ -99,12 +72,6 @@ public class RouteMapping implements IRoute {
         return value;
     }
 
-    /**
-     * @param value
-     * @param routeName
-     * @param methodPathName
-     * @return
-     */
     private static String routeMapping(String value, String routeName, String methodPathName) {
         value = routeMapping(value, routeName);
         if (methodPathName == null) {
@@ -118,17 +85,6 @@ public class RouteMapping implements IRoute {
         return value;
     }
 
-    /**
-     * @param rootName
-     * @param routeName
-     * @param mapping
-     * @param method
-     * @param methodPathName
-     * @param parameterPathName
-     * @param parameterNames
-     * @param mappings
-     * @param inMethods
-     */
     public static void routeMapping(String rootName, String routeName, Entry<Mapping, List<String>> mapping, Method method, String methodPathName, String parameterPathName, String[] parameterNames,
                                     List<String> mappings, List<InMethod> inMethods) {
         // class name route
@@ -354,18 +310,10 @@ public class RouteMapping implements IRoute {
         }
     }
 
-    /**
-     * @return the routeAdapter
-     */
     public RouteAdapter getRouteAdapter() {
         return routeAdapter;
     }
 
-    /**
-     * @param routeAction
-     * @param mappings
-     * @param inMethods
-     */
     public void routeMapping(RouteAction routeAction, String[] parameterPathNames, List<String> mappings, List<InMethod> inMethods) {
         if (mappings == null || mappings.isEmpty()) {
             return;
@@ -469,10 +417,6 @@ public class RouteMapping implements IRoute {
         }
     }
 
-    /**
-     * @param splits
-     * @return
-     */
     public RouteParameter getRouteParameter(String[] splits) {
         int length = splits.length;
         if (length < 1) {
@@ -529,13 +473,6 @@ public class RouteMapping implements IRoute {
         return routeParameter;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.route.IRoute#routeMapping(java.lang.String,
-     * java.util.Map.Entry, java.lang.reflect.Method, java.util.List,
-     * java.util.List, java.util.List)
-     */
     @Override
     public void routeMapping(String name, Entry<Mapping, List<String>> mapping, Method method, List<String> parameterPathNames, List<String> mappings, List<InMethod> inMethods) {
         String parameterPathName = KernelString.implode(KernelArray.repeat('*', parameterPathNames.size()), '/');

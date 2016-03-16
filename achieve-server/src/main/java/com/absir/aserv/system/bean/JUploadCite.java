@@ -17,9 +17,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
-/**
- * @author absir
- */
 @Entity
 public class JUploadCite extends JbBeanSL {
 
@@ -32,31 +29,18 @@ public class JUploadCite extends JbBeanSL {
     @JaEdit(types = "dateTime")
     private long updateTime;
 
-    /**
-     * @return the upload
-     */
     public JUpload getUpload() {
         return upload;
     }
 
-    /**
-     * @param upload the upload to set
-     */
     public void setUpload(JUpload upload) {
         this.upload = upload;
     }
 
-
-    /**
-     * @return
-     */
     public long getUpdateTime() {
         return updateTime;
     }
 
-    /**
-     * @param updateTime
-     */
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
     }

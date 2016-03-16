@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-3-8 下午12:43:09
  */
 package com.absir.core.dyna;
@@ -15,44 +15,21 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DynaBinder {
 
-    /**
-     * INSTANCE
-     */
     public static final DynaBinder INSTANCE = new DynaBinder();
-    /**
-     * converts
-     */
+
     protected final List<? extends DynaConvert> converts = new ArrayList<DynaConvert>();
 
-    /**
-     * @param obj
-     * @param toClass
-     * @return
-     */
     public static <T> T to(Object obj, Class<T> toClass) {
         return to(obj, null, toClass);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param toClass
-     * @return
-     */
     public static <T> T to(Object obj, String name, Class<T> toClass) {
         return INSTANCE.bind(obj, name, toClass);
     }
 
-    /**
-     * @param parameters
-     * @param parameterTypes
-     */
     public static void to(Object[] parameters, Class<?>[] parameterTypes) {
         int length = parameterTypes.length;
         for (int i = 0; i < length; i++) {
@@ -60,37 +37,18 @@ public class DynaBinder {
         }
     }
 
-    /**
-     * @param map
-     * @param toClass
-     * @return
-     */
     public static <T> T mapTo(Map map, Class<T> toClass) {
         return mapTo(map, null, toClass);
     }
 
-    /**
-     * @param map
-     * @param name
-     * @param toClass
-     * @return
-     */
     public static <T> T mapTo(Map map, String name, Class<T> toClass) {
         return (T) INSTANCE.mapBind(map, name, toClass);
     }
 
-    /**
-     * @param map
-     * @param toObject
-     */
     public static void mapTo(Map map, Object toObject) {
         INSTANCE.mapBind(map, toObject);
     }
 
-    /**
-     * @param toClass
-     * @return
-     */
     public static <T extends Collection> Class<T> toCollectionClass(Class<T> toClass) {
         if (toClass.isAssignableFrom(ArrayList.class)) {
             toClass = (Class<T>) ArrayList.class;
@@ -102,10 +60,6 @@ public class DynaBinder {
         return toClass;
     }
 
-    /**
-     * @param toClass
-     * @return
-     */
     public static <T extends Map> Class<T> toMapClass(Class<T> toClass) {
         if (toClass.isAssignableFrom(HashMap.class)) {
             toClass = (Class<T>) HashMap.class;
@@ -114,44 +68,22 @@ public class DynaBinder {
         return toClass;
     }
 
-    /**
-     * @return the converts
-     */
     public List<? extends DynaConvert> getConverts() {
         return converts;
     }
 
-    /**
-     * @param dynaConvert
-     */
     public void addConvert(DynaConvert dynaConvert) {
         KernelList.addOrderObject(converts, dynaConvert);
     }
 
-    /**
-     * @param dynaConvert
-     */
     public void removeConvert(DynaConvert dynaConvert) {
         converts.remove(dynaConvert);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param toType
-     * @return
-     */
     public Object bind(Object obj, String name, Type toType) {
         return bind(obj, name, toType, null);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param toType
-     * @param toObject
-     * @return
-     */
     public <T> T bind(Object obj, String name, Type toType, T toObject) {
         if (toType == null || toType instanceof TypeVariable) {
             return (T) obj;
@@ -199,29 +131,14 @@ public class DynaBinder {
         return null;
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param toType
-     * @return
-     */
     protected Object bindTo(Object obj, String name, Type toType) {
         return null;
     }
 
-    /**
-     * @param toClass
-     * @return
-     */
     protected <T> T newInstance(Class<T> toClass) {
         return KernelClass.declaredNew(toClass);
     }
 
-    /**
-     * @param toClass
-     * @param obj
-     * @return
-     */
     protected <T> T nullTo(Class<T> toClass, Object obj) {
         T toObject = (T) KernelClass.instanceOf(toClass, obj);
         if (toObject == null) {
@@ -231,12 +148,6 @@ public class DynaBinder {
         return toObject;
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param toClass
-     * @return
-     */
     public <T> T bind(Object obj, String name, Class<T> toClass) {
         if (obj == null) {
             return KernelDyna.nullTo(toClass);
@@ -249,12 +160,6 @@ public class DynaBinder {
         return bindTo(obj, name, toClass);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param toClass
-     * @return
-     */
     protected <T> T bindTo(Object obj, String name, Class<T> toClass) {
         T toObject = null;
         if (obj instanceof String) {
@@ -303,24 +208,10 @@ public class DynaBinder {
         return toObject;
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param toClass
-     * @return
-     */
     protected <T> T bindConvert(Object obj, String name, Class<T> toClass) {
         return bindConvert(obj, name, toClass, converts, new BreakException[1]);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param toClass
-     * @param converts
-     * @param breakExceptions
-     * @return
-     */
     protected <T> T bindConvert(Object obj, String name, Class<T> toClass, List<? extends DynaConvert> converts,
                                 BreakException[] breakExceptions) {
         T toObject = null;
@@ -344,10 +235,6 @@ public class DynaBinder {
         return toObject;
     }
 
-    /**
-     * @param map
-     * @param toObject
-     */
     public void mapBind(Map<?, ?> map, Object toObject) {
         if (toObject != null) {
             Class toClass = toObject.getClass();
@@ -376,11 +263,6 @@ public class DynaBinder {
         }
     }
 
-    /**
-     * @param map
-     * @param field
-     * @return
-     */
     protected Object mapField(Map<?, ?> map, Field field) {
         Object value = map.get(field.getName());
         if (value == null) {
@@ -392,12 +274,6 @@ public class DynaBinder {
         return value;
     }
 
-    /**
-     * @param map
-     * @param name
-     * @param toClass
-     * @return
-     */
     public <T> T mapBind(Map<?, ?> map, String name, Class<T> toClass) {
         T toObject = mapBindConvert(map, name, toClass);
         if (toObject == null) {
@@ -408,23 +284,10 @@ public class DynaBinder {
         return toObject;
     }
 
-    /**
-     * @param map
-     * @param name
-     * @param toClass
-     * @return
-     */
     protected <T> T mapBindConvert(Map<?, ?> map, String name, Class<T> toClass) {
         return mapBindConvert(map, name, toClass, converts, new BreakException[1]);
     }
 
-    /**
-     * @param map
-     * @param name
-     * @param toClass
-     * @param breakExceptions
-     * @return
-     */
     protected <T> T mapBindConvert(Map<?, ?> map, String name, Class<T> toClass, List<? extends DynaConvert> converts,
                                    BreakException[] breakExceptions) {
         T toObject = null;
@@ -448,25 +311,11 @@ public class DynaBinder {
         return toObject;
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @param toObject
-     * @param object
-     * @return
-     */
     protected Object bind(Object obj, Field field, Object toObject, Object object) {
         String name = null;
         return bind(obj, name, field.getGenericType(), toObject);
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param toClass
-     * @param toType
-     * @return
-     */
     protected <T> T bindArray(Object obj, String name, Class<T> toClass, Type toType) {
         ArrayAccessor array = KernelArray.forClass(toClass);
         if (obj instanceof Collection) {
@@ -509,11 +358,6 @@ public class DynaBinder {
         }
     }
 
-    /**
-     * @param toClass
-     * @param toObject
-     * @return
-     */
     protected Collection toCollection(Class<? extends Collection> toClass, Collection toObject) {
         if (toObject != null) {
             try {
@@ -531,14 +375,6 @@ public class DynaBinder {
         return toObject;
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param toClass
-     * @param toType
-     * @param toObject
-     * @return
-     */
     protected <T extends Collection> T bindCollection(Object obj, String name, Class<T> toClass, Type toType,
                                                       Collection toObject) {
         toObject = toCollection(toClass, toObject);
@@ -567,16 +403,6 @@ public class DynaBinder {
         return (T) toObject;
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param keyName
-     * @param toClass
-     * @param toType
-     * @param keyType
-     * @param toObject
-     * @return
-     */
     protected <T extends Map> T bindMap(Object obj, String name, String keyName, Class<T> toClass, Type toType,
                                         Type keyType, Map toObject) {
         if (obj instanceof Map) {
@@ -586,16 +412,6 @@ public class DynaBinder {
         return null;
     }
 
-    /**
-     * @param obj
-     * @param name
-     * @param keyName
-     * @param toClass
-     * @param toType
-     * @param keyType
-     * @param toObject
-     * @return
-     */
     protected <T extends Map> T bindMap(Map obj, String name, String keyName, Class<T> toClass, Type toType,
                                         Type keyType, Map toObject) {
         if (toObject != null) {
@@ -626,15 +442,9 @@ public class DynaBinder {
         return (T) toObject;
     }
 
-    /**
-     * @param index
-     */
     protected void bindArrayTo(int index) {
     }
 
-    /**
-     * @param key
-     */
     protected void bindMapTo(Object key) {
     }
 }

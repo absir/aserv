@@ -25,49 +25,24 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 @Basis
 @Bean
 public class AdviceMethodDefine extends AopMethodDefineAbstract<AopMethodInterceptor, IMethodAdvice[], Object> {
 
-    /**
-     * methodAdvices
-     */
     @Inject(type = InjectType.Selectable)
     private IMethodAdvice[] methodAdvices;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aop.AopMethodDefine#getAopInterceptor(com.absir.bean.basis.
-     * BeanDefine, java.lang.Object)
-     */
     @Override
     public AopMethodInterceptor getAopInterceptor(BeanDefine beanDefine, Object beanObject) {
         return methodAdvices == null ? null : new AopMethodInterceptor();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aop.AopMethodDefine#getAopInterceptor(java.lang.Object,
-     * java.lang.Class)
-     */
     @Override
     public IMethodAdvice[] getAopInterceptor(Object variable, Class<?> beanType) {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aop.AopMethodDefine#getAopInterceptor(java.lang.Object,
-     * java.lang.Object, java.lang.Class, java.lang.reflect.Method)
-     */
     @Override
     public IMethodAdvice[] getAopInterceptor(IMethodAdvice[] interceptor, Object variable, Class<?> beanType, Method method) {
         List<IMethodAdvice> advices = new ArrayList<IMethodAdvice>();
@@ -80,40 +55,20 @@ public class AdviceMethodDefine extends AopMethodDefineAbstract<AopMethodInterce
         return advices.isEmpty() ? null : KernelCollection.toArray(advices, IMethodAdvice.class);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return -1024;
     }
 
-    /**
-     * @author absir
-     */
     public static class AopMethodInterceptor extends AopInterceptorAbstract<IMethodAdvice[]> {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aop.AopInterceptor#before(java.lang.Object,
-         * java.util.Iterator, java.lang.Object, com.absir.aop.AopProxyHandler,
-         * java.lang.reflect.Method, java.lang.Object[],
-         * net.sf.cglib.proxy.MethodProxy)
-         */
         @Override
         public Object before(final Object proxy, final Iterator<AopInterceptor> iterator, final IMethodAdvice[] interceptor, final AopProxyHandler proxyHandler, final Method method,
                              final Object[] args, final MethodProxy methodProxy) throws Throwable {
             AdviceInvoker adviceInvoker = new AdviceInvoker() {
 
-                /**
-                 * index
-                 */
                 private int index = 0;
 
-                /** length */
                 private int length = interceptor.length;
 
                 @Override
@@ -144,13 +99,6 @@ public class AdviceMethodDefine extends AopMethodDefineAbstract<AopMethodInterce
             return adviceInvoker.invoke(null);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aop.AopInterceptor#after(java.lang.Object,
-         * java.lang.Object, java.lang.Object, com.absir.aop.AopProxyHandler,
-         * java.lang.reflect.Method, java.lang.Object[], java.lang.Throwable)
-         */
         @Override
         public Object after(Object proxy, Object returnValue, IMethodAdvice[] interceptor, AopProxyHandler proxyHandler, Method method, Object[] args, Throwable e) throws Throwable {
             return returnValue;

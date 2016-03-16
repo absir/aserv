@@ -23,57 +23,25 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-/**
- * @author absir
- */
 public class InjectFieldBean extends InjectInvoker {
 
-    /**
-     * propertyName
-     */
     private String propertyName;
 
-    /**
-     * beanDefine
-     */
     private BeanDefine beanDefine;
 
-    /**
-     * accessor
-     */
     private Accessor accessor;
 
-    /**
-     * paramName
-     */
     private String paramName;
 
-    /**
-     * parameterType
-     */
     private Type parameterType;
 
-    /**
-     * parameterClass
-     */
     private Class<?> parameterClass;
 
-    /**
-     * @param propertyName
-     * @param beanDefine
-     */
     public InjectFieldBean(String propertyName, BeanDefine beanDefine) {
         this.propertyName = propertyName;
         this.beanDefine = beanDefine;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.inject.InjectInvoker#invoke(com.absir.bean.basis.BeanFactory
-     * , java.lang.Object)
-     */
     @Override
     public void invoke(BeanFactory beanFactory, Object beanObject) {
         if (accessor == null) {

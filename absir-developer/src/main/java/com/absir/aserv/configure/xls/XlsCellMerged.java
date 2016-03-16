@@ -11,25 +11,12 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 public class XlsCellMerged extends XlsCell {
 
-    /**
-     * row
-     */
     private int basicRow;
 
-    /**
-     * column
-     */
     private int basicColumn;
 
-    /**
-     * xlsCell
-     */
     private XlsCell xlsCell;
 
     public XlsCellMerged(XlsCell xlsCell) {
@@ -43,37 +30,22 @@ public class XlsCellMerged extends XlsCell {
         }
     }
 
-    /**
-     * @return the basicRow
-     */
     public int getBasicRow() {
         return basicRow;
     }
 
-    /**
-     * @param basicRow the basicRow to set
-     */
     public void setBasicRow(int basicRow) {
         this.basicRow = basicRow;
     }
 
-    /**
-     * @return the basicColumn
-     */
     public int getBasicColumn() {
         return basicColumn;
     }
 
-    /**
-     * @param basicColumn the basicColumn to set
-     */
     public void setBasicColumn(int basicColumn) {
         this.basicColumn = basicColumn;
     }
 
-    /**
-     * @param hssfCell
-     */
     public void wirteHssfCell(HSSFCell hssfCell) {
         xlsCell.wirteHssfCell(hssfCell);
     }

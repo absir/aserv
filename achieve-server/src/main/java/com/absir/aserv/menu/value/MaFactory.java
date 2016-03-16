@@ -15,31 +15,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- *
- */
 @Target(value = {ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MaFactory {
 
-    /**
-     * @return
-     */
     String value() default "";
 
-    /**
-     * @return
-     */
     Class<? extends IMenuFactory> factory() default OMenuFactory.class;
 
-    /**
-     * @return
-     */
     MaMenu[] parent() default {};
 
-    /**
-     * @return
-     */
     MaMenu menu() default @MaMenu;
 }

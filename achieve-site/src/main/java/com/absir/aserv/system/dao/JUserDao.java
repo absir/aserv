@@ -12,22 +12,11 @@ import com.absir.aserv.system.bean.JUser;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 
-/**
- * @author absir
- *
- */
 @Bean
 public interface JUserDao {
 
-    /**
-     * ME
-     */
     public final static JUserDao ME = BeanFactoryUtils.get(JUserDao.class);
 
-    /**
-     * @param username
-     * @return
-     */
     @DataQuery("SELECT o FROM JUser o WHERE o.username = ?")
     public JUser findByUsername(String username);
 

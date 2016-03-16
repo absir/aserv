@@ -10,9 +10,6 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by absir on 16/2/12.
- */
 @RunWith(value = JUnit4.class)
 public class KernelClassTest {
 

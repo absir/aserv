@@ -14,26 +14,14 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 
-/**
- * @author absir
- */
 public class SocketNIO {
 
-    /**
-     * writeTimeout
-     */
     private static long writeTimeout = 20000;
 
-    /**
-     * @return the writeTimeout
-     */
     public static long getWriteTimeout() {
         return writeTimeout;
     }
 
-    /**
-     * @param timeout
-     */
     public static void setWriteTimeout(long timeout) {
         if (timeout < 3000) {
             timeout = 3000;
@@ -42,23 +30,10 @@ public class SocketNIO {
         writeTimeout = timeout;
     }
 
-    /**
-     * @param socketChannel
-     * @param byteBuffer
-     * @return
-     * @throws IOException
-     */
     public static void writeTimeout(SocketChannel socketChannel, ByteBuffer byteBuffer) throws IOException {
         writeTimeout(socketChannel, byteBuffer, writeTimeout);
     }
 
-    /**
-     * @param socketChannel
-     * @param byteBuffer
-     * @param writeTimeout
-     * @return
-     * @throws IOException
-     */
     public static void writeTimeout(SocketChannel socketChannel, ByteBuffer byteBuffer, long writeTimeout)
             throws IOException {
         int attempts = 0;

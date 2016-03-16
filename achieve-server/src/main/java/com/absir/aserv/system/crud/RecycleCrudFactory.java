@@ -19,19 +19,8 @@ import com.absir.core.kernel.KernelObject;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.value.JoEntity;
 
-/**
- * @author absir
- *
- */
 public class RecycleCrudFactory implements ICrudFactory, ICrudProcessor {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.ICrudProcessor#crud(com.absir.aserv.crud.
-     * CrudProperty, java.lang.Object, com.absir.aserv.crud.CrudHandler,
-     * com.absir.aserv.system.bean.proxy.JiUserBase)
-     */
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user) {
         String recycleName = crudProperty.getCrudEntity().getJoEntity().getEntityName() + "Recycle";
@@ -46,13 +35,6 @@ public class RecycleCrudFactory implements ICrudFactory, ICrudProcessor {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.crud.ICrudFactory#getProcessor(com.absir.aserv.support
-     * .entity.value.JoEntity, com.absir.aserv.support.developer.JCrudField)
-     */
     @Override
     public ICrudProcessor getProcessor(JoEntity joEntity, JCrudField crudField) {
         return this;

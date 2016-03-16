@@ -15,46 +15,22 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 public class HelperRandom {
 
-    /**
-     * RANDOM
-     */
     public static final Random RANDOM = new Random(new Date().getTime());
-    /**
-     * SECEND_SIZE
-     */
+
     private static final int SECEND_SIZE = 3;
 
-    /**
-     * @param max
-     * @return
-     */
     public static int nextInt(int max) {
         return RANDOM.nextInt(max);
     }
 
-    /**
-     * @param min
-     * @param max
-     * @return
-     */
     public static int nextInt(int min, int max) {
         max -= min;
         max = max > 0 ? RANDOM.nextInt(max) : 0;
         return min + max;
     }
 
-    /**
-     * @param rnd
-     * @param began
-     * @param end
-     * @return
-     */
     public static int randInt(int rnd, int began, int end) {
         if (rnd < began) {
             rnd = began;
@@ -66,22 +42,11 @@ public class HelperRandom {
         return rnd;
     }
 
-    /**
-     * @param min
-     * @param max
-     * @param began
-     * @param end
-     * @return
-     */
     public static int randInt(int min, int max, int began, int end) {
         int rnd = nextInt(min, max);
         return randInt(rnd, began, end);
     }
 
-    /**
-     * @param collection
-     * @return
-     */
     public static <T> T randElement(Collection<? extends T> collection) {
         int size = collection.size();
         size = nextInt(size);
@@ -99,19 +64,11 @@ public class HelperRandom {
         return null;
     }
 
-    /**
-     * @param collection
-     * @return
-     */
     public static <T> T randList(List<? extends T> collection) {
         int size = collection.size();
         return collection.remove(nextInt(size));
     }
 
-    /**
-     * @param rares
-     * @return
-     */
     public static float getTotal(float[] rares) {
         float total = 0;
         for (float rare : rares) {
@@ -121,10 +78,6 @@ public class HelperRandom {
         return total;
     }
 
-    /**
-     * @param rares
-     * @return
-     */
     public static float getTotal(Collection<Float> rares) {
         float total = 0;
         for (float rare : rares) {
@@ -134,10 +87,6 @@ public class HelperRandom {
         return total;
     }
 
-    /**
-     * @param rares
-     * @return
-     */
     public static float[] getProbabilities(float[] rares) {
         if (rares == null) {
             return null;
@@ -155,10 +104,6 @@ public class HelperRandom {
         return probabilities;
     }
 
-    /**
-     * @param rares
-     * @return
-     */
     public static float[] getProbabilities(List<Float> rares) {
         if (rares == null) {
             return null;
@@ -176,10 +121,6 @@ public class HelperRandom {
         return probabilities;
     }
 
-    /**
-     * @param probabilities
-     * @return
-     */
     public static int randIndex(float[] probabilities) {
         float total = RANDOM.nextFloat();
         int i = probabilities.length;
@@ -188,11 +129,6 @@ public class HelperRandom {
         return i;
     }
 
-    /**
-     * @param probabilities
-     * @param total
-     * @return
-     */
     public static int randIndex(float[] probabilities, float total) {
         total *= RANDOM.nextFloat();
         int i = probabilities.length;
@@ -201,11 +137,6 @@ public class HelperRandom {
         return i;
     }
 
-    /**
-     * @param probabilities
-     * @param total
-     * @return
-     */
     public static int randIndex(List<Float> probabilities, float total) {
         total *= RANDOM.nextFloat();
         int i = probabilities.size();
@@ -214,36 +145,14 @@ public class HelperRandom {
         return i;
     }
 
-    /**
-     * @param b
-     * @param e
-     * @return
-     */
     public static Color randColor(int b, int e) {
         return randColor(b, e, b);
     }
 
-    /**
-     * @param b
-     * @param e
-     * @param a
-     * @return
-     */
     public static Color randColor(int b, int e, int a) {
         return randColor(b, e, b, e, b, e, a, e);
     }
 
-    /**
-     * @param rb
-     * @param re
-     * @param gb
-     * @param ge
-     * @param bb
-     * @param be
-     * @param ab
-     * @param ae
-     * @return
-     */
     public static Color randColor(int rb, int re, int gb, int ge, int bb, int be, int ab, int ae) {
         rb = randInt(rb, re, 0, 255);
         gb = randInt(gb, ge, 0, 255);
@@ -258,22 +167,10 @@ public class HelperRandom {
         return new Color(rb, gb, bb, ab);
     }
 
-    /**
-     * @param size
-     * @return
-     */
     public static String randChars(int size) {
         return randChars(size, 0);
     }
 
-    /**
-     * 0x01 has number | no number 0x02 has char | no char 0x03 UPPER CHAR |
-     * lower char
-     *
-     * @param size
-     * @param type
-     * @return
-     */
     public static String randChars(int size, int type) {
         int rb = (type & 0x00) == 0 ? 0 : 10;
         int re = (type & 0x01) == 0 ? 26 : 10;
@@ -299,45 +196,22 @@ public class HelperRandom {
         return buffer.toString();
     }
 
-    /**
-     * @return
-     */
     public static String randSecendId() {
         return randSecendId(SECEND_SIZE);
     }
 
-    /**
-     * @param size
-     * @return
-     */
     public static String randSecendId(int size) {
         return randSecendId(System.currentTimeMillis(), size);
     }
 
-    /**
-     * @param time
-     * @param size
-     * @return
-     */
     public static String randSecendId(long time, int size) {
         return randSecendBuidler(time, size).toString();
     }
 
-    /**
-     * @param time
-     * @param size
-     * @param id
-     * @return
-     */
     public static String randSecendId(long time, int size, int id) {
         return randSecendBuidler(time, size).append(randFormate(8, Integer.toHexString(id).toCharArray())).toString();
     }
 
-    /**
-     * @param time
-     * @param size
-     * @return
-     */
     public static StringBuilder randSecendBuidler(long time, int size) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(randFormate(16, Long.toHexString(time).toCharArray()));
@@ -345,21 +219,10 @@ public class HelperRandom {
         return stringBuilder;
     }
 
-    /**
-     * @param time
-     * @param size
-     * @param id
-     * @return
-     */
     public static String randSecendBuidler(int time, int size, int id) {
         return randSecendBuidler(time, size).append(randFormate(8, Integer.toHexString(id).toCharArray())).toString();
     }
 
-    /**
-     * @param time
-     * @param size
-     * @return
-     */
     public static StringBuilder randSecendBuidler(int time, int size) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(randFormate(8, Integer.toHexString(time).toCharArray()));
@@ -367,11 +230,6 @@ public class HelperRandom {
         return stringBuilder;
     }
 
-    /**
-     * @param size
-     * @param chars
-     * @return
-     */
     public static char[] randFormate(int size, char[] chars) {
         int length = chars.length;
         if (length >= size) {
@@ -389,10 +247,6 @@ public class HelperRandom {
         }
     }
 
-    /**
-     * @param stringBuilder
-     * @param size
-     */
     public static void randAppendFormate(StringBuilder stringBuilder, int size) {
         while (size > 0) {
             char[] chars = size > 8 ? Long.toHexString(RANDOM.nextLong()).toCharArray() : Integer.toHexString(RANDOM.nextInt())
@@ -424,26 +278,14 @@ public class HelperRandom {
         }
     }
 
-    /**
-     * @param dist
-     * @return
-     */
     public static String randHashId(Object dist) {
         return HelperRandom.randSecendId(System.currentTimeMillis(), 8, dist.hashCode());
     }
 
-    /**
-     * @param time
-     * @return
-     */
     public static int getHashLong(long time) {
         return (int) time ^ (int) (time >>> 32);
     }
 
-    /**
-     * @param time
-     * @return
-     */
     public static long getHashLong(long time, int seqPos) {
         if (seqPos > 0) {
             if (seqPos < 8) {
@@ -460,11 +302,6 @@ public class HelperRandom {
         return time;
     }
 
-    /**
-     * @param time
-     * @param seqPos
-     * @return
-     */
     public static long getShortHashLong(long time, int seqPos) {
         if (seqPos > 0 && seqPos < 16) {
             seqPos *= 2;
@@ -484,10 +321,6 @@ public class HelperRandom {
         return time;
     }
 
-    /**
-     * @param time
-     * @return
-     */
     public static int getReverseInt(int time) {
         time = (((time & 0xaaaaaaaa) >> 1) | ((time & 0x55555555) << 1));
         time = (((time & 0xcccccccc) >> 2) | ((time & 0x33333333) << 2));
@@ -496,10 +329,6 @@ public class HelperRandom {
         return ((time >> 16) | (time << 16));
     }
 
-    /**
-     * @param time
-     * @return
-     */
     public static String randSequenceId(long time) {
         time = getHashLong(time, 4);
         StringBuilder stringBuilder = new StringBuilder();
@@ -508,10 +337,6 @@ public class HelperRandom {
         return stringBuilder.toString();
     }
 
-    /**
-     * @param time
-     * @return
-     */
     public static String randSequenceNumberId(long time) {
         time = getHashLong(time, 6);
         StringBuilder stringBuilder = new StringBuilder();
@@ -520,10 +345,6 @@ public class HelperRandom {
         return stringBuilder.toString();
     }
 
-    /**
-     * @param time
-     * @return
-     */
     public static String randSequenceShortNumberId(long time) {
         time = getHashLong(time, 9);
         StringBuilder stringBuilder = new StringBuilder();
@@ -532,10 +353,6 @@ public class HelperRandom {
         return stringBuilder.toString();
     }
 
-    /**
-     * @param stringBuilder
-     * @param size
-     */
     public static void randAppendNumberFormate(StringBuilder stringBuilder, int size) {
         while (size > 0) {
             char[] chars = size > 8 ? String.valueOf(RANDOM.nextLong()).toCharArray() : String.valueOf(RANDOM.nextInt())
@@ -569,24 +386,14 @@ public class HelperRandom {
 
     public static class RandomPool<T> {
 
-        /**
-         * elements
-         */
         private List<RandomPoolElement<T>> elements = new ArrayList<RandomPoolElement<T>>();
 
-        /** probabilities */
         private float[] probabilities;
 
-        /**
-         * @return the elements
-         */
         public List<RandomPoolElement<T>> getElements() {
             return elements;
         }
 
-        /**
-         * @return the probabilities
-         */
         public float[] getProbabilities() {
             if (probabilities == null) {
                 float total = 0;
@@ -610,33 +417,19 @@ public class HelperRandom {
             return probabilities;
         }
 
-        /**
-         * @return
-         */
         public int size() {
             return elements.size();
         }
 
-        /**
-         * @param element
-         */
         public void add(RandomPoolElement<T> element) {
             elements.add(element);
             probabilities = null;
         }
 
-        /**
-         * @param element
-         * @param rare
-         */
         public void add(T element, float rare) {
             add(new RandomPoolElement<T>(element, rare));
         }
 
-        /**
-         * @param element
-         * @return
-         */
         public boolean remove(RandomPoolElement<T> element) {
             if (elements.remove(element)) {
                 probabilities = null;
@@ -646,9 +439,6 @@ public class HelperRandom {
             return false;
         }
 
-        /**
-         * @param element
-         */
         public RandomPoolElement<T> removeElement(T element) {
             Iterator<RandomPoolElement<T>> iterator = elements.iterator();
             while (iterator.hasNext()) {
@@ -663,26 +453,16 @@ public class HelperRandom {
             return null;
         }
 
-        /**
-         * @return
-         */
         public int randIndex() {
             float[] probabilities = getProbabilities();
             return probabilities == null ? -1 : HelperRandom.randIndex(probabilities);
         }
 
-        /**
-         * @return
-         */
         public T randElement() {
             int index = randIndex();
             return index < 0 ? null : elements.get(index).element;
         }
 
-        /**
-         * @param filterTemplate
-         * @return
-         */
         public T randElement(FilterTemplate<T> filterTemplate) {
             if (filterTemplate == null) {
                 return randElement();
@@ -725,27 +505,14 @@ public class HelperRandom {
 
     public static class RandomPoolElement<T> {
 
-        /**
-         * element
-         */
         public T element;
 
-        /**
-         * rare
-         */
         public float rare;
 
-        /**
-         *
-         */
         public RandomPoolElement() {
 
         }
 
-        /**
-         * @param element
-         * @param rare
-         */
         public RandomPoolElement(T element, float rare) {
             this.element = element;
             this.rare = rare;

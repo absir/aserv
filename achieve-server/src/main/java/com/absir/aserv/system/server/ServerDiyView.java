@@ -29,62 +29,31 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author absir
- */
 public abstract class ServerDiyView extends ReturnedResolverView implements IRender, IRenderSuffix {
 
-    /**
-     * READERS_NAME
-     */
     private static final String READERS_NAME = ServerDiyView.class + "@READERS_NAME";
 
-    /**
-     * DONEGEN_NAME
-     */
     private static final String DONEGEN_NAME = ServerDiyView.class + "@DONEGEN_NAME";
 
-    /**
-     * diyExpression
-     */
     protected String diyExpression;
 
-    /**
-     * diyInclude
-     */
     protected String diyInclude;
 
-    /**
-     * diyView
-     */
     @Value("developer.diy.view")
     private String diyView = "/WEB-INF/developer/diy.html";
 
-    /**
-     * @param input
-     * @return
-     */
     public static Object[] getRenders(Input input) {
         return (Object[]) input.getAttribute(READERS_NAME);
     }
 
-    /**
-     * @return
-     */
     protected String diyExpression() {
         return "<% , %>";
     }
 
-    /**
-     * @return
-     */
     protected String diyInclude() {
         return echo("Pag.include(\",\")");
     }
 
-    /**
-     *
-     */
     @Inject
     @InjectOrder(value = 255)
     protected void initDiyView() {
@@ -97,13 +66,6 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.returned.ReturnedResolverView#resolveReturnedView
-     * (java.lang.String, com.absir.server.on.OnPut)
-     */
     @Override
     public void resolveReturnedView(String view, OnPut onPut) throws Exception {
         Input input = onPut.getInput();
@@ -115,11 +77,6 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
         }
     }
 
-    /**
-     * @param view
-     * @param input
-     * @throws Exception
-     */
     public void render(String view, InputRequest input) throws Exception {
         HttpServletRequest request = input.getRequest();
         request.setAttribute("INPUT", input);
@@ -161,18 +118,8 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
         renderView(view, renders, input);
     }
 
-    /**
-     * @param e
-     * @param input
-     * @return
-     */
     protected abstract boolean isNotExist(Exception e, InputRequest input);
 
-    /**
-     * @param view
-     * @return
-     * @throws IOException
-     */
     public String getDiyRestore(String view) throws IOException {
         if (IDeveloper.ME != null) {
             String diyView = IDeveloper.ME.getDeveloperPath(view);
@@ -190,30 +137,11 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
         return "";
     }
 
-    /**
-     * @param view
-     * @return
-     */
     protected abstract String getView(String view);
 
-    /**
-     * @param view
-     * @param input
-     */
     protected abstract Object getRender(String view, InputRequest input);
 
-    /**
-     * @param render
-     * @param input
-     * @return
-     */
     protected abstract Object[] getRenders(Object render, InputRequest input);
 
-    /**
-     * @param view
-     * @param renders
-     * @param input
-     * @throws Exception
-     */
     protected abstract void renderView(String view, Object[] renders, InputRequest input) throws Exception;
 }

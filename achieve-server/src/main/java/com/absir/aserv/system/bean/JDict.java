@@ -21,9 +21,6 @@ import javax.persistence.Id;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @MaEntity(parent = {@MaMenu("系统配置"), @MaMenu("常用配置")}, name = "字典")
 @Entity
 public class JDict extends JbBase implements JiOpenValue<String> {
@@ -49,44 +46,26 @@ public class JDict extends JbBase implements JiOpenValue<String> {
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonMap")
     private Map<String, String> metaMap;
 
-    /**
-     * @return the id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * @return the open
-     */
     public boolean isOpen() {
         return open;
     }
 
-    /**
-     * @param open the open to set
-     */
     public void setOpen(boolean open) {
         this.open = open;
     }
 
-    /**
-     * @return the value
-     */
     public String getValue() {
         return value;
     }
 
-    /**
-     * @param value the value to set
-     */
     public void setValue(String value) {
         this.value = value;
     }

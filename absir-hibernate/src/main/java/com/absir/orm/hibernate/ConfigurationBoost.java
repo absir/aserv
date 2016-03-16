@@ -27,51 +27,26 @@ import java.sql.SQLException;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * @author absir
- */
 public class ConfigurationBoost extends Configuration {
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationBoost.class);
 
-    /**
-     * sessionFactoryBoost
-     */
     protected static SessionFactoryBoost sessionFactoryBoost;
-    /**
-     * boostLocale
-     */
+
     private boolean boostLocale;
 
-    /**
-     *
-     */
     public ConfigurationBoost() {
         super();
     }
 
-    /**
-     * @param serviceRegistry
-     */
     public ConfigurationBoost(BootstrapServiceRegistry serviceRegistry) {
         super(serviceRegistry);
     }
 
-    /**
-     * @param metadataSources
-     */
     public ConfigurationBoost(MetadataSources metadataSources) {
         super(metadataSources);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.cfg.Configuration#reset()
-     */
     @Override
     protected void reset() {
         super.reset();
@@ -121,23 +96,12 @@ public class ConfigurationBoost extends Configuration {
         boostLocale = true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.cfg.Configuration#buildSessionFactory()
-     */
     @Override
     public SessionFactory buildSessionFactory() throws HibernateException {
         sessionFactoryBoost.beforeBuildConfiguration(this, boostLocale);
         return super.buildSessionFactory();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.cfg.Configuration#buildSessionFactory(org.hibernate
-     * .service.ServiceRegistry)
-     */
     @Override
     public SessionFactory buildSessionFactory(ServiceRegistry serviceRegistry) throws HibernateException {
         sessionFactoryBoost.beforeBuildConfiguration(this, boostLocale);

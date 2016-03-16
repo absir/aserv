@@ -7,19 +7,9 @@
  */
 package com.absir.aserv.crud.bean;
 
-/**
- * @author absir
- *
- */
 public interface CrudBean {
 
-    /**
-     *
-     */
     public void merge();
 
-    /**
-     *
-     */
     public void delete();
 }

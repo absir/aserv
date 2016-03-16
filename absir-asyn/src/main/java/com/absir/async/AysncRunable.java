@@ -17,45 +17,20 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 public class AysncRunable {
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(AysncRunable.class);
 
-    /**
-     * timeout
-     */
     protected long timeout;
 
-    /**
-     * thread
-     */
     protected boolean thread;
 
-    /**
-     * @param timeout
-     * @param thread
-     */
     public AysncRunable(long timeout, boolean thread) {
         this.timeout = timeout;
         this.thread = thread;
     }
 
-    /**
-     * @param proxy
-     * @param iterator
-     * @param proxyHandler
-     * @param method
-     * @param args
-     * @param methodProxy
-     * @throws Throwable
-     */
     public void aysnc(final Object proxy, final Iterator<AopInterceptor> iterator, final AopProxyHandler proxyHandler,
                       final Method method, final Object[] args, final MethodProxy methodProxy) throws Throwable {
         aysncRun(new Runnable() {
@@ -72,9 +47,6 @@ public class AysncRunable {
         });
     }
 
-    /**
-     * @param runnable
-     */
     public void aysncRun(Runnable runnable) {
         if (timeout > 0 || thread) {
             final Thread doThread = new Thread(runnable);

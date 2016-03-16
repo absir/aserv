@@ -18,9 +18,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-/**
- * @author absir
- */
 @MaEntity(parent = {@MaMenu("节点管理")}, name = "节点", value = @MaMenu(order = -128))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
@@ -71,156 +68,90 @@ public class JSlave extends JbBase {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String slaveKey;
 
-    /**
-     * @return the id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name the name to set
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * @return the ip
-     */
     public String getIp() {
         return ip;
     }
 
-    /**
-     * @param ip the ip to set
-     */
     public void setIp(String ip) {
         this.ip = ip;
     }
 
-    /**
-     * @return the groupId
-     */
     public String getGroupId() {
         return groupId;
     }
 
-    /**
-     * @param groupId the groupId to set
-     */
     public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
 
-    /**
-     * @return the version
-     */
     public String getVersion() {
         return version;
     }
 
-    /**
-     * @param version the version to set
-     */
     public void setVersion(String version) {
         this.version = version;
     }
 
-    /**
-     * @return the path
-     */
     public String getPath() {
         return path;
     }
 
-    /**
-     * @param path the path to set
-     */
     public void setPath(String path) {
         this.path = path;
     }
 
-    /**
-     * @return the connecting
-     */
     public boolean isConnecting() {
         return connecting;
     }
 
-    /**
-     * @param connecting the connecting to set
-     */
     public void setConnecting(boolean connecting) {
         this.connecting = connecting;
     }
 
-    /**
-     * @return the lastConnectTime
-     */
     public long getLastConnectTime() {
         return lastConnectTime;
     }
 
-    /**
-     * @param lastConnectTime the lastConnectTime to set
-     */
     public void setLastConnectTime(long lastConnectTime) {
         this.lastConnectTime = lastConnectTime;
     }
 
-    /**
-     * @return the serverIP
-     */
     public String getServerIP() {
         return serverIP;
     }
 
-    /**
-     * @param serverIP the serverIP to set
-     */
     public void setServerIP(String serverIP) {
         this.serverIP = serverIP;
     }
 
-    /**
-     * @return the forceOpen
-     */
     public boolean isForceOpen() {
         return forceOpen;
     }
 
-    /**
-     * @param forceOpen the forceOpen to set
-     */
     public void setForceOpen(boolean forceOpen) {
         this.forceOpen = forceOpen;
     }
 
-    /**
-     * @return the slaveKey
-     */
     public String getSlaveKey() {
         return slaveKey;
     }
 
-    /**
-     * @param slaveKey the slaveKey to set
-     */
     public void setSlaveKey(String slaveKey) {
         this.slaveKey = slaveKey;
     }

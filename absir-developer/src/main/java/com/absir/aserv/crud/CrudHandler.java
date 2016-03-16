@@ -17,67 +17,28 @@ import com.absir.core.kernel.KernelObject;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author absir
- */
 public abstract class CrudHandler {
 
-    /**
-     * crud
-     */
     protected JaCrud.Crud crud;
 
-    /**
-     * crudRecord
-     */
     protected Map<String, Object> crudRecord;
 
-    /**
-     * filter
-     */
     protected PropertyFilter filter;
 
-    /**
-     * crudEntity
-     */
     protected CrudEntity crudEntity;
 
-    /**
-     * root
-     */
     protected Object root;
 
-    /**
-     * rootEntity
-     */
     protected Object rootEntity;
 
-    /**
-     * entityMap
-     */
     protected Map<String, Object> entityMap;
 
-    /**
-     * propertyPath
-     */
     protected String propertyPath;
 
-    /**
-     * entity
-     */
     protected Object entity;
 
-    /**
-     * created
-     */
     protected boolean created;
 
-    /**
-     * @param crud
-     * @param filter
-     * @param crudEntity
-     * @param root
-     */
     public CrudHandler(JaCrud.Crud crud, Map<String, Object> crudRecord, PropertyFilter filter, CrudEntity crudEntity, Object root) {
         this.crud = crud;
         this.filter = filter;
@@ -85,44 +46,26 @@ public abstract class CrudHandler {
         this.root = root;
     }
 
-    /**
-     * @return the crud
-     */
     public JaCrud.Crud getCrud() {
         return crud;
     }
 
-    /**
-     * @return the crudRecord
-     */
     public Map<String, Object> getCrudRecord() {
         return crudRecord;
     }
 
-    /**
-     * @return the filter
-     */
     public PropertyFilter getFilter() {
         return filter;
     }
 
-    /**
-     * @return the crudEntity
-     */
     public CrudEntity getCrudEntity() {
         return crudEntity;
     }
 
-    /**
-     * @return the root
-     */
     public Object getRoot() {
         return root;
     }
 
-    /**
-     * @return the rootEntity
-     */
     public Object getRootEntity() {
         if (rootEntity == null) {
             if (crudEntity.getJoEntity().getEntityName() == null) {
@@ -140,9 +83,6 @@ public abstract class CrudHandler {
         return rootEntity;
     }
 
-    /**
-     * @return the Entity
-     */
     public Object getEntity() {
         if (propertyPath == filter.getPropertyPath()) {
             if (entity != null) {
@@ -168,9 +108,6 @@ public abstract class CrudHandler {
         return entity;
     }
 
-    /**
-     * @return
-     */
     public boolean isCreate() {
         if (created) {
             return false;
@@ -180,26 +117,12 @@ public abstract class CrudHandler {
         return crud == Crud.CREATE;
     }
 
-    /**
-     * @author absir
-     */
     protected static abstract class CrudInvoker extends CrudHandler {
 
-        /**
-         * @param crud
-         * @param filter
-         * @param crudEntity
-         * @param root
-         */
         public CrudInvoker(Crud crud, Map<String, Object> crudRecord, PropertyFilter filter, CrudEntity crudEntity, Object root) {
             super(crud, crudRecord, filter, crudEntity, root);
         }
 
-        /**
-         * @param crud
-         * @param crudProperty
-         * @return
-         */
         public boolean isSupport(Crud crud, CrudProperty crudProperty) {
             if (filter.allow(crudProperty.getInclude(), crudProperty.getExclude()) && isSupport(crudProperty)) {
                 Crud[] cruds = crudProperty.getjCrud().getCruds();
@@ -211,16 +134,8 @@ public abstract class CrudHandler {
             return false;
         }
 
-        /**
-         * @param crudProperty
-         * @return
-         */
         protected abstract boolean isSupport(CrudProperty crudProperty);
 
-        /**
-         * @param crudProperty
-         * @param entity
-         */
         public abstract void crudInvoke(CrudProperty crudProperty, Object entity);
     }
 }

@@ -9,10 +9,6 @@ package com.absir.aserv.system.helper;
 
 import com.absir.core.kernel.KernelDyna;
 
-/**
- * @author absir
- *
- */
 public class HelperLong {
 
     /**
@@ -61,11 +57,6 @@ public class HelperLong {
         return longIP(iPAddress, 4);
     }
 
-    /**
-     * @param lg
-     * @param glues
-     * @return
-     */
     public static String stringLong(long lg, char glues, int count) {
         int i = count * 8;
         StringBuilder sb = new StringBuilder();

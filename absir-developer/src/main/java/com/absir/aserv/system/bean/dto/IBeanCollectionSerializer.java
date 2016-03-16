@@ -16,20 +16,9 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.util.Collection;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("rawtypes")
 public class IBeanCollectionSerializer extends JsonSerializer<Collection<? extends IBase>> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.codehaus.jackson.map.JsonSerializer#serialize(java.lang.Object,
-     * org.codehaus.jackson.JsonGenerator,
-     * org.codehaus.jackson.map.SerializerProvider)
-     */
     @Override
     public void serialize(Collection<? extends IBase> value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
         jgen.writeStartArray();

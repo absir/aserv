@@ -31,66 +31,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DataQueryDetached {
 
-    /**
-     * SQL_QUEUE_PATTERN
-     */
     public static final String SQL_QUEUE_PATTERN = " @ ";
-    /**
-     * sql
-     */
+
     private String sql;
-    /**
-     * nativeSql
-     */
+
     private boolean nativeSql;
-    /**
-     * sessionFactory
-     */
+
     private SessionFactory sessionFactory;
-    /**
-     * returnType
-     */
+
     private Class<?> returnType;
-    /**
-     * cacheable
-     */
+
     private boolean cacheable;
-    /**
-     * queryReturnInvoker
-     */
+
     private QueryReturnInvoker queryReturnInvoker;
-    /**
-     * parameterMetas
-     */
+
     private Object[] parameterMetas;
-    /**
-     * countQueryDetached
-     */
+
     private DataQueryDetached countQueryDetached;
-    /**
-     * resultTransformer
-     */
+
     private ResultTransformer resultTransformer;
 
-    /**
-     * @param sql
-     * @param nativeSql
-     * @param sessionName
-     * @param returnType
-     * @param cacheable
-     * @param excuteType
-     * @param aliasType
-     * @param parameterTypes
-     * @param parameterNames
-     * @param firstResultsPos
-     * @param maxResultsPos
-     */
     public DataQueryDetached(String sql, boolean nativeSql, String sessionName, Class<?> returnType, boolean cacheable, Class<?> excuteType, Class<?> aliasType, Class<?>[] parameterTypes,
                              String[] parameterNames, int firstResultsPos, int maxResultsPos) {
         this.sql = sql;
@@ -232,32 +195,18 @@ public class DataQueryDetached {
         }
     }
 
-    /**
-     * @return the resultTransformer
-     */
     public ResultTransformer getResultTransformer() {
         return resultTransformer;
     }
 
-    /**
-     * @param resultTransformer the resultTransformer to set
-     */
     public void setResultTransformer(ResultTransformer resultTransformer) {
         this.resultTransformer = resultTransformer;
     }
 
-    /**
-     * @param parameters
-     * @return
-     */
     public Object run(Object... parameters) {
         return invoke(parameters);
     }
 
-    /**
-     * @param parameters
-     * @return
-     */
     public Object invoke(Object[] parameters) {
         Session session = null;
         JdbcPage jdbcPage = null;
@@ -339,9 +288,6 @@ public class DataQueryDetached {
         return queryReturnInvoker == null ? query : queryReturnInvoker.invoke(query, returnType);
     }
 
-    /**
-     * @author absir
-     */
     private static enum QueryReturnInvoker {
 
         EXECUTE {

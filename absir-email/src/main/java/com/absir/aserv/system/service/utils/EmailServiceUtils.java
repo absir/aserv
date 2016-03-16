@@ -21,29 +21,13 @@ import javax.mail.internet.*;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 
-/**
- * @author absir
- *
- */
 @Inject
 public class EmailServiceUtils {
 
-    /**
-     * ME
-     */
     public static final EmailService ME = BeanFactoryUtils.get(EmailService.class);
 
-    /**
-     * HTML_CONTENT_TYPE
-     */
     public static final String HTML_CONTENT_TYPE = "text/html;charset=" + ContextUtils.getCharset().displayName();
 
-    /**
-     * @param mimeMessage
-     * @param subject
-     * @param content
-     * @throws MessagingException
-     */
     public static void sendMimeMessageText(MimeMessage mimeMessage, String subject, String content) throws MessagingException {
         String charset = ContextUtils.getCharset().displayName();
         mimeMessage.setSubject(subject, charset);
@@ -51,26 +35,12 @@ public class EmailServiceUtils {
         ME.sendMimeMessage(mimeMessage);
     }
 
-    /**
-     * @param mimeMessage
-     * @param subject
-     * @param content
-     * @throws MessagingException
-     */
     public static void sendMimeMessageHtml(MimeMessage mimeMessage, String subject, String content) throws MessagingException {
         mimeMessage.setSubject(subject, ContextUtils.getCharset().displayName());
         mimeMessage.setContent(content, HTML_CONTENT_TYPE);
         ME.sendMimeMessage(mimeMessage);
     }
 
-    /**
-     * @param mimeMessage
-     * @param subject
-     * @param content
-     * @param files
-     * @throws MessagingException
-     * @throws UnsupportedEncodingException
-     */
     public static void sendMimeMessageMultipart(MimeMessage mimeMessage, String subject, String content, File[] files) throws MessagingException, UnsupportedEncodingException {
         mimeMessage.setSubject(subject, ContextUtils.getCharset().displayName());
         Multipart multipart = new MimeMultipart();
@@ -89,58 +59,22 @@ public class EmailServiceUtils {
         ME.sendMimeMessage(mimeMessage);
     }
 
-    /**
-     * @param to
-     * @param subject
-     * @param content
-     * @throws AddressException
-     * @throws MessagingException
-     */
     public static void sendMimeMessageText(String to, String subject, String content) throws AddressException, MessagingException {
         sendMimeMessageText(ME.createMimeMessage(to), subject, content);
     }
 
-    /**
-     * @param tos
-     * @param subject
-     * @param content
-     * @throws AddressException
-     * @throws MessagingException
-     */
     public static void sendsMimeMessageText(String[] tos, String subject, String content) throws AddressException, MessagingException {
         sendMimeMessageText(ME.createMimeMessage(tos), subject, content);
     }
 
-    /**
-     * @param to
-     * @param subject
-     * @param content
-     * @throws AddressException
-     * @throws MessagingException
-     */
     public static void sendMimeMessageHtml(String to, String subject, String content) throws AddressException, MessagingException {
         sendMimeMessageHtml(ME.createMimeMessage(to), subject, content);
     }
 
-    /**
-     * @param tos
-     * @param subject
-     * @param content
-     * @throws AddressException
-     * @throws MessagingException
-     */
     public static void sendsMimeMessageHtml(String[] tos, String subject, String content) throws AddressException, MessagingException {
         sendMimeMessageHtml(ME.createMimeMessage(tos), subject, content);
     }
 
-    /**
-     * @param to
-     * @param subject
-     * @param content
-     * @throws AddressException
-     * @throws MessagingException
-     * @throws UnsupportedEncodingException
-     */
     public static void sendMimeMessageMultipart(String to, String subject, String content, File[] files) throws AddressException, MessagingException, UnsupportedEncodingException {
         if (files == null) {
             sendMimeMessageHtml(ME.createMimeMessage(to), subject, content);
@@ -150,15 +84,6 @@ public class EmailServiceUtils {
         }
     }
 
-    /**
-     * @param tos
-     * @param subject
-     * @param content
-     * @param files
-     * @throws AddressException
-     * @throws MessagingException
-     * @throws UnsupportedEncodingException
-     */
     public static void sendsMimeMessageMultipart(String[] tos, String subject, String content, File[] files) throws AddressException, MessagingException, UnsupportedEncodingException {
         if (files == null) {
             sendMimeMessageHtml(ME.createMimeMessage(tos), subject, content);

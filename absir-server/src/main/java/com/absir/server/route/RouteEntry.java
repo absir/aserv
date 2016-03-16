@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-12-23 下午4:28:08
  */
 package com.absir.server.route;
@@ -19,38 +19,19 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class RouteEntry {
 
-    /**
-     * interceptors
-     */
     protected List<Interceptor> interceptors;
-    /**
-     * routeEntries
-     */
+
     private List<RouteEntry> routeEntries;
-    /**
-     * beforeMethods
-     */
+
     private List<RouteMethod> beforeMethods;
 
-    /**
-     * afterMethods
-     */
     private List<RouteMethod> afterMethods;
 
-    /**
-     * routeExceptions
-     */
     private List<RouteException> routeExceptions;
 
-    /**
-     * @param routeEntries
-     */
     private static void addRouteEntries(RouteEntry routeEntry, List<RouteEntry> routeEntries) {
         if (routeEntries != null) {
             for (RouteEntry entry : routeEntries) {
@@ -83,12 +64,6 @@ public class RouteEntry {
         }
     }
 
-    /**
-     * @param input
-     * @param routeEntry
-     * @return
-     * @throws Exception
-     */
     public static OnPut intercept(Input input, RouteEntry routeEntry) throws Throwable {
         if (routeEntry == null) {
             return invoke(input, routeEntry);
@@ -99,12 +74,6 @@ public class RouteEntry {
         }
     }
 
-    /**
-     * @param input
-     * @param routeEntry
-     * @return
-     * @throws Throwable
-     */
     public static OnPut invoke(Input input, RouteEntry routeEntry) throws Throwable {
         IDispatcher dispatcher = input.getDispatcher();
         RouteAction routeAction = input.getRouteAction();
@@ -140,12 +109,6 @@ public class RouteEntry {
         return onPut;
     }
 
-    /**
-     * @param routeBean
-     * @param onPut
-     * @param routeEntry
-     * @throws Throwable
-     */
     public static void invoke(Object routeBean, OnPut onPut, RouteEntry routeEntry) throws Throwable {
         if (routeEntry == null) {
             RouteAction routeAction = onPut.getInput().getRouteAction();
@@ -171,44 +134,26 @@ public class RouteEntry {
         }
     }
 
-    /**
-     * @return the routeEntries
-     */
     public List<RouteEntry> getRouteEntries() {
         return routeEntries;
     }
 
-    /**
-     * @return the interceptors
-     */
     public List<Interceptor> getInterceptors() {
         return interceptors;
     }
 
-    /**
-     * @return the beforeMethods
-     */
     public List<RouteMethod> getBeforeMethods() {
         return beforeMethods;
     }
 
-    /**
-     * @return the afterMethods
-     */
     public List<RouteMethod> getAfterMethods() {
         return afterMethods;
     }
 
-    /**
-     * @return the routeExceptions
-     */
     public List<RouteException> getRouteExceptions() {
         return routeExceptions;
     }
 
-    /**
-     * @return
-     */
     protected RouteEntry getRouteEntry() {
         if (interceptors == null && beforeMethods == null && afterMethods == null && routeExceptions == null) {
             if (routeEntries == null || routeEntries.isEmpty()) {
@@ -240,9 +185,6 @@ public class RouteEntry {
         return this;
     }
 
-    /**
-     * @param routeEntry
-     */
     protected void addRouteEntries(RouteEntry routeEntry) {
         if (routeEntries == null) {
             routeEntries = new ArrayList<RouteEntry>();
@@ -254,9 +196,6 @@ public class RouteEntry {
         routeEntries.add(routeEntry);
     }
 
-    /**
-     * @param interceptor
-     */
     protected void addInterceptor(Interceptor interceptor) {
         if (interceptors == null) {
             interceptors = new ArrayList<Interceptor>();
@@ -268,9 +207,6 @@ public class RouteEntry {
         interceptors.add(interceptor);
     }
 
-    /**
-     * @param routeMethod
-     */
     protected void addBeforeMethod(RouteMethod routeMethod) {
         if (beforeMethods == null) {
             beforeMethods = new ArrayList<RouteMethod>();
@@ -279,9 +215,6 @@ public class RouteEntry {
         beforeMethods.add(routeMethod);
     }
 
-    /**
-     * @param routeMethod
-     */
     protected void addAfterMethod(RouteMethod routeMethod) {
         if (afterMethods == null) {
             afterMethods = new ArrayList<RouteMethod>();
@@ -290,9 +223,6 @@ public class RouteEntry {
         afterMethods.add(routeMethod);
     }
 
-    /**
-     * @param routeException
-     */
     protected void addRouteException(RouteException routeException) {
         if (routeExceptions == null) {
             routeExceptions = new ArrayList<RouteException>();
@@ -301,9 +231,6 @@ public class RouteEntry {
         routeExceptions.add(routeException);
     }
 
-    /**
-     * @return
-     */
     public IRoute getIRoute() {
         if (interceptors != null) {
             for (Interceptor interceptor : interceptors) {
@@ -325,12 +252,6 @@ public class RouteEntry {
         return null;
     }
 
-    /**
-     * @param input
-     * @param iterator
-     * @return
-     * @throws Exception
-     */
     public OnPut intercept(Iterator<Interceptor> iterator, Input input) throws Throwable {
         if (iterator == null || !iterator.hasNext()) {
             return invoke(input, this);

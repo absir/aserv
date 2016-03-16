@@ -24,46 +24,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-/**
- * @author absir
- */
 @Base
 @Server
 public class Asset_verify extends AssetServer {
 
-    /**
-     * fontSize
-     */
     @Value(value = "asset.verify.fontSize")
     private static float fontSize = 18.0f;
 
-    /**
-     * fontName
-     */
     @Value(value = "asset.verify.fontName")
     private static String fontName = "Times New Roman";
 
-    /**
-     * minHeight
-     */
     @Value(value = "asset.verify.minHeight")
     private static int minHeight = 16;
 
-    /**
-     * heightWidth
-     */
     @Value(value = "asset.verify.heightWidth")
     private static float heightWidth = 1.28f;
 
-    /**
-     * heightDefault
-     */
     @Value(value = "asset.verify.heightDefault")
     private static float heightDefault = 28.0f;
 
-    /**
-     * @param input
-     */
     public static boolean verifyInput(Input input) {
         if (input instanceof InputRequest) {
             String verifycode = ((InputRequest) input).getSession("verifycode");
@@ -81,26 +60,11 @@ public class Asset_verify extends AssetServer {
         return false;
     }
 
-    /**
-     * @param width
-     * @param height
-     * @param request
-     * @param response
-     * @throws Exception
-     */
     @Body
     public void route(@Param @Nullable Integer width, @Param @Nullable Integer height, HttpServletRequest request, HttpServletResponse response) throws Exception {
         verifyCode(width == null ? 64 : width, height == null ? 18 : height, 0, request, response);
     }
 
-    /**
-     * @param width
-     * @param height
-     * @param type
-     * @param request
-     * @param response
-     * @throws Exception
-     */
     protected void verifyCode(int width, int height, int type, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (height < minHeight) {
             height = minHeight;

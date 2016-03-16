@@ -12,20 +12,9 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.property.PropertyResolverAbstract;
 
-/**
- * @author absir
- *
- */
 @Bean
 public class EditorEmbedd extends PropertyResolverAbstract<EditorObject, JaEmbedd> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-     */
     @Override
     public EditorObject getPropertyObjectAnnotation(EditorObject propertyObject, JaEmbedd annotation) {
         if (propertyObject == null) {
@@ -36,13 +25,6 @@ public class EditorEmbedd extends PropertyResolverAbstract<EditorObject, JaEmbed
         return propertyObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-     * (com.absir.property.PropertyObject, java.lang.String)
-     */
     @Override
     public EditorObject getPropertyObjectAnnotationValue(EditorObject propertyObject, String annotationValue) {
         if (propertyObject == null) {

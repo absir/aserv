@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年11月6日 上午10:00:16
  */
 package com.absir.data.base;
@@ -12,19 +12,10 @@ import com.absir.data.value.IDirty;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- */
 public class DDirtyM implements IDirty {
 
-    /**
-     * dirty
-     */
     protected transient List<Integer> dirty;
 
-    /**
-     * @param setDirtyI
-     */
     public void setDirtyI(int index) {
         if (index >= 0) {
             int size = (index >> 5) + 1;
@@ -47,10 +38,6 @@ public class DDirtyM implements IDirty {
         }
     }
 
-    /**
-     * @param index
-     * @return
-     */
     public boolean isDirtyI(int index) {
         if (index >= 0) {
             int size = (index >> 5) + 1;
@@ -66,21 +53,11 @@ public class DDirtyM implements IDirty {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.data.value.IDirty#isDirty()
-     */
     @Override
     public boolean isDirty() {
         return dirty != null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.data.value.IDirty#setDirty()
-     */
     @Override
     public void setDirty() {
         if (dirty == null) {
@@ -88,11 +65,6 @@ public class DDirtyM implements IDirty {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.data.value.IDirty#clearDirty()
-     */
     @Override
     public void clearDirty() {
         dirty = null;

@@ -14,10 +14,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- *
- */
 @Embeddable
 @MappedSuperclass
 public class DAnnouncement {
@@ -31,16 +27,10 @@ public class DAnnouncement {
     @Column(length = 10240)
     public String content;
 
-    /**
-     * @return the title
-     */
     public String getTitle() {
         return title;
     }
 
-    /**
-     * @return the content
-     */
     public String getContent() {
         return content;
     }

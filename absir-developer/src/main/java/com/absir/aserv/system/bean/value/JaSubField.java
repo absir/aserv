@@ -12,20 +12,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JaSubField {
 
-    /**
-     * @return
-     */
     String value();
 
-    /**
-     * @return
-     */
     String capition() default "";
 }

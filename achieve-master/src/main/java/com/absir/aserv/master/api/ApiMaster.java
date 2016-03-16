@@ -15,19 +15,8 @@ import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.Input;
 
-/**
- * @author absir
- *
- */
 public class ApiMaster extends ApiServer {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.api.ApiServer#onAuthentication(com.absir.server
-     * .in.Input)
-     */
     @Override
     protected SecurityContext onAuthentication(Input input) throws Throwable {
         SecurityContext context = super.onAuthentication(input);

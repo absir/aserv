@@ -12,16 +12,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- * @see inject must need @Inject
- */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface InjectOrder {
 
-    /**
-     * @return
-     */
     int value() default 8;
 }

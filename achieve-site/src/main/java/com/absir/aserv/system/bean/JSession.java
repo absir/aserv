@@ -13,10 +13,6 @@ import com.absir.aserv.system.bean.value.JaLang;
 
 import javax.persistence.Entity;
 
-/**
- * @author absir
- *
- */
 @MaEntity(parent = {@MaMenu("登录管理")}, name = "登录")
 @Entity
 public class JSession extends JbSession {
@@ -24,16 +20,10 @@ public class JSession extends JbSession {
     @JaLang("用户参数")
     private String userParameter;
 
-    /**
-     * @return the userParameter
-     */
     public String getUserParameter() {
         return userParameter;
     }
 
-    /**
-     * @param userParameter the userParameter to set
-     */
     public void setUserParameter(String userParameter) {
         this.userParameter = userParameter;
     }

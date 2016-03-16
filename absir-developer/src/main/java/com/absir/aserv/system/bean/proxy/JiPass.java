@@ -7,19 +7,9 @@
  */
 package com.absir.aserv.system.bean.proxy;
 
-/**
- * @author absir
- *
- */
 public interface JiPass {
 
-    /**
-     * @return
-     */
     public long getPassTime();
 
-    /**
-     * @param passTime
-     */
     public void setPassTime(long passTime);
 }

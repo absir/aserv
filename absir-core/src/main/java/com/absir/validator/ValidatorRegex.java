@@ -14,17 +14,9 @@ import com.absir.validator.value.Regex;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-/**
- * @author absir
- */
 @Bean
 public class ValidatorRegex extends PropertyResolverAbstract<ValidatorObject, Regex> {
 
-    /**
-     * @param propertyObject
-     * @param pattern
-     * @return
-     */
     public ValidatorObject getPropertyObjectPattern(ValidatorObject propertyObject, final String regex) {
         if (propertyObject == null) {
             propertyObject = new ValidatorObject();
@@ -52,25 +44,11 @@ public class ValidatorRegex extends PropertyResolverAbstract<ValidatorObject, Re
         return propertyObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotation(ValidatorObject propertyObject, Regex annotation) {
         return getPropertyObjectPattern(propertyObject, annotation.value());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-     * (com.absir.property.PropertyObject, java.lang.String)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotationValue(ValidatorObject propertyObject, String annotationValue) {
         return getPropertyObjectPattern(propertyObject, annotationValue);

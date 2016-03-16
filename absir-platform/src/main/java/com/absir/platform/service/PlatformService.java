@@ -23,24 +23,13 @@ import org.hibernate.Session;
 
 import java.util.Iterator;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
 public class PlatformService {
 
-    /**
-     * ME
-     */
     public static final PlatformService ME = BeanFactoryUtils.get(PlatformService.class);
 
-    /**
-     * @param platform
-     * @param username
-     * @return
-     */
     public static String getPlatformUserRefId(String platform, String username) {
         return platform + ',' + username;
     }
@@ -74,12 +63,6 @@ public class PlatformService {
         return ref == null ? null : ref.getPlatformUser();
     }
 
-    /**
-     * @param platform
-     * @param username
-     * @param channel
-     * @return
-     */
     @Transaction
     public JPlatformUser createPlatformUser(String platform, String username, String channel) {
         JPlatformUser platformUser = new JPlatformUser();
@@ -106,10 +89,6 @@ public class PlatformService {
         return platformUser;
     }
 
-    /**
-     * @param platformUser
-     * @param session
-     */
     protected void createPlatformUser(JPlatformUser platformUser, Session session) {
         JPlatformUserRef ref = new JPlatformUserRef();
         ref.setId(getPlatformUserRefId(platformUser.getPlatform(), platformUser.getUsername()));
@@ -117,12 +96,6 @@ public class PlatformService {
         session.persist(ref);
     }
 
-    /**
-     * @param platform
-     * @param username
-     * @param channel
-     * @return
-     */
     @Transaction
     public JPlatformUser getPlatformUser(String platform, String username, String channel) {
         JPlatformUser platformUser = findPlatformUser(platform, username);
@@ -195,12 +168,6 @@ public class PlatformService {
         return loginSessionUserType(getPlatformUser(platform, username, channel), lifeTime, 2);
     }
 
-    /**
-     * @param platformUser
-     * @param lifeTime
-     * @param type         0 login 1 continue login 2 session
-     * @return
-     */
     @Transaction
     public JPlatformUser loginSessionUserType(JPlatformUser platformUser, long lifeTime, int type) {
         if (platformUser != null && lifeTime > 0) {

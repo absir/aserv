@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年11月10日 下午4:58:50
  */
 package com.absir.sockser;
@@ -21,68 +21,33 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.net.InetAddress;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
 public class SockserService extends ActiveService<JiServer, SocketSer> {
 
-    /**
-     * ME
-     */
     public static final SockserService ME = BeanFactoryUtils.get(SockserService.class);
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(SockserService.class);
 
-    /**
-     * serverClass
-     */
     protected Class<? extends JiServer> serverClass = (Class<? extends JiServer>) SessionFactoryUtils
             .getEntityClass("JServer");
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.service.ActiveService#getInstance()
-     */
     @Override
     protected ActiveService<JiServer, SocketSer> getInstance() {
         return ME;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.service.ActiveService#findEntityClass()
-     */
     @Override
     protected Class<?> findEntityClass() {
         return serverClass;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.service.ActiveService#isClosed(java.lang.Object)
-     */
     @Override
     protected boolean isClosed(SocketSer activeContext) {
         return activeContext.isClosed();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.service.ActiveService#createActiveContext(com.
-     * absir.aserv.system.bean.value.JiActive)
-     */
     @Override
     protected SocketSer createActiveContext(JiServer active) {
         SocketSer ser = new SocketSer(active);
@@ -100,13 +65,6 @@ public class SockserService extends ActiveService<JiServer, SocketSer> {
         return ser;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.service.ActiveService#updateActiveContext(com.
-     * absir.aserv.system.bean.value.JiActive, java.lang.Object)
-     */
     @Override
     protected SocketSer updateActiveContext(JiServer active, SocketSer activeContext) {
         JiServer old = activeContext.getServer();
@@ -120,13 +78,6 @@ public class SockserService extends ActiveService<JiServer, SocketSer> {
         return activeContext;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.service.ActiveService#closeActiveContext(java.io
-     * .Serializable, java.lang.Object)
-     */
     @Override
     protected void closeActiveContext(Serializable id, SocketSer activeContext) {
         activeContext.close();

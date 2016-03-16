@@ -7,9 +7,6 @@
  */
 package com.absir.aserv.game.value;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class OBuff_MAX_HP_T extends OBuffRound<OCard> {
 
@@ -19,27 +16,14 @@ public class OBuff_MAX_HP_T extends OBuffRound<OCard> {
     // 积累最大生命提升
     int maxHpTR;
 
-    /**
-     * @return the maxHpT
-     */
     public int getMaxHpT() {
         return maxHpT;
     }
 
-    /**
-     * @param maxHpT the maxHpT to set
-     */
     public void setMaxHpT(int maxHpT) {
         this.maxHpT = maxHpT;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.game.value.OBuffRound#stepRound(com.absir.aserv.game
-     * .value.OObject, long, int, com.absir.aserv.game.value.OResult)
-     */
     @Override
     public void stepRound(OCard object, long time, int round, IResult result) {
         maxHpTR += maxHpT;
@@ -54,13 +38,6 @@ public class OBuff_MAX_HP_T extends OBuffRound<OCard> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.game.value.OBuffReverse#revert(com.absir.aserv.game
-     * .value.OObject, com.absir.aserv.game.value.OResult)
-     */
     @Override
     public void revert(OCard object, IResult result) {
         object.setMaxHp((int) object.getBuffAtt("maxHp", object.baseHp(), -maxHpTR));
@@ -69,13 +46,6 @@ public class OBuff_MAX_HP_T extends OBuffRound<OCard> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.game.value.OBuff#effect(com.absir.aserv.game.value
-     * .OObject, com.absir.aserv.game.value.OResult)
-     */
     @Override
     public void effect(OCard object, IResult result) {
     }

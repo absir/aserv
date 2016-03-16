@@ -38,53 +38,25 @@ import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
 public class CsvService {
 
-    /**
-     * ME
-     */
     public static final CsvService ME = BeanFactoryUtils.get(CsvService.class);
-    /**
-     * BOM_BYTES
-     */
+
     public static final byte[] BOM_BYTES = new byte[]{(byte) 239, (byte) 187, (byte) 191};
-    /**
-     * BOM_STR
-     */
+
     public static final String BOM_STR = new String(BOM_BYTES);
-    /**
-     * BOM_CAHRS
-     */
+
     public static final char[] BOM_CAHRS = BOM_STR.toCharArray();
-    /**
-     * SEARCH_STRS
-     */
+
     public static final String[] SEARCH_STRS = new String[]{",", "\r", "\n"};
-    /**
-     * TO_STRS
-     */
+
     public static final String[] TO_STRS = new String[]{"，", "\\r", "\\n"};
-    /**
-     * LOGGER
-     */
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(CsvService.class);
 
-    /**
-     * @param beanClass
-     * @param bases
-     * @param bom
-     * @param header
-     * @param outputStream
-     * @param writer
-     * @throws IOException
-     */
     public void write(Class<?> beanClass, Collection<?> bases, boolean bom, final boolean header,
                       OutputStream outputStream, final Writer writer) throws IOException {
         Object first = bases.iterator().next();
@@ -171,14 +143,6 @@ public class CsvService {
         writer.flush();
     }
 
-    /**
-     * @param updateTime
-     * @param outputStream
-     * @param bom
-     * @param header
-     * @param printWriter
-     * @throws IOException
-     */
     public void write(long updateTime, ZipOutputStream outputStream, boolean bom, boolean header,
                       PrintWriter printWriter) throws IOException {
         JdbcCondition jdbcCondition = null;

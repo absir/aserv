@@ -19,17 +19,10 @@ import com.absir.core.kernel.KernelString;
 
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @Base
 @Bean
 public class IdentityServiceLocal implements IdentityService {
 
-    /**
-     * identityServiceMap
-     */
     @Inject(value = "IdentityService")
     private static Map<String, IdentityService> identityServiceMap;
     @Value("security.identity.error")
@@ -37,10 +30,6 @@ public class IdentityServiceLocal implements IdentityService {
     @Value("security.identity.errorTime")
     private int errorTime = 60000;
 
-    /**
-     * @param identity
-     * @return
-     */
     public static JiUserBase getUserBase(String identity) {
         if (!KernelString.isEmpty(identity)) {
             String[] parameters = HelperString.split(identity, ',');
@@ -60,13 +49,6 @@ public class IdentityServiceLocal implements IdentityService {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.service.IdentityService#getUserBase(java.lang
-     * .String[])
-     */
     @Override
     public JiUserBase getUserBase(String[] parameters) {
         if (parameters.length == 3) {

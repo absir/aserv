@@ -23,32 +23,15 @@ import com.absir.open.service.TradeService;
 
 import java.util.Map;
 
-/**
- * @author absir
- */
 @Configure
 public abstract class PayUtils {
 
-    /**
-     * payInterfaceMap
-     */
     @Inject(value = "PayInterface", type = InjectType.Selectable)
     private static Map<String, IPayInterface> payInterfaceMap;
 
-    /**
-     * payService
-     */
     @Inject(type = InjectType.Selectable)
     private static IPayProccessor payService;
 
-    /**
-     * @param platform
-     * @param channel
-     * @param payTrade
-     * @param paramMap
-     * @return
-     * @throws Exception
-     */
     public static Object order(String platform, String channel, JPayTrade payTrade, Map<String, Object> paramMap)
             throws Exception {
         if (payTrade.getStatus() == null) {
@@ -65,12 +48,6 @@ public abstract class PayUtils {
         return null;
     }
 
-    /**
-     * @param platform
-     * @param payTrade
-     * @return
-     * @throws Exception
-     */
     public static boolean validator(String platform, JPayTrade payTrade) throws Exception {
         JePayStatus status = payTrade.getStatus();
         if (status == null || status.compareTo(JePayStatus.ERROR) <= 0) {
@@ -87,12 +64,6 @@ public abstract class PayUtils {
         return false;
     }
 
-    /**
-     * @param platform
-     * @param payTrade
-     * @return
-     * @throws Exception
-     */
     public static Object proccess(String platform, JPayTrade payTrade) throws Exception {
         if (validator(platform, payTrade)) {
             payTrade.setPlatform(platform);
@@ -102,11 +73,6 @@ public abstract class PayUtils {
         return null;
     }
 
-    /**
-     * @param platform
-     * @param payTrade
-     * @return
-     */
     public static Object proccessDone(String platform, JPayTrade payTrade) {
         if (payService != null) {
             try {
@@ -145,14 +111,6 @@ public abstract class PayUtils {
         return null;
     }
 
-    /**
-     * @param platform
-     * @param payInterface
-     * @param payTrade
-     * @param payStatus
-     * @param statusData
-     * @return
-     */
     public static Object notify(String platform, IPayInterface payInterface, JPayTrade payTrade, JePayStatus payStatus,
                                 String statusData) {
         payTrade.setStatusData(statusData);

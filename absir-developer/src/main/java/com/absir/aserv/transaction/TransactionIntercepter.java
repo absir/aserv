@@ -14,30 +14,15 @@ import com.absir.server.on.OnPut;
 
 import java.util.Iterator;
 
-/**
- * @author absir
- */
 public class TransactionIntercepter implements Interceptor {
 
-    /**
-     * TRANSACTION_STATUS_NAME
-     */
     private static final String TRANSACTION_STATUS_NAME = TransactionIntercepter.class.getName() + "@TRANSACTION_STATUS_NAME";
 
-    /**
-     * @param input
-     * @return
-     */
     public static TransactionStatus getTransactionStatus(Input input) {
         Object transactionStatus = input.getAttribute(TRANSACTION_STATUS_NAME);
         return transactionStatus == null || !(transactionStatus instanceof TransactionStatus) ? null : (TransactionStatus) transactionStatus;
     }
 
-    /**
-     * @param input
-     * @param transactionName
-     * @param transactionAttribute
-     */
     public static void open(Input input, String transactionName, TransactionAttribute transactionAttribute) {
         if (transactionName == null) {
             return;
@@ -60,12 +45,6 @@ public class TransactionIntercepter implements Interceptor {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.Interceptor#intercept(java.util.Iterator,
-     * com.absir.server.in.Input)
-     */
     @Override
     public final OnPut intercept(Iterator<Interceptor> iterator, Input input) throws Throwable {
         Throwable e = null;
@@ -86,12 +65,6 @@ public class TransactionIntercepter implements Interceptor {
         }
     }
 
-    /**
-     * @param iterator
-     * @param input
-     * @return
-     * @throws Throwable
-     */
     public OnPut interceptImpl(Iterator<Interceptor> iterator, Input input) throws Throwable {
         return input.intercept(iterator);
     }

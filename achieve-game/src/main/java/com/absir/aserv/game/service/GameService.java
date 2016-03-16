@@ -25,65 +25,33 @@ import org.slf4j.LoggerFactory;
 import java.util.Calendar;
 import java.util.Collection;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"unchecked", "rawtypes"})
 @Base
 @Bean
 public class GameService {
 
-    /**
-     * UPDATE_ONLINE_DAY
-     */
     public static final String UPDATE_ONLINE_DAY = GameService.class + "@UPDATE_ONLINE_DAY";
 
-    /**
-     * ME
-     */
     public static final GameService ME = BeanFactoryUtils.get(GameService.class);
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(GameService.class);
 
-    /**
-     * calendar
-     */
     protected static Calendar calendar;
 
-    /** gmtZoneTime */
     protected static int timeZoneRawOffset;
 
-    /**
-     * gameDay
-     */
     private static int gameDay;
 
-    /**
-     * gameDayUpdated
-     */
     private boolean gameDayUpdated;
 
-    /**
-     * @return the calendar
-     */
     public static Calendar getCalendar() {
         return calendar;
     }
 
-    /**
-     * @return the timeZoneRawOffset
-     */
     public static int getTimeZoneRawOffset() {
         return timeZoneRawOffset;
     }
 
-    /**
-     * @return the gameDay
-     */
     public static int getGameDay() {
         return gameDay;
     }

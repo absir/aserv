@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-3-5 下午2:31:23
  */
 package com.absir.core.kernel;
@@ -17,30 +17,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class KernelReflect {
 
-    /**
-     * Class_Method_Map_Method
-     */
     protected final static Map<String, Method> Class_Method_Map_Method = new HashMap<String, Method>();
 
-    /**
-     * @param member
-     * @return
-     */
     public static <T extends Member> T memberStatic(T member) {
         return memberStatic(member, null);
     }
 
-    /**
-     * @param member
-     * @param defaultValue
-     * @return
-     */
     public static <T extends Member> T memberStatic(T member, T defaultValue) {
         if (member == null || !Modifier.isStatic(member.getModifiers())) {
             return defaultValue;
@@ -49,19 +34,10 @@ public abstract class KernelReflect {
         return member;
     }
 
-    /**
-     * @param member
-     * @return
-     */
     public static <T extends Member> T memberAccessor(T member) {
         return memberAccessor(member, null);
     }
 
-    /**
-     * @param member
-     * @param defaultValue
-     * @return
-     */
     public static <T extends Member> T memberAccessor(T member, T defaultValue) {
         if (member == null || Modifier.isFinal(member.getModifiers()) || Modifier.isStatic(member.getModifiers())) {
             return defaultValue;
@@ -70,30 +46,14 @@ public abstract class KernelReflect {
         return member;
     }
 
-    /**
-     * @param cls
-     * @param parameterTypes
-     * @return
-     */
     public static <T> Constructor<T> constructor(Class<T> cls, Class... parameterTypes) {
         return declaredConstructor(cls, false, parameterTypes);
     }
 
-    /**
-     * @param cls
-     * @param parameterTypes
-     * @return
-     */
     public static <T> Constructor<T> declaredConstructor(Class<T> cls, Class... parameterTypes) {
         return declaredConstructor(cls, true, parameterTypes);
     }
 
-    /**
-     * @param cls
-     * @param declared
-     * @param parameterTypes
-     * @return
-     */
     public static <T> Constructor<T> declaredConstructor(Class<T> cls, boolean declared, Class... parameterTypes) {
         try {
             Constructor<T> constructor = declared ? cls.getDeclaredConstructor(parameterTypes)
@@ -120,21 +80,10 @@ public abstract class KernelReflect {
         return null;
     }
 
-    /**
-     * @param cls
-     * @param parameterTypes
-     * @return
-     */
     public static <T> Constructor<T> assignableConstructor(Class<T> cls, Class... parameterTypes) {
         return assignableConstructor(cls, false, parameterTypes);
     }
 
-    /**
-     * @param cls
-     * @param declared
-     * @param parameterTypes
-     * @return
-     */
     public static <T> Constructor<T> assignableConstructor(Class<T> cls, boolean declared, Class... parameterTypes) {
         Constructor<T>[] constructors = (Constructor<T>[]) (declared ? cls.getDeclaredConstructors()
                 : cls.getConstructors());
@@ -154,34 +103,16 @@ public abstract class KernelReflect {
         return constructor;
     }
 
-    /**
-     * @param cls
-     * @param declared
-     * @param assignable
-     * @param parameterTypes
-     * @return
-     */
     public static <T> Constructor<T> assignableConstructor(Class<T> cls, boolean declared, boolean assignable,
                                                            Class... parameterTypes) {
         return assignable ? assignableConstructor(cls, declared, parameterTypes)
                 : declaredConstructor(cls, declared, parameterTypes);
     }
 
-    /**
-     * @param constructor
-     * @param initargs
-     * @return
-     */
     public static <T> T newInstance(Constructor<T> constructor, Object... initargs) {
         return newInstance(constructor, null, initargs);
     }
 
-    /**
-     * @param constructor
-     * @param defaultValue
-     * @param initargs
-     * @return
-     */
     public static <T> T newInstance(Constructor<T> constructor, T defaultValue, Object... initargs) {
         if (constructor != null) {
             try {
@@ -212,51 +143,22 @@ public abstract class KernelReflect {
         return defaultValue;
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @return
-     */
     public static Field field(Class cls, String name) {
         return field(cls, name, 0);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param ancest
-     * @return
-     */
     public static Field field(Class cls, String name, int ancest) {
         return declaredField(cls, name, ancest, false);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @return
-     */
     public static Field declaredField(Class cls, String name) {
         return declaredField(cls, name, 0);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param ancest
-     * @return
-     */
     public static Field declaredField(Class cls, String name, int ancest) {
         return declaredField(cls, name, ancest, true);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param ancest
-     * @param declared
-     * @return
-     */
     public static Field declaredField(Class cls, String name, int ancest, boolean declared) {
         Field field = null;
         while (cls != null) {
@@ -291,46 +193,22 @@ public abstract class KernelReflect {
         return field;
     }
 
-    /**
-     * @param cls
-     * @return
-     */
     public static List<Field> fields(Class cls) {
         return fields(cls, 0);
     }
 
-    /**
-     * @param cls
-     * @param ancest
-     * @return
-     */
     public static List<Field> fields(Class cls, int ancest) {
         return declaredFields(cls, ancest, false);
     }
 
-    /**
-     * @param cls
-     * @return
-     */
     public static List<Field> declaredFields(Class cls) {
         return declaredFields(cls, 0);
     }
 
-    /**
-     * @param cls
-     * @param ancest
-     * @return
-     */
     public static List<Field> declaredFields(Class cls, int ancest) {
         return declaredFields(cls, ancest, true);
     }
 
-    /**
-     * @param cls
-     * @param ancest
-     * @param declared
-     * @return
-     */
     public static List<Field> declaredFields(Class cls, int ancest, boolean declared) {
         List<Field> declaredFields = new ArrayList<Field>();
         while (cls != null) {
@@ -354,12 +232,6 @@ public abstract class KernelReflect {
         return declaredFields;
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @param value
-     * @return
-     */
     public static boolean set(Object obj, Field field, Object value) {
         if (field != null) {
             try {
@@ -381,21 +253,10 @@ public abstract class KernelReflect {
         return false;
     }
 
-    /**
-     * @param obj
-     * @param field
-     * @return
-     */
     public static Object get(Object obj, Field field) {
         return KernelReflect.get(obj, null, field);
     }
 
-    /**
-     * @param obj
-     * @param defaultValue
-     * @param field
-     * @return
-     */
     public static Object get(Object obj, Object defaultValue, Field field) {
         if (field != null) {
             try {
@@ -416,119 +277,44 @@ public abstract class KernelReflect {
         return defaultValue;
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param parameterTypes
-     * @return
-     */
     public static Method method(Class cls, String name, Class... parameterTypes) {
         return method(cls, name, 0, parameterTypes);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param ancest
-     * @param parameterTypes
-     * @return
-     */
     public static Method method(Class cls, String name, int ancest, Class... parameterTypes) {
         return declaredMethod(cls, name, ancest, false, parameterTypes);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param parameterTypes
-     * @return
-     */
     public static Method declaredMethod(Class cls, String name, Class... parameterTypes) {
         return declaredMethod(cls, name, 0, parameterTypes);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param ancest
-     * @param parameterTypes
-     * @return
-     */
     public static Method declaredMethod(Class cls, String name, int ancest, Class... parameterTypes) {
         return declaredMethod(cls, name, ancest, true, parameterTypes);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param ancest
-     * @param declared
-     * @param parameterTypes
-     * @return
-     */
     public static Method declaredMethod(Class cls, String name, int ancest, boolean declared, Class... parameterTypes) {
         return assignableMethod(cls, name, ancest, declared, false, false, parameterTypes);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param parameterTypes
-     * @return
-     */
     public static Method assignableMethod(Class cls, String name, Class... parameterTypes) {
         return assignableMethod(cls, name, 0, parameterTypes);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param ancest
-     * @param parameterTypes
-     * @return
-     */
     public static Method assignableMethod(Class cls, String name, int ancest, Class... parameterTypes) {
         return assignableMethod(cls, name, ancest, false, parameterTypes);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param ancest
-     * @param declared
-     * @param parameterTypes
-     * @return
-     */
     public static Method assignableMethod(Class cls, String name, int ancest, boolean declared,
                                           Class... parameterTypes) {
         return assignableMethod(cls, name, ancest, declared, true, true, parameterTypes);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param ancest
-     * @param declared
-     * @param assignable
-     * @param cacheable
-     * @param parameterTypes
-     * @return
-     */
     public static Method assignableMethod(Class cls, String name, int ancest, boolean declared, boolean assignable,
                                           boolean cacheable, Class... parameterTypes) {
         return assignableMethod(cls, null, name, ancest, declared, assignable, cacheable, parameterTypes);
     }
 
-    /**
-     * @param cls
-     * @param name
-     * @param ancest
-     * @param declared
-     * @param assignable
-     * @param cacheable
-     * @param parameterTypes
-     * @return
-     */
     public static Method assignableMethod(Class cls, final Class returnType, final String name, int ancest,
                                           boolean declared, boolean assignable, boolean cacheable, final Class... parameterTypes) {
         String class_method_key = null;
@@ -628,23 +414,10 @@ public abstract class KernelReflect {
         return method;
     }
 
-    /**
-     * @param obj
-     * @param method
-     * @param args
-     * @return
-     */
     public static Object invoke(Object obj, Method method, Object... args) {
         return KernelReflect.invoke(obj, null, method, args);
     }
 
-    /**
-     * @param obj
-     * @param defaultValue
-     * @param method
-     * @param args
-     * @return
-     */
     public static Object invoke(Object obj, Object defaultValue, Method method, Object... args) {
         if (method != null) {
             try {
@@ -670,12 +443,6 @@ public abstract class KernelReflect {
         return defaultValue;
     }
 
-    /**
-     * @param obj
-     * @param method
-     * @param args
-     * @return
-     */
     public static boolean run(Object obj, Method method, Object... args) {
         if (method != null) {
             try {
@@ -703,19 +470,10 @@ public abstract class KernelReflect {
         return false;
     }
 
-    /**
-     * @param cls
-     * @param callback
-     */
     public static void doWithClasses(Class cls, CallbackBreak<Class<?>> callback) {
         doWithClasses(cls, callback, null);
     }
 
-    /**
-     * @param cls
-     * @param callback
-     * @param superClass
-     */
     public static void doWithClasses(Class cls, CallbackBreak<Class<?>> callback, Class superClass) {
         try {
             while (cls != null && cls != Object.class && cls != superClass) {
@@ -727,19 +485,10 @@ public abstract class KernelReflect {
         }
     }
 
-    /**
-     * @param cls
-     * @param callback
-     */
     public static void doWithFields(Class cls, CallbackBreak<Field> callback) {
         doWithFields(cls, callback, null);
     }
 
-    /**
-     * @param cls
-     * @param callback
-     * @param superClass
-     */
     public static void doWithFields(Class cls, CallbackBreak<Field> callback, Class superClass) {
         try {
             while (cls != null && cls != Object.class && cls != superClass) {
@@ -753,19 +502,10 @@ public abstract class KernelReflect {
         }
     }
 
-    /**
-     * @param cls
-     * @param callback
-     */
     public static void doWithDeclaredFields(Class cls, CallbackBreak<Field> callback) {
         doWithDeclaredFields(cls, callback, null);
     }
 
-    /**
-     * @param cls
-     * @param callback
-     * @param superClass
-     */
     public static void doWithDeclaredFields(Class cls, CallbackBreak<Field> callback, Class superClass) {
         try {
             while (cls != null && cls != Object.class && cls != superClass) {
@@ -780,10 +520,6 @@ public abstract class KernelReflect {
         }
     }
 
-    /**
-     * @param cls
-     * @param callback
-     */
     public static void doWithMethods(Class cls, CallbackBreak<Method> callback) {
         try {
             for (Method method : cls.getMethods()) {
@@ -794,19 +530,10 @@ public abstract class KernelReflect {
         }
     }
 
-    /**
-     * @param cls
-     * @param callback
-     */
     public static void doWithDeclaredMethods(Class cls, CallbackBreak<Method> callback) {
         doWithDeclaredMethods(cls, callback, null);
     }
 
-    /**
-     * @param cls
-     * @param callback
-     * @param superClass
-     */
     public static void doWithDeclaredMethods(Class cls, CallbackBreak<Method> callback, Class superClass) {
         try {
             while (cls != null && cls != Object.class && cls != superClass) {

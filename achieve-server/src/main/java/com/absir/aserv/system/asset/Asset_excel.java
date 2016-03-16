@@ -23,30 +23,15 @@ import java.io.PrintWriter;
 import java.util.Map;
 import java.util.TreeMap;
 
-/**
- * @author absir
- *
- */
 @Base
 @Server
 public class Asset_excel extends AssetServer {
 
-    /**
-     * @param index
-     * @param input
-     * @return
-     */
     @Body
     public Object route(int index, InputRequest input) {
         return route(index, false, input);
     }
 
-    /**
-     * @param index
-     * @param orientation
-     * @param input
-     * @return
-     */
     @Body
     public Object route(int index, boolean orientation, InputRequest input) {
         FileItem excel = UploadCrudFactory.getUploadFile(input, "excel");
@@ -71,10 +56,6 @@ public class Asset_excel extends AssetServer {
         return "can not find upload excel!";
     }
 
-    /**
-     * @param response
-     * @throws IOException
-     */
     @Body
     public void test(HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();

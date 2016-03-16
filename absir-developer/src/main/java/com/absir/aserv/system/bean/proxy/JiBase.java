@@ -11,15 +11,8 @@ import com.absir.core.base.IBase;
 
 import java.io.Serializable;
 
-/**
- * @author absir
- *
- */
 public interface JiBase extends IBase<Serializable> {
 
-    /**
-     * @return
-     */
     public Serializable getId();
 
 }

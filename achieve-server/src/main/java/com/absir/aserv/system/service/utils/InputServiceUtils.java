@@ -25,37 +25,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 public class InputServiceUtils {
 
-    /**
-     * SEARCH_CONDITIONS_PARAMTER_STRING
-     */
     private static final String SEARCH_CONDITIONS_PARAMTER_STRING = "searchConditions";
-    /**
-     * SEARCH_CONDITIONS_PARAMTER_ARRAY_LIST
-     */
+
     private static final String SEARCH_CONDITIONS_PARAMTER_ARRAY_LIST = "searchConditionList";
 
-    /**
-     * @param entityName
-     * @param input
-     * @return
-     */
     public static JdbcPage getJdbcPage(String entityName, Input input) {
         JdbcPage jdbcPage = new JdbcPage();
         return jdbcPage;
     }
 
-    /**
-     * @param entityName
-     * @param jdbcPage
-     * @param input
-     * @return
-     */
     public static JdbcPage getJdbcPage(String entityName, JdbcPage jdbcPage, Input input) {
         if (jdbcPage == null) {
             jdbcPage = getJdbcPage(entityName, input);
@@ -64,10 +45,6 @@ public class InputServiceUtils {
         return jdbcPage;
     }
 
-    /**
-     * @param input
-     * @return
-     */
     public static String getOrderQueue(Input input) {
         String[] orderFields = input.getParams("orderField");
         String[] orderDirections = input.getParams("orderDirection");

@@ -12,10 +12,6 @@ import com.absir.aserv.system.bean.value.JaLang;
 
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- *
- */
 @MappedSuperclass
 public class JbBeanTargetsOpen extends JbBeanTargets {
 
@@ -27,31 +23,18 @@ public class JbBeanTargetsOpen extends JbBeanTargets {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private int openLifeDay;
 
-    /**
-     * @return the openSubDay
-     */
     public int getOpenSubDay() {
         return openSubDay;
     }
 
-    /**
-     * @param openSubDay the openSubDay to set
-     */
     public void setOpenSubDay(int openSubDay) {
         this.openSubDay = openSubDay;
     }
 
-    /**
-     * @return the openLifeDay
-     */
     public int getOpenLifeDay() {
         return openLifeDay;
     }
 
-    /**
-     * @param openLifeDay
-     *            the openLifeDay to set
-     */
     public void setOpenLifeDay(int openLifeDay) {
         this.openLifeDay = openLifeDay;
     }

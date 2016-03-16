@@ -15,30 +15,14 @@ import com.absir.core.kernel.KernelString;
 
 import java.util.List;
 
-/**
- * @author absir
- */
 public class HelperCondition {
 
-    /**
-     * SQL_PARTERN
-     */
     private static final String[] SQL_PARTERN = new String[]{"AND ", "OR "};
 
-    /**
-     * SQL_EMPTY
-     */
     private static final String[] SQL_EMPTY = KernelArray.repeat("", SQL_PARTERN.length);
 
-    /**
-     * SQL_EXPRESSION
-     */
     private static final String[] SQL_EXPRESSION = new String[]{";", "SELECT", "INSERT", "UPDATE", "DELETE"};
 
-    /**
-     * @param expression
-     * @return
-     */
     public static String expression(String expression) {
         expression = HelperString.replaceEach(expression.toUpperCase(), SQL_PARTERN, SQL_EMPTY);
         if (expression.length() > 8) {
@@ -50,10 +34,6 @@ public class HelperCondition {
         return expression;
     }
 
-    /**
-     * @param queue
-     * @return
-     */
     public static String orderQueue(String queue) {
         if (queue != null) {
             StringBuilder queryBuilder = new StringBuilder("ORDER BY ");
@@ -82,11 +62,6 @@ public class HelperCondition {
         return queue;
     }
 
-    /**
-     * @param entityClass
-     * @param queue
-     * @return
-     */
     public static String orderQueue(Class<?> entityClass, String queue) {
         if (entityClass != null && JiSort.class.isAssignableFrom(entityClass)) {
             if (KernelString.isEmpty(queue)) {
@@ -100,10 +75,6 @@ public class HelperCondition {
         return queue;
     }
 
-    /**
-     * @param conditions
-     * @return
-     */
     public static void bracket(List<Object> conditions) {
         int last = conditions.size();
         if (last > 2) {
@@ -113,9 +84,6 @@ public class HelperCondition {
         }
     }
 
-    /**
-     * @param conditions
-     */
     public static void concatOR(List<Object> conditions) {
         int last = conditions.size();
         if (last > 2) {
@@ -125,11 +93,6 @@ public class HelperCondition {
         }
     }
 
-    /**
-     * @param conditions
-     * @param expression
-     * @return
-     */
     public static void concatOR(List<Object> conditions, String expression) {
         if (conditions.size() > 0) {
             conditions.add("OR " + expression);
@@ -139,9 +102,6 @@ public class HelperCondition {
         }
     }
 
-    /**
-     * @param conditions
-     */
     public static boolean leftOR(List<Object> conditions) {
         int last = conditions.size();
         if (last < 2) {
@@ -153,10 +113,6 @@ public class HelperCondition {
         return true;
     }
 
-    /**
-     * @param conditions
-     * @return
-     */
     public static boolean leftBracket(List<Object> conditions) {
         int last = conditions.size();
         if (last < 2) {
@@ -168,10 +124,6 @@ public class HelperCondition {
         return true;
     }
 
-    /**
-     * @param conditions
-     * @return
-     */
     public static boolean rigthBracket(List<Object> conditions) {
         int last = conditions.size();
         if (last < 2) {
@@ -183,42 +135,18 @@ public class HelperCondition {
         return true;
     }
 
-    /**
-     * @param jdbcCondition
-     * @param joinPropertyName
-     * @param joinAlias
-     */
     public static void leftJoin(JdbcCondition jdbcCondition, String joinPropertyName, String joinAlias) {
         jdbcCondition.setJoinAlias(" LEFT JOIN " + jdbcCondition.getPropertyAlias() + "." + joinPropertyName + " " + joinAlias + " " + jdbcCondition.getJoinAlias());
     }
 
-    /**
-     * @param jdbcCondition
-     * @param joinPropertyName
-     * @param joinAlias
-     */
     public static void leftJoinFetch(JdbcCondition jdbcCondition, String joinPropertyName, String joinAlias) {
         jdbcCondition.setJoinAlias(" LEFT JOIN FETCH " + jdbcCondition.getPropertyAlias() + "." + joinPropertyName + " " + joinAlias + jdbcCondition.getJoinAlias());
     }
 
-    /**
-     * @param jdbcCondition
-     * @param joinEntityName
-     * @param joinAlias
-     */
     public static void crossJoin(JdbcCondition jdbcCondition, String joinEntityName, String joinAlias) {
         jdbcCondition.setJoinAlias(jdbcCondition.getJoinAlias() + " , " + joinEntityName + " " + joinAlias);
     }
 
-    /**
-     * @param jdbcCondition
-     * @param joinEntityName
-     * @param joinAlias
-     * @param joinId
-     * @param alias
-     * @param entityId
-     * @param joinConditions
-     */
     public static void crossJoin(JdbcCondition jdbcCondition, String joinEntityName, String joinAlias, String joinId, String alias, String entityId, List<Object> joinConditions) {
         crossJoin(jdbcCondition, joinEntityName, joinAlias);
         concatOR(joinConditions, joinAlias + "." + joinId + " = " + alias + "." + entityId);

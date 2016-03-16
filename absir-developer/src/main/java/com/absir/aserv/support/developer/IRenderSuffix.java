@@ -7,15 +7,8 @@
  */
 package com.absir.aserv.support.developer;
 
-/**
- * @author absir
- *
- */
 public interface IRenderSuffix {
 
-    /**
-     * @return
-     */
     public String getSuffix();
 
 }

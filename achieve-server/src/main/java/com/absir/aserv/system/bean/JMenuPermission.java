@@ -20,9 +20,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-/**
- * @author absir
- */
 @MaEntity(parent = {@MaMenu("菜单管理")}, name = "权限")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
@@ -47,59 +44,35 @@ public class JMenuPermission extends JbBase {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private long forbidIds[];
 
-    /**
-     * @return the id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * @return the caption
-     */
     @Langs
     public String getCaption() {
         return caption;
     }
 
-    /**
-     * @param caption the caption to set
-     */
     public void setCaption(String caption) {
         this.caption = caption;
     }
 
-    /**
-     * @return the allowIds
-     */
     public long[] getAllowIds() {
         return allowIds;
     }
 
-    /**
-     * @param allowIds the allowIds to set
-     */
     public void setAllowIds(long[] allowIds) {
         this.allowIds = allowIds;
     }
 
-    /**
-     * @return the forbidIds
-     */
     public long[] getForbidIds() {
         return forbidIds;
     }
 
-    /**
-     * @param forbidIds the forbidIds to set
-     */
     public void setForbidIds(long[] forbidIds) {
         this.forbidIds = forbidIds;
     }

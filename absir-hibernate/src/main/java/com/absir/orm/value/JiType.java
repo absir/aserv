@@ -11,15 +11,7 @@ import org.hibernate.type.Type;
 
 import java.util.Properties;
 
-/**
- * @author absir
- */
 public interface JiType {
 
-    /**
-     * @param typeClass
-     * @param parameters
-     * @return
-     */
     public Type byClass(Class<?> typeClass, Properties parameters);
 }

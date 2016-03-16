@@ -28,23 +28,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class EntityBoost {
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(EntityBoost.class);
 
-    /**
-     * @param metadata
-     * @param sessionFactoryBoost
-     * @param locale
-     */
     public static void boost(Metadata metadata, SessionFactoryBoost sessionFactoryBoost, boolean locale) {
         Map<String, PersistentClass> classes = (Map<String, PersistentClass>) KernelObject.declaredGet(metadata,
                 "entityBindingMap");
@@ -54,11 +42,6 @@ public class EntityBoost {
         assocEntityPersistent(classes, tables, metadata.getImports(), sessionFactoryBoost);
     }
 
-    /**
-     * @param columnName
-     * @param tableColumns
-     * @return
-     */
     private static Column getTableColumn(String columnName, Map<String, Column> tableColumns) {
         Column column = tableColumns.get(columnName);
         if (column == null) {
@@ -73,9 +56,6 @@ public class EntityBoost {
         return column;
     }
 
-    /**
-     * @param classes
-     */
     private static void boostEntityTable(Map<String, PersistentClass> classes) {
         Map<String, Column> tableColumns = new HashMap<String, Column>();
         Map<String, List<Column>> subTableColumns = new HashMap<String, List<Column>>();
@@ -284,10 +264,6 @@ public class EntityBoost {
         }
     }
 
-    /**
-     * @param classes
-     * @param tables
-     */
     private static void assocEntityPersistent(Map<String, PersistentClass> classes, Map<Identifier, Table> tables,
                                               Map<String, String> imports, SessionFactoryBoost sessionFactoryBoost) {
         List<PersistentClass> persistentClasses = new ArrayList<PersistentClass>();
@@ -335,24 +311,11 @@ public class EntityBoost {
         }
     }
 
-    /**
-     * @param table
-     * @param tables
-     */
     private static void removeTable(Table table, Map<Identifier, Table> tables) {
         tables.remove(table.getNameIdentifier());
         KernelObject.declaredSet(table, "foreignKeys", new HashMap());
     }
 
-    /**
-     * @param jpaEntityPersistent
-     * @param implementPersistents
-     * @param classes
-     * @param tables
-     * @param imports
-     * @param associate
-     * @param sessionFactoryBoost
-     */
     private static void assocEntityPersistent(JpaEntityPersistent jpaEntityPersistent,
                                               List<ImplementPersistent> implementPersistents, Map<String, PersistentClass> classes,
                                               Map<Identifier, Table> tables, Map<String, String> imports, int associate,
@@ -392,19 +355,6 @@ public class EntityBoost {
                 classes, sessionFactoryBoost);
     }
 
-    /**
-     * @param entityName
-     * @param tableName
-     * @param persistentClass
-     * @param jpaEntityPersistent
-     * @param implementPersistents
-     * @param classes
-     * @param tables
-     * @param imports
-     * @param associate
-     * @param sessionFactoryBoost
-     * @return
-     */
     private static JpaEntityPersistent assocEntityPersistent(String entityName, String tableName,
                                                              PersistentClass persistentClass, JpaEntityPersistent jpaEntityPersistent,
                                                              List<ImplementPersistent> implementPersistents, Map<String, PersistentClass> classes,
@@ -430,14 +380,6 @@ public class EntityBoost {
         return jpaEntityPersistent;
     }
 
-    /**
-     * @param jpaEntityName
-     * @param entityName
-     * @param tableName
-     * @param persistentClass
-     * @param classes
-     * @param tables
-     */
     private static void assocEntityPersistent(String jpaEntityName, String entityName, String tableName,
                                               PersistentClass persistentClass, Map<String, PersistentClass> classes, Map<Identifier, Table> tables,
                                               Map<String, String> imports, SessionFactoryBoost sessionFactoryBoost) {
@@ -492,16 +434,6 @@ public class EntityBoost {
         }
     }
 
-    /**
-     * @param implementClass
-     * @param jpaEntityPersistent
-     * @param implementPersistents
-     * @param classes
-     * @param tables
-     * @param imports
-     * @param associate
-     * @param sessionFactoryBoost
-     */
     private static void implementPersistent(Class implementClass, JpaEntityPersistent jpaEntityPersistent,
                                             List<ImplementPersistent> implementPersistents, Map<String, PersistentClass> classes,
                                             Map<Identifier, Table> tables, Map<String, String> imports, int associate,
@@ -515,33 +447,16 @@ public class EntityBoost {
         }
     }
 
-    /**
-     * @author absir
-     */
     private static class ImplementPersistent {
 
-        /**
-         * implementClass
-         */
         private Class implementClass;
 
-        /**
-         * entityName
-         */
         private String entityName;
 
-        /** tableName */
         private String tableName;
 
-        /**
-         * persistentClass
-         */
         private PersistentClass persistentClass;
 
-        /**
-         * @param implementClass
-         * @param persistentClass
-         */
         private ImplementPersistent(Class implementClass, PersistentClass persistentClass) {
             this.implementClass = implementClass;
             Class<?> mappedClass = persistentClass.getMappedClass();
@@ -553,36 +468,16 @@ public class EntityBoost {
         }
     }
 
-    /**
-     * @author absir
-     *
-     */
     private static class JpaEntityPersistent {
 
-        /**
-         * jpaEntityName
-         */
         private String jpaEntityName;
 
-        /**
-         * entityName
-         */
         private String entityName;
 
-        /** tableName */
         private String tableName;
 
-        /**
-         * entityClass
-         */
         private Class entityClass;
 
-        /**
-         * @param jpaEntityName
-         * @param entityName
-         * @param tableName
-         * @param entityClass
-         */
         private JpaEntityPersistent(String jpaEntityName, String entityName, String tableName, Class entityClass) {
             this.jpaEntityName = jpaEntityName;
             this.entityName = entityName;

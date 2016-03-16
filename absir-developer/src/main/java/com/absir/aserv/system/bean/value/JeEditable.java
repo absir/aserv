@@ -7,10 +7,6 @@
  */
 package com.absir.aserv.system.bean.value;
 
-/**
- * @author absir
- *
- */
 public enum JeEditable {
 
     /**
@@ -33,9 +29,13 @@ public enum JeEditable {
      */
     OPTIONAL,
 
-    /** 锁定不管 */
+    /**
+     * 锁定不管
+     */
     LOCKABLE,
 
-    /** 锁定不显示 */
+    /**
+     * 锁定不显示
+     */
     LOCKNONE,
 }

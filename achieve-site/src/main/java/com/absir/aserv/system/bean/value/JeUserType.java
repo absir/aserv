@@ -7,10 +7,6 @@
  */
 package com.absir.aserv.system.bean.value;
 
-/**
- * @author absir
- *
- */
 public enum JeUserType {
 
     @JaLang("禁用")

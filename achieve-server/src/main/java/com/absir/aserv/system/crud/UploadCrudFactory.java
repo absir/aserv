@@ -65,97 +65,52 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<FileItem> {
 
-    /**
-     * ME
-     */
     public static final UploadCrudFactory ME = BeanFactoryUtils.get(UploadCrudFactory.class);
 
-    /**
-     * RECORD
-     */
     public static final String RECORD = "UPLOAD@";
-    /**
-     * DATE_FORMAT
-     */
+
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
-    /**
-     * LOGGER
-     */
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(UploadCrudFactory.class);
-    /**
-     * uploadUrl
-     */
+
     private static String uploadUrl;
-    /**
-     * uploadPath
-     */
+
     private static String uploadPath;
-    /**
-     * uploadPassTime
-     */
+
     @Value(value = "upload.passTime")
     private static long uploadPassTime = 3600000;
-    /**
-     * imageExtension
-     */
+
     @Value("upload.image.extension")
     private String imageExtension = "gif|jpg|jpeg|png|bmp";
-    /**
-     * managerDir
-     */
+
     @Value("upload.manager.dir")
     private String managerDir = "";
-    /**
-     * uploadProcessors
-     */
+
     @Orders
     @Inject(type = InjectType.Selectable)
     private IUploadProcessor[] uploadProcessors;
 
-    /**
-     * @return
-     */
     public static String getUploadUrl() {
         return uploadUrl;
     }
 
-    /**
-     * @return
-     */
     public static String getUploadPath() {
         return uploadPath;
     }
 
-    /**
-     * @return the uploadPassTime
-     */
     public static long getUploadPassTime() {
         return uploadPassTime;
     }
 
-    /**
-     * @param input
-     * @param name
-     * @return
-     */
     public static FileItem getUploadFile(InputRequest input, String name) {
         List<FileItem> fileItems = input.parseParameterMap().get(name);
         return fileItems == null || fileItems.isEmpty() ? null : fileItems.get(0);
     }
 
-    /**
-     * @param field
-     * @param file
-     * @param parameters
-     * @param errors
-     */
     public static void verifyMultipartFile(String field, FileItem file, Object[] parameters, PropertyErrors errors) {
         String extension = HelperFileName.getExtension(file.getName()).toLowerCase();
         if (KernelString.isEmpty(extension)) {
@@ -188,24 +143,14 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         }
     }
 
-    /**
-     * @return
-     */
     public String getImageExtension() {
         return imageExtension;
     }
 
-    /**
-     * @return
-     */
     public String getManagerDir() {
         return managerDir;
     }
 
-    /**
-     * @param uploadUrl
-     * @param uploadPath
-     */
     @Started
     protected void setUploadUrl(@Value(value = "resource.upload.url", defaultValue = "@") String
                                         uploadUrl, @Value(value = "resource.upload.path", defaultValue = "@") String uploadPath) {
@@ -233,28 +178,15 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         UploadCrudFactory.uploadPath = uploadPath;
     }
 
-    /**
-     * @param hashCode
-     * @return
-     */
-
     public String randUploadFile(int hashCode) {
         Date date = new Date();
         return DATE_FORMAT.format(date) + '/' + HelperRandom.randSecendBuidler((int) date.getTime(), 16, hashCode);
     }
 
-    /**
-     * @param uploadFile
-     * @param inputStream
-     * @throws IOException
-     */
     public void upload(String uploadFile, InputStream inputStream) throws IOException {
         HelperFile.write(new File(uploadPath + uploadFile), inputStream);
     }
 
-    /**
-     * @param uploadFile
-     */
     public void delete(String uploadFile) {
         HelperFile.deleteQuietly(new File(uploadPath + uploadFile));
     }
@@ -283,7 +215,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
             return null;
         }
     }
-
 
     /**
      * 上传扩展名内容
@@ -506,25 +437,11 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         return BeanService.ME.selectQuerySingle("SELECT o.id FROM JUpload o WHERE o.dirPath = ?", path) == null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.ICrudProcessorRequest#isMultipart()
-     */
     @Override
     public boolean isMultipart() {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.ICrudProcessorInput#crud(com.absir.aserv
-     * .crud.CrudProperty, com.absir.property.PropertyErrors,
-     * com.absir.aserv.crud.CrudHandler,
-     * com.absir.aserv.system.bean.proxy.JiUserBase,
-     * com.absir.server.in.Input)
-     */
     @Override
     public FileItem crud(CrudProperty crudProperty, PropertyErrors errors, CrudHandler handler, JiUserBase user, Input input) {
         if (handler.getCrud() != Crud.DELETE) {
@@ -541,13 +458,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.ICrudProcessorRequest#crud(com.absir.aserv
-     * .crud.CrudProperty, java.lang.Object, com.absir.aserv.crud.CrudHandler,
-     * com.absir.aserv.system.bean.proxy.JiUserBase, java.lang.Object)
-     */
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, FileItem requestBody) {
         if (requestBody == null) {
@@ -638,13 +548,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.ICrudProcessor#crud(com.absir.aserv.crud
-     * .CrudProperty, java.lang.Object, com.absir.aserv.crud.CrudHandler,
-     * com.absir.aserv.system.bean.proxy.JiUserBase)
-     */
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user) {
         if (crudHandler.getCrud() == Crud.DELETE) {
@@ -655,51 +558,23 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.crud.ICrudFactory#getProcessor(com.absir.aserv.support
-     * .entity.value.JoEntity, com.absir.aserv.support.developer.JCrudField)
-     */
     @Override
     public ICrudProcessor getProcessor(JoEntity joEntity, JCrudField crudField) {
         return ME;
     }
 
-    /**
-     * @author absir
-     */
     public static class MultipartUploader {
 
-        /**
-         * minSize
-         */
         private long minSize;
 
-        /**
-         * maxSize
-         */
         private long maxSize;
 
-        /**
-         * extensions
-         */
         private String[] extensions;
 
-        /**
-         * ruleName
-         */
         private String ruleName;
 
-        /**
-         * ided
-         */
         private boolean ided;
 
-        /**
-         * @param parameters
-         */
         public MultipartUploader(Object[] parameters) {
             int last = parameters.length - 1;
             if (last > 2) {
@@ -729,12 +604,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
             }
         }
 
-        /**
-         * @param extension
-         * @param field
-         * @param file
-         * @param errors
-         */
         public void verify(String extension, String field, FileItem file, PropertyErrors errors) {
             if (extensions != null) {
                 if (!KernelArray.contain(extensions, extension)) {
@@ -748,7 +617,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                     return;
                 }
             }
-
 
             if (maxSize > 0) {
                 if (file.getSize() > maxSize) {

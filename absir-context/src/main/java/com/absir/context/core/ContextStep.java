@@ -14,76 +14,38 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author absir
- */
 public class ContextStep implements Runnable {
 
-    /**
-     * cancel
-     */
     private boolean cancel;
 
-    /**
-     * delay
-     */
     private long delay;
 
-    /**
-     * deltaTime
-     */
     private long deltaTime;
 
-    /**
-     * steps
-     */
     private List<IStep> steps = new LinkedList<IStep>();
 
-    /**
-     * addSteps
-     */
     private List<IStep> addSteps = new ArrayList<IStep>();
 
-    /**
-     * @param delay
-     */
     public ContextStep(long delay) {
         this.delay = delay;
     }
 
-    /**
-     * @return the deltaTime
-     */
     public long getDeltaTime() {
         return deltaTime;
     }
 
-    /**
-     * @param step
-     */
     public synchronized void addStep(IStep step) {
         addSteps.add(step);
     }
 
-    /**
-     *
-     */
     public void start() {
         ContextUtils.getThreadPoolExecutor().execute(this);
     }
 
-    /**
-     *
-     */
     public void cancel() {
         cancel = true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Runnable#run()
-     */
     @Override
     public void run() {
         try {

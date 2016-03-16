@@ -16,27 +16,14 @@ import com.absir.server.socket.SocketServer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
-/**
- * @author absir
- *
- */
 public class SocketBufferResolver implements IBufferResolver {
 
-    /**
-     * bufferMax
-     */
     protected static long bufferMax = 10240;
 
-    /**
-     * @return the bufferMax
-     */
     public static long getBufferMax() {
         return bufferMax;
     }
 
-    /**
-     * @param bufferMax the bufferMax to set
-     */
     public static void setBufferMax(long max) {
         if (max < 8) {
             max = 8;
@@ -45,15 +32,6 @@ public class SocketBufferResolver implements IBufferResolver {
         bufferMax = max;
     }
 
-    /**
-     * @param bufferResolver
-     * @param socketChannel
-     * @param headerLength
-     * @param bytes
-     * @param offset
-     * @param length
-     * @return
-     */
     public static byte[] createByteBufferFull(IBufferResolver bufferResolver, SocketChannel socketChannel,
                                               int headerLength, byte[] bytes, int offset, int length) {
         byte[] headers = bufferResolver.createByteHeader(headerLength);
@@ -75,38 +53,15 @@ public class SocketBufferResolver implements IBufferResolver {
         return bufferFull;
     }
 
-    /**
-     * @param selSession
-     * @param socketChannel
-     * @param bytes
-     * @return
-     */
     public static boolean writeBufferTimeout(SelSession selSession, SocketChannel socketChannel, byte[] bytes) {
         return writeBufferTimeout(selSession, socketChannel, bytes, 0, bytes.length);
     }
 
-    /**
-     * @param selSession
-     * @param socketChannel
-     * @param bytes
-     * @param offset
-     * @param length
-     * @return
-     */
     public static boolean writeBufferTimeout(SelSession selSession, SocketChannel socketChannel, byte[] bytes,
                                              int offset, int length) {
         return writeBufferTimeout(selSession, socketChannel, bytes, offset, length, SocketNIO.getWriteTimeout());
     }
 
-    /**
-     * @param selSession
-     * @param socketChannel
-     * @param bytes
-     * @param offset
-     * @param length
-     * @param writeTimeout
-     * @return
-     */
     public static boolean writeBufferTimeout(SelSession selSession, SocketChannel socketChannel, byte[] bytes,
                                              int offset, int length, long writeTimeout) {
         synchronized (socketChannel) {
@@ -122,33 +77,12 @@ public class SocketBufferResolver implements IBufferResolver {
         return false;
     }
 
-    /**
-     * @param selSession
-     * @param bufferResolver
-     * @param socketChannel
-     * @param headerLength
-     * @param bytes
-     * @param offset
-     * @param length
-     * @return
-     */
     public static boolean writeBufferTimeout(SelSession selSession, IBufferResolver bufferResolver,
                                              SocketChannel socketChannel, int headerLength, byte[] bytes, int offset, int length) {
         return writeBufferTimeout(selSession, bufferResolver, socketChannel, headerLength, bytes, offset, length,
                 SocketNIO.getWriteTimeout());
     }
 
-    /**
-     * @param selSession
-     * @param bufferResolver
-     * @param socketChannel
-     * @param headerLength
-     * @param bytes
-     * @param offset
-     * @param length
-     * @param writeTimeout
-     * @return
-     */
     public static boolean writeBufferTimeout(SelSession selSession, IBufferResolver bufferResolver,
                                              SocketChannel socketChannel, int headerLength, byte[] bytes, int offset, int length, long writeTimeout) {
         byte[] headers = bufferResolver.createByteHeader(headerLength);
@@ -171,24 +105,11 @@ public class SocketBufferResolver implements IBufferResolver {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketBufferResolver#createSocketBuff()
-     */
     @Override
     public SocketBuffer createSocketBuff() {
         return new SocketBuffer();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketBufferResolver#readByteBuffer(com.
-     * absir.server.socket.SocketBuffer, byte[], int, int)
-     */
     @Override
     public int readByteBuffer(SocketBuffer socketBuffer, byte[] buffer, int position, int length) {
         for (; position < length; position++) {
@@ -227,13 +148,6 @@ public class SocketBufferResolver implements IBufferResolver {
         return position;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketBufferResolver#readByteBufferDone(
-     * com.absir.server.socket.SocketBuffer)
-     */
     @Override
     public void readByteBufferDone(SocketBuffer socketBuffer) {
         socketBuffer.setBuff(null);
@@ -241,25 +155,11 @@ public class SocketBufferResolver implements IBufferResolver {
         socketBuffer.setLengthIndex(0);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketBufferResolver#createByteHeader(
-     * int)
-     */
     @Override
     public byte[] createByteHeader(int headerLength) {
         return new byte[4 + headerLength];
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.socket.resolver.SocketBufferResolver#
-     * createByteBuffer( java.nio.channels.SocketChannel, int, byte[], byte[],
-     * int, int)
-     */
     @Override
     public ByteBuffer createByteBuffer(SocketChannel socketChannel, int headerLength, byte[] headerBytes, byte[] bytes,
                                        int offset, int length) {

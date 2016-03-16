@@ -28,30 +28,16 @@ import com.absir.servlet.InputRequest;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author absir
- */
 @Base
 @Server
 public class Asset_diy extends AssetServer {
 
-    /**
-     * DIY_AUTHENTICATION
-     */
     private static final String DIY_AUTHENTICATION = Asset_diy.class.getName() + "@DIY_AUTHENTICATION";
 
-    /**
-     * @param input
-     */
     public static void authentication(InputRequest input) {
         input.setSession(DIY_AUTHENTICATION, "");
     }
 
-    /**
-     * @param input
-     * @return
-     * @throws Exception
-     */
     @Before
     protected void onAuthentication(Input input) throws Exception {
         if (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP) {
@@ -72,19 +58,10 @@ public class Asset_diy extends AssetServer {
         throw new ServerException(ServerStatus.IN_404);
     }
 
-    /**
-     * @param view
-     * @return
-     */
     public String view(String view) {
         return view;
     }
 
-    /**
-     * @param view
-     * @return
-     * @throws IOException
-     */
     @Body
     public String body(String view) throws IOException {
         if (IDeveloper.ME != null) {
@@ -95,12 +72,6 @@ public class Asset_diy extends AssetServer {
         return file.exists() ? HelperFile.readFileToString(file) : "";
     }
 
-    /**
-     * @param view
-     * @param body
-     * @return
-     * @throws IOException
-     */
     @Body
     public void save(String view, @Param String body) throws IOException {
         if (IDeveloper.ME != null) {

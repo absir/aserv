@@ -11,10 +11,6 @@ import com.absir.aserv.jdbc.JdbcCondition;
 import com.absir.aserv.jdbc.JdbcCondition.Conditions;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 
-/**
- * @author absir
- *
- */
 public interface IRelateDao {
 
     /**

@@ -14,38 +14,17 @@ import net.sf.cglib.proxy.MethodProxy;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 public class AysncRunableNotifier extends AysncRunable {
 
-    /**
-     * notifying
-     */
     private boolean notifying;
-    /**
-     * notifierIterator
-     */
+
     private NotifierIterator notifierIterator;
 
-    /**
-     * @param timeout
-     * @param thread
-     */
     public AysncRunableNotifier(long timeout, boolean thread) {
         super(timeout, thread);
     }
 
-    /**
-     * @param proxy
-     * @param iterator
-     * @param proxyHandler
-     * @param method
-     * @param args
-     * @param methodProxy
-     * @return
-     */
     public Runnable notifierRunable(final Object proxy, final Iterator<AopInterceptor> iterator,
                                     final AopProxyHandler proxyHandler, final Method method, final Object[] args, final MethodProxy methodProxy) {
         return new Runnable() {
@@ -65,9 +44,6 @@ public class AysncRunableNotifier extends AysncRunable {
         };
     }
 
-    /**
-     *
-     */
     protected void checkNotifierIterator() {
         NotifierIterator iterator = null;
         synchronized (this) {
@@ -91,14 +67,6 @@ public class AysncRunableNotifier extends AysncRunable {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.async.AysncRunable#aysnc(java.lang.Object,
-     * java.util.Iterator, com.absir.aop.AopProxyHandler,
-     * java.lang.reflect.Method, java.lang.Object[],
-     * net.sf.cglib.proxy.MethodProxy)
-     */
     @Override
     public void aysnc(Object proxy, Iterator<AopInterceptor> iterator, AopProxyHandler proxyHandler, Method method, Object[] args,
                       MethodProxy methodProxy) throws Throwable {
@@ -129,39 +97,18 @@ public class AysncRunableNotifier extends AysncRunable {
         }
     }
 
-    /**
-     * @author absir
-     */
     private static class NotifierIterator {
 
-        /**
-         * proxy
-         */
         private Object proxy;
 
-        /**
-         * iterator
-         */
         private Iterator<AopInterceptor> iterator;
 
-        /**
-         * proxyHandler
-         */
         private AopProxyHandler proxyHandler;
 
-        /**
-         * method
-         */
         private Method method;
 
-        /**
-         * args
-         */
         private Object[] args;
 
-        /**
-         * methodProxy
-         */
         private MethodProxy methodProxy;
     }
 }

@@ -10,16 +10,8 @@ package com.absir.aserv.crud;
 import com.absir.aserv.support.developer.JCrudField;
 import com.absir.orm.value.JoEntity;
 
-/**
- * @author absir
- */
 public interface ICrudFactory {
 
-    /**
-     * @param joEntity
-     * @param crudField
-     * @return
-     */
     public ICrudProcessor getProcessor(JoEntity joEntity, JCrudField crudField);
 
 }

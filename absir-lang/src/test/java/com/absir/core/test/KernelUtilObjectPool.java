@@ -8,9 +8,6 @@ import org.junit.runners.JUnit4;
 @RunWith(value = JUnit4.class)
 public class KernelUtilObjectPool {
 
-    /**
-     * objectPool
-     */
     private UtilObjectPool<String> objectPool = new UtilObjectPool<String>(1, 5);
 
     @Test
@@ -29,10 +26,6 @@ public class KernelUtilObjectPool {
         testPool(false, "a");
     }
 
-    /**
-     * @param str
-     * @param add
-     */
     protected void testPool(boolean add, String addStr) {
         if (add) {
             System.out.println("addStr=>" + addStr);

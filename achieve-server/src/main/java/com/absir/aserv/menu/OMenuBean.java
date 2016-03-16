@@ -12,58 +12,28 @@ import com.absir.aserv.menu.value.MeUrlType;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author absir
- */
 public class OMenuBean implements IMenuBean {
 
-    /**
-     * menuBean
-     */
     private IMenuBean menuBean;
 
-    /**
-     * url
-     */
     private String url;
 
-    /**
-     * children
-     */
     private List<? extends OMenuBean> children;
 
-    /**
-     * @param menuBean
-     */
     public OMenuBean(IMenuBean menuBean) {
         this.menuBean = menuBean;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.feature.menu.IMenuBean#getName()
-     */
     @Override
     public String getName() {
         return menuBean.getName();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.feature.menu.IMenuBean#getOrder()
-     */
     @Override
     public int getOrder() {
         return menuBean.getOrder();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.feature.menu.IMenuBean#getUrl()
-     */
     @Override
     public String getUrl() {
         if (url == null) {
@@ -73,57 +43,29 @@ public class OMenuBean implements IMenuBean {
         return url;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.feature.menu.IMenuBean#getRef()
-     */
     @Override
     public String getRef() {
         return menuBean.getRef();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.feature.menu.IMenuBean#getUrlType()
-     */
     @Override
     public MeUrlType getUrlType() {
         return menuBean.getUrlType();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.feature.menu.IMenuBean#getChildren()
-     */
     @Override
     public Collection<? extends OMenuBean> getChildren() {
         return children;
     }
 
-    /**
-     * @param children the children to set
-     */
     public void setChildren(List<? extends OMenuBean> children) {
         this.children = children;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.feature.menu.IMenuBean#getUrl()
-     */
     public String getBaseUrl() {
         return menuBean.getUrl();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.feature.menu.IMenuBean#getIcon()
-     */
     @Override
     public String getIcon() {
         return menuBean.getIcon();

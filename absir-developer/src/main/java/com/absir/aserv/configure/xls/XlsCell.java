@@ -13,22 +13,11 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes"})
 public class XlsCell {
 
-    /**
-     * children
-     */
     private List<List<XlsCell>> children;
 
-    /**
-     * @param xlsCells
-     * @return
-     */
     public static int getLineRowCount(List<XlsCell> xlsCells) {
         int rowCount = 0;
         for (XlsCell xlsCell : xlsCells) {
@@ -41,10 +30,6 @@ public class XlsCell {
         return rowCount;
     }
 
-    /**
-     * @param xlsCells
-     * @return
-     */
     public static int getLineColumnCount(List<XlsCell> xlsCells) {
         int columnCount = 0;
         for (XlsCell xlsCell : xlsCells) {
@@ -54,17 +39,10 @@ public class XlsCell {
         return columnCount;
     }
 
-    /**
-     * @return the children
-     */
     public List<List<XlsCell>> getChildren() {
         return children;
     }
 
-    /**
-     * @param cells
-     * @return
-     */
     public void addColumnCells(List<XlsCell> cells) {
         if (children == null) {
             children = new ArrayList<List<XlsCell>>();
@@ -73,9 +51,6 @@ public class XlsCell {
         children.add(cells);
     }
 
-    /**
-     * @param columns
-     */
     public List<XlsCell> addColumnList(List columns) {
         List<XlsCell> cells = new ArrayList<XlsCell>();
         if (columns != null) {
@@ -93,30 +68,18 @@ public class XlsCell {
         return cells;
     }
 
-    /**
-     * @return
-     */
     public int getBasicRow() {
         return 0;
     }
 
-    /**
-     * @return
-     */
     public int getBasicColumn() {
         return 0;
     }
 
-    /**
-     * @param hssfCell
-     */
     public void wirteHssfCell(HSSFCell hssfCell) {
 
     }
 
-    /**
-     * @return
-     */
     public final int getRowCount() {
         int rowCount = getBasicRow();
         if (children != null) {
@@ -128,9 +91,6 @@ public class XlsCell {
         return rowCount;
     }
 
-    /**
-     * @return
-     */
     public final int getColumnCount() {
         int columnCount = getBasicColumn();
         if (children != null) {

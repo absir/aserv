@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-12-25 下午3:25:07
  */
 package com.absir.server.route;
@@ -16,39 +16,16 @@ import com.absir.server.in.InModel;
 
 import java.util.List;
 
-/**
- * @author absir
- */
 public class RouteMatcher extends InMatcher {
 
-    /**
-     * routeAction
-     */
     private RouteAction routeAction;
 
-    /**
-     * inMethods
-     */
     private InMethod[] inMethods;
 
-    /**
-     * parameterNames
-     */
     private String[] parameterNames;
 
-    /**
-     * routeParameter
-     */
     private RouteParameter routeParameter;
 
-    /**
-     * @param routeAction
-     * @param mapping
-     * @param suffix
-     * @param inMethods
-     * @param parameterNames
-     * @param routeParameter
-     */
     public RouteMatcher(RouteAction routeAction, String mapping, String suffix, List<InMethod> inMethods, String[] parameterNames, RouteParameter routeParameter) {
         super(mapping, suffix);
         this.routeAction = routeAction;
@@ -58,49 +35,27 @@ public class RouteMatcher extends InMatcher {
         this.routeParameter = routeParameter;
     }
 
-    /**
-     * @return the routeAction
-     */
     public RouteAction getRouteAction() {
         return routeAction;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.InMatcher#getParameterLength()
-     */
     @Override
     public int getParameterLength() {
         return parameterNames == null ? 0 : parameterNames.length;
     }
 
-    /**
-     * @return the routeParameter
-     */
     public RouteParameter getRouteParameter() {
         return routeParameter;
     }
 
-    /**
-     * @return
-     */
     public int getInMethodLength() {
         return inMethods == null ? 0 : inMethods.length;
     }
 
-    /**
-     * @param inMethod
-     * @return
-     */
     public boolean find(InMethod inMethod) {
         return inMethod == null || inMethods == null ? true : KernelArray.contain(inMethods, inMethod);
     }
 
-    /**
-     * @param parameters
-     * @return
-     */
     public InModel find(String[] parameters) {
         int length = parameters.length;
         if (parameterNames == null || length != parameterNames.length) {
@@ -116,11 +71,6 @@ public class RouteMatcher extends InMatcher {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "[" + (inMethods == null ? "" : KernelString.implode(inMethods, ',')) + "]" + (getMapping() == null ? "" : new String(getMapping()))

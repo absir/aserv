@@ -10,14 +10,8 @@ package com.absir.property;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelString;
 
-/**
- * @author absir
- */
 public class PropertyParams implements PropertyFactory {
 
-    /**
-     * PARAMS_CONVERT
-     */
     private static final PropertyConvert PARAMS_CONVERT = new PropertyConvert() {
 
         @Override
@@ -35,13 +29,6 @@ public class PropertyParams implements PropertyFactory {
         }
     };
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyFactory#getPropertyConvert(com.absir.property
-     * .Property)
-     */
     @Override
     public PropertyConvert getPropertyConvert(Property property) {
         return PARAMS_CONVERT;

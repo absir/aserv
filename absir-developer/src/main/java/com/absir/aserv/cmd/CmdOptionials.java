@@ -19,31 +19,15 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 public class CmdOptionials {
 
-    /**
-     * opitional
-     */
     private Opitional<?> opitional;
 
-    /**
-     * keyMapOpitional
-     */
     private Map<String, Opitional<?>> keyMapOpitional = new LinkedHashMap<String, Opitional<?>>();
 
-    /**
-     * optionialStoredFile
-     */
     private File optionialStoredFile;
 
-    /**
-     * @param argCmd
-     * @return
-     */
     public boolean proccessArgCmd(String argCmd) {
         int length = argCmd.length();
         if (length == 0) {
@@ -79,9 +63,6 @@ public class CmdOptionials {
         return true;
     }
 
-    /**
-     * @param storedFile
-     */
     public void loadOptionialStoredFile(File storedFile) {
         if (optionialStoredFile == null) {
             optionialStoredFile = storedFile;
@@ -123,47 +104,20 @@ public class CmdOptionials {
         }
     }
 
-    /**
-     * @param key
-     * @param optionalClass
-     * @param defaultValue
-     * @return
-     */
     public <T> Opitional<T> putOpitional(String key, Class<? extends T> optionalClass, T defaultValue) {
         return putOpitional(key, optionalClass, defaultValue, true);
     }
 
-    /**
-     * @param key
-     * @param optionalClass
-     * @param defaultValue
-     * @param stored
-     * @return
-     */
     public <T> Opitional<T> putOpitional(String key, Class<? extends T> optionalClass, T defaultValue, boolean stored) {
         Opitional<T> opitional = new Opitional<T>(optionalClass, defaultValue, stored);
         keyMapOpitional.put(key, opitional);
         return opitional;
     }
 
-    /**
-     * @param key
-     * @param optionalClass
-     * @param defaultValue
-     * @param activeValue
-     * @return
-     */
     public <T> OpitionalValue<T> putOpitionalValue(String key, Class<? extends T> optionalClass, T defaultValue, T activeValue) {
         return putOpitionalValue(key, optionalClass, defaultValue, activeValue, false);
     }
 
-    /**
-     * @param key
-     * @param optionalClass
-     * @param defaultValue
-     * @param activeValue
-     * @return
-     */
     public <T> OpitionalValue<T> putOpitionalValue(String key, Class<? extends T> optionalClass, T defaultValue, T activeValue,
                                                    boolean stored) {
         OpitionalValue<T> opitionalValue = new OpitionalValue<T>(optionalClass, defaultValue, stored, activeValue);
@@ -171,129 +125,65 @@ public class CmdOptionials {
         return opitionalValue;
     }
 
-    /**
-     * @author absir
-     */
     public static class Opitional<T> {
 
-        /**
-         * type
-         */
         protected Class<? extends T> type;
 
-        /**
-         * value
-         */
         protected T value;
 
-        /**
-         * stored
-         */
         protected boolean stored;
 
-        /**
-         * modified
-         */
         protected boolean modified;
 
-        /**
-         * @param optionalClass
-         * @param defaultValue
-         * @param stored
-         */
         protected Opitional(Class<? extends T> optionalClass, T defaultValue, boolean stored) {
             this.type = optionalClass;
             this.value = defaultValue;
             this.stored = stored;
         }
 
-        /**
-         * @return the type
-         */
         public Class<? extends T> getType() {
             return type;
         }
 
-        /**
-         * @return the value
-         */
         public T getValue() {
             return value;
         }
 
-        /**
-         * @param value the value to set
-         */
         public void setValue(T value) {
             this.value = value;
         }
 
-        /**
-         * @return the stored
-         */
         public boolean isStored() {
             return stored;
         }
 
-        /**
-         * @param stored the stored to set
-         */
         public void setStored(boolean stored) {
             this.stored = stored;
         }
 
-        /**
-         * @return the modified
-         */
         public boolean isModified() {
             return modified;
         }
 
-        /**
-         * @param modified the modified to set
-         */
         public void setModified(boolean modified) {
             this.modified = modified;
         }
 
-        /**
-         * @param opitionalValue
-         */
         public void setOpitionalValue(Object opitionalValue) {
             modified = true;
             value = DynaBinder.to(opitionalValue, type);
         }
     }
 
-    /**
-     * @param <T>
-     * @author absir
-     */
     public static class OpitionalValue<T> extends Opitional<T> {
 
-        /**
-         * activeValue
-         */
         private T activeValue;
 
-        /**
-         * @param optionalClass
-         * @param defaultValue
-         * @param stored
-         * @param activeValue
-         */
         protected OpitionalValue(Class<? extends T> optionalClass, T defaultValue, boolean stored, T activeValue) {
             super(optionalClass, defaultValue, stored);
             this.activeValue = activeValue;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.cmd.CmdOptionials.Opitional#setOpitionalValue(java
-         * .lang.Object)
-         */
         @Override
         public void setOpitionalValue(Object opitionalValue) {
             modified = true;

@@ -10,10 +10,6 @@ package com.absir.aserv.menu.value;
 import com.absir.aserv.menu.MenuContextUtils;
 import com.absir.aserv.system.bean.value.JaLang;
 
-/**
- * @author absir
- *
- */
 public enum MeUrlType {
 
     @JaLang("后台链接")

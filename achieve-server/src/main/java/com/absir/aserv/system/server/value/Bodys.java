@@ -12,17 +12,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- *
- */
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Bodys {
 
-    /**
-     * @return
-     */
     int value() default 0;
 
 }

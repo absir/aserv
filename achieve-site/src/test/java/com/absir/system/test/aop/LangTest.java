@@ -19,10 +19,6 @@ import org.junit.Test;
 
 import javax.persistence.Embeddable;
 
-/**
- * @author absir
- *
- */
 public class LangTest extends AbstractTestInject {
 
     @Test
@@ -68,9 +64,6 @@ public class LangTest extends AbstractTestInject {
 
         public String name;
 
-        /**
-         * @return the name
-         */
         @Langs
         public String getName() {
             return name;
@@ -83,19 +76,11 @@ public class LangTest extends AbstractTestInject {
 
         public LangEmbed langEmbed = new LangEmbed();
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.core.base.IBase#getId()
-         */
         @Override
         public Long getId() {
             return id;
         }
 
-        /**
-         * @return the langEmbed
-         */
         public LangEmbed getLangEmbed() {
             return langEmbed;
         }

@@ -25,9 +25,6 @@ import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 
-/**
- * @author absir
- */
 @MaEntity(parent = {@MaMenu("附件管理")}, name = "上传")
 @JaModel(desc = true)
 @Cacheable
@@ -72,9 +69,6 @@ public class JUpload extends JbBean implements JiPass, ICrudBean {
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
     private long passTime;
 
-    /**
-     * @return
-     */
     public String getDirPath() {
         if (dirPath == null) {
             dirPath = "";
@@ -83,118 +77,66 @@ public class JUpload extends JbBean implements JiPass, ICrudBean {
         return dirPath;
     }
 
-    /**
-     * @param dirPath
-     */
     public void setDirPath(String dirPath) {
         this.dirPath = dirPath;
     }
 
-    /**
-     * @return
-     */
     public String getFilename() {
         return filename;
     }
 
-    /**
-     * @param filename
-     */
     public void setFilename(String filename) {
         this.filename = filename;
     }
 
-    /**
-     * @return the fileType
-     */
     public String getFileType() {
         return fileType;
     }
 
-    /**
-     * @param fileType the fileType to set
-     */
     public void setFileType(String fileType) {
         this.fileType = fileType;
     }
 
-    /**
-     * @return
-     */
     public boolean isImaged() {
         return imaged;
     }
 
-    /**
-     * @param imaged
-     */
     public void setImaged(boolean imaged) {
         this.imaged = imaged;
     }
 
-    /**
-     * @return
-     */
     public long getFileSize() {
         return fileSize;
     }
 
-    /**
-     * @param fileSize
-     */
     public void setFileSize(long fileSize) {
         this.fileSize = fileSize;
     }
 
-    /**
-     * @return the userId
-     */
     public long getUserId() {
         return userId;
     }
 
-    /**
-     * @param userId the userId to set
-     */
     public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    /**
-     * @return the createTime
-     */
     public long getCreateTime() {
         return createTime;
     }
 
-    /**
-     * @param createTime the createTime to set
-     */
     public void setCreateTime(long createTime) {
         this.createTime = createTime;
     }
 
-    /**
-     * @return the passTime
-     */
     public long getPassTime() {
         return passTime;
     }
 
-    /**
-     * @param passTime the passTime to set
-     */
     public void setPassTime(long passTime) {
         this.passTime = passTime;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.crud.value.ICrudBean#proccessCrud(com.absir.aserv
-     * .system.bean.value.JaCrud.Crud, com.absir.aserv.crud.CrudHandler)
-     */
     @Override
     public void proccessCrud(Crud crud, CrudHandler handler) {
         UploadCrudFactory.ME.crud(this, crud, handler);

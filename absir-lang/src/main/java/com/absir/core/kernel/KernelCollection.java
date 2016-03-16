@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-4-15 下午5:41:36
  */
 package com.absir.core.kernel;
@@ -10,17 +10,9 @@ package com.absir.core.kernel;
 import java.lang.reflect.Array;
 import java.util.*;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class KernelCollection {
 
-    /**
-     * @param collection
-     * @param cls
-     * @return
-     */
     public static <T> T getAssignable(Collection<?> collection, Class<T> cls) {
         for (Object ele : collection) {
             if (cls.isAssignableFrom(ele.getClass())) {
@@ -31,11 +23,6 @@ public class KernelCollection {
         return null;
     }
 
-    /**
-     * @param lootCards
-     * @param card
-     * @return
-     */
     public static <T> boolean contain(List<T> collection, T element) {
         for (T ele : collection) {
             if (ele == element) {
@@ -46,10 +33,6 @@ public class KernelCollection {
         return false;
     }
 
-    /**
-     * @param collection
-     * @return
-     */
     public static <T> T anyObject(Collection<? extends T> collection) {
         if (collection == null) {
             return null;
@@ -62,11 +45,6 @@ public class KernelCollection {
         return null;
     }
 
-    /**
-     * @param list
-     * @param componentType
-     * @return
-     */
     public static <T> T[] toArray(Collection<? extends T> collection, Class<T> componentType) {
         if (collection == null) {
             return null;
@@ -81,11 +59,6 @@ public class KernelCollection {
         return array;
     }
 
-    /**
-     * @param collection
-     * @param componentType
-     * @return
-     */
     public static <T> T[] castToArray(Collection collection, Class<T> componentType) {
         if (collection == null) {
             return null;
@@ -100,21 +73,12 @@ public class KernelCollection {
         return array;
     }
 
-    /**
-     * @param list
-     * @param array
-     */
     public static <T> void addAll(Collection<T> list, T[] array) {
         for (T value : array) {
             list.add(value);
         }
     }
 
-    /**
-     * @param collection
-     * @param to
-     * @return
-     */
     public static boolean equals(Collection collection, Collection to) {
         if (collection == to) {
             return true;
@@ -135,20 +99,12 @@ public class KernelCollection {
         return iteratorTo.hasNext() ? false : true;
     }
 
-    /**
-     * @param collection
-     * @param to
-     */
     public static void copy(Collection collection, Collection to) {
         for (Object el : collection) {
             to.add(el);
         }
     }
 
-    /**
-     * @param collection
-     * @return
-     */
     public static Map toMap(Collection collection) {
         if (collection == null) {
             return null;

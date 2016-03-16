@@ -21,10 +21,6 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Lob;
 
-/**
- * @author absir
- *
- */
 @MaEntity(parent = {@MaMenu("节点管理")}, name = "同步", value = @MaMenu(order = -127))
 @JaModel(desc = true)
 @Entity
@@ -52,76 +48,42 @@ public class JSlaveSynch extends JbBeanSS {
     @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKED)
     private boolean slaveAutoSynch;
 
-    /**
-     * @return the uri
-     */
     public String getUri() {
         return uri;
     }
 
-    /**
-     * @param uri the uri to set
-     */
     public void setUri(String uri) {
         this.uri = uri;
     }
 
-    /**
-     * @return the postData
-     */
     public byte[] getPostData() {
         return postData;
     }
 
-    /**
-     * @param postData
-     *            the postData to set
-     */
     public void setPostData(byte[] postData) {
         this.postData = postData;
     }
 
-    /**
-     * @return the updateTime
-     */
     public long getUpdateTime() {
         return updateTime;
     }
 
-    /**
-     * @param updateTime
-     *            the updateTime to set
-     */
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
     }
 
-    /**
-     * @return the synched
-     */
     public boolean isSynched() {
         return synched;
     }
 
-    /**
-     * @param synched
-     *            the synched to set
-     */
     public void setSynched(boolean synched) {
         this.synched = synched;
     }
 
-    /**
-     * @return the slaveAutoSynch
-     */
     public boolean isSlaveAutoSynch() {
         return slaveAutoSynch;
     }
 
-    /**
-     * @param slaveAutoSynch
-     *            the slaveAutoSynch to set
-     */
     public void setSlaveAutoSynch(boolean slaveAutoSynch) {
         this.slaveAutoSynch = slaveAutoSynch;
     }

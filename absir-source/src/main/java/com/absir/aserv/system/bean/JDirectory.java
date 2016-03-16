@@ -9,10 +9,6 @@ package com.absir.aserv.system.bean;
 
 import javax.persistence.Entity;
 
-/**
- * @author absir
- *
- */
 @Entity
 public class JDirectory extends JbResource {
 }

@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年11月18日 下午6:11:48
  */
 package com.absir.core.test;
@@ -17,9 +17,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * @author absir
- */
 @RunWith(value = JUnit4.class)
 public class MapTest {
 

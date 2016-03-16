@@ -16,121 +16,56 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- */
 public class DBField implements IField {
 
-    /**
-     * crudField
-     */
     protected JCrudField crudField;
 
-    /**
-     * valueField
-     */
     protected IField valueField;
 
-    /**
-     * entityName
-     */
     protected String entityName;
 
-    /**
-     * valueEntityName
-     */
     protected String valueEntityName;
 
-    /**
-     * caption
-     */
     protected String caption;
 
-    /**
-     * groups
-     */
     protected String[] groups;
 
-    /**
-     * generated
-     */
     protected boolean generated;
 
-    /**
-     * canOrder
-     */
     protected boolean canOrder = true;
 
-    /**
-     * nullable
-     */
     protected boolean nullable = true;
 
-    /**
-     * collection
-     */
     protected boolean collection;
 
-    /**
-     * mappedBy
-     */
     protected String mappedBy;
 
-    /**
-     * types
-     */
     protected List<String> types = new ArrayList<String>();
 
-    /**
-     * editable
-     */
     protected JeEditable editable = JeEditable.ENABLE;
 
-    /**
-     * metas
-     */
     protected Map<String, Object> metas = new HashMap<String, Object>();
 
-    /**
-     * defaultEntity
-     */
     protected Object defaultEntity;
-    /**
-     * nodeName
-     */
+
     private String nodeName;
 
-    /**
-     *
-     */
     public DBField() {
         crudField = new JCrudField();
     }
 
-    /**
-     * @param column
-     */
     public DBField(DBColumn column) {
         this();
     }
 
-    /**
-     * @return the crudField
-     */
     public JCrudField getCrudField() {
         return crudField;
     }
 
-    /**
-     * @return
-     */
     public String getName() {
         return crudField.getName();
     }
 
-    /**
-     * @return
-     */
     public String getNodeName() {
         if (nodeName == null) {
             nodeName = crudField.getName().replace('.', '-');
@@ -139,109 +74,62 @@ public class DBField implements IField {
         return nodeName;
     }
 
-    /**
-     * @return
-     */
     public Class<?> getType() {
         return crudField.getType();
     }
 
-    /**
-     * @return
-     */
     public IField getValueField() {
         return valueField;
     }
 
-    /**
-     * @return
-     */
     public String getEntityName() {
         return entityName;
     }
 
-    /**
-     * @return
-     */
     public String getValueEntityName() {
         return valueEntityName;
     }
 
-    /**
-     * @return the caption
-     */
     public String getCaption() {
         return caption;
     }
 
-    /**
-     * @return the groups
-     */
     public String[] getGroups() {
         return groups;
     }
 
-    /**
-     * @return the generated
-     */
     public boolean isGenerated() {
         return generated;
     }
 
-    /**
-     * @return the canOrder
-     */
     public boolean isCanOrder() {
         return canOrder;
     }
 
-    /**
-     * @return the nullable
-     */
     public boolean isNullable() {
         return nullable;
     }
 
-    /**
-     * @return the collection
-     */
     public boolean isCollection() {
         return collection;
     }
 
-    /**
-     * @return the mappedBy
-     */
     public String getMappedBy() {
         return mappedBy;
     }
 
-    /**
-     * @return the types
-     */
     public List<String> getTypes() {
         return types;
     }
 
-    /**
-     * @return the editable
-     */
     public JeEditable getEditable() {
         return editable;
     }
 
-    /**
-     * @return the metas
-     */
     public Map<String, Object> getMetas() {
         return metas;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.support.developer.IField#getDefaultEntity()
-     */
     @Override
     public final Object getDefaultEntity() {
         if (defaultEntity == null) {
@@ -251,9 +139,6 @@ public class DBField implements IField {
         return defaultEntity;
     }
 
-    /**
-     * @return
-     */
     protected Object instanceDefaultEntity() {
         return null;
     }

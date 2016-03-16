@@ -19,21 +19,10 @@ import org.hibernate.Session;
 
 import java.nio.channels.SocketChannel;
 
-/**
- * @author absir
- *
- */
 @Base
 @Bean
 public class InputMasterService extends InputMasterContext {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.master.InputMasterContext#registerSlaveKey(java.io.
-     * Serializable, byte[], java.lang.String, java.lang.String[],
-     * java.nio.channels.SocketChannel)
-     */
     @Transaction
     @Override
     public void registerSlaveKey(String id, byte[] secerets, String validate, String[] params,
@@ -72,12 +61,6 @@ public class InputMasterService extends InputMasterContext {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.master.InputMasterContext#unregisterSlaveKey(java.io.
-     * Serializable, java.nio.channels.SocketChannel)
-     */
     @Transaction
     @Override
     public MasterChannelContext unregisterSlaveKey(String id, SocketChannel socketChannel) {

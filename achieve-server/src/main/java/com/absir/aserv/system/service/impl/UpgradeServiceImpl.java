@@ -16,19 +16,10 @@ import com.absir.servlet.InDispathContext;
 
 import java.io.IOException;
 
-/**
- * @author absir
- *
- */
 @Base
 @Bean
 public class UpgradeServiceImpl extends UpgradeService {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.upgrade.UpgradeService#stop()
-     */
     @Override
     public Object stop() throws IOException {
         Object context = InDispathContext.getServletContext();
@@ -60,11 +51,6 @@ public class UpgradeServiceImpl extends UpgradeService {
         return super.stop();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.upgrade.UpgradeService#start(java.lang.Object)
-     */
     @Override
     public void start(Object stopDone) throws IOException {
         boolean noCommand = KernelString.isEmpty(getRestartCommand());

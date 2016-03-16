@@ -27,77 +27,39 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- */
 @Bean
 public class ScheduleFactory extends UtilSchelduer<ScheduleRunable> implements IMethodInject<Schedule> {
 
-    /**
-     * LOGGER
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleFactory.class);
 
     @Value(value = "schedule.max")
     private long scheduleMax = 300000;
 
-    /**
-     *
-     */
     @Started
     protected void started() {
         start();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.util.UtilSchelduer#logThrowable(java.lang.Throwable)
-     */
     @Override
     protected void logThrowable(Throwable e) {
         LOGGER.error("failed!", e);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.util.UtilSchelduer#getMaxSleepTime()
-     */
     @Override
     protected long getMaxSleepTime() {
         return scheduleMax;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.inject.IMethodInject#isRequired()
-     */
     @Override
     public boolean isRequired() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.inject.IMethodInject#getInjects(com.absir.bean.basis.
-     * BeanScope , com.absir.bean.basis.BeanDefine, java.lang.reflect.Method)
-     */
     @Override
     public Schedule getInjects(BeanScope beanScope, BeanDefine beanDefine, Method method) {
         return method.getAnnotation(Schedule.class);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.inject.IMethodInject#setInjectMethod(java.lang.Object,
-     * java.lang.reflect.Method, java.lang.Object,
-     * com.absir.bean.inject.InjectMethod)
-     */
     @Override
     public void setInjectMethod(Schedule inject, Method method, Object beanObject, InjectMethod injectMethod) {
         ScheduleRunableAbstract scheduleRunable;

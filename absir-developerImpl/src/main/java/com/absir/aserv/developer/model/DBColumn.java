@@ -7,10 +7,6 @@
  */
 package com.absir.aserv.developer.model;
 
-/**
- * @author absir
- *
- */
 public class DBColumn {
 
 }

@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-12-23 下午4:31:39
  */
 package com.absir.bean.core;
@@ -19,54 +19,27 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author absir
- */
 public class BeanDefineDiscover {
 
-    /**
-     * Instance
-     */
     public static BeanDefineDiscover Instance;
 
-    /**
-     * MethodOrCtorMapParameterNames
-     */
     private static Map<AccessibleObject, String[]> MethodOrCtorMapParameterNames = new HashMap<AccessibleObject, String[]>();
 
-    /**
-     * adaptiveParanamer
-     */
     protected Paranamer adaptiveParanamer = new AdaptiveParanamer();
 
-    /**
-     *
-     */
     private BeanDefineDiscover() {
     }
 
-    /**
-     *
-     */
     public static void open() {
         if (Instance == null) {
             Instance = new BeanDefineDiscover();
         }
     }
 
-    /**
-     * @param methodOrCtor
-     * @return
-     */
     public static String[] paramterNames(AccessibleObject methodOrCtor) {
         return paramterNames(methodOrCtor, methodOrCtor instanceof Method ? ((Method) methodOrCtor).getParameterAnnotations() : ((Constructor<?>) methodOrCtor).getParameterAnnotations());
     }
 
-    /**
-     * @param methodOrCtor
-     * @param parameterAnnotations
-     * @return
-     */
     public static String[] paramterNames(AccessibleObject methodOrCtor, Annotation[][] parameterAnnotations) {
         if (parameterAnnotations == null || parameterAnnotations.length == 0) {
             return null;
@@ -114,9 +87,6 @@ public class BeanDefineDiscover {
         return parameterNames;
     }
 
-    /**
-     *
-     */
     public static void clear() {
         if (Instance != null) {
             Instance.adaptiveParanamer = null;
@@ -125,11 +95,6 @@ public class BeanDefineDiscover {
         MethodOrCtorMapParameterNames.clear();
     }
 
-    /**
-     * @param methodOrCtor
-     * @param annotations
-     * @return
-     */
     public String[] getParamterNames(AccessibleObject methodOrCtor) {
         if (adaptiveParanamer == null) {
             adaptiveParanamer = new AdaptiveParanamer();

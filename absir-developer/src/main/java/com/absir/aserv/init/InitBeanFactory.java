@@ -52,35 +52,20 @@ import java.sql.Statement;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class InitBeanFactory {
 
-    /**
-     * ME
-     */
     public static final InitBeanFactory ME = BeanFactoryUtils.get(InitBeanFactory.class);
-    /**
-     * LOGGER
-     */
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(InitBeanFactory.class);
-    /**
-     * appName
-     */
+
     @Value(value = "appName")
     protected String appName;
 
-    /**
-     * appRoute
-     */
     @Value(value = "appRoute")
     protected String appRoute;
-    /**
-     * oldVersion
-     */
+
     protected String oldVersion;
     @Value("appCode")
     private String appCode = "";
@@ -88,24 +73,13 @@ public class InitBeanFactory {
     private String version = "0.0.1";
     @Value("versionName")
     private String versionName = "developer";
-    /**
-     * versionSqlCount
-     */
+
     private int versionSqlCount = 0;
 
-    /**
-     * versionRevert
-     */
     private String versionRevert;
 
-    /**
-     * nameMapInitBean
-     */
     private Map<String, Object> nameMapInitBean = new HashMap<String, Object>();
 
-    /**
-     * @return
-     */
     public static boolean isRequireInit() {
         return BeanFactoryUtils.getEnvironment() != Environment.PRODUCT && ME.oldVersion == "0";
     }
@@ -146,74 +120,42 @@ public class InitBeanFactory {
         }
     }
 
-    /**
-     * @return the appName
-     */
     public String getAppName() {
         return appName;
     }
 
-    /**
-     * @return the appRoute
-     */
     public String getAppRoute() {
         return appRoute;
     }
 
-    /**
-     * @return the appCode
-     */
     public String getAppCode() {
         return appCode;
     }
 
-    /**
-     * @return the version
-     */
     public String getVersion() {
         return version;
     }
 
-    /**
-     * @return the versionName
-     */
     public String getVersionName() {
         return versionName;
     }
 
-    /**
-     * @return the oldVersion
-     */
     public String getOldVersion() {
         return oldVersion;
     }
 
-    /**
-     * @return the versionSqlCount
-     */
     public int getVersionSqlCount() {
         return versionSqlCount;
     }
 
-    /**
-     * @return the versionRevert
-     */
     public String getVersionRevert() {
         return versionRevert;
     }
 
-    /**
-     * @param name
-     * @return
-     */
     public Object getNameInitBean(String name) {
         return nameMapInitBean.get(name);
     }
 
-    /**
-     * @param name
-     * @param initBean
-     */
     public void putNameInitBean(String name, Object bean) {
         if (bean == null) {
             nameMapInitBean.remove(name);
@@ -531,34 +473,16 @@ public class InitBeanFactory {
         }
     }
 
-    /**
-     * @author absir
-     */
     protected static class VersionSqlName {
 
-        /**
-         * sqlName
-         */
         protected String sqlName;
 
-        /**
-         * version
-         */
         protected String version;
 
-        /**
-         * suffix
-         */
         protected String suffix;
 
-        /**
-         * 0 update 1 init 2 data
-         */
         protected int type;
 
-        /**
-         * @param sqlName
-         */
         public VersionSqlName(String sqlName) {
             this.sqlName = sqlName;
             String[] versions = sqlName.split("_", 2);
@@ -577,37 +501,22 @@ public class InitBeanFactory {
             }
         }
 
-        /**
-         * @return the sqlName
-         */
         public String getSqlName() {
             return sqlName;
         }
 
-        /**
-         * @return the version
-         */
         public String getVersion() {
             return version;
         }
 
-        /**
-         * @return the suffix
-         */
         public String getSuffix() {
             return suffix;
         }
 
-        /**
-         * @return the type
-         */
         public int getType() {
             return type;
         }
 
-        /**
-         * @return
-         */
         public String getVersionOrderName() {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(version);

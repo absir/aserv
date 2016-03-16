@@ -11,28 +11,11 @@ import com.absir.server.on.OnPut;
 
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- */
 public interface ReturnedResolver<T> {
 
-    /**
-     * @param method
-     * @return
-     */
     public T getReturned(Method method);
 
-    /**
-     * @param beanClass
-     * @return
-     */
     public T getReturned(Class<?> beanClass);
 
-    /**
-     * @param returnValue
-     * @param returned
-     * @param onPut
-     * @throws Exception
-     */
     public void resolveReturnedValue(Object returnValue, T returned, OnPut onPut) throws Exception;
 }

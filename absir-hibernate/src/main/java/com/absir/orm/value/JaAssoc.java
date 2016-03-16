@@ -10,9 +10,6 @@ package com.absir.orm.value;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JaAssoc {

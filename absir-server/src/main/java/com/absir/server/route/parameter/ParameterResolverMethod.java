@@ -11,16 +11,7 @@ import com.absir.server.in.InMethod;
 
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 public interface ParameterResolverMethod {
 
-    /**
-     * @param parameter
-     * @param inMethods
-     * @return
-     */
     public List<InMethod> resolveMethods(Object parameter, List<InMethod> inMethods);
 }

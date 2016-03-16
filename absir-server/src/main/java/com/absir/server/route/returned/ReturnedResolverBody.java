@@ -24,38 +24,21 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @Base(order = -128)
 @Bean
 public class ReturnedResolverBody implements ReturnedResolver<Integer> {
 
-    /**
-     * ME
-     */
     public static final ReturnedResolverBody ME = BeanFactoryUtils.get(ReturnedResolverBody.class);
-    /**
-     * BODY_CONVERTER_NAME
-     */
+
     protected static final String BODY_CONVERTER_NAME = ReturnedResolverBody.class + "@BODY_CONVERTER_NAME";
-    /**
-     * charset
-     */
+
     protected String charset = ContextUtils.getCharset().displayName();
-    /**
-     * contentTypeCharset
-     */
+
     @Value("server.body.contentType")
     protected String contentTypeCharset = "text/html;" + charset;
-    /**
-     * typeMapConverter
-     */
+
     protected Map<String, IBodyConverter> typeMapConverter;
 
-    /**
-     * @param bodyConverters
-     */
     @Inject(type = InjectType.Selectable)
     protected void initResolver(IBodyConverter[] bodyConverters) {
         if (bodyConverters != null && bodyConverters.length > 0) {
@@ -75,70 +58,35 @@ public class ReturnedResolverBody implements ReturnedResolver<Integer> {
         }
     }
 
-    /**
-     * @param input
-     * @return
-     */
     public IBodyConverter getBodyConverter(Input input) {
         Object converter = input.getAttribute(BODY_CONVERTER_NAME);
         return converter == null || !(converter instanceof IBodyConverter) ? null : (IBodyConverter) converter;
     }
 
-    /**
-     * @param input
-     * @param converter
-     */
     public void setBodyConverter(Input input, IBodyConverter converter) {
         input.setAttribute(BODY_CONVERTER_NAME, converter);
     }
 
-    /**
-     * @return the charset
-     */
     public String getCharset() {
         return charset;
     }
 
-    /**
-     * @return the contentTypeCharset
-     */
     public String getContentTypeCharset() {
         return contentTypeCharset;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.returned.ReturnedResolver#getReturned(java.lang
-     * .reflect.Method)
-     */
     @Override
     public Integer getReturned(Method method) {
         Body body = method.getAnnotation(Body.class);
         return body == null ? null : body.value();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.returned.ReturnedResolver#getReturned(java.lang
-     * .Class)
-     */
     @Override
     public Integer getReturned(Class<?> beanClass) {
         Body body = beanClass.getAnnotation(Body.class);
         return body == null ? null : body.value();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.returned.ReturnedResolver#resolveReturnedValue
-     * (java.lang.Object, java.lang.Object, com.absir.server.on.OnPut)
-     */
     @Override
     public void resolveReturnedValue(Object returnValue, Integer returned, OnPut onPut) throws Exception {
         if (returnValue != null) {

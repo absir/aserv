@@ -19,53 +19,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Inject
 public class ContextMap {
 
-    /**
-     * CONTEXT_MAP_SUPPLY
-     */
     public static final ContextMapSupply CONTEXT_MAP_SUPPLY = BeanFactoryUtils.get(ContextMapSupply.class);
 
-    /**
-     * obj
-     */
     private transient Object obj;
 
-    /**
-     * group
-     */
     private transient int group;
 
-    /**
-     * dataMap
-     */
     private Map<String, Object> dataMap;
 
-    /**
-     * propertyDatas
-     */
     private transient Map<String, PropertyData> propertyDatas;
 
-    /**
-     * propertyCompares
-     */
     private transient List<Object> propertyCompares = new ArrayList<Object>();
 
-    /**
-     * @param obj
-     */
     public ContextMap(Object obj) {
         this(obj, 0);
     }
 
-    /**
-     * @param obj
-     */
     public ContextMap(Object obj, int group) {
         this.obj = obj;
         this.group = group;
@@ -81,10 +54,6 @@ public class ContextMap {
         }
     }
 
-    /**
-     * @param name
-     * @param data
-     */
     public void put(String name, Object data) {
         if (dataMap == null) {
             dataMap = new HashMap<String, Object>();
@@ -93,9 +62,6 @@ public class ContextMap {
         dataMap.put(name, data);
     }
 
-    /**
-     * @return
-     */
     public Map<String, Object> comparedMap() {
         Map<String, Object> comparedMap = new HashMap<String, Object>();
         int index = 0;

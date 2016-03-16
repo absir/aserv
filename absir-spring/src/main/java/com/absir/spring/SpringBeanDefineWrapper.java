@@ -4,13 +4,8 @@ import com.absir.bean.basis.BeanDefine;
 import com.absir.bean.basis.BeanFactory;
 import com.absir.bean.core.BeanDefineWrapper;
 
-/**
- * Created by absir on 16/3/14.
- */
 public class SpringBeanDefineWrapper extends BeanDefineWrapper {
-    /**
-     * @param beanDefine
-     */
+
     public SpringBeanDefineWrapper(BeanDefine beanDefine) {
         super(beanDefine);
     }

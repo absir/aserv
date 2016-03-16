@@ -7,9 +7,6 @@
  */
 package com.absir.aserv.support;
 
-/**
- * @author absir
- */
 @SuppressWarnings("serial")
 public class DeveloperBreak extends RuntimeException {
 }

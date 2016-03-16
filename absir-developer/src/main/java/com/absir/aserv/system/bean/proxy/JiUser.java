@@ -7,20 +7,10 @@
  */
 package com.absir.aserv.system.bean.proxy;
 
-/**
- * @author absir
- *
- */
 public interface JiUser {
 
-    /**
-     * @return
-     */
     public Long getUserId();
 
-    /**
-     * @param userId
-     */
     public void setUserId(Long userId);
 
 }

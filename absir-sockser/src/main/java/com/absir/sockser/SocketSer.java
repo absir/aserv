@@ -9,33 +9,18 @@ package com.absir.sockser;
 
 import com.absir.server.socket.SocketServer;
 
-/**
- * @author absir
- */
 public class SocketSer extends SocketServer {
 
-    /**
-     * server
-     */
     protected JiServer server;
 
-    /**
-     * @param server
-     */
     public SocketSer(JiServer server) {
         this.server = server;
     }
 
-    /**
-     * @return the server
-     */
     public JiServer getServer() {
         return server;
     }
 
-    /**
-     * @param server the server to set
-     */
     protected void setServer(JiServer server) {
         this.server = server;
     }

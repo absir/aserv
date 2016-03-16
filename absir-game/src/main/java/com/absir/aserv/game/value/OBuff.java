@@ -9,9 +9,6 @@ package com.absir.aserv.game.value;
 
 import com.absir.core.base.Base;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 public abstract class OBuff<T extends OObject> extends Base<Integer> {
 
@@ -28,23 +25,14 @@ public abstract class OBuff<T extends OObject> extends Base<Integer> {
         return id;
     }
 
-    /**
-     * @param id
-     */
     protected void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name the name to set
-     */
     public void setName(String name) {
         this.name = name;
     }

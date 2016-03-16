@@ -12,16 +12,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OnException {
 
-    /**
-     * @return
-     */
     Class<? extends Throwable>[] value();
 
 }

@@ -9,20 +9,9 @@ package com.absir.aserv.menu;
 
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 
-/**
- * @author absir
- */
 public interface IMenuSupport {
 
-    /**
-     * @return
-     */
     public String getMenuType();
 
-    /**
-     * @param menuBean
-     * @param user
-     * @return
-     */
     public boolean isPermission(IMenuBean menuBean, JiUserBase user);
 }

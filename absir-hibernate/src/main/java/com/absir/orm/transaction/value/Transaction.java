@@ -12,41 +12,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- *
- */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Transaction {
 
-    /**
-     * @return
-     */
     String name() default "";
 
-    /**
-     * @return
-     */
     boolean readOnly() default false;
 
-    /**
-     * @return
-     */
     Class<?>[] rollback() default {};
 
-    /**
-     * @return
-     */
     boolean nested() default false;
 
-    /**
-     * @return
-     */
     boolean required() default false;
 
-    /**
-     * @return
-     */
     int timeout() default -1;
 }

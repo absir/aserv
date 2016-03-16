@@ -7,15 +7,8 @@
  */
 package com.absir.aserv.system.bean.value;
 
-/**
- * @author absir
- *
- */
 public interface JiRoleLevel {
 
-    /**
-     * @return
-     */
     public JeRoleLevel getJeRoleLevel();
 
 }

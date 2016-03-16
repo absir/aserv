@@ -17,59 +17,25 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class AopProxyUtils {
 
-    /**
-     * enhancerClass
-     */
     private static Class<?> enhancerClass = KernelClass.forName("net.sf.cglib.proxy.Enhancer");
 
-    /**
-     * aopProxyClass
-     */
     private static Class<?>[] aopProxyClass = new Class<?>[]{AopProxy.class};
 
-    /**
-     * @param beanObject
-     * @return
-     */
     public static <T> T getProxy(T beanObject) {
         return (T) getProxy(beanObject, false, false);
     }
 
-    /**
-     * @param beanObject
-     * @param jdk
-     * @param impl
-     * @return
-     */
     public static AopProxy getProxy(Object beanObject, boolean jdk, boolean impl) {
         return getProxy(beanObject, null, jdk, impl);
     }
 
-    /**
-     * @param beanObject
-     * @param interfaces
-     * @param jdk
-     * @param impl
-     * @return
-     */
     public static AopProxy getProxy(Object beanObject, Set<Class<?>> interfaces, boolean jdk, boolean impl) {
         return getProxy(beanObject, null, interfaces, jdk, impl);
     }
 
-    /**
-     * @param beanObject
-     * @param beanType
-     * @param interfaces
-     * @param jdk
-     * @param impl
-     * @return
-     */
     public static AopProxy getProxy(Object beanObject, Class<?> beanType, Set<Class<?>> interfaces, boolean jdk,
                                     boolean impl) {
         if (interfaces == null) {
@@ -150,10 +116,6 @@ public class AopProxyUtils {
         return (AopProxy) enhancer.create();
     }
 
-    /**
-     * @param beanObject
-     * @return
-     */
     public static <T> T getBean(T beanObject) {
         T bean;
         if (beanObject instanceof AopProxy) {
@@ -166,10 +128,6 @@ public class AopProxyUtils {
         return beanObject;
     }
 
-    /**
-     * @param beanObject
-     * @return
-     */
     public static Class<?> getBeanType(Object beanObject) {
         if (beanObject instanceof AopProxy) {
             AopProxy aopProxy = (AopProxy) beanObject;
@@ -189,21 +147,10 @@ public class AopProxyUtils {
         return beanObject.getClass();
     }
 
-    /**
-     * @param beanObject
-     * @param aopInterceptors
-     * @return
-     */
     public static AopProxy proxyInterceptors(Object beanObject, Collection<AopInterceptor> aopInterceptors) {
         return proxyInterceptors(beanObject, null, aopInterceptors);
     }
 
-    /**
-     * @param beanObject
-     * @param beanType
-     * @param aopInterceptor
-     * @return
-     */
     public static AopProxy proxyInterceptors(Object beanObject, Class<?> beanType,
                                              Collection<AopInterceptor> aopInterceptors) {
         AopProxy aopProxy = null;

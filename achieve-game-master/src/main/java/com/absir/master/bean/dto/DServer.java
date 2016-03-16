@@ -9,10 +9,6 @@ package com.absir.master.bean.dto;
 
 import com.absir.aserv.system.bean.value.JaLang;
 
-/**
- * @author absir
- *
- */
 public class DServer {
 
     @JaLang(value = "服务编号", tag = "serverId")
@@ -37,51 +33,30 @@ public class DServer {
     @JaLang("路径")
     public String path;
 
-    /**
-     * @return the id
-     */
     public long getId() {
         return id;
     }
 
-    /**
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @return the openTime
-     */
     public int getOpenTime() {
         return openTime;
     }
 
-    /**
-     * @return the ip
-     */
     public String getIp() {
         return ip;
     }
 
-    /**
-     * @return the port
-     */
     public int getPort() {
         return port;
     }
 
-    /**
-     * @return the status
-     */
     public int getStatus() {
         return status;
     }
 
-    /**
-     * @return the path
-     */
     public String getPath() {
         return path;
     }

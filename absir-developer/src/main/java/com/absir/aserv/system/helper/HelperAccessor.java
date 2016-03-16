@@ -16,25 +16,12 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 public class HelperAccessor {
 
-    /**
-     * @param field
-     * @return
-     */
     public static boolean isAccessor(Field field) {
         return (field.getModifiers() & PropertyUtils.TRANSIENT_MODIFIER) == 0;
     }
 
-    /**
-     * @param cls
-     * @param filterAnnotations
-     * @return
-     */
     public static List<Field> getFields(Class<?> cls, Class<? extends Annotation>... filterAnnotations) {
         List<Field> fields = new ArrayList<Field>();
         List<Field> fieldSopes = new ArrayList<Field>();
@@ -60,11 +47,6 @@ public class HelperAccessor {
         return fields;
     }
 
-    /**
-     * @param cls
-     * @param filterAnnotations
-     * @return
-     */
     public static List<Accessor> getXlsAccessors(Class<?> cls, Class<? extends Annotation>... filterAnnotations) {
         List<Accessor> accessors = new ArrayList<Accessor>();
         for (Field field : getFields(cls, filterAnnotations)) {

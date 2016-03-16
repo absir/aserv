@@ -15,26 +15,13 @@ import com.absir.core.kernel.KernelClass;
 
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class GameComponent<P extends JbPlayerContext, S extends JbServerContext> {
 
-    /**
-     * PLAYER_CONTEXT_CLASS
-     */
     public final Class<P> PLAYER_CONTEXT_CLASS;
 
-    /**
-     * SERVER_CONTEXT_CLASS
-     */
     public final Class<S> SERVER_CONTEXT_CLASS;
 
-    /**
-     * PLAYER_CLASS
-     */
     public final Class<? extends JbPlayer> PLAYER_CLASS;
 
     // 全部在线角色
@@ -58,9 +45,6 @@ public abstract class GameComponent<P extends JbPlayerContext, S extends JbServe
                 .getContextMap(SERVER_CONTEXT_CLASS);
     }
 
-    /**
-     *
-     */
     public static void KickOffAll() {
     }
 
@@ -72,30 +56,16 @@ public abstract class GameComponent<P extends JbPlayerContext, S extends JbServe
 
     }
 
-    /**
-     * @param playerId
-     * @return
-     */
     public P findPlayerContext(long playerId) {
         return PLAYER_CONTEXT_MAP.get(playerId);
     }
 
-    /**
-     * @param serverId
-     * @return
-     */
     public S findServerContext(long serverId) {
         return SERVER_CONTEXT_MAP.get(serverId);
     }
 
-    /**
-     * @return
-     */
     public abstract JbPlayer createPlayer();
 
-    /**
-     * @return
-     */
     public abstract JbPlayerA createPlayerA();
 
 }

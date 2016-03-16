@@ -29,26 +29,17 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Base
 @Bean
 public abstract class PlayerService {
 
-    /**
-     * ME
-     */
     public static final PlayerService ME = BeanFactoryUtils.get(PlayerService.class);
     /**
      * 用户名验证
      */
     public static final Pattern NAME_PATTERN = Pattern.compile("([\\w]|[\\u4e00-\\u9fa5]){2,8}");
-    /**
-     * LOGGER
-     */
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(PlayerService.class);
 
     /**
@@ -319,10 +310,6 @@ public abstract class PlayerService {
         return playerContext == null ? getPlayer(playerId) : playerContext.getPlayer();
     }
 
-    /**
-     * @param playerId
-     * @return
-     */
     @Transaction(readOnly = true)
     protected JbPlayer getPlayer(Long playerId) {
         return (JbPlayer) BeanDao.get(BeanDao.getSession(), JbPlayerContext.COMPONENT.PLAYER_CLASS, playerId);

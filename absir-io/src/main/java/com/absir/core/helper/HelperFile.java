@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-4-3 下午5:18:30
  */
 package com.absir.core.helper;
@@ -27,15 +27,8 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-/**
- * @author absir
- */
 public class HelperFile extends FileUtils {
 
-    /**
-     * @param filename
-     * @return
-     */
     public static URL existUrl(String filename) {
         try {
             return new URL(filename);
@@ -46,73 +39,36 @@ public class HelperFile extends FileUtils {
         return null;
     }
 
-    /**
-     * @param filename
-     * @return
-     */
     public static boolean urlExists(String filename) {
         return existUrl(filename) != null;
     }
 
-    /**
-     * @param filename
-     * @return
-     */
     public static File existFile(String filename) {
         File fl = new File(filename);
         return (fl.exists() && fl.isFile()) ? fl : null;
     }
 
-    /**
-     * @param filename
-     * @return
-     */
     public static boolean fileExists(String filename) {
         return existFile(filename) != null;
     }
 
-    /**
-     * @param filename
-     * @return
-     */
     public static File existDirectory(String filename) {
         File fl = new File(filename);
         return (fl.exists() && fl.isDirectory()) ? fl : null;
     }
 
-    /**
-     * @param filename
-     * @return
-     */
     public static boolean directoryExists(String filename) {
         return existDirectory(filename) != null;
     }
 
-    /**
-     * @param file
-     * @param callback
-     * @throws IOException
-     */
     public static void doWithReadLine(File file, CallbackBreak<String> callback) throws IOException {
         doWithReadLine(file, Charset.defaultCharset(), callback);
     }
 
-    /**
-     * @param file
-     * @param encoding
-     * @param callback
-     * @throws IOException
-     */
     public static void doWithReadLine(File file, String encoding, CallbackBreak<String> callback) throws IOException {
         doWithReadLine(file, Charsets.toCharset(encoding), callback);
     }
 
-    /**
-     * @param file
-     * @param encoding
-     * @param callback
-     * @throws IOException
-     */
     public static void doWithReadLine(File file, Charset encoding, CallbackBreak<String> callback) throws IOException {
         InputStream input = null;
         try {
@@ -126,21 +82,10 @@ public class HelperFile extends FileUtils {
         }
     }
 
-    /**
-     * @param file
-     * @param input
-     * @throws IOException
-     */
     public static void write(File file, InputStream input) throws IOException {
         HelperIO.copy(input, openOutputStream(file));
     }
 
-    /**
-     * @param file
-     * @param lastModified
-     * @return
-     * @throws IOException
-     */
     public static FileOutputStream openOutputStream(File file, Long lastModified) throws IOException {
         if (!file.exists() || lastModified == null || file.lastModified() < lastModified) {
             synchronized (file) {
@@ -168,14 +113,6 @@ public class HelperFile extends FileUtils {
         return null;
     }
 
-    /**
-     * @param srcFile
-     * @param destFile
-     * @param overWrite
-     * @param preserveFileDate
-     * @return
-     * @throws IOException
-     */
     public static boolean copyFileOverWrite(File srcFile, File destFile, boolean overWrite, boolean preserveFileDate)
             throws IOException {
         if (destFile.exists() && !overWrite) {
@@ -186,13 +123,6 @@ public class HelperFile extends FileUtils {
         return true;
     }
 
-    /**
-     * @param srcDir
-     * @param destDir
-     * @param overWrite
-     * @param preserveFileDate
-     * @throws IOException
-     */
     public static void copyDirectoryOverWrite(File srcDir, File destDir, boolean overWrite, FileFilter filter,
                                               boolean preserveFileDate) throws IOException {
         if (srcDir == null) {
@@ -228,15 +158,6 @@ public class HelperFile extends FileUtils {
         doCopyDirectoryOverWrite(srcDir, destDir, overWrite, filter, preserveFileDate, exclusionList);
     }
 
-    /**
-     * @param srcDir
-     * @param destDir
-     * @param overWrite
-     * @param filter
-     * @param preserveFileDate
-     * @param exclusionList
-     * @throws IOException
-     */
     private static void doCopyDirectoryOverWrite(File srcDir, File destDir, boolean overWrite, FileFilter filter,
                                                  boolean preserveFileDate, List<String> exclusionList) throws IOException {
         File[] srcFiles = filter == null ? srcDir.listFiles() : srcDir.listFiles(filter);
@@ -278,13 +199,6 @@ public class HelperFile extends FileUtils {
         }
     }
 
-    /**
-     * @param url
-     * @param destDir
-     * @param overWrite
-     * @param preserveFileDate
-     * @throws IOException
-     */
     public static void copyDirectoryOverWrite(URL url, File destDir, boolean overWrite, FileFilter filter,
                                               boolean preserveFileDate) throws IOException {
         if (url == null) {
@@ -300,13 +214,6 @@ public class HelperFile extends FileUtils {
         }
     }
 
-    /**
-     * @param jarURLConnection
-     * @param destDir
-     * @param overWrite
-     * @param preserveFileDate
-     * @throws IOException
-     */
     public static void copyDirectoryOverWrite(JarURLConnection jarURLConnection, File destDir, boolean overWrite,
                                               FileFilter filter, boolean preserveFileDate) throws IOException {
         JarFile jarFile = jarURLConnection.getJarFile();
@@ -342,14 +249,6 @@ public class HelperFile extends FileUtils {
         }
     }
 
-    /**
-     * @param inputStream
-     * @param destDir
-     * @param overWrite
-     * @param filter
-     * @param preserveFileDate
-     * @throws IOException
-     */
     public static void copyDirectoryOverWrite(ZipInputStream inputStream, File destDir, boolean overWrite,
                                               FileFilter filter, boolean preserveFileDate) throws IOException {
         String destPath = destDir.getPath() + "/";

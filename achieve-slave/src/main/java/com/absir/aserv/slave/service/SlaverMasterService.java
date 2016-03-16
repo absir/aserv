@@ -28,23 +28,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
 public class SlaverMasterService {
 
-    /**
-     * ME
-     */
     public static final SlaverMasterService ME = BeanFactoryUtils.get(SlaverMasterService.class);
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(SlaverMasterService.class);
 
     /**
@@ -59,13 +49,6 @@ public class SlaverMasterService {
         return addMasterSynch(0, id, uri, postData);
     }
 
-    /**
-     * @param masterIndex
-     * @param id
-     * @param uri
-     * @param postData
-     * @return
-     */
     @Transaction
     public boolean addMasterSynch(int masterIndex, String id, String uri, Object postData) {
         JMasterSynch masterSynch = new JMasterSynch();

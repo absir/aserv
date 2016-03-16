@@ -10,35 +10,18 @@ package com.absir.property;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- */
 public class PropertyErrors {
 
-    /**
-     * propertyErrors
-     */
     private List<PropertyError> propertyErrors = new ArrayList<PropertyError>();
 
-    /**
-     * @return the propertyErrors
-     */
     public List<PropertyError> getPropertyErrors() {
         return propertyErrors;
     }
 
-    /**
-     * @param propertyError
-     */
     public void addPropertyError(PropertyError propertyError) {
         propertyErrors.add(propertyError);
     }
 
-    /**
-     * @param propertyPath
-     * @param errorMessage
-     * @param errorObject
-     */
     public void rejectValue(String propertyPath, String errorMessage, Object errorObject) {
         int size = propertyErrors.size();
         if (size > 0) {
@@ -54,17 +37,10 @@ public class PropertyErrors {
         propertyErrors.add(propertyError);
     }
 
-    /**
-     * @return
-     */
     public boolean hashErrors() {
         return !propertyErrors.isEmpty();
     }
 
-    /**
-     * @param propertyPath
-     * @return
-     */
     public boolean contain(String propertyPath) {
         for (PropertyError propertyError : propertyErrors) {
             if (propertyError.getPropertyPath().equals(propertyPath)) {

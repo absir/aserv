@@ -33,31 +33,16 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 @Bean
 public class SecurityServiceImpl extends SecurityService implements ISecuritySupply, IEntityMerge<JUser> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.security.ISecurityService#getUserBase(java.lang
-     * .Long)
-     */
     @Transaction(readOnly = true)
     @Override
     public JiUserBase getUserBase(Long userId) {
         return loadUser(BeanDao.get(BeanDao.getSession(), JUser.class, userId));
     }
 
-    /**
-     * @param user
-     * @return
-     */
     private JUser loadUser(JUser user) {
         if (user != null) {
             user.getUserRoles().isEmpty();
@@ -66,26 +51,12 @@ public class SecurityServiceImpl extends SecurityService implements ISecuritySup
         return user;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.security.ISecurityService#getUserBase(java.lang
-     * .String)
-     */
     @Transaction(readOnly = true)
     @Override
     public JiUserBase getUserBase(String username) {
         return loadUser(JUserDao.ME.findByUsername(username));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.security.ISecurityService#validator(com.absir
-     * .aserv.system.bean.proxy.JiUserBase, java.lang.String)
-     */
     @Override
     public boolean validator(JiUserBase userBase, String password, int error, long errorTime) {
         if (password == null || !(userBase instanceof IUser)) {
@@ -114,13 +85,6 @@ public class SecurityServiceImpl extends SecurityService implements ISecuritySup
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.service.SecurityService#createSecurityContext
-     * (com.absir.aserv.system.bean.proxy.JiUserBase, java.lang.String)
-     */
     @Override
     protected SecurityContext createSecurityContext(JiUserBase userBase, String sessionId) {
         SecurityContext securityContext = ContextUtils.getContext(SecurityContext.class, sessionId);
@@ -131,13 +95,6 @@ public class SecurityServiceImpl extends SecurityService implements ISecuritySup
         return securityContext;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.service.SecurityService#loginSecurity(com
-     * .absir.aserv.system.security.SecurityContext,
-     * com.absir.aserv.system.bean.proxy.JiUserBase)
-     */
     @Override
     protected void loginSecurity(SecurityContext securityContext, JiUserBase userBase) {
         if (JoEntity.entityClass(userBase.getClass()) == JUser.class) {
@@ -145,13 +102,6 @@ public class SecurityServiceImpl extends SecurityService implements ISecuritySup
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.service.SecurityService#findSecurityContext(
-     * java.lang.String, com.absir.aserv.system.security.SecurityManager)
-     */
     @Override
     @Transaction(readOnly = true)
     protected SecurityContext findSecurityContext(String sessionId, SecurityManager securityManager) {
@@ -178,13 +128,6 @@ public class SecurityServiceImpl extends SecurityService implements ISecuritySup
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.security.ISecuritySupply#saveSession(com.absir
-     * .aserv.system.security.SecurityContext)
-     */
     @Override
     public void saveSession(SecurityContext securityContext) {
         JSession session = new JSession();
@@ -192,7 +135,8 @@ public class SecurityServiceImpl extends SecurityService implements ISecuritySup
         JiUserBase userBase = securityContext.getUser();
         session.setUserId(userBase.getUserId());
         session.setUsername(userBase.getUsername());
-        session.setAddress(HelperLong.longIP(securityContext.getAddress(), -1));
+        session.setAddress(securityContext.getAddress());
+        session.setIp(HelperLong.longIP(securityContext.getAddress(), -1));
         session.setAgent(securityContext.getAgent());
         session.setLastTime(ContextUtils.getContextTime());
         session.setPassTime(securityContext.getMaxExpirationTime());
@@ -203,13 +147,6 @@ public class SecurityServiceImpl extends SecurityService implements ISecuritySup
         BeanService.ME.merge(session);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.orm.hibernate.boost.IEntityMerge#merge(java.lang.String,
-     * java.lang.Object, com.absir.orm.hibernate.boost.IEntityMerge.MergeType,
-     * java.lang.Object)
-     */
     @Transaction
     @Override
     public void merge(String entityName, JUser entity, MergeType mergeType, Object mergeEvent) {
@@ -231,13 +168,6 @@ public class SecurityServiceImpl extends SecurityService implements ISecuritySup
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.security.ISecurityService#openUserBase(java.lang
-     * .String, java.lang.String, java.lang.String)
-     */
     @Override
     public JiUserBase openUserBase(String username, String password, String platform) {
         return null;

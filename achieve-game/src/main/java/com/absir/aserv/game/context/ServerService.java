@@ -12,18 +12,11 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.orm.transaction.value.Transaction;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("rawtypes")
 @Base
 @Bean
 public class ServerService {
 
-    /**
-     * ME
-     */
     public static final ServerService ME = BeanFactoryUtils.get(ServerService.class);
 
     /**

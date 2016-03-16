@@ -11,65 +11,30 @@ import com.absir.core.kernel.KernelList.Orderable;
 import com.absir.core.kernel.KernelString;
 import com.absir.property.value.Prop;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 public class PropertyContext implements Orderable {
 
-    /**
-     * propertyObject
-     */
     PropertyObject propertyObject;
 
-    /**
-     * name
-     */
     String name;
 
-    /**
-     * order
-     */
     int order;
 
-    /**
-     * include
-     */
     int include;
 
-    /**
-     * exclude
-     */
     int exclude;
 
-    /**
-     * beanName
-     */
     String beanName;
 
-    /**
-     * ignore
-     */
     boolean ignore;
 
-    /**
-     * factoryClass
-     */
     Class<? extends PropertyFactory> factoryClass;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return order;
     }
 
-    /**
-     * @param prop
-     */
     public void prop(Prop prop) {
         if (prop != null) {
             if (!KernelString.isEmpty(prop.name())) {
@@ -94,46 +59,26 @@ public class PropertyContext implements Orderable {
         }
     }
 
-    /**
-     * @return the propertyObject
-     */
     public Object getPropertyObject() {
         return propertyObject;
     }
 
-    /**
-     * @param name
-     * @param property
-     * @return
-     */
     public Object getPropertyData(String name, Property property) {
         return propertyObject == null ? null : propertyObject.getPropertyData(name, property);
     }
 
-    /**
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @return the include
-     */
     public int getInclude() {
         return include;
     }
 
-    /**
-     * @return the exclude
-     */
     public int getExclude() {
         return exclude;
     }
 
-    /**
-     * @return the beanName
-     */
     public String getBeanName() {
         return beanName;
     }

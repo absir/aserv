@@ -11,17 +11,8 @@ import com.absir.aserv.system.bean.JUpload;
 
 import java.io.InputStream;
 
-/**
- * @author absir
- */
 public interface IUploadProcessor {
 
-    /**
-     * @param extension
-     * @param upload(maybe NULL)
-     * @param inputStream
-     * @return
-     */
     public InputStream process(String extension, JUpload upload, InputStream inputStream);
 
 }

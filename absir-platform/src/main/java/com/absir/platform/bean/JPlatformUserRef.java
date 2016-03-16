@@ -15,9 +15,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 
-/**
- * @author absir
- */
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
@@ -32,30 +29,18 @@ public class JPlatformUserRef extends JbBase {
     @ManyToOne(fetch = FetchType.EAGER)
     private JPlatformUser platformUser;
 
-    /**
-     * @return the id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * @return the platformUser
-     */
     public JPlatformUser getPlatformUser() {
         return platformUser;
     }
 
-    /**
-     * @param platformUser the platformUser to set
-     */
     public void setPlatformUser(JPlatformUser platformUser) {
         this.platformUser = platformUser;
     }

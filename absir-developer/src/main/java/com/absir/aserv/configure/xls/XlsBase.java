@@ -19,24 +19,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"unchecked"})
 public class XlsBase extends Base<Serializable> {
 
-    /**
-     * XLS_DIR
-     */
     public static String XLS_DIR = "xls/";
-    /**
-     * XLS_SUFFIX
-     */
+
     public static String XLS_SUFFIX = ".xls";
-    /**
-     * id
-     */
+
     @JaLang("编号")
     protected Serializable id;
 
@@ -46,36 +35,19 @@ public class XlsBase extends Base<Serializable> {
     protected void initializing() {
     }
 
-    /**
-     * @return
-     */
     public Serializable getId() {
         return id;
     }
 
-    /**
-     * @param cls
-     * @return
-     */
     protected boolean is(Class<?> cls) {
         return DynaBinderUtils.is(cls) || XlsBase.class.isAssignableFrom(cls);
     }
 
-    /**
-     * @param workbook
-     * @return
-     * @throws IOException
-     */
     protected HSSFWorkbook getHssfWorkbook(String workbook) throws IOException {
         return new HSSFWorkbook(HelperFile.openInputStream(new File(BeanFactoryUtils.getBeanConfig().getResourcePath() + XLS_DIR
                 + workbook + XLS_SUFFIX)));
     }
 
-    /**
-     * @param hssfCell
-     * @param toClass
-     * @return
-     */
     protected <T> T read(HSSFCell hssfCell, Class<T> toClass) {
         Object value = XlsAccessorUtils.getCellObject(hssfCell);
         if (XlsBase.class.isAssignableFrom(toClass)) {
@@ -85,10 +57,6 @@ public class XlsBase extends Base<Serializable> {
         return DynaBinderUtils.to(value, toClass);
     }
 
-    /**
-     * @param hssfCell
-     * @param obj
-     */
     protected void write(HSSFCell hssfCell, Object obj) {
         if (obj == null) {
             return;

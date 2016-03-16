@@ -25,45 +25,23 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 public abstract class BeanDao {
 
-    /**
-     * sessionFactory
-     */
     private static SessionFactory sessionFactory = SessionFactoryUtils.get().getSessionFactory();
 
-    /**
-     * @return
-     */
     public static Session getSession() {
         return sessionFactory.getCurrentSession();
     }
 
-    /**
-     * @param entityClass
-     * @return
-     */
     public static <T> BaseDao<T, ?> getBaseDao(Class<T> entityClass) {
         return BaseDaoImpl.getBaseDaoImpl(entityClass);
     }
 
-    /**
-     * @param entity
-     * @return
-     */
     public static Serializable getIdentifier(Object entity) {
         return SessionFactoryUtils.getIdentifierValue(null, entity, null, null);
     }
 
-    /**
-     * @param entity
-     * @return
-     */
     public static List<Serializable> getIdentifiers(List<Object> entities) {
         List<Serializable> ids = new ArrayList<Serializable>();
         ClassMetadata classMetadata = null;
@@ -81,33 +59,14 @@ public abstract class BeanDao {
         return ids;
     }
 
-    /**
-     * @param session
-     * @param entityClass
-     * @param id
-     * @return
-     */
     public static <T> T get(Session session, Class<T> entityClass, Serializable id) {
         return id == null ? null : (T) session.get(entityClass, id);
     }
 
-    /**
-     * @param session
-     * @param entityName
-     * @param id
-     * @return
-     */
     public static Object get(Session session, String entityName, Serializable id) {
         return id == null ? null : session.get(SessionFactoryUtils.getEntityName(entityName), id);
     }
 
-    /**
-     * @param session
-     * @param entityName
-     * @param entityClass
-     * @param id
-     * @return
-     */
     public static <T> T get(Session session, String entityName, Class<T> entityClass, Serializable id) {
         if (entityName == null) {
             return get(session, entityClass, id);
@@ -122,46 +81,21 @@ public abstract class BeanDao {
         }
     }
 
-    /**
-     * @param session
-     * @param entityClass
-     * @param id
-     * @return
-     */
     public static <T> T find(Session session, Class<T> entityClass, Object id) {
         return get(session, entityClass,
                 DynaBinder.to(id, SessionFactoryUtils.getIdentifierType(null, entityClass, session.getSessionFactory())));
     }
 
-    /**
-     * @param session
-     * @param entityName
-     * @param id
-     * @return
-     */
     public static Object find(Session session, String entityName, Object id) {
         return get(session, entityName,
                 DynaBinder.to(id, SessionFactoryUtils.getIdentifierType(entityName, null, session.getSessionFactory())));
     }
 
-    /**
-     * @param session
-     * @param entityName
-     * @param entityClass
-     * @param id
-     * @return
-     */
     public static <T> T find(Session session, String entityName, Class<T> entityClass, Object id) {
         return get(session, entityName, entityClass,
                 DynaBinder.to(id, SessionFactoryUtils.getIdentifierType(entityName, entityClass, session.getSessionFactory())));
     }
 
-    /**
-     * @param session
-     * @param entityName
-     * @param entity
-     * @return
-     */
     public static Object getLoadedEntity(Session session, String entityName, Object entity) {
         if (session == null) {
             session = SessionFactoryUtils.getSessionFactory(entityName, entity.getClass()).getCurrentSession();
@@ -184,11 +118,6 @@ public abstract class BeanDao {
         return get(session, entityName, entity.getClass(), SessionFactoryUtils.getIdentifierValue(null, entity, session, null));
     }
 
-    /**
-     * @param transactionName
-     * @param transactionAttribute
-     * @return
-     */
     public static TransactionContext<?> open(String transactionName, TransactionAttribute transactionAttribute) {
         SessionFactory sessionFactory = SessionFactoryUtils.get().getNameMapSessionFactory(transactionName);
         if (sessionFactory != null) {
@@ -202,10 +131,6 @@ public abstract class BeanDao {
         return null;
     }
 
-    /**
-     * @param transactionContext
-     * @param e
-     */
     public static void commit(TransactionContext<?> transactionContext, Throwable e) {
         transactionContext.closeCurrent(e, null);
     }

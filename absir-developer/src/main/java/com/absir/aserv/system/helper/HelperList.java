@@ -10,27 +10,12 @@ package com.absir.aserv.system.helper;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 public class HelperList {
 
-    /**
-     * @param list
-     * @param index
-     * @param targets
-     */
     public static <T> void listTargets(List<T> list, int count, Collection<T> targets) {
         listTargets(list, null, count, targets);
     }
 
-    /**
-     * @param list
-     * @param target
-     * @param count
-     * @param targets
-     */
     public static <T> void listTargets(List<T> list, T target, int count, Collection<T> targets) {
         int index = target == null ? 0 : list.indexOf(target);
         if (index < 0) {

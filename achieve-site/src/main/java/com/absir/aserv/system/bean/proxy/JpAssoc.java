@@ -9,10 +9,6 @@ package com.absir.aserv.system.bean.proxy;
 
 import com.absir.orm.value.JiAssoc;
 
-/**
- * @author absir
- *
- */
 public interface JpAssoc extends JiAssoc {
 
 }

@@ -15,29 +15,15 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 public class XlsAccessorContext extends XlsAccessorBean {
 
     protected String beanName;
 
-    /**
-     * isXlsBean
-     */
     private boolean isXlsBean;
 
-    /**
-     * idType
-     */
     private Class<? extends Serializable> idType;
 
-    /**
-     * @param beanClass
-     * @param xlsBase
-     */
     public XlsAccessorContext(Class<?> beanClass, XlsBase xlsBase) {
         super(null, beanClass, beanClass);
         beanName = beanClass.getSimpleName();
@@ -53,27 +39,14 @@ public class XlsAccessorContext extends XlsAccessorBean {
         }
     }
 
-    /**
-     * @return the isXlsBean
-     */
     public boolean isXlsBean() {
         return isXlsBean;
     }
 
-    /**
-     * @return the idType
-     */
     public Class<? extends Serializable> getIdType() {
         return idType;
     }
 
-    /**
-     * @param xlsDao
-     * @param cell
-     * @param xlsBase
-     * @param index
-     * @return
-     */
     public Object newInstance(XlsDao<?, Serializable> xlsDao, Object cell, XlsBase xlsBase, int index) {
         Object bean = null;
         Serializable id = null;
@@ -101,14 +74,6 @@ public class XlsAccessorContext extends XlsAccessorBean {
         return bean;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessorUtils.XlsAccessorBean#
-     * setObject(java.lang.Object, java.lang.Object,
-     * com.absir.aserv.configure.xls.XlsBase,
-     * com.absir.core.kernel.KernelLang.ObjectTemplate)
-     */
     @Override
     public void setObject(Object obj, Object cell, XlsBase xlsBase, ObjectTemplate<Boolean> empty) {
         if (accessors != null) {
@@ -120,12 +85,6 @@ public class XlsAccessorContext extends XlsAccessorBean {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessorUtils.XlsAccessorBean#
-     * getHeader()
-     */
     @Override
     public XlsCell getHeader() {
         XlsCell xlsCell = super.getHeader();
@@ -158,24 +117,11 @@ public class XlsAccessorContext extends XlsAccessorBean {
         return xlsCell;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#writeXlsCells(java.util
-     * .List, java.lang.Object, com.absir.aserv.configure.xls.XlsBase)
-     */
     @Override
     public void writeXlsCells(List<XlsCell> xlsCells, Object obj, XlsBase xlsBase) {
         writeXlsCells(xlsCells, obj, accessors, xlsBase);
     }
 
-    /**
-     * @param xlsCellHeader
-     * @param obj
-     * @param xlsBase
-     * @param rowCounts
-     * @return
-     */
     public XlsCell writeXlsCellBean(XlsCell xlsCellHeader, Object obj, XlsBase xlsBase, int[] rowCounts) {
         if (obj == null) {
             super.writeXlsCells(xlsCellHeader.addColumnList(null), obj, xlsBase);

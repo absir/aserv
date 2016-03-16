@@ -20,16 +20,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class HelperString extends StringUtils {
 
-    /**
-     * NUMBER_FILTER_TEMPLATE
-     */
     public static final FilterTemplate<Entry<Object, Integer>> NUMBER_FILTER_TEMPLATE = new FilterTemplate<Entry<Object, Integer>>() {
 
         @Override
@@ -38,9 +31,7 @@ public class HelperString extends StringUtils {
         }
 
     };
-    /**
-     * PARAM_MAP_IMPLODE_BUILDER
-     */
+
     private static final ImplodeBuilder PARAM_MAP_IMPLODE_BUILDER = new ImplodeBuilder() {
 
         @Override
@@ -53,12 +44,6 @@ public class HelperString extends StringUtils {
         }
     };
 
-    /**
-     * @param str
-     * @param keyClass
-     * @param valueClass
-     * @return
-     */
     public static String paramMap(Map<?, ?> paramMap) {
         if (paramMap == null) {
             return null;
@@ -67,12 +52,6 @@ public class HelperString extends StringUtils {
         return KernelString.implode(paramMap, PARAM_MAP_IMPLODE_BUILDER, null, ",");
     }
 
-    /**
-     * @param str
-     * @param keyClass
-     * @param valueClass
-     * @return
-     */
     public static <K, V> LinkedHashMap<K, V> paramMap(String str, Class<K> keyClass, Class<V> valueClass) {
         if (str == null) {
             return null;
@@ -94,14 +73,6 @@ public class HelperString extends StringUtils {
         return paramMap;
     }
 
-    /**
-     * @param str
-     * @param keyClass
-     * @param valueClass
-     * @param paramIdMap
-     * @param filterTemplate
-     * @return
-     */
     public static <ID extends Serializable, K extends IBase<ID>, V> Map<ID, V> paramIdMap(String str, Class<K> keyClass, Class<V> valueClass, Map<ID, V> paramIdMap,
                                                                                           FilterTemplate<Entry<K, V>> filterTemplate) {
         if (str == null) {
@@ -126,12 +97,6 @@ public class HelperString extends StringUtils {
         return paramIdMap;
     }
 
-    /**
-     * @param str
-     * @param keyClass
-     * @param paramIdMap
-     * @return
-     */
     public static <K extends IBase, M extends Map<? extends Serializable, Integer>> M paramIdNumberMap(String str, Class<K> keyClass, M paramIdMap) {
         return (M) paramIdMap(str, keyClass, Integer.class, (Map<Serializable, Integer>) paramIdMap, (FilterTemplate<Entry<K, Integer>>) (Object) NUMBER_FILTER_TEMPLATE);
     }

@@ -7,19 +7,10 @@
  */
 package com.absir.open.bean.value;
 
-/**
- * @author absir
- */
 public class OErrorData {
 
-    /**
-     * error_code
-     */
     public int error_code;
 
-    /**
-     * error_msg
-     */
     public String error_msg;
 
 }

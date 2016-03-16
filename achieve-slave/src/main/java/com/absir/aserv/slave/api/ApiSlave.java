@@ -15,19 +15,8 @@ import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.Input;
 import com.absir.slave.InputSlave;
 
-/**
- * @author absir
- *
- */
 public class ApiSlave extends ApiServer {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.api.ApiServer#onAuthentication(com.absir.server
-     * .in.Input)
-     */
     @Override
     protected SecurityContext onAuthentication(Input input) throws Throwable {
         SecurityContext context = super.onAuthentication(input);

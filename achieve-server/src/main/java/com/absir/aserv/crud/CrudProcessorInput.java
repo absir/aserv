@@ -9,18 +9,8 @@ package com.absir.aserv.crud;
 
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 
-/**
- * @author absir
- */
 public abstract class CrudProcessorInput<T> implements ICrudProcessorInput<T> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.ICrudProcessor#crud(com.absir.aserv.crud.
-     * CrudProperty, java.lang.Object, com.absir.aserv.crud.CrudHandler,
-     * com.absir.aserv.system.bean.proxy.JiUserBase)
-     */
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user) {
     }

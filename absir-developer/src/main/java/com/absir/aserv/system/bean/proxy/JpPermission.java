@@ -11,15 +11,8 @@ import com.absir.aserv.system.bean.base.JbPermission;
 
 import javax.persistence.Entity;
 
-/**
- * @author absir
- *
- */
 public interface JpPermission {
 
-    /**
-     * @author absir
-     */
     @Entity
     class Permission extends JbPermission {
 

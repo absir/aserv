@@ -12,51 +12,23 @@ import com.absir.core.kernel.KernelString;
 import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "serial", "unchecked"})
 public class XlsBaseTypeDescriptor extends AbstractTypeDescriptor<XlsBase> {
 
-    /**
-     * @param type
-     */
     protected XlsBaseTypeDescriptor(Class<? extends XlsBase> type) {
         super((Class) type);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.hibernate.type.descriptor.java.JavaTypeDescriptor#toString(java.lang
-     * .Object)
-     */
     @Override
     public String toString(XlsBase value) {
         return KernelString.valueOf(value.getId());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.hibernate.type.descriptor.java.JavaTypeDescriptor#fromString(java
-     * .lang.String)
-     */
     @Override
     public XlsBase fromString(String string) {
         return XlsUtils.findXlsBean(getJavaTypeClass(), string);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.hibernate.type.descriptor.java.JavaTypeDescriptor#unwrap(java.lang
-     * .Object, java.lang.Class, org.hibernate.type.descriptor.WrapperOptions)
-     */
     @Override
     public <X> X unwrap(XlsBase value, Class<X> type, WrapperOptions options) {
         if (value == null) {
@@ -66,13 +38,6 @@ public class XlsBaseTypeDescriptor extends AbstractTypeDescriptor<XlsBase> {
         return KernelDyna.to(value.getId(), type);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.hibernate.type.descriptor.java.JavaTypeDescriptor#wrap(java.lang.
-     * Object, org.hibernate.type.descriptor.WrapperOptions)
-     */
     @Override
     public <X> XlsBase wrap(X value, WrapperOptions options) {
         if (value == null) {

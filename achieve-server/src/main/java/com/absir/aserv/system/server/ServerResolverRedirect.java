@@ -19,19 +19,9 @@ import com.absir.servlet.InputRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- *
- */
 @Bean
 public class ServerResolverRedirect implements ReturnedResolver<Boolean> {
 
-    /**
-     * @param url
-     * @param forward
-     * @param input
-     * @throws Exception
-     */
     public static void redirect(String url, boolean forward, Input input) throws Exception {
         if (input instanceof InputRequest) {
             if (url != null) {
@@ -49,39 +39,18 @@ public class ServerResolverRedirect implements ReturnedResolver<Boolean> {
         throw new ServerException(ServerStatus.ON_SUCCESS);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.returned.ReturnedResolver#getReturned(java.lang
-     * .reflect.Method)
-     */
     @Override
     public Boolean getReturned(Method method) {
         Redirect redirect = method.getAnnotation(Redirect.class);
         return redirect == null ? null : redirect.forward();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.returned.ReturnedResolver#getReturned(java.lang
-     * .Class)
-     */
     @Override
     public Boolean getReturned(Class<?> beanClass) {
         Redirect redirect = beanClass.getAnnotation(Redirect.class);
         return redirect == null ? null : redirect.forward();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.returned.ReturnedResolver#resolveReturnedValue
-     * (java.lang.Object, java.lang.Object, com.absir.server.on.OnPut)
-     */
     @Override
     public void resolveReturnedValue(Object returnValue, Boolean returned, OnPut onPut) throws Exception {
         Input input = onPut.getInput();

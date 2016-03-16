@@ -19,27 +19,12 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import java.lang.reflect.Field;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 public class XlsAccessor {
 
-    /**
-     * field
-     */
     private Field field;
 
-    /**
-     * accessor
-     */
     private Accessor accessor;
 
-    /**
-     * @param field
-     * @param cls
-     * @param beanClass
-     */
     public XlsAccessor(Field field, Class<?> cls, Class<?> beanClass) {
         if (field != null) {
             this.field = field;
@@ -47,54 +32,28 @@ public class XlsAccessor {
         }
     }
 
-    /**
-     * @return
-     */
     public Field getField() {
         return field;
     }
 
-    /**
-     * @return
-     */
     public Accessor getAccessor() {
         return accessor;
     }
 
-    /**
-     * @return
-     */
     public boolean isMulti() {
         return false;
     }
 
-    /**
-     * @return
-     */
     public int getColumnCount() {
         return 1;
     }
 
-    /**
-     * @param hssfSheet
-     * @param cells
-     * @param firstRow
-     * @param firstColumn
-     * @param lastRow
-     * @return
-     */
     public int readHssfSheet(HSSFSheet hssfSheet, List<Object> cells, int firstRow, int firstColumn, int lastRow) {
         HSSFRow row = hssfSheet.getRow(firstRow);
         cells.add(row == null ? null : row.getCell(firstColumn));
         return firstRow + 1;
     }
 
-    /**
-     * @param obj
-     * @param cell
-     * @param xlsBase
-     * @param empty
-     */
     public void setObject(Object obj, Object cell, XlsBase xlsBase, ObjectTemplate<Boolean> empty) {
         HSSFCell hssfCell = (HSSFCell) cell;
         if (empty != null && empty.object) {
@@ -106,9 +65,6 @@ public class XlsAccessor {
         accessor.set(obj, xlsBase.read(hssfCell, field.getType()));
     }
 
-    /**
-     * @return
-     */
     public XlsCell getHeader() {
         if (field == null) {
             return new XlsCell();
@@ -119,11 +75,6 @@ public class XlsAccessor {
         return new XlsCellValue(jaLang == null || "".equals(jaLang.value()) ? field.getName() : jaLang.value() + "(" + name + ")");
     }
 
-    /**
-     * @param xlsCells
-     * @param obj
-     * @param xlsBase
-     */
     public void writeXlsCells(List<XlsCell> xlsCells, Object obj, XlsBase xlsBase) {
         xlsCells.add(obj == null ? new XlsCellBase() : new XlsCellObject(accessor.get(obj), xlsBase));
     }

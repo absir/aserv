@@ -20,15 +20,8 @@ import javax.servlet.jsp.PageContext;
 import java.io.*;
 import java.net.MalformedURLException;
 
-/**
- * @author absir
- */
 public class WebJsplUtils extends Pag {
 
-    /**
-     * @param request
-     * @return
-     */
     public static String getServletPath(ServletRequest request) {
         Object requestDispatcherPath = KernelObject.declaredGet(request, "requestDispatcherPath");
         if (requestDispatcherPath != null) {
@@ -42,19 +35,10 @@ public class WebJsplUtils extends Pag {
         return null;
     }
 
-    /**
-     * @param pageContext
-     * @return
-     */
     public static String getServletPath(PageContext pageContext) {
         return getServletPath(pageContext.getRequest());
     }
 
-    /**
-     * @param includePath
-     * @param pageContext
-     * @return
-     */
     public static String getFullIncludePath(String includePath, PageContext pageContext) {
         if (!includePath.startsWith("/")) {
             String servletPath = getServletPath(pageContext);
@@ -66,11 +50,6 @@ public class WebJsplUtils extends Pag {
         return includePath;
     }
 
-    /**
-     * @param includePath
-     * @param pageContext
-     * @return
-     */
     public static String getFullExistIncludePath(String includePath, PageContext pageContext) {
         includePath = getFullIncludePath(includePath, pageContext);
         try {
@@ -85,53 +64,21 @@ public class WebJsplUtils extends Pag {
         return null;
     }
 
-    /**
-     * @param includePath
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
     public static void include(String includePath, ServletRequest request, ServletResponse response) throws ServletException, IOException {
         RequestDispatcher rd = request.getRequestDispatcher(includePath);
         rd.forward(request, response);
     }
 
-    /**
-     * @param includePath
-     * @param request
-     * @param response
-     * @return
-     * @throws ServletException
-     * @throws IOException
-     */
     public static String getIncludeContent(String includePath, ServletRequest request, ServletResponse response) throws ServletException, IOException {
         WebResponseWrapper render = new WebResponseWrapper(response);
         request.getRequestDispatcher(includePath).include(request, render);
         return render.getContent();
     }
 
-    /**
-     * @param includePath
-     * @param pageContext
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
     public static void include(String includePath, PageContext pageContext, ServletRequest request, ServletResponse response) throws ServletException, IOException {
         pageContext.getOut().print(getIncludeContent(includePath, request, response));
     }
 
-    /**
-     * @param includePath
-     * @param pageContext
-     * @param request
-     * @param response
-     * @return
-     * @throws ServletException
-     * @throws IOException
-     */
     public static boolean includeExist(String includePath, PageContext pageContext, ServletRequest request, ServletResponse response) throws ServletException, IOException {
         includePath = getFullExistIncludePath(includePath, pageContext);
         if (includePath != null) {
@@ -142,38 +89,14 @@ public class WebJsplUtils extends Pag {
         return false;
     }
 
-    /**
-     * @param output
-     * @param includeContent
-     * @param response
-     * @throws UnsupportedEncodingException
-     * @throws IOException
-     */
     public static void render(OutputStream output, String includeContent, ServletResponse response) throws UnsupportedEncodingException, IOException {
         output.write(includeContent.getBytes(response.getCharacterEncoding()));
     }
 
-    /**
-     * @param output
-     * @param includePath
-     * @param request
-     * @param response
-     * @throws UnsupportedEncodingException
-     * @throws IOException
-     * @throws ServletException
-     */
     public static void render(OutputStream output, String includePath, ServletRequest request, ServletResponse response) throws UnsupportedEncodingException, IOException, ServletException {
         render(output, getIncludeContent(includePath, request, response), response);
     }
 
-    /**
-     * @param file
-     * @param includePath
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
     public static void render(File file, String includePath, ServletRequest request, ServletResponse response) throws ServletException, IOException {
         FileOutputStream outputStream = HelperFile.openOutputStream(file);
         try {
@@ -184,28 +107,11 @@ public class WebJsplUtils extends Pag {
         }
     }
 
-    /**
-     * @param filepath
-     * @param includePath
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
     public static void render(String filepath, String includePath, HttpServletRequest request, ServletResponse response) throws ServletException, IOException {
         filepath = request.getSession().getServletContext().getRealPath(filepath);
         render(new File(filepath), includePath, request, response);
     }
 
-    /**
-     * @param file
-     * @param lastModified
-     * @param includePath
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
     public static void render(File file, Long lastModified, String includePath, ServletRequest request, ServletResponse response) throws ServletException, IOException {
         FileOutputStream output = null;
         try {
@@ -221,45 +127,17 @@ public class WebJsplUtils extends Pag {
         }
     }
 
-    /**
-     * @param filepath
-     * @param includePath
-     * @param lastModified
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
     public static void render(String filepath, Long lastModified, String includePath, HttpServletRequest request, ServletResponse response) throws ServletException, IOException {
         filepath = request.getSession().getServletContext().getRealPath(filepath);
         render(new File(filepath), lastModified, includePath, request, response);
     }
 
-    /**
-     * @param filepath
-     * @param includePath
-     * @param pageContext
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
     public static void renderInclude(String filepath, String includePath, PageContext pageContext, HttpServletRequest request, ServletResponse response) throws ServletException, IOException {
         filepath = getFullIncludePath(filepath, pageContext);
         render(filepath, includePath, request, response);
         include(filepath, pageContext, request, response);
     }
 
-    /**
-     * @param filepath
-     * @param lastModified
-     * @param includePath
-     * @param pageContext
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
     public static void renderInclude(String filepath, Long lastModified, String includePath, PageContext pageContext, HttpServletRequest request, ServletResponse response) throws ServletException,
             IOException {
         filepath = getFullIncludePath(filepath, pageContext);

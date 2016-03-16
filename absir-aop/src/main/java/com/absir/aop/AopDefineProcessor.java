@@ -29,23 +29,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Basis
 public class AopDefineProcessor implements IBeanDefineSupply, IBeanDefineProcessor, IBeanFactoryAware {
 
-    /**
-     * asynMethodDefines
-     */
     private static AopMethodDefine[] aopMethodDefines = KernelCollection.toArray(BeanFactoryUtils.getOrderBeanObjects(AopMethodDefine.class), AopMethodDefine.class);
 
-    /**
-     * @param beanDefine
-     * @param beanObject
-     * @return
-     */
     public static List<AopInterceptor> getAopInterceptors(BeanDefine beanDefine, Object beanObject) {
         final int length = aopMethodDefines.length;
         if (length == 0) {
@@ -112,13 +101,6 @@ public class AopDefineProcessor implements IBeanDefineSupply, IBeanDefineProcess
         }
     }
 
-    /**
-     * @param length
-     * @param aopInterceptorHolders
-     * @param beanType
-     * @param beanClass
-     * @param methodMapMethodDefines
-     */
     private static void addAopInterceptors(int length, List<AopInterceptorHolder> aopInterceptorHolders, Class<?> beanType, Class<?> beanClass, Map<Method, Set<AopMethodDefine>> methodMapMethodDefines) {
         List<Method> bridgeMethods = null;
         for (Method method : beanClass.getDeclaredMethods()) {
@@ -168,23 +150,11 @@ public class AopDefineProcessor implements IBeanDefineSupply, IBeanDefineProcess
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.kernel.KernelList.Orderable#getOrder()
-     */
     @Override
     public int getOrder() {
         return -255;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanDefineSupply#getBeanDefines(com.absir.bean
-     * .core.BeanFactoryImpl, java.lang.Class)
-     */
     @Override
     public List<BeanDefine> getBeanDefines(BeanFactoryImpl beanFactory, Class<?> beanType) {
         Impl basic = beanType.getAnnotation(Impl.class);
@@ -200,25 +170,11 @@ public class AopDefineProcessor implements IBeanDefineSupply, IBeanDefineProcess
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanDefineProcessor#getBeanDefine(com.absir.bean
-     * .basis.BeanFactory, com.absir.bean.basis.BeanDefine)
-     */
     @Override
     public BeanDefine getBeanDefine(BeanFactory beanFactory, BeanDefine beanDefine) {
         return new AopBeanDefine(beanDefine);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanFactoryAware#beforeRegister(com.absir.bean
-     * .core.BeanFactoryImpl)
-     */
     @Override
     public void beforeRegister(BeanFactoryImpl beanFactory) {
         if (aopMethodDefines == null) {
@@ -229,35 +185,16 @@ public class AopDefineProcessor implements IBeanDefineSupply, IBeanDefineProcess
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.bean.config.IBeanFactoryAware#afterRegister(com.absir.bean.
-     * core.BeanFactoryImpl)
-     */
     @Override
     public void afterRegister(BeanFactoryImpl beanFactory) {
     }
 
-    /**
-     * @author absir
-     */
     private static class AopInterceptorHolder {
 
-        /**
-         * aopInterceptor
-         */
         AopInterceptor aopInterceptor;
 
-        /**
-         * variable
-         */
         Object variable;
 
-        /**
-         * interceptor
-         */
         Object interceptor;
     }
 }

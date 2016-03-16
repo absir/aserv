@@ -36,38 +36,21 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- *
- */
 @Interceptors(AdminServer.Route.class)
 public abstract class AdminServer {
 
-    /**
-     * remember
-     */
     @Value("admin.login.remember")
     protected static boolean remember = true;
-    /**
-     * roleLevel
-     */
+
     @Value("admin.login.level")
     protected static int roleLevel = JeRoleLevel.ROLE_ADMIN.ordinal();
-    /**
-     * route
-     */
+
     private static String route = "admin";
 
-    /**
-     * @return
-     */
     public static String getRoute() {
         return route;
     }
 
-    /**
-     * @throws Exception
-     */
     @Before
     protected SecurityContext onAuthentication(Input input) throws Exception {
         SecurityContext securityContext = SecurityService.ME.autoLogin("admin", true, JeRoleLevel.ROLE_ADMIN.ordinal(), input);
@@ -78,9 +61,6 @@ public abstract class AdminServer {
         return securityContext;
     }
 
-    /**
-     * @param onPut
-     */
     @After
     protected void onView(OnPut onPut) {
         if (onPut.getReturnedResolver() == null) {
@@ -105,26 +85,13 @@ public abstract class AdminServer {
         }
     }
 
-    /**
-     * @author absir
-     */
     public static class Route extends TransactionIntercepter implements IRoute {
 
-        /**
-         * @param route
-         */
         @Inject(type = InjectType.Selectable)
         private void setRoute(@Value(value = "webmvc.admin.route") String route) {
             AdminServer.route = route;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.server.route.IRoute#routeMapping(java.lang.String,
-         * java.util.Map.Entry, java.lang.reflect.Method, java.util.List,
-         * java.util.List, java.util.List)
-         */
         @Override
         public void routeMapping(String name, Entry<Mapping, List<String>> mapping, Method method, List<String> parameterPathNames, List<String> mappings, List<InMethod> inMethods) {
             RouteMapping.routeMapping(AdminServer.route, name, mapping, method, method.getName(), KernelString.implode(KernelArray.repeat('*', parameterPathNames.size()), '/'),

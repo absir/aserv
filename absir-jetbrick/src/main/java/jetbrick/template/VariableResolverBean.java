@@ -22,39 +22,20 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Properties;
 
-/**
- * @author absir
- */
 public class VariableResolverBean {
 
-    /**
-     * classResolver
-     */
     private final ClassResolver classResolver;
-    /**
-     * methodInvokerResolver
-     */
+
     private final MethodInvokerResolver methodInvokerResolver;
-    /**
-     * functionInvokerResolver
-     */
+
     private final FunctionInvokerResolver functionInvokerResolver;
-    /**
-     * tagInvokerResolver
-     */
+
     private final TagInvokerResolver tagInvokerResolver;
-    /**
-     * engine
-     */
+
     protected JetEngine engine;
-    /**
-     * variableResolver
-     */
+
     private GlobalResolver variableResolver;
 
-    /**
-     * @param engine
-     */
     public VariableResolverBean(JetEngine engine) {
         this.engine = engine;
         variableResolver = engine.getGlobalResolver();
@@ -64,48 +45,27 @@ public class VariableResolverBean {
         tagInvokerResolver = (TagInvokerResolver) KernelObject.declaredGet(variableResolver, "tagInvokerResolver");
     }
 
-    /**
-     * @param engine
-     * @param configProperties
-     */
     public static void load(JetEngine engine, Properties configProperties) {
         DynaBinder.INSTANCE.bind(configProperties, null, engine.getConfig().getClass(), engine.getConfig());
     }
 
-    /**
-     * @return the variableResolver
-     */
     public GlobalResolver getVariableResolver() {
         return variableResolver;
     }
 
-    /**
-     * @param name
-     */
     public void importClass(String name) {
         classResolver.importClass(name);
     }
 
-    /**
-     * @param name
-     */
     public void importPackage(String name) {
         classResolver.importClass(name + ".*");
     }
 
-    /**
-     * @param method
-     * @return
-     */
     public MethodInfo create(Method method) {
         KlassInfo klass = KlassInfo.create(method.getDeclaringClass());
         return klass.getDeclaredMethod(method.getName(), method.getParameterTypes());
     }
 
-    /**
-     * @param name
-     * @param method
-     */
     public void registerMethod(String name, Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length == 0) {
@@ -120,10 +80,6 @@ public class VariableResolverBean {
         }
     }
 
-    /**
-     * @param name
-     * @param method
-     */
     public void registerFunction(String name, Method method) {
         int modifiers = method.getModifiers();
         if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)) {
@@ -134,10 +90,6 @@ public class VariableResolverBean {
         }
     }
 
-    /**
-     * @param name
-     * @param method
-     */
     public void registerTag(String name, Method method) {
         int modifiers = method.getModifiers();
         if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)) {

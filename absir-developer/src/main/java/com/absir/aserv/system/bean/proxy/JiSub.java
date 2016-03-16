@@ -7,14 +7,7 @@
  */
 package com.absir.aserv.system.bean.proxy;
 
-/**
- * @author absir
- *
- */
 public interface JiSub {
 
-    /**
-     * @return
-     */
     public Object getSub();
 }

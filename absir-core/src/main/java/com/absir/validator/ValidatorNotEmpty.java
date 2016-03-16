@@ -13,19 +13,9 @@ import com.absir.validator.value.NotEmpty;
 
 import java.util.Map;
 
-/**
- * @author absir
- */
 @Bean
 public class ValidatorNotEmpty extends PropertyResolverAbstract<ValidatorObject, NotEmpty> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotation(ValidatorObject propertyObject, NotEmpty annotation) {
         if (propertyObject == null) {
@@ -53,13 +43,6 @@ public class ValidatorNotEmpty extends PropertyResolverAbstract<ValidatorObject,
         return propertyObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-     * (com.absir.property.PropertyObject, java.lang.String)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotationValue(ValidatorObject propertyObject, String annotationValue) {
         return getPropertyObjectAnnotation(propertyObject, null);

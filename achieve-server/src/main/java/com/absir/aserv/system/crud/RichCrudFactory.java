@@ -41,34 +41,19 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
 public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object> {
 
-    /**
-     * ME
-     */
     public static final RichCrudFactory ME = BeanFactoryUtils.get(RichCrudFactory.class);
 
-    /**
-     * UPLOAD
-     */
     public static final String UPLOAD = "upload";
-    /**
-     * IMG_SRC_PATTERN
-     */
+
     public static final Pattern IMG_SRC_PATTERN = Pattern.compile("<img[^<>]*?[\\s| ]{1}src=[\"']{1}([^\"']*)[\"']{1}", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
-    /**
-     * SRC_EXCLUDE_CHARS
-     */
+
     public static final char[] SRC_EXCLUDE_CHARS = new char[]{'\'', '"', '\r', '\n'};
-    /**
-     * REMOTE_RICH_NAME
-     */
+
     private static final String REMOTE_RICH_NAME = "@REMOTE_RICH";
 
     /**
@@ -102,32 +87,15 @@ public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object
         return null;
     }
 
-    /**
-     * @param session
-     * @param assocId
-     * @return
-     */
     public static List<JUploadCite> getUploadCites(Session session, String assocId) {
         return QueryDaoUtils.createQueryArray(session, "SELECT o FROM JUploadCite o WHERE o.id.eid = ?", assocId).list();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.ICrudProcessorInput#isMultipart()
-     */
     @Override
     public boolean isMultipart() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.ICrudProcessor#crud(com.absir.aserv.crud.
-     * CrudProperty, java.lang.Object, com.absir.aserv.crud.CrudHandler,
-     * com.absir.aserv.system.bean.proxy.JiUserBase)
-     */
     @Transaction
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user) {
@@ -150,29 +118,11 @@ public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.crud.ICrudProcessorInput#crud(com.absir.aserv.crud
-     * .CrudProperty, com.absir.property.PropertyErrors,
-     * com.absir.aserv.crud.CrudHandler,
-     * com.absir.aserv.system.bean.proxy.JiUserBase,
-     * com.absir.server.in.Input)
-     */
     @Override
     public Object crud(CrudProperty crudProperty, PropertyErrors errors, CrudHandler handler, JiUserBase user, Input input) {
         return input;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.crud.ICrudProcessorInput#crud(com.absir.aserv.crud
-     * .CrudProperty, java.lang.Object, com.absir.aserv.crud.CrudHandler,
-     * com.absir.aserv.system.bean.proxy.JiUserBase, java.lang.Object)
-     */
     @Transaction
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, Object inputBody) {
@@ -314,13 +264,6 @@ public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.crud.ICrudFactory#getProcessor(com.absir.aserv.support
-     * .entity.value.JoEntity, com.absir.aserv.support.developer.JCrudField)
-     */
     @Override
     public ICrudProcessor getProcessor(JoEntity joEntity, JCrudField crudField) {
         return CharSequence.class.isAssignableFrom(crudField.getType()) ? ME : null;

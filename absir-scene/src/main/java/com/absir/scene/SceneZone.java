@@ -15,65 +15,37 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 public class SceneZone<T extends ISceneObject, E> implements IStep, ISceneBroadcast<T, E> {
 
-    /**
-     * OBJECT_EFFECT
-     */
     public static final String OBJECT_EFFECT = "O";
-    /**
-     * sceneObjects
-     */
+
     @JsonIgnore
     private UtilLinked<T> sceneObjects = new UtilLinked<T>();
-    /**
-     * sceneBroadCasts
-     */
+
     @JsonIgnore
     private UtilLinked<ISceneBroadcast<T, E>> sceneBroadCasts = new UtilLinked<ISceneBroadcast<T, E>>();
 
-    /**
-     * @param sceneObject
-     */
     public void addSceneObject(T sceneObject) {
         sceneObjects.add(sceneObject);
     }
 
-    /**
-     * @param sceneObject
-     */
     public void removeSceneObject(T sceneObject) {
         sceneObjects.remove(sceneObject);
     }
 
-    /**
-     * @param sceneObject
-     */
     public void addSceneBroadcast(ISceneBroadcast<T, E> sceneBroadcast) {
         sceneBroadCasts.add(sceneBroadcast);
     }
 
-    /**
-     * @param sceneBroadcast
-     */
     public void removeSceneBroadcast(ISceneBroadcast<T, E> sceneBroadcast) {
         sceneBroadCasts.remove(sceneBroadcast);
     }
 
-    /**
-     * @return
-     */
     public Iterator<T> iterator() {
         return sceneObjects.iterator();
     }
 
-    /**
-     * @param contextTime
-     */
     public boolean stepDone(long contextTime) {
         sceneBroadCasts.syncRemoves();
         List<ISceneBroadcast<T, E>> sceneBroadCastAdds = sceneBroadCasts.syncAdds();
@@ -133,13 +105,6 @@ public class SceneZone<T extends ISceneObject, E> implements IStep, ISceneBroadc
         return sceneObject == null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.scene.ISceneBroadcast#broadcast(com.absir.scene.ISceneObject,
-     * java.lang.Object, java.lang.Object)
-     */
     @Override
     public boolean broadcast(T sceneObject, E event, OReportDetail reportDetail) {
         Iterator<ISceneBroadcast<T, E>> iterator = sceneBroadCasts.iterator();

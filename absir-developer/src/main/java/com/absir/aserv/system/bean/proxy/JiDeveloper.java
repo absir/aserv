@@ -7,15 +7,8 @@
  */
 package com.absir.aserv.system.bean.proxy;
 
-/**
- * @author absir
- *
- */
 public interface JiDeveloper {
 
-    /**
-     * @return
-     */
     public boolean isDeveloper();
 
 }

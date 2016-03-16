@@ -7,23 +7,11 @@
  */
 package com.absir.aserv.system.bean.proxy;
 
-/**
- * @author absir
- *
- */
 public interface JiUserRole extends JiBase {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.bean.proxy.JiBase#getId()
-     */
     @Override
     public Long getId();
 
-    /**
-     * @return
-     */
     public String getRolename();
 
 }

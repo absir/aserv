@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2014-1-10 下午1:43:31
  */
 package com.absir.bean.core;
@@ -27,49 +27,25 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class BeanConfigImpl implements BeanConfig {
 
-    /**
-     * outEnvironmentDenied
-     */
     protected boolean outEnvironmentDenied = true;
-    /**
-     * beanConfig
-     */
+
     private BeanConfig beanConfig;
-    /**
-     * classPath
-     */
+
     private String classPath;
-    /**
-     * resourcePath
-     */
+
     private String resourcePath;
-    /**
-     * environment
-     */
+
     private Environment environment = Environment.getEnvironment();
-    /**
-     * configMap
-     */
+
     private Map<String, Object> configMap = new HashMap<String, Object>();
 
-    /**
-     * @param beanConfigProvider
-     * @param beanConfig
-     */
     public BeanConfigImpl(IBeanConfigProvider beanConfigProvider) {
         this(beanConfigProvider, null);
     }
 
-    /**
-     * @param beanConfigProvider
-     * @param classPath
-     */
     public BeanConfigImpl(IBeanConfigProvider beanConfigProvider, String classPath) {
         if (classPath == null) {
             classPath = HelperFileName.getClassPath(null);
@@ -102,14 +78,6 @@ public class BeanConfigImpl implements BeanConfig {
         }
     }
 
-    /**
-     * @param beanConfig
-     * @param configMap
-     * @param propertyFile
-     * @param propertyFilenames
-     * @param loadedPropertyFilenames
-     * @param beanConfigTemplates
-     */
     public static void readProperties(final BeanConfig beanConfig, final Map<String, Object> configMap,
                                       File propertyFile, final Map<String, CallbackTemplate<String>> beanConfigTemplates) {
         if (propertyFile.exists()) {
@@ -123,11 +91,6 @@ public class BeanConfigImpl implements BeanConfig {
         }
     }
 
-    /**
-     * @param beanConfig
-     * @param environments
-     * @return
-     */
     public static boolean isConfigEnvironments(BeanConfig beanConfig, String[] environments) {
         if (environments == null) {
             return true;
@@ -162,25 +125,13 @@ public class BeanConfigImpl implements BeanConfig {
         return false;
     }
 
-    /**
-     * @param beanConfig
-     * @param configMap
-     * @param inputStream
-     * @param beanConfigTemplates
-     */
     public static void readProperties(final BeanConfig beanConfig, final Map<String, Object> configMap,
                                       InputStream inputStream, final Map<String, CallbackTemplate<String>> beanConfigTemplates) {
         try {
             HelperIO.doWithReadLine(inputStream, new CallbackBreak<String>() {
 
-                /**
-                 * blockBuilder
-                 */
                 private StringBuilder blockBuilder;
 
-                /**
-                 * blockAppending
-                 */
                 private int blockAppending;
 
                 @Override
@@ -356,12 +307,6 @@ public class BeanConfigImpl implements BeanConfig {
         }
     }
 
-    /**
-     * @param beanConfig
-     * @param configMap
-     * @param propertyDir
-     * @param beanConfigTemplates
-     */
     public static void readDirProperties(final BeanConfig beanConfig, final Map<String, Object> configMap,
                                          File propertyDir, final Map<String, CallbackTemplate<String>> beanConfigTemplates) {
         if (propertyDir.exists()) {
@@ -379,10 +324,6 @@ public class BeanConfigImpl implements BeanConfig {
         }
     }
 
-    /**
-     * @param configMap
-     * @param propertyFile
-     */
     public static void writeProperties(Map<String, ?> configMap, File propertyFile) {
         StringBuilder stringBuilder = new StringBuilder();
         for (Entry<String, ?> entry : configMap.entrySet()) {
@@ -400,11 +341,6 @@ public class BeanConfigImpl implements BeanConfig {
         }
     }
 
-    /**
-     * @param beanConfig
-     * @param name
-     * @return
-     */
     public static Object getValue(BeanConfig beanConfig, String name) {
         Object object = beanConfig == null ? null : beanConfig.getConfigValue(name);
         if (object == null) {
@@ -429,13 +365,6 @@ public class BeanConfigImpl implements BeanConfig {
         return object;
     }
 
-    /**
-     * @param map
-     * @param name
-     * @param beanName
-     * @param toClass
-     * @return
-     */
     public static <T> T getMapValue(Map map, Object name, String beanName, Class<T> toClass) {
         Object obj = map.get(name);
         if (obj != null) {
@@ -450,13 +379,6 @@ public class BeanConfigImpl implements BeanConfig {
         return null;
     }
 
-    /**
-     * @param map
-     * @param name
-     * @param beanName
-     * @param toType
-     * @return
-     */
     public static Object getMapValue(Map map, Object name, String beanName, Type toType) {
         Object obj = map.get(name);
         if (obj != null) {
@@ -471,19 +393,10 @@ public class BeanConfigImpl implements BeanConfig {
         return null;
     }
 
-    /**
-     * @return the outEnvironmentDenied
-     */
     public boolean isOutEnvironmentDenied() {
         return outEnvironmentDenied;
     }
 
-    /**
-     * @param beanConfigProvider
-     * @param propertyFilenames
-     * @param loadedPropertyFilenames
-     * @param beanConfigTemplates
-     */
     protected void loadBeanConfig(IBeanConfigProvider beanConfigProvider, final Set<String> propertyFilenames,
                                   final Set<String> loadedPropertyFilenames,
                                   final Map<String, CallbackTemplate<String>> beanConfigTemplates) {
@@ -562,12 +475,6 @@ public class BeanConfigImpl implements BeanConfig {
         beanConfigProvider.loadBeanConfig(this, propertyFilenames, loadedPropertyFilenames, beanConfigTemplates);
     }
 
-    /**
-     * @param filename
-     * @param propertyFilenames
-     * @param loadedPropertyFilenames
-     * @param beanConfigTemplates
-     */
     private void readProperties(String filename, Set<String> propertyFilenames, Set<String> loadedPropertyFilenames,
                                 Map<String, CallbackTemplate<String>> beanConfigTemplates) {
         if (!loadedPropertyFilenames.add(filename)) {
@@ -604,73 +511,43 @@ public class BeanConfigImpl implements BeanConfig {
         }
     }
 
-    /**
-     * @return the classPath
-     */
     public String getClassPath() {
         return classPath;
     }
 
-    /**
-     * @param classPath
-     */
     public void setClassPath(String classPath) {
         this.classPath = classPath;
         configMap.put("classPath", classPath);
         System.setProperty("classPath", classPath);
     }
 
-    /**
-     * @return the resourcePath
-     */
     public String getResourcePath() {
         return resourcePath;
     }
 
-    /**
-     * @param resourcePath
-     */
     public void setResourcePath(String resourcePath) {
         this.resourcePath = resourcePath;
         configMap.put("resourcePath", resourcePath);
         System.setProperty("resourcePath", resourcePath);
     }
 
-    /**
-     * @return the environment
-     */
     public Environment getEnvironment() {
         return environment;
     }
 
-    /**
-     * @param environment the environment to set
-     */
     public void setEnvironment(Environment environment) {
         this.environment = environment;
         Environment.setEnvironment(environment);
     }
 
-    /**
-     * @param name
-     * @return
-     */
     public Object getValue(String name) {
         return getValue(this, name);
     }
 
-    /**
-     * @param name
-     * @param obj
-     */
     public void setValue(String name, Object obj) {
         configMap.put(name, obj);
     }
 
-    /**
-     * @param name
-     * @return
-     */
     public Object getConfigValue(String name) {
         Object obj = configMap.get(name);
         if (obj == null && !configMap.containsKey(name)) {
@@ -682,19 +559,10 @@ public class BeanConfigImpl implements BeanConfig {
         return obj;
     }
 
-    /**
-     * @param expression
-     * @return
-     */
     public String getExpression(String expression) {
         return getExpression(expression, false);
     }
 
-    /**
-     * @param expression
-     * @param strict
-     * @return
-     */
     public String getExpression(String expression, boolean strict) {
         int fromIndex = expression.indexOf("${");
         int length = expression.length();
@@ -743,12 +611,6 @@ public class BeanConfigImpl implements BeanConfig {
         return expression;
     }
 
-    /**
-     * @param expression
-     * @param beanName
-     * @param toClass
-     * @return
-     */
     public <T> T getExpressionObject(String expression, String beanName, Class<T> toClass) {
         Object obj = getExpression(expression);
         if (obj == expression) {
@@ -765,12 +627,6 @@ public class BeanConfigImpl implements BeanConfig {
         return DynaBinder.to(obj, beanName, toClass);
     }
 
-    /**
-     * @param expression
-     * @param beanName
-     * @param toType
-     * @return
-     */
     public Object getExpressionObject(String expression, String beanName, Type toType) {
         Object obj = getExpression(expression);
         if (obj == expression) {
@@ -788,23 +644,11 @@ public class BeanConfigImpl implements BeanConfig {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanConfig#getExpressionValue(java.lang.String,
-     * java.lang.String, java.lang.Class)
-     */
     @Override
     public <T> T getExpressionValue(String expression, String beanName, Class<T> toClass) {
         return DynaBinder.to(getExpressionObject(expression, beanName, toClass), null, toClass);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanConfig#getExpressionDefaultValue(java.lang.
-     * String , java.lang.String, java.lang.Class)
-     */
     @Override
     public <T> T getExpressionDefaultValue(String expression, String beanName, Class<T> toClass) {
         T value = getExpressionObject(expression, beanName, toClass);
@@ -815,12 +659,6 @@ public class BeanConfigImpl implements BeanConfig {
         return value;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanConfig#getExpressionDefaultValue(java.lang.
-     * String , java.lang.String, java.lang.reflect.Type)
-     */
     @Override
     public Object getExpressionDefaultValue(String expression, String beanName, Type toType) {
         Object value = getExpressionObject(expression, beanName, toType);
@@ -831,32 +669,16 @@ public class BeanConfigImpl implements BeanConfig {
         return value;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanConfig#getClassPath(java.lang.String)
-     */
     @Override
     public String getClassPath(String filename) {
         return getResourcePath(filename, classPath);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanConfig#getResourcePath(java.lang.String)
-     */
     @Override
     public String getResourcePath(String filename) {
         return getResourcePath(filename, resourcePath);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.basis.BeanConfig#getResourcePath(java.lang.String,
-     * java.lang.String)
-     */
     @Override
     public String getResourcePath(String filename, String nullPrefix) {
         filename = filename.replace("classpath:", classPath);

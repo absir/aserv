@@ -8,12 +8,8 @@ import org.junit.runners.JUnit4;
 
 import java.security.SecureRandom;
 
-/**
- * Created by absir on 16/2/12.
- */
 @RunWith(value = JUnit4.class)
 public class FileNameTest {
-
 
     @Test
     public void test() {

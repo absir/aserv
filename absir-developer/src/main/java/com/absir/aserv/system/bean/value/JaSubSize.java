@@ -14,16 +14,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- */
 @JaCrud(factory = SubSizeCrudFactory.class, parameters = {""})
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JaSubSize {
 
-    /**
-     * @return
-     */
     String value();
 }

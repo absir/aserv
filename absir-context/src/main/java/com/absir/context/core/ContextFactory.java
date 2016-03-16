@@ -26,81 +26,39 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.*;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Base
 @Bean
 public class ContextFactory {
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(ContextFactory.class);
 
-    /**
-     * contextTime
-     */
     private long contextTime = System.currentTimeMillis();
 
-    /**
-     * contextBases
-     */
     private Queue<ContextBase> contextBases = new ConcurrentLinkedQueue<ContextBase>();
 
-    /**
-     * tokenMap
-     */
     private Map<Object, Object> tokenMap = new HashMap<Object, Object>();
 
-    /**
-     * classMapIdMapContext
-     */
     private Map<Class<?>, Map<Serializable, Context>> classMapIdMapContext = new HashMap<Class<?>, Map<Serializable, Context>>();
 
-    /**
-     * contextBeans
-     */
     private Queue<ContextBean> contextBeans = new ConcurrentLinkedQueue<ContextBean>();
 
-    /**
-     * threadPoolExecutor
-     */
     private ThreadPoolExecutor threadPoolExecutor;
 
-    /**
-     * maxThread
-     */
     @Value("context.maxThread")
     private int maxThread = 128;
 
-    /**
-     * stopDelay
-     */
     @Value("context.delay")
     private int delay = 1000;
 
-    /**
-     * stopDelay
-     */
     @Value("context.stopDelay")
     private int stopDelay = 1000;
 
-    /**
-     * uninitCount
-     */
     @Value("context.uninitCount")
     private int uninitCount = 3;
 
-    /**
-     * contextTimer
-     */
     private Timer contextTimer = new Timer();
 
-    /**
-     * contextTimerTask
-     */
     private TimerTask contextTimerTask = new TimerTask() {
 
         @Override
@@ -182,45 +140,26 @@ public class ContextFactory {
         }
     };
 
-    /**
-     * @param maxThread
-     * @return
-     */
     public static UtilAtom getUtilAtom(int maxThread) {
         return maxThread <= 0 ? new UtilAtom() : new ContextAtom(maxThread);
     }
 
-    /**
-     * @return
-     */
     protected long forContextTime() {
         return System.currentTimeMillis();
     }
 
-    /**
-     * @return the contextTime
-     */
     public long getContextTime() {
         return contextTime;
     }
 
-    /**
-     * @return the threadPoolExecutor
-     */
     public ThreadPoolExecutor getThreadPoolExecutor() {
         return threadPoolExecutor;
     }
 
-    /**
-     * @return the uninitCount
-     */
     public int getUninitCount() {
         return uninitCount;
     }
 
-    /**
-     * @param contexts
-     */
     @Started
     private void scanner() {
         List<IContext> contexts = BeanFactoryUtils.get().getBeanObjects(IContext.class);
@@ -229,26 +168,15 @@ public class ContextFactory {
         }
     }
 
-    /**
-     * @param context
-     */
     public void addContext(ContextBase context) {
         context.retainAt(contextTime);
         contextBases.add(context);
     }
 
-    /**
-     * @param context
-     */
     public void removeContext(ContextBase context) {
         context.setExpiration();
     }
 
-    /**
-     * @param corePoolSize
-     * @param maximumPoolSize
-     * @param keepAliveTime
-     */
     @Inject
     @InjectOrder(-255)
     protected void injectExecutor(@Value(value = "context.corePoolSize", defaultValue = "1024") int corePoolSize,
@@ -259,11 +187,6 @@ public class ContextFactory {
         UtilContext.setMinIdlePool(minIdlePool);
     }
 
-    /**
-     * @param corePoolSize
-     * @param maximumPoolSize
-     * @param keepAliveTime
-     */
     protected void setThreadPoolExecutor(int corePoolSize, int maximumPoolSize, int keepAliveTime) {
         // 请求处理线程池
         threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MILLISECONDS,
@@ -271,11 +194,6 @@ public class ContextFactory {
         UtilContext.setThreadPoolExecutor(threadPoolExecutor);
     }
 
-    /**
-     * @param corePoolSize
-     * @param maximumPoolSize
-     * @param keepAliveTime
-     */
     @Inject
     @InjectOrder(-255)
     protected void injectRejectExecutor(@Value(value = "context.rejectPoolSize", defaultValue = "16") int corePoolSize,
@@ -285,25 +203,14 @@ public class ContextFactory {
                 TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()));
     }
 
-    /**
-     * @param tokenId
-     * @return
-     */
     public Object getToken(String tokenId) {
         return UtilAbsir.getToken(tokenId, tokenMap);
     }
 
-    /**
-     * @param tokenId
-     */
     public void clearToken(String tokenId) {
         UtilAbsir.clearToken(tokenId, tokenMap);
     }
 
-    /**
-     * @param cls
-     * @return
-     */
     public Map<Serializable, Context> getContextMap(Class<?> cls) {
         Map<Serializable, Context> contextMap = classMapIdMapContext.get(cls);
         if (contextMap == null) {
@@ -319,34 +226,15 @@ public class ContextFactory {
         return contextMap;
     }
 
-    /**
-     * @param cls
-     * @return
-     */
     public Map<Serializable, Context> findContextMap(Class<?> cls) {
         return classMapIdMapContext.get(cls);
     }
 
-    /**
-     * @param ctxClass
-     * @param id
-     * @param cls
-     * @param concurrent
-     * @return
-     */
     public <T extends Context<ID>, ID extends Serializable> T getContext(Class<T> ctxClass, ID id, Class<?> cls,
                                                                          boolean concurrent) {
         return getContext(getContextMap(cls), ctxClass, id, cls, concurrent);
     }
 
-    /**
-     * @param contextMap
-     * @param ctxClass
-     * @param id
-     * @param cls
-     * @param concurrent
-     * @return
-     */
     private <T extends Context<ID>, ID extends Serializable> T getContext(Map<Serializable, Context> contextMap,
                                                                           Class<T> ctxClass, ID id, Class<?> cls, boolean concurrent) {
         Context context = contextMap.get(id);
@@ -410,11 +298,6 @@ public class ContextFactory {
         return (T) context;
     }
 
-    /**
-     * @param context
-     * @param cls
-     * @param concurrent
-     */
     public void clearContext(Context context, Class cls, boolean concurrent) {
         if (context instanceof ContextBean) {
             ((ContextBean) context).setExpiration();
@@ -433,18 +316,12 @@ public class ContextFactory {
         }
     }
 
-    /**
-     *
-     */
     @InjectOrder(value = -1024)
     @Started
     private void start() {
         contextTimer.schedule(contextTimerTask, 0, delay);
     }
 
-    /**
-     *
-     */
     @InjectOrder(value = 1024)
     @Stopping
     private void stop() {

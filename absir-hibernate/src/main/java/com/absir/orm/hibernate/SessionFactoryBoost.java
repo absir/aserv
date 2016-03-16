@@ -45,9 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
@@ -58,22 +55,13 @@ public class SessionFactoryBoost {
 
     @Inject(type = InjectType.Selectable)
     private IEventService[] eventServices;
-    /**
-     *
-     */
+
     private Object metadata;
 
-    /**
-     * @return the basicTypes
-     */
     public BasicType[] getBasicTypes() {
         return basicTypes;
     }
 
-    /**
-     * @param configuration
-     * @param locale
-     */
     public void beforeBuildConfiguration(Configuration configuration, final boolean locale) {
         // EntityBoost.boost(configuration, this, locale);
         final MetadataSources metadataSources = (MetadataSources) KernelObject.declaredGet(configuration,
@@ -102,12 +90,6 @@ public class SessionFactoryBoost {
                 Object metadataBuilder = super.after(proxy, returnValue, interceptor, proxyHandler, method, args, e);
                 Object metadataBuilderProxy = new MetadataBuilderImpl(metadataSources) {
 
-                    /*
-                     * (non-Javadoc)
-                     *
-                     * @see
-                     * org.hibernate.boot.internal.MetadataBuilderImpl#build()
-                     */
                     @Override
                     public MetadataImplementor build() {
                         MetadataImplementor metadataImplementor = super.build();
@@ -136,10 +118,6 @@ public class SessionFactoryBoost {
         KernelObject.declaredSet(configuration, "metadataSources", metadataSourcesProxy);
     }
 
-    /**
-     * @param configuration
-     * @param sessionFactory
-     */
     public void afterBuildConfiguration(Configuration configuration, SessionFactoryImpl sessionFactory) {
         EventListenerRegistry eventListenerRegistry = sessionFactory.getServiceRegistry()
                 .getService(EventListenerRegistry.class);
@@ -153,13 +131,6 @@ public class SessionFactoryBoost {
         boost(sessionFactory);
     }
 
-    /**
-     * @param classes
-     * @param persistentClass
-     * @param property
-     * @param field
-     * @param referencedEntityName
-     */
     public void boost(Map<String, PersistentClass> classes, PersistentClass persistentClass, Property property,
                       Field field, String referencedEntityName) {
         if (eventServices != null) {
@@ -169,11 +140,6 @@ public class SessionFactoryBoost {
         }
     }
 
-    /**
-     * @param configuration
-     * @param sessionFactoryBean
-     * @param sessionFactory
-     */
     protected void boost(Configuration configuration, SessionFactoryBean sessionFactoryBean,
                          SessionFactory sessionFactory) {
         Map<String, PersistentClass> classes = (Map<String, PersistentClass>) KernelObject.declaredGet(metadata,
@@ -192,9 +158,6 @@ public class SessionFactoryBoost {
         metadata = null;
     }
 
-    /**
-     * @param sessionFactory
-     */
     protected void boost(SessionFactoryImpl sessionFactory) {
         Map<String, ClassMetadata> classMetadata = new HashMap<String, ClassMetadata>();
         for (Entry<String, ClassMetadata> entry : sessionFactory.getAllClassMetadata().entrySet()) {
@@ -254,14 +217,8 @@ public class SessionFactoryBoost {
         KernelObject.declaredSet(sessionFactory, "classMetadata", classMetadata);
     }
 
-    /**
-     * @author absir
-     */
     public static class MetadataBuilderProxy extends MetadataBuilderImpl {
 
-        /**
-         * @param sources
-         */
         public MetadataBuilderProxy(MetadataSources sources) {
             super(sources);
         }

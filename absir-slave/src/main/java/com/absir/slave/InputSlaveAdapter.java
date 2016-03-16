@@ -20,39 +20,18 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 import java.util.Map;
 
-/**
- * @author absir
- */
 public class InputSlaveAdapter extends SocketAdapterSel {
 
-    /**
-     * ip
-     */
     protected String ip;
 
-    /**
-     * port
-     */
     protected int port;
 
-    /**
-     * group
-     */
     protected String group;
 
-    /**
-     * key
-     */
     protected String key;
 
-    /**
-     * url
-     */
     protected String url;
 
-    /**
-     * slaveKey
-     */
     protected String slaveKey;
 
     /**
@@ -126,44 +105,26 @@ public class InputSlaveAdapter extends SocketAdapterSel {
         });
     }
 
-    /**
-     * @return the ip
-     */
     public String getIp() {
         return ip;
     }
 
-    /**
-     * @return the port
-     */
     public int getPort() {
         return port;
     }
 
-    /**
-     * @return the group
-     */
     public String getGroup() {
         return group;
     }
 
-    /**
-     * @return the key
-     */
     public String getKey() {
         return key;
     }
 
-    /**
-     * @return the url
-     */
     public String getUrl() {
         return url;
     }
 
-    /**
-     * @return the slaveKey
-     */
     public String getSlaveKey() {
         return slaveKey;
     }
@@ -232,23 +193,10 @@ public class InputSlaveAdapter extends SocketAdapterSel {
         // LOGGER.info("receiveCallback" + buffer);
     }
 
-    /**
-     * @param uri
-     * @param postData
-     * @param callbackMsg
-     * @throws IOException
-     */
     public void sendData(String uri, Object postData, CallbackMsg<?> callbackMsg) throws IOException {
         sendData(uri, postData, 30000, callbackMsg);
     }
 
-    /**
-     * @param uri
-     * @param postData
-     * @param timeout
-     * @param callbackMsg
-     * @throws IOException
-     */
     public void sendData(String uri, Object postData, int timeout, CallbackMsg<?> callbackMsg) throws IOException {
         sendData(uri.getBytes(ContextUtils.getCharset()), true, false,
                 postData == null ? null : HelperDatabind.writeAsBytes(postData), timeout, callbackMsg);

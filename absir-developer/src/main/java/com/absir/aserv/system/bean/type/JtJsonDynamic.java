@@ -26,25 +26,11 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Properties;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "serial"})
 public class JtJsonDynamic implements UserType, DynamicParameterizedType, Serializable {
 
-    /**
-     * dynamicType
-     */
     private Type dynamicType;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.hibernate.usertype.ParameterizedType#setParameterValues(java.util
-     * .Properties)
-     */
     @Override
     public void setParameterValues(Properties parameters) {
         Class<?> entityClass = KernelClass.forName(parameters.getProperty(ENTITY));
@@ -59,32 +45,16 @@ public class JtJsonDynamic implements UserType, DynamicParameterizedType, Serial
         dynamicType = KernelClass.forName(parameters.getProperty(RETURNED_CLASS));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.usertype.UserType#sqlTypes()
-     */
     @Override
     public int[] sqlTypes() {
         return new int[]{Types.LONGVARCHAR};
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.usertype.UserType#returnedClass()
-     */
     @Override
     public Class returnedClass() {
         return Object.class;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.usertype.UserType#equals(java.lang.Object,
-     * java.lang.Object)
-     */
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
         if (x == y) {
@@ -94,23 +64,11 @@ public class JtJsonDynamic implements UserType, DynamicParameterizedType, Serial
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.usertype.UserType#hashCode(java.lang.Object)
-     */
     @Override
     public int hashCode(Object x) throws HibernateException {
         return x.hashCode();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet,
-     * java.lang.String[], org.hibernate.engine.spi.SessionImplementor,
-     * java.lang.Object)
-     */
     @Override
     public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException,
             SQLException {
@@ -122,13 +80,6 @@ public class JtJsonDynamic implements UserType, DynamicParameterizedType, Serial
         return HelperJson.decodeNull(value, dynamicType);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.hibernate.usertype.UserType#nullSafeSet(java.sql.PreparedStatement,
-     * java.lang.Object, int, org.hibernate.engine.spi.SessionImplementor)
-     */
     @Override
     public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException,
             SQLException {
@@ -144,53 +95,26 @@ public class JtJsonDynamic implements UserType, DynamicParameterizedType, Serial
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.usertype.UserType#deepCopy(java.lang.Object)
-     */
     @Override
     public Object deepCopy(Object value) throws HibernateException {
         return KernelObject.clone(value);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.usertype.UserType#isMutable()
-     */
     @Override
     public boolean isMutable() {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.usertype.UserType#disassemble(java.lang.Object)
-     */
     @Override
     public Serializable disassemble(Object value) throws HibernateException {
         return (Serializable) value;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.usertype.UserType#assemble(java.io.Serializable,
-     * java.lang.Object)
-     */
     @Override
     public Object assemble(Serializable cached, Object owner) throws HibernateException {
         return cached;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.usertype.UserType#replace(java.lang.Object,
-     * java.lang.Object, java.lang.Object)
-     */
     @Override
     public Object replace(Object original, Object target, Object owner) throws HibernateException {
         return original;

@@ -15,29 +15,14 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author absir
- */
 public class JdbcUtils {
 
-    /**
-     * JDBC_DRIVER_CLASS_PREFIX
-     */
     public static final String JDBC_DRIVER_CLASS_PREFIX = JdbcDriver.class.getPackage().getName() + ".driver.";
 
-    /**
-     * Driver
-     */
     private static JdbcDriver Driver = null;
 
-    /**
-     * Product_Version_Map_JdbcDriver
-     */
     private static Map<String, JdbcDriver> Product_Version_Map_JdbcDriver = new HashMap<String, JdbcDriver>();
 
-    /**
-     * @return
-     */
     public static JdbcDriver Driver() {
         if (Driver == null) {
             Driver = new JdbcDriver();
@@ -46,21 +31,11 @@ public class JdbcUtils {
         return Driver;
     }
 
-    /**
-     * @param connection
-     * @return
-     * @throws SQLException
-     */
     public static JdbcDriver forProduct(Connection connection) throws SQLException {
         DatabaseMetaData metaData = connection.getMetaData();
         return JdbcUtils.forProduct(KernelString.capitalize(metaData.getDatabaseProductName().toLowerCase()), metaData.getDatabaseProductVersion().toLowerCase());
     }
 
-    /**
-     * @param productName
-     * @param version
-     * @return
-     */
     public static JdbcDriver forProduct(String productName, String version) {
         String productVersion = productName;
         int length = version.length();

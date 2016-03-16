@@ -9,10 +9,6 @@ package com.absir.aserv.system.bean.value;
 
 import com.absir.core.util.UtilEnum.EnumInteger;
 
-/**
- * @author absir
- *
- */
 public enum JeStrategy implements EnumInteger {
 
     /**
@@ -30,23 +26,12 @@ public enum JeStrategy implements EnumInteger {
      */
     EXCULDE_STRATEGY(0X02),;
 
-    /**
-     * value
-     */
     private int value;
 
-    /**
-     * @param value
-     */
     JeStrategy(int value) {
         this.value = value;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.util.UtilEnum.EnumObject#getValue()
-     */
     @Override
     public Integer getValue() {
         return value;

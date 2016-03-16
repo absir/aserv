@@ -7,14 +7,7 @@
  */
 package com.absir.aserv.system.bean.proxy;
 
-/**
- * @author absir
- *
- */
 public interface JiSort {
 
-    /**
-     * @return
-     */
     public int getSort();
 }

@@ -1,45 +1,28 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年10月7日 下午4:05:35
  */
 package com.absir.core.util;
 
 import java.util.ArrayList;
 
-/**
- * @author absir
- */
 public class UtilObjectPool<T> {
 
-    /**
-     * min
-     */
     protected int min;
-    /**
-     * max
-     */
+
     protected int max;
-    /**
-     * pool
-     */
+
     protected RangeList<T> pool;
 
-    /**
-     * @param minSize
-     * @param maxSize
-     */
     public UtilObjectPool(int minSize, int maxSize) {
         min = minSize;
         max = maxSize;
         pool = new RangeList<T>(maxSize);
     }
 
-    /**
-     * @return
-     */
     public T getObject() {
         if (pool.isEmpty()) {
             return null;
@@ -50,9 +33,6 @@ public class UtilObjectPool<T> {
         }
     }
 
-    /**
-     * @param obj
-     */
     public void freeObject(T obj) {
         synchronized (pool) {
             if (pool.size() < max) {
@@ -61,9 +41,6 @@ public class UtilObjectPool<T> {
         }
     }
 
-    /**
-     * @param level(max255)
-     */
     public void gc(int level) {
         if (pool.size() > min) {
             synchronized (pool) {
@@ -82,24 +59,13 @@ public class UtilObjectPool<T> {
     @SuppressWarnings("serial")
     public static class RangeList<T> extends ArrayList<T> {
 
-        /**
-         *
-         */
         public RangeList() {
         }
 
-        /**
-         * @param initialCapacity
-         */
         public RangeList(int initialCapacity) {
             super(initialCapacity);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.util.ArrayList#removeRange(int, int)
-         */
         @Override
         public void removeRange(int fromIndex, int toIndex) {
             super.removeRange(fromIndex, toIndex);

@@ -12,24 +12,14 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import org.hibernate.SessionFactory;
 
-/**
- * @author absir
- *
- */
 @Basis
 @Bean
 public class BeanServiceImpl extends BeanServiceBase {
 
-    /**
-     * @return
-     */
     public BeanServiceImpl() {
         super(SessionFactoryUtils.get().getSessionFactory());
     }
 
-    /**
-     * @param sessionFactory
-     */
     public BeanServiceImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
     }

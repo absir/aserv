@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年10月7日 下午2:08:57
  */
 package com.absir.core.test;
@@ -15,9 +15,6 @@ import org.junit.runners.JUnit4;
 
 import java.util.Date;
 
-/**
- * @author absir
- */
 @RunWith(value = JUnit4.class)
 public class UtilSchelduerTest {
 

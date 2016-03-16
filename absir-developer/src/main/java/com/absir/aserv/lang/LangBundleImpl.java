@@ -53,53 +53,27 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"unchecked", "rawtypes"})
 @Base(order = -1)
 @Bean
 public class LangBundleImpl extends LangBundle {
 
-    /**
-     * ME
-     */
     public static final LangBundleImpl ME = BeanFactoryUtils.get(LangBundleImpl.class);
-    /**
-     * RECORD
-     */
+
     public static final String RECORD = "LOCALE@";
-    /**
-     * entityMapIdMapNameMapValue
-     */
+
     private static Map<String, Map<String, Map<String, Map<String, Object>>>> entityMapIdMapNameMapValue = new HashMap<String, Map<String, Map<String, Map<String, Object>>>>();
-    /**
-     * langConfigureMap
-     */
+
     private Map<String, Object> langConfigureMap;
-    /**
-     * unLangDeveloperMap
-     */
+
     private Map<String, Object> unLangDeveloperMap;
 
-    /**
-     * langInterfaces
-     */
     private Set<Class<?>> langInterfaces = new HashSet<Class<?>>();
 
-    /**
-     * methodMapLangEntryImpl
-     */
     private Map<Method, LangEntryImpl> methodMapLangEntryImpl = new HashMap<Method, LangEntryImpl>();
 
-    /**
-     * entityMapLangInterceptors
-     */
     private Map<String, Map<Method, LangEntry>> entityMapLangInterceptors = new HashMap<String, Map<Method, LangEntry>>();
 
-    /**
-     *
-     */
     public LangBundleImpl() {
         langInterfaces.add(ILangBase.class);
         langInterfaces.add(IBinder.class);
@@ -107,11 +81,6 @@ public class LangBundleImpl extends LangBundle {
         InitLangBundleImpl(methodMapLangEntryImpl);
     }
 
-    /**
-     * @param entityName
-     * @param id
-     * @return
-     */
     public static Map<String, Map<String, Object>> getLangNameMapValue(String entityName, String id) {
         Map<String, Map<String, Map<String, Object>>> idMapNameMapValue = entityMapIdMapNameMapValue.get(entityName);
         if (idMapNameMapValue == null) {
@@ -133,11 +102,6 @@ public class LangBundleImpl extends LangBundle {
         return nameMapValue;
     }
 
-    /**
-     * @param entityName
-     * @param id
-     * @return
-     */
     public static Map<String, Map<String, Object>> findLangNameMapValue(String entityName, String id) {
         Map<String, Map<String, Map<String, Object>>> idMapNameMapValue = entityMapIdMapNameMapValue.get(entityName);
         if (idMapNameMapValue != null) {
@@ -147,11 +111,6 @@ public class LangBundleImpl extends LangBundle {
         return null;
     }
 
-    /**
-     * @param entityName
-     * @param id
-     * @return
-     */
     public static Map<String, Map<String, Object>> createLangNameMapValue(String entityName, String id) {
         Map<String, Map<String, Map<String, Object>>> idMapNameMapValue = entityMapIdMapNameMapValue.get(entityName);
         if (idMapNameMapValue == null) {
@@ -168,11 +127,6 @@ public class LangBundleImpl extends LangBundle {
         return nameMapValue;
     }
 
-    /**
-     * @param entityName
-     * @param ids
-     * @return
-     */
     public static Map<String, Map<String, Map<String, Object>>> getLangNameMapValues(String entityName, List<String> ids) {
         Map<String, Map<String, Map<String, Object>>> nameMapValues = new HashMap<String, Map<String, Map<String, Object>>>();
         for (Map<String, Object> value : (List<Map<String, Object>>) BeanService.ME.selectQuery(
@@ -198,10 +152,6 @@ public class LangBundleImpl extends LangBundle {
         return nameMapValues;
     }
 
-    /**
-     * @param entityName
-     * @param id
-     */
     protected static void deleteLangMapValue(String entityName, String id) {
         BeanService.ME.executeUpdate("DELETE FROM JLocale o WHERE o.entity = ?, o.id = ?", entityName, id);
         Map<String, Map<String, Map<String, Object>>> idMapNameMapValue = entityMapIdMapNameMapValue.get(entityName);
@@ -210,10 +160,6 @@ public class LangBundleImpl extends LangBundle {
         }
     }
 
-    /**
-     * @param entityName
-     * @param mapValues
-     */
     protected static void mergeLangMapValue(String entityName, String id, Map<String, Map<String, Object>> nameMapValue) {
         BeanService.ME.mergers("JLocale", nameMapValue.values());
         Map<String, Map<String, Map<String, Object>>> idMapNameMapValue = entityMapIdMapNameMapValue.get(entityName);
@@ -222,16 +168,10 @@ public class LangBundleImpl extends LangBundle {
         }
     }
 
-    /**
-     * @param entityName
-     */
     public static void clearLangNameMapValue(String entityName) {
         entityMapIdMapNameMapValue.remove(entityName);
     }
 
-    /**
-     * @param methodMapLangEntryImpl
-     */
     private static void InitLangBundleImpl(Map<Method, LangEntryImpl> methodMapLangEntryImpl) {
         for (Method method : ILangBase.class.getMethods()) {
             LangEntryImpl langEntryImpl = null;
@@ -380,9 +320,6 @@ public class LangBundleImpl extends LangBundle {
         }
     }
 
-    /**
-     * @return the langConfigureMap
-     */
     protected Map<String, Object> getLangConfigureMap() {
         if (langConfigureMap != null) {
             langConfigureMap = new HashMap<String, Object>();
@@ -393,10 +330,6 @@ public class LangBundleImpl extends LangBundle {
         return langConfigureMap;
     }
 
-    /**
-     * @param name
-     * @return
-     */
     public String[] getLangValueTag(String name) {
         return BeanConfigImpl.getMapValue(getLangConfigureMap(), name, null, String[].class);
     }
@@ -413,11 +346,6 @@ public class LangBundleImpl extends LangBundle {
         }
     }
 
-    /**
-     * @param lang
-     * @param tag
-     * @return
-     */
     public String getunLang(String lang, String tag) {
         if (unLangDeveloperMap != null) {
             Object unLang = null;
@@ -437,21 +365,12 @@ public class LangBundleImpl extends LangBundle {
         return lang;
     }
 
-    /**
-     * @param joEntity
-     * @return
-     */
     protected Map<Method, LangEntry> getLangInterceptors(JoEntity joEntity) {
         return getLangInterceptors(
                 joEntity.getEntityName() == null ? joEntity.getEntityClass().getName() : joEntity.getEntityName(),
                 joEntity.getEntityClass());
     }
 
-    /**
-     * @param entityName
-     * @param entityClass
-     * @return
-     */
     protected Map<Method, LangEntry> getLangInterceptors(final String entityName, final Class<?> entityClass) {
         if (isI18n()) {
             Map<Method, LangEntry> langInterceptors = entityMapLangInterceptors.get(entityName);
@@ -632,11 +551,6 @@ public class LangBundleImpl extends LangBundle {
         return null;
     }
 
-    /**
-     * @param entityName
-     * @param entity
-     * @return
-     */
     public <T> T getLangProxy(String entityName, T entity) {
         if (isI18n() && entity instanceof IBase) {
             return getLangProxy(entityName, entity, ((IBase) entity).getId());
@@ -645,12 +559,6 @@ public class LangBundleImpl extends LangBundle {
         return entity;
     }
 
-    /**
-     * @param entityName
-     * @param entity
-     * @param id
-     * @return
-     */
     public <T> T getLangProxy(String entityName, T entity, Object id) {
         if (entity == null) {
             return entity;
@@ -666,11 +574,6 @@ public class LangBundleImpl extends LangBundle {
         return entity;
     }
 
-    /**
-     * @param entityName
-     * @param entities
-     * @return
-     */
     public <T> List<T> getLangProxy(final String entityName, final List<T> entities) {
         if (isI18n() && !entities.isEmpty()) {
             Object entity = entities.get(0);
@@ -683,12 +586,6 @@ public class LangBundleImpl extends LangBundle {
         return entities;
     }
 
-    /**
-     * @param entityName
-     * @param entities
-     * @param crudSupply
-     * @return
-     */
     public <T> List<T> getLangProxy(final String entityName, final List<T> entities, ICrudSupply crudSupply) {
         if (isI18n() && !entities.isEmpty()) {
             Object entity = entities.get(0);
@@ -705,11 +602,6 @@ public class LangBundleImpl extends LangBundle {
         return entities;
     }
 
-    /**
-     * @param entityName
-     * @param entity
-     * @return
-     */
     public <T> Iterator<T> getLangProxy(final String entityName, final Iterator<T> entityIterator) {
         if (isI18n()) {
             return new Iterator<T>() {
@@ -734,13 +626,6 @@ public class LangBundleImpl extends LangBundle {
         return entityIterator;
     }
 
-    /**
-     * @param entityName
-     * @param joEntity
-     * @param entity
-     * @param id
-     * @return
-     */
     public <T> T getLangProxy(String entityName, JoEntity joEntity, T entity, Object id) {
         if (isI18n()) {
             Map<Method, LangEntry> langInterceptors = getLangInterceptors(joEntity);
@@ -756,16 +641,6 @@ public class LangBundleImpl extends LangBundle {
         return entity;
     }
 
-    /**
-     * @param parent
-     * @param joEntity
-     * @param entity
-     * @param nameId
-     * @param langInterceptors
-     * @param finds
-     * @param iterceptors
-     * @return
-     */
     protected <T> T getLangProxy(LangIterceptor parent, JoEntity joEntity, T entity, String[] nameId,
                                  Map<Method, LangEntry> langInterceptors, List<String> finds, List<LangIterceptor> iterceptors) {
         AopProxy proxy = AopProxyUtils.getProxy(entity, langInterfaces, false, true);
@@ -793,13 +668,6 @@ public class LangBundleImpl extends LangBundle {
         return (T) proxy;
     }
 
-    /**
-     * @param parent
-     * @param joEntity
-     * @param entities
-     * @param nameIds
-     * @return
-     */
     public <T> T[] getLangProxyArray(LangIterceptor parent, JoEntity joEntity, T[] entities, String[][] nameIds) {
         if (isI18n()) {
             int length = entities.length;
@@ -821,10 +689,6 @@ public class LangBundleImpl extends LangBundle {
         return entities;
     }
 
-    /**
-     * @param finds
-     * @param iterceptors
-     */
     protected void getLangProxyFinds(List<String> finds, List<LangIterceptor> iterceptors) {
         int length = finds.size();
         if (length > 0) {
@@ -842,14 +706,6 @@ public class LangBundleImpl extends LangBundle {
         }
     }
 
-    /**
-     * @param parent
-     * @param joEntity
-     * @param entities
-     * @param nameIds
-     * @param langInterceptors
-     * @return
-     */
     protected <T> List<T> getLangProxyList(LangIterceptor parent, JoEntity joEntity, Collection<T> entities, String[][] nameIds,
                                            Map<Method, LangEntry> langInterceptors) {
         List<String> finds = new ArrayList<String>();
@@ -867,13 +723,6 @@ public class LangBundleImpl extends LangBundle {
         return list;
     }
 
-    /**
-     * @param parent
-     * @param joEntity
-     * @param entities
-     * @param nameIds
-     * @return
-     */
     public <T> Collection<T> getLangProxyCollection(LangIterceptor parent, JoEntity joEntity, Collection<T> entities,
                                                     String[][] nameIds) {
         if (isI18n() && !entities.isEmpty()) {
@@ -888,13 +737,6 @@ public class LangBundleImpl extends LangBundle {
         return entities;
     }
 
-    /**
-     * @param parent
-     * @param joEntity
-     * @param entityMap
-     * @param nameIds
-     * @return
-     */
     public <K, V> Map<K, V> getLangProxyMap(LangIterceptor parent, JoEntity joEntity, Map<K, V> entityMap, String[][] nameIds) {
         if (isI18n() && !entityMap.isEmpty()) {
             Map<Method, LangEntry> langInterceptors = getLangInterceptors(joEntity.getEntityName(), joEntity.getEntityClass());
@@ -912,12 +754,6 @@ public class LangBundleImpl extends LangBundle {
         return entityMap;
     }
 
-    /**
-     * @param entityName
-     * @param id
-     * @param langInterceptors
-     * @return
-     */
     protected LangIterceptor getLangIterceptor(String entityName, String id, Map<Method, LangEntry> langInterceptors) {
         return new LangIterceptor(entityName, id, langInterceptors);
     }
@@ -947,49 +783,18 @@ public class LangBundleImpl extends LangBundle {
         }
     }
 
-    /**
-     * @author absir
-     */
     protected static interface LangEntry {
 
-        /**
-         * @param iterceptor
-         * @param proxy
-         * @param iterator
-         * @param proxyHandler
-         * @param method
-         * @param args
-         * @param methodProxy
-         * @return
-         * @throws Throwable
-         */
         public Object invoke(LangIterceptor iterceptor, Object proxy, Iterator<AopInterceptor> iterator,
                              AopProxyHandler proxyHandler, Method method, Object[] args, MethodProxy methodProxy) throws Throwable;
     }
 
-    /**
-     * @author absir
-     */
     protected static class LangEntryValue extends ObjectEntry<String, Class<?>> implements LangEntry {
 
-        /**
-         * @param name
-         * @param toType
-         */
         public LangEntryValue(String name, Class<?> toType) {
             super(name, toType);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.lang.LangBundleImpl.LangEntry#invoke(com.absir.
-         * aserv.lang.LangBundleImpl.LangIterceptor, java.lang.Object,
-         * java.util.Iterator, com.absir.aop.AopProxyHandler,
-         * java.lang.reflect.Method, java.lang.Object[],
-         * net.sf.cglib.proxy.MethodProxy)
-         */
         @Override
         public Object invoke(LangIterceptor iterceptor, Object proxy, Iterator<AopInterceptor> iterator,
                              AopProxyHandler proxyHandler, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
@@ -1008,19 +813,10 @@ public class LangBundleImpl extends LangBundle {
         }
     }
 
-    /**
-     * @author absir
-     */
     protected static abstract class LangEntryImpl implements LangEntry {
 
-        /**
-         * langEntry
-         */
         private LangEntry langEntry;
 
-        /**
-         * @return
-         */
         public LangEntry getLangEntry() {
             if (langEntry == null) {
                 langEntry = generateLangEnry();
@@ -1029,46 +825,20 @@ public class LangBundleImpl extends LangBundle {
             return langEntry;
         }
 
-        /**
-         * @return
-         */
         protected abstract LangEntry generateLangEnry();
     }
 
-    /**
-     * @author absir
-     */
     protected static abstract class LangEmbeded implements LangEntry {
 
-        /**
-         * name
-         */
         protected String name;
 
-        /**
-         * accessor
-         */
         protected Accessor accessor;
 
-        /**
-         * @param beanType
-         * @param property
-         */
         public LangEmbeded(Class<?> beanType, String property) {
             name = property;
             accessor = UtilAccessor.getAccessorProperty(beanType, property);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aserv.lang.LangBundleImpl.LangEntry#invoke(com.absir.
-         * aserv.lang.LangBundleImpl.LangIterceptor, java.lang.Object,
-         * java.util.Iterator, com.absir.aop.AopProxyHandler,
-         * java.lang.reflect.Method, java.lang.Object[],
-         * net.sf.cglib.proxy.MethodProxy)
-         */
         @Override
         public Object invoke(LangIterceptor langIterceptor, Object proxy, Iterator<AopInterceptor> iterator,
                              AopProxyHandler proxyHandler, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
@@ -1085,68 +855,29 @@ public class LangBundleImpl extends LangBundle {
             return value;
         }
 
-        /**
-         * @param langIterceptor
-         * @param value
-         * @return
-         */
         public abstract Object langProxy(LangIterceptor langIterceptor, Object value);
     }
 
-    /**
-     * @author absir
-     */
     protected static class LangIterceptor implements AopInterceptor<LangEntry> {
 
-        /**
-         * entityName
-         */
         private String entityName;
 
-        /**
-         * parent
-         */
         private LangIterceptor parent;
 
-        /**
-         * nameId
-         */
         private String[] nameId;
 
-        /**
-         * relateId
-         */
         private String relateId;
 
-        /**
-         * id
-         */
         private String id;
 
-        /**
-         * embededs
-         */
         private Set<Method> embededs;
 
-        /**
-         * langInterceptors
-         */
         private Map<Method, LangEntry> langInterceptors;
 
-        /**
-         * nameMapValue
-         */
         private Map<String, Map<String, Object>> nameMapValue;
 
-        /**
-         * nameLocaleMapValue
-         */
         private Map<JEmbedSL, Object> nameLocaleMapValue;
 
-        /**
-         * @param entityName
-         * @param langInterceptors
-         */
         public LangIterceptor(String entityName, String id, Map<Method, LangEntry> langInterceptors) {
             this.entityName = entityName;
             this.id = id;
@@ -1154,22 +885,11 @@ public class LangBundleImpl extends LangBundle {
             this.langInterceptors = langInterceptors;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aop.AopInterceptor#getInterface()
-         */
         @Override
         public Class<?> getInterface() {
             return null;
         }
 
-        /**
-         * @param parent
-         * @param entity
-         * @param nameId
-         * @param crudHandler
-         */
         public void setNameId(LangIterceptor parent, Object entity, String[] nameId, CrudHandler crudHandler) {
             this.parent = parent;
             if (id == null) {
@@ -1178,10 +898,6 @@ public class LangBundleImpl extends LangBundle {
             }
         }
 
-        /**
-         * @param entity
-         * @param crudHandler
-         */
         public void initId(Object entity, CrudHandler crudHandler) {
             if (id == null) {
                 if (nameId == null) {
@@ -1230,17 +946,10 @@ public class LangBundleImpl extends LangBundle {
             }
         }
 
-        /**
-         * @param embed
-         * @return
-         */
         public boolean embed(Method method) {
             return embededs == null || !embededs.contains(method);
         }
 
-        /**
-         * @param method
-         */
         public void setEmbed(Method method) {
             if (embededs == null) {
                 embededs = new HashSet<Method>();
@@ -1249,58 +958,30 @@ public class LangBundleImpl extends LangBundle {
             embededs.add(method);
         }
 
-        /**
-         * @param method
-         */
         public void removeEmbed(Method method) {
             if (embededs != null) {
                 embededs.remove(method);
             }
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.absir.aop.AopInterceptor#getInterceptor(com.absir.aop.AopProxyHandler
-         * , java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
-         */
         @Override
         public LangEntry getInterceptor(AopProxyHandler proxyHandler, Object beanObject, Method method, Object[] args)
                 throws Throwable {
             return langInterceptors.get(method);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aop.AopInterceptor#before(java.lang.Object,
-         * java.util.Iterator, java.lang.Object, com.absir.aop.AopProxyHandler,
-         * java.lang.reflect.Method, java.lang.Object[],
-         * net.sf.cglib.proxy.MethodProxy)
-         */
         @Override
         public Object before(Object proxy, Iterator<AopInterceptor> iterator, LangEntry interceptor, AopProxyHandler proxyHandler,
                              Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
             return interceptor.invoke(this, proxy, iterator, proxyHandler, method, args, methodProxy);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aop.AopInterceptor#after(java.lang.Object,
-         * java.lang.Object, java.lang.Object, com.absir.aop.AopProxyHandler,
-         * java.lang.reflect.Method, java.lang.Object[], java.lang.Throwable)
-         */
         @Override
         public Object after(Object proxy, Object returnValue, LangEntry interceptor, AopProxyHandler proxyHandler, Method method,
                             Object[] args, Throwable e) throws Throwable {
             return returnValue;
         }
 
-        /**
-         * @return the nameMapValue
-         */
         public Map<String, Map<String, Object>> getNameMapValue() {
             if (nameMapValue == null) {
                 nameMapValue = getLangNameMapValue(entityName, id);
@@ -1309,19 +990,10 @@ public class LangBundleImpl extends LangBundle {
             return nameMapValue;
         }
 
-        /**
-         * @param nameMapValue the nameMapValue to set
-         */
         public void setNameMapValue(Map<String, Map<String, Object>> nameMapValue) {
             this.nameMapValue = nameMapValue;
         }
 
-        /**
-         * @param fieldName
-         * @param locale
-         * @param type
-         * @return
-         */
         public Object getLang(String fieldName, Integer locale, Class<?> type) {
             Object value = null;
             if (nameLocaleMapValue != null) {
@@ -1341,11 +1013,6 @@ public class LangBundleImpl extends LangBundle {
             return value;
         }
 
-        /**
-         * @param fieldName
-         * @param locale
-         * @param value
-         */
         public void setLang(String fieldName, Integer locale, Object value) {
             if (nameLocaleMapValue == null) {
                 nameLocaleMapValue = new HashMap<JEmbedSL, Object>();
@@ -1354,9 +1021,6 @@ public class LangBundleImpl extends LangBundle {
             nameLocaleMapValue.put(new JEmbedSL(fieldName, (long) locale), value);
         }
 
-        /**
-         * @param values
-         */
         public void setLangValues(String[] values) {
             for (String value : values) {
                 String[] langs = value.split(",", 3);
@@ -1366,12 +1030,6 @@ public class LangBundleImpl extends LangBundle {
             }
         }
 
-        /**
-         * @param mapValue
-         * @param name
-         * @param handler
-         * @return
-         */
         protected Map<String, Object> getMapValue(Map<String, Map<String, Object>> mapValue, String name, CrudHandler handler) {
             Map<String, Object> value = new HashMap<String, Object>();
             mapValue.put(name, value);
@@ -1386,11 +1044,6 @@ public class LangBundleImpl extends LangBundle {
             return value;
         }
 
-        /**
-         * @param entity
-         * @param crud
-         * @param handler
-         */
         public void proccessCrud(Object entity, Crud crud, CrudHandler handler) {
             if (id == null) {
                 if (entity == handler.getRoot() && nameId == null) {
@@ -1449,13 +1102,6 @@ public class LangBundleImpl extends LangBundle {
             }
         }
 
-        /**
-         * @param entity
-         * @param name
-         * @param value
-         * @param propertyData
-         * @param binderData
-         */
         public void bind(Object entity, String name, Object value, PropertyData propertyData, BinderData binderData) {
             if (entity instanceof ILangBase) {
                 String[] args = value.toString().split(".", 2);

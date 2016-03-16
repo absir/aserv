@@ -7,10 +7,6 @@
  */
 package com.absir.aserv.game.bean.value;
 
-/**
- * @author absir
- *
- */
 public interface IRank {
 
 }

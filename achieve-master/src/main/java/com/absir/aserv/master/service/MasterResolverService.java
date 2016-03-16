@@ -14,22 +14,10 @@ import com.absir.server.socket.SelSession;
 
 import java.nio.channels.SocketChannel;
 
-/**
- * @author absir
- *
- */
 @Base
 @Bean
 public class MasterResolverService extends MasterServerResolver {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.master.resolver.MasterServerResolver#idForMaster(java.lang.
-     * String[], java.nio.channels.SocketChannel,
-     * com.absir.server.socket.SelSession)
-     */
     @Override
     public String idForMaster(String[] params, SocketChannel socketChannel, SelSession selSession) {
         return super.idForMaster(params, socketChannel, selSession);

@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年10月22日 下午5:13:50
  */
 package com.absir.core.util;
@@ -19,44 +19,20 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 public class UtilPipedStream implements IStep {
 
-    /**
-     * STREAM_STEP
-     */
     public static final UtilStep STREAM_STEP = UtilStep.openUtilStep(true, "UtilPipedStream.STEP", 5000);
 
-    /**
-     * idleTime
-     */
     protected long idleTime;
 
-    /**
-     * size
-     */
     private int size;
 
-    /**
-     * index
-     */
     private int index;
 
-    /**
-     * addMapOutStream
-     */
     private Map<Object, NextOutputStream> addMapOutStream;
 
-    /**
-     * nextMapOutStream
-     */
     private Map<Object, NextOutputStream> nextMapOutStream = new HashMap<Object, NextOutputStream>();
 
-    /**
-     * @param idleTime
-     */
     public UtilPipedStream(long idleTime) {
         if (idleTime < 1000) {
             idleTime = 1000;
@@ -65,11 +41,6 @@ public class UtilPipedStream implements IStep {
         STREAM_STEP.addStep(this);
     }
 
-    /**
-     * @param hashKey
-     * @param index
-     * @return
-     */
     public static final long getHashIndex(int hashKey, int index) {
         long hashIndex = hashKey;
         hashIndex <<= 32;
@@ -77,9 +48,6 @@ public class UtilPipedStream implements IStep {
         return hashIndex;
     }
 
-    /**
-     * @param closeable
-     */
     public static final void closeCloseable(Closeable closeable) {
         if (closeable == null) {
             return;
@@ -95,23 +63,14 @@ public class UtilPipedStream implements IStep {
         }
     }
 
-    /**
-     * @return the size
-     */
     public int getSize() {
         return size;
     }
 
-    /**
-     *
-     */
     public synchronized void close() {
         idleTime = 0;
     }
 
-    /**
-     * @param hashKey
-     */
     public synchronized Entry<Integer, NextOutputStream> nextOutputStream(int hashKey) {
         if (idleTime > 0) {
             boolean maxed = false;
@@ -142,17 +101,10 @@ public class UtilPipedStream implements IStep {
         return null;
     }
 
-    /**
-     * @return
-     */
     protected NextOutputStream createNextOutputStream() {
         return new NextOutputStream();
     }
 
-    /**
-     * @param hashIndex
-     * @return
-     */
     public NextOutputStream getOutputStream(Object hashIndex) {
         Map<Object, NextOutputStream> mapOutStream = addMapOutStream;
         NextOutputStream outputStream = nextMapOutStream.get(hashIndex);
@@ -165,19 +117,10 @@ public class UtilPipedStream implements IStep {
         return outputStream;
     }
 
-    /**
-     * @param hashKey
-     * @param index
-     * @return
-     */
     public NextOutputStream getOutputStream(int hashKey, int index) {
         return getOutputStream(getHashIndex(hashKey, index));
     }
 
-    /**
-     * @param key
-     * @param value
-     */
     protected synchronized void addNextOutputStream(Long key, NextOutputStream value) {
         if (addMapOutStream == null) {
             addMapOutStream = new HashMap<Object, NextOutputStream>();
@@ -188,20 +131,12 @@ public class UtilPipedStream implements IStep {
         addMapOutStream.put(key, value);
     }
 
-    /**
-     * @param hashIndex
-     * @return
-     */
     public NextOutputStream createNextOutputStream(Object hashIndex) {
         NextOutputStream outputStream = createNextOutputStream();
         setNextOutputStream(hashIndex, outputStream);
         return outputStream;
     }
 
-    /**
-     * @param key
-     * @param value
-     */
     public synchronized void setNextOutputStream(Object hashIndex, NextOutputStream value) {
         NextOutputStream outputStream = getOutputStream(hashIndex);
         if (outputStream == null) {
@@ -215,11 +150,6 @@ public class UtilPipedStream implements IStep {
         addMapOutStream.put(hashIndex, value);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.util.UtilStep.IStep#stepDone(long)
-     */
     @Override
     public boolean stepDone(long contextTime) {
         if (idleTime > 0) {
@@ -269,57 +199,30 @@ public class UtilPipedStream implements IStep {
         }
     }
 
-    /**
-     * @author absir
-     */
     public class NextOutputStream extends PipedOutputStream {
 
-        /**
-         * passTime
-         */
         protected long passTime;
 
-        /**
-         *
-         */
         public NextOutputStream() {
             retainAt();
         }
 
-        /**
-         *
-         */
         public final void retainAt() {
             passTime += UtilContext.getCurrentTime() + idleTime;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.io.PipedOutputStream#write(int)
-         */
         @Override
         public void write(int b) throws IOException {
             retainAt();
             super.write(b);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.io.PipedOutputStream#write(byte[], int, int)
-         */
         @Override
         public void write(byte[] b, int off, int len) throws IOException {
             retainAt();
             super.write(b, off, len);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.io.PipedOutputStream#close()
-         */
         @Override
         public void close() throws IOException {
             if (passTime > 0) {

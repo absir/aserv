@@ -21,49 +21,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
 
-    /**
-     * TYPE_VARIABLE
-     */
     public static final TypeVariable<?> TYPE_VARIABLE = DCache.class.getTypeParameters()[0];
 
-    /**
-     * entityClass
-     */
     protected Class<K> entityClass;
 
-    /**
-     * entityName
-     */
     protected String entityName;
 
-    /**
-     * cacheMap
-     */
     protected Map<Serializable, V> cacheMap;
 
-    /**
-     * cacheMapBuffer
-     */
     protected Map<Serializable, V> cacheMapBuffer;
 
-    /**
-     * @param entityName
-     */
     public DCache(String entityName) {
         this(null, null);
     }
 
-    /**
-     * @param entityClass
-     * @param entityName
-     */
     public DCache(Class<K> entityClass, String entityName) {
         if (entityClass == null) {
             entityClass = KernelClass.typeClass(getClass(), TYPE_VARIABLE);
@@ -74,31 +48,18 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
         L2EntityMergeService.ME.addEntityMerges(entityClass, this);
     }
 
-    /**
-     * @return
-     */
     protected Map<Serializable, V> createCacheMap() {
         return new HashMap<Serializable, V>();
     }
 
-    /**
-     * @return the cacheMap
-     */
     protected Map<Serializable, V> getCacheMap() {
         return cacheMap;
     }
 
-    /**
-     * @return
-     */
     public boolean isEmpty() {
         return cacheMap.isEmpty();
     }
 
-    /**
-     * @param id
-     * @return
-     */
     public V getCacheValue(Serializable id) {
         return cacheMap.get(id);
     }
@@ -123,13 +84,6 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
         cacheMapBuffer = null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.orm.hibernate.boost.IEntityMerge#merge(java.lang.String,
-     * java.lang.Object, com.absir.orm.hibernate.boost.IEntityMerge.MergeType,
-     * java.lang.Object)
-     */
     @Override
     public void merge(String entityName, K entity, com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType,
                       Object mergeEvent) {
@@ -158,10 +112,6 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
         }
     }
 
-    /**
-     * @param entity
-     * @return
-     */
     protected abstract V getCacheValue(K entity);
 
 }

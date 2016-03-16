@@ -19,30 +19,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 public class BinderUtils {
 
-    /**
-     * @return
-     */
     public static BinderSupply getBinderSupply() {
         return BinderData.binderSupply;
     }
 
-    /**
-     * @return
-     */
     public static ValidatorSupply getValidatorSupply() {
         return BinderData.validatorSupply;
     }
 
-    /**
-     * @param entity
-     * @return
-     */
     public static Map<String, Object> getEntityMap(Object entity) {
         if (entity == null) {
             return null;
@@ -59,20 +46,10 @@ public class BinderUtils {
         return entityMap;
     }
 
-    /**
-     * @param propertyMap
-     * @return
-     */
     public static Map<String, Object> getDataMap(Map<String, Object> propertyMap) {
         return (Map<String, Object>) getDataObject(propertyMap, null);
     }
 
-
-    /**
-     * @param propertyMap
-     * @param from
-     * @return
-     */
     public static Object getDataObject(Map<String, Object> propertyMap, String from) {
         int length = from == null ? 0 : from.length();
         Object dataObject = null;
@@ -103,15 +80,6 @@ public class BinderUtils {
         return dataObject;
     }
 
-    /**
-     * @param propertyPaths
-     * @param beganIndex
-     * @param endIndex
-     * @param value
-     * @param dataObject
-     * @param handler
-     * @return
-     */
     private static Object addDataObject(String[] propertyPaths, int beganIndex, int endIndex, Object value, Object dataObject, DataObjectHandler handler) {
         if (beganIndex >= endIndex) {
             return value;
@@ -249,14 +217,8 @@ public class BinderUtils {
         return dataMap;
     }
 
-    /**
-     *
-     */
     protected static class DataObjectHandler {
 
-        /**
-         * pathMapKeys
-         */
         public Map<String, List<String>> pathMapKeys;
     }
 }

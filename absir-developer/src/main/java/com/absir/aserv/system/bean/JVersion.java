@@ -13,10 +13,6 @@ import com.absir.aserv.system.bean.value.JaLang;
 
 import javax.persistence.Entity;
 
-/**
- * @author absir
- *
- */
 @Entity
 public class JVersion extends JbBean {
 
@@ -39,76 +35,42 @@ public class JVersion extends JbBean {
     @JaLang(value = "描述")
     private String description;
 
-    /**
-     * @return the version
-     */
     public String getVersion() {
         return version;
     }
 
-    /**
-     * @param version the version to set
-     */
     public void setVersion(String version) {
         this.version = version;
     }
 
-    /**
-     * @return the versionName
-     */
     public String getVersionName() {
         return versionName;
     }
 
-    /**
-     * @param versionName
-     *            the versionName to set
-     */
     public void setVersionName(String versionName) {
         this.versionName = versionName;
     }
 
-    /**
-     * @return the versionFile
-     */
     public String getVersionFile() {
         return versionFile;
     }
 
-    /**
-     * @param versionFile
-     *            the versionFile to set
-     */
     public void setVersionFile(String versionFile) {
         this.versionFile = versionFile;
     }
 
-    /**
-     * @return the createTime
-     */
     public long getCreateTime() {
         return createTime;
     }
 
-    /**
-     * @param createTime
-     *            the createTime to set
-     */
     public void setCreateTime(long createTime) {
         this.createTime = createTime;
     }
 
-    /**
-     * @return the description
-     */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * @param description
-     *            the description to set
-     */
     public void setDescription(String description) {
         this.description = description;
     }

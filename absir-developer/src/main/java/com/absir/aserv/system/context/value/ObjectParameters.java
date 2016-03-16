@@ -14,16 +14,9 @@ import com.absir.core.kernel.KernelReflect;
 import java.lang.reflect.Field;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 public class ObjectParameters {
 
-    /**
-     * @param parameters
-     */
     public ObjectParameters(String[] parameters) {
         List<Field> fields = HelperAccessor.getFields(getClass());
         int size = fields.size();

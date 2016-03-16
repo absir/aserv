@@ -115,10 +115,6 @@ public class Admin_entity extends AdminServer {
                 queue, jdbcPage));
     }
 
-    /**
-     * @param entityName
-     * @param input
-     */
     public void edit(String entityName, Input input) {
         edit(entityName, null, input);
     }
@@ -209,11 +205,6 @@ public class Admin_entity extends AdminServer {
         }
     }
 
-    /**
-     * @param entityName
-     * @param input
-     * @return
-     */
     public String save(String entityName, Input input) {
         return save(entityName, null, input);
     }
@@ -369,12 +360,6 @@ public class Admin_entity extends AdminServer {
         return "admin/entity/delete";
     }
 
-    /**
-     * @param entityName
-     * @param ids
-     * @param input
-     * @return
-     */
     public String deletes(String entityName, @Param String ids, Input input) {
         return delete(entityName, HelperString.split(ids, ','), input);
     }
@@ -473,10 +458,6 @@ public class Admin_entity extends AdminServer {
         input.getModel().put("entities", EntityStatics.suggest(entityName, InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), null, null, input), input));
     }
 
-    /**
-     * @param entityName
-     * @param input
-     */
     public void lookup(String entityName, Input input) {
         lookup(entityName, null, input);
     }

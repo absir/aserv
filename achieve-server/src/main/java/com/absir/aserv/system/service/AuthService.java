@@ -29,16 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- *
- */
 @Bean
 public class AuthService {
 
-    /**
-     * ME
-     */
     public final static AuthService ME = BeanFactoryUtils.get(AuthService.class);
 
     /**
@@ -304,11 +297,6 @@ public class AuthService {
         return permissionFilter(fieldVotes);
     }
 
-    /**
-     * @param maMenu
-     * @param roleId
-     * @param fieldVotes
-     */
     private void permissionFilter(JMaMenu maMenu, Long roleId, Map<String, JeVote> fieldVotes) {
         JPermission permission = maMenu.getPermissions().get(roleId);
         if (permission != null) {
@@ -344,10 +332,6 @@ public class AuthService {
         }
     }
 
-    /**
-     * @param fieldVotes
-     * @return
-     */
     private PropertyFilter permissionFilter(Map<String, JeVote> fieldVotes) {
         PropertyFilter propertyFilter = new PropertyFilter();
         for (Entry<String, JeVote> entry : fieldVotes.entrySet()) {

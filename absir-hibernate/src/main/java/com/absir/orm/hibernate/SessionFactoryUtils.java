@@ -38,25 +38,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 @Inject
 public abstract class SessionFactoryUtils {
 
-    /**
-     * Entity_Name_Map_Field_Metas
-     */
     private static final Map<String, Map<String, Object[]>> Entity_Name_Map_Field_Metas = new HashMap<String, Map<String, Object[]>>();
-    /**
-     * sessionFactoryBean
-     */
+
     private static SessionFactoryBean sessionFactoryBean = BeanFactoryUtils.get(SessionFactoryBean.class);
 
-    /**
-     * @return the sessionFactoryBean
-     */
     public static SessionFactoryBean get() {
         return sessionFactoryBean;
     }
@@ -335,13 +324,6 @@ public abstract class SessionFactoryUtils {
         return sessionFactory.getClassMetadata(entityClass);
     }
 
-    /**
-     * @param jpaEntityName
-     * @param entity
-     * @param session
-     * @param sessionFactory
-     * @return
-     */
     public static Serializable getIdentifierValue(String jpaEntityName, Object entity, Session session,
                                                   SessionFactory sessionFactory) {
         if (sessionFactory == null && session != null) {
@@ -351,39 +333,18 @@ public abstract class SessionFactoryUtils {
         return getIdentifierValue(getClassMetadata(jpaEntityName, entity.getClass(), sessionFactory), entity, session);
     }
 
-    /**
-     * @param classMetadata
-     * @param entity
-     * @param session
-     * @return
-     */
     public static Serializable getIdentifierValue(ClassMetadata classMetadata, Object entity, Session session) {
         return classMetadata == null ? null : classMetadata.getIdentifier(entity, (SessionImplementor) session);
     }
 
-    /**
-     * @param entityName
-     * @param field
-     * @return
-     */
     public static String getReferencedEntityName(String entityName, Field field) {
         return getReferencedEntityName(new JoEntity(entityName, null), field);
     }
 
-    /**
-     * @param entityClass
-     * @param field
-     * @return
-     */
     public static String getReferencedEntityName(Class<?> entityClass, Field field) {
         return getReferencedEntityName(new JoEntity(null, entityClass), field);
     }
 
-    /**
-     * @param joEntity
-     * @param field
-     * @return
-     */
     public static String getReferencedEntityName(JoEntity joEntity, Field field) {
         if (joEntity.getEntityClass() == null) {
             return null;
@@ -414,20 +375,10 @@ public abstract class SessionFactoryUtils {
         return referencedEntityName;
     }
 
-    /**
-     * @param entityName
-     * @param field
-     * @return
-     */
     public static String[] getReferencedEntityNames(String entityName, Field field) {
         return getReferencedEntityNames(new JoEntity(entityName, null), field);
     }
 
-    /**
-     * @param joEntity
-     * @param field
-     * @return
-     */
     public static String[] getReferencedEntityNames(JoEntity joEntity, Field field) {
         if (joEntity.getEntityClass() == null) {
             return null;
@@ -456,9 +407,6 @@ public abstract class SessionFactoryUtils {
         return referencedEntityNames;
     }
 
-    /**
-     * @param jpaEntityNames
-     */
     public static String[] getEntityNames(String[] jpaEntityNames) {
         if (jpaEntityNames == null) {
             return null;
@@ -472,10 +420,6 @@ public abstract class SessionFactoryUtils {
         return jpaEntityNames;
     }
 
-    /**
-     * @param entityNames
-     * @return
-     */
     public static String[] getJpaEntityNames(String[] entityNames) {
         if (entityNames == null) {
             return null;
@@ -489,29 +433,14 @@ public abstract class SessionFactoryUtils {
         return entityNames;
     }
 
-    /**
-     * @param joEntity
-     * @param field
-     * @return
-     */
     public static String getReferencedJpaEntityName(JoEntity joEntity, Field field) {
         return getJpaEntityName(getReferencedEntityName(joEntity, field));
     }
 
-    /**
-     * @param joEntity
-     * @param field
-     * @return
-     */
     public static String[] getReferencedJpaEntityNames(JoEntity joEntity, Field field) {
         return getJpaEntityNames(getReferencedEntityNames(joEntity, field));
     }
 
-    /**
-     * @param jpaEntityName
-     * @param entityClass
-     * @return
-     */
     public static Map<String, Object[]> getEntityFieldMetas(final String jpaEntityName, Class<?> entityClass) {
         if (entityClass == null) {
             entityClass = getEntityClass(jpaEntityName);

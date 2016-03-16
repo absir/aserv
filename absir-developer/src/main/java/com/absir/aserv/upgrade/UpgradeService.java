@@ -40,20 +40,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class UpgradeService {
 
-    /**
-     * ME
-     */
     public static final UpgradeService ME = BeanFactoryUtils.get(UpgradeService.class);
-    /**
-     * START_DONE
-     */
+
     public static final IUpgradeReStart START_DONE = new IUpgradeReStart() {
 
         @Override
@@ -64,41 +56,25 @@ public class UpgradeService {
         public void stop() throws Throwable {
         }
     };
-    /**
-     * LOGGER
-     */
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(UpgradeService.class);
-    /**
-     * upgradeResource
-     */
+
     @Value(value = "upgrade.resource", defaultValue = "${resourcePath}upgrade/")
     private String upgradeResource;
-    /**
-     * upgradeDestination
-     */
+
     @Value(value = "upgrade.destination", defaultValue = "${classPath}../../")
     private String upgradeDestination;
-    /**
-     * restartCommand
-     */
+
     @Value(value = "upgrade.restart")
     private String restartCommand;
-    /**
-     * backupCommand
-     */
+
     @Value(value = "upgrade.backup")
     private String backupCommand;
 
-    /**
-     * @return the upgradeResource
-     */
     public String getUpgradeResource() {
         return upgradeResource;
     }
 
-    /**
-     * @return the upgradeDestination
-     */
     public String getUpgradeDestination() {
         return upgradeDestination;
     }
@@ -171,9 +147,6 @@ public class UpgradeService {
         return null;
     }
 
-    /**
-     * @return
-     */
     public JVersion upgradeVersion() {
         try {
             File upgradeFile = new File(BeanFactoryUtils.getBeanConfig().getClassPath() + "upgrade.zip");
@@ -195,10 +168,6 @@ public class UpgradeService {
         return null;
     }
 
-    /**
-     * @param version
-     * @return
-     */
     public JVersion upgradeVersion(JVersion version) {
         if (KernelUtil.compareVersion(version.getVersion(), InitBeanFactory.ME.getVersionRevert()) >= 0) {
             try {
@@ -213,11 +182,6 @@ public class UpgradeService {
         return null;
     }
 
-    /**
-     * @param version
-     * @param upgradeFile
-     * @return
-     */
     public JVersion upgradeVersion(JVersion version, File upgradeFile) {
         version = addVersion(version == null ? new JVersion() : version, upgradeFile);
         if (version != null) {
@@ -227,9 +191,6 @@ public class UpgradeService {
         return null;
     }
 
-    /**
-     * @throws IOException
-     */
     @Async(notifier = true, thread = true)
     public void restart() throws IOException {
         Object stopDone = stop();
@@ -249,10 +210,6 @@ public class UpgradeService {
         }
     }
 
-    /**
-     * @param versionFile
-     * @throws IOException
-     */
     @Async(notifier = true, thread = true)
     public void restartUpgrade(String versionFile) throws IOException {
         Object stopDone = stop();
@@ -261,10 +218,6 @@ public class UpgradeService {
         start(stopDone);
     }
 
-    /**
-     * @param inputStream
-     * @throws IOException
-     */
     @Async(notifier = true, thread = true)
     public void restartUpgrade(InputStream inputStream) throws IOException {
         Object stopDone = stop();
@@ -282,16 +235,10 @@ public class UpgradeService {
         start(stopDone);
     }
 
-    /**
-     * @return the restartCommand
-     */
     public String getRestartCommand() {
         return restartCommand;
     }
 
-    /**
-     * @throws IOException
-     */
     public void start(Object stopDone) throws IOException {
         BeanFactoryStopping.stoppingAll();
         if (!KernelString.isEmpty(restartCommand)) {
@@ -299,24 +246,14 @@ public class UpgradeService {
         }
     }
 
-    /**
-     * @throws IOException
-     */
     public Object stop() throws IOException {
         return null;
     }
 
-    /**
-     * @param versionFile
-     * @throws IOException
-     */
     public void upgrade(ZipInputStream inputStream) throws IOException {
         HelperFile.copyDirectoryOverWrite(inputStream, new File(upgradeDestination), true, null, true);
     }
 
-    /**
-     * @throws IOException
-     */
     @Async
     @Schedule(cron = "0 0 5 * * *")
     protected void upradeBackup() throws IOException {
@@ -325,19 +262,10 @@ public class UpgradeService {
         }
     }
 
-    /**
-     * @author absir
-     */
     public interface IUpgradeReStart {
 
-        /**
-         * @throws Throwable
-         */
         public void start() throws Throwable;
 
-        /**
-         * @throws Throwable
-         */
         public void stop() throws Throwable;
 
     }

@@ -14,19 +14,9 @@ import com.absir.validator.value.Digits;
 
 import java.util.Map;
 
-/**
- * @author absir
- */
 @Bean
 public class ValidatorDigits extends PropertyResolverAbstract<ValidatorObject, Digits> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotation(ValidatorObject propertyObject, Digits annotation) {
         if (propertyObject == null) {
@@ -54,13 +44,6 @@ public class ValidatorDigits extends PropertyResolverAbstract<ValidatorObject, D
         return propertyObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-     * (com.absir.property.PropertyObject, java.lang.String)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotationValue(ValidatorObject propertyObject, String annotationValue) {
         return getPropertyObjectAnnotation(propertyObject, null);

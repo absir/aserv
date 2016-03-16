@@ -10,19 +10,9 @@ package com.absir.aserv.system.bean.value;
 import com.absir.aserv.system.bean.proxy.JiBase;
 import com.absir.aserv.system.bean.proxy.JiPass;
 
-/**
- * @author absir
- *
- */
 public interface JiActive extends JiBase, JiPass {
 
-    /**
-     * @return
-     */
     public long getBeginTime();
 
-    /**
-     * @param beginTime
-     */
     public void setBeginTime(long beginTime);
 }

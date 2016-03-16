@@ -16,40 +16,21 @@ import com.absir.orm.transaction.value.Transaction;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 
-/**
- * @author absir
- *
- */
 @Bean
 public abstract class UserService {
 
-    /**
-     * ME
-     */
     public static final UserService ME = BeanFactoryUtils.get(UserService.class);
 
-    /**
-     * @param user
-     * @return
-     */
     public static String getPasswordEntry(String password, IUser user) {
         return PasswordCrudFactory.getPasswordEncrypt(password, user.getSalt());
     }
 
-    /**
-     * @param user
-     */
     @Transaction(rollback = Throwable.class)
     public void register(IUser user) {
         user.setPassword(getPasswordEntry(user.getPassword(), user));
         BeanDao.getSession().persist(user);
     }
 
-    /**
-     * @param user
-     * @param password
-     * @param newPassword
-     */
     @Transaction(rollback = Throwable.class)
     public void setPassword(IUser user, String password, String newPassword) {
         if (password != null) {

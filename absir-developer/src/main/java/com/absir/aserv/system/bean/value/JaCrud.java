@@ -12,10 +12,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @author absir
- *
- */
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JaCrud {
@@ -48,9 +44,6 @@ public @interface JaCrud {
      */
     JaCrud.Crud[] cruds() default {JaCrud.Crud.CREATE, JaCrud.Crud.UPDATE};
 
-    /**
-     * @author absir
-     */
     public static enum Crud {
 
         /**
@@ -63,10 +56,14 @@ public @interface JaCrud {
          */
         UPDATE,
 
-        /** 删除处理 DELETE */
+        /**
+         * 删除处理 DELETE
+         */
         DELETE,
 
-        /** 全部处理|LIST COMPLETE */
+        /**
+         * 全部处理|LIST COMPLETE
+         */
         COMPLETE;
     }
 }

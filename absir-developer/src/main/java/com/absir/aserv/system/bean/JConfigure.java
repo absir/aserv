@@ -14,30 +14,17 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-/**
- * @author absir
- *
- */
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 public class JConfigure extends JbBeanSS {
 
-    /**
-     * value
-     */
     @Column(length = 20480)
     private String value;
 
-    /**
-     * @return the value
-     */
     public String getValue() {
         return value;
     }
 
-    /**
-     * @param value the value to set
-     */
     public void setValue(String value) {
         this.value = value;
     }

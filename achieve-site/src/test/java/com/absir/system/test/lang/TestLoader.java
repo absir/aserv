@@ -11,15 +11,8 @@ import com.absir.aop.AopProxyUtils;
 import com.absir.system.test.AbstractTest;
 import org.junit.Test;
 
-/**
- * @author absir
- *
- */
 public class TestLoader extends AbstractTest {
 
-    /**
-     * @return
-     */
     public static String getName() {
         return "123";
     }

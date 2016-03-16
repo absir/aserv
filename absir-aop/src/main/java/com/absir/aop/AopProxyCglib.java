@@ -12,26 +12,12 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- */
 public class AopProxyCglib extends AopProxyHandler implements MethodInterceptor {
 
-    /**
-     * @param beanType
-     * @param beanObject
-     */
     public AopProxyCglib(Class<?> beanType, Object beanObject) {
         super(beanType, beanObject);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aop.AopProxyHandler#invoke(java.lang.Object,
-     * java.lang.reflect.Method, java.lang.Object[],
-     * net.sf.cglib.proxy.MethodProxy)
-     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         if (beanObject == null) {

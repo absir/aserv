@@ -16,31 +16,20 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * @author absir
- */
 public class SelectorFactory {
 
     public static final int DEFAULT_MAX_SELECTORS = 20;
-    /**
-     * LOGGER
-     */
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(SelectorFactory.class);
     private static final Queue<Selector> selectors = new ConcurrentLinkedQueue<Selector>();
     private static final AtomicInteger poolSize = new AtomicInteger();
     private static final AtomicInteger missesCounter = new AtomicInteger();
     private static volatile int maxSelectors = DEFAULT_MAX_SELECTORS;
 
-    /**
-     * @return
-     */
     public final static int getMaxSelectors() {
         return maxSelectors;
     }
 
-    /**
-     * @param size
-     */
     public static void setMaxSelectors(int size) {
         if (size < 0) {
             throw new IllegalArgumentException("size < 0");
@@ -50,9 +39,6 @@ public class SelectorFactory {
         maxSelectors = size;
     }
 
-    /**
-     * @return
-     */
     public final static Selector openSelector() {
         try {
             return Selector.open();
@@ -64,9 +50,6 @@ public class SelectorFactory {
         return null;
     }
 
-    /**
-     * @return
-     */
     public final static Selector getSelector() {
         Selector selector = (Selector) selectors.poll();
         if (selector != null) {
@@ -85,9 +68,6 @@ public class SelectorFactory {
         return selector;
     }
 
-    /**
-     * @param s
-     */
     public final static void returnSelector(Selector s) {
         if (poolSize.getAndIncrement() < maxSelectors) {
             selectors.offer(s);
@@ -98,9 +78,6 @@ public class SelectorFactory {
         }
     }
 
-    /**
-     * @param s
-     */
     public final static void selectNowAndReturnSelector(Selector s) {
         try {
             s.selectNow();
@@ -112,9 +89,6 @@ public class SelectorFactory {
         }
     }
 
-    /**
-     * @param s
-     */
     private final static void closeSelector(Selector s) {
         try {
             s.close();

@@ -31,20 +31,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- */
 @Bean
 public class MenuBeanService {
 
-    /**
-     * typeMapMenuSupport
-     */
     private Map<String, IMenuSupport> typeMapMenuSupport = new HashMap<String, IMenuSupport>();
 
-    /**
-     *
-     */
     @Inject
     protected void addMenuSupply() {
         // 父链接权限管理
@@ -85,9 +76,6 @@ public class MenuBeanService {
         });
     }
 
-    /**
-     * @param menuSupports
-     */
     @Inject(type = InjectType.Selectable)
     protected void addMenuSupply(IMenuSupport[] menuSupports) {
         for (IMenuSupport menuSupport : menuSupports) {
@@ -117,11 +105,6 @@ public class MenuBeanService {
         return getMenuBeans(LangBundleImpl.ME.getLangProxy("JMenu", menuCite.getMenu()), user, depth);
     }
 
-    /**
-     * @param parent
-     * @param user
-     * @param depth
-     */
     private List<OMenuBean> getMenuBeans(JMenu parent, JiUserBase user, int depth) {
         if ((depth >= 0 && --depth < 0) || parent.getChildren() == null) {
             return null;

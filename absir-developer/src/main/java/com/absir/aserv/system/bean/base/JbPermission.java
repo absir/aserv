@@ -12,31 +12,17 @@ import com.absir.aserv.system.bean.value.JaLang;
 
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- *
- */
 @MappedSuperclass
 public class JbPermission extends JbAssoc implements JiUser {
 
     @JaLang("关联用户")
     private Long userId;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.bean.proxy.JpUser#getUserId()
-     */
     @Override
     public Long getUserId() {
         return userId;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.bean.proxy.JpUser#setUserId(java.lang.Long)
-     */
     @Override
     public void setUserId(Long userId) {
         this.userId = userId;

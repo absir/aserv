@@ -9,9 +9,6 @@ package com.absir.orm.value;
 
 import com.absir.core.util.UtilEnum.EnumInteger;
 
-/**
- * @author absir
- */
 public enum JePermission implements EnumInteger {
 
     /**
@@ -34,23 +31,12 @@ public enum JePermission implements EnumInteger {
      */
     DELETE(0X08),;
 
-    /**
-     * value
-     */
     private int value;
 
-    /**
-     * @param value
-     */
     JePermission(int value) {
         this.value = value;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.util.UtilEnum.EnumObject#getValue()
-     */
     public Integer getValue() {
         return value;
     }

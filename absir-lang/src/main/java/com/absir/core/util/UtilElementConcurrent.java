@@ -1,23 +1,14 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年9月29日 上午10:26:47
  */
 package com.absir.core.util;
 
-/**
- * @author absir
- */
 public class UtilElementConcurrent<T> extends UtilElement<T> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.core.util.UtilElement#insert(com.absir.core.util.UtilElement)
-     */
     @Override
     public synchronized void insert(UtilElement<T> element) {
         synchronized (element) {
@@ -27,11 +18,6 @@ public class UtilElementConcurrent<T> extends UtilElement<T> {
         next = element;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.util.UtilElement#removeNext()
-     */
     @Override
     public synchronized void removeNext() {
         if (next != null) {

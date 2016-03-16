@@ -29,80 +29,39 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
-/**
- * @author absir
- */
 @SuppressWarnings("unchecked")
 public class DeveloperModel {
 
-    /**
-     * ELEMENT_NAME
-     */
     private static final String ELEMENT_NAME = DeveloperModel.class + "@ELEMENT_NAME";
-    /**
-     * NODES_NAME
-     */
+
     private static final String NODES_NAME = DeveloperModel.class + "@NODES_NAME";
-    /**
-     * INPUT_NAME
-     */
+
     private static final String INPUT_NAME = DeveloperModel.class + "@INPUT_NAME";
-    /**
-     * IDENTIFIER_NAME
-     */
+
     private static final String IDENTIFIER_NAME = DeveloperModel.class + "@IDENTIFIER_NAME";
-    /**
-     * FIELD_NAME
-     */
+
     private static final String FIELD_NAME = DeveloperModel.class + "@FIELD_NAME";
-    /**
-     * RELATIVE_PATHS
-     */
+
     private static final String[] RELATIVE_PATHS = new String[]{""};
-    /**
-     * entityName
-     */
+
     private String entityName;
-    /**
-     * entityModel
-     */
+
     private EntityModel entityModel;
-    /**
-     * entitySuggests
-     */
+
     private List<IField> entitySuggests;
 
-    /**
-     * @param joEntity
-     * @return
-     */
     public static EntityModel getModelEntity(JoEntity joEntity) {
         return ModelFactory.getModelEntity(joEntity);
     }
 
-    /**
-     * @param entityName
-     * @param request
-     * @return
-     */
     public static DeveloperModel forEntityName(String entityName, ServletRequest request) {
         return forEntityNameClass(CrudUtils.newJoEntity(entityName, null), request);
     }
 
-    /**
-     * @param entityClass
-     * @param request
-     * @return
-     */
     public static DeveloperModel forEntityClass(Class<?> entityClass, ServletRequest request) {
         return forEntityNameClass(CrudUtils.newJoEntity(null, entityClass), request);
     }
 
-    /**
-     * @param joEntity
-     * @param request
-     * @return
-     */
     public static DeveloperModel forEntityNameClass(JoEntity joEntity, ServletRequest request) {
         String persistKey = DeveloperModel.class.getName() + joEntity.toString();
         Object modelObject = request.getAttribute(persistKey);
@@ -118,59 +77,30 @@ public class DeveloperModel {
         return (DeveloperModel) modelObject;
     }
 
-    /**
-     * @param request
-     * @return
-     */
     public static Element getElement(ServletRequest request) {
         return (Element) request.getAttribute(ELEMENT_NAME);
     }
 
-    /**
-     * @param request
-     * @return
-     */
     public static List<Node> getNodes(ServletRequest request) {
         return (List<Node>) request.getAttribute(NODES_NAME);
     }
 
-    /**
-     * @param request
-     * @return
-     */
     public static Element getElementInput(ServletRequest request) {
         return (Element) request.getAttribute(INPUT_NAME);
     }
 
-    /**
-     * @param input
-     * @param request
-     */
     public static void setElementInput(Element input, ServletRequest request) {
         request.setAttribute(INPUT_NAME, input);
     }
 
-    /**
-     * @param request
-     * @return
-     */
     public static String getIdentifier(ServletRequest request) {
         return (String) request.getAttribute(IDENTIFIER_NAME);
     }
 
-    /**
-     * @param request
-     * @return
-     */
     public static IField getField(ServletRequest request) {
         return (IField) request.getAttribute(FIELD_NAME);
     }
 
-    /**
-     * @param field
-     * @param required
-     * @return
-     */
     public static boolean allow(IField field, Boolean required) {
         if (required != null) {
             return required != field.isNullable();
@@ -179,14 +109,6 @@ public class DeveloperModel {
         return true;
     }
 
-    /**
-     * @param field
-     * @param include
-     * @param exclude
-     * @param required
-     * @param nameSet
-     * @return
-     */
     public static boolean allow(IField field, int include, int exclude, Boolean required, Set<String> nameSet) {
         if (field.getCrudField().allow(include, exclude)) {
             if (nameSet == null) {
@@ -200,28 +122,14 @@ public class DeveloperModel {
         return false;
     }
 
-    /**
-     * @return the entityName
-     */
     public String getEntityName() {
         return entityName;
     }
 
-    /**
-     * @return the entityModel
-     */
     public EntityModel getEntityModel() {
         return entityModel;
     }
 
-    /**
-     * @param div
-     * @param theme
-     * @param name
-     * @param renders
-     * @return
-     * @throws IOException
-     */
     public Element show(String div, String theme, String name, Object... renders) throws IOException {
         IField nameField = null;
         for (IField field : entityModel.getFields()) {
@@ -403,10 +311,6 @@ public class DeveloperModel {
         return element;
     }
 
-    /**
-     * @param value
-     * @return
-     */
     public String suggest(String value) {
         StringWriter writer = new StringWriter();
         PrintWriter out = new PrintWriter(writer);
@@ -415,10 +319,6 @@ public class DeveloperModel {
         return writer.toString();
     }
 
-    /**
-     * @param values
-     * @return
-     */
     public String suggests(String values) {
         StringWriter writer = new StringWriter();
         PrintWriter out = new PrintWriter(writer);
@@ -436,9 +336,6 @@ public class DeveloperModel {
         return writer.toString();
     }
 
-    /**
-     * @param out
-     */
     private void suggest(PrintWriter out) {
         String values = "";
         int size = entitySuggests == null ? 0 : entitySuggests.size();

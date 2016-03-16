@@ -23,36 +23,16 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 public class ProtoJavaMerger extends CodeJavaMerger {
 
-    /**
-     * JP_EXT_NAME
-     */
     protected static final String JP_EXT_NAME = "JProtoBufProtoClass";
 
-    /**
-     * JP_EXT_NAME_LEN
-     */
     protected static final int JP_EXT_NAME_LEN = JP_EXT_NAME.length();
 
-    /**
-     * PB_PRE_NAME
-     */
     protected static final String PB_PRE_NAME = "P";
 
-    /**
-     * VOID_TYPE
-     */
     protected Type VOID_TYPE = new VoidType();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.code.CodeJavaMerger#getToClassName(java.lang.String)
-     */
     @Override
     public String getToClassName(String className) {
         int length = className.length();
@@ -63,9 +43,6 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         return className;
     }
 
-    /**
-     * @param className
-     */
     protected boolean isProtoClassName(String className) {
         if (className.length() > PB_PRE_NAME.length() && className.startsWith(PB_PRE_NAME)) {
             char chr = className.charAt(PB_PRE_NAME.length());
@@ -75,15 +52,6 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.code.CodeJavaMerger#mergeCompilationUnit(com.github.javaparser.
-     * ast.CompilationUnit, com.github.javaparser.ast.CompilationUnit,
-     * com.github.javaparser.ast.body.TypeDeclaration,
-     * com.github.javaparser.ast.body.TypeDeclaration, java.util.Map)
-     */
     @Override
     public void mergeCompilationUnit(CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
                                      TypeDeclaration fromType, TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap) {
@@ -237,15 +205,6 @@ public class ProtoJavaMerger extends CodeJavaMerger {
                 addDeclarations.add(getCloneMore(toType));
             }
 
-			/*
-             * methodDeclaration = toMethodMap.get("setDirtyI"); if (dirtyM > 0)
-			 * { if (methodDeclaration != null) {
-			 * removeDeclarations.add(methodDeclaration); }
-			 * 
-			 * } else { if (methodDeclaration == null) {
-			 * addDeclarations.add(getSetDirtyI(toType)); } }
-			 */
-
             methodDeclaration = toMethodMap.get("mergeDirty");
 
             if (methodDeclaration != null) {
@@ -279,12 +238,6 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         }
     }
 
-    /**
-     * @param name
-     * @param getName
-     * @param declaration
-     * @return
-     */
     protected MethodDeclaration getGetter(String name, String getName, FieldDeclaration declaration) {
         MethodDeclaration method = new MethodDeclaration();
         method.setName(getName);
@@ -298,14 +251,6 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         return method;
     }
 
-    /**
-     * @param index
-     * @param dirtyM
-     * @param name
-     * @param setName
-     * @param declaration
-     * @return
-     */
     protected MethodDeclaration getSetter(int index, int dirtyM, String name, String setName,
                                           FieldDeclaration declaration) {
         MethodDeclaration method = new MethodDeclaration();
@@ -334,13 +279,6 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         return method;
     }
 
-    /**
-     * @param index
-     * @param dirtyM
-     * @param name
-     * @param setName
-     * @param declaration
-     */
     protected void updateSetter(int index, int dirtyM, String name, String setName, MethodDeclaration declaration) {
         BlockStmt blockStmt = declaration.getBody();
         if (blockStmt != null) {
@@ -371,10 +309,6 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         }
     }
 
-    /**
-     * @param toType
-     * @return
-     */
     protected MethodDeclaration getCreate(TypeDeclaration toType) {
         MethodDeclaration method = new MethodDeclaration();
         method.setName("create");
@@ -388,10 +322,6 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         return method;
     }
 
-    /**
-     * @param toType
-     * @return
-     */
     protected MethodDeclaration getClone(TypeDeclaration toType) {
         MethodDeclaration method = new MethodDeclaration();
         method.setName("clone");
@@ -407,10 +337,6 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         return method;
     }
 
-    /**
-     * @param toType
-     * @return
-     */
     protected MethodDeclaration getCloneDepth(TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap) {
         MethodDeclaration method = new MethodDeclaration();
         method.setName("cloneDepth");
@@ -467,10 +393,6 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         return method;
     }
 
-    /**
-     * @param toType
-     * @return
-     */
     protected MethodDeclaration getCloneMore(TypeDeclaration toType) {
         MethodDeclaration method = new MethodDeclaration();
         method.setName("cloneMore");
@@ -487,10 +409,6 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         return method;
     }
 
-    /**
-     * @param toType
-     * @return
-     */
     protected MethodDeclaration getSetDirtyI(TypeDeclaration toType) {
         MethodDeclaration method = new MethodDeclaration();
         method.setName("setDirtyI");
@@ -504,11 +422,6 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         return method;
     }
 
-    /**
-     * @param toType
-     * @param fromFieldMap
-     * @return
-     */
     protected MethodDeclaration getMergeDirty(TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap) {
         MethodDeclaration method = new MethodDeclaration();
         method.setName("mergeDirty");

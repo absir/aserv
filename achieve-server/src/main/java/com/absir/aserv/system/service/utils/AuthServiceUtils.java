@@ -16,10 +16,6 @@ import com.absir.core.kernel.KernelLang.PropertyFilter;
 import com.absir.orm.value.JePermission;
 import com.absir.orm.value.JoEntity;
 
-/**
- * @author absir
- *
- */
 @Configure
 public abstract class AuthServiceUtils {
 
@@ -104,12 +100,6 @@ public abstract class AuthServiceUtils {
         return AuthService.ME.permissionFilter(joEntity, user, JeVotePermission.SELECTABLE);
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @return
-     */
     public static PropertyFilter selectPropertyFilter(String entityName, ICrudSupply crudSupply, JiUserBase user) {
         return selectPropertyFilter(new JoEntity(entityName, crudSupply.getEntityClass(entityName)), user);
     }
@@ -125,12 +115,6 @@ public abstract class AuthServiceUtils {
         return AuthService.ME.permissionFilter(joEntity, user, JeVotePermission.UPDATABLE);
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @return
-     */
     public static PropertyFilter updatePropertyFilter(String entityName, ICrudSupply crudSupply, JiUserBase user) {
         return updatePropertyFilter(new JoEntity(entityName, crudSupply.getEntityClass(entityName)), user);
     }
@@ -146,12 +130,6 @@ public abstract class AuthServiceUtils {
         return AuthService.ME.permissionFilter(joEntity, user, JeVotePermission.INSERTABLE);
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @return
-     */
     public static PropertyFilter insertPropertyFilter(String entityName, ICrudSupply crudSupply, JiUserBase user) {
         return insertPropertyFilter(new JoEntity(entityName, crudSupply.getEntityClass(entityName)), user);
     }
@@ -166,12 +144,6 @@ public abstract class AuthServiceUtils {
         AuthService.ME.permissionFilter(joEntity, user, JeVotePermission.DELETEABLE);
     }
 
-    /**
-     * @param entityName
-     * @param crudSupply
-     * @param user
-     * @return
-     */
     public static void deletePropertyFilter(String entityName, ICrudSupply crudSupply, JiUserBase user) {
         deletePropertyFilter(new JoEntity(entityName, crudSupply.getEntityClass(entityName)), user);
     }

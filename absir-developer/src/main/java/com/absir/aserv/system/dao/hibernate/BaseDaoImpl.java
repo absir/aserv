@@ -21,25 +21,13 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 public class BaseDaoImpl<T, ID extends Serializable> implements BaseDao<T, ID> {
 
-    /**
-     * Base_Class_Map_Dao
-     */
     private static final Map<Class<?>, BaseDaoImpl<?, ?>> Base_Class_Map_Dao = new HashMap<Class<?>, BaseDaoImpl<?, ?>>();
-    /**
-     * baseClass
-     */
+
     private Class<?> baseClass;
 
-    /**
-     *
-     */
     public BaseDaoImpl() {
         if (baseClass == null) {
             baseClass = KernelClass.argumentClass(getClass().getGenericSuperclass(), true);
@@ -48,18 +36,11 @@ public class BaseDaoImpl<T, ID extends Serializable> implements BaseDao<T, ID> {
         Base_Class_Map_Dao.put(baseClass, this);
     }
 
-    /**
-     * @param baseClass
-     */
     public BaseDaoImpl(Class<?> baseClass) {
         this.baseClass = baseClass;
         Base_Class_Map_Dao.put(baseClass, this);
     }
 
-    /**
-     * @param baseClass
-     * @return
-     */
     public static <T> BaseDaoImpl<T, ?> getBaseDaoImpl(Class<T> baseClass) {
         BaseDaoImpl<T, ?> baseDao = (BaseDaoImpl<T, ?>) Base_Class_Map_Dao.get(baseClass);
         if (baseDao == null) {
@@ -95,21 +76,10 @@ public class BaseDaoImpl<T, ID extends Serializable> implements BaseDao<T, ID> {
         return baseDao;
     }
 
-    /**
-     * @return the baseClass
-     */
     public Class<?> getBaseClass() {
         return baseClass;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.dao.BaseDao#crud(com.absir.aserv.support.entity
-     * .value.JaCrud.Crud, com.absir.aserv.crud.CrudProperty,
-     * com.absir.aserv.crud.CrudHandler, java.lang.Object)
-     */
     @Override
     public void crud(Crud crud, CrudProperty property, CrudHandler crudHandler, T entity) {
     }

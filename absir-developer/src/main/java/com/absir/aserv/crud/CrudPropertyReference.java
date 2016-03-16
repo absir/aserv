@@ -10,50 +10,25 @@ package com.absir.aserv.crud;
 import com.absir.aserv.crud.CrudHandler.CrudInvoker;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
 
-/**
- * @author absir
- */
 public abstract class CrudPropertyReference {
 
-    /**
-     * crudProperty
-     */
     protected CrudProperty crudProperty;
 
-    /**
-     * cruds
-     */
     protected Crud[] cruds;
 
-    /**
-     * valueCrudEntity
-     */
     protected CrudEntity valueCrudEntity;
 
-    /**
-     * @return
-     */
     public CrudProperty getCrudProperty() {
         return crudProperty;
     }
 
-    /**
-     * @return the cruds
-     */
     public Crud[] getCruds() {
         return cruds;
     }
 
-    /**
-     * @return the valueCrudEntity
-     */
     public CrudEntity getValueCrudEntity() {
         return valueCrudEntity;
     }
 
-    /**
-     * @param entity
-     * @param crudHandler
-     */
     protected abstract void crud(Object entity, CrudInvoker crudHandler);
 }

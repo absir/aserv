@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年11月5日 下午5:06:27
  */
 package com.absir.proto.test;
@@ -13,9 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/**
- * @author absir
- */
 @RunWith(value = JUnit4.class)
 public class UtilProtoJavaMergerTest {
 

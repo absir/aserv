@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-12-25 下午3:23:37
  */
 package com.absir.server.route;
@@ -10,30 +10,14 @@ package com.absir.server.route;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author absir
- */
 public class RouteParameterPattern extends RouteParameter {
 
-    /**
-     * pattern
-     */
     private Pattern pattern;
 
-    /**
-     * @param regex
-     */
     public RouteParameterPattern(String regex) {
         this.pattern = Pattern.compile(regex);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.parameter.ParameterPath#findParameters(java.lang
-     * .String)
-     */
     @Override
     public String[] findParameters(String parameterPathName) {
         Matcher matcher = pattern.matcher(parameterPathName);
@@ -50,11 +34,6 @@ public class RouteParameterPattern extends RouteParameter {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.route.RouteParameter#toParameterPath(int)
-     */
     @Override
     public String toParameterPath(int parameterLength) {
         return pattern.toString();

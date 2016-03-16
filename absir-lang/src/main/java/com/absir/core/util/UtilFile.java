@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-6-8 上午10:13:45
  */
 package com.absir.core.util;
@@ -12,25 +12,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-/**
- * @author absir
- */
 public class UtilFile {
 
-    /**
-     * @param pathname
-     * @return
-     * @throws IOException
-     */
     public static byte[] read(String pathname) throws IOException {
         return read(new File(pathname));
     }
 
-    /**
-     * @param file
-     * @return
-     * @throws IOException
-     */
     public static byte[] read(File file) throws IOException {
         FileInputStream inputStream = null;
         try {
@@ -46,18 +33,10 @@ public class UtilFile {
         }
     }
 
-    /**
-     * @param pathname
-     * @throws IOException
-     */
     public static void write(String pathname, byte[] bytes) throws IOException {
         write(new File(pathname), bytes);
     }
 
-    /**
-     * @param file
-     * @throws IOException
-     */
     public static void write(File file, byte[] bytes) throws IOException {
         FileOutputStream outputStream = null;
         try {
@@ -71,11 +50,6 @@ public class UtilFile {
         }
     }
 
-    /**
-     * @param file
-     * @return
-     * @throws IOException
-     */
     public static FileInputStream openInputStread(File file) throws IOException {
         if (file.exists()) {
             if (file.isDirectory()) {
@@ -93,12 +67,6 @@ public class UtilFile {
         return new FileInputStream(file);
     }
 
-    /**
-     * @param file
-     * @param append
-     * @return
-     * @throws IOException
-     */
     public static FileOutputStream openOutputStream(File file, boolean append) throws IOException {
         if (file.exists()) {
             if (file.isDirectory()) {

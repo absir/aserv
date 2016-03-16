@@ -11,10 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
-/**
- * @author absir
- *
- */
 public class CronSequenceGenerator {
 
     private final BitSet seconds = new BitSet(60);
@@ -33,63 +29,18 @@ public class CronSequenceGenerator {
 
     private final TimeZone timeZone;
 
-    /**
-     * Construct a {@link CronSequenceGenerator} from the pattern provided,
-     * using the default {@link TimeZone}.
-     *
-     * @param expression a space-separated list of time fields
-     * @throws IllegalArgumentException if the pattern cannot be parsed
-     * @see java.util.TimeZone#getDefault()
-     */
     public CronSequenceGenerator(String expression) {
         this(expression, TimeZone.getDefault());
     }
 
-    /**
-     * Construct a {@link CronSequenceGenerator} from the pattern provided,
-     * using the specified {@link TimeZone}.
-     *
-     * @param expression
-     *            a space-separated list of time fields
-     * @param timeZone
-     *            the TimeZone to use for generated trigger times
-     * @throws IllegalArgumentException
-     *             if the pattern cannot be parsed
-     */
     public CronSequenceGenerator(String expression, TimeZone timeZone) {
         this.expression = expression;
         this.timeZone = timeZone;
         parse(expression);
     }
 
-    /**
-     * Get the next {@link Date} in the sequence matching the Cron pattern and
-     * after the value provided. The return value will have a whole number of
-     * seconds, and will be after the input value.
-     *
-     * @param date
-     *            a seed value
-     * @return the next value matching the pattern
-     */
     public Date next(Date date) {
-        /*
-         * The plan:
-		 * 
-		 * 1 Round up to the next whole second
-		 * 
-		 * 2 If seconds match move on, otherwise find the next match: 2.1 If
-		 * next match is in the next minute then roll forwards
-		 * 
-		 * 3 If minute matches move on, otherwise find the next match 3.1 If
-		 * next match is in the next hour then roll forwards 3.2 Reset the
-		 * seconds and go to 2
-		 * 
-		 * 4 If hour matches move on, otherwise find the next match 4.1 If next
-		 * match is in the next day then roll forwards, 4.2 Reset the minutes
-		 * and seconds and go to 2
-		 * 
-		 * ...
-		 */
+
         Calendar calendar = new GregorianCalendar();
         calendar.setTimeZone(this.timeZone);
         calendar.setTime(date);
@@ -172,24 +123,6 @@ public class CronSequenceGenerator {
         return dayOfMonth;
     }
 
-    /**
-     * Search the bits provided for the next set bit after the value provided,
-     * and reset the calendar.
-     *
-     * @param bits
-     *            a {@link BitSet} representing the allowed values of the field
-     * @param value
-     *            the current value of the field
-     * @param calendar
-     *            the calendar to increment as we move through the bits
-     * @param field
-     *            the field to increment in the calendar (@see {@link Calendar}
-     *            for the static constants defining valid fields)
-     * @param lowerOrders
-     *            the Calendar field ids that should be reset (i.e. the ones of
-     *            lower significance than the field of interest)
-     * @return the value of the calendar field that is next in the sequence
-     */
     private int findNext(BitSet bits, int value, Calendar calendar, int field, int nextField, List<Integer> lowerOrders) {
         int nextValue = bits.nextSetBit(value);
         // roll over if needed
@@ -205,9 +138,6 @@ public class CronSequenceGenerator {
         return nextValue;
     }
 
-    /**
-     * Reset the calendar setting all the fields provided to zero.
-     */
     private void reset(Calendar calendar, List<Integer> fields) {
         for (int field : fields) {
             calendar.set(field, field == Calendar.DAY_OF_MONTH ? 1 : 0);
@@ -216,9 +146,6 @@ public class CronSequenceGenerator {
 
     // Parsing logic invoked by the constructor
 
-    /**
-     * Parse the given pattern expression.
-     */
     private void parse(String expression) throws IllegalArgumentException {
         String[] fields = StringUtils.split(expression, " ");
         if (fields.length != 6) {
@@ -237,12 +164,6 @@ public class CronSequenceGenerator {
         }
     }
 
-    /**
-     * Replace the values in the commaSeparatedList (case insensitive) with
-     * their index in the list.
-     *
-     * @return a new string with the values from the list replaced
-     */
     private String replaceOrdinals(String value, String commaSeparatedList) {
         String[] list = StringUtils.split(commaSeparatedList, ",");
         for (int i = 0; i < list.length; i++) {

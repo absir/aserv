@@ -7,20 +7,10 @@
  */
 package com.absir.property;
 
-/**
- * @author absir
- */
 public interface PropertyFactory {
 
-    /**
-     * @param property
-     * @return
-     */
     public PropertyConvert getPropertyConvert(Property property);
 
-    /**
-     * @author absir
-     */
     public interface Void extends PropertyFactory {
 
     }

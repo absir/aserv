@@ -7,13 +7,7 @@
  */
 package com.absir.aserv.game.value;
 
-/**
- * @author absir
- */
 public interface IExp {
 
-    /**
-     * @return
-     */
     public int getExp();
 }

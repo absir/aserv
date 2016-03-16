@@ -15,28 +15,12 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 
 import java.lang.reflect.Field;
 
-/**
- * @author absir
- *
- */
 public class XlsAccessorEnum extends XlsAccessor {
 
-    /**
-     * values
-     */
     protected String[] values;
 
-    /**
-     * keys
-     */
     protected String[] keys;
 
-    /**
-     * @param field
-     * @param beanClass
-     * @param value
-     * @param key
-     */
     public XlsAccessorEnum(Field field, Class<?> cls, Class<?> beanClass, String[] value, String[] key) {
         super(field, cls, beanClass);
         if (value != null && value.length > 1) {
@@ -47,14 +31,6 @@ public class XlsAccessorEnum extends XlsAccessor {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.configure.xls.XlsAccessor#setObject(java.lang.Object,
-     * java.lang.Object, com.absir.aserv.configure.xls.XlsBase,
-     * com.absir.core.kernel.KernelLang.ObjectTemplate)
-     */
     @Override
     public void setObject(Object obj, Object cell, XlsBase xlsBase, ObjectTemplate<Boolean> empty) {
         if (values == null) {

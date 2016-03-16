@@ -20,27 +20,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 public class XlsAccessorMap extends XlsAccessorBean {
 
-    /**
-     * keyClass
-     */
     protected Class<?> keyClass;
 
-    /**
-     * keyAccessors
-     */
     protected List<XlsAccessor> keyAccessors;
 
-    /**
-     * @param field
-     * @param beanClass
-     */
     public XlsAccessorMap(Field field, Class<?> cls, Class<?> keyClass, Class<?> beanClass, XlsBase xlsBase) {
         super(field, cls, beanClass);
         this.keyClass = keyClass;
@@ -55,21 +41,11 @@ public class XlsAccessorMap extends XlsAccessorBean {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#isMulti()
-     */
     @Override
     public boolean isMulti() {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#getColumnCount()
-     */
     @Override
     public int getColumnCount() {
         int column = 0;
@@ -94,12 +70,6 @@ public class XlsAccessorMap extends XlsAccessorBean {
         return column;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#readHssfSheet(org.apache
-     * .poi.hssf.usermodel.HSSFSheet, java.util.List, int, int, int)
-     */
     @Override
     public int readHssfSheet(HSSFSheet hssfSheet, List<Object> cells, int firstRow, int firstColumn, int lastRow) {
         List<Object> list = new ArrayList<Object>();
@@ -156,14 +126,6 @@ public class XlsAccessorMap extends XlsAccessorBean {
         return lastRow;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessorUtils.XlsAccessorBean#
-     * setObject(java.lang.Object, java.lang.Object,
-     * com.absir.aserv.configure.xls.XlsBase,
-     * com.absir.core.kernel.KernelLang.ObjectTemplate)
-     */
     @Override
     public void setObject(Object obj, Object cell, XlsBase xlsBase, ObjectTemplate<Boolean> empty) {
         List<List<?>> cells = (List<List<?>>) cell;
@@ -192,12 +154,6 @@ public class XlsAccessorMap extends XlsAccessorBean {
         getAccessor().set(obj, DynaBinder.INSTANCE.bind(beanMap, null, getField().getGenericType()));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessorUtils.XlsAccessorBean#
-     * getHeader()
-     */
     @Override
     public XlsCell getHeader() {
         List<XlsAccessor> valueAccessors = accessors;
@@ -227,12 +183,6 @@ public class XlsAccessorMap extends XlsAccessorBean {
         return xlsCell;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#writeXlsCells(java.util
-     * .List, java.lang.Object, com.absir.aserv.configure.xls.XlsBase)
-     */
     @Override
     public void writeXlsCells(List<XlsCell> xlsCells, Object obj, XlsBase xlsBase) {
         if (obj != null) {

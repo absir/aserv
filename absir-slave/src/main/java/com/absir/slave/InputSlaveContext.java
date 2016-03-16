@@ -22,112 +22,57 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class InputSlaveContext {
 
-    /**
-     * ME
-     */
     public static final InputSlaveContext ME = BeanFactoryUtils.get(InputSlaveContext.class);
 
-    /**
-     * LOGGER
-     */
     protected static final Logger LOGGER = LoggerFactory.getLogger(InputSlaveContext.class);
 
-    /**
-     * ip
-     */
     @Value("server.slave.ip")
     protected String ip;
 
-    /**
-     * port
-     */
     @Value("server.slave.port")
     protected int port = 28890;
 
-    /**
-     * slave
-     */
     @Value("server.slave.group")
     protected String group = "0";
 
-    /**
-     * key
-     */
     @Value("server.slave.key")
     protected String key = "absir@qq.com";
 
-    /**
-     * url
-     */
     @Value("server.slave.url")
     protected String url;
 
-    /**
-     * slaveKey
-     */
     protected String slaveKey;
 
-    /**
-     * slaveCallbacks
-     */
     @Inject(type = InjectType.Selectable)
     @Orders
     protected ISlaveCallback[] slaveCallbacks;
 
-    /**
-     * slaveAdapter
-     */
     protected InputSlaveAdapter slaveAdapter;
 
-    /**
-     * slaveAdapters
-     */
     protected List<InputSlaveAdapter> slaveAdapters = new ArrayList<InputSlaveAdapter>();
 
-    /**
-     * slaveAdapterAdds
-     */
     protected List<InputSlaveAdapter> slaveAdapterAdds;
 
-    /**
-     * @return the key
-     */
     public String getKey() {
         return key;
     }
 
-    /**
-     * @return the url
-     */
     public String getUrl() {
         return url;
     }
 
-    /**
-     * @return the slaveKey
-     */
     public String getSlaveKey() {
         return slaveKey;
     }
 
-    /**
-     * @return the slaveAdapter
-     */
     public InputSlaveAdapter getSlaveAdapter() {
         return slaveAdapter;
     }
 
-    /**
-     * @param index
-     * @return
-     */
     public InputSlaveAdapter getSlaveAdapter(int index) {
         if (index == 0) {
             return slaveAdapter;
@@ -145,9 +90,6 @@ public class InputSlaveContext {
         return new InputSlaveAdapter(ip, port, group, key, url, slaveCallbacks);
     }
 
-    /**
-     * @param adapter
-     */
     public synchronized void addSlaveAdapter(InputSlaveAdapter adapter) {
         if (slaveAdapterAdds == null) {
             slaveAdapterAdds = new ArrayList<InputSlaveAdapter>();
@@ -168,11 +110,6 @@ public class InputSlaveContext {
         return adapter.sendDataBytes(registerKey.getBytes(), false, false, 0, null);
     }
 
-    /**
-     * @param adapter
-     * @param buffer
-     * @return
-     */
     public boolean isRegisterData(InputSlaveAdapter adapter, byte[] buffer) {
         return Arrays.equals(buffer, SocketAdapter.ok);
     }
@@ -186,9 +123,6 @@ public class InputSlaveContext {
         addSlaveAdapter(slaveAdapter);
     }
 
-    /**
-     *
-     */
     protected void syncAdapters() {
         if (slaveAdapterAdds != null) {
             synchronized (this) {

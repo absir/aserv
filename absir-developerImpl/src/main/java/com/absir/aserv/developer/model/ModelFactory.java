@@ -23,36 +23,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- */
 public class ModelFactory {
 
-    /**
-     * Jo_Entity_Map_Entity_Model
-     */
     private static final Map<JoEntity, EntityModel> Jo_Entity_Map_Entity_Model = new HashMap<JoEntity, EntityModel>();
 
-    /**
-     * @param entityName
-     * @return
-     */
     public static EntityModel getModelEntity(String entityName) {
         return getModelEntity(CrudUtils.newJoEntity(entityName, null));
     }
 
-    /**
-     * @param entityClass
-     * @return
-     */
     public static EntityModel getModelEntity(Class<?> entityClass) {
         return getModelEntity(CrudUtils.newJoEntity(null, entityClass));
     }
 
-    /**
-     * @param joEntity
-     * @return
-     */
     public static EntityModel getModelEntity(JoEntity joEntity) {
         if (joEntity.getEntityClass() == null) {
             return null;
@@ -75,10 +57,6 @@ public class ModelFactory {
         return entityModel;
     }
 
-    /**
-     * @param joEntity
-     * @return
-     */
     protected static EntityModel generateModelEntity(JoEntity joEntity) {
         if (joEntity.getClass() == null) {
             return null;
@@ -88,11 +66,6 @@ public class ModelFactory {
         }
     }
 
-    /**
-     * @param joEntity
-     * @param entityModel
-     * @return
-     */
     private static EntityModel getModelEntityClass(final JoEntity joEntity, final EntityModel entityModel) {
         if (BeanFactoryUtils.getEnvironment() != Environment.DEVELOP) {
             entityModel.setUpdate(Developer.lastModified(joEntity));

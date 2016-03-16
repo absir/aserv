@@ -7,19 +7,9 @@
  */
 package com.absir.aserv.game.value;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 public interface IBuffTreatDo<T, O extends OObject> extends IBuffFrom<T> {
 
-    /**
-     * @param self
-     * @param target
-     * @param treat
-     * @param treatFrom
-     * @param result
-     */
     public void treatDo(O self, O target, int treat, T treatFrom, IResult result);
 
 }

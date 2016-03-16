@@ -25,10 +25,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 public class EntityAssoc {
 
@@ -190,14 +186,6 @@ public class EntityAssoc {
         addEntityAssocField(referenced, entityName, referencedEntityName, null, field, jaField);
     }
 
-    /**
-     * @param referenced
-     * @param entityName
-     * @param referencedEntityName
-     * @param referencedEntityClass
-     * @param field
-     * @param jaField
-     */
     protected static void addEntityAssocField(Referenced referenced, String entityName, String referencedEntityName, Class<?> referencedEntityClass, Field field, JaField jaField) {
         List<AssocField> assocFields = SessionFactoryUtils.get().getNameMapAssocFields().get(entityName);
         if (assocFields == null) {
@@ -213,9 +201,6 @@ public class EntityAssoc {
         }
     }
 
-    /**
-     * @param sessionFactoryBean
-     */
     public static void boost(SessionFactoryBean sessionFactoryBean) {
         Set<Entry<?, ?>> entries = new HashSet<Entry<?, ?>>();
         entries.addAll(sessionFactoryBean.getNameMapPermissions().entrySet());
@@ -308,7 +293,6 @@ public class EntityAssoc {
      * 关联实体结构
      *
      * @author absir
-     *
      */
     public static class AssocEntity {
 
@@ -327,16 +311,16 @@ public class EntityAssoc {
          */
         private Class<?>[] assocClasses;
 
-        /** 关联实体关联至实体名称 referenceEntityName */
+        /**
+         * 关联实体关联至实体名称 referenceEntityName
+         */
         private String referenceEntityName;
 
-        /** 关联实体关联至实体类型 referenceEntityClass */
+        /**
+         * 关联实体关联至实体类型 referenceEntityClass
+         */
         private Class<?> referenceEntityClass;
 
-        /**
-         * @param assocName
-         * @param jaAssoc
-         */
         private AssocEntity(String assocName, JaAssoc jaAssoc) {
             this.entityName = assocName;
             this.entityClass = (Class<? extends JiAssoc>) jaAssoc.entityClass();
@@ -399,28 +383,29 @@ public class EntityAssoc {
      * 关联属性结构
      *
      * @author absir
-     *
      */
     public static class AssocField {
 
-        /** 关联属性名称 feildName */
+        /**
+         * 关联属性名称 feildName
+         */
         private String feildName;
 
-        /** 关联属性支持关联类型 assocClasses */
+        /**
+         * 关联属性支持关联类型 assocClasses
+         */
         private Class<?>[] assocClasses;
 
-        /** 关联属性类型 referenced */
+        /**
+         * 关联属性类型 referenced
+         */
         private Referenced referenced;
 
-        /** 关联实体名称 referenceEntityName */
+        /**
+         * 关联实体名称 referenceEntityName
+         */
         private String referenceEntityName;
 
-        /**
-         * @param referenced
-         * @param entityName
-         * @param assocId
-         * @param classes
-         */
         private AssocField(String assocId, Class<?>[] classes, Referenced referenced, String referenceEntityName) {
             this.feildName = assocId;
             this.assocClasses = classes;
@@ -465,9 +450,6 @@ public class EntityAssoc {
         }
     }
 
-    /**
-     * @author absir
-     */
     public static class AssocFieldEntity extends AssocField {
 
         /**
@@ -475,62 +457,35 @@ public class EntityAssoc {
          */
         private Class<?> referenceEntityClass;
 
-        /**
-         * @param assocId
-         * @param classes
-         * @param referenced
-         * @param referenceEntityName
-         * @param referenceEntityClass
-         */
         private AssocFieldEntity(String assocId, Class<?>[] classes, Referenced referenced, String referenceEntityName, Class<?> referenceEntityClass) {
             super(assocId, classes, referenced, referenceEntityName);
             this.referenceEntityClass = referenceEntityClass;
         }
 
-        /**
-         * @return the referenceEntityClass
-         */
         public Class<?> getReferenceEntityClass() {
             return referenceEntityClass;
         }
 
-        /**
-         * @param referenceEntityClass the referenceEntityClass to set
-         */
         public void setReferenceEntityClass(Class<?> referenceEntityClass) {
             this.referenceEntityClass = referenceEntityClass;
         }
     }
 
-    /**
-     * @author absir
-     */
     public static class AssocFieldFactory extends AssocFieldEntity {
 
-        /** 关联实体查询对象 */
+        /**
+         * 关联实体查询对象
+         */
         private Object assocDao;
 
-        /**
-         * @param assocId
-         * @param classes
-         * @param referenced
-         * @param referenceEntityName
-         * @param referenceEntityClass
-         */
         private AssocFieldFactory(String assocId, Class<?>[] classes, Referenced referenced, String referenceEntityName, Class<?> referenceEntityClass) {
             super(assocId, classes, referenced, referenceEntityName, referenceEntityClass);
         }
 
-        /**
-         * @return the assocDao
-         */
         public Object getAssocDao() {
             return assocDao;
         }
 
-        /**
-         * @param assocDao the assocDao to set
-         */
         public void setAssocDao(Object assocDao) {
             this.assocDao = assocDao;
         }
@@ -553,10 +508,6 @@ public class EntityAssoc {
          */
         private AssocEntity assocEntity;
 
-        /**
-         * @param assocName
-         * @param assocEntity
-         */
         private EntityAssocEntity(String assocName, AssocEntity assocEntity) {
             this.assocName = assocName;
             this.assocEntity = assocEntity;
@@ -584,19 +535,10 @@ public class EntityAssoc {
     @SuppressWarnings("serial")
     public static class AssocType extends ManyToOneType {
 
-        /**
-         * @param scope
-         * @param referencedEntityName
-         */
         public AssocType(TypeScope scope, String referencedEntityName) {
             super(scope, referencedEntityName);
         }
 
-        /**
-         * @param scope
-         * @param referencedEntityName
-         * @param uniqueKeyPropertyName
-         */
         public AssocType(TypeScope scope, String referencedEntityName, String uniqueKeyPropertyName) {
             super(scope, referencedEntityName, false, uniqueKeyPropertyName, true, false, false, false);
         }

@@ -12,20 +12,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 
-/**
- * @author absir
- *
- */
 public class XlsBeanUpdate<T extends Serializable> extends XlsBean<T> implements JiUpdate {
 
-    /**
-     * updateTime
-     */
     protected transient long updateTime;
 
-    /**
-     * @return the updateTime
-     */
     @JsonIgnore
     public long getUpdateTime() {
         return updateTime;

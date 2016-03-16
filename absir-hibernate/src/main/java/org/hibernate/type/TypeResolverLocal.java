@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-10-14 下午7:21:33
  */
 package org.hibernate.type;
@@ -16,31 +16,15 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"serial"})
 public class TypeResolverLocal extends TypeResolver {
 
-    /**
-     * fieldTypes
-     */
     private Set<JiType> jiTypes = new HashSet<JiType>();
 
-    /**
-     * @param typeResolver
-     */
     public TypeResolverLocal(TypeResolver typeResolver) {
         KernelObject.clone(typeResolver, this);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.hibernate.type.TypeResolver#registerTypeOverride(org.hibernate.type
-     * .BasicType)
-     */
     @Override
     public void registerTypeOverride(BasicType type) {
         super.registerTypeOverride(type);
@@ -49,12 +33,6 @@ public class TypeResolverLocal extends TypeResolver {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.hibernate.type.TypeResolver#heuristicType(java.lang.String,
-     * java.util.Properties)
-     */
     @Override
     public Type heuristicType(String typeName, Properties parameters) throws MappingException {
         Type type = basic(typeName);

@@ -15,32 +15,16 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- */
 public class BeanFactoryStopping {
 
-    /**
-     * FACTORY_STOPPINGS
-     */
     public static final List<BeanFactoryStopping> FACTORY_STOPPINGS = new ArrayList<BeanFactoryStopping>();
-    /**
-     * LOGGER
-     */
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(BeanFactoryStopping.class);
-    /**
-     * beanFactory
-     */
+
     protected BeanFactory beanFactory;
-    /**
-     * beanFactoryStoppings
-     */
+
     protected List<IBeanFactoryStopping> beanFactoryStoppings = new ArrayList<IBeanFactoryStopping>();
 
-    /**
-     * @param beanFactory
-     * @param stoppings
-     */
     public static void addStopping(BeanFactory beanFactory, List<IBeanFactoryStopping> stoppings) {
         BeanFactoryStopping beanFactoryStopping = new BeanFactoryStopping();
         beanFactoryStopping.beanFactory = beanFactory;
@@ -48,9 +32,6 @@ public class BeanFactoryStopping {
         FACTORY_STOPPINGS.add(beanFactoryStopping);
     }
 
-    /**
-     *
-     */
     public static void stoppingAll() {
         if (!FACTORY_STOPPINGS.isEmpty()) {
             for (BeanFactoryStopping FACTORY_STOPPING : FACTORY_STOPPINGS) {

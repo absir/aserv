@@ -7,9 +7,6 @@
  */
 package com.absir.orm.value;
 
-/**
- * @author absir
- */
 public interface JiAssocDao {
 
 }

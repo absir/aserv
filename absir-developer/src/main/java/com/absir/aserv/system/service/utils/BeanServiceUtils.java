@@ -9,18 +9,9 @@ package com.absir.aserv.system.service.utils;
 
 import com.absir.bean.basis.Configure;
 
-/**
- * @author absir
- *
- */
 @Configure
 public abstract class BeanServiceUtils {
 
-    /**
-     * @param entityName
-     * @param propertyMap
-     * @return
-     */
     public static Object similarEntity(String entityName, Object propertyMap) {
         return null;
     }

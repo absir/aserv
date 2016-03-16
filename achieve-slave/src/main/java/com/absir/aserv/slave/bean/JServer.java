@@ -11,10 +11,6 @@ import com.absir.sockser.JbServerBase;
 
 import javax.persistence.Entity;
 
-/**
- * @author absir
- *
- */
 @Entity
 public class JServer extends JbServerBase {
 

@@ -11,17 +11,8 @@ import com.absir.core.kernel.KernelLang.CallbackTemplate;
 
 import java.io.Serializable;
 
-/**
- * @author absir
- *
- */
 public interface IMergeService {
 
-    /**
-     * @param merge
-     * @param id
-     * @return
-     */
     public Object merge(CallbackTemplate<Object> merge, Serializable id);
 
 }

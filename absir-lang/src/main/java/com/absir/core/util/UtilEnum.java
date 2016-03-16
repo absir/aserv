@@ -1,15 +1,12 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-3-8 下午12:43:09
  */
 package com.absir.core.util;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 public class UtilEnum {
 
@@ -18,9 +15,6 @@ public class UtilEnum {
      */
     public static interface EnumObject<T> {
 
-        /**
-         * @return
-         */
         public T getValue();
     }
 

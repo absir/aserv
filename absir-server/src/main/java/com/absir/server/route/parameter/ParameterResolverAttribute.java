@@ -17,34 +17,15 @@ import com.absir.server.value.Attribute;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-/**
- * @author absir
- *
- */
 @Bean
 public class ParameterResolverAttribute implements ParameterResolver<String> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.route.parameter.ParameterResolver#getParameter(int,
-     * java.lang.String[], java.lang.Class<?>[],
-     * java.lang.annotation.Annotation[][], java.lang.reflect.Method)
-     */
     @Override
     public String getParameter(int i, String[] parameterNames, Class<?>[] parameterTypes, Annotation[][] annotations, Method method) {
         Attribute attribute = KernelArray.getAssignable(annotations[i], Attribute.class);
         return attribute == null ? null : KernelString.isEmpty(attribute.value()) ? parameterNames[i] : attribute.value();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.route.parameter.ParameterResolver#getParameterValue(
-     * com.absir.server.on.OnPut, java.lang.Object, java.lang.Class,
-     * java.lang.String, com.absir.server.route.RouteMethod)
-     */
     @Override
     public Object getParameterValue(OnPut onPut, String parameter, Class<?> parameterType, String beanName, RouteMethod routeMethod) {
         Object value = onPut.getBinderData().bind(onPut.getInput().getAttribute(parameter), beanName, parameterType);

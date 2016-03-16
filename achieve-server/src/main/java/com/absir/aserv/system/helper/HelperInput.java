@@ -13,32 +13,16 @@ import com.absir.servlet.InputRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * @author absir
- *
- */
 public class HelperInput {
 
-    /**
-     * @param input
-     * @return
-     */
     public static boolean isAjax(Input input) {
         return input instanceof InputRequest && (((InputRequest) input).getRequest()).getHeader("X-Requested-With") != null;
     }
 
-    /**
-     * @param request
-     * @return
-     */
     public static String getRequestUrl(HttpServletRequest request) {
         return getRequestUrl(request, 80);
     }
 
-    /**
-     * @param request
-     * @return
-     */
     public static String getRequestUrl(HttpServletRequest request, int defaultPort) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(request.getProtocol());

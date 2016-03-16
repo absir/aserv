@@ -18,46 +18,23 @@ import com.absir.core.kernel.KernelLang;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class AopBeanDefine extends BeanDefineWrapper {
 
-    /**
-     * aopInterceptors
-     */
     private List<AopInterceptor> aopInterceptors;
 
-    /**
-     * @param beanDefine
-     */
     public AopBeanDefine(BeanDefine beanDefine) {
         super(beanDefine);
     }
 
-    /**
-     * @param beanType
-     * @return
-     */
     public static <T> T instanceBeanObject(Class<?> beanType) {
         return (T) new AopBeanDefine(new BeanDefineType("@", beanType)).getBeanObject(BeanFactoryUtils.get());
     }
 
-    /**
-     * @param beanType
-     * @return
-     */
     public static <T> T instanceBeanObject(Class<?> beanType, Object... initargs) {
         return (T) new AopBeanDefine(new BeanDefineType("@", beanType)).getBeanObject(new BeanFactoryParameters(BeanFactoryUtils.get(), initargs));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.core.BeanDefineWrapper#getBeanProxy(java.lang.Object,
-     * com.absir.bean.basis.BeanDefine, com.absir.bean.basis.BeanFactory)
-     */
     @Override
     public Object getBeanProxy(Object beanObject, BeanDefine beanDefineRoot, BeanFactory beanFactory) {
         if (aopInterceptors == null) {
@@ -77,11 +54,6 @@ public class AopBeanDefine extends BeanDefineWrapper {
         return beanObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.bean.core.BeanDefineWrappered#retrenchBeanDefine()
-     */
     @Override
     public BeanDefine retrenchBeanDefine() {
         if (beanDefine instanceof BeanDefineWrapper) {

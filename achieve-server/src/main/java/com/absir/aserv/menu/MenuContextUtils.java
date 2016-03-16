@@ -38,41 +38,23 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-/**
- * @author absir
- */
 @Inject
 public abstract class MenuContextUtils {
 
-    /**
-     * CONTEXT
-     */
     protected static final MenuContext CONTEXT = BeanFactoryUtils.get(MenuContext.class);
 
-    /**
-     * @return
-     */
     public static MenuBeanService getService() {
         return CONTEXT.menuBeanService;
     }
 
-    /**
-     * @return the app_Name
-     */
     public static String getAppName() {
         return InitBeanFactory.ME.getAppName();
     }
 
-    /**
-     * @return the site_Route
-     */
     public static String getSiteRoute() {
         return InitBeanFactory.ME.getAppRoute();
     }
 
-    /**
-     * @return the admin_Route
-     */
     public static String getAdminRoute() {
         return CONTEXT.Admin_Route;
     }
@@ -85,20 +67,10 @@ public abstract class MenuContextUtils {
         return getMenuBeans(cite, SecurityServiceUtils.getUserBase());
     }
 
-    /**
-     * @param cite
-     * @param user
-     * @return
-     */
     public static List<OMenuBean> getMenuBeans(String cite, JiUserBase user) {
         return CONTEXT.menuBeanService.getMenuBeans(cite, user, 3);
     }
 
-    /**
-     * @param url
-     * @param urlType
-     * @return
-     */
     public static String getUrl(String url, MeUrlType urlType) {
         if (url == null) {
             return KernelLang.NULL_STRING;
@@ -222,29 +194,17 @@ public abstract class MenuContextUtils {
         }
     }
 
-    /**
-     * @author absir
-     */
     @Bean
     protected static class MenuContext {
 
-        /**
-         * Admin_Route
-         */
         protected String Admin_Route;
 
         @Inject
         protected InitBeanFactory initBeanFactory;
 
-        /**
-         * menuBeanService
-         */
         @Inject
         protected MenuBeanService menuBeanService;
 
-        /**
-         * @param servletContext
-         */
         @Inject(type = InjectType.Selectable)
         protected void setServletContext(ServletContext servletContext) {
             // 全局链接参数

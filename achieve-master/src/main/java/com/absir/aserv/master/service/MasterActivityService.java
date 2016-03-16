@@ -23,28 +23,15 @@ import org.hibernate.Session;
 
 import java.util.Iterator;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 @Base
 @Bean
 public class MasterActivityService implements IEntityMerge<JSlaveServer> {
 
-    /**
-     * ME
-     */
     public static final MasterActivityService ME = BeanFactoryUtils.get(MasterActivityService.class);
 
-    /**
-     * targetsActivityOpens
-     */
     private UtilLinked<OTargetsActivityOpen<?, ?>> targetsActivityOpens;
 
-    /**
-     * @param targetsActivityOpen
-     */
     public void addTargetActivityOpen(OTargetsActivityOpen<?, ?> targetsActivityOpen) {
         if (targetsActivityOpens == null) {
             targetsActivityOpens = new UtilLinked<OTargetsActivityOpen<?, ?>>();
@@ -53,13 +40,6 @@ public class MasterActivityService implements IEntityMerge<JSlaveServer> {
         targetsActivityOpens.add(targetsActivityOpen);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.orm.hibernate.boost.IEntityMerge#merge(java.lang.String,
-     * java.lang.Object, com.absir.orm.hibernate.boost.IEntityMerge.MergeType,
-     * java.lang.Object)
-     */
     @Override
     public void merge(String entityName, JSlaveServer entity,
                       com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType, Object mergeEvent) {
@@ -75,10 +55,6 @@ public class MasterActivityService implements IEntityMerge<JSlaveServer> {
         }
     }
 
-    /**
-     * @param targetsActivityOpen
-     */
-
     @Transaction
     public void reTargetsActivityOpen(OTargetsActivityOpen<?, ?> targetsActivityOpen) {
         Session session = BeanDao.getSession();
@@ -91,10 +67,6 @@ public class MasterActivityService implements IEntityMerge<JSlaveServer> {
         }
     }
 
-    /**
-     * @param targetsActivityOpen
-     * @param server
-     */
     @Transaction
     public void reActivityServer(OTargetsActivityOpen<?, ?> targetsActivityOpen, JSlaveServer server) {
         targetsActivityOpen.reActivityServer(server);

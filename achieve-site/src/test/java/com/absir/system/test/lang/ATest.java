@@ -7,10 +7,6 @@
  */
 package com.absir.system.test.lang;
 
-/**
- * @author absir
- *
- */
 public abstract class ATest {
 
     public static String name = TestLoader.getName();

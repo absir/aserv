@@ -14,18 +14,9 @@ import com.absir.validator.value.Length;
 
 import java.util.Map;
 
-/**
- * @author absir
- */
 @Bean
 public class ValidatorLength extends PropertyResolverAbstract<ValidatorObject, Length> {
 
-    /**
-     * @param propertyObject
-     * @param min
-     * @param max
-     * @return
-     */
     public ValidatorObject getPropertyObjectLength(ValidatorObject propertyObject, final int min, final int max) {
         if (propertyObject == null) {
             propertyObject = new ValidatorObject();
@@ -60,25 +51,11 @@ public class ValidatorLength extends PropertyResolverAbstract<ValidatorObject, L
         return propertyObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotation(ValidatorObject propertyObject, Length annotation) {
         return getPropertyObjectLength(propertyObject, annotation.min(), annotation.max());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-     * (com.absir.property.PropertyObject, java.lang.String)
-     */
     @Override
     public ValidatorObject getPropertyObjectAnnotationValue(ValidatorObject propertyObject, String annotationValue) {
         String[] parameters = annotationValue.split(",");

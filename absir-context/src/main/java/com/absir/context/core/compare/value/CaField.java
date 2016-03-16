@@ -13,10 +13,6 @@ import java.lang.annotation.Target;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
- * @author absir
- *
- */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RUNTIME)
 public @interface CaField {

@@ -28,25 +28,13 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class XlsAccessorUtils {
 
-    /**
-     * Base_Class_Map_Dao
-     */
     private static final Map<Class, XlsDao> Base_Class_Map_Dao = new HashMap<Class, XlsDao>();
-    /**
-     * calculateUpdate
-     */
+
     private static boolean calculateUpdate = true;
 
-    /**
-     * @param hssfCell
-     * @return
-     */
     public static Object getCellObject(HSSFCell hssfCell) {
         if (hssfCell == null) {
             return null;
@@ -73,10 +61,6 @@ public class XlsAccessorUtils {
         return hssfCell.toString();
     }
 
-    /**
-     * @param cellValue
-     * @return
-     */
     public static Object getCellValue(CellValue cellValue) {
         if (cellValue == null) {
             return null;
@@ -99,19 +83,10 @@ public class XlsAccessorUtils {
         return cellValue.getStringValue();
     }
 
-    /**
-     * @param hssfCell
-     * @param hssfCell
-     * @return
-     */
     public static String getCellValue(HSSFCell hssfCell) {
         return DynaBinder.to(getCellObject(hssfCell), String.class);
     }
 
-    /**
-     * @param hssfSheet
-     * @return
-     */
     public static int[] accessorsSheet(HSSFSheet hssfSheet) {
         int[] accessors = new int[4];
         accessors[0] = 0;
@@ -122,21 +97,10 @@ public class XlsAccessorUtils {
         return accessors;
     }
 
-    /**
-     * @param row
-     * @param column
-     * @return
-     */
     public static String columnWithRow(int column, int row) {
         return column + "@" + row;
     }
 
-    /**
-     * @param hssfWorkbook
-     * @param index
-     * @param orientation
-     * @return
-     */
     public static List<Object> getSheetList(HSSFWorkbook hssfWorkbook, int index, boolean orientation) {
         List<Object> sheetList = new ArrayList<Object>();
         int size = hssfWorkbook.getNumberOfSheets();
@@ -164,11 +128,6 @@ public class XlsAccessorUtils {
         return sheetList;
     }
 
-    /**
-     * @param hssfSheet
-     * @param orientation
-     * @return
-     */
     public static Map<String, Object> getSheetMap(HSSFSheet hssfSheet, boolean orientation) {
         int rows = hssfSheet.getLastRowNum() + 1;
         HSSFRow hssfRow = hssfSheet.getRow(0);
@@ -246,29 +205,14 @@ public class XlsAccessorUtils {
         return sheetMap;
     }
 
-    /**
-     * @return
-     */
     public static Set<Class> getXlsBases() {
         return Base_Class_Map_Dao.keySet();
     }
 
-    /**
-     * @param xlsClass
-     * @return
-     */
     public static <T extends XlsBase> XlsDao<T, Serializable> getXlsDao(Class<T> xlsClass) {
         return Base_Class_Map_Dao.get(xlsClass);
     }
 
-    /**
-     * @param hssfWorkbook
-     * @param sheets
-     * @param beanClass
-     * @param xlsBase
-     * @param cacheable
-     * @return
-     */
     public static <T> List<T> getXlsBeans(HSSFWorkbook hssfWorkbook, int sheets[], Class<T> beanClass, XlsBase xlsBase,
                                           boolean cacheable) {
         if (cacheable && !XlsBase.class.isAssignableFrom(beanClass)) {
@@ -311,28 +255,14 @@ public class XlsAccessorUtils {
         return readXlsBeans(hssfSheets, accessors, beanClass, xlsBase, cacheable);
     }
 
-    /**
-     * @return the calculateUpdate
-     */
     public static boolean isCalculateUpdate() {
         return calculateUpdate;
     }
 
-    /**
-     * @param calculateUpdate the calculateUpdate to set
-     */
     public static void setCalculateUpdate(boolean calculateUpdate) {
         XlsAccessorUtils.calculateUpdate = calculateUpdate;
     }
 
-    /**
-     * @param hssfSheets
-     * @param accessors
-     * @param beanClass
-     * @param xlsBase
-     * @param cacheable
-     * @return
-     */
     private static <T> List<T> readXlsBeans(HSSFSheet[] hssfSheets, int[][] accessors, Class<T> beanClass, XlsBase xlsBase,
                                             boolean cacheable) {
         XlsAccessorContext xlsAccessorContext = new XlsAccessorContext(beanClass, xlsBase);
@@ -498,17 +428,10 @@ public class XlsAccessorUtils {
         return beans;
     }
 
-    /**
-     * @param xlsClass
-     */
     public static <T extends XlsBase> XlsDao<T, ?> clearXlsDao(Class<T> xlsClass) {
         return Base_Class_Map_Dao.remove(xlsClass);
     }
 
-    /**
-     * @param hssfSheet
-     * @param xlsCell
-     */
     public static void writeHssfSheet(HSSFSheet hssfSheet, XlsCell xlsCell) {
         int rows = hssfSheet.getPhysicalNumberOfRows();
         int rowCount = xlsCell.getRowCount();
@@ -523,14 +446,6 @@ public class XlsAccessorUtils {
         writeHssfSheet(hssfSheet, xlsCell, rows, 0, rowCount, columnCount);
     }
 
-    /**
-     * @param hssfSheet
-     * @param xlsCell
-     * @param row
-     * @param column
-     * @param rowCount
-     * @param columnCount
-     */
     private static void writeHssfSheet(HSSFSheet hssfSheet, XlsCell xlsCell, int row, int column, int rowCount, int columnCount) {
         int basicRow = xlsCell.getBasicRow();
         if (basicRow > 0) {
@@ -562,12 +477,6 @@ public class XlsAccessorUtils {
         }
     }
 
-    /**
-     * @param hssfWorkbook
-     * @param beanClass
-     * @param beans
-     * @param xlsBase
-     */
     public static void writeHssfWorkbook(HSSFWorkbook hssfWorkbook, Class beanClass, Collection beans, XlsBase xlsBase) {
         int[] rowCounts = new int[2];
         rowCounts[1] = SpreadsheetVersion.EXCEL97.getLastRowIndex();
@@ -592,77 +501,39 @@ public class XlsAccessorUtils {
         writeHssfSheet(hssfSheet, xlsCellHeader);
     }
 
-    /**
-     * @author absir
-     */
     public static class XlsDaoBase extends XlsDao {
 
-        /**
-         * beans
-         */
         private List<Object> beans = new ArrayList<Object>();
 
-        /**
-         * @param idType
-         */
         public XlsDaoBase(Class idType) {
             super(idType);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.configure.xls.XlsDao#get(java.io.Serializable)
-         */
         @Override
         public Object get(Serializable id) {
             Integer index = (Integer) id;
             return index < 0 || index >= beans.size() ? null : beans.get(index);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.configure.xls.XlsDao#getAll()
-         */
         @Override
         public Collection getAll() {
             return beans;
         }
     }
 
-    /**
-     * @author absir
-     */
     public static class XlsDaoBean extends XlsDao {
 
-        /**
-         * beans
-         */
         private Map<Serializable, Object> beans = new LinkedHashMap<Serializable, Object>();
 
-        /**
-         * @param idType
-         */
         public XlsDaoBean(Class idType) {
             super(idType);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.configure.xls.XlsDao#get(java.io.Serializable)
-         */
         @Override
         public Object get(Serializable id) {
             return beans.get(id);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.aserv.configure.xls.XlsDao#getAll()
-         */
         @Override
         public Collection getAll() {
             return beans.values();

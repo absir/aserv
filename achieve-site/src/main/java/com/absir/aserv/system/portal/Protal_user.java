@@ -19,15 +19,9 @@ import com.absir.server.route.parameter.ParameterResolverBinder;
 import com.absir.server.value.Param;
 import com.absir.server.value.Server;
 
-/**
- * @author absir
- */
 @Server
 public class Protal_user {
 
-    /**
-     * TAG
-     */
     protected static final String TAG = "LA";
 
     /**

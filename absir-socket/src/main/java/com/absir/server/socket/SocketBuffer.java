@@ -14,130 +14,68 @@ import com.absir.core.util.UtilQueue;
 
 import java.io.Serializable;
 
-/**
- * @author absir
- */
 public class SocketBuffer {
 
-    /**
-     * id
-     */
     private Serializable id;
 
-    /**
-     * length
-     */
     private int length;
 
-    /**
-     * lengthIndex
-     */
     private int lengthIndex;
 
-    /**
-     * buff
-     */
     private byte[] buff;
 
-    /**
-     * buffLengthIndex
-     */
     private int buffLengthIndex;
-    /**
-     * bufferQueue
-     */
+
     private UtilQueue<byte[]> bufferQueue;
-    /**
-     * concurrent
-     */
+
     private int concurrent;
-    /**
-     * concurrentMax
-     */
+
     private int concurrentMax;
-    /**
-     * activePool
-     */
+
     private UtilActivePool activePool;
-    /**
-     * pipedStream
-     */
+
     private UtilPipedStream pipedStream;
 
-    /**
-     * @return the id
-     */
     public Serializable getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(Serializable id) {
         this.id = id;
     }
 
-    /**
-     * @return the length
-     */
     public int getLength() {
         return length;
     }
 
-    /**
-     * @param length the length to set
-     */
     public void setLength(int length) {
         this.length = length;
     }
 
-    /**
-     * @return the lengthIndex
-     */
     public int getLengthIndex() {
         return lengthIndex;
     }
 
-    /**
-     * @param lengthIndex the lengthIndex to set
-     */
     public void setLengthIndex(int lengthIndex) {
         this.lengthIndex = lengthIndex;
     }
 
-    /**
-     * @return the buff
-     */
     public byte[] getBuff() {
         return buff;
     }
 
-    /**
-     * @param buff the buff to set
-     */
     public void setBuff(byte[] buff) {
         this.buff = buff;
     }
 
-    /**
-     * @return the buffLengthIndex
-     */
     public int getBuffLengthIndex() {
         return buffLengthIndex;
     }
 
-    /**
-     * @param buffLengthIndex the buffLengthIndex to set
-     */
     public void setBuffLengthIndex(int buffLengthIndex) {
         this.buffLengthIndex = buffLengthIndex;
     }
 
-    /**
-     * @param queueSize
-     * @param concurrent
-     */
     public void setQueueConcurrent(int queueSize, int max) {
         if (queueSize > 0 && max > 0) {
             bufferQueue = new UtilQueue<byte[]>(queueSize);
@@ -149,10 +87,6 @@ public class SocketBuffer {
         }
     }
 
-    /**
-     * @param buff
-     * @return
-     */
     public boolean addBufferQueue(byte[] buff) {
         if (bufferQueue != null) {
             synchronized (this) {
@@ -170,9 +104,6 @@ public class SocketBuffer {
 
     }
 
-    /**
-     * @return
-     */
     public byte[] readBufferQueue() {
         if (bufferQueue != null) {
             synchronized (this) {
@@ -190,9 +121,6 @@ public class SocketBuffer {
         return null;
     }
 
-    /**
-     * @return the activePool
-     */
     public UtilActivePool getActivePool() {
         if (activePool == null) {
             synchronized (this) {
@@ -205,16 +133,10 @@ public class SocketBuffer {
         return activePool;
     }
 
-    /**
-     * @return
-     */
     protected UtilPipedStream createPipedStream() {
         return new UtilPipedStream(SocketAdapterSel.PIPED_STREAM_TIMEOUT);
     }
 
-    /**
-     * @return the pipedStream
-     */
     public UtilPipedStream getPipedStream() {
         if (pipedStream == null) {
             synchronized (this) {
@@ -227,9 +149,6 @@ public class SocketBuffer {
         return pipedStream;
     }
 
-    /**
-     *
-     */
     public void close() {
         if (activePool != null) {
             activePool.clear();

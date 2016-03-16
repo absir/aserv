@@ -17,10 +17,6 @@ import com.absir.aserv.system.crud.UploadCrudFactory;
 
 import javax.persistence.Entity;
 
-/**
- * @author absir
- *
- */
 @MaEntity(parent = {@MaMenu("平台管理")}, name = "升级")
 @JaModel(desc = true)
 @Entity
@@ -53,91 +49,50 @@ public class JUpgrade extends JbBean {
     @JaCrud(value = "dateCrudFactory", cruds = {Crud.CREATE, Crud.UPDATE}, factory = DateCrudFactory.class)
     private long updateTime;
 
-    /**
-     * @return the upgradeFile
-     */
     public String getUpgradeFile() {
         return upgradeFile;
     }
 
-    /**
-     * @param upgradeFile the upgradeFile to set
-     */
     public void setUpgradeFile(String upgradeFile) {
         this.upgradeFile = upgradeFile;
     }
 
-    /**
-     * @return the description
-     */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * @param description
-     *            the description to set
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * @return the beginTime
-     */
     public long getBeginTime() {
         return beginTime;
     }
 
-    /**
-     * @param beginTime
-     *            the beginTime to set
-     */
     public void setBeginTime(long beginTime) {
         this.beginTime = beginTime;
     }
 
-    /**
-     * @return the success
-     */
     public boolean isSuccess() {
         return success;
     }
 
-    /**
-     * @param success
-     *            the success to set
-     */
     public void setSuccess(boolean success) {
         this.success = success;
     }
 
-    /**
-     * @return the createTime
-     */
     public long getCreateTime() {
         return createTime;
     }
 
-    /**
-     * @param createTime
-     *            the createTime to set
-     */
     public void setCreateTime(long createTime) {
         this.createTime = createTime;
     }
 
-    /**
-     * @return the updateTime
-     */
     public long getUpdateTime() {
         return updateTime;
     }
 
-    /**
-     * @param updateTime
-     *            the updateTime to set
-     */
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
     }

@@ -7,15 +7,8 @@
  */
 package com.absir.step;
 
-/**
- * @author absir
- */
 public interface IStep {
 
-    /**
-     * @param contextTime
-     * @return
-     */
     public boolean stepDone(long contextTime);
 
 }

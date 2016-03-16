@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年11月9日 上午10:19:41
  */
 package com.absir.master.resolver;
@@ -41,29 +41,14 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.channels.SocketChannel;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class MasterServerResolver extends SocketServerResolver {
 
-    /**
-     * ME
-     */
     public static final MasterServerResolver ME = BeanFactoryUtils.get(MasterServerResolver.class);
-    /**
-     * masterAdapter
-     */
+
     protected SocketAdapterSel masterAdapter = createMasterAdapter();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketServerResolver#acceptTimeoutNIO(
-     * java.nio.channels.SocketChannel)
-     */
     @Override
     public long acceptTimeoutNIO(final SocketChannel socketChannel) throws Throwable {
         ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
@@ -78,13 +63,6 @@ public class MasterServerResolver extends SocketServerResolver {
         return InputSocketContext.getAcceptTimeout();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketServerResolver#register(java.nio.
-     * channels.SocketChannel, com.absir.server.socket.SelSession, byte[])
-     */
     @Override
     public void register(SocketChannel socketChannel, SelSession selSession, byte[] buffer) throws Throwable {
         String[] params = new String(buffer).split(",", 16);
@@ -101,38 +79,15 @@ public class MasterServerResolver extends SocketServerResolver {
         }
     }
 
-    /**
-     * @param params
-     * @param socketChannel
-     * @param selSession
-     * @return
-     */
     public String idForMaster(String[] params, SocketChannel socketChannel, SelSession selSession) {
         return params[1] + ',' + socketChannel.socket().getInetAddress().getHostAddress();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketServerResolver#unRegister(java.io.
-     * Serializable, java.nio.channels.SocketChannel,
-     * com.absir.server.socket.SelSession)
-     */
     @Override
     public void unRegister(Serializable id, SocketChannel socketChannel, SelSession selSession) {
         InputMasterContext.ME.unregisterSlaveKey((String) id, socketChannel);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketServerResolver#input(java.lang.
-     * String, com.absir.server.in.InMethod, com.absir.server.in.InModel,
-     * com.absir.server.socket.InputSocket.InputSocketAtt,
-     * java.nio.channels.SocketChannel)
-     */
     @Override
     protected Input input(String uri, InMethod inMethod, InModel model, InputSocketAtt req, SocketChannel res) {
         InputMaster input = new InputMaster(model, req, res);
@@ -140,66 +95,30 @@ public class MasterServerResolver extends SocketServerResolver {
         return input;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.SocketServerResolver#doResponse(java.nio
-     * .channels.SocketChannel, java.io.Serializable, byte, byte[])
-     */
     @Override
     protected void doResponse(SocketChannel socketChannel, Serializable id, byte flag, byte[] buffer) {
         masterAdapter.receiveCallback(0, buffer, (byte) flag);
     }
 
-    /**
-     * @return
-     */
     protected SocketAdapterSel createMasterAdapter() {
         return new SocketAdapterSel();
     }
 
-    /**
-     * @return the masterAdapter
-     */
     public SocketAdapterSel getMasterAdapter() {
         return masterAdapter;
     }
 
-    /**
-     * @param socketChannel
-     * @param uri
-     * @param postData
-     * @param callbackMsg
-     * @throws IOException
-     */
     public void sendData(SocketChannel socketChannel, String uri, Object postData, CallbackMsg<?> callbackMsg)
             throws IOException {
         sendDataBytes(socketChannel, uri, postData == null ? null : HelperDatabind.writeAsBytes(postData), callbackMsg);
     }
 
-    /**
-     * @param socketChannel
-     * @param uri
-     * @param postData
-     * @param callbackMsg
-     * @throws IOException
-     */
     public void sendDataBytes(SocketChannel socketChannel, String uri, byte[] postData, CallbackMsg<?> callbackMsg)
             throws IOException {
         sendDataBytes(socketChannel, uri.getBytes(ContextUtils.getCharset()), true, false, postData, 60000,
                 callbackMsg);
     }
 
-    /**
-     * @param socketChannel
-     * @param dataBytes
-     * @param head
-     * @param debug
-     * @param postData
-     * @param timeout
-     * @param callbackAdapte
-     */
     public void sendDataBytes(SocketChannel socketChannel, byte[] dataBytes, boolean head, boolean debug,
                               byte[] postData, int timeout, CallbackAdapte callbackAdapte) {
         int callbackIndex = masterAdapter.generateCallbackIndex();
@@ -215,15 +134,6 @@ public class MasterServerResolver extends SocketServerResolver {
         }
     }
 
-    /**
-     * @param socketChannel
-     * @param dataBytes
-     * @param head
-     * @param debug
-     * @param inputStream
-     * @param timeout
-     * @param callbackAdapte
-     */
     public void sendDataBytes(final SocketChannel socketChannel, byte[] dataBytes, boolean head, boolean debug,
                               final InputStream inputStream, final int timeout, CallbackAdapte callbackAdapte) {
         boolean sended = false;

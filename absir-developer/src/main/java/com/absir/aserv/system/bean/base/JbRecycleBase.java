@@ -16,10 +16,6 @@ import com.absir.aserv.system.bean.value.JaLang;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-/**
- * @author absir
- *
- */
 @MappedSuperclass
 public class JbRecycleBase extends JbBase implements JiUpdate {
 
@@ -32,31 +28,18 @@ public class JbRecycleBase extends JbBase implements JiUpdate {
     @JaCrud(value = "dateCrudFactory", cruds = {Crud.CREATE, Crud.UPDATE})
     private long updateTime;
 
-    /**
-     * @return the id
-     */
     public Long getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * @return the updateTime
-     */
     public long getUpdateTime() {
         return updateTime;
     }
 
-    /**
-     * @param updateTime
-     *            the updateTime to set
-     */
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
     }

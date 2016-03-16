@@ -14,44 +14,19 @@ import com.absir.property.PropertyObject;
 import java.util.Collection;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes"})
 public class CompareObject implements PropertyObject<CompareAbstract> {
 
-    /**
-     * compareField
-     */
     private CompareField compareField = new CompareField();
 
-    /**
-     * compareArray
-     */
     private CompareArray compareArray = new CompareArray();
 
-    /**
-     * compareCollection
-     */
     private CompareCollection compareCollection = new CompareCollection();
 
-    /**
-     * compareBean
-     */
     private CompareBean compareBean = new CompareBean();
 
-    /**
-     * compareMap
-     */
     private CompareMap compareMap = new CompareMap();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.property.PropertyObject#getPropertyData(java.lang.String,
-     * com.absir.property.Property)
-     */
     @Override
     public CompareAbstract getPropertyData(String name, Property property) {
         if (property.getAllow() < 0) {

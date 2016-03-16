@@ -9,16 +9,9 @@ package com.absir.aserv.system.bean.type;
 
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("serial")
 public class JtJsonMap extends JtJsonValue {
 
-    /**
-     * @throws ClassNotFoundException
-     */
     public JtJsonMap() throws ClassNotFoundException {
         super(Map.class.getName());
     }

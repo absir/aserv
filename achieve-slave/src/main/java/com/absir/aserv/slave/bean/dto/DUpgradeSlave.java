@@ -7,34 +7,18 @@
  */
 package com.absir.aserv.slave.bean.dto;
 
-/**
- * @author absir
- *
- */
 public class DUpgradeSlave {
 
-    /**
-     * upgradeFile
-     */
     public String upgradeFile;
 
-    /**
-     * resourceFile
-     */
     public String resourceFile;
 
-    /**
-     * beginTime
-     */
     public long beginTime;
 
-    /** upgradeMd5 */
     public String upgradeMd5;
 
-    /** resourceMd5 */
     public String resourceMd5;
 
-    /** silent */
     public boolean silent;
 
 }

@@ -8,10 +8,7 @@
  * @author absir
  * @author absir
  */
-/**
- * @author absir
- *
- */
+
 @JaProxy
 package com.absir.aserv.system.bean.proxy;
 

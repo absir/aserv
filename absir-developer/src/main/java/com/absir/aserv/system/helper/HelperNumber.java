@@ -9,19 +9,8 @@ package com.absir.aserv.system.helper;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
-/**
- * @author absir
- *
- */
 public class HelperNumber extends NumberUtils {
 
-    /**
-     * @param a
-     * @param aE
-     * @param b
-     * @param bE
-     * @return
-     */
     public static boolean isNoCross(int a, int aE, int b, int bE) {
         return (a < b && aE < b) || (a > bE && aE > bE);
     }

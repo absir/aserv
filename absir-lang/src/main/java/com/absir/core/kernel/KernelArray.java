@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-3-5 下午2:31:23
  */
 package com.absir.core.kernel;
@@ -10,17 +10,9 @@ package com.absir.core.kernel;
 import java.lang.reflect.Array;
 import java.util.*;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class KernelArray {
 
-    /**
-     * @param array
-     * @param index
-     * @return
-     */
     public static <T> T get(T[] array, int index) {
         if (array != null && index >= 0 && index < array.length) {
             return array[index];
@@ -29,63 +21,32 @@ public abstract class KernelArray {
         return null;
     }
 
-    /**
-     * @param array
-     * @param element
-     */
     public static <T> void set(T[] array, T element) {
         set(array, element, array.length);
     }
 
-    /**
-     * @param array
-     * @param element
-     * @param length
-     */
     public static <T> void set(T[] array, T element, int length) {
         set(array, element, 0, length);
     }
 
-    /**
-     * @param array
-     * @param element
-     * @param beginIndex
-     * @param endIndex
-     */
     public static <T> void set(T[] array, T element, int beginIndex, int endIndex) {
         for (int i = beginIndex; i < endIndex; i++) {
             array[i] = element;
         }
     }
 
-    /**
-     * @param element
-     * @param length
-     * @return
-     */
     public static <T> T[] repeat(T element, int length) {
         T[] array = (T[]) forComponentType(element.getClass()).newInstance(length);
         set(array, element, length);
         return array;
     }
 
-    /**
-     * @param element
-     * @param length
-     * @param componentType
-     * @return
-     */
     public static <T> T[] repeat(T element, int length, Class<T> componentType) {
         T[] array = (T[]) Array.newInstance(componentType, length);
         set(array, element, length);
         return array;
     }
 
-    /**
-     * @param array
-     * @param element
-     * @return
-     */
     public static <T> int index(T[] array, T element) {
         int length = array.length;
         for (int i = 0; i < length; i++) {
@@ -97,20 +58,10 @@ public abstract class KernelArray {
         return -1;
     }
 
-    /**
-     * @param array
-     * @param element
-     * @return
-     */
     public static <T> boolean contain(T[] array, T element) {
         return index(array, element) != -1;
     }
 
-    /**
-     * @param array
-     * @param elements
-     * @return
-     */
     public static <T> boolean contains(T[] array, T... elements) {
         for (T element : elements) {
             if (!contain(array, element)) {
@@ -121,11 +72,6 @@ public abstract class KernelArray {
         return true;
     }
 
-    /**
-     * @param array
-     * @param other
-     * @return
-     */
     public static boolean equal(Object[] array, Object[] other) {
         int length = array.length;
         if (length != other.length) {
@@ -141,11 +87,6 @@ public abstract class KernelArray {
         return true;
     }
 
-    /**
-     * @param array
-     * @param other
-     * @return
-     */
     public static boolean equals(Object[] array, Object[] other) {
         int length = array.length;
         if (length != other.length) {
@@ -161,10 +102,6 @@ public abstract class KernelArray {
         return true;
     }
 
-    /**
-     * @param array
-     * @param other
-     */
     public static <T> T[] concat(T[] array, T[] other) {
         T[] concatArray = (T[]) Array.newInstance(array.getClass().getComponentType(), array.length + other.length);
         System.arraycopy(array, 0, concatArray, 0, array.length);
@@ -178,10 +115,6 @@ public abstract class KernelArray {
         return concatArray;
     }
 
-    /**
-     * @param array
-     * @param to
-     */
     public static <T> void copy(T[] array, T[] to) {
         int length = array.length;
         for (int i = 0; i < length; i++) {
@@ -189,20 +122,12 @@ public abstract class KernelArray {
         }
     }
 
-    /**
-     * @param array
-     * @param collection
-     */
     public static <T> void copy(T[] array, Collection<T> collection) {
         for (T value : array) {
             collection.add(value);
         }
     }
 
-    /**
-     * @param array
-     * @return
-     */
     public static Object[] toArray(Object array) {
         int length = Array.getLength(array);
         Object[] objects = new Object[length];
@@ -216,30 +141,18 @@ public abstract class KernelArray {
         return objects;
     }
 
-    /**
-     * @param array
-     * @return
-     */
     public static <T> List<T> toList(T[] array) {
         List<T> list = new ArrayList<T>(array.length);
         copy(array, list);
         return list;
     }
 
-    /**
-     * @param array
-     * @return
-     */
     public static <T> Set<T> toSet(T[] array) {
         Set<T> set = new HashSet<T>(array.length);
         copy(array, set);
         return set;
     }
 
-    /**
-     * @param array
-     * @param cls
-     */
     public static <T> T getAssignable(Object[] array, Class<T> cls) {
         for (Object value : array) {
             if (value != null && cls.isAssignableFrom(value.getClass())) {
@@ -250,10 +163,6 @@ public abstract class KernelArray {
         return null;
     }
 
-    /**
-     * @param cls
-     * @return
-     */
     public static ArrayAccessor forClass(Class cls) {
         if (cls.isArray()) {
             return forComponentType(cls.getComponentType());
@@ -262,10 +171,6 @@ public abstract class KernelArray {
         return null;
     }
 
-    /**
-     * @param componentType
-     * @return
-     */
     public static ArrayAccessor forComponentType(Class componentType) {
         if (componentType == byte.class) {
             return EnumArrayAccessor.Byte;
@@ -298,10 +203,6 @@ public abstract class KernelArray {
         return new ComponentArrayAsscessor(componentType);
     }
 
-    /**
-     * @param array
-     * @param to
-     */
     public static <T> void copy(Object array, Object to) {
         if (array.getClass().isArray() && to.getClass().isArray() && array.getClass().getComponentType().isAssignableFrom(to.getClass().getComponentType())) {
             ArrayAccessor interfaceArray = forClass(array.getClass());
@@ -312,10 +213,6 @@ public abstract class KernelArray {
         }
     }
 
-    /**
-     * @param array
-     * @return
-     */
     public static <T> T clone(T array) {
         ArrayAccessor interfaceArray = forClass(array.getClass());
         if (interfaceArray == null) {
@@ -331,9 +228,6 @@ public abstract class KernelArray {
         return clone;
     }
 
-    /**
-     * @author absir
-     */
     public static enum EnumArrayAccessor implements ArrayAccessor {
 
         Byte {
@@ -490,80 +384,33 @@ public abstract class KernelArray {
         };
     }
 
-    /**
-     * @author absir
-     */
     public static interface ArrayAccessor {
 
-        /**
-         * @param length
-         * @return
-         */
         public Object newInstance(int length);
 
-        /**
-         * @param array
-         * @param index
-         * @return
-         * @throws IllegalArgumentException
-         * @throws ArrayIndexOutOfBoundsException
-         */
         public Object get(Object array, int index) throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
-        /**
-         * @param array
-         * @param index
-         * @param value
-         * @throws IllegalArgumentException
-         * @throws ArrayIndexOutOfBoundsException
-         */
         public void set(Object array, int index, Object value) throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
     }
 
-    /**
-     * @author absir
-     */
     public static class ComponentArrayAsscessor implements ArrayAccessor {
 
-        /**
-         * componentType
-         */
         private Class componentType;
 
-        /**
-         * @param componentType
-         */
         public ComponentArrayAsscessor(Class componentType) {
             this.componentType = componentType;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.aserv.kernel.KernelArray.Interface#newInstance(int)
-         */
         @Override
         public Object newInstance(int length) {
             return Array.newInstance(componentType, length);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.aserv.kernel.KernelArray.Interface#get(java.lang.Object,
-         * int)
-         */
         @Override
         public Object get(Object array, int index) {
             return Array.get(array, index);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.aserv.kernel.KernelArray.Interface#set(java.lang.Object,
-         * int, java.lang.Object)
-         */
         @Override
         public void set(Object array, int index, Object value) {
             Array.set(array, index, value);

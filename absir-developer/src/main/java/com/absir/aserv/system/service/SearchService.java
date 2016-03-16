@@ -12,24 +12,10 @@ import com.absir.orm.transaction.value.Transaction;
 import java.io.Serializable;
 import java.util.Set;
 
-/**
- * @author absir
- *
- */
 @Transaction(readOnly = true)
 public interface SearchService {
 
-    /**
-     * @param entityName
-     * @param ids
-     * @return
-     */
     public Set<Object> getSearch(String entityName, Object... ids);
 
-    /**
-     * @param entityName
-     * @param ids
-     * @return
-     */
     public Set<Serializable> getSearchIds(String entityName, Object... ids);
 }

@@ -17,9 +17,6 @@ import javax.persistence.OneToMany;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by absir on 16/1/20.
- */
 @MaEntity(parent = {@MaMenu("测试管理")}, name = "测试")
 @Entity
 public class JModelDemo extends JbBean implements ICrudSubmit<JModelDemo.DemoOpition> {
@@ -35,7 +32,6 @@ public class JModelDemo extends JbBean implements ICrudSubmit<JModelDemo.DemoOpi
 
     @JaEdit(types = "html")
     public String html;
-
 
     @JaSubField("test1")
     @JaEdit(types = "html")
@@ -66,7 +62,6 @@ public class JModelDemo extends JbBean implements ICrudSubmit<JModelDemo.DemoOpi
 
     @JaEdit(types = "text")
     public String text2;
-
 
     @JaLang("扩展")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")

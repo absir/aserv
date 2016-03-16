@@ -19,57 +19,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * @author absir
- */
 public class MenuBeanRoot {
 
-    /**
-     * TAG
-     */
     public static final String TAG = "MENU";
 
-    /**
-     * menuBean
-     */
     private JMenu menuBean;
 
-    /**
-     * children
-     */
     private Map<String, MenuBeanRoot> children = new HashMap<String, MenuBeanRoot>();
 
-    /**
-     * @return the menuBean
-     */
     public JMenu getMenuBean() {
         return menuBean;
     }
 
-    /**
-     * @param menuBean the menuBean to set
-     */
     public void setMenuBean(JMenu menuBean) {
         this.menuBean = menuBean;
     }
 
-    /**
-     * @return the children
-     */
     public Map<String, MenuBeanRoot> getChildren() {
         return children;
     }
 
-    /**
-     * @param children the children to set
-     */
     public void setChildren(Map<String, MenuBeanRoot> children) {
         this.children = children;
     }
 
-    /**
-     * @return
-     */
     public List<JMenu> getMenuBeans() {
         List<JMenu> menuBeans = new ArrayList<JMenu>();
         for (Entry<String, MenuBeanRoot> entry : children.entrySet()) {
@@ -85,23 +58,10 @@ public class MenuBeanRoot {
         return menuBeans;
     }
 
-    /**
-     * @param name
-     * @return
-     */
     public MenuBeanRoot getChildrenRoot(String name) {
         return getChildrenRoot(name, 0, null, null, null, null);
     }
 
-    /**
-     * @param name
-     * @param order
-     * @param ref
-     * @param url
-     * @param type
-     * @param icon
-     * @return
-     */
     public MenuBeanRoot getChildrenRoot(String name, int order, String ref, String url, String type, String icon) {
         if (name == null) {
             return this;
@@ -146,52 +106,18 @@ public class MenuBeanRoot {
         return menuBeanRoot;
     }
 
-    /**
-     * @param maMenu
-     * @param name
-     * @param icon
-     * @return
-     */
     public MenuBeanRoot getChildrenRoot(MaMenu maMenu, String name, String icon) {
         return getChildrenRoot(maMenu, name, null, null, icon);
     }
 
-    /**
-     * @param maMenu
-     * @param name
-     * @param ref
-     * @param url
-     * @param icon
-     * @return
-     */
     public MenuBeanRoot getChildrenRoot(MaMenu maMenu, String name, String ref, String url, String icon) {
         return getChildrenRoot(maMenu, name, 0, ref, url, icon);
     }
 
-    /**
-     * @param maMenu
-     * @param name
-     * @param order
-     * @param ref
-     * @param url
-     * @param icon
-     * @return
-     */
     public MenuBeanRoot getChildrenRoot(MaMenu maMenu, String name, int order, String ref, String url, String icon) {
         return getChildrenRoot(maMenu, name, null, order, ref, url, null, icon);
     }
 
-    /**
-     * @param maMenu
-     * @param name
-     * @param suffix
-     * @param order
-     * @param ref
-     * @param url
-     * @param type
-     * @param icon
-     * @return
-     */
     public MenuBeanRoot getChildrenRoot(MaMenu maMenu, String name, String suffix, int order, String ref, String url, String type, String icon) {
         String caption = name;
         if (maMenu != null) {

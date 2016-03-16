@@ -18,38 +18,19 @@ import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.Input;
 import com.absir.server.socket.InputSocketImpl;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class PlayerServer extends ApiServer {
 
-    /**
-     * @param input
-     * @return
-     */
     public static JbPlayerContext getPlayerContext(Input input) {
         Object playerContext = input.getAttribute("playerContext");
         return playerContext == null || !(playerContext instanceof JbPlayerContext) ? null
                 : (JbPlayerContext) playerContext;
     }
 
-    /**
-     * @param input
-     * @param playerContext
-     */
     public static void setPlayerContext(Input input, JbPlayerContext playerContext) {
         input.setAttribute("playerContext", playerContext);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.system.api.MvcApi#onAuthentication(javax.servlet.http
-     * .HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
     @Override
     protected SecurityContext onAuthentication(Input input) throws Throwable {
         SecurityContext securityContext = super.onAuthentication(input);
@@ -84,10 +65,6 @@ public class PlayerServer extends ApiServer {
         return securityContext;
     }
 
-    /**
-     * @param playerContext
-     * @return
-     */
     protected boolean onAuthPlayerContext(JbPlayerContext playerContext) {
         if (playerContext == null) {
             return false;

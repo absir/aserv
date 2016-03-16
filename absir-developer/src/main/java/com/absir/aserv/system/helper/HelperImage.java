@@ -14,20 +14,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-/**
- * @author absir
- *
- */
 public class HelperImage {
 
-    /**
-     * @param pressFile
-     * @param targetFile
-     * @param x
-     * @param y
-     * @param formatName
-     * @param destFile
-     */
     public final static void pressImage(File pressFile, File targetFile, int x, int y, String formatName, File destFile) throws Exception {
         Image targetImage = ImageIO.read(targetFile);
         int width = targetImage.getWidth(null);
@@ -43,17 +31,6 @@ public class HelperImage {
         ImageIO.write(image, formatName, HelperFile.openOutputStream(destFile));
     }
 
-    /**
-     * @param pressText
-     * @param targetFile
-     * @param color
-     * @param font
-     * @param x
-     * @param y
-     * @param formatName
-     * @param destFile
-     * @throws Exception
-     */
     public static void pressText(String pressText, File targetFile, Color color, Font font, int x, int y, String formatName, File destFile) throws Exception {
         Image targetImage = ImageIO.read(targetFile);
         int width = targetImage.getWidth(null);

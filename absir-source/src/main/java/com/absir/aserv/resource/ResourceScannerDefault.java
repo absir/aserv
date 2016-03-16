@@ -20,46 +20,24 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- */
 @Base
 @Bean
 public class ResourceScannerDefault extends ResourceScanner {
 
-    /**
-     * ME
-     */
     public static final ResourceScannerDefault ME = BeanFactoryUtils.get(ResourceScannerDefault.class);
 
-    /**
-     * scanPath
-     */
     @Value("resource.scan.path")
     private String scanPath = "resources";
 
-    /**
-     * resourceProcessors
-     */
     @Orders
     @Inject
     private List<ResourceProcessor> resourceProcessors;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.resource.ResourceScanner#getScanPath()
-     */
     @Override
     public String getScanPath() {
         return scanPath;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.resource.ResourceScanner#getResourceProcessors()
-     */
     @Override
     public List<ResourceProcessor> getResourceProcessors() {
         return resourceProcessors;
@@ -90,11 +68,6 @@ public class ResourceScannerDefault extends ResourceScanner {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.resource.ResourceScanner#startScanner()
-     */
     @Override
     public void doScanner(File scanFile) {
         Session session = BeanDao.getSession();

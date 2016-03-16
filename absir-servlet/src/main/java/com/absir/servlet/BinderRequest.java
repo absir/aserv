@@ -20,23 +20,11 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class BinderRequest extends BinderData {
 
-    /**
-     * parameterPath
-     */
     private String parameterPath;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.binder.BinderData#bindTo(java.lang.Object,
-     * java.lang.String, java.lang.Class)
-     */
     @Override
     protected <T> T bindTo(Object obj, String name, Class<T> toClass) {
         if (obj == null) {
@@ -58,12 +46,6 @@ public class BinderRequest extends BinderData {
         return super.bindTo(obj, name, toClass);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#bind(java.lang.Object,
-     * java.lang.String, java.lang.reflect.Type, java.lang.Object)
-     */
     @Override
     public <T> T bind(Object obj, String name, Type toType, T toObject) {
         if (toType == null) {
@@ -92,12 +74,6 @@ public class BinderRequest extends BinderData {
         return super.bind(obj, name, toType, toObject);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.core.dyna.DynaBinder#bindArray(java.lang.Object,
-     * java.lang.String, java.lang.Class, java.lang.reflect.Type)
-     */
     @Override
     protected <T> T bindArray(Object obj, String name, Class<T> toClass, Type toType) {
         if (obj.getClass() == String[].class) {
@@ -141,13 +117,6 @@ public class BinderRequest extends BinderData {
         return super.bindArray(obj, name, toClass, toType);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.binder.BinderData#bindCollection(java.lang.Object,
-     * java.lang.String, java.lang.Class, java.lang.reflect.Type,
-     * java.util.Collection)
-     */
     @Override
     protected <T extends Collection> T bindCollection(Object obj, String name, Class<T> toClass, Type toType, Collection toObject) {
         if (obj.getClass() == String[].class) {
@@ -193,12 +162,6 @@ public class BinderRequest extends BinderData {
         return super.bindCollection(obj, name, toClass, toType, toObject);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.binder.BinderData#addPropertyError(java.lang.String,
-     * java.lang.Object)
-     */
     @Override
     protected void addPropertyError(String errorMessage, Object errorObject) {
         if (parameterPath == null) {

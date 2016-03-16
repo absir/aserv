@@ -9,17 +9,8 @@ package com.absir.binder;
 
 import com.absir.property.PropertyData;
 
-/**
- * @author absir
- */
 public interface IBinder {
 
-    /**
-     * @param name
-     * @param value
-     * @param propertyData
-     * @param binderData
-     */
     public void bind(String name, Object value, PropertyData propertyData, BinderData binderData);
 
 }

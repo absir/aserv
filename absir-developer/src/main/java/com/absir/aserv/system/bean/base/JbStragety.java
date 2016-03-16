@@ -23,21 +23,11 @@ public class JbStragety extends JbAssoc implements JiUser {
     @JaCrud(value = "userIdCrudFactory", cruds = JaCrud.Crud.CREATE)
     private Long userId;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.bean.proxy.JpUser#getUserId()
-     */
     @Override
     public Long getUserId() {
         return userId;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.system.bean.proxy.JpUser#setUserId(java.lang.Long)
-     */
     @Override
     public void setUserId(Long userId) {
         this.userId = userId;

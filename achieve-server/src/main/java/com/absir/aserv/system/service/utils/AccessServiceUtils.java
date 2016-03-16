@@ -17,26 +17,12 @@ import com.absir.aserv.system.domain.DCondition;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.value.JePermission;
 
-/**
- * @author absir
- */
 public abstract class AccessServiceUtils {
 
-    /**
-     * @param entityName
-     * @param jdbcCondition
-     * @return
-     */
     public static JdbcCondition selectCondition(String entityName, JdbcCondition jdbcCondition) {
         return selectCondition(entityName, SecurityServiceUtils.getUserBase(), jdbcCondition);
     }
 
-    /**
-     * @param entityName
-     * @param user
-     * @param jdbcCondition
-     * @return
-     */
     public static JdbcCondition selectCondition(String entityName, JiUserBase user, JdbcCondition jdbcCondition) {
         return selectCondition(entityName, user, null, jdbcCondition);
     }
@@ -56,14 +42,6 @@ public abstract class AccessServiceUtils {
                 jdbcCondition);
     }
 
-    /**
-     * @param entityName
-     * @param entityClass
-     * @param user
-     * @param condition
-     * @param jdbcCondition
-     * @return
-     */
     public static JdbcCondition selectCondition(String entityName, Class<?> entityClass, JiUserBase user,
                                                 DCondition condition, JdbcCondition jdbcCondition) {
         if (entityClass == null) {
@@ -97,11 +75,6 @@ public abstract class AccessServiceUtils {
         return jdbcCondition;
     }
 
-    /**
-     * @param entityName
-     * @param jdbcCondition
-     * @return
-     */
     public static JdbcCondition updateCondition(String entityName, JdbcCondition jdbcCondition) {
         return updateCondition(entityName, SecurityServiceUtils.getUserBase(), jdbcCondition);
     }
@@ -128,11 +101,6 @@ public abstract class AccessServiceUtils {
         return jdbcCondition;
     }
 
-    /**
-     * @param entityName
-     * @param jdbcCondition
-     * @return
-     */
     public static JdbcCondition deleteCondition(String entityName, JdbcCondition jdbcCondition) {
         return deleteCondition(entityName, SecurityServiceUtils.getUserBase(), jdbcCondition);
     }
@@ -159,11 +127,6 @@ public abstract class AccessServiceUtils {
         return jdbcCondition;
     }
 
-    /**
-     * @param entityName
-     * @param jdbcCondition
-     * @return
-     */
     public static JdbcCondition suggestCondition(String entityName, JdbcCondition jdbcCondition) {
         return suggestCondition(entityName, SecurityServiceUtils.getUserBase(), jdbcCondition);
     }
@@ -180,13 +143,6 @@ public abstract class AccessServiceUtils {
         return suggestCondition(entityName, JbSuggest.class, user, jdbcCondition);
     }
 
-    /**
-     * @param entityName
-     * @param permissionClass
-     * @param user
-     * @param jdbcCondition
-     * @return
-     */
     public static JdbcCondition suggestCondition(String entityName, Class<? extends JbPermission> permissionClass,
                                                  JiUserBase user, JdbcCondition jdbcCondition) {
         Class<?> entityClass = SessionFactoryUtils.getEntityClass(entityName);

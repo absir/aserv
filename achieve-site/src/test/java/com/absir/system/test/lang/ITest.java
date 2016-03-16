@@ -7,10 +7,6 @@
  */
 package com.absir.system.test.lang;
 
-/**
- * @author absir
- *
- */
 public interface ITest {
 
     public static String name = TestLoader.getName();

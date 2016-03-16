@@ -23,18 +23,8 @@ import com.absir.orm.value.JoEntity;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
-/**
- * @author absir
- */
 public class SubSizeCrudFactory implements ICrudFactory, ICrudProcessor {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.crud.ICrudProcessor#crud(com.absir.aserv.crud.
-     * CrudProperty, java.lang.Object, com.absir.aserv.crud.CrudHandler,
-     * com.absir.aserv.system.bean.proxy.JiUserBase)
-     */
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user) {
         Object property = crudProperty.get(entity);
@@ -68,13 +58,6 @@ public class SubSizeCrudFactory implements ICrudFactory, ICrudProcessor {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.crud.ICrudFactory#getProcessor(com.absir.aserv.support
-     * .entity.value.JoEntity, com.absir.aserv.support.developer.JCrudField)
-     */
     @Override
     public ICrudProcessor getProcessor(JoEntity joEntity, JCrudField crudField) {
         if (crudField.getjCrud().getParameters().length < 0) {

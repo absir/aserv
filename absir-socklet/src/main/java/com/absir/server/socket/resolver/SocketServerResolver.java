@@ -30,78 +30,33 @@ import java.io.PipedInputStream;
 import java.io.Serializable;
 import java.nio.channels.SocketChannel;
 
-/**
- * @author absir
- *
- */
 public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketChannel> implements IServerResolver {
 
-    /**
-     * streamMax
-     */
     @Value("server.socket.stream.max")
     private static int streamMax = 4;
 
-    /**
-     * @return the streamMax
-     */
     public int getStreamMax() {
         return streamMax;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.IServerResolver#acceptTimeoutNIO(java.
-     * nio.channels.SocketChannel)
-     */
     @Override
     public long acceptTimeoutNIO(SocketChannel socketChannel) throws Throwable {
         return InputSocketContext.getAcceptTimeout();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.IServerResolver#doBeat(java.nio.channels
-     * .SocketChannel, com.absir.server.socket.SelSession, long)
-     */
     @Override
     public void doBeat(SocketChannel socketChannel, SelSession selSession, long contextTime) {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.socket.resolver.IServerResolver#register(java.nio.
-     * channels.SocketChannel, com.absir.server.socket.SelSession, byte[])
-     */
     @Override
     public void register(SocketChannel socketChannel, SelSession selSession, byte[] buffer) throws Throwable {
         selSession.getSocketBuffer().setId(new String(buffer));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.IServerResolver#reciveBeatNIO(java.nio.
-     * channels.SocketChannel, com.absir.server.socket.SelSession)
-     */
     @Override
     public void reciveBeatNIO(SocketChannel socketChannel, SelSession selSession) {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.IServerResolver#receiveBufferNIO(java.
-     * nio.channels.SocketChannel, com.absir.server.socket.SelSession,
-     * com.absir.server.socket.SocketBuffer, byte[])
-     */
     @Override
     public boolean receiveBufferNIO(final SocketChannel socketChannel, final SelSession selSession,
                                     final SocketBuffer socketBuffer, final byte[] buffer) {
@@ -154,39 +109,16 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.socket.resolver.IServerResolver#receiveByteBuffer(java.
-     * nio.channels.SocketChannel, com.absir.server.socket.SelSession,
-     * com.absir.server.socket.SocketBuffer, byte[])
-     */
     @Override
     public void receiveByteBuffer(SocketChannel socketChannel, SelSession selSession, SocketBuffer socketBuffer,
                                   byte[] buffer) {
         doDispath(selSession, socketChannel, socketBuffer.getId(), buffer, socketBuffer, null);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.socket.resolver.IServerResolver#unRegister(java.io.
-     * Serializable, java.nio.channels.SocketChannel,
-     * com.absir.server.socket.SelSession)
-     */
     @Override
     public void unRegister(Serializable id, SocketChannel socketChannel, SelSession selSession) {
     }
 
-    /**
-     * @param selSession
-     * @param socketChannel
-     * @param id
-     * @param buffer
-     * @param socketBuffer
-     * @param inputStream
-     */
     protected void doDispath(SelSession selSession, SocketChannel socketChannel, Serializable id, byte[] buffer,
                              SocketBuffer socketBuffer, InputStream inputStream) {
         if (buffer.length > 0) {
@@ -227,56 +159,25 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
         }
     }
 
-    /**
-     * @param socketChannel
-     * @param id
-     * @param flag
-     * @param buffer
-     */
     protected void doResponse(SocketChannel socketChannel, Serializable id, byte flag, byte[] buffer) {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.IDispatcher#getInMethod(java.lang.Object)
-     */
     @Override
     public InMethod getInMethod(InputSocketAtt req) {
         return req.getMethod();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.IDispatcher#decodeUri(java.lang.String,
-     * java.lang.Object)
-     */
     @Override
     public String decodeUri(String uri, InputSocketAtt req) {
         return uri;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.server.in.InDispatcher#input(java.lang.String,
-     * com.absir.server.in.InMethod, com.absir.server.in.InModel,
-     * java.lang.Object, java.lang.Object)
-     */
     @Override
     protected Input input(String uri, InMethod inMethod, InModel model, InputSocketAtt req, SocketChannel res) {
         InputSocketImpl socketInput = new InputSocketImpl(model, req, res);
         return socketInput;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.server.in.IDispatcher#resolveReturnedValue(java.lang.Object,
-     * com.absir.server.on.OnPut)
-     */
     @Override
     public void resolveReturnedValue(Object routeBean, OnPut onPut) throws Throwable {
         if (onPut.getReturnValue() == null) {

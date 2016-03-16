@@ -13,18 +13,8 @@ import com.absir.aserv.system.bean.value.JaCrud.Crud;
 
 import java.io.Serializable;
 
-/**
- * @author absir
- *
- */
 public interface BaseDao<T, ID extends Serializable> {
 
-    /**
-     * @param crud
-     * @param property
-     * @param crudHandler
-     * @param entity
-     */
     public void crud(Crud crud, CrudProperty property, CrudHandler crudHandler, T entity);
 
 }

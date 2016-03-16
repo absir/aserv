@@ -7,9 +7,6 @@
  */
 package com.absir.aserv.game.value;
 
-/**
- * @author absir
- */
 @SuppressWarnings("rawtypes")
 public abstract class OBuffReverse<T extends OObject> extends OBuff<T> {
 

@@ -9,38 +9,20 @@ package com.absir.aserv.game.value;
 
 import com.absir.core.kernel.KernelClass;
 
-/**
- * @author absir
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class OBuffFromReverse<T, O extends OObject> extends OBuffReverse<O> implements IBuffFrom<T> {
 
-    /**
-     * formType
-     */
     private Class<T> formType;
 
-    /**
-     *
-     */
     public OBuffFromReverse() {
         formType = KernelClass.argumentClass(formType);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.aserv.game.value.IBuffFrom#supportsFrom(java.lang.Object)
-     */
     @Override
     public boolean supportsFrom(Object from) {
         return from == null ? isFromNullable() : formType.isAssignableFrom(formType.getClass());
     }
 
-    /**
-     * @return
-     */
     public boolean isFromNullable() {
         return false;
     }

@@ -17,23 +17,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class XlsAccessorParam extends XlsAccessor {
 
-    /**
-     * xlsClass
-     */
     Class<? extends XlsBase> xlsClass;
 
-    /**
-     * @param field
-     * @param beanClass
-     * @param xlsBase
-     */
     public XlsAccessorParam(Field field, Class<?> cls, Class<?> beanClass) {
         super(field, cls, beanClass);
         if (XlsBase.class.isAssignableFrom(beanClass)) {
@@ -41,10 +29,6 @@ public class XlsAccessorParam extends XlsAccessor {
         }
     }
 
-    /**
-     * @param value
-     * @return
-     */
     protected Object getParamValues(String value) {
         if (KernelString.isEmpty(value)) {
             return null;
@@ -73,14 +57,6 @@ public class XlsAccessorParam extends XlsAccessor {
         return DynaBinder.INSTANCE.bind(paramsValue, null, getField().getGenericType());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessorUtils.XlsAccessorBean#
-     * setObject(java.lang.Object, java.lang.Object,
-     * com.absir.aserv.configure.xls.XlsBase,
-     * com.absir.core.kernel.KernelLang.ObjectTemplate)
-     */
     @Override
     public void setObject(Object obj, Object cell, XlsBase xlsBase, ObjectTemplate<Boolean> empty) {
         HSSFCell hssfCell = (HSSFCell) cell;
@@ -93,10 +69,6 @@ public class XlsAccessorParam extends XlsAccessor {
         getAccessor().set(obj, getParamValues(XlsAccessorUtils.getCellValue(hssfCell)));
     }
 
-    /**
-     * @param value
-     * @return
-     */
     protected String getValueParams(Object value) {
         if (value == null) {
             return null;
@@ -116,12 +88,6 @@ public class XlsAccessorParam extends XlsAccessor {
         return KernelString.implode(params, ',');
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.aserv.configure.xls.XlsAccessor#writeXlsCells(java.util
-     * .List, java.lang.Object, com.absir.aserv.configure.xls.XlsBase)
-     */
     @Override
     public void writeXlsCells(List<XlsCell> xlsCells, Object obj, XlsBase xlsBase) {
         xlsCells.add(obj == null ? new XlsCellBase() : new XlsCellObject(getValueParams(getAccessor().get(obj)), xlsBase));

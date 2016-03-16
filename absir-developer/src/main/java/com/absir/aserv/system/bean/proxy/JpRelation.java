@@ -11,15 +11,8 @@ import com.absir.aserv.system.bean.base.JbRecycleBase;
 
 import javax.persistence.Entity;
 
-/**
- * @author absir
- *
- */
 public interface JpRelation {
 
-    /**
-     * @author absir
-     */
     @Entity
     class Relation extends JbRecycleBase {
 

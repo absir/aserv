@@ -11,29 +11,16 @@ import com.absir.core.kernel.KernelString;
 
 import java.util.regex.Pattern;
 
-/**
- * @author absir
- *
- */
 public class HelperPattern {
 
-    /**
-     * EMAIL_PATTERN
-     */
     public static final Pattern EMAIL_PATTERN = Pattern.compile("[\\w]+@[\\w]+");
-    /**
-     * MOBILE_PATTERN
-     */
+
     public static final Pattern MOBILE_PATTERN = Pattern.compile("1[0-9]{10}");
 
     public static boolean isEmail(String input) {
         return !KernelString.isEmpty(input) && EMAIL_PATTERN.matcher(input).find();
     }
 
-    /**
-     * @param input
-     * @return
-     */
     public static boolean isMobilePhone(String input) {
         return !KernelString.isEmpty(input) && MOBILE_PATTERN.matcher(input).find();
     }

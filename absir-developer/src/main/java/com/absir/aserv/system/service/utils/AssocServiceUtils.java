@@ -31,33 +31,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author absir
- *
- */
 @SuppressWarnings("unchecked")
 public abstract class AssocServiceUtils {
 
-    /**
-     * @param assocClass
-     * @param entityName
-     * @param user
-     * @param permission
-     * @param jdbcCondition
-     * @return
-     */
     public static JdbcCondition assocConditions(Class<? extends JiAssoc> assocClass, String entityName, JiUserBase user, JePermission permission, JdbcCondition jdbcCondition) {
         return assocConditions(assocClass, entityName, user, permission, null, jdbcCondition);
     }
 
-    /**
-     * @param assocClass
-     * @param entityName
-     * @param user
-     * @param mapStrategies
-     * @param jdbcCondition
-     * @return
-     */
     public static JdbcCondition assocConditions(Class<? extends JiAssoc> assocClass, String entityName, JiUserBase user, JePermission permission, Map<String, List<Object>> mapStrategies,
                                                 JdbcCondition jdbcCondition) {
         if (jdbcCondition == null) {

@@ -7,66 +7,29 @@
  */
 package com.absir.orm.transaction;
 
-/**
- * @author absir
- */
 public abstract class TransactionHolder implements ISessionHolder {
 
-    /**
-     * READONLY_FLAG
-     */
     public static final int READONLY_FLAG = 0x01;
 
-    /**
-     * READONLY_EQ_FLAG
-     */
     public static final int READONLY_EQ_FLAG = READONLY_FLAG << 1;
 
-    /**
-     * NESTED_FLAG
-     */
     public static final int NESTED_FLAG = READONLY_EQ_FLAG << 1;
 
-    /**
-     * NESTED_EQ_FLAG
-     */
     public static final int NESTED_EQ_FLAG = NESTED_FLAG << 1;
 
-    /**
-     * REQUIRED_FLAG
-     */
     public static final int REQUIRED_FLAG = NESTED_EQ_FLAG << 1;
 
-    /**
-     * REQUIRED_EQ_FLAG
-     */
     public static final int REQUIRED_EQ_FLAG = REQUIRED_FLAG << 1;
 
-    /**
-     * flag
-     */
     protected int flag;
 
-    /**
-     * rollback
-     */
     protected Class<?>[] rollback;
 
-    /**
-     * timeout
-     */
     protected long timeout;
 
-    /**
-     *
-     */
     public TransactionHolder() {
     }
 
-    /**
-     * @param holderBefore
-     * @param transactionAttributeBefore
-     */
     public TransactionHolder(ISessionHolder holderBefore, TransactionAttribute transactionAttribute) {
         if (holderBefore == null || transactionAttribute.isNested()) {
             flag |= NESTED_FLAG;
@@ -106,43 +69,24 @@ public abstract class TransactionHolder implements ISessionHolder {
         rollback = transactionAttribute.getRollback();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.orm.transaction.ISessionHolder#isReadOnly()
-     */
     @Override
     public boolean isReadOnly() {
         return (flag & READONLY_FLAG) != 0;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.absir.orm.transaction.ISessionHolder#isRequired()
-     */
     @Override
     public boolean isRequired() {
         return (flag & REQUIRED_FLAG) != 0;
     }
 
-    /**
-     * @return the flag
-     */
     public int getFlag() {
         return flag;
     }
 
-    /**
-     * @return the timeout
-     */
     public long getTimeout() {
         return timeout;
     }
 
-    /**
-     * @return the rollback
-     */
     public Class<?>[] getRollback() {
         return rollback;
     }

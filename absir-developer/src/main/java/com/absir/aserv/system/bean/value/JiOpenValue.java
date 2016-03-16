@@ -9,20 +9,10 @@ package com.absir.aserv.system.bean.value;
 
 import com.absir.aserv.system.bean.proxy.JiBase;
 
-/**
- * @author absir
- *
- */
 public interface JiOpenValue<T> extends JiBase {
 
-    /**
-     * @return
-     */
     public boolean isOpen();
 
-    /**
-     * @return
-     */
     public T getValue();
 
 }

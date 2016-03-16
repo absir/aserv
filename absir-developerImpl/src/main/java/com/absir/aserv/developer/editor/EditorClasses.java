@@ -12,20 +12,9 @@ import com.absir.core.kernel.KernelClass;
 import com.absir.orm.value.JaClasses;
 import com.absir.property.PropertyResolverAbstract;
 
-/**
- * @author absir
- *
- */
 @Bean
 public class EditorClasses extends PropertyResolverAbstract<EditorObject, JaClasses> {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotation
-     * (com.absir.property.PropertyObject, java.lang.annotation.Annotation)
-     */
     @Override
     public EditorObject getPropertyObjectAnnotation(EditorObject propertyObject, JaClasses annotation) {
         if (propertyObject == null) {
@@ -37,13 +26,6 @@ public class EditorClasses extends PropertyResolverAbstract<EditorObject, JaClas
         return propertyObject;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.absir.property.PropertyResolverAbstract#getPropertyObjectAnnotationValue
-     * (com.absir.property.PropertyObject, java.lang.String)
-     */
     @Override
     public EditorObject getPropertyObjectAnnotationValue(EditorObject propertyObject, String annotationValue) {
         if (propertyObject == null) {

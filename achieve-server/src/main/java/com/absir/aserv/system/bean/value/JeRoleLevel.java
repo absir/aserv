@@ -7,10 +7,6 @@
  */
 package com.absir.aserv.system.bean.value;
 
-/**
- * @author absir
- *
- */
 public enum JeRoleLevel {
 
     /**
@@ -23,6 +19,8 @@ public enum JeRoleLevel {
      */
     ROLE_ADMIN,
 
-    /** 开发者 */
+    /**
+     * 开发者
+     */
     ROLE_DEVELOPER;
 }

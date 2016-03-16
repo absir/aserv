@@ -13,16 +13,8 @@ import org.junit.Test;
 import javax.script.ScriptException;
 import java.io.IOException;
 
-/**
- * @author absir
- *
- */
 public class TestMethod extends AbstractTest {
 
-    /**
-     * @param value
-     * @return
-     */
     public static String unTransferred(String value) {
         value = value.trim();
         int length = value.length();
@@ -73,10 +65,6 @@ public class TestMethod extends AbstractTest {
         return quotation == 1 ? '"' + stringBuilder.toString() : stringBuilder.toString();
     }
 
-    /**
-     * @param stringBuilder
-     * @param chr
-     */
     public static void appendTransferred(StringBuilder stringBuilder, char chr) {
         switch (chr) {
             case 't':
@@ -152,11 +140,6 @@ public class TestMethod extends AbstractTest {
 
     public class TS implements TI<String> {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.system.test.lang.TestMethod.TI#t(java.lang.Object)
-         */
         @Override
         public String t(String t) {
             return null;
@@ -166,11 +149,6 @@ public class TestMethod extends AbstractTest {
 
     public class TL implements TI<Long> {
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.absir.system.test.lang.TestMethod.TI#t(java.lang.Object)
-         */
         @Override
         public Long t(Long t) {
             return null;

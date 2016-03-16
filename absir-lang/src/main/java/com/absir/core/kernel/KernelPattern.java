@@ -1,24 +1,16 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-6-14 下午3:35:10
  */
 package com.absir.core.kernel;
 
 import java.util.regex.Pattern;
 
-/**
- * @author absir
- */
 public class KernelPattern {
 
-    /**
-     * @param strs
-     * @param flags
-     * @return
-     */
     public static Pattern[] getPatterns(String[] strs, int flags) {
         if (strs == null) {
             return null;
@@ -37,11 +29,6 @@ public class KernelPattern {
         return patterns;
     }
 
-    /**
-     * @param str
-     * @param patterns
-     * @return
-     */
     public static boolean matchPatterns(String str, Pattern[] patterns) {
         if (patterns == null) {
             return false;

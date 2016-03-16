@@ -7,10 +7,6 @@
  */
 package com.absir.aserv.master.bean.base;
 
-/**
- * @author absir
- *
- */
 public interface ISlaveAutoSynch {
 
 }
