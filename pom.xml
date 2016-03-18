@@ -55,7 +55,7 @@
         <module>achieve-game-master</module>
         <module>absir-platform</module>
         <module>absir-dubbo</module>
-        <module>diamond</module>
+        <module>absir-diamond</module>
     </modules>
     <dependencies>
         <dependency>
