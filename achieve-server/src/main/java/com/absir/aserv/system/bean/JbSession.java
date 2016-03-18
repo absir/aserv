@@ -11,9 +11,11 @@ import com.absir.aserv.system.bean.base.JbVerifier;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JaModel;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
+import java.util.HashMap;
+import java.util.Map;
 
 @JaModel(desc = true)
 @MappedSuperclass
@@ -43,9 +45,12 @@ public abstract class JbSession extends JbVerifier {
     @JaLang(value = "最后登录", tag = "lastLogin")
     private long lastTime;
 
-    @JaLang("附加信息")
-    @Lob
-    private byte[] metas;
+    @JaLang(value = "不可用")
+    private boolean disable;
+
+    @JaLang("扩展纪录")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonMap")
+    private Map<String, String> metaMap;
 
     public Long getUserId() {
         return userId;
@@ -95,11 +100,31 @@ public abstract class JbSession extends JbVerifier {
         this.lastTime = lastTime;
     }
 
-    public byte[] getMetas() {
-        return metas;
+    public boolean isDisable() {
+        return disable;
     }
 
-    public void setMetas(byte[] metas) {
-        this.metas = metas;
+    public void setDisable(boolean disable) {
+        this.disable = disable;
+    }
+
+    public Map<String, String> getMetaMap() {
+        return metaMap;
+    }
+
+    public void setMetaMap(Map<String, String> metaMap) {
+        this.metaMap = metaMap;
+    }
+
+    public Object getMetaMap(String key) {
+        return metaMap == null ? null : metaMap.get(key);
+    }
+
+    public void setMetaMap(String key, String value) {
+        if (metaMap == null) {
+            metaMap = new HashMap<String, String>();
+        }
+
+        metaMap.put(key, value);
     }
 }

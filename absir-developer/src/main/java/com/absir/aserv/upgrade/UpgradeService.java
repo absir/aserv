@@ -129,7 +129,7 @@ public class UpgradeService {
         Map<String, Object> versionMap = getVersionMap(upgradeFile);
         if (versionMap != null) {
             long time = System.currentTimeMillis();
-            String versionFile = HelperRandom.randSecendId(time, 8, upgradeFile.hashCode());
+            String versionFile = HelperRandom.randSecondId(time, 8, upgradeFile.hashCode());
             try {
                 HelperFile.copyFile(upgradeFile, new File(versionFile));
                 version.setVersion(KernelDyna.to(versionMap.get("version"), String.class));
@@ -222,7 +222,7 @@ public class UpgradeService {
     public void restartUpgrade(InputStream inputStream) throws IOException {
         Object stopDone = stop();
         File upgradeFile = new File(BeanFactoryUtils.getBeanConfig().getResourcePath() + "upgrade/"
-                + HelperRandom.randSecendId() + ".upgrd");
+                + HelperRandom.randSecondId() + ".upgrd");
         try {
             HelperFile.write(upgradeFile, inputStream);
             upgrade(new ZipInputStream(new FileInputStream(upgradeFile)));

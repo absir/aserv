@@ -13,31 +13,36 @@ import com.absir.aserv.support.developer.IDeveloper.ISecurity;
 import com.absir.aserv.system.bean.JLog;
 import com.absir.aserv.system.bean.JbSession;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.aserv.system.bean.value.IUser;
 import com.absir.aserv.system.bean.value.JeRoleLevel;
+import com.absir.aserv.system.crud.PasswordCrudFactory;
+import com.absir.aserv.system.dao.BeanDao;
+import com.absir.aserv.system.dao.utils.QueryDaoUtils;
+import com.absir.aserv.system.domain.DSequence;
 import com.absir.aserv.system.helper.HelperLong;
+import com.absir.aserv.system.helper.HelperRandom;
 import com.absir.aserv.system.security.ISecurityService;
 import com.absir.aserv.system.security.SecurityContext;
 import com.absir.aserv.system.security.SecurityManager;
 import com.absir.bean.basis.Configure;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
+import com.absir.bean.inject.value.InjectOrder;
+import com.absir.bean.inject.value.Value;
 import com.absir.context.core.ContextUtils;
-import com.absir.context.lang.LangBundle;
-import com.absir.core.kernel.KernelLang.CallbackTemplate;
 import com.absir.core.kernel.KernelString;
+import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
-import com.absir.server.in.IFacade;
 import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
-import com.absir.servlet.InputRequest;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
+import java.util.Iterator;
 import java.util.Map;
 
 @Configure
-public abstract class SecurityService implements ISecurityService, ISecurity, IFacade {
+public abstract class SecurityService implements ISecurityService, ISecurity, IEntityMerge<JiUserBase> {
 
     public static final SecurityService ME = BeanFactoryUtils.get(SecurityService.class);
 
@@ -48,7 +53,8 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IF
 
     private static final String SECURITY_CONTEXT_NAME = "SECURITY";
 
-    private static final int SECURITY_CREATE_MAX_COUNT = 3;
+    @Value("security.max.persist")
+    private static final int SECURITY_MAX_PERSIST = 3;
 
     @Inject
     private SecurityManager securityManager;
@@ -81,143 +87,235 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IF
         return securityManager == null ? this.securityManager : securityManager;
     }
 
-    protected abstract void loginSecurity(SecurityContext securityContext, JiUserBase userBase);
+    protected abstract JbSession createSession(JiUserBase userBase, long remember,
+                                               String address, String agent);
 
-    protected abstract JbSession createSecuritySession();
+    private DSequence sessionSequence;
 
-    protected abstract SecurityContext createSecurityContext(JiUserBase userBase, JbSession session, String sessionId);
-
-    public String getAddress(HttpServletRequest request) {
-        return request.getLocalAddr();
+    @InjectOrder(255)
+    @Inject
+    protected void afterPropertySetter() {
+        if (sessionSequence == null) {
+            sessionSequence = new DSequence();
+        }
     }
 
-    public SecurityContext loginUser(SecurityManager securityManager, JiUserBase userBase, long remember,
-                                     String address, String agent, Input input) {
-        long contextTime = ContextUtils.getContextTime();
-        JbSession session = createSecuritySession();
-        session.setUserId(userBase.getUserId());
+    public String nextSecurityId() {
+        StringBuilder stringBuilder = new StringBuilder();
+        HelperRandom.appendFormatLong(stringBuilder, HelperRandom.FormatType.HEX_DIG, System.currentTimeMillis());
+        HelperRandom.appendFormat(stringBuilder, HelperRandom.FormatType.HEX_DIG, sessionSequence.nextSequence());
+        HelperRandom.randAppendFormat(stringBuilder, 5, HelperRandom.FormatType.HEX_DIG);
+        return stringBuilder.toString();
+    }
+
+    public void insertSession(JiUserBase userBase, JbSession session) {
+        BeanService.ME.persist(session);
+    }
+
+    public void deleteSession(JbSession session) {
+        BeanService.ME.delete(session);
+    }
+
+    public void updateSession(JiUserBase userBase, JbSession session) {
+        BeanService.ME.merge(session);
+    }
+
+    public JbSession findSession(String sessionId) {
+        return (JbSession) BeanService.ME.selectQuerySingle("SELECT o FROM JSession o WHERE o.id = ? AND o.disable = ? AND o.lastTime > ?", sessionId, false, ContextUtils.getContextTime());
+    }
+
+    public JiUserBase findUserBase(JbSession session) {
+        return getUserBase(session.getUserId());
+    }
+
+    protected Class<? extends SecurityContext> getFactorySecurityContextClass() {
+        return SecurityContext.class;
+    }
+
+    protected SecurityContext createSecurityContext(SecurityManager securityManager, JiUserBase userBase, JbSession session, long remember) {
+        SecurityContext securityContext = null;
+        Class<? extends SecurityContext> securityContextClass = getFactorySecurityContextClass();
+        if (securityContextClass == null) {
+            securityContext = new SecurityContext();
+            //todo securityContext 销毁时应该检测变化和保存
+
+        } else {
+            long contextTime = ContextUtils.getContextTime();
+            securityContext = ContextUtils.getContext(securityContextClass, session.getId());
+            securityContext.setLifeTime(securityManager.getSessionLife());
+            securityContext.retainAt(contextTime);
+            securityContext.setMaxExpirationTime(remember);
+            securityContext.retainAt();
+        }
+
+        securityContext.setSession(session);
+        securityContext.setUser(userBase);
+        return securityContext;
+    }
+
+    public long getRemember(SecurityManager securityManager, long remember) {
+        long sessionExpiration = securityManager.getSessionExpiration();
+        if (remember <= 0 || (sessionExpiration > 0 && remember > sessionExpiration)) {
+            remember = sessionExpiration;
+        }
+
+        return sessionExpiration > 0 && sessionExpiration > remember ? sessionExpiration : remember;
+    }
+
+    public JbSession loginUser(JiUserBase userBase, long remember,
+                               String address, String agent) {
+        JbSession session = createSession(userBase, remember, address, agent);
+        if (session == null) {
+            return null;
+        }
+
+        if (session.getUserId() == 0) {
+            session.setUserId(userBase.getUserId());
+        }
+
         session.setUsername(userBase.getUsername());
         session.setAddress(address);
+        session.setIp(HelperLong.longIPV4(address));
         session.setAgent(agent);
-        session.setIp(address == null ? 0 : HelperLong.longIPV4(address));
-        session.setLastTime(contextTime + securityManager.getSessionExpiration());
-
-        SecurityContext securityContext;
+        long contextTime = ContextUtils.getContextTime();
+        session.setLastTime(contextTime);
+        session.setPassTime(contextTime + remember);
         int count = 0;
         while (true) {
-            securityContext = createSecurityContext(userBase, session, VerifierService.ME.randVerifierId(input));
-            if (securityContext != null) {
+            session.setId(nextSecurityId());
+            insertSession(userBase, session);
+            if (session != null) {
                 break;
             }
 
-            if (++count >= SECURITY_CREATE_MAX_COUNT) {
+            if (++count >= SECURITY_MAX_PERSIST) {
                 return null;
             }
         }
 
-        securityContext.setUser(userBase);
-        securityContext.setAddress(address);
-        securityContext.setAgent(agent);
-        securityContext.setLifeTime(securityManager.getSessionLife());
-        securityContext.retainAt(contextTime);
-        long sessionExpiration = securityManager.getSessionExpiration();
-        if (sessionExpiration >= 0 && sessionExpiration < remember) {
-            sessionExpiration = remember;
-        }
-
-        securityContext.setMaxExpirationTime(sessionExpiration);
-        loginSecurity(securityContext, userBase);
-        setSecurityContext(securityContext, input);
-        return securityContext;
+        return session;
     }
 
-    public SecurityContext loginUserRequest(String name, JiUserBase userBase, InputRequest inputRequest) {
+    protected void loginSecurity(SecurityContext securityContext, JiUserBase userBase, Input input) {
+    }
+
+
+    public SecurityContext loginUser(String name, JiUserBase userBase, Input input) {
         SecurityManager securityManager = SecurityService.ME.getSecurityManager(name);
         long remember = securityManager.getSessionExpiration();
         if (remember < securityManager.getSessionLife()) {
             remember = securityManager.getSessionLife();
         }
 
-        return SecurityService.ME.loginUserRequest(securityManager, userBase, remember, inputRequest);
+        return SecurityService.ME.loginUser(securityManager, userBase, remember, input);
     }
 
-    public SecurityContext loginUserRequest(SecurityManager securityManager, JiUserBase userBase, long remember,
-                                            InputRequest inputRequest) {
-        SecurityContext securityContext = loginUser(securityManager, userBase, remember, inputRequest.getAddress(), inputRequest.getRequest().getHeader("user-agent"), inputRequest);
-        if (securityContext != null) {
+    public SecurityContext loginUser(SecurityManager securityManager, JiUserBase userBase, long remember,
+                                     Input input) {
+        return loginUser(securityManager, userBase, remember, input.getAddress(), input.getFacade().getUserAgent(), input);
+    }
+
+    public SecurityContext loginUser(SecurityManager securityManager, JiUserBase userBase, long remember,
+                                     String address, String agent, Input input) {
+        remember = getRemember(securityManager, remember);
+        JbSession session = loginUser(userBase, remember, address, agent);
+        if (session == null) {
+            return null;
+        }
+
+        SecurityContext securityContext = createSecurityContext(securityManager, userBase, session, remember);
+        if (securityContext == null) {
+            return null;
+        }
+
+        setSecurityContext(securityContext, input);
+        loginSecurity(securityContext, userBase, input);
+        if (input.isInFacade()) {
             if (remember > 0) {
-                inputRequest.setCookie(securityManager.getSessionKey(), securityContext.getId(), securityManager.getCookiePath(),
-                        remember);
+                input.getFacade().setCookie(securityManager.getSessionKey(), securityContext.getId(), securityManager.getCookiePath(), remember);
+
+            } else {
+                input.getFacade().setSession(securityManager.getSessionKey(), securityContext.getId());
             }
+
+            return securityContext;
         }
 
         return securityContext;
     }
 
-    protected abstract SecurityContext findSecurityContext(String sessionId, SecurityManager securityManager);
+    protected SecurityContext findSecurityContext(String sessionId, SecurityManager securityManager) {
+        Class<? extends SecurityContext> securityContextClass = getFactorySecurityContextClass();
+        if (securityContextClass != null) {
+            SecurityContext securityContext = ContextUtils.findContext(securityContextClass, sessionId);
+            if (securityContext != null) {
+                return securityContext;
+            }
+        }
+
+        JbSession session = findSession(sessionId);
+        if (session == null || session.isDisable()) {
+            return null;
+        }
+
+        long remember = session.getPassTime() - ContextUtils.getContextTime();
+        if (remember <= 0) {
+            return null;
+        }
+
+        JiUserBase userBase = findUserBase(session);
+        return createSecurityContext(securityManager, userBase, session, remember);
+    }
 
     @Override
     public SecurityContext autoLogin(String name, boolean remember, int roleLevel, Input input) {
         SecurityContext securityContext = getSecurityContext(input);
         if (securityContext == null) {
-            if (!input.isIFacade()) {
+            if (input.isInFacade()) {
                 SecurityManager securityManager = getSecurityManager(name);
-                String sessionId = input.getFacade().getSessionValue(securityManager.getSessionKey());
+                String sessionId = input.getFacade().getCookie(securityManager.getSessionKey());
                 if (sessionId == null && remember) {
-                    sessionId = input.getFacade().getCookie(securityManager.getSessionKey());
+                    sessionId = input.getFacade().getSessionValue(securityManager.getSessionKey());
                 }
 
                 if (sessionId != null) {
-                    securityContext = ContextUtils.findContext(SecurityContext.class, sessionId);
+                    securityContext = findSecurityContext(sessionId, securityManager);
                     if (securityContext == null) {
-                        securityContext = ME.findSecurityContext(sessionId, securityManager);
-                        if (securityContext == null) {
-                            return null;
-                        }
+                        return null;
                     }
-
-                    securityContext.retainAt();
-                    setSecurityContext(securityContext, input);
                 }
             }
         }
 
-        if (securityContext == null) {
+        JiUserBase user = securityContext.getUser();
+        if (user == null || user.isDisabled() || user.getUserRoleLevel() < roleLevel) {
             return null;
-
-        } else {
-            JiUserBase user = securityContext.getUser();
-            if (user == null || user.isDisabled() || user.getUserRoleLevel() < roleLevel) {
-                return null;
-            }
         }
 
+        securityContext.retainAt();
+        setSecurityContext(securityContext, input);
         return securityContext;
     }
 
     @Override
     public SecurityContext login(String username, String password, long remember, int roleLevel, String name,
                                  Input input) {
-        if (input instanceof InputRequest) {
-            InputRequest inputRequest = (InputRequest) input;
-            JiUserBase userBase = ME.getUserBase(username);
-            if (userBase == null || userBase.isDisabled()) {
-                throw new ServerException(ServerStatus.NO_USER);
-            }
+        JiUserBase userBase = ME.getUserBase(username);
+        if (userBase == null || userBase.isDisabled()) {
+            throw new ServerException(ServerStatus.NO_USER);
+        }
 
-            SecurityManager securityManager = getSecurityManager(name);
-            if (!validator(userBase, password, securityManager.getError(), securityManager.getErrorTime())) {
-                JLog.log(name, "login", input.getAddress(), username, false);
-                throw new ServerException(ServerStatus.NO_USER, userBase);
-            }
+        SecurityManager securityManager = getSecurityManager(name);
+        if (!validator(userBase, password, securityManager.getError(), securityManager.getErrorTime())) {
+            JLog.log(name, "login", input.getAddress(), username, false);
+            throw new ServerException(ServerStatus.NO_USER, userBase);
+        }
 
-            if (userBase.getUserRoleLevel() >= roleLevel) {
-                SecurityContext securityContext = loginUserRequest(securityManager, userBase, remember, inputRequest);
-                if (securityContext != null) {
-                    JLog.log(name, "login", input.getAddress(), username, true);
-                    inputRequest.setSession(securityManager.getSessionKey(), securityContext.getId());
-                    return securityContext;
-                }
+        if (userBase.getUserRoleLevel() >= roleLevel) {
+            SecurityContext securityContext = loginUser(securityManager, userBase, remember, input);
+            if (securityContext != null) {
+                JLog.log(name, "login", input.getAddress(), username, true);
+                return securityContext;
             }
         }
 
@@ -233,11 +331,10 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IF
         } else {
             // 销毁之前的登录
             securityContext.destorySession();
-            if (input instanceof InputRequest) {
-                InputRequest inputRequest = (InputRequest) input;
+            if (input.isInFacade()) {
                 SecurityManager securityManager = getSecurityManager(name);
-                inputRequest.removeSession(securityManager.getSessionKey());
-                inputRequest.removeCookie(securityManager.getSessionKey(), securityManager.getCookiePath());
+                input.getFacade().removeSession(securityManager.getSessionKey());
+                input.getFacade().removeCookie(securityManager.getSessionKey(), securityManager.getCookiePath());
             }
 
             setSecurityContext(null, input);
@@ -265,52 +362,74 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IF
 
     public <T> T getSession(String name, Class<T> toClass, Input input) {
         T value = null;
-        JiUserBase user = getUserBase(input);
-        if (user != null) {
-            value = DynaBinderUtils.to(user.getMetaMap(name), toClass);
+        SecurityContext securityContext = getSecurityContext(input);
+        if (securityContext != null) {
+            value = DynaBinderUtils.to(securityContext.getSession().getMetaMap(name), toClass);
         }
 
-        if (value == null && input instanceof InputRequest) {
-            value = DynaBinderUtils.to(((InputRequest) input).getSession(SECURITY_SESSION_NAME + name), toClass);
+        if (value == null) {
+            value = DynaBinderUtils.to(input.getFacade().getSession(SECURITY_SESSION_NAME + name), toClass);
         }
 
         return value;
     }
 
     public void setSession(final String name, final Object value, Input input) {
-        JiUserBase user = getUserBase(input);
-        if (user == null) {
-            if (input instanceof InputRequest) {
-                ((InputRequest) input).setSession(SECURITY_SESSION_NAME + name,
-                        DynaBinderUtils.to(value, String.class));
-            }
+        SecurityContext securityContext = getSecurityContext(input);
+        if (securityContext == null) {
+            input.getFacade().setSession(SECURITY_SESSION_NAME + name, DynaBinderUtils.to(value, String.class));
 
         } else {
-            BeanService.MERGE.merge(user, user.getUserId(), new CallbackTemplate<Object>() {
-
-                @Override
-                public void doWith(Object template) {
-                    ((JiUserBase) template).setMetaMap(name, DynaBinderUtils.to(value, String.class));
-                }
-            });
+            securityContext.getSession().setMetaMap(name, DynaBinderUtils.to(value, String.class));
+            securityContext.setChannged(true);
         }
     }
 
     @Override
-    public String getAddress(Input input) {
-        return null;
+    public boolean validator(JiUserBase userBase, String password, int error, long errorTime) {
+        if (password == null || !(userBase instanceof IUser)) {
+            return true;
+        }
+
+        IUser user = (IUser) userBase;
+        long contextTime = ContextUtils.getContextTime();
+        if (error > 0 && user.getLastErrorLogin() > contextTime) {
+            return false;
+        }
+
+        if (PasswordCrudFactory.getPasswordEncrypt(password, user.getSalt(), user.getSaltCount()).equals(user.getPassword())) {
+            return true;
+        }
+
+        int errorLogin = user.getErrorLogin() + 1;
+        if (errorLogin >= error) {
+            // 密码错误5次,30分钟内禁止登录
+            errorLogin = 0;
+            user.setLastErrorLogin(contextTime + errorTime);
+        }
+
+        user.setErrorLogin(errorLogin);
+        BeanService.ME.merge(user);
+        return false;
     }
 
     @Override
-    public Integer getLocaleCode(Input input) {
-        Integer locale = getSession("locale", Integer.class, input);
-        if (locale == null && input instanceof InputRequest) {
-            locale = LangBundle.ME.getLocaleCode(((InputRequest) input).getRequest().getLocale());
-            if (locale != null) {
-                setSession("locale", locale, input);
+    public void merge(String entityName, JiUserBase entity, MergeType mergeType, Object mergeEvent) {
+        if (getFactorySecurityContextClass() != null) {
+            Iterator<String> iterator = QueryDaoUtils.createQueryArray(BeanDao.getSession(),
+                    "SELECT o.id FROM JSession o WHERE o.userId = ? AND o.passTime > ?", entity.getUserId(),
+                    ContextUtils.getContextTime()).iterate();
+            while (iterator.hasNext()) {
+                SecurityContext securityContext = ContextUtils.findContext(SecurityContext.class, iterator.next());
+                if (securityContext != null) {
+                    if (mergeType == MergeType.UPDATE) {
+                        securityContext.setUser(entity);
+
+                    } else {
+                        securityContext.setExpiration();
+                    }
+                }
             }
         }
-
-        return locale;
     }
 }

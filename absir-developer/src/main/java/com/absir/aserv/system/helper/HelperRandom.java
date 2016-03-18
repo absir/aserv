@@ -7,19 +7,25 @@
  */
 package com.absir.aserv.system.helper;
 
+import com.absir.client.helper.HelperEncrypt;
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.core.kernel.KernelLang.FilterTemplate;
 import com.absir.core.kernel.KernelObject;
 
 import java.awt.*;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.List;
 
 public class HelperRandom {
 
-    public static final Random RANDOM = new Random(new Date().getTime());
+    public static final Random RANDOM = new Random(System.currentTimeMillis());
+
+    public static final SecureRandom SECURE_RANDOM = new SecureRandom(Long.toHexString(System.currentTimeMillis()).getBytes());
 
     private static final int SECEND_SIZE = 3;
+
+    private static final char[] HEX_DIG_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
 
     public static int nextInt(int max) {
         return RANDOM.nextInt(max);
@@ -196,90 +202,208 @@ public class HelperRandom {
         return buffer.toString();
     }
 
-    public static String randSecendId() {
-        return randSecendId(SECEND_SIZE);
+    public static void appendFormat(StringBuilder stringBuilder, int size, char[] chars) {
+        appendFormat(stringBuilder, 0, size, chars);
     }
 
-    public static String randSecendId(int size) {
-        return randSecendId(System.currentTimeMillis(), size);
-    }
-
-    public static String randSecendId(long time, int size) {
-        return randSecendBuidler(time, size).toString();
-    }
-
-    public static String randSecendId(long time, int size, int id) {
-        return randSecendBuidler(time, size).append(randFormate(8, Integer.toHexString(id).toCharArray())).toString();
-    }
-
-    public static StringBuilder randSecendBuidler(long time, int size) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(randFormate(16, Long.toHexString(time).toCharArray()));
-        randAppendFormate(stringBuilder, size);
-        return stringBuilder;
-    }
-
-    public static String randSecendBuidler(int time, int size, int id) {
-        return randSecendBuidler(time, size).append(randFormate(8, Integer.toHexString(id).toCharArray())).toString();
-    }
-
-    public static StringBuilder randSecendBuidler(int time, int size) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(randFormate(8, Integer.toHexString(time).toCharArray()));
-        randAppendFormate(stringBuilder, size);
-        return stringBuilder;
-    }
-
-    public static char[] randFormate(int size, char[] chars) {
+    public static void appendFormat(StringBuilder stringBuilder, int offset, int size, char[] chars) {
         int length = chars.length;
-        if (length >= size) {
-            return chars;
+        size += offset;
+        for (; length < size; size--) {
+            stringBuilder.append('0');
+        }
 
-        } else {
-            char[] buff = new char[size];
-            int start = size - length;
-            Arrays.fill(buff, 0, start, '0');
-            for (length = start; start < size; start++) {
-                buff[start] = chars[start - length];
+        stringBuilder.append(chars, offset, size);
+    }
+
+    public enum FormatType {
+
+        NUMBER {
+            @Override
+            public int intLen() {
+                return 10;
             }
 
-            return buff;
-        }
+            @Override
+            public char[] charsForInt(int i) {
+                return String.valueOf(i).toCharArray();
+            }
+
+            @Override
+            public int longLen() {
+                return 19;
+            }
+
+            @Override
+            public char[] charsForLong(long l) {
+                return String.valueOf(l).toCharArray();
+            }
+        },
+
+        HEX {
+            @Override
+            public int intLen() {
+                return 8;
+            }
+
+            @Override
+            public char[] charsForInt(int i) {
+                return Integer.toHexString(i).toCharArray();
+            }
+
+            @Override
+            public int longLen() {
+                return 16;
+            }
+
+            @Override
+            public char[] charsForLong(long l) {
+                return Long.toHexString(l).toCharArray();
+            }
+        },
+
+        HEX_DIG {
+            @Override
+            public int intLen() {
+                return 6;
+            }
+
+            @Override
+            public char[] charsForInt(int i) {
+                return charsForLong(i);
+            }
+
+            @Override
+            public int longLen() {
+                return 11;
+            }
+
+            @Override
+            public char[] charsForLong(long l) {
+                if (l < 0) {
+                    l = -l;
+                }
+
+                int length = HEX_DIG_CHARS.length;
+                char[] chars = new char[l <= Integer.MAX_VALUE ? intLen() : longLen()];
+                int i = 0;
+                while (l > 0) {
+                    chars[i] = HEX_DIG_CHARS[(int) (l % length)];
+                    l /= length;
+                    i++;
+                }
+
+                return Arrays.copyOfRange(chars, 0, i);
+            }
+        };
+
+        public abstract int intLen();
+
+        public abstract char[] charsForInt(int i);
+
+        public abstract int longLen();
+
+        public abstract char[] charsForLong(long l);
     }
 
-    public static void randAppendFormate(StringBuilder stringBuilder, int size) {
+    public static void appendFormat(StringBuilder stringBuilder, FormatType type, int i) {
+        appendFormat(stringBuilder, type, i, 0, type.intLen());
+    }
+
+    public static void appendFormat(StringBuilder stringBuilder, FormatType type, int i, int offset, int size) {
+        appendFormat(stringBuilder, 0, size, type.charsForInt(i));
+    }
+
+    public static void appendFormatLong(StringBuilder stringBuilder, FormatType type, long l) {
+        appendFormatLong(stringBuilder, type, l, 0, type.longLen());
+    }
+
+    public static void appendFormatLong(StringBuilder stringBuilder, FormatType type, long l, int offset, int size) {
+        appendFormat(stringBuilder, 0, size, type.charsForLong(l));
+    }
+
+    public static void appendFormatLongMd5(StringBuilder stringBuilder, FormatType type, long l, int size) {
+        appendFormatLongMd5(stringBuilder, type, Long.toHexString(l).getBytes(), size);
+    }
+
+    public static void appendFormatLongMd5(StringBuilder stringBuilder, FormatType type, byte[] bytes, int size) {
+        char[] md5 = HelperEncrypt.encryptionMD5Chars(bytes);
+        if (size > type.longLen()) {
+            if (md5[16] > '7') {
+                md5[16] = (char) ('0' + md5[16] % 7);
+            }
+
+            appendFormatLong(stringBuilder, type, Long.parseLong(new String(md5, 16, 16), 16));
+            size -= type.longLen();
+        }
+
+        if (md5[0] > '7') {
+            md5[0] = (char) ('0' + md5[0] % 7);
+        }
+
+        appendFormatLong(stringBuilder, type, Long.parseLong(new String(md5, 0, 16), 16), 0, size);
+    }
+
+    public static void randAppendFormat(StringBuilder stringBuilder, int size) {
+        randAppendFormat(stringBuilder, size, FormatType.HEX);
+    }
+
+    public static void randAppendFormat(StringBuilder stringBuilder, int size, FormatType type) {
         while (size > 0) {
-            char[] chars = size > 8 ? Long.toHexString(RANDOM.nextLong()).toCharArray() : Integer.toHexString(RANDOM.nextInt())
-                    .toCharArray();
+            char[] chars = size <= type.intLen() ? type.charsForInt(RANDOM.nextInt()) : type.charsForLong(RANDOM.nextLong());
             int length = chars.length;
             if (length < size) {
-                if (size > 8) {
-                    if (length < 16) {
-                        length = 16;
-                        chars = randFormate(length, chars);
-                    }
+                if (size <= type.intLen()) {
+                    length = type.intLen();
 
                 } else {
-                    if (length < 8) {
-                        length = 8;
-                        chars = randFormate(length, chars);
-                    }
+                    length = type.longLen();
                 }
-            }
-
-            if (size >= length) {
-                stringBuilder.append(chars);
 
             } else {
-                stringBuilder.append(chars, length - size, size);
+                length = size;
             }
 
+            appendFormat(stringBuilder, length, chars);
             size -= length;
         }
     }
 
+    public static String randSecondId() {
+        return randSecondId(SECEND_SIZE);
+    }
+
+    public static String randSecondId(int size) {
+        return randSecondId(System.currentTimeMillis(), size);
+    }
+
+    public static String randSecondId(long time, int size) {
+        return randSecondBuilder(time, size).toString();
+    }
+
+    public static StringBuilder randSecondBuilder(long time, int size) {
+        return randSecondBuilder(time, size, FormatType.HEX);
+    }
+
+    public static StringBuilder randSecondBuilder(long time, int size, FormatType formatType) {
+        StringBuilder stringBuilder = new StringBuilder();
+        appendFormatLong(stringBuilder, formatType, time);
+        randAppendFormat(stringBuilder, size, formatType);
+        return stringBuilder;
+    }
+
+    public static String randSecondId(long time, int size, int id) {
+        return randSecondId(time, size, id, FormatType.HEX);
+    }
+
+    public static String randSecondId(long time, int size, int id, FormatType formatType) {
+        StringBuilder stringBuilder = randSecondBuilder(time, size, formatType);
+        appendFormat(stringBuilder, formatType, id, 0, 8);
+        return stringBuilder.toString();
+    }
+
     public static String randHashId(Object dist) {
-        return HelperRandom.randSecendId(System.currentTimeMillis(), 8, dist.hashCode());
+        return HelperRandom.randSecondId(System.currentTimeMillis(), 8, dist.hashCode());
     }
 
     public static int getHashLong(long time) {
@@ -327,61 +451,6 @@ public class HelperRandom {
         time = (((time & 0xf0f0f0f0) >> 4) | ((time & 0x0f0f0f0f) << 4));
         time = (((time & 0xff00ff00) >> 8) | ((time & 0x00ff00ff) << 8));
         return ((time >> 16) | (time << 16));
-    }
-
-    public static String randSequenceId(long time) {
-        time = getHashLong(time, 4);
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(randFormate(12, Long.toHexString(time).toCharArray()), 0, 12);
-        HelperRandom.randAppendFormate(stringBuilder, 4);
-        return stringBuilder.toString();
-    }
-
-    public static String randSequenceNumberId(long time) {
-        time = getHashLong(time, 6);
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(randFormate(12, String.valueOf(time).toCharArray()), 0, 12);
-        HelperRandom.randAppendNumberFormate(stringBuilder, 4);
-        return stringBuilder.toString();
-    }
-
-    public static String randSequenceShortNumberId(long time) {
-        time = getHashLong(time, 9);
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(randFormate(6, String.valueOf(time).toCharArray()), 0, 6);
-        HelperRandom.randAppendNumberFormate(stringBuilder, 2);
-        return stringBuilder.toString();
-    }
-
-    public static void randAppendNumberFormate(StringBuilder stringBuilder, int size) {
-        while (size > 0) {
-            char[] chars = size > 8 ? String.valueOf(RANDOM.nextLong()).toCharArray() : String.valueOf(RANDOM.nextInt())
-                    .toCharArray();
-            int length = chars.length;
-            if (length < size) {
-                if (size > 8) {
-                    if (length < 16) {
-                        length = 16;
-                        chars = randFormate(length, chars);
-                    }
-
-                } else {
-                    if (length < 8) {
-                        length = 8;
-                        chars = randFormate(length, chars);
-                    }
-                }
-            }
-
-            if (size >= length) {
-                stringBuilder.append(chars);
-
-            } else {
-                stringBuilder.append(chars, length - size, size);
-            }
-
-            size -= length;
-        }
     }
 
     public static class RandomPool<T> {

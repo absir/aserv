@@ -22,11 +22,12 @@ public abstract class UserService {
     public static final UserService ME = BeanFactoryUtils.get(UserService.class);
 
     public static String getPasswordEntry(String password, IUser user) {
-        return PasswordCrudFactory.getPasswordEncrypt(password, user.getSalt());
+        return PasswordCrudFactory.getPasswordEncrypt(password, user.getSalt(), user.getSaltCount());
     }
 
     @Transaction(rollback = Throwable.class)
     public void register(IUser user) {
+        user.setSaltCount(PasswordCrudFactory.getSlatCountDefault());
         user.setPassword(getPasswordEntry(user.getPassword(), user));
         BeanDao.getSession().persist(user);
     }

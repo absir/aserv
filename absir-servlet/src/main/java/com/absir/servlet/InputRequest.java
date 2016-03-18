@@ -241,6 +241,11 @@ public class InputRequest extends Input {
         return session.getAttribute(name);
     }
 
+    public String getSessionValue(String name) {
+        Object value = getSession(name);
+        return value == null ? null : value.toString();
+    }
+
     public void setSession(String name, Object value) {
         request.getSession().setAttribute(name, value);
     }

@@ -68,6 +68,11 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @JaEdit(editable = JeEditable.DISABLE)
     private String salt;
 
+    @JaLang(value = "加密次数", tag = "encryptionCount")
+    @Prop(include = 99)
+    @JaEdit(editable = JeEditable.DISABLE)
+    private int saltCount;
+
     @JaLang("最后登录")
     @Prop(include = 99)
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
@@ -115,6 +120,14 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public int getSaltCount() {
+        return saltCount;
+    }
+
+    public void setSaltCount(int saltCount) {
+        this.saltCount = saltCount;
     }
 
     public long getLastLogin() {

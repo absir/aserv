@@ -10,6 +10,8 @@ package com.absir.aserv.system.crud;
 import com.absir.aserv.crud.*;
 import com.absir.aserv.support.developer.JCrudField;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.bean.basis.Configure;
+import com.absir.bean.inject.value.Value;
 import com.absir.client.helper.HelperEncrypt;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAccessor;
@@ -19,7 +21,15 @@ import com.absir.property.PropertyErrors;
 import com.absir.server.in.Input;
 import com.absir.servlet.InputRequest;
 
+@Configure
 public class PasswordCrudFactory implements ICrudFactory {
+
+    @Value("password.slat.count")
+    private static int slatCountDefault = 8;
+
+    public static int getSlatCountDefault() {
+        return slatCountDefault;
+    }
 
     private final ICrudProcessor PASSWORD_PROCESSOR = new ICrudProcessorInput<String>() {
 

@@ -107,12 +107,12 @@ public class TestMethod extends AbstractTest {
 
         // System.out.println(DynaBinder.to("name", List.class));
         // System.out.println(DynaBinder.to("name", String[].class));
-        // System.out.println(HelperRandom.randSecendId(7));
-        // System.out.println(HelperRandom.randSecendId(8));
-        // System.out.println(HelperRandom.randSecendId(9));
-        // System.out.println(HelperRandom.randSecendId(31));
-        // System.out.println(HelperRandom.randSecendId(32));
-        // System.out.println(HelperRandom.randSecendId(33));
+        // System.out.println(HelperRandom.randSecondId(7));
+        // System.out.println(HelperRandom.randSecondId(8));
+        // System.out.println(HelperRandom.randSecondId(9));
+        // System.out.println(HelperRandom.randSecondId(31));
+        // System.out.println(HelperRandom.randSecondId(32));
+        // System.out.println(HelperRandom.randSecondId(33));
         // //[^/\\]*([/\\]*)
         // String regx = "^([/\\\\]*)[^/\\\\]*([/\\\\]+)";
         // System.out.println("\\/ddd/a/sdsd".replaceFirst(regx, "$1admin$2"));

@@ -15,7 +15,6 @@ import com.absir.server.value.Body;
 import com.absir.server.value.Nullable;
 import com.absir.server.value.Param;
 import com.absir.server.value.Server;
-import com.absir.servlet.InputRequest;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -44,15 +43,13 @@ public class Asset_verify extends AssetServer {
     private static float heightDefault = 28.0f;
 
     public static boolean verifyInput(Input input) {
-        if (input instanceof InputRequest) {
-            String verifycode = ((InputRequest) input).getSession("verifycode");
-            if (verifycode != null) {
-                String paramVerify = input.getParam("verifycode");
-                if (paramVerify != null) {
-                    if (verifycode.equals(paramVerify.toLowerCase())) {
-                        ((InputRequest) input).removeSession("verifycode");
-                        return true;
-                    }
+        String verifyCode = input.getFacade().getSessionValue("verifyCode");
+        if (verifyCode != null) {
+            String paramVerify = input.getParam("verifyCode");
+            if (paramVerify != null) {
+                if (verifyCode.equals(paramVerify.toLowerCase())) {
+                    input.getFacade().removeSession("verifyCode");
+                    return true;
                 }
             }
         }
@@ -103,14 +100,14 @@ public class Asset_verify extends AssetServer {
         float left = width * 0.05f;
         float step = (width - (left * 2.0f)) / (fontCount + 1.0f);
         left -= scale * 4.56f;
-        String verifycode = HelperRandom.randChars(fontCount, type);
-        for (char chr : verifycode.toCharArray()) {
+        String verifyCode = HelperRandom.randChars(fontCount, type);
+        for (char chr : verifyCode.toCharArray()) {
             left += step;
             graphics.setColor(HelperRandom.randColor(20, 130, -1));
             graphics.drawString(String.valueOf(chr), (int) left, line);
         }
 
-        request.getSession().setAttribute("verifycode", verifycode.toLowerCase());
+        request.getSession().setAttribute("verifyCode", verifyCode.toLowerCase());
         response.setContentType("image/jpeg");
         response.setHeader("Pragma", "No-cache");
         response.setHeader("Cache-Control", "no-cache");

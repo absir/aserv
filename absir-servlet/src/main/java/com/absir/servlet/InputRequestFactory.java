@@ -15,12 +15,13 @@ import com.absir.server.in.Input;
 public class InputRequestFactory extends InFacadeFactory {
 
     @Override
-    public InFacade getInputFacade(Input input) {
-        if (input instanceof InputRequest) {
-            return new InputRequestFacade();
-        }
+    public boolean isSupport(Input input) {
+        return input instanceof InputRequest;
+    }
 
-        return null;
+    @Override
+    public InFacade getInputFacade(Input input) {
+        return new InputRequestFacade();
     }
 
     public static class InputRequestFacade extends InFacade<InputRequest> {
@@ -63,6 +64,11 @@ public class InputRequestFactory extends InFacadeFactory {
         @Override
         public void removeCookie(String name, String path) {
             input.removeCookie(name, path);
+        }
+
+        @Override
+        public String getUserAgent() {
+            return input.getRequest().getHeader("user-agent");
         }
     }
 }

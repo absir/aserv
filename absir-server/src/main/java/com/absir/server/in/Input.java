@@ -71,8 +71,8 @@ public abstract class Input extends Bean<Serializable> implements IAttributes {
         return facade;
     }
 
-    public boolean isIFacade() {
-        return getFacade() == InFacadeFactory.I_FACADE;
+    public boolean isInFacade() {
+        return getFacade() != InFacadeFactory.IN_FACADE;
     }
 
     public Locale getLocale() {

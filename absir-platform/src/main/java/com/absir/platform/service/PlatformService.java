@@ -176,7 +176,7 @@ public class PlatformService {
                 platformUser.setPassTime(currentTime + lifeTime);
                 if (type == 2 || KernelString.isEmpty(platformUser.getSessionId())) {
                     platformUser
-                            .setSessionId(HelperRandom.randSecendId(currentTime, 8, platformUser.getId().hashCode()));
+                            .setSessionId(HelperRandom.randSecondId(currentTime, 8, platformUser.getId().hashCode()));
                 }
             }
 

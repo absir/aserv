@@ -147,7 +147,7 @@ public abstract class ApiServer {
                             remember = securityManager.getSessionLife();
                         }
 
-                        SecurityService.ME.loginUserRequest(securityManager, userBase, remember, inputRequest);
+                        SecurityService.ME.loginUser(securityManager, userBase, remember, input);
                     }
                 }
             }

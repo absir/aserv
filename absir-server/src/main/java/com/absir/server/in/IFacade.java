@@ -27,4 +27,6 @@ public interface IFacade {
 
     public void removeCookie(String name, String path);
 
+    public String getUserAgent();
+
 }

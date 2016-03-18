@@ -178,9 +178,11 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         UploadCrudFactory.uploadPath = uploadPath;
     }
 
+
     public String randUploadFile(int hashCode) {
         Date date = new Date();
-        return DATE_FORMAT.format(date) + '/' + HelperRandom.randSecendBuidler((int) date.getTime(), 16, hashCode);
+        //todo 随机命名需要Sequence
+        return DATE_FORMAT.format(date) + '/' + HelperRandom.randSecondId(date.getTime(), 16, hashCode);
     }
 
     public void upload(String uploadFile, InputStream inputStream) throws IOException {

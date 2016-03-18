@@ -28,7 +28,7 @@ public class HelperEncrypt {
     private static char HEX_DIGITS[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
             'F'};
 
-    public static String hexDigit(byte[] outBuffer, byte[] secrets) {
+    public static char[] hexDigitChars(byte[] outBuffer, byte[] secrets) {
         int len = outBuffer.length;
         char str[] = new char[len * 2];
         int sel = 0;
@@ -53,7 +53,11 @@ public class HelperEncrypt {
             str[j++] = HEX_DIGITS[byt & 0x0F];
         }
 
-        return new String(str);
+        return str;
+    }
+
+    public static String hexDigit(byte[] outBuffer, byte[] secrets) {
+        return new String(hexDigitChars(outBuffer, secrets));
     }
 
     public static String encryption(String algorithm, byte[] inBuffer, byte[] secrets) {
@@ -65,7 +69,10 @@ public class HelperEncrypt {
             MessageDigest mdInst = MessageDigest.getInstance(algorithm);
             while (true) {
                 mdInst.update(inBuffer);
-                mdInst.update(secrets);
+                if (secrets != null) {
+                    mdInst.update(secrets);
+                }
+
                 inBuffer = mdInst.digest();
                 mdInst.reset();
                 if (--count <= 0) {
@@ -114,6 +121,45 @@ public class HelperEncrypt {
     public static String encryption(String algorithm, String string, byte[] secrets) {
         byte[] inBuffer = string.getBytes();
         return encryption(algorithm, inBuffer, secrets);
+    }
+
+    public static char[] encryptionMD5Chars(byte[] inBuffer) {
+        try {
+            MessageDigest mdInst = MessageDigest.getInstance("MD5");
+            mdInst.update(inBuffer);
+            return hexDigitChars(mdInst.digest(), null);
+
+        } catch (Exception e) {
+            if (Environment.getEnvironment() == Environment.DEVELOP) {
+                e.printStackTrace();
+            }
+
+            return null;
+
+        }
+    }
+
+    public static char[] encryptionMD5Chars(InputStream inputStream) {
+        try {
+            MessageDigest mdInst = MessageDigest.getInstance("MD5");
+            byte[] inBuffer = new byte[255];
+            int len = 0;
+            while ((len = inputStream.read(inBuffer)) > 0) {
+                mdInst.update(inBuffer, 0, len);
+            }
+
+            return hexDigitChars(mdInst.digest(), null);
+
+        } catch (Exception e) {
+            if (Environment.getEnvironment() == Environment.DEVELOP) {
+                e.printStackTrace();
+            }
+
+            return null;
+
+        } finally {
+            HelperIO.closeQuietly(inputStream);
+        }
     }
 
     public static String encryptionMD5(byte[] inBuffer) {

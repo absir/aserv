@@ -30,7 +30,7 @@ public class TradeService {
     protected Map<String, Object> tokenMap = new HashMap<String, Object>();
 
     public String newTradeId(int hashCode) {
-        return HelperRandom.randSecendId(hashCode);
+        return HelperRandom.randSecondId(hashCode);
     }
 
     @Transaction
