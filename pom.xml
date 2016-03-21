@@ -15,21 +15,17 @@
         <module>absir-lang</module>
         <module>absir-io</module>
         <module>absir-log4j</module>
-        <module>absir-code</module>
-        <module>absir-data</module>
         <module>absir-bean</module>
         <module>absir-core</module>
         <module>absir-context</module>
         <module>absir-aop</module>
         <module>absir-asyn</module>
         <module>absir-hibernate</module>
+        <module>absir-client</module>
         <module>absir-server</module>
         <module>absir-servlet</module>
-        <module>absir-client</module>
-        <module>absir-socket</module>
-        <module>absir-socklet</module>
-        <module>absir-slave</module>
-        <module>absir-master</module>
+        <module>absir-data</module>
+        <module>absir-code</module>
         <module>absir-developer</module>
         <module>absir-developerImpl</module>
         <module>absir-developerWeb</module>
@@ -37,25 +33,30 @@
         <module>absir-developerJsp</module>
         <module>absir-jetbrick</module>
         <module>absir-jetbrickDeveloper</module>
-        <module>achieve-server</module>
         <module>absir-open</module>
         <module>absir-source</module>
         <module>absir-email</module>
-        <module>absir-spring</module>
-        <module>absir-scene</module>
+        <module>absir-platform</module>
+        <module>absir-socket</module>
+        <module>absir-socklet</module>
         <module>absir-sockser</module>
+        <module>absir-slave</module>
+        <module>absir-master</module>
+        <module>absir-scene</module>
         <module>absir-game</module>
         <module>absir-card</module>
-        <module>achieve-game</module>
-        <module>achieve-master</module>
-        <module>achieve-slave</module>
-        <module>achieve-site</module>
         <module>absir-plugin</module>
-        <module>achieve-game-slave</module>
-        <module>achieve-game-master</module>
-        <module>absir-platform</module>
+        <module>absir-spring</module>
         <module>absir-dubbo</module>
         <module>absir-diamond</module>
+        <module>absir-contextRedis</module>
+        <module>asev-server</module>
+        <module>achieve-site</module>
+        <module>asev-game</module>
+        <module>asev-master</module>
+        <module>asev-slave</module>
+        <module>asev-game-slave</module>
+        <module>asev-game-master</module>
     </modules>
     <dependencies>
         <dependency>
