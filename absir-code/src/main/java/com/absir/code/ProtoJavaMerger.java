@@ -43,10 +43,12 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         return className;
     }
 
-    protected boolean isProtoClassName(String className) {
+    protected boolean isProtoStructClassName(String className) {
         if (className.length() > PB_PRE_NAME.length() && className.startsWith(PB_PRE_NAME)) {
             char chr = className.charAt(PB_PRE_NAME.length());
-            return chr >= 'A' && chr <= 'Z';
+            if (chr >= 'A' && chr <= 'Z') {
+                return !className.endsWith("Type");
+            }
         }
 
         return false;
@@ -361,10 +363,9 @@ public class ProtoJavaMerger extends CodeJavaMerger {
         for (Entry<String, FieldDeclaration> entry : fromFieldMap.entrySet()) {
             String name = entry.getKey();
             FieldDeclaration fieldDeclaration = entry.getValue();
-            if (isProtoClassName(fieldDeclaration.getType().toString())) {
+            if (isProtoStructClassName(fieldDeclaration.getType().toString())) {
                 if (!nextDepth) {
                     nextDepth = true;
-                    // int nextDepth = depth;
                     stmt = new ExpressionStmt(new AssignExpr(new NameExpr("int _nextDepth"), new NameExpr("_depth - 1"),
                             Operator.assign));
                     stmts.add(stmt);
@@ -373,6 +374,7 @@ public class ProtoJavaMerger extends CodeJavaMerger {
                 stmts.add(new ExpressionStmt(new AssignExpr(new NameExpr("_clone." + name),
                         new MethodCallExpr(new NameExpr("_nextDepth < 0 ? " + name + " : " + name), "cloneDepth", args),
                         Operator.assign)));
+
             } else {
                 stmts.add(new ExpressionStmt(
                         new AssignExpr(new NameExpr("_clone." + name), new NameExpr(name), Operator.assign)));

@@ -6,17 +6,17 @@
         <artifactId>parent</artifactId>
         <version>1.0-Final</version>
     </parent>
-    <artifactId>absir-developerWeb</artifactId>
+    <artifactId>aserv-master</artifactId>
     <version>${com.absir.version}</version>
     <dependencies>
         <dependency>
             <groupId>com.absir</groupId>
-            <artifactId>absir-developerImpl</artifactId>
+            <artifactId>aserv-server</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>
             <groupId>com.absir</groupId>
-            <artifactId>aserv-server</artifactId>
+            <artifactId>absir-master</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
         <!-- Servlet -->

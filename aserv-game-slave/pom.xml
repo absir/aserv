@@ -6,25 +6,33 @@
         <artifactId>parent</artifactId>
         <version>1.0-Final</version>
     </parent>
-    <artifactId>absir-developerWeb</artifactId>
+    <artifactId>aserv-game-slave</artifactId>
     <version>${com.absir.version}</version>
     <dependencies>
         <dependency>
             <groupId>com.absir</groupId>
-            <artifactId>absir-developerImpl</artifactId>
+            <artifactId>aserv-game</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>
             <groupId>com.absir</groupId>
-            <artifactId>aserv-server</artifactId>
+            <artifactId>aserv-slave</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
-        <!-- Servlet -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.27</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+            <version>${org.hibernate-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-ehcache</artifactId>
+            <version>${org.hibernate-version}</version>
         </dependency>
     </dependencies>
 </project>

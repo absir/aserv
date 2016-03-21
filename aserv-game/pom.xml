@@ -6,17 +6,27 @@
         <artifactId>parent</artifactId>
         <version>1.0-Final</version>
     </parent>
-    <artifactId>absir-developerWeb</artifactId>
+    <artifactId>aserv-game</artifactId>
     <version>${com.absir.version}</version>
     <dependencies>
         <dependency>
             <groupId>com.absir</groupId>
-            <artifactId>absir-developerImpl</artifactId>
+            <artifactId>aserv-server</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>
             <groupId>com.absir</groupId>
-            <artifactId>aserv-server</artifactId>
+            <artifactId>absir-game</artifactId>
+            <version>${com.absir.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.absir</groupId>
+            <artifactId>absir-sockser</artifactId>
+            <version>${com.absir.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.absir</groupId>
+            <artifactId>absir-platform</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
         <!-- Servlet -->
@@ -24,6 +34,12 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

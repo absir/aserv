@@ -50,13 +50,13 @@
         <module>absir-dubbo</module>
         <module>absir-diamond</module>
         <module>absir-contextRedis</module>
-        <module>asev-server</module>
+        <module>aserv-server</module>
         <module>achieve-site</module>
-        <module>asev-game</module>
-        <module>asev-master</module>
-        <module>asev-slave</module>
-        <module>asev-game-slave</module>
-        <module>asev-game-master</module>
+        <module>aserv-game</module>
+        <module>aserv-master</module>
+        <module>aserv-slave</module>
+        <module>aserv-game-slave</module>
+        <module>aserv-game-master</module>
     </modules>
     <dependencies>
         <dependency>

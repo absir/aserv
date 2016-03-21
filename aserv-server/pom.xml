@@ -6,20 +6,29 @@
         <artifactId>parent</artifactId>
         <version>1.0-Final</version>
     </parent>
-    <artifactId>absir-developerWeb</artifactId>
+    <artifactId>aserv-server</artifactId>
     <version>${com.absir.version}</version>
     <dependencies>
         <dependency>
             <groupId>com.absir</groupId>
-            <artifactId>absir-developerImpl</artifactId>
+            <artifactId>absir-developer</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>
             <groupId>com.absir</groupId>
-            <artifactId>aserv-server</artifactId>
+            <artifactId>absir-servlet</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
-        <!-- Servlet -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.9</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>

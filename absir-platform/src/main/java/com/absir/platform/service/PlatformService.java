@@ -10,10 +10,13 @@ package com.absir.platform.service;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
+import com.absir.aserv.system.domain.DSequence;
 import com.absir.aserv.system.helper.HelperRandom;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.inject.value.Inject;
+import com.absir.bean.inject.value.InjectOrder;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.transaction.value.Transaction;
@@ -36,10 +39,6 @@ public class PlatformService {
 
     /**
      * 获取关联平台账号
-     *
-     * @param userBase
-     * @param channel
-     * @return
      */
     public static JPlatformUser getPlatformUser(JiUserBase userBase, String channel) {
         if (userBase instanceof JPlatformUser) {
@@ -51,10 +50,6 @@ public class PlatformService {
 
     /**
      * 查询平台用户
-     *
-     * @param platform
-     * @param username
-     * @return
      */
     @Transaction(readOnly = true)
     public JPlatformUser findPlatformUser(String platform, String username) {
@@ -114,11 +109,6 @@ public class PlatformService {
 
     /**
      * 验证登录
-     *
-     * @param platform
-     * @param username
-     * @param sessionId
-     * @return
      */
     public JPlatformUser platformUserSession(String platform, String username, String sessionId) {
         JPlatformUser platformUser = findPlatformUser(platform, username);
@@ -128,12 +118,6 @@ public class PlatformService {
 
     /**
      * 登录平台账号
-     *
-     * @param platform
-     * @param username
-     * @param channel
-     * @param lifeTime
-     * @return
      */
     @Transaction
     public JPlatformUser loginPlatformUser(String platform, String username, String channel, long lifeTime) {
@@ -142,12 +126,6 @@ public class PlatformService {
 
     /**
      * 重新登录
-     *
-     * @param platform
-     * @param username
-     * @param channel
-     * @param lifeTime
-     * @return
      */
     @Transaction
     public JPlatformUser reLoginPlatformUser(String platform, String username, String channel, long lifeTime) {
@@ -156,17 +134,30 @@ public class PlatformService {
 
     /**
      * 刷新登录信息
-     *
-     * @param platform
-     * @param username
-     * @param channel
-     * @param lifeTime
-     * @return
      */
     @Transaction
     public JPlatformUser reSessionPlatformUser(String platform, String username, String channel, long lifeTime) {
         return loginSessionUserType(getPlatformUser(platform, username, channel), lifeTime, 2);
     }
+
+    private DSequence sessionSequence;
+
+    @InjectOrder(255)
+    @Inject
+    protected void afterPropertySetter() {
+        if (sessionSequence == null) {
+            sessionSequence = new DSequence();
+        }
+    }
+
+    public String nextSecurityId() {
+        StringBuilder stringBuilder = new StringBuilder();
+        HelperRandom.appendFormatLong(stringBuilder, HelperRandom.FormatType.HEX_DIG, System.currentTimeMillis());
+        HelperRandom.appendFormat(stringBuilder, HelperRandom.FormatType.HEX_DIG, sessionSequence.nextSequence());
+        HelperRandom.randAppendFormat(stringBuilder, 5, HelperRandom.FormatType.HEX_DIG);
+        return stringBuilder.toString();
+    }
+
 
     @Transaction
     public JPlatformUser loginSessionUserType(JPlatformUser platformUser, long lifeTime, int type) {
@@ -175,8 +166,7 @@ public class PlatformService {
             if (type != 0 || platformUser.getPassTime() < currentTime) {
                 platformUser.setPassTime(currentTime + lifeTime);
                 if (type == 2 || KernelString.isEmpty(platformUser.getSessionId())) {
-                    platformUser
-                            .setSessionId(HelperRandom.randSecondId(currentTime, 8, platformUser.getId().hashCode()));
+                    platformUser.setSessionId(nextSecurityId());
                 }
             }
 
