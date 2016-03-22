@@ -8,6 +8,7 @@
 package com.absir.aserv.game.service;
 
 import com.absir.aserv.configure.JConfigureUtils;
+import com.absir.aserv.game.context.GameComponent;
 import com.absir.aserv.game.context.JbPlayerContext;
 import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
@@ -108,7 +109,7 @@ public class GameService {
      * 更新玩家天数数据
      */
     protected void updateOnlineContexts() {
-        for (JbPlayerContext playerContext : (Collection<JbPlayerContext>) JbPlayerContext.COMPONENT.PLAYER_CONTEXT_MAP
+        for (JbPlayerContext playerContext : (Collection<JbPlayerContext>) GameComponent.ME.PLAYER_CONTEXT_MAP
                 .values()) {
             try {
                 playerContext.checkOnlineDay();

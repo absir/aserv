@@ -1,17 +1,14 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2014-3-11 下午5:27:56
  */
 package com.absir.aserv.system.server;
 
 import com.absir.aserv.system.helper.HelperServer;
-import com.absir.aserv.system.server.value.Bodys;
-import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
-import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Value;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelArray;
@@ -22,6 +19,7 @@ import com.absir.server.route.RouteMethod;
 import com.absir.server.route.parameter.ParameterResolver;
 import com.absir.server.route.parameter.ParameterResolverMethod;
 import com.absir.server.route.returned.ReturnedResolverBody;
+import com.absir.server.value.Body;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,13 +31,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-@Base
-@Bean
 public class ServerResolverBodys extends ReturnedResolverBody implements ParameterResolver<Object>, ParameterResolverMethod, IServerResolverBody {
 
     public static final ServerResolverBodys ME = BeanFactoryUtils.get(ServerResolverBodys.class);
-    @Value("bodys.trace")
-    private boolean trace;
+
+    @Value("server.bodys")
+    protected boolean bodys;
+
+    public boolean isBodys() {
+        return bodys;
+    }
 
     @Override
     public Object getParameter(int i, String[] parameterNames, Class<?>[] parameterTypes, Annotation[][] annotations, Method method) {
@@ -48,13 +49,17 @@ public class ServerResolverBodys extends ReturnedResolverBody implements Paramet
 
     @Override
     public Integer getBodyParameter(int i, String[] parameterNames, Class<?>[] parameterTypes, Annotation[][] annotations, Method method) {
-        Bodys bodys = KernelArray.getAssignable(annotations[i], Bodys.class);
+        Body bodys = KernelArray.getAssignable(annotations[i], Body.class);
         return bodys == null ? null : bodys.value();
+    }
+
+    protected boolean isTraceBody(OnPut onPut) {
+        return !bodys || onPut.getInput().isDebug();
     }
 
     @Override
     public Object getParameterValue(OnPut onPut, Object parameter, Class<?> parameterType, String beanName, RouteMethod routeMethod) throws Exception {
-        return ServerResolverBody.ME.getParameterValue(!trace || onPut.getInput().isDebug() ? ServerResolverBody.ME : this, onPut, parameter, parameterType, beanName, routeMethod);
+        return ServerResolverBody.ME.getParameterValue(isTraceBody(onPut) ? ServerResolverBody.ME : this, onPut, parameter, parameterType, beanName, routeMethod);
     }
 
     @Override
@@ -94,19 +99,19 @@ public class ServerResolverBodys extends ReturnedResolverBody implements Paramet
 
     @Override
     public Integer getReturned(Method method) {
-        Bodys bodys = method.getAnnotation(Bodys.class);
-        return bodys == null ? null : bodys.value();
+        Body body = method.getAnnotation(Body.class);
+        return body == null ? null : body.value();
     }
 
     @Override
     public Integer getReturned(Class<?> beanClass) {
-        Bodys bodys = beanClass.getAnnotation(Bodys.class);
-        return bodys == null ? null : bodys.value();
+        Body body = beanClass.getAnnotation(Body.class);
+        return body == null ? null : body.value();
     }
 
     @Override
     public void resolveReturnedValue(Object returnValue, Integer returned, OnPut onPut) throws Exception {
-        if (!trace || onPut.getInput().isDebug()) {
+        if (isTraceBody(onPut)) {
             ServerResolverBody.ME.resolveReturnedValue(returnValue, returned, onPut);
 
         } else {

@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2015年11月16日 上午10:38:23
  */
 package com.absir.platform.bean;

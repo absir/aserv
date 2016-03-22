@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2015年11月18日 上午10:46:28
  */
 package com.absir.platform.service;
@@ -159,6 +159,10 @@ public class PlatformService {
     }
 
 
+    /**
+     * @param type
+     * @return
+     */
     @Transaction
     public JPlatformUser loginSessionUserType(JPlatformUser platformUser, long lifeTime, int type) {
         if (platformUser != null && lifeTime > 0) {

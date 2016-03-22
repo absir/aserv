@@ -8,7 +8,7 @@
 package com.absir.client.callback;
 
 import com.absir.client.SocketAdapter;
-import com.absir.client.SocketAdapterSel.CallbackAdapteStream;
+import com.absir.client.SocketAdapterSel.CallbackAdapterStream;
 import com.absir.core.base.Environment;
 import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelCharset;
@@ -22,7 +22,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 
 @SuppressWarnings("unchecked")
-public abstract class CallbackMsg<T> implements CallbackAdapteStream {
+public abstract class CallbackMsg<T> implements CallbackAdapterStream {
 
     public static final TypeVariable<?> TYPE_VARIABLE = CallbackMsg.class.getTypeParameters()[0];
 

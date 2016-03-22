@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2014年10月20日 下午1:06:29
  */
 package com.absir.aserv.game.context;
@@ -15,12 +15,13 @@ import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JeEditable;
 import com.absir.aserv.system.dao.BeanDao;
-import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
 import com.absir.context.core.ContextBean;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.base.IBase;
 import com.absir.property.value.Allow;
+import com.absir.server.exception.ServerException;
+import com.absir.server.exception.ServerStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.Session;
@@ -33,9 +34,6 @@ import java.util.List;
 @SuppressWarnings({"rawtypes"})
 @Inject
 public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> extends ContextBean<Long> {
-
-    // 功能组件
-    public static final GameComponent COMPONENT = BeanFactoryUtils.get(GameComponent.class);
 
     // 玩家基本数据
     @Embedded
@@ -131,7 +129,30 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
     /**
      * 载入数据
      */
-    protected abstract void load();
+    protected void load() {
+        Session session = BeanDao.getSession();
+        long id = getId();
+        player = (P) session.get(GameComponent.ME.PLAYERA_CLASS, getId());
+        if (player == null) {
+            throw new ServerException(ServerStatus.NO_LOGIN);
+        }
+
+        boolean newPlayerA = false;
+        playerA = (A) BeanDao.get(session, GameComponent.ME.PLAYERA_CLASS, getId());
+        if (playerA == null) {
+            newPlayerA = true;
+            playerA = (A) GameComponent.ME.createPlayerA();
+            playerA.setId(id);
+            playerA.setLastOffline(ContextUtils.getContextTime());
+        }
+
+        load(session, newPlayerA);
+    }
+
+    /**
+     * 载入更多数据
+     */
+    protected abstract void load(Session session, boolean newPlayerA);
 
     /**
      * 检测在线天数
@@ -188,6 +209,11 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
         session.merge(player);
         session.merge(playerA);
     }
+
+    /**
+     * 写入登录消息
+     */
+    public abstract void writeLoginMessage();
 
     /**
      * 写入封禁消息

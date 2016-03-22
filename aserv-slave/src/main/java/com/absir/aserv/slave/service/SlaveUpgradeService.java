@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.zip.ZipInputStream;
 
@@ -228,7 +229,7 @@ public class SlaveUpgradeService {
     /**
      * 重载资源
      */
-    protected void reloadResource() {
+    protected void reloadResource() throws IOException {
     }
 
     /**

@@ -21,7 +21,7 @@ public interface IServerResolver {
 
     public void register(SocketChannel socketChannel, SelSession selSession, byte[] buffer) throws Throwable;
 
-    public void reciveBeatNIO(SocketChannel socketChannel, SelSession selSession);
+    public void receiveBeatNIO(SocketChannel socketChannel, SelSession selSession);
 
     public boolean receiveBufferNIO(SocketChannel socketChannel, SelSession selSession, SocketBuffer socketBuffer,
                                     byte[] buffer);

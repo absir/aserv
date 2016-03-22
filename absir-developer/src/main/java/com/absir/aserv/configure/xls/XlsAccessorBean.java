@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2013-9-27 下午4:20:12
  */
 package com.absir.aserv.configure.xls;
@@ -127,6 +127,12 @@ public class XlsAccessorBean extends XlsAccessor {
 
     @Override
     public int readHssfSheet(HSSFSheet hssfSheet, List<Object> cells, int firstRow, int firstColumn, int lastRow) {
+        //添加过滤注释行
+        String cellValue = XlsAccessorUtils.getCellValue(hssfSheet.getRow(firstRow).getCell(firstColumn));
+        if (cellValue != null && cellValue.startsWith("#")) {
+            return firstRow + 1;
+        }
+
         if (accessors != null) {
             int iColumn = firstColumn;
             for (XlsAccessor accessor : accessors) {

@@ -221,7 +221,7 @@ public class SocketAdapterSel extends SocketAdapter {
     }
 
     @Override
-    public void receiveCallback(CallbackAdapte callbackAdapte, int offset, byte[] buffer, byte flag,
+    public void receiveCallback(CallbackAdapter callbackAdapter, int offset, byte[] buffer, byte flag,
                                 Integer callbackIndex) {
         if ((flag & STREAM_FLAG) != 0) {
             int length = buffer.length;
@@ -247,7 +247,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 return;
 
             } else if (length == offsetIndex) {
-                if (callbackAdapte instanceof CallbackAdapteStream) {
+                if (callbackAdapter instanceof CallbackAdapterStream) {
                     try {
                         int hashIndex = KernelByte.getLength(buffer, offset);
                         NextOutputStream outputStream = createNextOutputStream(hashIndex);
@@ -258,8 +258,8 @@ public class SocketAdapterSel extends SocketAdapter {
                         } else {
                             PipedInputStream inputStream = new PipedInputStream();
                             outputStream.connect(inputStream);
-                            CallbackAdapteStream callbackAdapteStream = (CallbackAdapteStream) callbackAdapte;
-                            callbackAdapte = null;
+                            CallbackAdapterStream callbackAdapteStream = (CallbackAdapterStream) callbackAdapter;
+                            callbackAdapter = null;
                             callbackAdapteStream.doWith(this, offset, buffer, inputStream);
                             return;
                         }
@@ -268,8 +268,8 @@ public class SocketAdapterSel extends SocketAdapter {
                         LOGGER.error("receiveCallbackStream", e);
                     }
 
-                    if (callbackAdapte != null) {
-                        callbackAdapte.doWith(this, offset, null);
+                    if (callbackAdapter != null) {
+                        callbackAdapter.doWith(this, offset, null);
                     }
 
                     return;
@@ -277,7 +277,7 @@ public class SocketAdapterSel extends SocketAdapter {
             }
         }
 
-        super.receiveCallback(callbackAdapte, offset, buffer, flag, callbackIndex);
+        super.receiveCallback(callbackAdapter, offset, buffer, flag, callbackIndex);
     }
 
     @Override
@@ -318,8 +318,8 @@ public class SocketAdapterSel extends SocketAdapter {
         return 1024;
     }
 
-    protected RegisteredRunable sendStream(byte[] dataBytes, boolean head, boolean debug, final int callbackIndex,
-                                           final InputStream inputStream, final CallbackTimeout callbackTimeout, final long timeout) {
+    protected RegisteredRunnable sendStream(byte[] dataBytes, boolean head, boolean debug, final int callbackIndex,
+                                            final InputStream inputStream, final CallbackTimeout callbackTimeout, final long timeout) {
         connect();
         boolean sended = false;
         ObjectTemplate<Integer> nextIndex = getActivePool().addObject();
@@ -383,7 +383,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 return null;
             }
 
-            RegisteredRunable runnable = new RegisteredRunable() {
+            RegisteredRunnable runnable = new RegisteredRunnable() {
 
                 @Override
                 public void doRun() {
@@ -412,7 +412,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 }
             };
 
-            registeredRunables.add(runnable);
+            registeredRunnables.add(runnable);
             lastedResgiter();
             return runnable;
 
@@ -433,28 +433,28 @@ public class SocketAdapterSel extends SocketAdapter {
      * @param debug
      * @param inputStream
      * @param timeout
-     * @param callbackAdapte
+     * @param callbackAdapter
      */
     public void sendStreamIndex(int callbackIndex, byte[] dataBytes, boolean head, boolean debug,
-                                InputStream inputStream, int timeout, CallbackAdapte callbackAdapte) {
+                                InputStream inputStream, int timeout, CallbackAdapter callbackAdapter) {
         if (callbackIndex == 0 || inputStream == null) {
-            sendDataIndex(callbackIndex, dataBytes, head, debug, null, timeout, callbackAdapte);
+            sendDataIndex(callbackIndex, dataBytes, head, debug, null, timeout, callbackAdapter);
 
         } else {
             CallbackTimeout callbackTimeout = null;
-            if (callbackAdapte != null) {
-                callbackTimeout = putReceiveCallbacks(callbackIndex, timeout, callbackAdapte);
+            if (callbackAdapter != null) {
+                callbackTimeout = putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
             }
 
-            RegisteredRunable registeredRunable = sendStream(dataBytes, head, debug, callbackIndex, inputStream,
+            RegisteredRunnable registeredRunnable = sendStream(dataBytes, head, debug, callbackIndex, inputStream,
                     callbackTimeout, timeout);
             if (callbackTimeout != null) {
-                callbackTimeout.registeredRunable = registeredRunable;
+                callbackTimeout.registeredRunnable = registeredRunnable;
             }
         }
     }
 
-    public static interface CallbackAdapteStream extends CallbackAdapte {
+    public static interface CallbackAdapterStream extends CallbackAdapter {
 
         public void doWith(SocketAdapter adapter, int offset, byte[] buffer, InputStream inputStream);
     }

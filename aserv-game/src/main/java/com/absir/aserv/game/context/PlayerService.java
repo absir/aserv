@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2015年11月13日 下午4:15:55
  */
 package com.absir.aserv.game.context;
@@ -12,6 +12,7 @@ import com.absir.aserv.game.bean.JbPlayer;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
+import com.absir.aserv.system.service.BeanService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
@@ -35,6 +36,7 @@ import java.util.regex.Pattern;
 public abstract class PlayerService {
 
     public static final PlayerService ME = BeanFactoryUtils.get(PlayerService.class);
+
     /**
      * 用户名验证
      */
@@ -113,6 +115,23 @@ public abstract class PlayerService {
     }
 
     /**
+     * 查找或创建角色ID
+     */
+    public Long openPlayerId(Long serverId, Long userId) {
+        Long playerId = openPlayerId(serverId, userId);
+        if (playerId == null) {
+            JbPlayer player = GameComponent.ME.createPlayer();
+            player.setCreateTime(ContextUtils.getContextTime());
+            player.setServerId(serverId);
+            player.setUserId(userId);
+            BeanService.ME.persist(player);
+            playerId = player.getId();
+        }
+
+        return playerId;
+    }
+
+    /**
      * 获取用户IDS
      */
     @DataQuery("SELECT o.id FROM JPlayer o WHERE o.id IN :p0")
@@ -153,7 +172,7 @@ public abstract class PlayerService {
      * 查找用户姓名
      */
     public String getPlayerName(Long playerId, long serverId) {
-        JbPlayerContext playerContext = JbPlayerContext.COMPONENT.findPlayerContext(playerId);
+        JbPlayerContext playerContext = GameComponent.ME.findPlayerContext(playerId);
         if (playerContext == null) {
             return ME.findPlayerServerId(playerId, serverId);
         }
@@ -170,7 +189,7 @@ public abstract class PlayerService {
      * 查找用户
      */
     public JbPlayer getPlayerById(Long playerId, long serverId) {
-        JbPlayerContext playerContext = JbPlayerContext.COMPONENT.findPlayerContext(playerId);
+        JbPlayerContext playerContext = GameComponent.ME.findPlayerContext(playerId);
         if (playerContext == null) {
             return ME.findPlayerById(playerId, serverId);
         }
@@ -238,7 +257,7 @@ public abstract class PlayerService {
             platformUser.setServerId(serverId);
         }
 
-        JbPlayer player = JbPlayerContext.COMPONENT.createPlayer();
+        JbPlayer player = GameComponent.ME.createPlayer();
         player.setServerId(serverId);
         player.setUserId(userBase.getUserId());
         player.setName(name);
@@ -253,13 +272,13 @@ public abstract class PlayerService {
      * 获取玩家
      */
     public JbPlayer findPlayer(Long playerId) {
-        JbPlayerContext playerContext = JbPlayerContext.COMPONENT.findPlayerContext(playerId);
+        JbPlayerContext playerContext = GameComponent.ME.findPlayerContext(playerId);
         return playerContext == null ? getPlayer(playerId) : playerContext.getPlayer();
     }
 
     @Transaction(readOnly = true)
     protected JbPlayer getPlayer(Long playerId) {
-        return (JbPlayer) BeanDao.get(BeanDao.getSession(), JbPlayerContext.COMPONENT.PLAYER_CLASS, playerId);
+        return (JbPlayer) BeanDao.get(BeanDao.getSession(), GameComponent.ME.PLAYER_CLASS, playerId);
     }
 
     /**
@@ -276,7 +295,7 @@ public abstract class PlayerService {
                 continue;
             }
 
-            playerContext = JbPlayerContext.COMPONENT.findPlayerContext(playerId);
+            playerContext = GameComponent.ME.findPlayerContext(playerId);
             if (playerContext == null) {
                 player = null;
                 if (unfinds == null) {
@@ -327,7 +346,7 @@ public abstract class PlayerService {
     @Transaction(rollback = Throwable.class)
     protected void mergePlayer(Long playerId, CallbackTemplate<JbPlayer> playerModifier) {
         Session session = BeanDao.getSession();
-        JbPlayer player = (JbPlayer) BeanDao.get(session, JbPlayerContext.COMPONENT.PLAYER_CLASS, playerId);
+        JbPlayer player = (JbPlayer) BeanDao.get(session, GameComponent.ME.PLAYER_CLASS, playerId);
         playerModifier.doWith(player);
         session.save(player);
     }
@@ -336,7 +355,7 @@ public abstract class PlayerService {
      * 修改玩家属性
      */
     public void modifyPlayer(Long playerId, Runnable playerModifier) {
-        String tokenId = UtilAbsir.getId(JbPlayerContext.COMPONENT.PLAYER_CONTEXT_CLASS, playerId);
+        String tokenId = UtilAbsir.getId(GameComponent.ME.PLAYER_CONTEXT_CLASS, playerId);
         ContextFactory contextFactory = ContextUtils.getContextFactory();
         try {
             synchronized (contextFactory.getToken(tokenId)) {
@@ -352,11 +371,11 @@ public abstract class PlayerService {
      * 修改玩家属性
      */
     public void modifyPlayer(Long playerId, CallbackTemplate<JbPlayer> playerModifier) {
-        String tokenId = UtilAbsir.getId(JbPlayerContext.COMPONENT.PLAYER_CONTEXT_CLASS, playerId);
+        String tokenId = UtilAbsir.getId(GameComponent.ME.PLAYER_CONTEXT_CLASS, playerId);
         ContextFactory contextFactory = ContextUtils.getContextFactory();
         try {
             synchronized (contextFactory.getToken(tokenId)) {
-                JbPlayerContext playerContext = JbPlayerContext.COMPONENT.findPlayerContext(playerId);
+                JbPlayerContext playerContext = GameComponent.ME.findPlayerContext(playerId);
                 if (playerContext == null) {
                     mergePlayer(playerId, playerModifier);
 
@@ -390,8 +409,8 @@ public abstract class PlayerService {
             targetId = tId;
         }
 
-        String tokenId = UtilAbsir.getId(JbPlayerContext.COMPONENT.PLAYER_CONTEXT_CLASS, playerId);
-        String tokenTarget = UtilAbsir.getId(JbPlayerContext.COMPONENT.PLAYER_CONTEXT_CLASS, targetId);
+        String tokenId = UtilAbsir.getId(GameComponent.ME.PLAYER_CONTEXT_CLASS, playerId);
+        String tokenTarget = UtilAbsir.getId(GameComponent.ME.PLAYER_CONTEXT_CLASS, targetId);
         ContextFactory contextFactory = ContextUtils.getContextFactory();
         try {
             synchronized (contextFactory.getToken(tokenId)) {

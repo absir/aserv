@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2015年11月9日 下午9:17:18
  */
 package com.absir.slave;
@@ -44,7 +44,7 @@ public class InputSlaveAdapter extends SocketAdapterSel {
         this.group = group;
         this.key = key;
         this.url = url;
-        setCallbackConnect(new CallbackAdapte() {
+        setCallbackConnect(new CallbackAdapter() {
 
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
@@ -52,7 +52,7 @@ public class InputSlaveAdapter extends SocketAdapterSel {
             }
         });
 
-        setCallbackDisconnect(new CallbackAdapte() {
+        setCallbackDisconnect(new CallbackAdapter() {
 
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
@@ -60,7 +60,7 @@ public class InputSlaveAdapter extends SocketAdapterSel {
             }
         });
 
-        setAcceptCallback(new CallbackAdapte() {
+        setAcceptCallback(new CallbackAdapter() {
 
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
@@ -68,7 +68,7 @@ public class InputSlaveAdapter extends SocketAdapterSel {
             }
         });
 
-        setRegisterCallback(new CallbackAdapte() {
+        setRegisterCallback(new CallbackAdapter() {
 
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
@@ -76,7 +76,7 @@ public class InputSlaveAdapter extends SocketAdapterSel {
             }
         });
 
-        setReceiveCallback(new CallbackAdapte() {
+        setReceiveCallback(new CallbackAdapter() {
 
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
@@ -85,7 +85,7 @@ public class InputSlaveAdapter extends SocketAdapterSel {
         });
 
         if (slaveCallbacks != null) {
-            Map<Integer, ObjectEntry<CallbackAdapte, CallbackTimeout>> receiveCallbacks = getReceiveCallbacks();
+            Map<Integer, ObjectEntry<CallbackAdapter, CallbackTimeout>> receiveCallbacks = getReceiveCallbacks();
             for (ISlaveCallback slaveCallback : slaveCallbacks) {
                 int callbackIndex = slaveCallback.getCallbackIndex();
                 if (callbackIndex <= getMinCallbackIndex() && !receiveCallbacks.containsKey(callbackIndex)) {
@@ -96,7 +96,7 @@ public class InputSlaveAdapter extends SocketAdapterSel {
 
         slaveKey = key;
         // 接受密钥
-        putReceiveCallbacks(2, 0, new CallbackAdapte() {
+        putReceiveCallbacks(2, 0, new CallbackAdapter() {
 
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
@@ -131,8 +131,6 @@ public class InputSlaveAdapter extends SocketAdapterSel {
 
     /**
      * 连接
-     *
-     * @param adapter
      */
     protected void connectAdapter(SocketAdapter adapter) {
         if (ip != null) {
@@ -150,8 +148,6 @@ public class InputSlaveAdapter extends SocketAdapterSel {
 
     /**
      * 断开重连
-     *
-     * @param adapter
      */
     protected void disconnectAdapter(SocketAdapter adapter) {
         adapter.connect();
@@ -159,9 +155,6 @@ public class InputSlaveAdapter extends SocketAdapterSel {
 
     /**
      * 接收
-     *
-     * @param adapter
-     * @param buffer
      */
     protected void acceptAdapter(SocketAdapter adapter, byte[] buffer) {
         adapter.sendData(InputSlaveContext.ME.registerData(this, buffer));
@@ -169,9 +162,6 @@ public class InputSlaveAdapter extends SocketAdapterSel {
 
     /**
      * 注册
-     *
-     * @param adapter
-     * @param buffer
      */
     protected void registerAdapter(SocketAdapter adapter, byte[] buffer) {
         if (InputSlaveContext.ME.isRegisterData(this, buffer)) {
@@ -185,9 +175,6 @@ public class InputSlaveAdapter extends SocketAdapterSel {
 
     /**
      * 接收数据
-     *
-     * @param adapter
-     * @param buffer
      */
     protected void receiveCallback(SocketAdapter adapter, byte[] buffer) {
         // LOGGER.info("receiveCallback" + buffer);

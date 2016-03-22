@@ -11,7 +11,7 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.client.SocketAdapter;
-import com.absir.client.SocketAdapter.CallbackAdapte;
+import com.absir.client.SocketAdapter.CallbackAdapter;
 import com.absir.client.SocketAdapter.CallbackTimeout;
 import com.absir.client.SocketAdapterSel;
 import com.absir.client.callback.CallbackMsg;
@@ -120,10 +120,10 @@ public class MasterServerResolver extends SocketServerResolver {
     }
 
     public void sendDataBytes(SocketChannel socketChannel, byte[] dataBytes, boolean head, boolean debug,
-                              byte[] postData, int timeout, CallbackAdapte callbackAdapte) {
+                              byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
         int callbackIndex = masterAdapter.generateCallbackIndex();
-        if (callbackAdapte != null) {
-            masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapte);
+        if (callbackAdapter != null) {
+            masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
         }
 
         byte[] buffer = masterAdapter.sendDataBytes(5, dataBytes, head, debug, callbackIndex, postData);
@@ -135,14 +135,14 @@ public class MasterServerResolver extends SocketServerResolver {
     }
 
     public void sendDataBytes(final SocketChannel socketChannel, byte[] dataBytes, boolean head, boolean debug,
-                              final InputStream inputStream, final int timeout, CallbackAdapte callbackAdapte) {
+                              final InputStream inputStream, final int timeout, CallbackAdapter callbackAdapter) {
         boolean sended = false;
         final ObjectTemplate<Integer> nextIndex = masterAdapter.getActivePool().addObject();
         try {
             CallbackTimeout callbackTimeout = null;
             int callbackIndex = masterAdapter.generateCallbackIndex();
-            if (callbackAdapte != null) {
-                callbackTimeout = masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapte);
+            if (callbackAdapter != null) {
+                callbackTimeout = masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
             }
 
             byte[] buffer = masterAdapter.sendDataBytes(9, dataBytes, head, debug, SocketAdapter.STREAM_FLAG,

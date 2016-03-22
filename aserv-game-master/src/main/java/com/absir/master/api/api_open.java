@@ -13,7 +13,6 @@ import com.absir.bean.basis.Base;
 import com.absir.master.bean.dto.DAnnouncement;
 import com.absir.master.bean.dto.DServer;
 import com.absir.master.service.MasterChannelService;
-import com.absir.master.service.MasterOpenService;
 import com.absir.master.service.MasterTradeService;
 import com.absir.open.bean.JPayTrade;
 import com.absir.open.service.utils.PayUtils;
@@ -35,27 +34,6 @@ public class api_open extends ApiServer {
     @JaLang("服务列表")
     public List<DServer> servers(String channel, String version) {
         return MasterChannelService.ME.getServers(channel, version);
-    }
-
-    @JaLang("注册")
-    public int register(String username, String password, String email, long platformUserId) {
-        return MasterOpenService.ME.register(username, password, email, platformUserId);
-    }
-
-    @JaLang("登录")
-    public String login(String username, String password, int time, String channel) {
-        return MasterOpenService.ME.login(username, password, time, channel);
-    }
-
-    @JaLang("修改密码")
-    public int rePassword(String username, String password, int time, String newPassword, String email) {
-        return MasterOpenService.ME.rePassword(username, password, time, newPassword, email);
-    }
-
-    @JaLang("绑定平台账号")
-    public int bindPlatformUser(String platform, String platformUsername, String sessionId, String username,
-                                String password, String email) {
-        return MasterOpenService.ME.bindPlatformUser(platform, platformUsername, sessionId, username, password, email);
     }
 
     @JaLang("购买")

@@ -1,14 +1,15 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2013-9-28 上午9:26:44
  */
 package com.absir.aserv.game.bean;
 
 import com.absir.aserv.game.value.ILevelExp;
-import com.absir.aserv.system.bean.base.JbBean;
+import com.absir.aserv.system.bean.base.JbBase;
+import com.absir.aserv.system.bean.base.JiBase;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JaName;
@@ -19,7 +20,7 @@ import javax.persistence.Index;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public abstract class JbPlayer extends JbBean implements ILevelExp {
+public abstract class JbPlayer extends JbBase implements JiBase<Long>, ILevelExp {
 
     @JaLang("服务区")
     @JsonIgnore

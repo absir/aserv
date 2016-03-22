@@ -1,22 +1,31 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2015年11月13日 下午4:08:45
  */
 package com.absir.aserv.game.context;
 
 import com.absir.aserv.game.bean.JbPlayer;
 import com.absir.aserv.game.bean.JbPlayerA;
+import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Map;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class GameComponent<P extends JbPlayerContext, S extends JbServerContext> {
+
+    // 功能组件
+    public static final GameComponent ME = BeanFactoryUtils.get(GameComponent.class);
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(GameComponent.class);
 
     public final Class<P> PLAYER_CONTEXT_CLASS;
 
@@ -52,9 +61,7 @@ public abstract class GameComponent<P extends JbPlayerContext, S extends JbServe
      * 载入配置
      */
     @Inject
-    public void reloadComponent() {
-
-    }
+    public abstract void reloadComponent() throws IOException;
 
     public P findPlayerContext(long playerId) {
         return PLAYER_CONTEXT_MAP.get(playerId);

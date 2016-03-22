@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2014-3-11 下午5:27:56
  */
 package com.absir.aserv.system.server;
@@ -69,10 +69,12 @@ public class ServerResolverBody extends ReturnedResolverBody implements Paramete
         Object converter = input.getAttribute(BODY_CONVERTER_NAME);
         if (converter == null) {
             IBodyConverter bodyConverter = null;
-            if (input instanceof InputRequest) {
-                String contentType = ((InputRequest) input).getRequest().getContentType();
-                if (contentType != null) {
-                    bodyConverter = typeMapConverter.get(contentType);
+            if (typeMapConverter != null) {
+                if (input instanceof InputRequest) {
+                    String contentType = ((InputRequest) input).getRequest().getContentType();
+                    if (contentType != null) {
+                        bodyConverter = typeMapConverter.get(contentType.toLowerCase());
+                    }
                 }
             }
 

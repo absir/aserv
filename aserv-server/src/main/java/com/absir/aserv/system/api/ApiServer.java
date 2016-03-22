@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2013-4-3 下午5:58:37
  */
 package com.absir.aserv.system.api;
@@ -10,7 +10,6 @@ package com.absir.aserv.system.api;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.security.SecurityContext;
 import com.absir.aserv.system.security.SecurityManager;
-import com.absir.aserv.system.server.value.Bodys;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.aserv.system.service.impl.IdentityServiceLocal;
 import com.absir.aserv.transaction.TransactionIntercepter;
@@ -38,11 +37,8 @@ public abstract class ApiServer {
 
     /**
      * 统一返回类型 权限判断
-     *
-     * @param input
-     * @throws Throwable
      */
-    @Bodys
+    @Body
     @NoBody
     @Before
     protected SecurityContext onAuthentication(Input input) throws Throwable {
@@ -51,11 +47,8 @@ public abstract class ApiServer {
 
     /**
      * 统一异常返回
-     *
-     * @param e
-     * @return
      */
-    @Bodys
+    @Body
     @OnException(Throwable.class)
     protected Object onException(Throwable e, Input input) {
         input.setStatus(ServerStatus.ON_ERROR.getCode());
@@ -89,8 +82,6 @@ public abstract class ApiServer {
 
     /**
      * 消息对象
-     *
-     * @author absir
      */
     public static class MessageCode {
 

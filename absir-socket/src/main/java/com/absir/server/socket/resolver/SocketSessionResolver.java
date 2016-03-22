@@ -202,7 +202,7 @@ public class SocketSessionResolver implements ISessionResolver {
         }
 
         if (isBeat(socketChannel, socketBuffer, buffer)) {
-            getServerResolver().reciveBeatNIO(socketChannel, selSession);
+            getServerResolver().receiveBeatNIO(socketChannel, selSession);
             return;
         }
 

@@ -15,7 +15,6 @@ import com.absir.aserv.system.bean.proxy.JiUpdate;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.domain.DCondition;
 import com.absir.aserv.system.helper.HelperCondition;
-import com.absir.aserv.system.server.value.Bodys;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.EntityService;
 import com.absir.aserv.system.service.SecurityService;
@@ -80,7 +79,7 @@ public class Api_entity extends ApiServer {
     /**
      * 获取多个数据
      */
-    public List<Object> gets(String entityName, @Bodys Object[] ids, Input input) {
+    public List<Object> gets(String entityName, @Body Object[] ids, Input input) {
         JiUserBase user = SecurityService.ME.getUserBase(input);
         if (!(SessionFactoryUtils.entityPermission(entityName, JePermission.SELECT) || AuthServiceUtils.selectPermission(entityName, user))) {
             throw new ServerException(ServerStatus.ON_DENIED);
@@ -129,7 +128,7 @@ public class Api_entity extends ApiServer {
      * 获取数据列表(分页)
      */
     @Mapping(method = InMethod.POST)
-    public JdbcEntities list(String entityName, @Bodys JdbcPage jdbcPage, Input input) {
+    public JdbcEntities list(String entityName, @Body JdbcPage jdbcPage, Input input) {
         JiUserBase user = SecurityService.ME.getUserBase(input);
         if (!(SessionFactoryUtils.entityPermission(entityName, JePermission.SELECT) || AuthServiceUtils.selectPermission(entityName, user))) {
             throw new ServerException(ServerStatus.ON_DENIED);
@@ -163,7 +162,7 @@ public class Api_entity extends ApiServer {
      * 高级搜索列表(分页)
      */
     @Mapping(method = InMethod.POST)
-    public JdbcEntities search(String entityName, @Param @Nullable String condition, @Param @Nullable String queue, @Bodys JdbcPage jdbcPage, Input input) {
+    public JdbcEntities search(String entityName, @Param @Nullable String condition, @Param @Nullable String queue, @Body JdbcPage jdbcPage, Input input) {
         ICrudSupply crudSupply = EntityService.ME.getCrudSupply(entityName);
         JiUserBase user = SecurityService.ME.getUserBase(input);
         if (!(SessionFactoryUtils.entityPermission(entityName, JePermission.SELECT) && AuthServiceUtils.selectPermission(entityName, user))) {
@@ -266,7 +265,7 @@ public class Api_entity extends ApiServer {
         return modelMap;
     }
 
-    public Map<String, Object> changed(@Bodys EntityNames entityNames, Input input) {
+    public Map<String, Object> changed(@Body EntityNames entityNames, Input input) {
         JiUserBase user = SecurityService.ME.getUserBase(input);
         Map<String, Object> modelMap = new HashMap<String, Object>();
         if (entityNames.names != null) {
@@ -294,7 +293,7 @@ public class Api_entity extends ApiServer {
     /**
      * 插入单条纪录
      */
-    public Object insert(String entityName, @Bodys Object entityObject, Input input) {
+    public Object insert(String entityName, @Body Object entityObject, Input input) {
         ICrudSupply crudSupply = EntityService.ME.getCrudSupply(entityName);
         if (!(SessionFactoryUtils.entityPermission(entityName, JePermission.INSERT))) {
             throw new ServerException(ServerStatus.ON_DENIED);
@@ -308,7 +307,7 @@ public class Api_entity extends ApiServer {
     /**
      * 插入多条纪录
      */
-    public Object inserts(String entityName, @Bodys List<?> entityList, Input input) {
+    public Object inserts(String entityName, @Body List<?> entityList, Input input) {
         ICrudSupply crudSupply = EntityService.ME.getCrudSupply(entityName);
         if (!SessionFactoryUtils.entityPermission(entityName, JePermission.INSERT)) {
             throw new ServerException(ServerStatus.ON_DENIED);
@@ -322,7 +321,7 @@ public class Api_entity extends ApiServer {
     /**
      * 更新单条纪录
      */
-    public Object update(String entityName, @Bodys Object entityObject, Input input) {
+    public Object update(String entityName, @Body Object entityObject, Input input) {
         ICrudSupply crudSupply = EntityService.ME.getCrudSupply(entityName);
         if (!SessionFactoryUtils.entityPermission(entityName, JePermission.UPDATE)) {
             throw new ServerException(ServerStatus.ON_DENIED);
@@ -336,7 +335,7 @@ public class Api_entity extends ApiServer {
     /**
      * 更新多条纪录
      */
-    public List<Object> updates(String entityName, @Bodys List<?> entityList, Input input) {
+    public List<Object> updates(String entityName, @Body List<?> entityList, Input input) {
         ICrudSupply crudSupply = EntityService.ME.getCrudSupply(entityName);
         if (!SessionFactoryUtils.entityPermission(entityName, JePermission.UPDATE)) {
             throw new ServerException(ServerStatus.ON_DENIED);
@@ -363,7 +362,7 @@ public class Api_entity extends ApiServer {
     /**
      * 删除多条纪录
      */
-    public List<Object> deletes(String entityName, @Bodys Object[] ids, Input input) {
+    public List<Object> deletes(String entityName, @Body Object[] ids, Input input) {
         ICrudSupply crudSupply = EntityService.ME.getCrudSupply(entityName);
         JiUserBase user = SecurityService.ME.getUserBase(input);
         if (!(SessionFactoryUtils.entityPermission(entityName, JePermission.DELETE) && AuthServiceUtils.deletePermission(entityName, user))) {
@@ -373,13 +372,13 @@ public class Api_entity extends ApiServer {
         return EntityService.ME.delete(entityName, crudSupply, user, ids);
     }
 
-    public Map<String, Object> sync(String entityName, @Bodys Map<?, ?> entityMap, Input input) {
+    public Map<String, Object> sync(String entityName, @Body Map<?, ?> entityMap, Input input) {
         Map<String, Object> modelMap = new HashMap<String, Object>();
         sync(entityName, SecurityService.ME.getUserBase(input), entityMap, modelMap, input);
         return modelMap;
     }
 
-    public Map<String, Object> syncs(@Bodys Map<String, Map<?, ?>> entityMaps, Input input) {
+    public Map<String, Object> syncs(@Body Map<String, Map<?, ?>> entityMaps, Input input) {
         JiUserBase user = SecurityService.ME.getUserBase(input);
         Map<String, Object> modelMap = new HashMap<String, Object>();
         for (Entry<String, Map<?, ?>> entry : entityMaps.entrySet()) {
@@ -404,13 +403,13 @@ public class Api_entity extends ApiServer {
         EntityService.ME.sync(entityName, crudSupply, user, null, modelMap, entityMap, filter);
     }
 
-    public Map<String, Object> mirror(String entityName, @Bodys List<?> entityList, Input input) {
+    public Map<String, Object> mirror(String entityName, @Body List<?> entityList, Input input) {
         Map<String, Object> modelMap = new HashMap<String, Object>();
         mirror(entityName, SecurityService.ME.getUserBase(input), entityList, modelMap, input);
         return modelMap;
     }
 
-    public Map<String, Object> mirrors(@Bodys Map<String, List<?>> entityMaps, Input input) {
+    public Map<String, Object> mirrors(@Body Map<String, List<?>> entityMaps, Input input) {
         JiUserBase user = SecurityService.ME.getUserBase(input);
         Map<String, Object> modelMap = new HashMap<String, Object>();
         for (Entry<String, List<?>> entry : entityMaps.entrySet()) {
@@ -437,7 +436,7 @@ public class Api_entity extends ApiServer {
     /**
      * 并行处理数据
      */
-    public Map<String, Object> multiple(@Bodys EntityMutiple mutiple, Input input) {
+    public Map<String, Object> multiple(@Body EntityMutiple mutiple, Input input) {
         Map<String, Object> modelMap = new HashMap<String, Object>();
         JiUserBase user = SecurityService.ME.getUserBase(input);
         if (mutiple.mirrors != null) {

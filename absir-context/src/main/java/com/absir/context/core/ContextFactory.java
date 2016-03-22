@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2014-1-14 下午4:12:13
  */
 package com.absir.context.core;
@@ -33,7 +33,9 @@ public class ContextFactory {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(ContextFactory.class);
 
-    private long contextTime = System.currentTimeMillis();
+    private long contextTime = forContextTime();
+
+    private int shortTime = (int) (contextTime / 1000);
 
     private Queue<ContextBase> contextBases = new ConcurrentLinkedQueue<ContextBase>();
 
@@ -67,74 +69,84 @@ public class ContextFactory {
             Iterator<ContextBase> contextBaseIterator = contextBases.iterator();
             while (contextBaseIterator.hasNext()) {
                 final ContextBase contextBase = contextBaseIterator.next();
-                if (contextBase.isExpiration() || contextBase.stepDone(contextTime)) {
-                    contextBaseIterator.remove();
-                    if (!contextBase.uninitializeDone()) {
-                        threadPoolExecutor.execute(new RunableGuaranted() {
+                try {
+                    if (contextBase.isExpiration() || contextBase.stepDone(contextTime)) {
+                        contextBaseIterator.remove();
+                        if (!contextBase.uninitializeDone()) {
+                            threadPoolExecutor.execute(new RunableGuaranted() {
 
-                            @Override
-                            public void run() {
-                                for (int i = 0; i < uninitCount; i++) {
-                                    try {
-                                        contextBase.uninitialize();
-                                        break;
+                                @Override
+                                public void run() {
+                                    for (int i = 0; i < uninitCount; i++) {
+                                        try {
+                                            contextBase.uninitialize();
+                                            break;
 
-                                    } catch (Throwable e) {
-                                        LOGGER.error("stepDone " + contextBase, e);
+                                        } catch (Throwable e) {
+                                            LOGGER.error("stepDone " + contextBase, e);
+                                        }
                                     }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
+
+                } catch (Throwable e) {
+                    LOGGER.error("contextBase error " + contextBase, e);
                 }
             }
 
             Iterator<ContextBean> contextBeanIterator = contextBeans.iterator();
             while (contextBeanIterator.hasNext()) {
                 final ContextBean contextBean = contextBeanIterator.next();
-                if (contextBean.isExpiration() || contextBean.stepDone(contextTime)) {
-                    contextBeanIterator.remove();
-                    contextBean.setExpiration();
-                    final Map<Serializable, Context> contextMap = classMapIdMapContext.get(contextBean.getKeyClass());
-                    if (contextBean.uninitializeDone()) {
-                        if (contextMap != null) {
-                            synchronized (contextMap) {
-                                if (contextBean.isExpiration()) {
-                                    contextMap.remove(contextBean.getId());
-                                    continue;
+                try {
+                    if (contextBean.isExpiration() || contextBean.stepDone(contextTime)) {
+                        contextBeanIterator.remove();
+                        contextBean.setExpiration();
+                        final Map<Serializable, Context> contextMap = classMapIdMapContext.get(contextBean.getKeyClass());
+                        if (contextBean.uninitializeDone()) {
+                            if (contextMap != null) {
+                                synchronized (contextMap) {
+                                    if (contextBean.isExpiration()) {
+                                        contextMap.remove(contextBean.getId());
+                                        continue;
+                                    }
+
+                                    contextBeans.add(contextBean);
                                 }
-
-                                contextBeans.add(contextBean);
                             }
-                        }
 
-                    } else {
-                        threadPoolExecutor.execute(new RunableGuaranted() {
+                        } else {
+                            threadPoolExecutor.execute(new RunableGuaranted() {
 
-                            @Override
-                            public void run() {
-                                for (int i = 0; i < uninitCount; i++) {
-                                    try {
-                                        contextBean.uninitialize();
-                                        if (contextMap != null) {
-                                            synchronized (contextMap) {
-                                                if (contextBean.isExpiration()) {
-                                                    contextMap.remove(contextBean.getId());
-                                                    return;
+                                @Override
+                                public void run() {
+                                    for (int i = 0; i < uninitCount; i++) {
+                                        try {
+                                            contextBean.uninitialize();
+                                            if (contextMap != null) {
+                                                synchronized (contextMap) {
+                                                    if (contextBean.isExpiration()) {
+                                                        contextMap.remove(contextBean.getId());
+                                                        return;
+                                                    }
                                                 }
+
+                                                contextBeans.add(contextBean);
+                                                break;
                                             }
 
-                                            contextBeans.add(contextBean);
-                                            break;
+                                        } catch (Throwable e) {
+                                            LOGGER.error("stepDone " + contextBean + " => " + contextBean.getId(), e);
                                         }
-
-                                    } catch (Throwable e) {
-                                        LOGGER.error("stepDone " + contextBean + " => " + contextBean.getId(), e);
                                     }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
+
+                } catch (Throwable e) {
+                    LOGGER.error("contextBean error " + contextBean, e);
                 }
             }
         }
@@ -150,6 +162,10 @@ public class ContextFactory {
 
     public long getContextTime() {
         return contextTime;
+    }
+
+    public int getShortTime() {
+        return shortTime;
     }
 
     public ThreadPoolExecutor getThreadPoolExecutor() {

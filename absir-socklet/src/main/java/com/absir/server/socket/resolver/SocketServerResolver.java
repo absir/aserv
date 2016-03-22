@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2015年11月4日 下午4:21:11
  */
 package com.absir.server.socket.resolver;
@@ -54,7 +54,7 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
     }
 
     @Override
-    public void reciveBeatNIO(SocketChannel socketChannel, SelSession selSession) {
+    public void receiveBeatNIO(SocketChannel socketChannel, SelSession selSession) {
     }
 
     @Override

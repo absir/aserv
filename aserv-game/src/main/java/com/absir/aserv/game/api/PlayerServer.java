@@ -8,6 +8,7 @@
 package com.absir.aserv.game.api;
 
 import com.absir.aserv.game.bean.JbPlayer;
+import com.absir.aserv.game.context.GameComponent;
 import com.absir.aserv.game.context.JbPlayerContext;
 import com.absir.aserv.game.context.PlayerService;
 import com.absir.aserv.system.api.ApiServer;
@@ -37,7 +38,7 @@ public class PlayerServer extends ApiServer {
         if (securityContext == null) {
             if (input instanceof InputSocketImpl) {
                 Long playerId = (Long) input.getId();
-                JbPlayerContext playerContext = (JbPlayerContext) ContextUtils.getContext(JbPlayerContext.COMPONENT.PLAYER_CONTEXT_CLASS,
+                JbPlayerContext playerContext = (JbPlayerContext) ContextUtils.getContext(GameComponent.ME.PLAYER_CONTEXT_CLASS,
                         playerId);
                 if (!onAuthPlayerContext(playerContext)) {
                     throw new ServerException(ServerStatus.NO_LOGIN);
@@ -55,7 +56,7 @@ public class PlayerServer extends ApiServer {
             throw new ServerException(ServerStatus.NO_LOGIN);
         }
 
-        JbPlayerContext playerContext = (JbPlayerContext) ContextUtils.getContext(JbPlayerContext.COMPONENT.PLAYER_CONTEXT_CLASS,
+        JbPlayerContext playerContext = (JbPlayerContext) ContextUtils.getContext(GameComponent.ME.PLAYER_CONTEXT_CLASS,
                 playerId);
         if (!onAuthPlayerContext(playerContext)) {
             throw new ServerException(ServerStatus.NO_LOGIN);

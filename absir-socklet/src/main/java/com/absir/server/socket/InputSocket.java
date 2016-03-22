@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2014-2-17 下午4:06:43
  */
 package com.absir.server.socket;
@@ -107,7 +107,7 @@ public abstract class InputSocket extends Input {
 
     public static boolean writeByteBuffer(SocketBufferResolver bufferResolver, SelSession selSession,
                                           SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes, int offset, int length) {
-        int headerLength = flag == 0 ? 0 : callbackIndex == 0 ? 1 : 5;
+        int headerLength = callbackIndex == 0 ? flag == 0 ? 0 : 1 : 5;
         byte[] headerBytes = bufferResolver.createByteHeader(headerLength);
         if (headerBytes == null) {
             return false;

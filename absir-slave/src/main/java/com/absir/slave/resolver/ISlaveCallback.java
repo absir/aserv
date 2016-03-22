@@ -7,10 +7,10 @@
  */
 package com.absir.slave.resolver;
 
-import com.absir.client.SocketAdapter.CallbackAdapte;
+import com.absir.client.SocketAdapter.CallbackAdapter;
 import com.absir.core.kernel.KernelList.Orderable;
 
-public interface ISlaveCallback extends CallbackAdapte, Orderable {
+public interface ISlaveCallback extends CallbackAdapter, Orderable {
 
     public int getCallbackIndex();
 

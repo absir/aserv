@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2015年11月19日 下午2:27:17
  */
 package com.absir.master.service;
@@ -40,14 +40,6 @@ public class MasterTradeService implements IPayProccessor {
 
     /**
      * 生成购买订单
-     *
-     * @param platform
-     * @param channel
-     * @param serverId
-     * @param playerId
-     * @param index
-     * @param amount
-     * @return
      */
     @Transaction
     public JPayTrade buyDollar(String platform, String channel, long serverId, long playerId, int index, float amount) {
@@ -74,10 +66,6 @@ public class MasterTradeService implements IPayProccessor {
     /*
      * 充值通知
      *
-     * (non-Javadoc)
-     *
-     * @see com.absir.open.service.IPayProccessor#proccess(com.absir.open.bean.
-     * JPayTrade)
      */
     @Override
     public Object proccess(JPayTrade payTrade) throws Exception {
