@@ -1,0 +1,89 @@
+package G2.Protocol;
+
+import com.absir.data.value.IProto;
+import com.baidu.bjf.remoting.protobuf.Codec;
+import com.baidu.bjf.remoting.protobuf.FieldType;
+import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
+import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
+
+public class PLoginData implements IProto {
+
+    public static final Codec<PLoginData> CODEC = ProtobufProxy.create(PLoginData.class);
+
+    @Protobuf(fieldType = FieldType.INT64, order = 1, required = true)
+    protected long userId;
+
+    @Protobuf(fieldType = FieldType.STRING, order = 2, required = true)
+    protected String sessionId;
+
+    @Protobuf(fieldType = FieldType.INT64, order = 3, required = true)
+    protected long serverId;
+
+    @Protobuf(fieldType = FieldType.INT64, order = 4, required = true)
+    protected long versionTime;
+
+    @Protobuf(fieldType = FieldType.INT64, order = 5, required = false)
+    protected long playerId;
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public Long getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(long serverId) {
+        this.serverId = serverId;
+    }
+
+    public long getVersionTime() {
+        return versionTime;
+    }
+
+    public void setVersionTime(long versionTime) {
+        this.versionTime = versionTime;
+    }
+
+    public long getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(long playerId) {
+        this.playerId = playerId;
+    }
+
+    public PLoginData create() {
+        return new PLoginData();
+    }
+
+    public PLoginData clone() {
+        return cloneDepth(0);
+    }
+
+    public void cloneMore(PLoginData _clone, int _depth) {
+    }
+
+    public PLoginData cloneDepth(int _depth) {
+        PLoginData _clone = create();
+        _clone.userId = userId;
+        _clone.sessionId = sessionId;
+        _clone.serverId = serverId;
+        _clone.versionTime = versionTime;
+        _clone.playerId = playerId;
+        cloneMore(_clone, _depth);
+        return _clone;
+    }
+}

@@ -1,0 +1,41 @@
+package G2.Protocol;
+
+option optimize_for = LITE_RUNTIME;
+
+//登录数据
+message LoginData {
+    //用户编号
+    required int64 userId = 1;
+    //SessionID
+    required string sessionId = 2;
+    //逻辑区编号
+    required int64 serverId = 3;
+    //版本时间
+    required int64 versionTime = 4;
+    //重连角色编号
+    optional int64 playerId = 5;
+}
+
+//登录消息
+message LoginMessage {
+    //状态类型
+    required LoginStatusType statusType = 1;
+    //状态参数
+    optional int64 statusValue = 2;
+}
+
+//登录状态类型
+enum LoginStatusType {
+    //成功
+    Success = 1;
+    //服务关闭
+    ServerClosed = 2;
+    //登录失败
+    LoginFailed = 3;
+    //登录失效
+    LoginLose = 4;
+    //禁用设备
+    DinedDevice = 5;
+    //角色封禁
+    PlayerBaned = 6;
+}
