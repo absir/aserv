@@ -138,7 +138,7 @@ public class JUpload extends JbBean implements JiPass, ICrudBean {
     }
 
     @Override
-    public void proccessCrud(Crud crud, CrudHandler handler) {
+    public void processCrud(Crud crud, CrudHandler handler) {
         UploadCrudFactory.ME.crud(this, crud, handler);
     }
 }

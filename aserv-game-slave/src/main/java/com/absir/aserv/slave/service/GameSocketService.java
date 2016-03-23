@@ -6,7 +6,6 @@ import G2.Protocol.PLoginStatusType;
 import com.absir.aserv.game.bean.JPlayerSession;
 import com.absir.aserv.game.context.GameComponent;
 import com.absir.aserv.game.context.JbPlayerContext;
-import com.absir.aserv.game.context.PlayerService;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -63,6 +62,13 @@ public class GameSocketService extends SocketServerResolver {
     public void register(SocketChannel socketChannel, SelSession selSession, byte[] buffer) throws Throwable {
         PLoginData loginData = PLoginData.CODEC.decode(buffer);
         PLoginMessage loginMessage = new PLoginMessage();
+        if (loginData.getPlayerId() <= 0) {
+            //登录失效
+            loginMessage.setStatusType(PLoginStatusType.LoginFailed);
+            writeGoogleProto(socketChannel, selSession, loginMessage);
+            return;
+        }
+
         if (GameComponent.ME.findServerContext(loginData.getServerId()) == null) {
             //区未开放
             loginMessage.setStatusType(PLoginStatusType.ServerClosed);
@@ -75,23 +81,20 @@ public class GameSocketService extends SocketServerResolver {
         JbPlayerContext playerContext = null;
         if (playerId > 0) {
             JPlayerSession playerSession = BeanService.ME.get(JPlayerSession.class, playerId);
-            if (playerSession == null || playerSession.getPassTime() <= contextTime || playerSession.getVersionTime() > loginData.getVersionTime()) {
+            if (playerSession == null || playerSession.getPassTime() <= contextTime || playerSession.getLoginTime() > loginData.getLoginTime()) {
                 //登录失效
                 loginMessage.setStatusType(PLoginStatusType.LoginLose);
                 writeGoogleProto(socketChannel, selSession, loginMessage);
                 return;
             }
+        }
 
-        } else {
-            long lifeTime = masterService.login(loginData.getUserId(), loginData.getSessionId());
-            if (lifeTime <= 0) {
-                //登录失败
-                loginMessage.setStatusType(PLoginStatusType.LoginFailed);
-                writeGoogleProto(socketChannel, selSession, loginMessage);
-                return;
-            }
-
-            playerId = PlayerService.ME.openPlayerId(loginData.getServerId(), loginData.getUserId());
+        long lifeTime = masterService.login(playerId, loginData.getSessionId());
+        if (lifeTime <= 0) {
+            //登录失败
+            loginMessage.setStatusType(PLoginStatusType.LoginFailed);
+            writeGoogleProto(socketChannel, selSession, loginMessage);
+            return;
         }
 
         playerContext = (JbPlayerContext) ContextUtils.getContext(GameComponent.ME.PLAYER_CONTEXT_CLASS, playerId);

@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2013-5-31 下午5:16:29
  */
 package com.absir.aserv.system.service;
@@ -20,14 +20,13 @@ import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.domain.DSequence;
 import com.absir.aserv.system.helper.HelperLong;
-import com.absir.aserv.system.helper.HelperRandom;
 import com.absir.aserv.system.security.ISecurityService;
 import com.absir.aserv.system.security.SecurityContext;
 import com.absir.aserv.system.security.SecurityManager;
 import com.absir.bean.basis.Configure;
 import com.absir.bean.core.BeanFactoryUtils;
+import com.absir.bean.inject.value.Domain;
 import com.absir.bean.inject.value.Inject;
-import com.absir.bean.inject.value.InjectOrder;
 import com.absir.bean.inject.value.Value;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelString;
@@ -90,22 +89,11 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
     protected abstract JbSession createSession(JiUserBase userBase, long remember,
                                                String address, String agent);
 
+    @Domain
     private DSequence sessionSequence;
 
-    @InjectOrder(255)
-    @Inject
-    protected void afterPropertySetter() {
-        if (sessionSequence == null) {
-            sessionSequence = new DSequence();
-        }
-    }
-
     public String nextSecurityId() {
-        StringBuilder stringBuilder = new StringBuilder();
-        HelperRandom.appendFormatLong(stringBuilder, HelperRandom.FormatType.HEX_DIG, System.currentTimeMillis());
-        HelperRandom.appendFormat(stringBuilder, HelperRandom.FormatType.HEX_DIG, sessionSequence.nextSequence());
-        HelperRandom.randAppendFormat(stringBuilder, 5, HelperRandom.FormatType.HEX_DIG);
-        return stringBuilder.toString();
+        return sessionSequence.getNextHexId();
     }
 
     public void insertSession(JiUserBase userBase, JbSession session) {

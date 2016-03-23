@@ -17,7 +17,7 @@ public class JPlayerSession extends JbBean {
 
     private String sessionId;
 
-    private long versionTime;
+    private long loginTime;
 
     private long passTime;
 
@@ -29,12 +29,12 @@ public class JPlayerSession extends JbBean {
         this.sessionId = sessionId;
     }
 
-    public long getVersionTime() {
-        return versionTime;
+    public long getLoginTime() {
+        return loginTime;
     }
 
-    public void setVersionTime(long versionTime) {
-        this.versionTime = versionTime;
+    public void setLoginTime(long loginTime) {
+        this.loginTime = loginTime;
     }
 
     public long getPassTime() {
@@ -44,4 +44,5 @@ public class JPlayerSession extends JbBean {
     public void setPassTime(long passTime) {
         this.passTime = passTime;
     }
+
 }

@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2013-9-6 下午12:42:34
  */
 package com.absir.aserv.menu;
@@ -137,7 +137,7 @@ public class OMenuFactory extends AopMethodDefineAbstract<MenuAopInterceptor, St
     }
 
     @Override
-    public void proccess(String route, MenuBeanRoot menuBeanRoot, RouteMatcher routeMatcher, MaFactory maFactory) {
+    public void process(String route, MenuBeanRoot menuBeanRoot, RouteMatcher routeMatcher, MaFactory maFactory) {
         if (KernelArray.getAssignable(routeMatcher.getRouteAction().getRouteMethod().getParameterResolvers(), ParameterResolverPath.class) == null) {
             String ref = null;
             Object routeObject = routeMatcher.getRouteAction().getRouteEntity().getRoute();

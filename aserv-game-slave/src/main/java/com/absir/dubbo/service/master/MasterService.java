@@ -10,6 +10,6 @@ public interface MasterService {
      *
      * @return lifeTime
      */
-    public long login(long userId, String sessionId);
+    public long login(long playerId, String sessionId);
 
 }

@@ -21,7 +21,7 @@ public class BeanCrudFactory implements ICrudFactory, ICrudProcessor {
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user) {
         if (crudHandler.getRoot() != entity && entity instanceof ICrudBean) {
-            ((ICrudBean) entity).proccessCrud(crudHandler.getCrud(), crudHandler);
+            ((ICrudBean) entity).processCrud(crudHandler.getCrud(), crudHandler);
         }
     }
 

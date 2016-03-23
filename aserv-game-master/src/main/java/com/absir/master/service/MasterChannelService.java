@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2015年11月18日 下午2:18:06
  */
 package com.absir.master.service;
@@ -15,22 +15,27 @@ import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.domain.DCache;
 import com.absir.aserv.system.domain.DCacheEntity;
 import com.absir.aserv.system.domain.DCacheOpen;
+import com.absir.aserv.system.service.BeanService;
 import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
+import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.kernel.KernelUtil;
 import com.absir.master.bean.JChannel;
 import com.absir.master.bean.JChannelAnnouncement;
 import com.absir.master.bean.JChannelSlaveServer;
+import com.absir.master.bean.JPlayer;
 import com.absir.master.bean.dto.DAnnouncement;
 import com.absir.master.bean.dto.DServer;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.hibernate.boost.L2EntityMergeService;
 import com.absir.orm.transaction.value.Transaction;
+import com.absir.platform.bean.JPlatformUser;
+import com.absir.platform.service.PlatformService;
 import org.hibernate.Session;
 
 import java.util.*;
@@ -188,4 +193,37 @@ public abstract class MasterChannelService {
 
         return servers;
     }
+
+    public JPlayer getPlayer(long serverId, JPlatformUser platformUser, String channel) {
+        JPlayer player = (JPlayer) BeanService.ME.selectQuerySingle("SELECT o FROM JPlayer WHERE o.serverId = ? AND o.userId = ?", serverId, platformUser.getId());
+        if (player == null) {
+            player = new JPlayer();
+            player.setServerId(serverId);
+            player.setUserId(platformUser.getUserId());
+            player.setPlatform(platformUser.getPlatform());
+            player.setChannel(platformUser.getChannel());
+            player.setCreateTime(ContextUtils.getContextTime());
+            BeanService.ME.persist(player);
+        }
+
+        return player;
+    }
+
+    /**
+     * @return 1 success | 2 login failed | 3 can't login
+     */
+    public JPlayer selectServerId(long serverId, String sessionId, String channel) {
+        JPlatformUser platformUser = PlatformService.ME.loginForSessionId(sessionId);
+        if (platformUser == null) {
+            return null;
+        }
+
+        JPlayer player = getPlayer(serverId, platformUser, channel);
+        if (player == null) {
+            return null;
+        }
+
+        return player;
+    }
+
 }

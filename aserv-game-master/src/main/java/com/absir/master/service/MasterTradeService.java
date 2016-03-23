@@ -68,7 +68,7 @@ public class MasterTradeService implements IPayProccessor {
      *
      */
     @Override
-    public Object proccess(JPayTrade payTrade) throws Exception {
+    public Object process(JPayTrade payTrade) throws Exception {
         if ("JDollar".equals(payTrade.getName())) {
             long serverId = payTrade.getServerId();
             JSlaveServer slaveServer = BeanService.ME.get(JSlaveServer.class, serverId);
@@ -95,7 +95,7 @@ public class MasterTradeService implements IPayProccessor {
             payTrade = buyDollar(platform, channel, serverId, playerId, index, amount);
         }
 
-        return PayUtils.proccess(platform, payTrade);
+        return PayUtils.process(platform, payTrade);
     }
 
     /**

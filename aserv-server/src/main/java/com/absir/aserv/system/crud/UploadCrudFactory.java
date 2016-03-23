@@ -527,7 +527,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                     IUploadRule uploadRule = (IUploadRule) entity;
                     uploadFile = uploadRule.getUploadRuleName(crudProperty.getName(), extensionName);
                     if (uploadFile != null) {
-                        uploadStream = uploadRule.proccessInputStream(crudProperty.getName(), requestBody.getInputStream(), extensionName);
+                        uploadStream = uploadRule.processInputStream(crudProperty.getName(), requestBody.getInputStream(), extensionName);
                     }
                 }
 

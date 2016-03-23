@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.absir</groupId>
-            <artifactId>aserv-server</artifactId>
+            <artifactId>aserv-admin</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>

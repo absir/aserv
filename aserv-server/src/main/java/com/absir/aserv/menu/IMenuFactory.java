@@ -12,6 +12,6 @@ import com.absir.server.route.RouteMatcher;
 
 public interface IMenuFactory {
 
-    public void proccess(String route, MenuBeanRoot menuBeanRoot, RouteMatcher routeMatcher, MaFactory maFactory);
+    public void process(String route, MenuBeanRoot menuBeanRoot, RouteMatcher routeMatcher, MaFactory maFactory);
 
 }

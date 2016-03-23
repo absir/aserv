@@ -170,7 +170,7 @@ public class JSlaveServer extends JbBean implements ICrudBean {
     }
 
     @Override
-    public void proccessCrud(Crud crud, CrudHandler handler) {
+    public void processCrud(Crud crud, CrudHandler handler) {
         if (crud == Crud.CREATE && host != null) {
             if (KernelString.isEmpty(serverIP)) {
                 serverIP = host.getServerIP();

@@ -64,16 +64,16 @@ public abstract class PayUtils {
         return false;
     }
 
-    public static Object proccess(String platform, JPayTrade payTrade) throws Exception {
+    public static Object process(String platform, JPayTrade payTrade) throws Exception {
         if (validator(platform, payTrade)) {
             payTrade.setPlatform(platform);
-            return proccessDone(platform, payTrade);
+            return processDone(platform, payTrade);
         }
 
         return null;
     }
 
-    public static Object proccessDone(String platform, JPayTrade payTrade) {
+    public static Object processDone(String platform, JPayTrade payTrade) {
         if (payService != null) {
             try {
                 String tradeNo = payTrade.getTradeNo();
@@ -82,7 +82,7 @@ public abstract class PayUtils {
                 }
 
                 if (TradeService.ME.addPayHistory(payTrade, tradeNo)) {
-                    Object res = payService.proccess(payTrade);
+                    Object res = payService.process(payTrade);
                     if (payTrade.getStatus() != JePayStatus.COMPLETE) {
                         payTrade.setStatus(JePayStatus.COMPLETE);
                     }
@@ -116,7 +116,7 @@ public abstract class PayUtils {
         payTrade.setStatusData(statusData);
         if (payStatus != JePayStatus.COMPLETE) {
             if (payStatus == JePayStatus.PAYED) {
-                return proccessDone(platform, payTrade);
+                return processDone(platform, payTrade);
 
             } else if (payStatus != payTrade.getStatus()) {
                 payTrade.setStatus(payStatus);

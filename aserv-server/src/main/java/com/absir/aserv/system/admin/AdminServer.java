@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2013-4-6 下午1:06:37
  */
 package com.absir.aserv.system.admin;
@@ -88,7 +88,7 @@ public abstract class AdminServer {
     public static class Route extends TransactionIntercepter implements IRoute {
 
         @Inject(type = InjectType.Selectable)
-        private void setRoute(@Value(value = "webmvc.admin.route") String route) {
+        private void setRoute(@Value(value = "admin.route") String route) {
             AdminServer.route = route;
         }
 

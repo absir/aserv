@@ -10,28 +10,17 @@ public class PLoginData implements IProto {
 
     public static final Codec<PLoginData> CODEC = ProtobufProxy.create(PLoginData.class);
 
-    @Protobuf(fieldType = FieldType.INT64, order = 1, required = true)
-    protected long userId;
-
-    @Protobuf(fieldType = FieldType.STRING, order = 2, required = true)
+    @Protobuf(fieldType = FieldType.STRING, order = 1, required = true)
     protected String sessionId;
+
+    @Protobuf(fieldType = FieldType.INT64, order = 2, required = true)
+    protected long loginTime;
 
     @Protobuf(fieldType = FieldType.INT64, order = 3, required = true)
     protected long serverId;
 
     @Protobuf(fieldType = FieldType.INT64, order = 4, required = true)
-    protected long versionTime;
-
-    @Protobuf(fieldType = FieldType.INT64, order = 5, required = false)
     protected long playerId;
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
 
     public String getSessionId() {
         return sessionId;
@@ -41,20 +30,20 @@ public class PLoginData implements IProto {
         this.sessionId = sessionId;
     }
 
+    public Long getLoginTime() {
+        return loginTime;
+    }
+
+    public void setLoginTime(Long loginTime) {
+        this.loginTime = loginTime;
+    }
+
     public Long getServerId() {
         return serverId;
     }
 
     public void setServerId(long serverId) {
         this.serverId = serverId;
-    }
-
-    public long getVersionTime() {
-        return versionTime;
-    }
-
-    public void setVersionTime(long versionTime) {
-        this.versionTime = versionTime;
     }
 
     public long getPlayerId() {
@@ -78,10 +67,9 @@ public class PLoginData implements IProto {
 
     public PLoginData cloneDepth(int _depth) {
         PLoginData _clone = create();
-        _clone.userId = userId;
         _clone.sessionId = sessionId;
+        _clone.loginTime = loginTime;
         _clone.serverId = serverId;
-        _clone.versionTime = versionTime;
         _clone.playerId = playerId;
         cloneMore(_clone, _depth);
         return _clone;

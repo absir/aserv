@@ -28,7 +28,7 @@ public class CmdOptionials {
 
     private File optionialStoredFile;
 
-    public boolean proccessArgCmd(String argCmd) {
+    public boolean processArgCmd(String argCmd) {
         int length = argCmd.length();
         if (length == 0) {
             return false;

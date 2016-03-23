@@ -142,7 +142,7 @@ public abstract class CrudUtils {
         };
 
         if (entity instanceof ICrudBean) {
-            ((ICrudBean) entity).proccessCrud(crud, crudInvoker);
+            ((ICrudBean) entity).processCrud(crud, crudInvoker);
         }
 
         crud(entity, crudEntity, crudInvoker);

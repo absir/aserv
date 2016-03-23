@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2013-5-28 下午4:49:18
  */
 package com.absir.aserv.system.helper;
@@ -311,7 +311,7 @@ public class HelperRandom {
     }
 
     public static void appendFormat(StringBuilder stringBuilder, FormatType type, int i, int offset, int size) {
-        appendFormat(stringBuilder, 0, size, type.charsForInt(i));
+        appendFormat(stringBuilder, offset, size, type.charsForInt(i));
     }
 
     public static void appendFormatLong(StringBuilder stringBuilder, FormatType type, long l) {
@@ -319,7 +319,7 @@ public class HelperRandom {
     }
 
     public static void appendFormatLong(StringBuilder stringBuilder, FormatType type, long l, int offset, int size) {
-        appendFormat(stringBuilder, 0, size, type.charsForLong(l));
+        appendFormat(stringBuilder, offset, size, type.charsForLong(l));
     }
 
     public static void appendFormatLongMd5(StringBuilder stringBuilder, FormatType type, long l, int size) {

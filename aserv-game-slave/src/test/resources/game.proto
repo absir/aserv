@@ -4,16 +4,14 @@ option optimize_for = LITE_RUNTIME;
 
 //登录数据
 message LoginData {
-    //用户编号
-    required int64 userId = 1;
     //SessionID
-    required string sessionId = 2;
-    //逻辑区编号
+    required string sessionId = 1;
+    //登录时间
+    required int64 loginTime = 2;
+    //服务区编号
     required int64 serverId = 3;
-    //版本时间
-    required int64 versionTime = 4;
     //重连角色编号
-    optional int64 playerId = 5;
+    required int64 playerId = 4;
 }
 
 //登录消息

@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2013-9-4 下午8:08:17
  */
 package com.absir.aserv.menu;
@@ -19,6 +19,7 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.InjectType;
+import com.absir.bean.inject.value.Value;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang;
@@ -155,7 +156,7 @@ public abstract class MenuContextUtils {
     /**
      * 处理收集链接
      */
-    public static void proccessMenuRoot(String route, MenuBeanRoot menuBeanRoot, FilterTemplate<RouteMatcher> filter) {
+    public static void processMenuRoot(String route, MenuBeanRoot menuBeanRoot, FilterTemplate<RouteMatcher> filter) {
         try {
             for (RouteMatcher routeMatcher : InDispatcher.getRouteAdapter().getRouteMatchers()) {
                 if (filter == null || filter.doWith(routeMatcher)) {
@@ -165,7 +166,7 @@ public abstract class MenuContextUtils {
                         IMenuFactory menuFactory = BeanFactoryUtils.getRegisterBeanObject(maFactory.value(),
                                 IMenuFactory.class, maFactory.factory());
                         if (menuFactory != null) {
-                            menuFactory.proccess(route, menuBeanRoot, routeMatcher, maFactory);
+                            menuFactory.process(route, menuBeanRoot, routeMatcher, maFactory);
                         }
                     }
                 }
@@ -186,6 +187,9 @@ public abstract class MenuContextUtils {
         @Inject
         protected MenuBeanService menuBeanService;
 
+        @Value("menu.developer.scan")
+        protected boolean menuDeveloperScan = false;
+
         @Inject(type = InjectType.Selectable)
         protected void setServletContext(ServletContext servletContext) {
             // 全局链接参数
@@ -198,11 +202,11 @@ public abstract class MenuContextUtils {
             servletContext.setAttribute("app_code", InitBeanFactory.ME.getAppCode());
             servletContext.setAttribute("app_version", InitBeanFactory.ME.getVersion());
 
-            if (InitBeanFactory.isRequireInit() || BeanFactoryUtils.getEnvironment() == Environment.DEVELOP) {
+            if (menuDeveloperScan && (InitBeanFactory.isRequireInit() || BeanFactoryUtils.getEnvironment() == Environment.DEVELOP)) {
                 // 初始化菜单
                 MenuBeanRoot menuBeanRoot = new MenuBeanRoot();
                 // 扫瞄后台菜单
-                proccessMenuRoot(AdminServer.getRoute(), menuBeanRoot, new FilterTemplate<RouteMatcher>() {
+                processMenuRoot(AdminServer.getRoute(), menuBeanRoot, new FilterTemplate<RouteMatcher>() {
 
                     @Override
                     public boolean doWith(RouteMatcher template) throws BreakException {

@@ -17,9 +17,9 @@ import java.util.List;
 
 public abstract class BeanDefineAbstractor extends BeanDefineAbstract {
 
-    public static boolean proccessDelay;
+    public static boolean processDelay;
 
-    public static List<Runnable> proccessRunables;
+    public static List<Runnable> processRunables;
 
     private boolean loaded;
 
@@ -39,11 +39,11 @@ public abstract class BeanDefineAbstractor extends BeanDefineAbstract {
      * @return
      */
     public static boolean openProccessDelay() {
-        if (!proccessDelay) {
+        if (!processDelay) {
             synchronized (BeanDefineAbstractor.class) {
-                proccessDelay = true;
-                if (proccessRunables == null) {
-                    proccessRunables = new ArrayList<Runnable>();
+                processDelay = true;
+                if (processRunables == null) {
+                    processRunables = new ArrayList<Runnable>();
                 }
 
                 return true;
@@ -57,19 +57,19 @@ public abstract class BeanDefineAbstractor extends BeanDefineAbstract {
      * 移除延时处理对象
      */
     public static void removeProccessDelay() {
-        proccessDelay = false;
+        processDelay = false;
     }
 
     /**
      * 清算延时处理对象
      */
     public static void clearProccessDelay() {
-        if (proccessRunables != null) {
+        if (processRunables != null) {
             synchronized (BeanDefineAbstractor.class) {
-                if (proccessRunables != null) {
-                    List<Runnable> runnables = proccessRunables;
-                    proccessDelay = false;
-                    proccessRunables = null;
+                if (processRunables != null) {
+                    List<Runnable> runnables = processRunables;
+                    processDelay = false;
+                    processRunables = null;
                     int last = runnables.size();
                     while (true) {
                         if (last > 0) {
@@ -122,13 +122,13 @@ public abstract class BeanDefineAbstractor extends BeanDefineAbstract {
             }
         }
 
-        if (proccessDelay) {
+        if (processDelay) {
             // 延迟处理对象
             synchronized (BeanDefineAbstractor.class) {
-                if (proccessDelay) {
+                if (processDelay) {
                     final BeanDefine root = beanDefineRoot;
                     final Object proxy = beanProxy;
-                    proccessRunables.add(new Runnable() {
+                    processRunables.add(new Runnable() {
 
                         @Override
                         public void run() {

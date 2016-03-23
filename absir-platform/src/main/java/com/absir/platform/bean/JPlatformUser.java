@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p/>
+ * <p>
  * All right reserved
- * <p/>
+ * <p>
  * Create on 2015年11月16日 上午10:23:13
  */
 package com.absir.platform.bean;
@@ -45,6 +45,10 @@ public class JPlatformUser extends JbBean implements JiUserBase {
     @JaLang("渠道")
     @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
     private String channel;
+
+    @JaLang("昵称")
+    @JaEdit(groups = {JaEdit.GROUP_LIST})
+    private String nickname;
 
     @JaLang("禁用")
     @JaEdit(groups = {JaEdit.GROUP_LIST})
@@ -94,6 +98,14 @@ public class JPlatformUser extends JbBean implements JiUserBase {
 
     public void setChannel(String channel) {
         this.channel = channel;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public boolean isDisabled() {
@@ -187,5 +199,6 @@ public class JPlatformUser extends JbBean implements JiUserBase {
 
         metaMap.put(key, value);
     }
+
 
 }

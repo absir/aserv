@@ -11,6 +11,6 @@ import com.absir.open.bean.JPayTrade;
 
 public interface IPayProccessor {
 
-    public Object proccess(JPayTrade payTrade) throws Exception;
+    public Object process(JPayTrade payTrade) throws Exception;
 
 }

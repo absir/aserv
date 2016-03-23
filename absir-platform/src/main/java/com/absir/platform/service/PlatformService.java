@@ -11,15 +11,17 @@ import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.domain.DSequence;
-import com.absir.aserv.system.helper.HelperRandom;
+import com.absir.aserv.system.service.BeanService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
-import com.absir.bean.inject.value.Inject;
-import com.absir.bean.inject.value.InjectOrder;
+import com.absir.bean.inject.value.Domain;
+import com.absir.bean.inject.value.Value;
+import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.transaction.value.Transaction;
+import com.absir.platform.bean.JPlatformSession;
 import com.absir.platform.bean.JPlatformUser;
 import com.absir.platform.bean.JPlatformUserRef;
 import org.hibernate.Session;
@@ -35,6 +37,13 @@ public class PlatformService {
 
     public static String getPlatformUserRefId(String platform, String username) {
         return platform + ',' + username;
+    }
+
+    @Value("platform.lifeTime")
+    private long lifeTime = 3600000 * 24;
+
+    public long getLifeTime() {
+        return lifeTime;
     }
 
     /**
@@ -116,6 +125,10 @@ public class PlatformService {
                 : platformUser;
     }
 
+    public JPlatformUser loginPlatformUser(String platform, String username, String channel) {
+        return loginPlatformUser(platform, username, channel, lifeTime);
+    }
+
     /**
      * 登录平台账号
      */
@@ -140,43 +153,69 @@ public class PlatformService {
         return loginSessionUserType(getPlatformUser(platform, username, channel), lifeTime, 2);
     }
 
+    @Domain
     private DSequence sessionSequence;
 
-    @InjectOrder(255)
-    @Inject
-    protected void afterPropertySetter() {
-        if (sessionSequence == null) {
-            sessionSequence = new DSequence();
-        }
+    public String nextSessionId() {
+        return sessionSequence.getNextHexId();
     }
-
-    public String nextSecurityId() {
-        StringBuilder stringBuilder = new StringBuilder();
-        HelperRandom.appendFormatLong(stringBuilder, HelperRandom.FormatType.HEX_DIG, System.currentTimeMillis());
-        HelperRandom.appendFormat(stringBuilder, HelperRandom.FormatType.HEX_DIG, sessionSequence.nextSequence());
-        HelperRandom.randAppendFormat(stringBuilder, 5, HelperRandom.FormatType.HEX_DIG);
-        return stringBuilder.toString();
-    }
-
 
     /**
-     * @param type
-     * @return
+     * @param type 0 不自动延长登录时间 | 1 | 2 强制刷sessionID
      */
     @Transaction
     public JPlatformUser loginSessionUserType(JPlatformUser platformUser, long lifeTime, int type) {
         if (platformUser != null && lifeTime > 0) {
-            long currentTime = System.currentTimeMillis();
-            if (type != 0 || platformUser.getPassTime() < currentTime) {
-                platformUser.setPassTime(currentTime + lifeTime);
+            long contextTime = ContextUtils.getContextTime();
+            if (type != 0 || platformUser.getPassTime() < contextTime) {
+                platformUser.setPassTime(contextTime + lifeTime);
                 if (type == 2 || KernelString.isEmpty(platformUser.getSessionId())) {
-                    platformUser.setSessionId(nextSecurityId());
+                    platformUser.setSessionId(nextSessionId());
                 }
-            }
 
-            BeanDao.getSession().merge(platformUser);
+                BeanDao.getSession().merge(platformUser);
+            }
         }
 
         return platformUser;
+    }
+
+    public JPlatformSession loginReSession(String platform, String username, String channel, String address, String agent) {
+        return loginReSession(getPlatformUser(platform, username, channel), address, agent);
+    }
+
+    public JPlatformSession loginReSession(JPlatformUser platformUser, String address, String agent) {
+        return loginReSession(platformUser, lifeTime, address, agent);
+    }
+
+    public JPlatformSession loginReSession(JPlatformUser platformUser, long lifeTime, String address, String agent) {
+        JPlatformSession platformSession = new JPlatformSession();
+        platformSession.setId(nextSessionId());
+        platformSession.setPlatformUserId(platformUser.getId());
+        platformSession.setPassTime(ContextUtils.getContextTime() + lifeTime);
+        platformSession.setAddress(address);
+        platformSession.setAgent(agent);
+        BeanService.ME.persist(platformSession);
+        return platformSession;
+    }
+
+    public JPlatformUser loginFromPlatformUser(String platform, String username, String sessionId) {
+        JPlatformUser platformUser = findPlatformUser(platform, username);
+        if (platformUser != null) {
+            if (platformUser.getPassTime() > ContextUtils.getContextTime() && !KernelString.isEmpty(platformUser.getSessionId()) && platformUser.getSessionId().equals(sessionId)) {
+                return platformUser;
+            }
+        }
+
+        return null;
+    }
+
+    public JPlatformUser loginForSessionId(String sessionId) {
+        JPlatformSession platformSession = BeanService.ME.get(JPlatformSession.class, sessionId);
+        if (platformSession != null && platformSession.getPassTime() > ContextUtils.getContextTime()) {
+            return BeanService.ME.get(JPlatformUser.class, platformSession.getPlatformUserId());
+        }
+
+        return null;
     }
 }

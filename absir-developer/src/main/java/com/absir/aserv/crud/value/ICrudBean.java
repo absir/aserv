@@ -12,5 +12,5 @@ import com.absir.aserv.system.bean.value.JaCrud.Crud;
 
 public interface ICrudBean {
 
-    public void proccessCrud(Crud crud, CrudHandler handler);
+    public void processCrud(Crud crud, CrudHandler handler);
 }

@@ -57,6 +57,7 @@
         <module>aserv-slave</module>
         <module>aserv-game-slave</module>
         <module>aserv-game-master</module>
+        <module>aserv-admin</module>
     </modules>
     <dependencies>
         <dependency>
