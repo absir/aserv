@@ -104,14 +104,14 @@ public class InputMasterContext {
         return key;
     }
 
-    public void registerSlaveKey(String id, byte[] secerets, String validate, String[] params,
-                                 SocketChannel socketChannel) {
+    public void registerSlaveKey(String id, byte[] secrets, String validate, String[] params,
+                                 SocketChannel socketChannel, long currentTime) {
         MasterChannelContext channelContext = new MasterChannelContext(socketChannel);
         channelContext.slaveKey = validate;
         serverContext.loginSocketChannel(id, channelContext);
     }
 
-    public MasterChannelContext unregisterSlaveKey(String id, SocketChannel socketChannel) {
+    public MasterChannelContext unregisterSlaveKey(String id, SocketChannel socketChannel, long currentTime) {
         return serverContext.logoutSocketChannel(id, socketChannel);
     }
 

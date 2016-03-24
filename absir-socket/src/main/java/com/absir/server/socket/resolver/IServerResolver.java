@@ -17,18 +17,18 @@ public interface IServerResolver {
 
     public long acceptTimeoutNIO(SocketChannel socketChannel) throws Throwable;
 
-    public void doBeat(SocketChannel socketChannel, SelSession selSession, long contextTime);
+    public void doBeat(SocketChannel socketChannel, SelSession selSession, long currentTime);
 
-    public void register(SocketChannel socketChannel, SelSession selSession, byte[] buffer) throws Throwable;
+    public void register(SocketChannel socketChannel, SelSession selSession, byte[] buffer, long currentTime) throws Throwable;
 
-    public void receiveBeatNIO(SocketChannel socketChannel, SelSession selSession);
+    public void receiveBeatNIO(SocketChannel socketChannel, SelSession selSession, long currentTime);
 
     public boolean receiveBufferNIO(SocketChannel socketChannel, SelSession selSession, SocketBuffer socketBuffer,
-                                    byte[] buffer);
+                                    byte[] buffer, long currentTime);
 
     public void receiveByteBuffer(SocketChannel socketChannel, SelSession selSession, SocketBuffer socketBuffer,
-                                  byte[] buffer);
+                                  byte[] buffer, long currentTime);
 
-    public void unRegister(Serializable id, SocketChannel socketChannel, SelSession selSession);
+    public void unRegister(Serializable id, SocketChannel socketChannel, SelSession selSession, long currentTime);
 
 }

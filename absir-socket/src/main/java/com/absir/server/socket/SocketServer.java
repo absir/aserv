@@ -84,10 +84,10 @@ public class SocketServer {
                         Entry<SocketChannel, SelSession> entry;
                         SelSession selSession;
                         SocketChannel socketChannel;
-                        long contextTime;
+                        long currentTime;
                         while (Environment.isStarted()) {
                             Thread.sleep(sessionDelay);
-                            contextTime = UtilContext.getCurrentTime();
+                            currentTime = UtilContext.getCurrentTime();
                             iterator = globalSelSessionMap.entrySet().iterator();
                             while (iterator.hasNext()) {
                                 entry = iterator.next();
@@ -95,13 +95,13 @@ public class SocketServer {
                                 socketChannel = entry.getKey();
                                 try {
                                     if (socketChannel.isConnected()) {
-                                        if (selSession.getNextIdleTime() > contextTime) {
+                                        if (selSession.getNextIdleTime() > currentTime) {
                                             continue;
 
                                         } else {
                                             selSession.getSocketServer().socketSessionResolver.idle(socketChannel,
-                                                    selSession, contextTime);
-                                            if (selSession.getNextIdleTime() > contextTime) {
+                                                    selSession, currentTime);
+                                            if (selSession.getNextIdleTime() > currentTime) {
                                                 continue;
                                             }
                                         }

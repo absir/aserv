@@ -15,9 +15,9 @@
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.absir</groupId>
-            <artifactId>absir-log4j</artifactId>
-            <version>${com.absir.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j-version}</version>
         </dependency>
         <dependency>
             <groupId>dom4j</groupId>

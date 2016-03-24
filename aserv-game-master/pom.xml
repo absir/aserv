@@ -16,6 +16,11 @@
         </dependency>
         <dependency>
             <groupId>com.absir</groupId>
+            <artifactId>absir-dubbo</artifactId>
+            <version>${com.absir.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.absir</groupId>
             <artifactId>absir-platform</artifactId>
             <version>${com.absir.version}</version>
         </dependency>

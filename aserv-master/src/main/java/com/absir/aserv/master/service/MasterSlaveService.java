@@ -25,7 +25,6 @@ import com.absir.client.SocketAdapter;
 import com.absir.client.callback.CallbackMsg;
 import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.value.Schedule;
-import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAbsir;
 import com.absir.core.util.UtilAtom;
@@ -36,7 +35,6 @@ import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.hibernate.boost.L2CacheCollectionService;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.server.socket.SocketServerContext.ChannelContext;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,19 +71,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
     public void initService() {
         QueryDaoUtils.createQueryArray(BeanDao.getSession(), "UPDATE JSlave o SET o.connecting = FALSE")
                 .executeUpdate();
-    }
-
-    @Transaction
-    public void unRegisterSlave(String id) {
-        if (Environment.isStarted()) {
-            Session session = BeanDao.getSession();
-            JSlave slave = BeanDao.get(session, JSlave.class, id);
-            if (slave != null) {
-                slave.setConnecting(false);
-                slave.setLastConnectTime(ContextUtils.getContextTime());
-                session.merge(slave);
-            }
-        }
     }
 
     /**

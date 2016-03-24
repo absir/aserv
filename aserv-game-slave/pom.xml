@@ -15,17 +15,6 @@
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.baidu</groupId>
-            <artifactId>jprotobuf</artifactId>
-            <version>1.9.6</version>
-        </dependency>
-        <dependency>
-            <groupId>com.absir</groupId>
-            <artifactId>absir-code</artifactId>
-            <version>${com.absir.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.absir</groupId>
             <artifactId>aserv-slave</artifactId>
             <version>${com.absir.version}</version>
@@ -39,6 +28,17 @@
             <groupId>com.absir</groupId>
             <artifactId>absir-diamond</artifactId>
             <version>${com.absir.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baidu</groupId>
+            <artifactId>jprotobuf</artifactId>
+            <version>1.9.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.absir</groupId>
+            <artifactId>absir-code</artifactId>
+            <version>${com.absir.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

@@ -64,16 +64,16 @@ public class MasterServerResolver extends SocketServerResolver {
     }
 
     @Override
-    public void register(SocketChannel socketChannel, SelSession selSession, byte[] buffer) throws Throwable {
+    public void register(SocketChannel socketChannel, SelSession selSession, byte[] buffer, long currentTime) throws Throwable {
         String[] params = new String(buffer).split(",", 16);
         if (params.length >= 2) {
-            byte[] secerets = KernelByte.getLengthBytes(socketChannel.hashCode());
-            String validate = HelperEncrypt.encryptionMD5(InputMasterContext.ME.getKey(), secerets);
+            byte[] secrets = KernelByte.getLengthBytes(socketChannel.hashCode());
+            String validate = HelperEncrypt.encryptionMD5(InputMasterContext.ME.getKey(), secrets);
             if (validate.equals(params[0])) {
                 String id = idForMaster(params, socketChannel, selSession);
                 if (id != null) {
                     selSession.getSocketBuffer().setId(id);
-                    InputMasterContext.ME.registerSlaveKey(id, secerets, validate, params, socketChannel);
+                    InputMasterContext.ME.registerSlaveKey(id, secrets, validate, params, socketChannel, currentTime);
                 }
             }
         }
@@ -84,8 +84,8 @@ public class MasterServerResolver extends SocketServerResolver {
     }
 
     @Override
-    public void unRegister(Serializable id, SocketChannel socketChannel, SelSession selSession) {
-        InputMasterContext.ME.unregisterSlaveKey((String) id, socketChannel);
+    public void unRegister(Serializable id, SocketChannel socketChannel, SelSession selSession, long currentTime) {
+        InputMasterContext.ME.unregisterSlaveKey((String) id, socketChannel, currentTime);
     }
 
     @Override

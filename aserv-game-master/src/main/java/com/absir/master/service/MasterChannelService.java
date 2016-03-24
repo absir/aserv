@@ -210,20 +210,20 @@ public abstract class MasterChannelService {
     }
 
     /**
-     * @return 1 success | 2 login failed | 3 can't login
+     * @return > 0 success | -1 login failed | -2 can't login
      */
-    public JPlayer selectServerId(long serverId, String sessionId, String channel) {
+    public long selectServerId(long serverId, String sessionId, String channel) {
         JPlatformUser platformUser = PlatformService.ME.loginForSessionId(sessionId);
         if (platformUser == null) {
-            return null;
+            return -1;
         }
 
         JPlayer player = getPlayer(serverId, platformUser, channel);
         if (player == null) {
-            return null;
+            return -2;
         }
 
-        return player;
+        return player.getId();
     }
 
 }

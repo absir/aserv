@@ -14,7 +14,6 @@
     <modules>
         <module>absir-lang</module>
         <module>absir-io</module>
-        <module>absir-log4j</module>
         <module>absir-bean</module>
         <module>absir-core</module>
         <module>absir-context</module>
@@ -48,8 +47,6 @@
         <module>absir-plugin</module>
         <module>absir-spring</module>
         <module>absir-dubbo</module>
-        <module>absir-diamond</module>
-        <module>absir-contextRedis</module>
         <module>aserv-server</module>
         <module>achieve-site</module>
         <module>aserv-game</module>
@@ -58,6 +55,8 @@
         <module>aserv-game-slave</module>
         <module>aserv-game-master</module>
         <module>aserv-admin</module>
+        <module>aserv-dubbo-master</module>
+        <module>aserv-dubbo-slave</module>
     </modules>
     <dependencies>
         <dependency>

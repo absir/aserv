@@ -9,9 +9,9 @@ package com.absir.aserv.master.service;
 
 import com.absir.aserv.master.bean.JSlave;
 import com.absir.aserv.system.dao.BeanDao;
+import com.absir.aserv.system.service.BeanService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
-import com.absir.context.core.ContextUtils;
 import com.absir.core.base.Environment;
 import com.absir.master.InputMasterContext;
 import com.absir.orm.transaction.value.Transaction;
@@ -25,9 +25,9 @@ public class InputMasterService extends InputMasterContext {
 
     @Transaction
     @Override
-    public void registerSlaveKey(String id, byte[] secerets, String validate, String[] params,
-                                 SocketChannel socketChannel) {
-        super.registerSlaveKey(id, secerets, validate, params, socketChannel);
+    public synchronized void registerSlaveKey(String id, byte[] secrets, String validate, String[] params,
+                                              SocketChannel socketChannel, long currentTime) {
+        super.registerSlaveKey(id, secrets, validate, params, socketChannel, currentTime);
         Session session = BeanDao.getSession();
         JSlave slave = BeanDao.get(session, JSlave.class, id);
         if (slave == null) {
@@ -50,7 +50,7 @@ public class InputMasterService extends InputMasterContext {
 
         slave.setIp(socketChannel.socket().getInetAddress().getHostAddress());
         slave.setConnecting(true);
-        slave.setLastConnectTime(ContextUtils.getContextTime());
+        slave.setLastConnectTime(currentTime);
         slave.setSlaveKey(validate);
         if (id == null) {
             session.persist(slave);
@@ -61,25 +61,13 @@ public class InputMasterService extends InputMasterContext {
         }
     }
 
-    @Transaction
     @Override
-    public MasterChannelContext unregisterSlaveKey(String id, SocketChannel socketChannel) {
-        MasterChannelContext context = super.unregisterSlaveKey(id, socketChannel);
+    public MasterChannelContext unregisterSlaveKey(String id, SocketChannel socketChannel, long currentTime) {
+        MasterChannelContext context = super.unregisterSlaveKey(id, socketChannel, currentTime);
         if (context != null) {
             if (Environment.isStarted()) {
-                Session session = BeanDao.getSession();
-                JSlave slave = BeanDao.get(session, JSlave.class, id);
-                if (slave != null) {
-                    slave.setConnecting(false);
-                    slave.setLastConnectTime(ContextUtils.getContextTime());
-                    session.merge(slave);
-                    session.flush();
-                    if (InputMasterContext.ME.getSlaveKey(id) != null) {
-                        // session.getTransaction().rollback();
-                    }
-
-                    session.evict(slave);
-                }
+                BeanService.ME.executeUpdate("UPDATE JSlave o SET o.connecting = ? AND o.lastConnectTime = ? WHERE o.id = ? AND o.lastConnectTime < ?",
+                        false, currentTime, id, currentTime);
             }
         }
 

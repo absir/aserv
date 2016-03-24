@@ -151,16 +151,16 @@ public class UtilPipedStream implements IStep {
     }
 
     @Override
-    public boolean stepDone(long contextTime) {
+    public boolean stepDone(long currentTime) {
         if (idleTime > 0) {
-            contextTime = UtilContext.getCurrentTime();
+            currentTime = UtilContext.getCurrentTime();
             Iterator<Entry<Object, NextOutputStream>> iterator = nextMapOutStream.entrySet().iterator();
             Entry<Object, NextOutputStream> entry;
             NextOutputStream outputStream;
             while (iterator.hasNext()) {
                 entry = iterator.next();
                 outputStream = entry.getValue();
-                if (outputStream.passTime < contextTime) {
+                if (outputStream.passTime < currentTime) {
                     iterator.remove();
                     closeCloseable(outputStream);
                 }

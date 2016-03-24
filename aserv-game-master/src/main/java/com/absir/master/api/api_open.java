@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年11月18日 下午2:15:37
  */
 package com.absir.master.api;
@@ -74,11 +74,6 @@ public class api_open extends ApiServer {
 
         JPlatformSession session = PlatformService.ME.loginReSession("OKL", uuid, channel, input.getAddress(), input.getFacade().getUserAgent());
         return new String[]{uuid, session.getId()};
-    }
-
-    @JaLang("选择分区")
-    public long selectServerId(long serverId, String sessionId, String channel) {
-        return MasterChannelService.ME.selectServerId(serverId, sessionId, channel).getId();
     }
 
 }

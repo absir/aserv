@@ -140,7 +140,7 @@ public class SocketSessionResolver implements ISessionResolver {
             public void run() {
                 Serializable id = null;
                 try {
-                    getServerResolver().register(socketChannel, selSession, buffer);
+                    getServerResolver().register(socketChannel, selSession, buffer, System.currentTimeMillis());
                     id = socketBuffer.getId();
                     if (id == SelSession.UN_REGISTER_ID) {
                         id = null;
@@ -201,12 +201,13 @@ public class SocketSessionResolver implements ISessionResolver {
             return;
         }
 
+        final long currentTime = System.currentTimeMillis();
         if (isBeat(socketChannel, socketBuffer, buffer)) {
-            getServerResolver().receiveBeatNIO(socketChannel, selSession);
+            getServerResolver().receiveBeatNIO(socketChannel, selSession, currentTime);
             return;
         }
 
-        if (getServerResolver().receiveBufferNIO(socketChannel, selSession, socketBuffer, buffer)) {
+        if (getServerResolver().receiveBufferNIO(socketChannel, selSession, socketBuffer, buffer, currentTime)) {
             return;
         }
 
@@ -221,7 +222,7 @@ public class SocketSessionResolver implements ISessionResolver {
                 byte[] queueBuffer = buffer;
                 while (queueBuffer != null) {
                     try {
-                        getServerResolver().receiveByteBuffer(socketChannel, selSession, socketBuffer, queueBuffer);
+                        getServerResolver().receiveByteBuffer(socketChannel, selSession, socketBuffer, queueBuffer, currentTime);
 
                     } catch (Throwable e) {
                         LOGGER.error("receiveByteBuffer", e);
@@ -240,11 +241,12 @@ public class SocketSessionResolver implements ISessionResolver {
     @Override
     public void unRegister(final Serializable id, final SocketChannel socketChannel, final SelSession selSession)
             throws Throwable {
+        final long currentTime = System.currentTimeMillis();
         UtilContext.getThreadPoolExecutor().execute(new RunableGuaranted() {
 
             @Override
             public void run() {
-                getServerResolver().unRegister(id, socketChannel, selSession);
+                getServerResolver().unRegister(id, socketChannel, selSession, currentTime);
             }
         });
     }

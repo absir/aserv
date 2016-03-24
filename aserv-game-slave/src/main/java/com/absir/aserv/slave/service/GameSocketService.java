@@ -59,7 +59,7 @@ public class GameSocketService extends SocketServerResolver {
     }
 
     @Override
-    public void register(SocketChannel socketChannel, SelSession selSession, byte[] buffer) throws Throwable {
+    public void register(SocketChannel socketChannel, SelSession selSession, byte[] buffer, long currentTime) throws Throwable {
         PLoginData loginData = PLoginData.CODEC.decode(buffer);
         PLoginMessage loginMessage = new PLoginMessage();
         if (loginData.getPlayerId() <= 0) {

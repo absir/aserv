@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd ">
+
+    <context:component-scan base-package="com.absir.dubbo">
+        <context:include-filter type="annotation" expression="com.alibaba.dubbo.config.annotation.Service"/>
+    </context:component-scan>
+
+    <dubbo:annotation package="com.absir.dubbo"/>
+
+    <dubbo:application name="aserv-dubbo-slave"/>
+    <dubbo:registry address="zookeeper://127.0.0.1:2181" check="false" timeout="30000" group="slave"/>
+    <dubbo:protocol name="dubbo" port="20880"/>
+    <dubbo:consumer check="false" version="1.0.0"/>
+
+</beans>
