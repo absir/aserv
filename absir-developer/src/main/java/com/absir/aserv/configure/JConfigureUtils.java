@@ -89,9 +89,9 @@ public abstract class JConfigureUtils {
     }
 
     private static void initConfigure(final JConfigureBase configureBase) {
-        String identitier = configureBase.getIdentitier();
+        String identifier = configureBase.getIdentifier();
         Map<String, JConfigure> configureMap = new HashMap<String, JConfigure>();
-        for (JConfigure configure : (List<JConfigure>) BeanService.ME.list("JConfigure", null, 0, 0, "o.id.eid", identitier)) {
+        for (JConfigure configure : (List<JConfigure>) BeanService.ME.list("JConfigure", null, 0, 0, "o.id.eid", identifier)) {
             configureMap.put(configure.getId().getMid(), configure);
         }
 
@@ -99,7 +99,7 @@ public abstract class JConfigureUtils {
             JConfigure configure = configureMap.get(field.getName());
             if (configure == null) {
                 configure = new JConfigure();
-                configure.setId(new JEmbedSS(identitier, field.getName()));
+                configure.setId(new JEmbedSS(identifier, field.getName()));
 
             } else {
                 KernelObject.declaredSetter(configureBase, field, configureBase.set(configure.getValue(), field));

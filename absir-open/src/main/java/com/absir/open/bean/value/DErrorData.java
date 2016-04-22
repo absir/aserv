@@ -7,7 +7,7 @@
  */
 package com.absir.open.bean.value;
 
-public class OErrorData {
+public class DErrorData {
 
     public int error_code;
 

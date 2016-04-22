@@ -9,7 +9,7 @@ package com.absir.open.service;
 
 import com.absir.open.bean.JPayTrade;
 
-public interface IPayProccessor {
+public interface IPayProcessor {
 
     public Object process(JPayTrade payTrade) throws Exception;
 

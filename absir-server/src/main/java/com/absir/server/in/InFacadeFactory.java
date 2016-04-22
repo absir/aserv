@@ -2,6 +2,7 @@ package com.absir.server.in;
 
 import com.absir.bean.basis.Configure;
 import com.absir.bean.inject.value.Inject;
+import com.absir.bean.inject.value.InjectType;
 import com.absir.bean.inject.value.Orders;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import java.util.Map;
 public abstract class InFacadeFactory {
 
     @Orders
-    @Inject
+    @Inject(type = InjectType.Selectable)
     private static InFacadeFactory[] facadeFactories;
 
     private static final Map<Class<?>, InFacadeFactory> inputClassMapFacadeFactory = new HashMap<Class<?>, InFacadeFactory>();

@@ -33,7 +33,6 @@ public class MasterSlaveService implements NotifyListener {
 
     private DCache<JSlave, JSlave> slaveDCache;
 
-
     public RegistryService getRegistryService() {
         return registryService;
     }

@@ -7,10 +7,12 @@
  */
 package com.absir.open.service;
 
-import com.absir.open.bean.JPayTrade;
+import java.lang.reflect.TypeVariable;
 
-public interface IPayInterface {
+public interface IPayInterface<T> {
 
-    public boolean validator(JPayTrade payTrade) throws Exception;
+    public static final TypeVariable<?> TYPE_VARIABLE = IPayInterface.class.getTypeParameters()[0];
+
+    public boolean validator(T configure, String tradeNo, String tradeReceipt, String platformData, String[] moreDatas) throws Exception;
 
 }

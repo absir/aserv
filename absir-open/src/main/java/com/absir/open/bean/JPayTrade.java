@@ -14,9 +14,7 @@ import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.open.bean.value.JePayStatus;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @MaEntity(parent = {@MaMenu("支付管理")}, name = "订单")
 @Entity
@@ -28,6 +26,7 @@ public class JPayTrade extends JbBase {
 
     @JaLang("创建时间")
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
+    @Temporal(TemporalType.TIMESTAMP)
     private long createTime;
 
     @JaLang(value = "平台名称", tag = "platformName")
@@ -37,15 +36,15 @@ public class JPayTrade extends JbBase {
     @JaLang("平台参数")
     private String platformData;
 
+    @JaLang("渠道")
+    private String channel;
+
     @JaLang("交易号")
     private String tradeNo;
 
-    @JaLang("交易号")
+    @JaLang("交易票据")
     @Column(length = 1024)
-    private String tradeData;
-
-    @JaLang("渠道")
-    private String channel;
+    private String tradeReceipt;
 
     @JaLang(value = "交易状态", tag = "tradeStatus")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -83,6 +82,12 @@ public class JPayTrade extends JbBase {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String source;
 
+    @JaLang("配置编号")
+    private int configureId;
+
+    @JaLang(value = "更多数据")
+    private String[] moreDatas;
+
     public String getId() {
         return id;
     }
@@ -115,6 +120,14 @@ public class JPayTrade extends JbBase {
         this.platformData = platformData;
     }
 
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
     public String getTradeNo() {
         return tradeNo;
     }
@@ -123,20 +136,12 @@ public class JPayTrade extends JbBase {
         this.tradeNo = tradeNo;
     }
 
-    public String getTradeData() {
-        return tradeData;
+    public String getTradeReceipt() {
+        return tradeReceipt;
     }
 
-    public void setTradeData(String tradeData) {
-        this.tradeData = tradeData;
-    }
-
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
+    public void setTradeReceipt(String tradeReceipt) {
+        this.tradeReceipt = tradeReceipt;
     }
 
     public JePayStatus getStatus() {
@@ -211,4 +216,19 @@ public class JPayTrade extends JbBase {
         this.source = source;
     }
 
+    public int getConfigureId() {
+        return configureId;
+    }
+
+    public void setConfigureId(int configureId) {
+        this.configureId = configureId;
+    }
+
+    public String[] getMoreDatas() {
+        return moreDatas;
+    }
+
+    public void setMoreDatas(String[] moreDatas) {
+        this.moreDatas = moreDatas;
+    }
 }

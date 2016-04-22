@@ -23,7 +23,7 @@ import com.absir.core.util.UtilAbsir;
 import com.absir.core.util.UtilContext;
 import com.absir.open.bean.JPayTrade;
 import com.absir.open.bean.value.JePayStatus;
-import com.absir.open.service.IPayProccessor;
+import com.absir.open.service.IPayProcessor;
 import com.absir.open.service.TradeService;
 import com.absir.open.service.utils.PayUtils;
 import com.absir.orm.transaction.value.Transaction;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 @Base
 @Bean
-public class MasterTradeService implements IPayProccessor {
+public class MasterTradeService implements IPayProcessor {
 
     public static final MasterTradeService ME = BeanFactoryUtils.get(MasterTradeService.class);
 

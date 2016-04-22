@@ -472,7 +472,9 @@ public class BeanConfigImpl implements BeanConfig {
 
         });
 
-        beanConfigProvider.loadBeanConfig(this, propertyFilenames, loadedPropertyFilenames, beanConfigTemplates);
+        if (beanConfigProvider != null) {
+            beanConfigProvider.loadBeanConfig(this, propertyFilenames, loadedPropertyFilenames, beanConfigTemplates);
+        }
     }
 
     private void readProperties(String filename, Set<String> propertyFilenames, Set<String> loadedPropertyFilenames,
@@ -552,7 +554,7 @@ public class BeanConfigImpl implements BeanConfig {
         Object obj = configMap.get(name);
         if (obj == null && !configMap.containsKey(name)) {
             if (beanConfig != null) {
-                obj = beanConfig.getValue(name);
+                obj = beanConfig.getConfigValue(name);
             }
         }
 

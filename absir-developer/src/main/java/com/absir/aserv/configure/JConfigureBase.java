@@ -32,7 +32,7 @@ public class JConfigureBase implements IBase<Serializable> {
         return 0;
     }
 
-    protected String getIdentitier() {
+    protected String getIdentifier() {
         return InitBeanFactory.ME.getAppCode() + getClass().getName() + "@" + getId();
     }
 

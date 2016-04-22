@@ -57,6 +57,7 @@
         <module>aserv-admin</module>
         <module>aserv-dubbo-master</module>
         <module>aserv-dubbo-slave</module>
+        <module>absir-freemaker</module>
     </modules>
     <dependencies>
         <dependency>

@@ -32,6 +32,18 @@ public abstract class ConfigureUtils {
         return BinderUtils.getDataMap(propertyMap);
     }
 
+    public static <T> T newConfigure(Class<T> cls, File configureFile) {
+        T configure = KernelClass.newInstance(cls);
+        try {
+            DynaBinder.INSTANCE.mapBind(readPropertyMap(configureFile), configure);
+
+        } catch (Exception e) {
+            LOGGER.error("get configure " + cls + " error", e);
+        }
+
+        return configure;
+    }
+
     public <T extends ConfigureBase> T getConfigure(Class<T> cls) {
         T configure = (T) Configure_Class_Map_Bean.get(cls);
         if (configure == null) {

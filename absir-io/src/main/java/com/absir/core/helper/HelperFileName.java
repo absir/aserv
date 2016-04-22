@@ -31,7 +31,12 @@ public class HelperFileName extends FilenameUtils {
     public static String getClassPath(Class<?> cls) {
         String classPath = null;
         if (cls == null) {
-            return getResourcePath(Thread.currentThread().getContextClassLoader().getResource(""));
+            classPath = getResourcePath(Thread.currentThread().getContextClassLoader().getResource(""));
+            if (classPath != null) {
+                return classPath;
+            }
+
+            cls = HelperFileName.class;
         }
 
         ProtectionDomain domain = cls.getProtectionDomain();

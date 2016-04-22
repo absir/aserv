@@ -14,6 +14,7 @@ import com.absir.bean.config.IBeanObjectProcessor;
 import com.absir.bean.config.IBeanSoftReferenceAware;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelClass;
+import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.core.kernel.KernelLang.FilterTemplate;
 import com.absir.core.kernel.KernelList;
@@ -50,6 +51,15 @@ public class BeanFactoryImpl implements BeanFactory {
     private BeanFactoryImpl beanFactoryImpl;
 
     private List<BeanSupply> beanSupplies;
+
+    public static BeanConfig forBeanConfig(String classPath) {
+        if (Instance == null) {
+            new BeanFactoryImpl(new BeanConfigImpl(null, classPath), new ConcurrentHashMap<String, BeanDefine>(), new ArrayList<IBeanDefineAware>(), new ArrayList<IBeanDefineProcessor>(),
+                    new ArrayList<IBeanObjectProcessor>(), new ArrayList<IBeanSoftReferenceAware>());
+        }
+
+        return Instance.beanConfig;
+    }
 
     protected BeanFactoryImpl(BeanConfig beanConfig, ConcurrentHashMap<String, BeanDefine> beanNameDefineMap,
                               List<IBeanDefineAware> beanDefineAwares, List<IBeanDefineProcessor> beanDefineProcessors,
@@ -244,6 +254,12 @@ public class BeanFactoryImpl implements BeanFactory {
 
         if (KernelString.isEmpty(beanName)) {
             beanName = null;
+
+        } else {
+            String aliasName = KernelDyna.to(beanConfig.getConfigValue("Bean:" + beanName), String.class);
+            if (!KernelString.isEmpty(aliasName)) {
+                beanName = aliasName;
+            }
         }
 
         Object beanObject = beanName == null ? getBeanObject(beanType) : getBeanObject(beanName);
@@ -884,8 +900,6 @@ public class BeanFactoryImpl implements BeanFactory {
 
     /**
      * 注销对象定义
-     *
-     * @param beanDefine
      */
     public void unRegisterBeanDefine(BeanDefine beanDefine) {
         unRegisterBeanDefine(null, null, beanDefine);
@@ -893,10 +907,6 @@ public class BeanFactoryImpl implements BeanFactory {
 
     /**
      * 注销对象定义
-     *
-     * @param registeredBeanDefine
-     * @param object
-     * @param beanDefine
      */
     protected void unRegisterBeanDefine(String beanName, Object beanObject, BeanDefine beanDefine) {
         if (beanName == null) {
