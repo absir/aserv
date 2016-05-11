@@ -72,11 +72,6 @@ public class RouteAdapter implements IBeanFactoryStarted {
 
     /**
      * 路由匹配比较
-     *
-     * @param inMatcher
-     * @param uries
-     * @param length
-     * @return
      */
     public static int compare(InMatcher inMatcher, byte[] uries, int length) {
         byte[] to = inMatcher.getMapping();
@@ -106,10 +101,6 @@ public class RouteAdapter implements IBeanFactoryStarted {
 
     /**
      * 路由匹配
-     *
-     * @param uries
-     * @param getMethod
-     * @return
      */
     public <T> Object[] route(String uri, IDispatcher<T> dispatcher, T req) {
         if (!started) {
@@ -272,15 +263,15 @@ public class RouteAdapter implements IBeanFactoryStarted {
      * 注册全部匹配
      */
     public void registerAllMatcher() {
-        Collections.sort(routeMatchers, ROUTE_MATCHER_COMPARATOR);
-        for (RouteMatcher routeMatcher : routeMatchers) {
-            LOGGER.info(routeMatcher.toString());
-        }
+        registerAllMatcher(routeMatchers);
     }
 
     public void registerAllMatcher(List<RouteMatcher> matchers) {
         Collections.sort(matchers, ROUTE_MATCHER_COMPARATOR);
         routeMatchers = matchers;
+        for (RouteMatcher routeMatcher : routeMatchers) {
+            LOGGER.info(routeMatcher.toString());
+        }
     }
 
     @Override
@@ -293,4 +284,5 @@ public class RouteAdapter implements IBeanFactoryStarted {
         LOGGER.info("started server");
         started = true;
     }
+
 }

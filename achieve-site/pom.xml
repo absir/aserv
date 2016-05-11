@@ -9,6 +9,7 @@
         <artifactId>parent</artifactId>
         <version>1.0-Final</version>
     </parent>
+    <groupId>com.absir.archetype</groupId>
     <artifactId>achieve-site</artifactId>
     <packaging>war</packaging>
     <name>achieve-site Maven site</name>

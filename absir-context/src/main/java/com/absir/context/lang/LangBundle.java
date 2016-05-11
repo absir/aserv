@@ -37,6 +37,8 @@ public class LangBundle {
 
     private static boolean i18n;
 
+    private static boolean strict;
+
     @Value(value = "lang.resouce", defaultValue = "${classPath}lang/")
     protected String langResource;
 
@@ -73,9 +75,14 @@ public class LangBundle {
         return i18n;
     }
 
+    public static boolean isStrictTag() {
+        return i18n || LangBundle.strict;
+    }
+
     @Inject
-    protected void setI18n(@Value(value = "lang.i18n", defaultValue = "0") boolean i18n) {
+    protected void setI18n(@Value(value = "lang.i18n", defaultValue = "0") boolean i18n, @Value(value = "lang.strict", defaultValue = "0") boolean strict) {
         LangBundle.i18n = i18n;
+        LangBundle.strict = strict;
     }
 
     /**

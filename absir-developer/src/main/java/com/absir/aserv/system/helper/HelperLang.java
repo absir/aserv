@@ -53,7 +53,7 @@ public class HelperLang {
             LangBundle.ME.setResourceLang(name, lang);
         }
 
-        return name;
+        return LangBundle.isStrictTag() || KernelString.isEmpty(lang) ? name : lang;
     }
 
     public static String[] getLangNameLang(String lang, String tag, String name) {

@@ -15,5 +15,5 @@ ext=$ext$group
 fi
 
 command="mvn archetype:generate -DarchetypeCatalog=local -DinteractiveMode=false -DarchetypeGroupId=com.absir.archetype -DarchetypeArtifactId=achieve-site-archetype -DarchetypeVersion=1.0-Final -DartifactId=$project $ext"
-printf "$command"
+printf "$command\r\n"
 $command
