@@ -3,4 +3,4 @@ import = "org.jsoup.nodes.*"
 )
 
 ${node.empty().voidValue()}
-${node.appendChild(ScripteNode::node('$' + '{Pag::enumLang(' + nodeval + ')}')).voidValue()}
+${node.appendChild(ScriptNode::node('$' + '{Pag::enumLang(' + nodeval + ')}')).voidValue()}

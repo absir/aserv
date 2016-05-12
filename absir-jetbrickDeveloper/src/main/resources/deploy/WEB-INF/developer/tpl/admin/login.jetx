@@ -197,7 +197,7 @@
                 </div>
                 <div class="form-group">
                     <label for="j_captcha" class="t">${Pag::getLang("验证码")}：</label>
-                    <input id="j_captcha" name="verifycode" type="text" class="form-control x164 in">
+                    <input id="j_captcha" name="verifyCode" type="text" class="form-control x164 in">
                     <img id="captcha_img" src="${SITE_ROUTE}asset/verify?width=150&height=35" class="m">
                 </div>
                 <div class="form-group">

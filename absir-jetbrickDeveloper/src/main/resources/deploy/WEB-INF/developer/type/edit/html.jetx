@@ -9,4 +9,4 @@ ${input.attr('data-minheight', '200')}
 ${input.attr('data-upload-json', '${ADMIN_ROUTE}entity/upload')}
 ${input.attr('data-file-manager-json', '${ADMIN_ROUTE}entity/filemanager')}
 ${input.removeAttr('value')}
-${input.appendChild(ScripteNode::node('${' + inputval + '}')).voidValue()}
+${input.appendChild(ScriptNode::node('${' + inputval + '}')).voidValue()}

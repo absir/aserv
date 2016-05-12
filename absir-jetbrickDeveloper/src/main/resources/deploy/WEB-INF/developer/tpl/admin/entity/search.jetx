@@ -17,14 +17,14 @@ ${Scenario::set("search", request)}
                 <input ${identifier} type="text" size="10" value="\${searchConditionMap['${field.getName()}']}" />
             </p>
             #end
-            #set(nodes = ScripteNode::append(element, node))
+            #set(nodes = ScriptNode::append(element, node))
             ${DeveloperUtils::includeExist("search", field.getTypes(), request)}
         #end
     #end
 #end
 ${DeveloperUtils::includeExist("search", entityModel.getJoEntity().getEntityName(), request)}
 #tag scriptEcho()
-${element.html() + "\r\n"}
+${ScriptNode::html(element) + "\r\n"}
 #end
 ##table header-->
 #end

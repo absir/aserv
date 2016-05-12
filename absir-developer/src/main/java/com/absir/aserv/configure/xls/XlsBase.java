@@ -22,9 +22,9 @@ import java.io.Serializable;
 @SuppressWarnings({"unchecked"})
 public class XlsBase extends Base<Serializable> {
 
-    public static String XLS_DIR = "xls/";
+    public static final String XLS_DIR = "xls/";
 
-    public static String XLS_SUFFIX = ".xls";
+    public static final String XLS_SUFFIX = ".xls";
 
     @JaLang("编号")
     protected Serializable id;

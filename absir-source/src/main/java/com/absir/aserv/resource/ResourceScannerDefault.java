@@ -13,6 +13,7 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.*;
 import com.absir.core.helper.HelperFileName;
+import com.absir.core.kernel.KernelString;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.Session;
 
@@ -49,8 +50,8 @@ public class ResourceScannerDefault extends ResourceScanner {
     @Transaction(rollback = Throwable.class)
     @Started
     public void startedProcess() {
-        if (resourceProcessors != null) {
-            scanPath = HelperFileName.normalizeNoEndSeparator(BeanFactoryUtils.getBeanConfig().getResourcePath() + scanPath);
+        if (resourceProcessors != null && !KernelString.isEmpty(scanPath)) {
+            scanPath = HelperFileName.normalizeNoEndSeparator(HelperFileName.concat(BeanFactoryUtils.getBeanConfig().getResourcePath(), scanPath));
             List<ResourceProcessor> processors = new ArrayList<ResourceProcessor>();
             for (ResourceProcessor resourceProcessor : resourceProcessors) {
                 if (resourceProcessor.supports(this)) {

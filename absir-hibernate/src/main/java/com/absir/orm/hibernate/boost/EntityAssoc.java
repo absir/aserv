@@ -53,9 +53,10 @@ public class EntityAssoc {
      *
      * @param entityName
      * @param assocName
+     * @param assocJpaName
      * @param jaAssoc
      */
-    protected static void addPersistentClass(String entityName, String assocName, JaAssoc jaAssoc) {
+    protected static void addPersistentClass(String entityName, String assocName, String assocJpaName, JaAssoc jaAssoc) {
         if (JiAssoc.class.isAssignableFrom(jaAssoc.entityClass())) {
             List<AssocEntity> assocEntities = SessionFactoryUtils.get().getNameMapAssocEntities().get(entityName);
             if (assocEntities == null) {
@@ -75,7 +76,7 @@ public class EntityAssoc {
             SessionFactoryUtils.get().getNameMapEntityAssocEntity().put(assocName, new EntityAssocEntity(entityName, assocEntity));
         }
 
-        SessionFactoryUtils.setEntityPermissions(assocName, jaAssoc.permissions());
+        SessionFactoryUtils.setEntityPermissions(assocJpaName, jaAssoc.permissions());
     }
 
     /**
@@ -94,13 +95,13 @@ public class EntityAssoc {
 
         SessionFactoryUtils.get().getEntityNameMapJpaEntityName().put(entityName, jpaEntityName);
         if (jaEntity != null) {
-            SessionFactoryUtils.setEntityPermissions(entityName, jaEntity.permissions());
+            SessionFactoryUtils.setEntityPermissions(jpaEntityName, jaEntity.permissions());
 
             for (JaPermission jaPermission : jaEntity.jaPermissions()) {
                 String assocName = entityName + jaPermission.entityName();
                 PersistentClass persistentClass = classes.get(assocName);
                 if (persistentClass != null && !SessionFactoryUtils.get().getNameMapPermissions().containsKey(entityName)) {
-                    SessionFactoryUtils.setEntityPermissions(persistentClass.getEntityName(), jaPermission.permissions());
+                    SessionFactoryUtils.setEntityPermissions(persistentClass.getJpaEntityName(), jaPermission.permissions());
                 }
             }
         }

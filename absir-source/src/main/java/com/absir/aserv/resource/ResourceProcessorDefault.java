@@ -70,7 +70,9 @@ public class ResourceProcessorDefault implements ResourceProcessor {
 
         // 文件已经扫瞄
         resource.setScanned(true);
+        long fileSize = resourceFile.length();
         String md5 = null;
+        FileInputStream inputStream = null;
         try {
             md5 = HelperEncrypt.encryptionMD5(new FileInputStream(resourceFile));
 
@@ -78,8 +80,9 @@ public class ResourceProcessorDefault implements ResourceProcessor {
             e.printStackTrace();
         }
 
-        if (md5 != null && !KernelObject.equals(md5, resource.getFileMd5())) {
+        if (fileSize != resource.getFileSize() || (md5 != null && !KernelObject.equals(md5, resource.getFileMd5()))) {
             resource.setUpdateTime(ContextUtils.getContextTime());
+            resource.setFileSize(fileSize);
             resource.setFileMd5(md5);
         }
 

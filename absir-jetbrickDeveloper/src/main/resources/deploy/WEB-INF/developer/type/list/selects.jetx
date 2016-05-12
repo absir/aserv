@@ -15,4 +15,4 @@ entity : 'suggest'
 #end
 
 ${node.empty().voidValue()}
-${node.appendChild(ScripteNode::node(shtml)).voidValue()}
+${node.appendChild(ScriptNode::node(shtml)).voidValue()}

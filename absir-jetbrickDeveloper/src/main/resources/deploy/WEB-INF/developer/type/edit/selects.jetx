@@ -26,4 +26,4 @@ ${input.removeAttr('value')}
 ${input.removeAttr('type')}
 ${input.removeAttr('size')}
 ${input.attr('data-width', '200')}
-${input.appendChild(ScripteNode::node(shtml)).voidValue()}
+${input.appendChild(ScriptNode::node(shtml)).voidValue()}

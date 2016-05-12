@@ -19,7 +19,7 @@ ${Scenario::set("edit", request)}
                 <input ${identifier} type="text" size="20" readonly="readonly" value="\${entity.${field.getName()}}"/>
             </p>
             #end
-            #set(nodes = ScripteNode::append(element, node))
+            #set(nodes = ScriptNode::append(element, node))
         #else
             ##一般主键
             #tag layout_block("node")
@@ -28,7 +28,7 @@ ${Scenario::set("edit", request)}
 		        <input ${identifier} type="text" size="20" value="\${entity.${field.getName()}}" />
 	        </p>
             #end
-            #set(nodes = ScripteNode::append(element, node))
+            #set(nodes = ScriptNode::append(element, node))
             ${nodes.get(0).getElementsByTag("input").get(0).attr(readonly, "true").voidValue()}
             ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
         #end
@@ -70,7 +70,7 @@ ${Scenario::set("edit", request)}
 		            <input ${identifier} type="text" size="20" value="\${entity.${field.getName()}}" />
 	            </p>
                 #end
-                #set(nodes = ScripteNode::append(element, node))
+                #set(nodes = ScriptNode::append(element, node))
                 ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
 		    #end
 	    #end
@@ -79,7 +79,7 @@ ${Scenario::set("edit", request)}
 ##编辑一般字段结束
 ${DeveloperUtils::includeExist("edit", entityModel.getJoEntity().getEntityName(), request)}
 #tag scriptEcho()
-${element.html() + "\r\n"}
+${ScriptNode::html(element) + "\r\n"}
 #end
 ##编辑关联实体
 ##subtableFields 关联实体List 或 Map
@@ -162,13 +162,13 @@ ${element.html() + "\r\n"}
                             <input ${identifier} type="text" size="20" value="\${entity.${field.getName()}}" />
                         </p>
                         #end
-                        #set(nodes = ScripteNode::append(element, node))
+                        #set(nodes = ScriptNode::append(element, node))
                         ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
                     #end
                 #end
 
                 #tag scriptEcho()
-                    ${element.html() + "\r\n"}
+                    ${ScriptNode::html(element) + "\r\n"}
                     </div>
 
                 #end
@@ -225,7 +225,7 @@ ${element.html() + "\r\n"}
                                             #tag layout_block("node")
                                             <td><input ${identifier} type="text" style="width:80%" value="\${entity.key}"></td>
                                             #end
-                                            #set(nodes = ScripteNode::append(element, node))
+                                            #set(nodes = ScriptNode::append(element, node))
                                             ${DeveloperUtils::includeExist("subtable", field.getTypes(), request)}
                                         #end
                                     #end
@@ -242,7 +242,7 @@ ${element.html() + "\r\n"}
                                         #tag layout_block("node")
                                         <td><input ${identifier} type="text" style="width:80%" value="\${entity${map_value}}"></td>
                                         #end
-                                        #set(nodes = ScripteNode::append(element, node))
+                                        #set(nodes = ScriptNode::append(element, node))
                                         ${DeveloperUtils::includeExist("subtable", map_value ? field.getValueField().getTypes() : field.getTypes(), request)}
                                     #end
 
@@ -259,7 +259,7 @@ ${element.html() + "\r\n"}
                                             #tag layout_block("node")
                                             <td><input ${identifier} type="text" style="width:80%" value="\${entity${map_value}.${field.getName()} ?! ''}"></td>
                                             #end
-                                            #set(nodes = ScripteNode::append(element, node))
+                                            #set(nodes = ScriptNode::append(element, node))
                                             ${DeveloperUtils::includeExist("subtable", field.getTypes(), request)}
                                         #end
                                     #end
@@ -281,8 +281,8 @@ ${element.html() + "\r\n"}
                             </td>
                             #end
                     #end
-                            #set(nodes = ScripteNode::append(element, node))
-                            #set(element_html = element.html())
+                            #set(nodes = ScriptNode::append(element, node))
+                            #set(element_html = ScriptNode::html(element))
                             #for(doc : element.select('[name]'))
                                 ${doc.attr('aname', doc.attr('name')).voidValue()}
                                 ${doc.removeAttr('name').voidValue()}
@@ -295,7 +295,7 @@ ${element.html() + "\r\n"}
                                 \#set(for_index = Pag::getForIndex())
                                 \#set(for_entity = entity)
                                 \#set(entity = Pag::getForEntityMap(${archetype_map}))
-                                ${element.html() + "\r\n"}
+                                ${ScriptNode::html(element) + "\r\n"}
                                 \#set(entity = for_entity)
                                 archetype--${'>'}
                             </tr>

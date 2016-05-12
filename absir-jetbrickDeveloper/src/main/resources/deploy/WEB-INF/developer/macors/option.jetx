@@ -10,7 +10,7 @@ ${request.setAttribute("generator", generator)}
 ##define(String identifier)
 
 #set(Document document = new Document(""))
-${document.outputSettings().escapeMode(ScripteNode::NONE).voidValue()}
+${document.outputSettings().escapeMode(ScriptNode::NONE).voidValue()}
 ${request.setAttribute("document", document)}
 ##define(Element element)
 ##define(List nodes)

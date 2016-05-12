@@ -16,7 +16,17 @@ import javax.persistence.Entity;
 @Entity
 public class JResource extends JbResource {
 
+    private long fileSize;
+
     private String fileMd5;
+
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
 
     public String getFileMd5() {
         return fileMd5;

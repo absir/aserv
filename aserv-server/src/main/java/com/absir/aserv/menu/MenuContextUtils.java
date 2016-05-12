@@ -201,7 +201,7 @@ public abstract class MenuContextUtils {
             servletContext.setAttribute("app_code", InitBeanFactory.ME.getAppCode());
             servletContext.setAttribute("app_version", InitBeanFactory.ME.getVersion());
 
-            if (menuScanUpdate && InitBeanFactory.isVersionChange()) {
+            if (menuScanUpdate && InitBeanFactory.ME.isVersionChange()) {
                 // 初始化菜单
                 MenuBeanRoot menuBeanRoot = new MenuBeanRoot();
                 // 扫瞄后台菜单

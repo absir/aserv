@@ -27,7 +27,6 @@ public abstract class JbPlayerA extends JbBase {
     private int gameDay;
 
     @JaLang("在线天数")
-    @JaEdit(types = "dateTime")
     private int onlineDay;
 
     @JaLang("在线时间")

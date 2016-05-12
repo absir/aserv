@@ -3,4 +3,4 @@ import = "org.jsoup.nodes.*"
 )
 
 ${node.empty().voidValue()}
-${node.appendChild(ScripteNode::node('$' + '{Pag::dateValue(' + nodeval + ')}')).voidValue()}
+${node.appendChild(ScriptNode::node('$' + '{Pag::dateValue(' + nodeval + ')}')).voidValue()}

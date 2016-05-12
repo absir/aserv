@@ -11,6 +11,7 @@ import com.absir.bean.basis.Basis;
 import com.absir.bean.basis.BeanFactory;
 import com.absir.bean.config.IBeanFactoryStopping;
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Value;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelClass;
@@ -38,6 +39,11 @@ import java.util.Map.Entry;
 public class SessionFactoryBean implements IBeanFactoryStopping {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryBean.class);
+
+    @Inject
+    public void setSessionFactoryScanner(SessionFactoryScanner scanner) {
+        LOGGER.info("setSessionFactoryScanner " + scanner);
+    }
 
     @Value("driver.shared")
     private boolean driverShared;

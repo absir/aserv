@@ -14,6 +14,7 @@ import com.absir.aserv.jdbc.JdbcUtils;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelLang;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 import java.io.Serializable;
@@ -100,6 +101,12 @@ public abstract class QueryDaoUtils {
 
     public static Query createQueryArray(Session session, String queryString, Object... parameters) {
         Query query = session.createQuery(queryString);
+        setParameterArray(query, parameters);
+        return query;
+    }
+
+    public static SQLQuery createSQLQuery(Session session, String queryString, Object... parameters) {
+        SQLQuery query = session.createSQLQuery(queryString);
         setParameterArray(query, parameters);
         return query;
     }

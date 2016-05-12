@@ -18,7 +18,7 @@ import javax.persistence.MappedSuperclass;
 public class JbResource extends JbBase implements JiUpdate {
 
     @Id
-    String id;
+    protected String id;
 
     @JsonIgnore
     private long updateTime;

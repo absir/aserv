@@ -13,7 +13,7 @@ ${Scenario::set("list", request)}
         #set(identifier = "<th class=\"th_" + field.getNodeName())
         #if(!generator.append(identifier, element))
             #set(node = identifier + "\">" + Pag::getLangName(field.getCaption()) + "</th>")
-            #set(node = ScripteNode::append(element, node).get(0))
+            #set(node = ScriptNode::append(element, node).get(0))
             #set(width = field.getMetas().get("width"))
             #if(width != null)
                 ${node.attr("width", width.toString()).voidValue()}
@@ -26,7 +26,7 @@ ${Scenario::set("list", request)}
     #end
     ##-->
     #end
-    ${element.html() + "\r\n"}
+    ${ScriptNode::html(element) + "\r\n"}
 </tr>
 </thead>
 <tbody>
@@ -41,7 +41,7 @@ ${Scenario::set("list", request)}
         #set(identifier = "<td class=\"td_" + field.getNodeName())
         #if(!generator.append(identifier, element))
             #set(node = identifier + "\">" + "${entity." + field.getName() + "}</td>")
-            #set(nodes = ScripteNode::append(element, node))
+            #set(nodes = ScriptNode::append(element, node))
             #set(node = nodes.get(0))
             ${DeveloperUtils::includeExist("list", field.getTypes(), request)}
         #end
@@ -49,7 +49,7 @@ ${Scenario::set("list", request)}
     ${DeveloperUtils::includeExist("list", entityModel.getJoEntity().getEntityName(), request)}
     ##-->
     #end
-    ${element.html() + "\r\n"}
+    ${ScriptNode::html(element) + "\r\n"}
 </tr>
 \#end
 </tbody>

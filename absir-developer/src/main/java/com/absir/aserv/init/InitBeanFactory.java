@@ -19,8 +19,8 @@ import com.absir.bean.basis.BeanDefine;
 import com.absir.bean.basis.BeanFactory;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.InjectOrder;
-import com.absir.bean.inject.value.Started;
 import com.absir.bean.inject.value.Value;
 import com.absir.context.config.BeanProviderContext;
 import com.absir.core.base.Environment;
@@ -87,12 +87,12 @@ public class InitBeanFactory {
 
     private Map<String, Object> nameMapInitBean = new HashMap<String, Object>();
 
-    public static boolean isRequireInit() {
-        return ME.initCheck && ME.oldVersion == "0";
+    public boolean isRequireInit() {
+        return initCheck && KernelObject.equals(oldVersion, "0");
     }
 
-    public static boolean isVersionChange() {
-        return ME.initCheck && (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP || !KernelObject.equals(ME.oldVersion, ME.version));
+    public boolean isVersionChange() {
+        return initCheck && (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP || !KernelObject.equals(oldVersion, version));
     }
 
     /**
@@ -188,7 +188,7 @@ public class InitBeanFactory {
      * 开始初始化
      */
     @InjectOrder(-2048)
-    @Started
+    @Inject
     public void start() {
         JEmbedSS embedSS = new JEmbedSS();
         embedSS.setEid(appCode);

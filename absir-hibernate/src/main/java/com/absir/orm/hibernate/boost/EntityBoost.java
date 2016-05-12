@@ -333,7 +333,7 @@ public class EntityBoost {
                     JpaEntityPersistent assocJpaEntityPersistent = assocEntityPersistent(jaAssoc.entityName(),
                             jaAssoc.tableName(), persistentClass, jpaEntityPersistent, implementPersistents, classes,
                             tables, imports, associate, sessionFactoryBoost);
-                    EntityAssoc.addPersistentClass(jpaEntityPersistent.entityName, assocJpaEntityPersistent.entityName,
+                    EntityAssoc.addPersistentClass(jpaEntityPersistent.entityName, assocJpaEntityPersistent.entityName, assocJpaEntityPersistent.jpaEntityName,
                             jaAssoc);
                 }
             }
