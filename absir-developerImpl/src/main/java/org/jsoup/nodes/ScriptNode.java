@@ -16,21 +16,22 @@ import org.jsoup.parser.Parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
-public class ScripteNode extends TextNode {
+public class ScriptNode extends TextNode {
 
     public static final EscapeMode NONE = KernelObject.serializeClone(EscapeMode.extended);
 
     static {
-        KernelObject.declaredSet(ScripteNode.NONE, "map", new HashMap<Object, Object>());
+        KernelObject.declaredSet(ScriptNode.NONE, "map", new HashMap<Object, Object>());
     }
 
-    public ScripteNode(String text) {
+    public ScriptNode(String text) {
         this(text, "");
     }
 
-    public ScripteNode(String text, String baseUri) {
+    public ScriptNode(String text, String baseUri) {
         super(text, baseUri);
     }
 
@@ -54,8 +55,20 @@ public class ScripteNode extends TextNode {
         return nodes;
     }
 
-    public static ScripteNode node(String html) {
-        return new ScripteNode("\r\n" + html);
+    public static ScriptNode node(String html) {
+        return new ScriptNode("\r\n" + html);
+    }
+
+    public static String html(Element element) {
+        StringBuilder accum = new StringBuilder();
+        Iterator i$ = element.childNodes.iterator();
+
+        while (i$.hasNext()) {
+            Node node = (Node) i$.next();
+            node.outerHtml(accum);
+        }
+
+        return accum.toString();
     }
 
     @Override
