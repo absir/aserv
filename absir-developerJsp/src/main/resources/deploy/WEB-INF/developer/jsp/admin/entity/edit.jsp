@@ -30,7 +30,7 @@
     </c:set>
     <%
                     // 适配字段特性
-                    nodes = ScripteNode.append(element, pageContext.getAttribute("node").toString());
+                    nodes = ScriptNode.append(element, pageContext.getAttribute("node").toString());
                     ((Element) nodes.get(0)).getElementsByTag("input").get(0).attr(readonly, "true");
                     request.setAttribute("nodes", nodes);
                     DeveloperUtils.includeExist("edit", field.getTypes(), pageContext, request, response);
@@ -74,7 +74,7 @@
         </p>
     </c:set>
     <%
-                    request.setAttribute("nodes", ScripteNode.append(element, pageContext.getAttribute("node").toString()));
+                    request.setAttribute("nodes", ScriptNode.append(element, pageContext.getAttribute("node").toString()));
                     DeveloperUtils.includeExist("edit", field.getTypes(), pageContext, request, response);
                 }
             }
@@ -147,7 +147,7 @@
                     </c:set>
                     <%
                             request.setAttribute("field", field);
-                            request.setAttribute("nodes", ScripteNode.append(element, pageContext.getAttribute("node").toString()));
+                            request.setAttribute("nodes", ScriptNode.append(element, pageContext.getAttribute("node").toString()));
                             DeveloperUtils.includeExist("subtable", field.getTypes(), pageContext, request, response);
                         }
                         // 关联实体数组结束(简单类型)
@@ -168,7 +168,7 @@
                     </c:set>
                     <%
                                     request.setAttribute("field", subField);
-                                    request.setAttribute("nodes", ScripteNode.append(element, pageContext.getAttribute("node").toString()));
+                                    request.setAttribute("nodes", ScriptNode.append(element, pageContext.getAttribute("node").toString()));
                                     DeveloperUtils.includeExist("subtable", subField.getTypes(), pageContext, request, response);
                                 }
                                 // 关联实体数组结束(复杂类型)
@@ -194,7 +194,7 @@
                     </c:set>
                     <%
                             request.setAttribute("field", field);
-                            request.setAttribute("nodes", ScripteNode.append(element, pageContext.getAttribute("node").toString()));
+                            request.setAttribute("nodes", ScriptNode.append(element, pageContext.getAttribute("node").toString()));
                             DeveloperUtils.includeExist("subtable", field.getTypes(), pageContext, request, response);
                         }
 
@@ -213,7 +213,7 @@
                     </c:set>
                     <%
                             request.setAttribute("field", field.getValueField());
-                            request.setAttribute("nodes", ScripteNode.append(element, pageContext.getAttribute("node").toString()));
+                            request.setAttribute("nodes", ScriptNode.append(element, pageContext.getAttribute("node").toString()));
                             DeveloperUtils.includeExist("subtable", field.getValueField().getTypes(), pageContext, request, response);
                         }
                         // 关联实体字典结束(简单值类型)
@@ -234,7 +234,7 @@
                     </c:set>
                     <%
                                 request.setAttribute("field", subField);
-                                request.setAttribute("nodes", ScripteNode.append(element, pageContext.getAttribute("node").toString()));
+                                request.setAttribute("nodes", ScriptNode.append(element, pageContext.getAttribute("node").toString()));
                                 DeveloperUtils.includeExist("subtable", subField.getTypes(), pageContext, request, response);
                             }
                             // 关联实体字典结束(复杂值类型)
@@ -259,9 +259,9 @@
                                    value="<%="${i.index}"%>" $selected/></td>
                     </c:set>
                     <%
-                                node = ScripteNode.append(element, pageContext.getAttribute("node").toString()).get(0);
+                                node = ScriptNode.append(element, pageContext.getAttribute("node").toString()).get(0);
                                 node.remove();
-                                element.appendChild(ScripteNode.node(node.outerHtml().replace("$selected=\"\"", "${entityContext." + subField.getName() + "==i.index ? \"checked\" : \"\"}")));
+                                element.appendChild(ScriptNode.node(node.outerHtml().replace("$selected=\"\"", "${entityContext." + subField.getName() + "==i.index ? \"checked\" : \"\"}")));
                             }
                         }
                         // 关联实体索引字段结束
@@ -272,7 +272,7 @@
                         </td>
                     </c:set>
                     <%
-                        request.setAttribute("nodes", ScripteNode.append(element, pageContext.getAttribute("node").toString()));
+                        request.setAttribute("nodes", ScriptNode.append(element, pageContext.getAttribute("node").toString()));
                     %>
                 </tr>
                 <tr class="archetype">

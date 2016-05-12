@@ -15,6 +15,6 @@
 
     input.append((String) pageContext.getAttribute("options"));
     String value = input.attr("value");
-    element.before(ScripteNode.node("<c:set value=\"" + value + "\" var=\"value\"/>"));
+    element.before(ScriptNode.node("<c:set value=\"" + value + "\" var=\"value\"/>"));
     input.attr("value", DeveloperCode.print("WebJsplUtils.enumValue(pageContext.getAttribute(\"value\"))"));
 %>

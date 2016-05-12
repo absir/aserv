@@ -15,7 +15,7 @@
            value="<%="${searchConditionMap['" + cname + "']}"%>">
 </c:set>
 <%
-            ScripteNode.append(element, pageContext.getAttribute("node").toString());
+            ScriptNode.append(element, pageContext.getAttribute("node").toString());
 
         } else {
             DeveloperUtils.includeExist("edit", field.getTypes(), pageContext, request, response);

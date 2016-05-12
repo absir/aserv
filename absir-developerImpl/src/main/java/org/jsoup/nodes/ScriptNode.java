@@ -9,11 +9,13 @@ package org.jsoup.nodes;
 
 import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelObject;
+import com.absir.core.kernel.KernelReflect;
 import com.absir.core.kernel.KernelString;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.parser.Parser;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,6 +71,14 @@ public class ScriptNode extends TextNode {
         }
 
         return accum.toString();
+    }
+
+    protected static final Field attrKeyField = KernelReflect.declaredField(Attribute.class, "key");
+
+    public static void attr(Node node, String key, String value) {
+        Attribute attribute = new Attribute(key, value);
+        KernelReflect.set(attribute, attrKeyField, key);
+        node.attributes.put(attribute);
     }
 
     @Override

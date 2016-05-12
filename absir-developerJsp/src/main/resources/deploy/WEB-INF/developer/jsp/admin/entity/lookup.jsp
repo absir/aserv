@@ -19,7 +19,7 @@
         <%=identifier + "\">" + WebJsplUtils.getInput(request).getLang(field.getCaption()) + "</th>"%>
     </c:set>
     <%
-                node = ScripteNode.append(element, pageContext.getAttribute("node").toString()).get(0);
+                node = ScriptNode.append(element, pageContext.getAttribute("node").toString()).get(0);
                 Object width = field.getMetas().get("width");
                 if (width != null) {
                     node.attr("width", width.toString());
@@ -72,7 +72,7 @@
     </c:set>
     <%
                 // 适配字段特性
-                request.setAttribute("nodes", ScripteNode.append(element, pageContext.getAttribute("node").toString()));
+                request.setAttribute("nodes", ScriptNode.append(element, pageContext.getAttribute("node").toString()));
                 DeveloperUtils.includeExist("list", field.getTypes(), pageContext, request, response);
             }
             // 显示页面内容结束

@@ -10,7 +10,7 @@ package com.absir.aserv.developer;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelLang.ObjectEntry;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.ScripteNode;
+import org.jsoup.nodes.ScriptNode;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspWriter;
@@ -83,7 +83,7 @@ public class DeveloperGenerator {
             for (ObjectEntry<String, Boolean> gDefine : gDefines) {
                 if (gDefine.getKey().indexOf(identifier) >= 0) {
                     if (!gDefine.getValue()) {
-                        element.appendChild(ScripteNode.node(gDefine.getKey()));
+                        element.appendChild(ScriptNode.node(gDefine.getKey()));
                     }
 
                     return true;

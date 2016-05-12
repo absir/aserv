@@ -11,5 +11,5 @@
     %>
 </c:set>
 <%
-    element.before(ScripteNode.node((String) pageContext.getAttribute("node")));
+    element.before(ScriptNode.node((String) pageContext.getAttribute("node")));
 %>

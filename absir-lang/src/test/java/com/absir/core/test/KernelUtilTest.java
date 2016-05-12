@@ -11,6 +11,7 @@ public class KernelUtilTest {
 
     @Test
     public void test() {
+        testCompareVersion("0", "0.0.1", -1);
         testCompareVersion("1.1", "1.0.1", 1);
         testCompareVersion("1", "1.0.1", -1);
         testCompareVersion("2", "1.0.1", 1);
@@ -33,7 +34,7 @@ public class KernelUtilTest {
         int compare = KernelUtil.compareVersion(version1, version2);
         System.out.println(
                 version1 + " " + (compare == 0 ? "=" : compare < 0 ? "<" : ">") + " " + version2 + " => " + compare);
-        if (compare != future && (compare * future) < 0) {
+        if (compare != future && (compare * future) < 0 || compare == 0 || future == 0) {
             Assert.fail("the future is " + future);
         }
     }

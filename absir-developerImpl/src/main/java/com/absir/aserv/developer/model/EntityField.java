@@ -10,6 +10,7 @@ package com.absir.aserv.developer.model;
 import com.absir.aserv.crud.CrudEntity;
 import com.absir.aserv.crud.CrudUtils;
 import com.absir.aserv.crud.ICrudSupply;
+import com.absir.aserv.developer.DeveloperService;
 import com.absir.aserv.developer.editor.EditorObject;
 import com.absir.aserv.developer.editor.EditorSupply;
 import com.absir.aserv.lang.value.Langs;
@@ -403,7 +404,16 @@ public class EntityField extends DBField {
                 types.addAll(0, KernelArray.toList(editorObject.getEdit().types()));
             }
 
-            Object metasObject = HelperJson.decodeMap(editorObject.getEdit().metas());
+            Object metasObject = null;
+            if (!KernelString.isEmpty(editorObject.getEdit().metas())) {
+                try {
+                    metasObject = HelperJson.decode(editorObject.getEdit().metas(), Map.class);
+
+                } catch (Exception e) {
+                    DeveloperService.LOGGER.error("could not load metas " + field, e);
+                }
+            }
+
             if (metasObject != null) {
                 KernelObject.copy(metasObject, metas);
             }

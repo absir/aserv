@@ -48,7 +48,6 @@
         <module>absir-spring</module>
         <module>absir-dubbo</module>
         <module>aserv-server</module>
-        <module>achieve-site</module>
         <module>aserv-game</module>
         <module>aserv-master</module>
         <module>aserv-slave</module>

@@ -1,3 +1,4 @@
+<%@ page import="org.jsoup.nodes.ScriptNode" %>
 <%@ include file="./base.jsp" %>
 <%
     EntityModel entityModel = (EntityModel) request.getAttribute("entityModel");
@@ -7,6 +8,6 @@
     String value = element.html();
     element.before("<c:set var=\"value\">" + value + "</c:set>");
     element.empty();
-    element.appendChild(ScripteNode.node(DeveloperCode.print("WebJsplUtils.value(((java.util.Map)EntityStatics.getSharedObject(\"" + runtimeName
+    element.appendChild(ScriptNode.node(DeveloperCode.print("WebJsplUtils.value(((java.util.Map)EntityStatics.getSharedObject(\"" + runtimeName
             + "\", WebJsplUtils.getInput(request))).get(pageContext.getAttribute(\"value\")))")));
 %>

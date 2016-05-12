@@ -22,7 +22,7 @@ public class FieldDomain implements IFieldSupport {
     @Override
     public InjectInvoker getInjectInvoker(BeanScope beanScope, BeanDefine beanDefine, Field field) {
         Domain domain = field.getAnnotation(Domain.class);
-        return new InjectFieldDomain(field, domain);
+        return domain == null ? null : new InjectFieldDomain(field, domain);
     }
 
     public static class InjectFieldDomain extends InjectInvoker {

@@ -1,0 +1,13 @@
+.DS_Store
+target
+bin
+gen
+out
+.svn
+.project
+.classpath
+.setting
+.idea
+*.iml
+*.log
+projects

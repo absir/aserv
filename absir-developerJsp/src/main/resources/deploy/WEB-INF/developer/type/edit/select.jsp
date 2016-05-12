@@ -17,7 +17,7 @@
     <%=model.suggest(input.attr("value"))%>
 </c:set>
 <%
-    element.before(ScripteNode.node((String) pageContext
+    element.before(ScriptNode.node((String) pageContext
             .findAttribute("scripte")));
     input.append("${options}");
 

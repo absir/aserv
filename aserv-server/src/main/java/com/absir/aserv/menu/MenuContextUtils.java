@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-9-4 下午8:08:17
  */
 package com.absir.aserv.menu;
@@ -20,7 +20,6 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.InjectType;
 import com.absir.bean.inject.value.Value;
-import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelLang.BreakException;
@@ -187,8 +186,8 @@ public abstract class MenuContextUtils {
         @Inject
         protected MenuBeanService menuBeanService;
 
-        @Value("menu.developer.scan")
-        protected boolean menuDeveloperScan = false;
+        @Value("menu.scan.update")
+        protected boolean menuScanUpdate = true;
 
         @Inject(type = InjectType.Selectable)
         protected void setServletContext(ServletContext servletContext) {
@@ -202,7 +201,7 @@ public abstract class MenuContextUtils {
             servletContext.setAttribute("app_code", InitBeanFactory.ME.getAppCode());
             servletContext.setAttribute("app_version", InitBeanFactory.ME.getVersion());
 
-            if (menuDeveloperScan && (InitBeanFactory.isRequireInit() || BeanFactoryUtils.getEnvironment() == Environment.DEVELOP)) {
+            if (menuScanUpdate && InitBeanFactory.isVersionChange()) {
                 // 初始化菜单
                 MenuBeanRoot menuBeanRoot = new MenuBeanRoot();
                 // 扫瞄后台菜单

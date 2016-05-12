@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-5-31 下午5:16:29
  */
 package com.absir.aserv.system.service;
@@ -157,13 +157,17 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
             return null;
         }
 
-        if (session.getUserId() == 0) {
+        Long userId = session.getUserId();
+        if (userId == null || userId == 0) {
             session.setUserId(userBase.getUserId());
         }
 
         session.setUsername(userBase.getUsername());
-        session.setAddress(address);
-        session.setIp(HelperLong.longIPV4(address));
+        if (address != null) {
+            session.setAddress(address);
+            session.setIp(HelperLong.longIPV4(address));
+        }
+
         session.setAgent(agent);
         long contextTime = ContextUtils.getContextTime();
         session.setLastTime(contextTime);
@@ -271,6 +275,9 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
                     if (securityContext == null) {
                         return null;
                     }
+
+                } else {
+                    return null;
                 }
             }
         }

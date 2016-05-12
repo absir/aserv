@@ -8,7 +8,7 @@
     String identifier;
 
     Document document = new Document("");
-    document.outputSettings().escapeMode(ScripteNode.NONE);
+    document.outputSettings().escapeMode(ScriptNode.NONE);
 
     Element element;
     List<Node> nodes;

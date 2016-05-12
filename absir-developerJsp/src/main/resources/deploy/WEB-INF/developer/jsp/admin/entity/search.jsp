@@ -23,7 +23,7 @@
 <c:set var="field" value="${field}" scope="request"/>
 <%
             // 适配字段特性
-            request.setAttribute("nodes", ScripteNode.append(element, pageContext.getAttribute("node").toString()));
+            request.setAttribute("nodes", ScriptNode.append(element, pageContext.getAttribute("node").toString()));
             DeveloperUtils.includeExist("search", field.getTypes(), pageContext, request, response);
         }
         // 显示搜索内容结束

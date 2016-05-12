@@ -21,7 +21,7 @@ import com.absir.orm.value.JoEntity;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
-import org.jsoup.nodes.ScripteNode;
+import org.jsoup.nodes.ScriptNode;
 
 import javax.servlet.ServletRequest;
 import java.io.IOException;
@@ -160,7 +160,7 @@ public class DeveloperModel {
         Element element = document.appendElement(div);
         request.setAttribute(ELEMENT_NAME, element);
         request.setAttribute(FIELD_NAME, nameField);
-        List<Node> nodes = ScripteNode.append(element, RenderUtils.load(theme + "show" + DeveloperUtils.suffix, renders));
+        List<Node> nodes = ScriptNode.append(element, RenderUtils.load(theme + "show" + DeveloperUtils.suffix, renders));
         request.setAttribute(NODES_NAME, nodes);
         DeveloperUtils.includeExist(theme + "type/", nameField.getTypes(), RELATIVE_PATHS, renders);
         return element;
@@ -200,7 +200,7 @@ public class DeveloperModel {
         Element element = document.appendElement(div);
         // 顶部代码
         String node = RenderUtils.loadExist(theme + "top" + DeveloperUtils.suffix, renders);
-        List<Node> nodes = node == null ? null : ScripteNode.append(element, node);
+        List<Node> nodes = node == null ? null : ScriptNode.append(element, node);
         request.setAttribute(ELEMENT_NAME, element);
         request.setAttribute(NODES_NAME, nodes);
         String identifier;
@@ -212,7 +212,7 @@ public class DeveloperModel {
                     if (!generator.append(identifier, element)) {
                         request.setAttribute(IDENTIFIER_NAME, identifier);
                         request.setAttribute(FIELD_NAME, field);
-                        nodes = ScripteNode.append(element, RenderUtils.load(theme + "primary" + DeveloperUtils.suffix, renders));
+                        nodes = ScriptNode.append(element, RenderUtils.load(theme + "primary" + DeveloperUtils.suffix, renders));
                         request.setAttribute(NODES_NAME, nodes);
                         DeveloperUtils.includeExist(themeType, field.getTypes(), RELATIVE_PATHS, renders);
                     }
@@ -249,7 +249,7 @@ public class DeveloperModel {
                     if (!generator.append(identifier, element)) {
                         request.setAttribute(IDENTIFIER_NAME, identifier);
                         request.setAttribute(FIELD_NAME, field);
-                        nodes = ScripteNode.append(element, RenderUtils.load(theme + "field" + DeveloperUtils.suffix, renders));
+                        nodes = ScriptNode.append(element, RenderUtils.load(theme + "field" + DeveloperUtils.suffix, renders));
                         request.setAttribute(NODES_NAME, nodes);
                         DeveloperUtils.includeExist(themeType, field.getTypes(), RELATIVE_PATHS, renders);
                     }
@@ -259,20 +259,20 @@ public class DeveloperModel {
 
         // 分割代码
         node = RenderUtils.loadExist(theme + "center" + DeveloperUtils.suffix, renders);
-        nodes = node == null ? null : ScripteNode.append(element, node);
+        nodes = node == null ? null : ScriptNode.append(element, node);
         // 编辑关联实体
         if (subtable && subtableFields.size() > 0) {
             request.setAttribute("subtable", true);
             // 关联顶部代码
             node = RenderUtils.loadExist(theme + "subtop" + DeveloperUtils.suffix, renders);
-            nodes = node == null ? null : ScripteNode.append(element, node);
+            nodes = node == null ? null : ScriptNode.append(element, node);
             String themeSub = theme + "sub/";
             for (IField field : subtableFields) {
                 identifier = "name=\"" + field.getName() + "-sub\"";
                 if (!!generator.append(identifier, element)) {
                     request.setAttribute(IDENTIFIER_NAME, identifier);
                     request.setAttribute(FIELD_NAME, field);
-                    nodes = ScripteNode.append(element, RenderUtils.load(theme + "sub" + DeveloperUtils.suffix, renders));
+                    nodes = ScriptNode.append(element, RenderUtils.load(theme + "sub" + DeveloperUtils.suffix, renders));
                     request.setAttribute(NODES_NAME, nodes);
                     DeveloperUtils.includeExist(themeSub, field.getTypes(), RELATIVE_PATHS, renders);
                 }
@@ -280,14 +280,14 @@ public class DeveloperModel {
 
             // 关联分割代码
             node = RenderUtils.loadExist(theme + "subcenter" + DeveloperUtils.suffix, renders);
-            nodes = node == null ? null : ScripteNode.append(element, node);
+            nodes = node == null ? null : ScriptNode.append(element, node);
 
             for (IField field : subtableFields) {
                 identifier = "name=\"" + field.getName() + "-subtable\"";
                 if (!!generator.append(identifier, element)) {
                     request.setAttribute(IDENTIFIER_NAME, identifier);
                     request.setAttribute(FIELD_NAME, field);
-                    nodes = ScripteNode.append(element, RenderUtils.load(theme + "subfield" + DeveloperUtils.suffix, renders));
+                    nodes = ScriptNode.append(element, RenderUtils.load(theme + "subfield" + DeveloperUtils.suffix, renders));
                     request.setAttribute(NODES_NAME, nodes);
                     DeveloperUtils.includeExist(themeType, field.getTypes(), RELATIVE_PATHS, renders);
                 }
@@ -295,18 +295,18 @@ public class DeveloperModel {
 
             // 关联底部代码
             node = RenderUtils.loadExist(theme + "subbottom" + DeveloperUtils.suffix, renders);
-            nodes = node == null ? null : ScripteNode.append(element, node);
+            nodes = node == null ? null : ScriptNode.append(element, node);
         }
 
         // 底部代码
         node = RenderUtils.loadExist(theme + "bottom" + DeveloperUtils.suffix, renders);
-        nodes = node == null ? null : ScripteNode.append(element, node);
+        nodes = node == null ? null : ScriptNode.append(element, node);
         // 生成代码对象再处理
         request.setAttribute("element", element);
         String path = IRender.ME.getPath(renders);
         path = KernelString.replaceLast(path, DeveloperUtils.suffix, "") + "." + entityName + "." + HelperFileName.getName(HelperFileName.getPathNoEndSeparator(theme)) + DeveloperUtils.suffix;
         node = RenderUtils.loadExist(path);
-        nodes = node == null ? null : ScripteNode.append(element, node);
+        nodes = node == null ? null : ScriptNode.append(element, node);
         // 返回处理完成代码
         return element;
     }

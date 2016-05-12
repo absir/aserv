@@ -39,7 +39,7 @@ import java.util.Map.Entry;
 @Bean
 public class DeveloperService implements IDeveloper, IDeploy {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(DeveloperService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(DeveloperService.class);
 
     @Value("developer.web")
     private static String developerWeb;

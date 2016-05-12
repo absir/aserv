@@ -30,6 +30,7 @@ import com.absir.core.helper.HelperFileName;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.core.kernel.KernelLang.CallbackBreak;
+import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelUtil;
 import com.absir.core.util.UtilAccessor;
 import com.absir.orm.hibernate.SessionFactoryBean;
@@ -67,12 +68,18 @@ public class InitBeanFactory {
     protected String appRoute;
 
     protected String oldVersion;
+
     @Value("appCode")
-    private String appCode = "";
+    protected String appCode = "";
+
     @Value("version")
-    private String version = "0.0.1";
+    protected String version = "0.0.1";
+
     @Value("versionName")
-    private String versionName = "developer";
+    protected String versionName = "developer";
+
+    @Value("initCheck")
+    protected boolean initCheck = true;
 
     private int versionSqlCount = 0;
 
@@ -81,7 +88,11 @@ public class InitBeanFactory {
     private Map<String, Object> nameMapInitBean = new HashMap<String, Object>();
 
     public static boolean isRequireInit() {
-        return BeanFactoryUtils.getEnvironment() != Environment.PRODUCT && ME.oldVersion == "0";
+        return ME.initCheck && ME.oldVersion == "0";
+    }
+
+    public static boolean isVersionChange() {
+        return ME.initCheck && (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP || !KernelObject.equals(ME.oldVersion, ME.version));
     }
 
     /**
@@ -144,6 +155,14 @@ public class InitBeanFactory {
         return oldVersion;
     }
 
+    public boolean isInitCheck() {
+        return initCheck;
+    }
+
+    public void setInitCheck(boolean initCheck) {
+        this.initCheck = initCheck;
+    }
+
     public int getVersionSqlCount() {
         return versionSqlCount;
     }
@@ -176,7 +195,7 @@ public class InitBeanFactory {
         embedSS.setMid("version");
         JConfigure configure = BeanService.ME.get(JConfigure.class, embedSS);
         oldVersion = configure == null ? "0" : configure.getValue();
-        if (isRequireInit() || BeanFactoryUtils.getEnvironment() == Environment.DEVELOP) {
+        if (isVersionChange()) {
             // 数据升级
             upgradeData(embedSS, configure);
             initData(BeanFactoryUtils.getBeanConfig().getClassPath() + "data/");

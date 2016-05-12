@@ -109,11 +109,11 @@ public class KernelUtil {
                     }
 
                 } else {
-                    return -1;
+                    return -9;
                 }
 
             } else if (t == '.') {
-                return 1;
+                return 9;
             }
         }
 
@@ -123,12 +123,12 @@ public class KernelUtil {
 
         if (len1 < len2) {
             if (toVersion[len1] == '.') {
-                return compare;
+                return compare == 0 ? len1 - len2 : compare;
             }
 
         } else {
             if (version[len2] == '.') {
-                return compare;
+                return compare == 0 ? len1 - len2 : compare;
             }
         }
 
