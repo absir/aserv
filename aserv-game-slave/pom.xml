@@ -25,11 +25,6 @@
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.absir</groupId>
-            <artifactId>absir-diamond</artifactId>
-            <version>${com.absir.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.baidu</groupId>
             <artifactId>jprotobuf</artifactId>
             <version>1.9.6</version>
