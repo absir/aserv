@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-@Base(order = -128)
+@Base
 @Bean
 public class ReturnedResolverBody implements ReturnedResolver<Integer> {
 
