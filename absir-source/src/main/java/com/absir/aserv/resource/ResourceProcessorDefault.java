@@ -44,7 +44,7 @@ public class ResourceProcessorDefault implements ResourceProcessor {
             directory.setId(directoryId);
         }
 
-        boolean modified = directory.getUpdateTime() < directoryFile.lastModified();
+        boolean modified = true;
         // 目录已经扫瞄
         directory.setScanned(true);
         directory.setUpdateTime(directoryFile.lastModified());
