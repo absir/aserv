@@ -27,6 +27,9 @@ public class ResourceScannerDefault extends ResourceScanner {
 
     public static final ResourceScannerDefault ME = BeanFactoryUtils.get(ResourceScannerDefault.class);
 
+    @Value("resource.scan.start")
+    private boolean scanStart = true;
+
     @Value("resource.scan.path")
     private String scanPath = "resources";
 
@@ -49,7 +52,13 @@ public class ResourceScannerDefault extends ResourceScanner {
      */
     @Transaction(rollback = Throwable.class)
     @Started
-    public void startedProcess() {
+    protected void startedProcess() {
+        if (scanStart) {
+            scanProcess();
+        }
+    }
+
+    public void scanProcess() {
         if (resourceProcessors != null && !KernelString.isEmpty(scanPath)) {
             scanPath = HelperFileName.normalizeNoEndSeparator(HelperFileName.concat(BeanFactoryUtils.getBeanConfig().getResourcePath(), scanPath));
             List<ResourceProcessor> processors = new ArrayList<ResourceProcessor>();
