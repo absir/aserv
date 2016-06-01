@@ -365,7 +365,6 @@ achieve-server中 MenuUtils中的包扫描获取默认菜单，让你不需要�
 	 */
 	@Override
 	public boolean supportAssocClass(Class<? extends JiAssoc> assocClass, String rootEntityName, JiUserBase user, JePermission permission) {
-		// TODO Auto-generated method stub
 		return user != null && !user.isDeveloper();
 	}
 
@@ -383,7 +382,6 @@ achieve-server中 MenuUtils中的包扫描获取默认菜单，让你不需要�
 	@Override
 	public void assocConditions(String rootEntityName, JiUserBase user, JePermission permission, Object strategies, JdbcCondition jdbcCondition, Conditions includeConditions,
 			Conditions excludeConditions) {
-		// TODO Auto-generated method stub
 		excludeConditions.add(jdbcCondition.getCurrentPropertyAlias() + ".developer");
 		excludeConditions.add(false);
 	}

@@ -1,0 +1,7 @@
+{
+\#for(path : paths)
+"url": "\${Pag::uploadUrl(path)}",
+\#break
+\#end
+"error": 0
+}

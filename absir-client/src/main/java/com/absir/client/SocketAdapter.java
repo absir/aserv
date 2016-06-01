@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年4月7日 上午11:20:38
  */
 package com.absir.client;
@@ -337,7 +337,7 @@ public class SocketAdapter {
     /**
      * 接受心跳
      */
-    public void recieverBeat() {
+    public void receiverBeat() {
         lastedBeat();
     }
 
@@ -474,7 +474,7 @@ public class SocketAdapter {
             }
 
             if (i >= length) {
-                recieverBeat();
+                receiverBeat();
                 return;
             }
         }

@@ -27,7 +27,7 @@ public class ContextMapSupply extends PropertySupply<CompareObject, CompareAbstr
     private CompareObject compareObject = new CompareObject();
 
     @Override
-    public Class<? extends Annotation> getIngoreAnnotationClass() {
+    public Class<? extends Annotation> getIgnoreAnnotationClass() {
         return null;
     }
 

@@ -33,8 +33,19 @@ public class InitContextFactory extends InitBeanFactory {
         if (KernelString.isEmpty(appRoute)) {
             appRoute = "/";
 
-        } else if (appRoute.charAt(0) != '/') {
-            appRoute = '/' + appRoute + '/';
+        } else {
+            appRoute = appRoute.replace('\\', '/');
+            StringBuilder stringBuilder = new StringBuilder();
+            if (appRoute.charAt(0) != '/') {
+                stringBuilder.append('/');
+            }
+
+            stringBuilder.append(appRoute);
+            if (appRoute.charAt(appRoute.length() - 1) != '/') {
+                stringBuilder.append('/');
+            }
+
+            appRoute = stringBuilder.toString();
         }
     }
 }

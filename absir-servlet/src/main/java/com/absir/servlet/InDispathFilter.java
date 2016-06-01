@@ -90,6 +90,11 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if (!getRouteAdapter().isStarted()) {
+            response.getWriter().write("route adapter not started");
+            return;
+        }
+
         try {
             if (!(request instanceof HttpServletRequest && response instanceof HttpServletResponse && on(getUri(request),
                     (HttpServletRequest) request, (HttpServletResponse) response))) {

@@ -65,14 +65,14 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
             this.propertyResolvers = KernelCollection.toArray(propertyResolveList, PropertyResolver.class);
         }
 
-        ingoreAnnotationClass = getIngoreAnnotationClass();
+        ingoreAnnotationClass = getIgnoreAnnotationClass();
     }
 
     public int getSupplyIndex() {
         return supplyIndex;
     }
 
-    public abstract Class<? extends Annotation> getIngoreAnnotationClass();
+    public abstract Class<? extends Annotation> getIgnoreAnnotationClass();
 
     public final Map<String, PropertyData> getPropertyMap(Class<?> beanClass) {
         return PropertyUtils.getPropertyMap(beanClass, this).getNameMapPropertyData();

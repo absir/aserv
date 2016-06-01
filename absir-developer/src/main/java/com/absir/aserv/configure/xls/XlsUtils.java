@@ -60,7 +60,7 @@ public abstract class XlsUtils {
         if (xlsDao == null) {
             synchronized (xlsClass) {
                 xlsDao = XlsAccessorUtils.getXlsDao(xlsClass);
-                if (xlsDao == null) {
+                if (xlsDao == null || reload) {
                     try {
                         reloadXlsDao(xlsClass);
 

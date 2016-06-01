@@ -21,6 +21,8 @@ public abstract class CrudHandler {
 
     protected JaCrud.Crud crud;
 
+    protected boolean persist;
+
     protected Map<String, Object> crudRecord;
 
     protected PropertyFilter filter;
@@ -52,6 +54,14 @@ public abstract class CrudHandler {
 
     public Map<String, Object> getCrudRecord() {
         return crudRecord;
+    }
+
+    public boolean isPersist() {
+        return persist;
+    }
+
+    protected void setPersist(boolean persist) {
+        this.persist = persist;
     }
 
     public PropertyFilter getFilter() {
@@ -108,6 +118,7 @@ public abstract class CrudHandler {
         return entity;
     }
 
+    //todo 搞清楚 create状态
     public boolean isCreate() {
         if (created) {
             return false;

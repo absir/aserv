@@ -69,7 +69,7 @@ public abstract class CrudContextUtils extends CrudUtils {
         return false;
     }
 
-    public static void crud(JaCrud.Crud crud, Map<String, Object> crudRecord, JoEntity joEntity, Object entity, final JiUserBase user, PropertyFilter filter, final PropertyErrors errors,
+    public static void crud(JaCrud.Crud crud, boolean persist, Map<String, Object> crudRecord, JoEntity joEntity, Object entity, final JiUserBase user, PropertyFilter filter, final PropertyErrors errors,
                             final Input input) {
         CrudEntity crudEntity = getCrudEntity(joEntity);
         if (crudEntity == null) {
@@ -129,6 +129,8 @@ public abstract class CrudContextUtils extends CrudUtils {
             }
         };
 
+        crudInvoker.persist = persist;
+
         if (entity instanceof ICrudBean) {
             ((ICrudBean) entity).processCrud(crud, crudInvoker);
         }
@@ -136,7 +138,7 @@ public abstract class CrudContextUtils extends CrudUtils {
         crud(entity, crudEntity, crudInvoker);
     }
 
-    public static void crud(JaCrud.Crud crud, Map<String, Object> crudRecord, JoEntity joEntity, Object entity, JiUserBase user, PropertyFilter filter) {
-        crud(crud, crudRecord, joEntity, entity, user, filter, null, null);
+    public static void crud(JaCrud.Crud crud, boolean persist, Map<String, Object> crudRecord, JoEntity joEntity, Object entity, JiUserBase user, PropertyFilter filter) {
+        crud(crud, persist, crudRecord, joEntity, entity, user, filter, null, null);
     }
 }

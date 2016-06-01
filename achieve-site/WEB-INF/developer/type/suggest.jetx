@@ -1,0 +1,11 @@
+#set(entityModel = DeveloperModel::getModelEntity(joEntity))
+#set(suggests = '')
+#for(suggest : Pag::getEntityGroupField(joEntity, 'suggest'))
+#if(for.index == 1)
+#set(suggests = '${' + entity + '.' + suggest + '}')
+#else
+#set(suggests = suggests + '.${' + entity + '.' + suggest + '}')
+#end
+#end
+
+#return(suggests)

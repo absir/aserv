@@ -146,7 +146,7 @@ public class VerifierService {
                             "SELECT o FROM " + entry.getKey() + " o WHERE o.passTime > 0 AND o.passTime < ?",
                             contextTime).iterate();
                     while (iterator.hasNext()) {
-                        CrudUtils.crud(Crud.DELETE, null, entry.getValue().getJoEntity(), iterator.next(), null, null);
+                        CrudUtils.crud(Crud.DELETE, true, null, entry.getValue().getJoEntity(), iterator.next(), null, null);
                     }
                 }
 

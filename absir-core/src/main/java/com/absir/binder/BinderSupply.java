@@ -9,7 +9,7 @@ package com.absir.binder;
 
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
-import com.absir.binder.value.BinderIngore;
+import com.absir.binder.value.BinderIgnore;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.property.Property;
 import com.absir.property.PropertyData;
@@ -22,8 +22,8 @@ import java.lang.annotation.Annotation;
 public class BinderSupply extends PropertySupply<BinderObject, Binder> {
 
     @Override
-    public Class<? extends Annotation> getIngoreAnnotationClass() {
-        return BinderIngore.class;
+    public Class<? extends Annotation> getIgnoreAnnotationClass() {
+        return BinderIgnore.class;
     }
 
     public Object bindValue(PropertyData propertyData, Object value, Class<?> toType, DynaBinder dynaBinder, Object toValue) {

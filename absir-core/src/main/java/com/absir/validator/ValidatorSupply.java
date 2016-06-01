@@ -10,7 +10,7 @@ package com.absir.validator;
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
 import com.absir.property.PropertySupply;
-import com.absir.validator.value.ValidatorIngore;
+import com.absir.validator.value.ValidatorIgnore;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -20,8 +20,8 @@ import java.util.List;
 public class ValidatorSupply extends PropertySupply<ValidatorObject, List<Validator>> {
 
     @Override
-    public Class<? extends Annotation> getIngoreAnnotationClass() {
-        return ValidatorIngore.class;
+    public Class<? extends Annotation> getIgnoreAnnotationClass() {
+        return ValidatorIgnore.class;
     }
 
 }

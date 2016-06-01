@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>com.absir</groupId>
-            <artifactId>absir-data</artifactId>
+            <artifactId>absir-developer</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>

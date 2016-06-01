@@ -7,7 +7,7 @@
  */
 package com.absir.aserv.developer.editor;
 
-import com.absir.aserv.system.bean.value.JaIngore;
+import com.absir.aserv.system.bean.value.JaIgnore;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.property.PropertySupply;
@@ -21,8 +21,8 @@ public class EditorSupply extends PropertySupply<EditorObject, EditorObject> {
     public static final EditorSupply ME = BeanFactoryUtils.get(EditorSupply.class);
 
     @Override
-    public Class<? extends Annotation> getIngoreAnnotationClass() {
-        return JaIngore.class;
+    public Class<? extends Annotation> getIgnoreAnnotationClass() {
+        return JaIgnore.class;
     }
 
     @Override

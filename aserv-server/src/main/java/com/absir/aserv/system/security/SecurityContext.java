@@ -13,6 +13,7 @@ import com.absir.aserv.system.bean.JbSession;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
+import com.absir.aserv.system.bean.value.JeEditable;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.context.core.ContextBean;
 import com.absir.context.core.ContextUtils;
@@ -27,13 +28,14 @@ import java.util.Map;
 @Properties(@Property(name = "expirationTime", infos = @PropertyInfo(value = JaLang.class, valueInfo = "过期时间")))
 public class SecurityContext extends ContextBean<String> {
 
+    @JaEdit(editable = JeEditable.DISABLE)
     @JaLang("SESSION")
     private JbSession session;
 
     @JaLang("变化")
     private boolean channged;
 
-    @JaEdit(groups = JaEdit.GROUP_LIST)
+    @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKNONE)
     @JaLang("用户")
     private JiUserBase user;
 

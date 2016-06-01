@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-3-8 下午12:43:09
  */
 package com.absir.aserv.system.admin;
@@ -156,7 +156,7 @@ public class Admin_entity extends AdminServer {
         binderResult.setValidation(true);
         binderResult.setPropertyFilter(filter);
         binderData.mapBind(BinderUtils.getDataMap(input.getParamMap()), entity);
-        CrudContextUtils.crud(Crud.CREATE, null, joEntity, entity, user, filter);
+        CrudContextUtils.crud(Crud.CREATE, false, null, joEntity, entity, user, filter);
         model.put("entity", entity);
     }
 
@@ -243,7 +243,7 @@ public class Admin_entity extends AdminServer {
 
         binderData.mapBind(dataMap, entity);
         JoEntity joEntity = (JoEntity) input.getAttribute("joEntity");
-        CrudContextUtils.crud(create ? Crud.CREATE : Crud.UPDATE, crudRecord, joEntity, entity, user, filter, binderResult, input);
+        CrudContextUtils.crud(create ? Crud.CREATE : Crud.UPDATE, true, crudRecord, joEntity, entity, user, filter, binderResult, input);
         InModel model = input.getModel();
         model.put("entity", entity);
         if (binderResult.hashErrors()) {

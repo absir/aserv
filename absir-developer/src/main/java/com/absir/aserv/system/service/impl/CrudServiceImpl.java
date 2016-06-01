@@ -50,7 +50,7 @@ public class CrudServiceImpl implements CrudService {
 
     @Override
     public void merge(String entityName, Map<String, Object> crudRecord, Object entity, ICrudSupply crudSupply, boolean create, JiUserBase user, PropertyFilter filter) {
-        CrudUtils.crud(create ? Crud.CREATE : Crud.UPDATE, crudRecord, new JoEntity(entityName, entity.getClass()), entity, filter, user);
+        CrudUtils.crud(create ? Crud.CREATE : Crud.UPDATE, true, crudRecord, new JoEntity(entityName, entity.getClass()), entity, filter, user);
         crudSupply.mergeEntity(entityName, entity, create);
     }
 
@@ -61,7 +61,7 @@ public class CrudServiceImpl implements CrudService {
             return null;
         }
 
-        CrudUtils.crud(Crud.DELETE, null, new JoEntity(entityName, entity.getClass()), entity, null, user);
+        CrudUtils.crud(Crud.DELETE, true, null, new JoEntity(entityName, entity.getClass()), entity, null, user);
         crudSupply.deleteEntity(entityName, entity);
         return entity;
     }
@@ -76,7 +76,7 @@ public class CrudServiceImpl implements CrudService {
                     joEntity = new JoEntity(entityName, entity.getClass());
                 }
 
-                CrudUtils.crud(Crud.DELETE, null, new JoEntity(entityName, entity.getClass()), entity, null, user);
+                CrudUtils.crud(Crud.DELETE, true, null, new JoEntity(entityName, entity.getClass()), entity, null, user);
                 crudSupply.deleteEntity(entityName, entity);
             }
         }

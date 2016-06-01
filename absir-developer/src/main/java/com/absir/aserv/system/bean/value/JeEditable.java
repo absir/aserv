@@ -15,7 +15,7 @@ public enum JeEditable {
     ENABLE,
 
     /**
-     * 不可编辑
+     * 不可编辑|不显示
      */
     DISABLE,
 

@@ -8,9 +8,14 @@
 package com.absir.binder;
 
 import com.absir.core.dyna.DynaBinder;
+import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
 import com.absir.property.PropertyData;
+import com.absir.property.PropertyError;
+import com.absir.property.PropertyHolder;
+import com.absir.property.PropertyUtils;
+import com.absir.validator.Validator;
 import com.absir.validator.ValidatorSupply;
 
 import java.util.ArrayList;
@@ -220,5 +225,37 @@ public class BinderUtils {
     protected static class DataObjectHandler {
 
         public Map<String, List<String>> pathMapKeys;
+    }
+
+    public static void validate(BinderResult binderResult, Object bean, String... names) {
+        ValidatorSupply validatorSupply = getValidatorSupply();
+        PropertyHolder propertyHolder = PropertyUtils.getPropertyMap(bean.getClass(), validatorSupply);
+        for (Entry<String, PropertyData> entry : propertyHolder.getNameMapPropertyData().entrySet()) {
+            String name = entry.getKey();
+            if (KernelArray.contain(names, name)) {
+                Object value = entry.getValue().getProperty().getAccessor().get(bean);
+                List<Validator> validators = validatorSupply.getPropertyObject(entry.getValue());
+                if (validators != null) {
+                    if (value == null) {
+                        int last = binderResult.getPropertyErrors().size() - 1;
+                        if (last >= 0 && binderResult.getPropertyErrors().get(last).getPropertyPath() == binderResult.getPropertyPath()) {
+                            return;
+                        }
+                    }
+
+                    for (Validator validator : validators) {
+                        String errorMessage = validator.validate(value);
+                        if (errorMessage != null) {
+                            PropertyError propertyError = new PropertyError();
+                            propertyError.setPropertyPath(binderResult.getPropertyPath());
+                            propertyError.setErrorMessage(errorMessage);
+                            propertyError.setErrorObject(value);
+                            binderResult.addPropertyError(propertyError);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
