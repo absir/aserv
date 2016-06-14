@@ -7,19 +7,24 @@
  */
 package com.absir.property;
 
+import com.absir.bean.basis.BeanConfig;
+import com.absir.bean.core.BeanConfigImpl;
+import com.absir.bean.core.BeanFactoryUtils;
+import com.absir.core.dyna.DynaBinder;
+import com.absir.core.kernel.KernelClass;
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
 import com.absir.property.value.BeanName;
 import com.absir.property.value.Prop;
 import com.absir.property.value.Properties;
 import com.absir.property.value.Property;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class PropertyUtils {
@@ -91,7 +96,7 @@ public class PropertyUtils {
         return propertyContext;
     }
 
-    private static void addPropertyMap(Map<String, Object> propertyMap, boolean propertyTree, Class<?> beanClass, PropertySupply propertySupply) {
+    private static void addPropertyMap(final Map<String, Object> propertyMap, boolean propertyTree, Class<?> beanClass, final PropertySupply propertySupply) {
         if (beanClass == null || beanClass == Object.class) {
             return;
         }
@@ -173,7 +178,7 @@ public class PropertyUtils {
         Properties properties = beanClass.getAnnotation(Properties.class);
         if (properties != null) {
             for (Property property : properties.value()) {
-                if (!KernelString.isEmpty(name)) {
+                if (!KernelString.isEmpty(property.name())) {
                     name = property.name();
                 }
 
@@ -190,6 +195,66 @@ public class PropertyUtils {
                 }
             }
         }
+
+        final Set<String> names = new HashSet<String>(propertyMap.keySet());
+        for (Field field : beanClass.getDeclaredFields()) {
+            names.add(field.getName());
+        }
+
+        KernelClass.doWithAncestRevertClass(beanClass, new KernelLang.CallbackBreak<Class<?>>() {
+            @Override
+            public void doWith(Class<?> template) throws KernelLang.BreakException {
+                Map<String, Object> properties = getPropertiesForBeanClass(template);
+                if (properties != null && !properties.isEmpty()) {
+                    for (String name : names) {
+                        Object property = properties.get(name);
+                        if (property != null) {
+                            String[] params = null;
+                            if (property.getClass() == String.class) {
+                                params = ((String) property).split(",");
+
+                            }
+
+                            params = DynaBinder.to(property, String[].class);
+                            if (params == null || params.length < 1) {
+                                properties.remove(name);
+
+                            } else {
+                                if ((Object) params != properties) {
+                                    properties.put(name, params);
+                                }
+
+                                propertyMap.put(name, propertySupply.getPropertyObjectParams((PropertyObject) propertyMap.get(name), params));
+                            }
+                        }
+                    }
+                }
+            }
+
+        }, true);
     }
 
+    protected static final Map<Class<?>, Map<String, Object>> beanClassMapProperties = new HashMap<Class<?>, Map<String, Object>>();
+
+    public static Map<String, Object> getPropertiesForBeanClass(Class<?> beanClass) {
+        Map<String, Object> properties = beanClassMapProperties.get(beanClass);
+        if (properties != null) {
+            return properties;
+        }
+
+        BeanConfig config = BeanFactoryUtils.getBeanConfig();
+        File propertiesFile = new File(config.getClassPath() + "properties/" + beanClass.getSimpleName() + ".properties");
+
+        if (propertiesFile.exists()) {
+            properties = new HashMap<String, Object>();
+            BeanConfigImpl.readProperties(config, properties, propertiesFile, null);
+        }
+
+        if (properties == null || properties.isEmpty()) {
+            properties = (Map<String, Object>) (Object) KernelLang.NULL_MAP;
+        }
+
+        beanClassMapProperties.put(beanClass, properties);
+        return properties;
+    }
 }

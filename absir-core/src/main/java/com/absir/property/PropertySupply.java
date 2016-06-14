@@ -157,4 +157,24 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
 
         return propertyObject;
     }
+
+    public O getPropertyObjectParams(O propertyObject, String[] propertyParams) {
+        if (propertyResolvers != null) {
+            String annotationClassName = propertyParams[0];
+            PropertyObject propertyObj = propertyObject;
+            if (propertyObj != null && ingoreAnnotationClass != null) {
+                if (annotationClassName.equals(ingoreAnnotationClass.getSimpleName())) {
+                    propertyObj = null;
+                }
+            }
+
+            for (PropertyResolver propertyResolver : propertyResolvers) {
+                propertyObj = propertyResolver.getPropertyObjectParams(propertyObj, propertyParams);
+            }
+
+            propertyObject = (O) propertyObj;
+        }
+
+        return propertyObject;
+    }
 }

@@ -828,6 +828,29 @@ public abstract class KernelClass {
         }
     }
 
+    public static boolean doWithAncestRevertClass(Class cls, CallbackBreak<Class<?>> callback, boolean withInterface) {
+        if (cls != null && cls != Object.class) {
+            if (doWithAncestRevertClass(cls.getSuperclass(), callback, withInterface)) {
+                return true;
+            }
+
+            try {
+                if (withInterface) {
+                    for (Class<?> iCls : cls.getInterfaces()) {
+                        callback.doWith(iCls);
+                    }
+                }
+
+                callback.doWith(cls);
+
+            } catch (BreakException e) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static Object invokeCommandString(String commandString) {
         if (!KernelString.isEmpty(commandString)) {
             String[] commands = commandString.split("\\:", 3);

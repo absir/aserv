@@ -7,6 +7,7 @@
  */
 package com.absir.core.util;
 
+import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelReflect;
@@ -15,7 +16,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -57,7 +60,45 @@ public class UtilAnnotation {
             }
         }
 
-        return (T) Proxy.newProxyInstance(AnnotationHandler.class.getClassLoader(), new Class[]{annotation.getClass()}, new AnnotationHandler(annotation.getClass(), memberValues));
+        return (T) newInstance(annotation.getClass(), memberValues);
+    }
+
+    public static <T extends Annotation> T newInstance(Class<T> annotationClass, Map<String, Object> memberValues) {
+        return (T) Proxy.newProxyInstance(AnnotationHandler.class.getClassLoader(), new Class[]{annotationClass}, new AnnotationHandler(annotationClass, memberValues));
+    }
+
+    public static <T extends Annotation> T newInstance(Class<T> annotationClass, Collection<?> values) {
+        Map<String, Object> memberValues = new HashMap<String, Object>();
+        int i = 0;
+        Iterator<?> iterator = values.iterator();
+        for (Method method : annotationClass.getMethods()) {
+            if (iterator.hasNext()) {
+                memberValues.put(method.getName(), DynaBinder.to(iterator.next(), method.getReturnType()));
+
+            } else {
+                break;
+            }
+        }
+
+        return newInstance(annotationClass, memberValues);
+    }
+
+    public static <T extends Annotation> T newInstance(Class<T> annotationClass, Object[] values, int offset) {
+        Map<String, Object> memberValues = new HashMap<String, Object>();
+        int i = offset < 0 ? 0 : offset;
+        int length = values.length;
+        for (Method method : annotationClass.getMethods()) {
+            if (i < length) {
+                memberValues.put(method.getName(), DynaBinder.to(values[i], method.getReturnType()));
+
+            } else {
+                break;
+            }
+
+            i++;
+        }
+
+        return newInstance(annotationClass, memberValues);
     }
 
     public static class AnnotationHandler extends UtilAbstractHandler {

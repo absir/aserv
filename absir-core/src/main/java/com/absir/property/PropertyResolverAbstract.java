@@ -8,6 +8,7 @@
 package com.absir.property;
 
 import com.absir.core.kernel.KernelClass;
+import com.absir.core.util.UtilAnnotation;
 import com.absir.property.value.PropertyInfo;
 
 import java.lang.annotation.Annotation;
@@ -50,6 +51,16 @@ public abstract class PropertyResolverAbstract<O extends PropertyObject, A exten
             if (propertyInfo.annotationType() == annotationClass) {
                 return getPropertyObjectAnnotationValue(propertyObject, propertyInfo.valueInfo());
             }
+        }
+
+        return propertyObject;
+    }
+
+    @Override
+    public O getPropertyObjectParams(O propertyObject, String[] propertyParams) {
+        String annotationClassName = propertyParams[0];
+        if (annotationClassName.equals(annotationClass.getSimpleName())) {
+            return getPropertyObjectAnnotation(propertyObject, UtilAnnotation.newInstance(annotationClass, propertyParams, 1));
         }
 
         return propertyObject;

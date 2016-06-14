@@ -454,7 +454,7 @@ public class BeanConfigImpl implements BeanConfig {
 
         });
 
-        beanConfigTemplates.put("propterties", new CallbackTemplate<String>() {
+        beanConfigTemplates.put("properties", new CallbackTemplate<String>() {
 
             @Override
             public void doWith(String template) {

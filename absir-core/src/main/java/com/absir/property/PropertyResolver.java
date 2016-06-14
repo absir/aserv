@@ -26,4 +26,5 @@ public interface PropertyResolver<O extends PropertyObject> {
 
     public O getPropertyObject(O propertyObject, PropertyInfo[] propertyInfos);
 
+    public O getPropertyObjectParams(O propertyObject, String[] propertyParams);
 }
