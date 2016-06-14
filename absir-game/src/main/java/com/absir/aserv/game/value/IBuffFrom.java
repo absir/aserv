@@ -7,7 +7,11 @@
  */
 package com.absir.aserv.game.value;
 
+import java.lang.reflect.TypeVariable;
+
 public interface IBuffFrom<T> {
+
+    public static final TypeVariable T_VARIABLE = IBuffFrom.class.getTypeParameters()[0];
 
     public boolean supportsFrom(Object from);
 

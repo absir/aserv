@@ -8,8 +8,11 @@
 package com.absir.core.base;
 
 import java.io.Serializable;
+import java.lang.reflect.TypeVariable;
 
 public interface IBase<ID extends Serializable> {
+
+    public static final TypeVariable ID_VARIABLE = IBase.class.getTypeParameters()[0];
 
     public ID getId();
 

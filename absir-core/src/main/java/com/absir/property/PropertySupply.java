@@ -19,12 +19,15 @@ import com.absir.property.value.PropertyInfo;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class PropertySupply<O extends PropertyObject<T>, T> {
+
+    public static final TypeVariable O_VARIABLE = PropertySupply.class.getTypeParameters()[0];
 
     private static int supplySize;
 
@@ -50,9 +53,9 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
     @Inject(type = InjectType.Selectable)
     public void setPropertyResolvers(PropertyResolver[] propertyResolvers) {
         List<PropertyResolver> propertyResolveList = new ArrayList<PropertyResolver>();
-        Class<?> propertyObjectClass = KernelClass.argumentClass(getClass());
+        Class<?> propertyObjectClass = KernelClass.typeClass(getClass(), O_VARIABLE);
         for (PropertyResolver propertyResolver : propertyResolvers) {
-            if (propertyObjectClass == KernelClass.argumentClass(propertyResolver.getClass())) {
+            if (propertyObjectClass == KernelClass.typeClass(propertyResolver.getClass(), PropertyResolver.O_VARIABLE)) {
                 propertyResolveList.add(propertyResolver);
             }
         }

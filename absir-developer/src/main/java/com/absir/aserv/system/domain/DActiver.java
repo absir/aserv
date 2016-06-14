@@ -19,11 +19,14 @@ import com.absir.orm.hibernate.boost.IEntityMerge.MergeType;
 import org.hibernate.Session;
 import org.hibernate.event.spi.PostUpdateEvent;
 
+import java.lang.reflect.TypeVariable;
 import java.util.Iterator;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
 public class DActiver<T extends JiActive> {
+
+    protected static final TypeVariable T_VARIABLE = DActiver.class.getTypeParameters()[0];
 
     /**
      * 延时更新时间
@@ -48,7 +51,7 @@ public class DActiver<T extends JiActive> {
 
     public DActiver(String entityName) {
         if (entityName == null) {
-            entityName = SessionFactoryUtils.getJpaEntityName(KernelClass.argumentClass(getClass()));
+            entityName = SessionFactoryUtils.getJpaEntityName(KernelClass.typeClass(getClass(), T_VARIABLE));
         }
 
         if (!KernelString.isEmpty(entityName)) {

@@ -15,7 +15,7 @@ public abstract class OBuffFromRound<T, O extends OObject> extends OBuffRound<O>
     private Class<T> formType;
 
     public OBuffFromRound() {
-        formType = KernelClass.argumentClass(getClass());
+        formType = KernelClass.typeClass(getClass(), IBuffFrom.T_VARIABLE);
     }
 
     @Override

@@ -18,11 +18,14 @@ import com.absir.core.kernel.KernelLang.ObjectTemplate;
 import com.absir.core.kernel.KernelObject;
 
 import java.io.Serializable;
+import java.lang.reflect.TypeVariable;
 import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class BaseDaoImpl<T, ID extends Serializable> implements BaseDao<T, ID> {
+
+    protected static final TypeVariable T_VARIABLE = BaseDaoImpl.class.getTypeParameters()[0];
 
     private static final Map<Class<?>, BaseDaoImpl<?, ?>> Base_Class_Map_Dao = new HashMap<Class<?>, BaseDaoImpl<?, ?>>();
 
@@ -30,7 +33,7 @@ public class BaseDaoImpl<T, ID extends Serializable> implements BaseDao<T, ID> {
 
     public BaseDaoImpl() {
         if (baseClass == null) {
-            baseClass = KernelClass.argumentClass(getClass().getGenericSuperclass(), true);
+            baseClass = KernelClass.typeClass(getClass(), T_VARIABLE);
         }
 
         Base_Class_Map_Dao.put(baseClass, this);

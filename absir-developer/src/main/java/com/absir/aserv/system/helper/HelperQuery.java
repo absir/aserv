@@ -28,7 +28,7 @@ public class HelperQuery {
     public static Class<?> getFieldType(Class<?> entityClass, Field field) {
         Class<?> fieldType = field.getType();
         if (fieldType == Serializable.class && "id".equals(field.getName()) && IBase.class.isAssignableFrom(entityClass)) {
-            fieldType = KernelClass.argumentClass(entityClass);
+            fieldType = KernelClass.typeClass(entityClass, IBase.ID_VARIABLE);
         }
 
         return fieldType;

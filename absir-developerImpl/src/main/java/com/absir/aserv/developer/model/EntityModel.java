@@ -37,7 +37,7 @@ public class EntityModel implements IModel {
         addReferencedMap(JaEdit.GROUP_LIST, JaEdit.GROUP_SEARCH);
     }
 
-    TypeVariable<?> TYPE_VARIABLE = ICrudSubmit.class.getTypeParameters()[0];
+    protected static final TypeVariable<?> TYPE_VARIABLE = ICrudSubmit.class.getTypeParameters()[0];
 
     // private boolean filter;
 

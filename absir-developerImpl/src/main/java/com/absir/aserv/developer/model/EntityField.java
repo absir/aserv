@@ -476,7 +476,7 @@ public class EntityField extends DBField {
             if (entityModel != null && (property.getAccessor().getAnnotation(Id.class, true) != null || (identifierName != null && identifierName.equals(fieldName)))) {
                 entityField = new EntityField(fieldName, property, editorObject, joEntity);
                 if ((entityField.getType() == Object.class || entityField.getType() == Serializable.class) && IBase.class.isAssignableFrom(joEntity.getEntityClass()) && fieldName.equals("id")) {
-                    entityField.getCrudField().setType(KernelClass.argumentClass(joEntity.getEntityClass()));
+                    entityField.getCrudField().setType(KernelClass.typeClass(joEntity.getEntityClass(), IBase.ID_VARIABLE));
                 }
 
                 primary = true;

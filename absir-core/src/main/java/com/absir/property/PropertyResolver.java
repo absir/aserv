@@ -11,9 +11,12 @@ import com.absir.property.value.PropertyInfo;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.TypeVariable;
 
 @SuppressWarnings({"rawtypes"})
 public interface PropertyResolver<O extends PropertyObject> {
+
+    public static final TypeVariable O_VARIABLE = PropertyResolver.class.getTypeParameters()[0];
 
     public O getPropertyObject(O propertyObject, Field field);
 

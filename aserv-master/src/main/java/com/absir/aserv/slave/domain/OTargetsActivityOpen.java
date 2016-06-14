@@ -21,10 +21,15 @@ import com.absir.orm.hibernate.boost.L2EntityMergeService;
 import com.absir.orm.transaction.TransactionContext;
 import org.hibernate.Session;
 
+import java.lang.reflect.TypeVariable;
 import java.util.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends JbBeanTargetsOpen> {
+
+    protected static final TypeVariable<?> TARGETS_VARIABLE = OTargetsActivityOpen.class.getTypeParameters()[0];
+
+    protected static final TypeVariable<?> TARGETS_OPEN_VARIABLE = OTargetsActivityOpen.class.getTypeParameters()[1];
 
     protected Class<T> targetsClass;
 
@@ -41,9 +46,8 @@ public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends J
     protected String selectServerActivityQuery;
 
     public OTargetsActivityOpen() {
-        Class[] classes = KernelClass.argumentClasses(getClass(), true);
-        targetsClass = classes[0];
-        targetsOpenClass = classes[1];
+        targetsClass = KernelClass.typeClass(getClass(), TARGETS_VARIABLE);
+        targetsOpenClass = KernelClass.typeClass(getClass(), TARGETS_OPEN_VARIABLE);
         targetsName = targetsClass.getSimpleName();
         targetsOpenName = targetsOpenClass.getSimpleName();
         initQueryString();

@@ -13,14 +13,17 @@ import com.absir.property.value.PropertyInfo;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.TypeVariable;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class PropertyResolverAbstract<O extends PropertyObject, A extends Annotation> implements PropertyResolver<O> {
 
+    protected static final TypeVariable ANNOTATION_VARIABLE = PropertyResolverAbstract.class.getTypeParameters()[1];
+
     private Class<A> annotationClass;
 
     public PropertyResolverAbstract() {
-        annotationClass = KernelClass.argumentClasses(getClass(), true)[1];
+        annotationClass = KernelClass.typeClass(getClass(), ANNOTATION_VARIABLE);
     }
 
     @Override

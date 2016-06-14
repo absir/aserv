@@ -15,7 +15,7 @@ public abstract class OBuffFrom<T, O extends OObject> extends OBuff<O> implement
     private Class<T> formType;
 
     public OBuffFrom() {
-        formType = KernelClass.argumentClass(formType);
+        formType = KernelClass.typeClass(getClass(), IBuffFrom.T_VARIABLE);
     }
 
     @Override

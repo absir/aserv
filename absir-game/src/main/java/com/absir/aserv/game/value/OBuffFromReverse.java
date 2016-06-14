@@ -15,7 +15,7 @@ public abstract class OBuffFromReverse<T, O extends OObject> extends OBuffRevers
     private Class<T> formType;
 
     public OBuffFromReverse() {
-        formType = KernelClass.argumentClass(formType);
+        formType = KernelClass.typeClass(getClass(), IBuffFrom.T_VARIABLE);
     }
 
     @Override
