@@ -38,9 +38,7 @@ public class ContextAtom extends UtilAtom {
                 return;
 
             } catch (Exception e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
             }
         }
 

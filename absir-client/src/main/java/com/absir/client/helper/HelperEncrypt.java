@@ -83,10 +83,7 @@ public class HelperEncrypt {
             return hexDigit(inBuffer, secrets);
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
-
+            Environment.throwable(e);
             return null;
         }
     }
@@ -103,10 +100,7 @@ public class HelperEncrypt {
             return hexDigit(outBuffer, secrets);
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
-
+            Environment.throwable(e);
             return null;
 
         } finally {
@@ -130,10 +124,7 @@ public class HelperEncrypt {
             return hexDigitChars(mdInst.digest(), null);
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
-
+            Environment.throwable(e);
             return null;
 
         }
@@ -151,10 +142,7 @@ public class HelperEncrypt {
             return hexDigitChars(mdInst.digest(), null);
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
-
+            Environment.throwable(e);
             return null;
 
         } finally {
@@ -219,9 +207,7 @@ public class HelperEncrypt {
             return cipher.doFinal(inBuffer);
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
 
         return null;
@@ -238,9 +224,7 @@ public class HelperEncrypt {
             return cipher.doFinal(content);
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
 
         return null;

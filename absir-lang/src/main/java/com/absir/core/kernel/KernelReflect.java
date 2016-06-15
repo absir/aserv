@@ -67,14 +67,10 @@ public abstract class KernelReflect {
             }
 
         } catch (SecurityException e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
 
         } catch (NoSuchMethodException e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
 
         return null;
@@ -119,24 +115,16 @@ public abstract class KernelReflect {
                 return constructor.newInstance(initargs);
 
             } catch (IllegalArgumentException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
 
             } catch (InstantiationException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
 
             } catch (IllegalAccessException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
 
             } catch (InvocationTargetException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
             }
         }
 
@@ -167,10 +155,7 @@ public abstract class KernelReflect {
                 break;
 
             } catch (SecurityException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
-
+                Environment.throwable(e);
                 break;
 
             } catch (NoSuchFieldException e) {
@@ -239,14 +224,10 @@ public abstract class KernelReflect {
                 return true;
 
             } catch (IllegalArgumentException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
 
             } catch (IllegalAccessException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
             }
         }
 
@@ -263,14 +244,10 @@ public abstract class KernelReflect {
                 return field.get(obj);
 
             } catch (IllegalArgumentException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
 
             } catch (IllegalAccessException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
             }
         }
 
@@ -379,17 +356,11 @@ public abstract class KernelReflect {
                     break;
 
                 } catch (SecurityException e) {
-                    if (Environment.getEnvironment() == Environment.DEVELOP) {
-                        e.printStackTrace();
-                    }
-
+                    Environment.throwable(e);
                     break;
 
                 } catch (NoSuchMethodException e) {
-                    // if (Environment.getEnvironment() == Environment.DEVELOP)
-                    // {
-                    // e.printStackTrace();
-                    // }
+                    //Environment.throwable(e);
                 }
             }
 
@@ -424,19 +395,13 @@ public abstract class KernelReflect {
                 return method.invoke(obj, args);
 
             } catch (IllegalArgumentException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
 
             } catch (IllegalAccessException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
 
             } catch (InvocationTargetException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
             }
         }
 
@@ -450,20 +415,13 @@ public abstract class KernelReflect {
                 return true;
 
             } catch (IllegalArgumentException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
 
             } catch (IllegalAccessException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
 
             } catch (InvocationTargetException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
-
+                Environment.throwable(e);
             }
         }
 

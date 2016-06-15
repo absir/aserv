@@ -40,9 +40,7 @@ public class InputSlaveDispather extends InDispatcher<InputSlaveAtt, SocketChann
                 }
 
             } catch (Throwable e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
             }
 
             InputSocket.writeByteBuffer(SlaveBufferResolver.ME, null, adapter.getSocket().getChannel(),

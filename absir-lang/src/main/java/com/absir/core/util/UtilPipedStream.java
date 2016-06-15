@@ -57,9 +57,7 @@ public class UtilPipedStream implements IStep {
             closeable.close();
 
         } catch (IOException e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
     }
 

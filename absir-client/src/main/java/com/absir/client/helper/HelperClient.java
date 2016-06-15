@@ -101,11 +101,7 @@ public class HelperClient {
             return openConnection(urlConnection, type);
 
         } catch (Throwable e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
-
-            LOGGER.error("", e);
+            LOGGER.error("open error", e);
         }
 
         return null;
@@ -124,11 +120,7 @@ public class HelperClient {
             }
 
         } catch (Throwable e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
-
-            LOGGER.error("", e);
+            LOGGER.error("request error", e);
         }
 
         return response;

@@ -80,9 +80,7 @@ public class SessionFactoryBean implements IBeanFactoryStopping {
                     : (ConnectionProvider) connectionProvider;
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
 
         return null;

@@ -267,10 +267,7 @@ public abstract class InputSocket extends Input {
                                 }
 
                             } catch (Exception e) {
-                                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                                    e.printStackTrace();
-                                }
-
+                                Environment.throwable(e);
                                 return;
                             }
 
@@ -284,9 +281,7 @@ public abstract class InputSocket extends Input {
                 sended = true;
 
             } catch (Exception e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
 
             } finally {
                 if (!sended) {

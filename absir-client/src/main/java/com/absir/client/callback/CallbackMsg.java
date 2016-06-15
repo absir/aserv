@@ -64,9 +64,7 @@ public abstract class CallbackMsg<T> implements CallbackAdapterStream {
                     }
 
                 } catch (Exception e) {
-                    if (Environment.getEnvironment() == Environment.DEVELOP) {
-                        e.printStackTrace();
-                    }
+                    Environment.throwable(e);
                 }
             }
         }
@@ -100,9 +98,7 @@ public abstract class CallbackMsg<T> implements CallbackAdapterStream {
                     }
 
                 } catch (Exception e) {
-                    if (Environment.getEnvironment() == Environment.DEVELOP) {
-                        e.printStackTrace();
-                    }
+                    Environment.throwable(e);
                 }
             }
 

@@ -139,9 +139,7 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
     }
 
     protected void logThrowable(Throwable e) {
-        if (Environment.getEnvironment() == Environment.DEVELOP) {
-            e.printStackTrace();
-        }
+        Environment.throwable(e);
     }
 
     protected long getMaxSleepTime() {

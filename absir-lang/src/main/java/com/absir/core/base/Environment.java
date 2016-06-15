@@ -46,4 +46,10 @@ public enum Environment {
     public static void setStarted(boolean started) {
         Environment.started = started;
     }
+
+    public static void throwable(Throwable e) {
+        if (Environment.getEnvironment() == Environment.DEVELOP) {
+            e.printStackTrace();
+        }
+    }
 }

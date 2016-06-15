@@ -111,9 +111,7 @@ public class SocketServer {
                                     sessionClose(selSession, socketChannel);
 
                                 } catch (Throwable e) {
-                                    if (Environment.getEnvironment() == Environment.DEVELOP) {
-                                        e.printStackTrace();
-                                    }
+                                    Environment.throwable(e);
                                 }
                             }
 
@@ -184,9 +182,7 @@ public class SocketServer {
                     sessionClose(selSession, socketChannel);
 
                 } catch (Throwable e) {
-                    if (Environment.getEnvironment() == Environment.DEVELOP) {
-                        e.printStackTrace();
-                    }
+                    Environment.throwable(e);
                 }
             }
         }

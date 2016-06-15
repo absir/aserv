@@ -234,16 +234,21 @@ public class PropertyUtils {
         }, true);
     }
 
-    protected static final Map<Class<?>, Map<String, Object>> beanClassMapProperties = new HashMap<Class<?>, Map<String, Object>>();
+    protected static final Map<String, Map<String, Object>> beanClassMapProperties = new HashMap<String, Map<String, Object>>();
 
     public static Map<String, Object> getPropertiesForBeanClass(Class<?> beanClass) {
-        Map<String, Object> properties = beanClassMapProperties.get(beanClass);
+        return getPropertiesForBeanClass(beanClass, "properties");
+    }
+
+    public static Map<String, Object> getPropertiesForBeanClass(Class<?> beanClass, String category) {
+        String beanClassCategory = beanClass + "@" + category;
+        Map<String, Object> properties = beanClassMapProperties.get(beanClassCategory);
         if (properties != null) {
             return properties;
         }
 
         BeanConfig config = BeanFactoryUtils.getBeanConfig();
-        File propertiesFile = new File(config.getClassPath() + "properties/" + beanClass.getSimpleName() + ".properties");
+        File propertiesFile = new File(config.getClassPath() + category + "/" + beanClass.getSimpleName() + ".properties");
 
         if (propertiesFile.exists()) {
             properties = new HashMap<String, Object>();
@@ -254,7 +259,7 @@ public class PropertyUtils {
             properties = (Map<String, Object>) (Object) KernelLang.NULL_MAP;
         }
 
-        beanClassMapProperties.put(beanClass, properties);
+        beanClassMapProperties.put(beanClassCategory, properties);
         return properties;
     }
 }

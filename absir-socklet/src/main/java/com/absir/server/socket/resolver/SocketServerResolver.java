@@ -96,9 +96,7 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
                         outputStream.close();
 
                     } catch (IOException e) {
-                        if (Environment.getEnvironment() == Environment.DEVELOP) {
-                            e.printStackTrace();
-                        }
+                        Environment.throwable(e);
                     }
                 }
             }

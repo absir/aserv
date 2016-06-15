@@ -71,9 +71,7 @@ public class UtilQueueBlock<T> extends UtilQueue<T> {
             }
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
 
         return null;
@@ -94,9 +92,7 @@ public class UtilQueueBlock<T> extends UtilQueue<T> {
             }
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
 
         return null;

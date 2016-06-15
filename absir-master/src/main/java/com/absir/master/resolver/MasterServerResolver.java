@@ -182,9 +182,7 @@ public class MasterServerResolver extends SocketServerResolver {
                                 }
 
                             } catch (Exception e) {
-                                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                                    e.printStackTrace();
-                                }
+                                Environment.throwable(e);
 
                                 return;
                             }

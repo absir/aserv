@@ -100,10 +100,7 @@ public abstract class Developer {
             return KernelObject.unserialize(UtilFile.read(getRuntimeFile(runtimeName)));
 
         } catch (IOException e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
-
+            Environment.throwable(e);
             return null;
         }
     }
@@ -124,9 +121,7 @@ public abstract class Developer {
             }
 
         } catch (IOException e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
     }
 }

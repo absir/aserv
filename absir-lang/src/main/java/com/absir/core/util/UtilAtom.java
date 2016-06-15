@@ -50,9 +50,7 @@ public class UtilAtom {
                 }
 
             } catch (Exception e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
             }
 
             lock.unlock();

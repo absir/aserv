@@ -70,7 +70,13 @@ public class UtilContext {
             @Override
             public void run() {
                 while (Environment.isStarted()) {
-                    runnable.run();
+                    try {
+                        runnable.run();
+
+                    } catch (Throwable e) {
+                        Environment.throwable(e);
+                    }
+
                     try {
                         Thread.sleep(1000);
 
@@ -168,6 +174,7 @@ public class UtilContext {
             threadPoolExecutor.execute(command);
 
         } catch (Throwable e) {
+            Environment.throwable(e);
         }
     }
 

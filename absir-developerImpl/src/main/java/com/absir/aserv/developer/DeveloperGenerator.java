@@ -70,9 +70,7 @@ public class DeveloperGenerator {
             }
 
         } catch (IOException e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
 
         return false;
@@ -91,9 +89,7 @@ public class DeveloperGenerator {
             }
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
 
         return false;

@@ -106,9 +106,7 @@ public class UtilStep extends Thread {
     }
 
     protected void logThrowable(Throwable e) {
-        if (Environment.getEnvironment() == Environment.DEVELOP) {
-            e.printStackTrace();
-        }
+        Environment.throwable(e);
     }
 
     public interface IStep {

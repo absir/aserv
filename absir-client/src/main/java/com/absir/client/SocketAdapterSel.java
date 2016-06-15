@@ -83,9 +83,7 @@ public class SocketAdapterSel extends SocketAdapter {
                                                 }
 
                                             } catch (Exception e) {
-                                                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                                                    e.printStackTrace();
-                                                }
+                                                Environment.throwable(e);
                                             }
 
                                             key.cancel();
@@ -103,10 +101,7 @@ public class SocketAdapterSel extends SocketAdapter {
                                         }
 
                                     } catch (Exception e) {
-                                        if (Environment.getEnvironment() == Environment.DEVELOP) {
-                                            e.printStackTrace();
-                                        }
-
+                                        Environment.throwable(e);
                                         break;
                                     }
                                 }
@@ -122,9 +117,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 }
 
             } catch (IOException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
             }
         }
 
@@ -173,9 +166,7 @@ public class SocketAdapterSel extends SocketAdapter {
                         return true;
 
                     } catch (Exception e) {
-                        if (Environment.getEnvironment() == Environment.DEVELOP) {
-                            e.printStackTrace();
-                        }
+                        Environment.throwable(e);
                     }
                 }
 
@@ -207,9 +198,7 @@ public class SocketAdapterSel extends SocketAdapter {
                         outputStream.close();
 
                     } catch (IOException e) {
-                        if (Environment.getEnvironment() == Environment.DEVELOP) {
-                            e.printStackTrace();
-                        }
+                        Environment.throwable(e);
                     }
                 }
             }
@@ -236,9 +225,7 @@ public class SocketAdapterSel extends SocketAdapter {
                         return;
 
                     } catch (IOException e) {
-                        if (Environment.getEnvironment() == Environment.DEVELOP) {
-                            e.printStackTrace();
-                        }
+                        Environment.throwable(e);
                     }
                 }
 
@@ -294,9 +281,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 registerSelector(socketChannel);
 
             } catch (IOException e) {
-                if (Environment.getEnvironment() == Environment.DEVELOP) {
-                    e.printStackTrace();
-                }
+                Environment.throwable(e);
             }
         }
     }
@@ -360,10 +345,7 @@ public class SocketAdapterSel extends SocketAdapter {
                             }
 
                         } catch (Exception e) {
-                            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                                e.printStackTrace();
-                            }
-
+                            Environment.throwable(e);
                             return;
                         }
 

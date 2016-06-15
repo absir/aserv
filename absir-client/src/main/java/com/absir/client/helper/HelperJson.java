@@ -53,10 +53,7 @@ public class HelperJson {
             return encode(obj);
 
         } catch (IOException e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
-
+            Environment.throwable(e);
             return null;
         }
     }
@@ -85,9 +82,7 @@ public class HelperJson {
             return decode(string);
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
 
         return null;
@@ -112,9 +107,7 @@ public class HelperJson {
             return decode(string, toClass);
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
 
         return null;
@@ -129,9 +122,7 @@ public class HelperJson {
             return decode(string, toType);
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
 
         return null;
@@ -174,10 +165,7 @@ public class HelperJson {
             return encodeBase64String(encode(obj));
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
-
+            Environment.throwable(e);
             return null;
         }
     }
@@ -191,10 +179,7 @@ public class HelperJson {
             return decode(decodeBase64String(string), toClass);
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
-
+            Environment.throwable(e);
             return null;
         }
     }
@@ -208,10 +193,7 @@ public class HelperJson {
             return decode(decodeBase64String(string), toType);
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
-
+            Environment.throwable(e);
             return null;
         }
     }
@@ -224,10 +206,7 @@ public class HelperJson {
             return xmlToMap(saxReader.read(inputStream).getRootElement());
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
-
+            Environment.throwable(e);
             return null;
 
         } finally {
@@ -275,9 +254,7 @@ public class HelperJson {
             return new String(outputStream.toByteArray(), KernelCharset.UTF8);
 
         } catch (Exception e) {
-            if (Environment.getEnvironment() == Environment.DEVELOP) {
-                e.printStackTrace();
-            }
+            Environment.throwable(e);
         }
 
         return null;
