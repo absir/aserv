@@ -9,15 +9,15 @@ package com.absir.core.util;
 
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelList.Orderable;
-import com.absir.core.util.UtilSchelduer.NextRunable;
+import com.absir.core.util.UtilSchelduer.NextRunnable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class UtilSchelduer<T extends NextRunable> extends Thread {
+public class UtilSchelduer<T extends NextRunnable> extends Thread {
 
-    protected List<T> addRunables;
+    protected List<T> addRunnables;
 
     protected UtilNode<T> runableHeader = new UtilNode<T>();
 
@@ -25,23 +25,23 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
 
     protected boolean starting;
 
-    protected long nextRunableTime;
+    protected long nextRunnableTime;
 
-    public synchronized void addRunables(T runable) {
-        if (addRunables == null) {
-            addRunables = new ArrayList<T>();
+    public synchronized void addRunnables(T runable) {
+        if (addRunnables == null) {
+            addRunnables = new ArrayList<T>();
         }
 
-        addRunables.add(runable);
+        addRunnables.add(runable);
         runable.start(UtilContext.getCurrentDate());
-        if (runable.getNextTime() < nextRunableTime) {
+        if (runable.getNextTime() < nextRunnableTime) {
             interrupt();
         }
     }
 
-    public synchronized void removeRunables(T runable) {
-        if (addRunables != null) {
-            addRunables.remove(runable);
+    public synchronized void removeRunnables(T runable) {
+        if (addRunnables != null) {
+            addRunnables.remove(runable);
         }
     }
 
@@ -80,10 +80,10 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
                     }
 
                     if (runable.getNextTime() <= time) {
-                        removeRunableNode(node);
+                        removeRunnableNode(node);
 
                     } else {
-                        sortNextRunableNode(node);
+                        sortNextRunnableNode(node);
                     }
 
                 } else {
@@ -93,10 +93,10 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
                 node = nodeNext;
             }
 
-            if (addRunables != null) {
-                List<T> adds = addRunables;
+            if (addRunnables != null) {
+                List<T> adds = addRunnables;
                 synchronized (this) {
-                    addRunables = null;
+                    addRunnables = null;
                 }
 
                 for (T add : adds) {
@@ -114,21 +114,21 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
                         }
                     }
 
-                    addNextRunableNode(add);
+                    addNextRunnableNode(add);
                 }
             }
 
             node = runableHeader.getNext();
             if (node == null) {
-                nextRunableTime = time + getMaxSleepTime();
+                nextRunnableTime = time + getMaxSleepTime();
 
             } else {
-                nextRunableTime = node.getElement().getNextTime();
+                nextRunnableTime = node.getElement().getNextTime();
             }
 
-            if (nextRunableTime > time) {
+            if (nextRunnableTime > time) {
                 try {
-                    Thread.sleep(nextRunableTime - time);
+                    Thread.sleep(nextRunnableTime - time);
 
                 } catch (InterruptedException e) {
                     continue;
@@ -155,7 +155,7 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
         runableFooter = node;
     }
 
-    protected void sortAllRunables() {
+    protected void sortAllRunnables() {
         UtilNode.sortOrderableNodeAll(runableHeader);
         computeFooter();
     }
@@ -167,7 +167,7 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
         }
     }
 
-    protected void removeRunableNode(UtilNode<T> runableNode) {
+    protected void removeRunnableNode(UtilNode<T> runableNode) {
         if (runableNode == runableFooter) {
             runableFooter = runableFooter.previous;
         }
@@ -175,17 +175,17 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
         runableNode.remove();
     }
 
-    protected void sortNextRunableNode(UtilNode<T> runableNode) {
+    protected void sortNextRunnableNode(UtilNode<T> runableNode) {
         UtilNode.sortOrderableNode(runableNode);
         computeAddFooter();
     }
 
-    protected void addNextRunableNode(T runableNode) {
+    protected void addNextRunnableNode(T runableNode) {
         UtilNode.insertOrderableNodeFooter(runableFooter, runableNode);
         computeAddFooter();
     }
 
-    public interface NextRunable extends Orderable {
+    public interface NextRunnable extends Orderable {
 
         public void start(Date date);
 
@@ -194,7 +194,7 @@ public class UtilSchelduer<T extends NextRunable> extends Thread {
         public void run(Date date);
     }
 
-    public static abstract class NextRunableDelay implements NextRunable {
+    public static abstract class NextRunnableDelay implements NextRunnable {
 
         protected long nextTime;
 

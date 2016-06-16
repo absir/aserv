@@ -10,13 +10,13 @@ package com.absir.context.config;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.InjectMethod;
 
-public class BeanMethodRunable implements Runnable {
+public class BeanMethodRunnable implements Runnable {
 
     private Object beanObject;
 
     private InjectMethod injectMethod;
 
-    public BeanMethodRunable(Object beanObject, InjectMethod injectMethod) {
+    public BeanMethodRunnable(Object beanObject, InjectMethod injectMethod) {
         this.beanObject = beanObject;
         this.injectMethod = injectMethod;
     }

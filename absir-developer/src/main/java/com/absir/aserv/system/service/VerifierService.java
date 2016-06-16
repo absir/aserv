@@ -22,7 +22,7 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Started;
 import com.absir.bean.inject.value.Value;
 import com.absir.context.core.ContextUtils;
-import com.absir.context.schedule.cron.CronFixDelayRunable;
+import com.absir.context.schedule.cron.CronFixDelayRunnable;
 import com.absir.orm.hibernate.SessionFactoryBean;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
@@ -115,7 +115,7 @@ public class VerifierService {
 
             if (!nameMapCrudEntity.isEmpty()) {
                 setNameMapCrudEntity(nameMapCrudEntity);
-                ContextUtils.getScheduleFactory().addRunables(new CronFixDelayRunable(new Runnable() {
+                ContextUtils.getScheduleFactory().addRunnables(new CronFixDelayRunnable(new Runnable() {
 
                     @Override
                     public void run() {

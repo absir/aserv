@@ -9,11 +9,11 @@ package com.absir.context.schedule.cron;
 
 import java.util.Date;
 
-public class CronExpressionRunable extends CronFixDelayRunable {
+public class CronExpressionRunnable extends CronFixDelayRunnable {
 
     private CronSequenceGenerator cronSequenceGenerator;
 
-    public CronExpressionRunable(Runnable runnable, long fixDelay, String expression) {
+    public CronExpressionRunnable(Runnable runnable, long fixDelay, String expression) {
         super(runnable, fixDelay);
         cronSequenceGenerator = new CronSequenceGenerator(expression);
     }

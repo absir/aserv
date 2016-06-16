@@ -15,7 +15,7 @@ import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Stopping;
 import com.absir.bean.inject.value.Value;
 import com.absir.context.core.ContextUtils;
-import com.absir.context.schedule.cron.CronFixDelayRunable;
+import com.absir.context.schedule.cron.CronFixDelayRunnable;
 import com.absir.core.base.Environment;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelMap;
@@ -44,7 +44,7 @@ public class LangBundle {
 
     protected long reloadTime;
 
-    protected CronFixDelayRunable reloadRunable;
+    protected CronFixDelayRunnable reloadRunnable;
 
     protected Locale locale;
 
@@ -153,13 +153,13 @@ public class LangBundle {
         if (this.reloadTime != reloadTime) {
             this.reloadTime = reloadTime;
             if (reloadTime <= 0) {
-                if (reloadRunable != null) {
-                    reloadRunable.setFixDelay(0);
-                    reloadRunable = null;
+                if (reloadRunnable != null) {
+                    reloadRunnable.setFixDelay(0);
+                    reloadRunnable = null;
                 }
 
             } else {
-                reloadRunable = reloadRunable == null ? new CronFixDelayRunable(new Runnable() {
+                reloadRunnable = reloadRunnable == null ? new CronFixDelayRunnable(new Runnable() {
 
                     @Override
                     public void run() {
@@ -167,8 +167,8 @@ public class LangBundle {
                         localeMapResourceBunlde.clear();
                     }
 
-                }, reloadTime) : reloadRunable.transformCronFixDelayRunable(reloadTime);
-                ContextUtils.getScheduleFactory().addRunables(reloadRunable);
+                }, reloadTime) : reloadRunnable.transformCronFixDelayRunnable(reloadTime);
+                ContextUtils.getScheduleFactory().addRunnables(reloadRunnable);
             }
         }
     }

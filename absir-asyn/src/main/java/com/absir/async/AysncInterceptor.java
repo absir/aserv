@@ -16,10 +16,10 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 
 @SuppressWarnings("rawtypes")
-public class AysncInterceptor extends AopInterceptorAbstract<AysncRunable> {
+public class AysncInterceptor extends AopInterceptorAbstract<AysncRunnable> {
 
     @Override
-    public Object before(Object proxy, Iterator<AopInterceptor> iterator, AysncRunable interceptor, AopProxyHandler proxyHandler, Method method, Object[] args, MethodProxy methodProxy)
+    public Object before(Object proxy, Iterator<AopInterceptor> iterator, AysncRunnable interceptor, AopProxyHandler proxyHandler, Method method, Object[] args, MethodProxy methodProxy)
             throws Throwable {
         interceptor.aysnc(proxy, iterator, proxyHandler, method, args, methodProxy);
         return null;

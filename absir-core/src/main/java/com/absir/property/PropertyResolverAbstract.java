@@ -24,8 +24,11 @@ public abstract class PropertyResolverAbstract<O extends PropertyObject, A exten
 
     private Class<A> annotationClass;
 
+    private String annotationSimpleClassName;
+
     public PropertyResolverAbstract() {
         annotationClass = KernelClass.typeClass(getClass(), ANNOTATION_VARIABLE);
+        annotationSimpleClassName = annotationClass.getSimpleName();
     }
 
     @Override
@@ -60,7 +63,7 @@ public abstract class PropertyResolverAbstract<O extends PropertyObject, A exten
     @Override
     public O getPropertyObjectParams(O propertyObject, String[] propertyParams) {
         String annotationClassName = propertyParams[0];
-        if (annotationClassName.equals(annotationClass.getSimpleName())) {
+        if (annotationClassName.equals(annotationSimpleClassName)) {
             return getPropertyObjectAnnotation(propertyObject, UtilAnnotation.newInstance(annotationClass, propertyParams, 1));
         }
 

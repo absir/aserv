@@ -318,7 +318,7 @@ public class SocketAdapterSel extends SocketAdapter {
             final byte[] buffer = sendDataBytes(4, dataBytes, head, debug, STREAM_FLAG, callbackIndex, null);
             System.arraycopy(buffer, 8, buffer, 4, buffer.length - 8);
             KernelByte.setLength(buffer, buffer.length - 4, nextIndex.object);
-            final Runnable postRunable = new Runnable() {
+            final Runnable postRunnable = new Runnable() {
 
                 @Override
                 public void run() {
@@ -360,7 +360,7 @@ public class SocketAdapterSel extends SocketAdapter {
             };
 
             if (registered && sendData(buffer)) {
-                UtilContext.getThreadPoolExecutor().execute(postRunable);
+                UtilContext.getThreadPoolExecutor().execute(postRunnable);
                 sended = false;
                 return null;
             }
@@ -381,7 +381,7 @@ public class SocketAdapterSel extends SocketAdapter {
                         failed = !sendData(buffer);
                         if (!failed) {
                             nextTemplate.object = nextIndex;
-                            UtilContext.getThreadPoolExecutor().execute(postRunable);
+                            UtilContext.getThreadPoolExecutor().execute(postRunnable);
                             sended = true;
                         }
 

@@ -36,7 +36,7 @@ public class AsyncMethodDefine extends AopMethodDefineAbstract<AysncInterceptor,
     @Override
     public void setAopInterceptor(Async interceptor, AysncInterceptor aopInterceptor, Class<?> beanType, Method method, Method beanMethod) {
         aopInterceptor.getMethodMapInterceptor().put(beanMethod,
-                interceptor.notifier() ? new AysncRunableNotifier(interceptor.timeout(), interceptor.thread()) : new AysncRunable(interceptor.timeout(), interceptor.thread()));
+                interceptor.notifier() ? new AysncRunnableNotifier(interceptor.timeout(), interceptor.thread()) : new AysncRunnable(interceptor.timeout(), interceptor.thread()));
     }
 
     @Override

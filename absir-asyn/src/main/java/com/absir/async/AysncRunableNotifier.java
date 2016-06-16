@@ -15,17 +15,17 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 
 @SuppressWarnings("rawtypes")
-public class AysncRunableNotifier extends AysncRunable {
+public class AysncRunnableNotifier extends AysncRunnable {
 
     private boolean notifying;
 
     private NotifierIterator notifierIterator;
 
-    public AysncRunableNotifier(long timeout, boolean thread) {
+    public AysncRunnableNotifier(long timeout, boolean thread) {
         super(timeout, thread);
     }
 
-    public Runnable notifierRunable(final Object proxy, final Iterator<AopInterceptor> iterator,
+    public Runnable notifierRunnable(final Object proxy, final Iterator<AopInterceptor> iterator,
                                     final AopProxyHandler proxyHandler, final Method method, final Object[] args, final MethodProxy methodProxy) {
         return new Runnable() {
 
@@ -58,7 +58,7 @@ public class AysncRunableNotifier extends AysncRunable {
         }
 
         try {
-            aysncRun(notifierRunable(iterator.proxy, iterator.iterator, iterator.proxyHandler, iterator.method, iterator.args,
+            aysncRun(notifierRunnable(iterator.proxy, iterator.iterator, iterator.proxyHandler, iterator.method, iterator.args,
                     iterator.methodProxy));
 
         } catch (Throwable e) {
@@ -89,7 +89,7 @@ public class AysncRunableNotifier extends AysncRunable {
         }
 
         try {
-            aysncRun(notifierRunable(proxy, iterator, proxyHandler, method, args, methodProxy));
+            aysncRun(notifierRunnable(proxy, iterator, proxyHandler, method, args, methodProxy));
 
         } catch (Throwable e) {
             checkNotifierIterator();

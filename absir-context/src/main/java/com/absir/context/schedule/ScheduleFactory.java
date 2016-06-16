@@ -16,9 +16,9 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Started;
 import com.absir.bean.inject.value.Stopping;
 import com.absir.bean.inject.value.Value;
-import com.absir.context.config.BeanMethodRunable;
-import com.absir.context.schedule.cron.CronExpressionRunable;
-import com.absir.context.schedule.cron.CronFixDelayRunable;
+import com.absir.context.config.BeanMethodRunnable;
+import com.absir.context.schedule.cron.CronExpressionRunnable;
+import com.absir.context.schedule.cron.CronFixDelayRunnable;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
 import com.absir.core.util.UtilSchelduer;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 
 @Bean
-public class ScheduleFactory extends UtilSchelduer<ScheduleRunable> implements IMethodInject<Schedule> {
+public class ScheduleFactory extends UtilSchelduer<ScheduleRunnable> implements IMethodInject<Schedule> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleFactory.class);
 
@@ -62,21 +62,21 @@ public class ScheduleFactory extends UtilSchelduer<ScheduleRunable> implements I
 
     @Override
     public void setInjectMethod(Schedule inject, Method method, Object beanObject, InjectMethod injectMethod) {
-        ScheduleRunableAbstract scheduleRunable;
-        BeanMethodRunable beanMethodRunable = new BeanMethodRunable(beanObject, injectMethod);
+        ScheduleRunnableAbstract scheduleRunnable;
+        BeanMethodRunnable beanMethodRunnable = new BeanMethodRunnable(beanObject, injectMethod);
         if ("".equals(inject.cron())) {
-            scheduleRunable = new CronFixDelayRunable(beanMethodRunable, inject.fixedDelay());
+            scheduleRunnable = new CronFixDelayRunnable(beanMethodRunnable, inject.fixedDelay());
 
         } else {
-            scheduleRunable = new CronExpressionRunable(beanMethodRunable, inject.fixedDelay(), inject.cron());
+            scheduleRunnable = new CronExpressionRunnable(beanMethodRunnable, inject.fixedDelay(), inject.cron());
         }
 
         if (BeanFactoryUtils.getEnvironment().compareTo(Environment.DEBUG) <= 0) {
             LOGGER.info(beanObject + " => " + injectMethod.getMethod());
         }
 
-        scheduleRunable.setNextTime(inject.initialDelay());
-        addNextRunableNode(scheduleRunable);
+        scheduleRunnable.setNextTime(inject.initialDelay());
+        addNextRunnableNode(scheduleRunnable);
     }
 
     /**

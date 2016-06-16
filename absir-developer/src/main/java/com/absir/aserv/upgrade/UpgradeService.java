@@ -256,7 +256,7 @@ public class UpgradeService {
 
     @Async
     @Schedule(cron = "0 0 5 * * *")
-    protected void upradeBackup() throws IOException {
+    protected void upgradeBackup() throws IOException {
         if (!KernelString.isEmpty(backupCommand)) {
             Runtime.getRuntime().exec(backupCommand);
         }

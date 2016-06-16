@@ -38,7 +38,7 @@ public class UtilContext {
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
             warnIdlePool = true;
-            if (r instanceof RunableGuaranted) {
+            if (r instanceof RunnableGuaranted) {
                 getRejectThreadPoolExecutor().execute(r);
                 return;
             }
@@ -205,6 +205,6 @@ public class UtilContext {
         }
     }
 
-    public static interface RunableGuaranted extends Runnable {
+    public static interface RunnableGuaranted extends Runnable {
     }
 }

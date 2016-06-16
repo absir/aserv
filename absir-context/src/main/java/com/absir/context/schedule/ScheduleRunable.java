@@ -7,8 +7,8 @@
  */
 package com.absir.context.schedule;
 
-import com.absir.core.util.UtilSchelduer.NextRunable;
+import com.absir.core.util.UtilSchelduer.NextRunnable;
 
-public interface ScheduleRunable extends NextRunable {
+public interface ScheduleRunnable extends NextRunnable {
 
 }

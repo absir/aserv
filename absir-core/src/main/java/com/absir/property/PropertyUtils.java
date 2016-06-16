@@ -10,7 +10,6 @@ package com.absir.property;
 import com.absir.bean.basis.BeanConfig;
 import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryUtils;
-import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
@@ -207,23 +206,9 @@ public class PropertyUtils {
                 Map<String, Object> properties = getPropertiesForBeanClass(template);
                 if (properties != null && !properties.isEmpty()) {
                     for (String name : names) {
-                        Object property = properties.get(name);
-                        if (property != null) {
-                            String[] params = null;
-                            if (property.getClass() == String.class) {
-                                params = ((String) property).split(",");
-
-                            }
-
-                            params = DynaBinder.to(property, String[].class);
-                            if (params == null || params.length < 1) {
-                                properties.remove(name);
-
-                            } else {
-                                if ((Object) params != properties) {
-                                    properties.put(name, params);
-                                }
-
+                        String[][] paramsAry = BeanConfigImpl.getParamsAry(properties, name, true);
+                        if (paramsAry != null) {
+                            for (String[] params : paramsAry) {
                                 propertyMap.put(name, propertySupply.getPropertyObjectParams((PropertyObject) propertyMap.get(name), params));
                             }
                         }
@@ -249,7 +234,6 @@ public class PropertyUtils {
 
         BeanConfig config = BeanFactoryUtils.getBeanConfig();
         File propertiesFile = new File(config.getClassPath() + category + "/" + beanClass.getSimpleName() + ".properties");
-
         if (propertiesFile.exists()) {
             properties = new HashMap<String, Object>();
             BeanConfigImpl.readProperties(config, properties, propertiesFile, null);

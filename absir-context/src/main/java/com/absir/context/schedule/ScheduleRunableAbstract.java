@@ -7,15 +7,15 @@
  */
 package com.absir.context.schedule;
 
-import com.absir.core.util.UtilSchelduer.NextRunableDelay;
+import com.absir.core.util.UtilSchelduer.NextRunnableDelay;
 
 import java.util.Date;
 
-public abstract class ScheduleRunableAbstract extends NextRunableDelay implements ScheduleRunable {
+public abstract class ScheduleRunnableAbstract extends NextRunnableDelay implements ScheduleRunnable {
 
     protected Runnable runnable;
 
-    public ScheduleRunableAbstract(Runnable runnable) {
+    public ScheduleRunnableAbstract(Runnable runnable) {
         this.runnable = runnable;
     }
 

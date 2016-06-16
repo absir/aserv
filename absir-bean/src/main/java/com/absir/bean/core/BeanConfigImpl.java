@@ -692,4 +692,47 @@ public class BeanConfigImpl implements BeanConfig {
 
         return filename;
     }
+
+    public static String[][] getParamsAry(Map<String, Object> properties, String name, boolean removeNull) {
+        String[][] paramsAry = null;
+        Object property = properties.get(name);
+        if (property != null) {
+            if (property.getClass() == String[][].class) {
+                paramsAry = (String[][]) property;
+
+            } else {
+                List<Object> list;
+                if (property.getClass() == String.class) {
+                    list = new ArrayList<Object>();
+                    list.add(property);
+
+                } else {
+                    list = DynaBinder.to(property, List.class);
+                }
+
+                List<String[]> paramsList = new ArrayList<String[]>();
+                for (Object obj : list) {
+                    String param = DynaBinder.to(obj, String.class);
+                    if (!KernelString.isEmpty(param)) {
+                        paramsList.add(param.split(","));
+                    }
+                }
+
+                if (!paramsList.isEmpty()) {
+                    paramsAry = DynaBinder.to(paramsList, String[][].class);
+                }
+            }
+
+            if (paramsAry == null || paramsAry.length < 1) {
+                if (removeNull) {
+                    properties.remove(name);
+                }
+
+            } else if ((Object) paramsAry != properties) {
+                properties.put(name, paramsAry);
+            }
+        }
+
+        return paramsAry;
+    }
 }

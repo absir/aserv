@@ -7,15 +7,15 @@
  */
 package com.absir.context.schedule.cron;
 
-import com.absir.context.schedule.ScheduleRunableAbstract;
+import com.absir.context.schedule.ScheduleRunnableAbstract;
 
 import java.util.Date;
 
-public class CronFixDelayRunable extends ScheduleRunableAbstract {
+public class CronFixDelayRunnable extends ScheduleRunnableAbstract {
 
     private long fixDelay;
 
-    public CronFixDelayRunable(Runnable runnable, long fixDelay) {
+    public CronFixDelayRunnable(Runnable runnable, long fixDelay) {
         super(runnable);
         this.fixDelay = fixDelay;
     }
@@ -42,8 +42,8 @@ public class CronFixDelayRunable extends ScheduleRunableAbstract {
         return nextTime;
     }
 
-    public CronFixDelayRunable transformCronFixDelayRunable(long fixDelay) {
+    public CronFixDelayRunnable transformCronFixDelayRunnable(long fixDelay) {
         this.fixDelay = 0;
-        return new CronFixDelayRunable(runnable, fixDelay);
+        return new CronFixDelayRunnable(runnable, fixDelay);
     }
 }

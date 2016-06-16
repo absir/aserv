@@ -17,6 +17,7 @@ import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.core.kernel.KernelLang.CallbackBreak;
 import com.absir.core.kernel.KernelLang.ObjectEntry;
 
+import java.io.File;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -30,6 +31,49 @@ import java.util.concurrent.ConcurrentHashMap;
 @Bean
 public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply, IBeanDefineAware,
         IBeanObjectProcessor, IBeanFactoryAware, IAdapterSupport, IBeanFactoryStarted, IBeanFactoryStopping {
+
+    protected static class MatchInjectParams {
+
+        protected Entry<String, KernelLang.IMatcherType> macherEntry;
+
+        protected String[][] paramsAry;
+
+    }
+
+    protected static List<MatchInjectParams> matchInjectParamses;
+
+    public static String[][] getInjectParamsAry(String classNameMember) {
+        if (matchInjectParamses == null) {
+            List<MatchInjectParams> paramses = new ArrayList<MatchInjectParams>();
+            BeanConfig config = BeanFactoryUtils.getBeanConfig();
+            File injectsFile = new File(config.getClassPath() + "injects");
+            if (injectsFile.exists()) {
+                Map<String, Object> properties = new LinkedHashMap<String, Object>();
+                BeanConfigImpl.readDirProperties(config, properties, injectsFile, null);
+                for (String name : properties.keySet()) {
+                    String[][] paramsAry = BeanConfigImpl.getParamsAry(properties, name, false);
+                    if (paramsAry != null) {
+                        MatchInjectParams params = new MatchInjectParams();
+                        params.macherEntry = KernelLang.MatcherType.getMatchEntry(name);
+                        params.paramsAry = paramsAry;
+                        paramses.add(0, params);
+                    }
+                }
+            }
+
+            matchInjectParamses = paramses;
+        }
+
+        if (!matchInjectParamses.isEmpty()) {
+            for (MatchInjectParams matchInjectParams : matchInjectParamses) {
+                if (KernelLang.MatcherType.isMatch(classNameMember, matchInjectParams.macherEntry)) {
+                    return matchInjectParams.paramsAry;
+                }
+            }
+        }
+
+        return null;
+    }
 
     protected static final Comparator<Entry<Object, InjectInvoker>> OBJECT_INVOKER_COMPARATOR = new Comparator<Entry<Object, InjectInvoker>>() {
 
@@ -92,24 +136,25 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
 
     private List<Entry<Object, InjectInvoker>> stoppingInjectInvokers = new ArrayList<Entry<Object, InjectInvoker>>();
 
-    private IMethodInject[] methodInjects = new IMethodInject[]{new IMethodInject<Started>() {
+    private IMethodInject[] methodInjects = new IMethodInject[]{
+            new IMethodInject<Started>() {
 
-        @Override
-        public boolean isRequired() {
-            return true;
-        }
+                @Override
+                public boolean isRequired() {
+                    return true;
+                }
 
-        @Override
-        public Started getInjects(BeanScope beanScope, BeanDefine beanDefine, Method method) {
-            return method.getAnnotation(Started.class);
-        }
+                @Override
+                public Started getInjects(BeanScope beanScope, BeanDefine beanDefine, Method method) {
+                    return method.getAnnotation(Started.class);
+                }
 
-        @Override
-        public void setInjectMethod(Started inject, Method method, Object beanObject, InjectMethod injectMethod) {
-            startedInjectInvokers.add(new ObjectEntry<Object, InjectInvoker>(beanObject, injectMethod));
-        }
+                @Override
+                public void setInjectMethod(Started inject, Method method, Object beanObject, InjectMethod injectMethod) {
+                    startedInjectInvokers.add(new ObjectEntry<Object, InjectInvoker>(beanObject, injectMethod));
+                }
 
-    },
+            },
 
             new IMethodInject<Stopping>() {
 

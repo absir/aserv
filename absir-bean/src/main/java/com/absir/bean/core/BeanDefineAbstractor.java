@@ -19,7 +19,7 @@ public abstract class BeanDefineAbstractor extends BeanDefineAbstract {
 
     public static boolean processDelay;
 
-    public static List<Runnable> processRunables;
+    public static List<Runnable> processRunnables;
 
     private boolean loaded;
 
@@ -42,8 +42,8 @@ public abstract class BeanDefineAbstractor extends BeanDefineAbstract {
         if (!processDelay) {
             synchronized (BeanDefineAbstractor.class) {
                 processDelay = true;
-                if (processRunables == null) {
-                    processRunables = new ArrayList<Runnable>();
+                if (processRunnables == null) {
+                    processRunnables = new ArrayList<Runnable>();
                 }
 
                 return true;
@@ -64,12 +64,12 @@ public abstract class BeanDefineAbstractor extends BeanDefineAbstract {
      * 清算延时处理对象
      */
     public static void clearProccessDelay() {
-        if (processRunables != null) {
+        if (processRunnables != null) {
             synchronized (BeanDefineAbstractor.class) {
-                if (processRunables != null) {
-                    List<Runnable> runnables = processRunables;
+                if (processRunnables != null) {
+                    List<Runnable> runnables = processRunnables;
                     processDelay = false;
-                    processRunables = null;
+                    processRunnables = null;
                     int last = runnables.size();
                     while (true) {
                         if (last > 0) {
@@ -128,7 +128,7 @@ public abstract class BeanDefineAbstractor extends BeanDefineAbstract {
                 if (processDelay) {
                     final BeanDefine root = beanDefineRoot;
                     final Object proxy = beanProxy;
-                    processRunables.add(new Runnable() {
+                    processRunnables.add(new Runnable() {
 
                         @Override
                         public void run() {

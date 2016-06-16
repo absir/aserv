@@ -18,15 +18,15 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 
 @SuppressWarnings("rawtypes")
-public class AysncRunable {
+public class AysncRunnable {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AysncRunable.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AysncRunnable.class);
 
     protected long timeout;
 
     protected boolean thread;
 
-    public AysncRunable(long timeout, boolean thread) {
+    public AysncRunnable(long timeout, boolean thread) {
         this.timeout = timeout;
         this.thread = thread;
     }
