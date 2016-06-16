@@ -460,6 +460,20 @@ public abstract class KernelString {
         return 1.0f - (float) compare(str, to, m, n) / Math.max(str.length(), to.length());
     }
 
+    public static int findChars(String string, char[] chars) {
+        int length = string.length();
+        for (int i = 0; i < length; i++) {
+            char ch = string.charAt(i);
+            for (char chr : chars) {
+                if (ch == chr) {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
+    }
+
     public static String implode(Object[] array, Object... glues) {
         return implode(array, null, null, glues);
     }

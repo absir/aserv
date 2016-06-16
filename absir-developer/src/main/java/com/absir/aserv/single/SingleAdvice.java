@@ -60,7 +60,6 @@ public class SingleAdvice implements IMethodAdvice {
 
                 }
 
-
             } catch (HibernateException e) {
                 return null;
             }

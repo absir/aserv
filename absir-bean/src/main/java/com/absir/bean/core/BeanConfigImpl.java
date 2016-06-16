@@ -16,6 +16,7 @@ import com.absir.core.helper.HelperFile;
 import com.absir.core.helper.HelperFileName;
 import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelDyna;
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.core.kernel.KernelLang.CallbackBreak;
 import com.absir.core.kernel.KernelLang.CallbackTemplate;
@@ -108,7 +109,7 @@ public class BeanConfigImpl implements BeanConfig {
                 if (value != null) {
                     String match = params[1];
                     if (!match.isEmpty()) {
-                        Entry<String, MatcherType> entry = MatcherType.getMatchEntry(match.toLowerCase());
+                        Entry<String, KernelLang.IMatcherType> entry = MatcherType.getMatchEntry(match.toLowerCase());
                         if (MatcherType.isMatch(value.toLowerCase(), entry)) {
                             return true;
                         }

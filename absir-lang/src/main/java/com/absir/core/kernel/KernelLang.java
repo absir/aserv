@@ -7,9 +7,12 @@
  */
 package com.absir.core.kernel;
 
+import com.absir.core.base.Environment;
+
 import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class KernelLang {
@@ -151,7 +154,14 @@ public class KernelLang {
         }
     }
 
-    public static enum MatcherType {
+    public static interface IMatcherType {
+
+        public boolean matchString(String match, String string);
+    }
+
+    public static final char[] REG_CHARS = new char[]{'*', '{', '(', '['};
+
+    public static enum MatcherType implements IMatcherType {
 
         NORMAL {
             @Override
@@ -181,8 +191,12 @@ public class KernelLang {
             }
         };
 
-        public static Entry<String, MatcherType> getMatchEntry(String match) {
-            ObjectEntry<String, MatcherType> matchEntry = new ObjectEntry<String, MatcherType>();
+        public static Entry<String, IMatcherType> getMatchEntry(String match) {
+            return getMatchEntry(match, false);
+        }
+
+        public static Entry<String, IMatcherType> getMatchEntry(String match, boolean matchReg) {
+            ObjectEntry<String, IMatcherType> matchEntry = new ObjectEntry<String, IMatcherType>();
             int last = match.length() - 1;
             if (last >= 0) {
                 if (match.charAt(0) == '*') {
@@ -206,6 +220,17 @@ public class KernelLang {
                     }
 
                 } else {
+                    if (matchReg && KernelString.findChars(match, REG_CHARS) >= 0) {
+                        try {
+                            Pattern pattern = Pattern.compile(match);
+                            matchEntry.setValue(new MatcherTypeReg(pattern));
+                            return matchEntry;
+
+                        } catch (Throwable e) {
+                            Environment.throwable(e);
+                        }
+                    }
+
                     matchEntry.setValue(MatcherType.NORMAL);
                     matchEntry.setKey(match);
                 }
@@ -214,8 +239,8 @@ public class KernelLang {
             return matchEntry;
         }
 
-        public static boolean isMatch(String match, Entry<String, MatcherType> entry) {
-            MatcherType matcherType = entry.getValue();
+        public static boolean isMatch(String match, Entry<String, IMatcherType> entry) {
+            IMatcherType matcherType = entry.getValue();
             if (matcherType == null) {
                 return true;
             }
@@ -227,7 +252,20 @@ public class KernelLang {
             return false;
         }
 
-        public abstract boolean matchString(String match, String string);
+    }
+
+    public static class MatcherTypeReg implements IMatcherType {
+
+        protected Pattern pattern;
+
+        MatcherTypeReg(Pattern pattern) {
+            this.pattern = pattern;
+        }
+
+        @Override
+        public boolean matchString(String match, String string) {
+            return pattern.matcher(string).find();
+        }
     }
 
     public static interface CloneTemplate<T> extends Cloneable {
@@ -408,9 +446,9 @@ public class KernelLang {
 
         private int group;
 
-        private Map<String, Entry<String, MatcherType>> includes;
+        private Map<String, Entry<String, IMatcherType>> includes;
 
-        private Map<String, Entry<String, MatcherType>> excludes;
+        private Map<String, Entry<String, IMatcherType>> excludes;
 
         private String propertyPath = "";
 
@@ -440,7 +478,7 @@ public class KernelLang {
 
         public PropertyFilter inlcude(String property) {
             if (includes == null) {
-                includes = new HashMap<String, Entry<String, MatcherType>>();
+                includes = new HashMap<String, Entry<String, IMatcherType>>();
 
             } else if (includes.containsKey(property)) {
                 return this;
@@ -458,7 +496,7 @@ public class KernelLang {
 
         public PropertyFilter exlcude(String property) {
             if (excludes == null) {
-                excludes = new HashMap<String, Entry<String, MatcherType>>();
+                excludes = new HashMap<String, Entry<String, IMatcherType>>();
 
             } else if (excludes.containsKey(property)) {
                 return this;
@@ -478,13 +516,13 @@ public class KernelLang {
             return includes == null && excludes == null;
         }
 
-        private boolean match(Map<String, Entry<String, MatcherType>> matchers) {
-            for (Entry<String, Entry<String, MatcherType>> matcher : matchers.entrySet()) {
+        private boolean match(Map<String, Entry<String, IMatcherType>> matchers) {
+            for (Entry<String, Entry<String, IMatcherType>> matcher : matchers.entrySet()) {
                 if (matcher.getKey() == null) {
                     return true;
                 }
 
-                Entry<String, MatcherType> entry = matcher.getValue();
+                Entry<String, IMatcherType> entry = matcher.getValue();
                 if (entry == null) {
                     entry = MatcherType.getMatchEntry(matcher.getKey());
                     matcher.setValue(entry);
@@ -543,11 +581,11 @@ public class KernelLang {
             this.propertyPath = propertyPath;
         }
 
-        public Map<String, Entry<String, MatcherType>> getIncludes() {
+        public Map<String, Entry<String, IMatcherType>> getIncludes() {
             return includes;
         }
 
-        public Map<String, Entry<String, MatcherType>> getExcludes() {
+        public Map<String, Entry<String, IMatcherType>> getExcludes() {
             return excludes;
         }
     }
