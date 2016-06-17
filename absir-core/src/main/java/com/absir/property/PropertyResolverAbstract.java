@@ -7,6 +7,7 @@
  */
 package com.absir.property;
 
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAnnotation;
@@ -24,11 +25,8 @@ public abstract class PropertyResolverAbstract<O extends PropertyObject, A exten
 
     private Class<A> annotationClass;
 
-    private String annotationSimpleClassName;
-
     public PropertyResolverAbstract() {
         annotationClass = KernelClass.typeClass(getClass(), ANNOTATION_VARIABLE);
-        annotationSimpleClassName = annotationClass.getSimpleName();
     }
 
     @Override
@@ -61,10 +59,10 @@ public abstract class PropertyResolverAbstract<O extends PropertyObject, A exten
     }
 
     @Override
-    public O getPropertyObjectParams(O propertyObject, String[] propertyParams) {
-        String annotationClassName = propertyParams[0];
-        if (annotationClassName.equals(annotationSimpleClassName)) {
-            return getPropertyObjectAnnotation(propertyObject, UtilAnnotation.newInstance(annotationClass, propertyParams, 1));
+    public O getPropertyObjectParams(O propertyObject, BeanConfigImpl.ParamsAnnotations annotations) {
+        A annotation = annotations.getAnnotation(annotationClass);
+        if (annotation != null) {
+            return getPropertyObjectAnnotation(propertyObject, annotation);
         }
 
         return propertyObject;

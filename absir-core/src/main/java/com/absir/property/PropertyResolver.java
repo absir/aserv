@@ -7,6 +7,7 @@
  */
 package com.absir.property;
 
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.property.value.PropertyInfo;
 
 import java.lang.reflect.Field;
@@ -26,5 +27,5 @@ public interface PropertyResolver<O extends PropertyObject> {
 
     public O getPropertyObject(O propertyObject, PropertyInfo[] propertyInfos);
 
-    public O getPropertyObjectParams(O propertyObject, String[] propertyParams);
+    public O getPropertyObjectParams(O propertyObject, BeanConfigImpl.ParamsAnnotations annotations);
 }

@@ -7,6 +7,7 @@
  */
 package com.absir.property;
 
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.InjectType;
@@ -42,8 +43,6 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
 
     protected Class<? extends Annotation> ingoreAnnotationClass;
 
-    protected String ingoreAnnotationSimpleClassName;
-
     private int supplyIndex;
 
     private PropertyResolver[] propertyResolvers;
@@ -71,7 +70,6 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
         }
 
         ingoreAnnotationClass = getIgnoreAnnotationClass();
-        ingoreAnnotationSimpleClassName = ingoreAnnotationClass == null ? null : ingoreAnnotationClass.getSimpleName();
     }
 
     public int getSupplyIndex() {
@@ -161,18 +159,17 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
         return propertyObject;
     }
 
-    public O getPropertyObjectParams(O propertyObject, String[] propertyParams) {
+    public O getPropertyObjectParams(O propertyObject, BeanConfigImpl.ParamsAnnotations annotations) {
         if (propertyResolvers != null) {
-            String annotationClassName = propertyParams[0];
             PropertyObject propertyObj = propertyObject;
             if (propertyObj != null && ingoreAnnotationClass != null) {
-                if (ingoreAnnotationSimpleClassName != null && annotationClassName.equals(ingoreAnnotationSimpleClassName)) {
+                if (annotations.getAnnotation(ingoreAnnotationClass) != null) {
                     propertyObj = null;
                 }
             }
 
             for (PropertyResolver propertyResolver : propertyResolvers) {
-                propertyObj = propertyResolver.getPropertyObjectParams(propertyObj, propertyParams);
+                propertyObj = propertyResolver.getPropertyObjectParams(propertyObj, annotations);
             }
 
             propertyObject = (O) propertyObj;

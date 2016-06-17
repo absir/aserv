@@ -15,6 +15,7 @@ import com.absir.core.dyna.DynaBinder;
 import com.absir.core.helper.HelperFile;
 import com.absir.core.helper.HelperFileName;
 import com.absir.core.helper.HelperIO;
+import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelLang.BreakException;
@@ -22,8 +23,10 @@ import com.absir.core.kernel.KernelLang.CallbackBreak;
 import com.absir.core.kernel.KernelLang.CallbackTemplate;
 import com.absir.core.kernel.KernelLang.MatcherType;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.util.UtilAnnotation;
 
 import java.io.*;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Map.Entry;
@@ -693,12 +696,40 @@ public class BeanConfigImpl implements BeanConfig {
         return filename;
     }
 
-    public static String[][] getParamsAry(Map<String, Object> properties, String name, boolean removeNull) {
-        String[][] paramsAry = null;
-        Object property = properties.get(name);
+    public static class ParamsAnnotations {
+
+        protected Map<String, String[]> nameMapParams;
+
+        protected Map<Class<? extends Annotation>, Object> classMapAnnotation;
+
+        public <T extends Annotation> T getAnnotation(Class<T> cls) {
+            if (cls == null) {
+                return null;
+            }
+
+            Object annotation = nameMapParams == null ? null : nameMapParams.get(cls);
+            if (annotation == null) {
+                Map<String, String[]> mapParams = nameMapParams;
+                if (mapParams != null) {
+                    String[] params = mapParams.remove(KernelClass.getClassSharedSimpleName(cls));
+                    if (params != null) {
+                        annotation = UtilAnnotation.newInstance(cls, params, 1);
+                        if (mapParams.isEmpty()) {
+                            nameMapParams = null;
+                        }
+                    }
+                }
+            }
+
+            return (T) annotation;
+        }
+    }
+
+    public static ParamsAnnotations getParamsAnnotations(Object property) {
+        ParamsAnnotations annotations = null;
         if (property != null) {
-            if (property.getClass() == String[][].class) {
-                paramsAry = (String[][]) property;
+            if (property.getClass() == ParamsAnnotations.class) {
+                annotations = (ParamsAnnotations) property;
 
             } else {
                 List<Object> list;
@@ -710,29 +741,97 @@ public class BeanConfigImpl implements BeanConfig {
                     list = DynaBinder.to(property, List.class);
                 }
 
-                List<String[]> paramsList = new ArrayList<String[]>();
+                Map<String, String[]> nameMapParams = new HashMap<String, String[]>();
                 for (Object obj : list) {
                     String param = DynaBinder.to(obj, String.class);
                     if (!KernelString.isEmpty(param)) {
-                        paramsList.add(param.split(","));
+                        String[] params = param.split(",");
+                        nameMapParams.put(params[0], params);
                     }
                 }
 
-                if (!paramsList.isEmpty()) {
-                    paramsAry = DynaBinder.to(paramsList, String[][].class);
+                if (!nameMapParams.isEmpty()) {
+                    annotations = new ParamsAnnotations();
+                    annotations.nameMapParams = nameMapParams;
                 }
-            }
-
-            if (paramsAry == null || paramsAry.length < 1) {
-                if (removeNull) {
-                    properties.remove(name);
-                }
-
-            } else if ((Object) paramsAry != properties) {
-                properties.put(name, paramsAry);
             }
         }
 
-        return paramsAry;
+        return annotations;
     }
+
+    public static ParamsAnnotations getParamsAnnotations(Map<String, Object> properties, String name) {
+        ParamsAnnotations annotations = null;
+        Object property = properties.get(name);
+        if (property != null) {
+            annotations = getParamsAnnotations(property);
+            if (annotations == null) {
+                properties.remove(name);
+
+            } else if ((Object) annotations != properties) {
+                properties.put(name, annotations);
+            }
+        }
+
+        return annotations;
+    }
+
+    protected static Map<String, ParamsAnnotations> nameMapParamsAnnotations;
+
+    protected static List<MatchParamsAnnotations> matchParamsAnnotationsList;
+
+    protected static class MatchParamsAnnotations {
+
+        protected Entry<String, KernelLang.IMatcherType> macherEntry;
+
+        protected ParamsAnnotations paramsAnnotations;
+
+    }
+
+    protected static void loadParamsAnnotations() {
+        if (nameMapParamsAnnotations == null) {
+            Map<String, ParamsAnnotations> annotationsMap = new HashMap<String, ParamsAnnotations>();
+            List<MatchParamsAnnotations> annotationsList = new ArrayList<MatchParamsAnnotations>();
+            BeanConfig config = BeanFactoryUtils.getBeanConfig();
+            File annotationsFile = new File(config.getClassPath() + "annotations");
+            if (annotationsFile.exists()) {
+                Map<String, Object> properties = new LinkedHashMap<String, Object>();
+                BeanConfigImpl.readDirProperties(config, properties, annotationsFile, null);
+                for (String name : properties.keySet()) {
+                    ParamsAnnotations annotations = BeanConfigImpl.getParamsAnnotations(properties, name);
+                    if (annotations != null) {
+                        Entry<String, KernelLang.IMatcherType> macherEntry = KernelLang.MatcherType.getMatchEntry(name);
+                        if (macherEntry.getValue() == MatcherType.NORMAL) {
+                            annotationsMap.put(macherEntry.getKey(), annotations);
+
+                        } else {
+                            MatchParamsAnnotations paramsAnnotations = new MatchParamsAnnotations();
+                            paramsAnnotations.macherEntry = macherEntry;
+                            paramsAnnotations.paramsAnnotations = annotations;
+                            annotationsList.add(0, paramsAnnotations);
+                        }
+                    }
+                }
+            }
+
+            nameMapParamsAnnotations = annotationsMap;
+            matchParamsAnnotationsList = annotationsList;
+        }
+    }
+
+    public static ParamsAnnotations getMemberParamsAnnotations(String classNameMember, boolean findMatch) {
+        loadParamsAnnotations();
+        ParamsAnnotations paramsAnnotations = nameMapParamsAnnotations.get(classNameMember);
+        if (paramsAnnotations == null && findMatch) {
+            for (MatchParamsAnnotations matchParamsAnnotations : matchParamsAnnotationsList) {
+                if (MatcherType.isMatch(classNameMember, matchParamsAnnotations.macherEntry)) {
+                    paramsAnnotations = matchParamsAnnotations.paramsAnnotations;
+                    break;
+                }
+            }
+        }
+
+        return paramsAnnotations;
+    }
+
 }

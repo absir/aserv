@@ -7,7 +7,7 @@
  */
 package com.absir.system.test.aop;
 
-import com.absir.aop.advice.MethodAfter;
+import com.absir.aserv.advice.MethodAfter;
 import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;

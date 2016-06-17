@@ -869,4 +869,16 @@ public abstract class KernelClass {
 
         return null;
     }
+
+    protected static final Map<Class, String> classMapSimpleName = new HashMap<Class, String>();
+
+    public static String getClassSharedSimpleName(Class<?> cls) {
+        String simpleName = classMapSimpleName.get(cls);
+        if (simpleName == null) {
+            simpleName = cls.getSimpleName();
+            classMapSimpleName.put(cls, simpleName);
+        }
+
+        return simpleName;
+    }
 }

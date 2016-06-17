@@ -206,11 +206,9 @@ public class PropertyUtils {
                 Map<String, Object> properties = getPropertiesForBeanClass(template);
                 if (properties != null && !properties.isEmpty()) {
                     for (String name : names) {
-                        String[][] paramsAry = BeanConfigImpl.getParamsAry(properties, name, true);
-                        if (paramsAry != null) {
-                            for (String[] params : paramsAry) {
-                                propertyMap.put(name, propertySupply.getPropertyObjectParams((PropertyObject) propertyMap.get(name), params));
-                            }
+                        BeanConfigImpl.ParamsAnnotations annotations = BeanConfigImpl.getParamsAnnotations(properties, name);
+                        if (annotations != null) {
+                            propertyMap.put(name, propertySupply.getPropertyObjectParams((PropertyObject) propertyMap.get(name), annotations));
                         }
                     }
                 }

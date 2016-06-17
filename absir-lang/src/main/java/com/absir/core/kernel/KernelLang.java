@@ -166,7 +166,7 @@ public class KernelLang {
         NORMAL {
             @Override
             public boolean matchString(String match, String string) {
-                return string.contains(match);
+                return string.equals(match);
             }
         },
 

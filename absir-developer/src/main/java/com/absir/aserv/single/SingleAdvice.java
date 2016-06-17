@@ -1,7 +1,7 @@
 package com.absir.aserv.single;
 
-import com.absir.aop.advice.AdviceInvoker;
-import com.absir.aop.advice.IMethodAdvice;
+import com.absir.aserv.advice.AdviceInvoker;
+import com.absir.aserv.advice.IMethodAdvice;
 import com.absir.aserv.system.bean.JSingle;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.bean.basis.Base;
