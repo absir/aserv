@@ -179,7 +179,7 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
             Environment environment = beanFactory.getBeanConfig().getEnvironment();
             for (IBeanDefineSupply beanDefineSupply : beanDefineSupplies) {
                 if ((beanDefines = beanDefineSupply.getBeanDefines(beanFactory, beanType)) != null) {
-                    Base base = beanType.getAnnotation(Base.class);
+                    Base base = BeanConfigImpl.getTypeAnnotation(beanType, Base.class);
                     if (base != null && base.environment().compareTo(environment) < 0) {
                         continue;
                     }
@@ -519,7 +519,7 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
                                    final Class<?>[] basisTypes, final Collection[] collections) {
         final List<BeanDefine> beanDefines = new ArrayList<BeanDefine>();
         for (final Class<?> beanType : beanTypes) {
-            if (!this.beanTypes.contains(beanType) && beanType.getAnnotation(Basis.class) == null) {
+            if (!this.beanTypes.contains(beanType) && !BeanConfigImpl.findTypeAnnotation(beanType, Basis.class)) {
                 continue;
             }
 
@@ -535,13 +535,13 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
             }
 
             final BeanDefine beanDefine = beanDefineType;
-            if (beanType.getAnnotation(Configure.class) != null) {
+            if (BeanConfigImpl.findTypeAnnotation(beanType, Configure.class)) {
                 KernelReflect.doWithDeclaredMethods(beanType, new CallbackBreak<Method>() {
 
                     @Override
                     public void doWith(Method template) throws BreakException {
                         if (KernelClass.isAssignableFrom(basisTypes, template.getReturnType())
-                                && template.getAnnotation(Basis.class) != null) {
+                                && BeanConfigImpl.findMethodAnnotation(template, Basis.class)) {
                             if (beanDefine != null || Modifier.isStatic(template.getModifiers())) {
                                 String beanName = BeanDefineMethod.getBeanName(null, template);
                                 BeanDefine beanDefineMethod = beanFactory.getBeanDefine(beanName);

@@ -27,6 +27,7 @@ import com.absir.core.util.UtilAnnotation;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.Map.Entry;
@@ -723,6 +724,10 @@ public class BeanConfigImpl implements BeanConfig {
 
             return (T) annotation;
         }
+
+        public boolean findAnnotation(Class<? extends Annotation> cls) {
+            return classMapAnnotation.containsKey(cls) || nameMapParams.containsKey(KernelClass.getClassSharedSimpleName(cls));
+        }
     }
 
     public static ParamsAnnotations getParamsAnnotations(Object property) {
@@ -832,6 +837,76 @@ public class BeanConfigImpl implements BeanConfig {
         }
 
         return paramsAnnotations;
+    }
+
+    public static @interface NoConfigure {
+
+    }
+
+    public static <T extends Annotation> T getTypeAnnotation(Class<?> type, Class<T> annotationClass) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(type.getName(), false);
+        if (annotations != null) {
+            T annotation = annotations.getAnnotation(annotationClass);
+            if (annotation == null) {
+                if (annotations.findAnnotation(NoConfigure.class)) {
+                    return null;
+                }
+
+            } else {
+                return annotation;
+            }
+        }
+
+        return type.getAnnotation(annotationClass);
+    }
+
+    public static boolean findTypeAnnotation(Class<?> type, Class<? extends Annotation> annotationClass) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(type.getName(), false);
+        if (annotations != null) {
+            if (annotations.findAnnotation(annotationClass)) {
+                return true;
+
+            } else {
+                if (annotations.findAnnotation(NoConfigure.class)) {
+                    return false;
+                }
+            }
+        }
+
+        return type.getAnnotation(annotationClass) != null;
+    }
+
+    public static <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationClass) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(method.toString(), false);
+        if (annotations != null) {
+            T annotation = annotations.getAnnotation(annotationClass);
+            if (annotation == null) {
+                if (annotations.findAnnotation(NoConfigure.class)) {
+                    return null;
+                }
+
+            } else {
+                return annotation;
+            }
+        }
+
+        return method.getAnnotation(annotationClass);
+    }
+
+    public static boolean findMethodAnnotation(Method method, Class<? extends Annotation> annotationClass) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(method.toString(), false);
+        if (annotations != null) {
+            if (annotations.findAnnotation(annotationClass)) {
+                return true;
+
+            } else {
+                if (annotations.findAnnotation(NoConfigure.class)) {
+                    return false;
+                }
+            }
+        }
+
+        return method.getAnnotation(annotationClass) != null;
     }
 
 }

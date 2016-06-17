@@ -163,7 +163,7 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
         if (propertyResolvers != null) {
             PropertyObject propertyObj = propertyObject;
             if (propertyObj != null && ingoreAnnotationClass != null) {
-                if (annotations.getAnnotation(ingoreAnnotationClass) != null) {
+                if (annotations.findAnnotation(ingoreAnnotationClass)) {
                     propertyObj = null;
                 }
             }
