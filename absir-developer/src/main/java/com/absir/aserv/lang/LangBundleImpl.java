@@ -902,7 +902,7 @@ public class LangBundleImpl extends LangBundle {
             if (id == null) {
                 if (nameId == null) {
                     Object oid = crudHandler == null ? ((IBase) entity).getId() : CrudServiceUtils.identifier(crudHandler
-                            .getCrudEntity().getJoEntity().getEntityName(), entity, crudHandler.isCreate());
+                            .getCrudEntity().getJoEntity().getEntityName(), entity, crudHandler.doCreate());
                     if (oid != null) {
                         id = DynaBinderUtils.to(oid, String.class);
                         relateId = id;

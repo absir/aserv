@@ -128,7 +128,7 @@ public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, Object inputBody) {
         Session session = BeanDao.getSession();
         String entityName = handler.getCrudEntity().getJoEntity().getEntityName();
-        Object id = CrudServiceUtils.identifier(entityName, entity, handler.isCreate());
+        Object id = CrudServiceUtils.identifier(entityName, entity, handler.doCreate());
         String assocId = getAssocId(entityName, id);
         if (handler.getCrud() == Crud.DELETE) {
             // 解除关联关系

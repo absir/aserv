@@ -514,7 +514,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                     } else {
                         String identity = "";
                         if (multipartUploader.ided) {
-                            Object id = CrudServiceUtils.identifier(handler.getCrudEntity().getJoEntity().getEntityName(), entity, handler.isCreate());
+                            Object id = CrudServiceUtils.identifier(handler.getCrudEntity().getJoEntity().getEntityName(), entity, handler.doCreate());
                             if (id != null) {
                                 identity = DynaBinderUtils.getParamFromValue(id);
                             }

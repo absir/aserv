@@ -118,8 +118,7 @@ public abstract class CrudHandler {
         return entity;
     }
 
-    //todo 搞清楚 create状态
-    public boolean isCreate() {
+    public boolean doCreate() {
         if (created) {
             return false;
         }
