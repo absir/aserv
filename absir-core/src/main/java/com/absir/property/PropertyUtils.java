@@ -208,7 +208,7 @@ public class PropertyUtils {
                     for (String name : names) {
                         BeanConfigImpl.ParamsAnnotations annotations = BeanConfigImpl.getParamsAnnotations(properties, name);
                         if (annotations != null) {
-                            propertyMap.put(name, propertySupply.getPropertyObjectParams((PropertyObject) propertyMap.get(name), annotations));
+                            propertyMap.put(name, propertySupply.getPropertyObjectParams(annotations.findAnnotation(NoProperty.class) ? null : (PropertyObject) propertyMap.get(name), annotations));
                         }
                     }
                 }
