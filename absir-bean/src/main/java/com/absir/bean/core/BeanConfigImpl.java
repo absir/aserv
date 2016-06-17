@@ -919,7 +919,7 @@ public class BeanConfigImpl implements BeanConfig {
     }
 
     public static <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationClass, boolean findMatch) {
-        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + "." + method.getName(), findMatch);
+        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + ":" + method.getName(), findMatch);
         if (annotations != null) {
             T annotation = annotations.getAnnotation(annotationClass);
             if (annotation == null) {
@@ -944,7 +944,7 @@ public class BeanConfigImpl implements BeanConfig {
     }
 
     public static boolean findMethodAnnotation(Method method, Class<? extends Annotation> annotationClass, boolean findMatch) {
-        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + "." + method.getName(), findMatch);
+        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + ":" + method.getName(), findMatch);
         if (annotations != null) {
             if (annotations.findAnnotation(annotationClass)) {
                 return true;
@@ -963,18 +963,18 @@ public class BeanConfigImpl implements BeanConfig {
         return method.getAnnotation(annotationClass) != null;
     }
 
-    public static <T extends Annotation> T getAccessorAnnotation(UtilAccessor.Accessor accessor, Class<T> annotationClass) {
-        Method getter = accessor.getGetter();
-        if (getter == null) {
+    public static <T extends Annotation> T getAccessorAnnotation(UtilAccessor.Accessor accessor, Class<T> annotationClass, boolean getter) {
+        Method method = getter ? accessor.getGetter() : accessor.getSetter();
+        if (method == null) {
             Field field = accessor.getField();
             if (field == null) {
-                return getMethodAnnotation(accessor.getSetter(), annotationClass);
+                return getMethodAnnotation(getter ? accessor.getSetter() : accessor.getGetter(), annotationClass);
             }
 
             return getFieldAnnotation(field, annotationClass);
         }
 
-        return getMethodAnnotation(getter, annotationClass);
+        return getMethodAnnotation(method, annotationClass);
     }
 
 }

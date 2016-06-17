@@ -39,7 +39,7 @@ public class Property {
     public Property(Class<?> beanClass, String name, int include, int exclude, String beanName, Class<? extends PropertyFactory> factoryClass) {
         accessor = UtilAccessor.getAccessorProperty(beanClass, name);
         Field field = accessor == null ? null : accessor.getField();
-        if (field == null || (!Modifier.isPublic(field.getModifiers()) && field.getAnnotation(Allow.class) == null)) {
+        if (field == null || (!Modifier.isPublic(field.getModifiers()) && PropertyUtils.getFieldAnnotation(beanClass, field, Allow.class) == null)) {
             if (accessor == null) {
                 allow = -2;
 

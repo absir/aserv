@@ -14,6 +14,7 @@ import com.absir.context.lang.LangBundle;
 import com.absir.core.kernel.KernelMap;
 import com.absir.core.kernel.KernelReflect;
 import com.absir.core.kernel.KernelString;
+import com.absir.property.PropertyUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -78,7 +79,7 @@ public class HelperLang {
         String name = cls + "." + field;
         String[] valueTag = LangBundleImpl.ME == null ? null : LangBundleImpl.ME.getLangValueTag(name);
         if (valueTag == null || valueTag.length == 0) {
-            return getLangName(BeanConfigImpl.getFieldAnnotation(field, JaLang.class), KernelString.capitalize(field.getName()));
+            return getLangName(PropertyUtils.getFieldAnnotation(cls, field, JaLang.class), KernelString.capitalize(field.getName()));
         }
 
         return getFieldCaption(valueTag[0], valueTag.length > 1 ? valueTag[1] : name, field.getName(), cls);
@@ -97,12 +98,12 @@ public class HelperLang {
     }
 
     public static String getEnumNameCaption(Enum enumerate) {
-        return getLangName(BeanConfigImpl.getFieldAnnotation(KernelReflect.declaredField(enumerate.getClass(), enumerate.name()), JaLang.class),
+        return getLangName(PropertyUtils.getFieldAnnotation(enumerate.getClass(), KernelReflect.declaredField(enumerate.getClass(), enumerate.name()), JaLang.class),
                 enumerate.name());
     }
 
     public static String[] getEnumNameCaptions(Enum enumerate) {
-        return getLangNameLang(BeanConfigImpl.getFieldAnnotation(KernelReflect.declaredField(enumerate.getClass(), enumerate.name()), JaLang.class),
+        return getLangNameLang(PropertyUtils.getFieldAnnotation(enumerate.getClass(), KernelReflect.declaredField(enumerate.getClass(), enumerate.name()), JaLang.class),
                 enumerate.name());
     }
 

@@ -110,12 +110,12 @@ public class PropertyUtils {
             name = field.getName();
             if (propertyTree) {
                 PropertyContext propertyContext = getPropertyContext(propertyMap, name);
-                BeanName beanName = BeanConfigImpl.getFieldAnnotation(field, BeanName.class);
+                BeanName beanName = PropertyUtils.getFieldAnnotation(beanClass, field, BeanName.class);
                 if (beanName != null) {
                     propertyContext.beanName = beanName.value();
                 }
 
-                propertyContext.prop(BeanConfigImpl.getFieldAnnotation(field, Prop.class));
+                propertyContext.prop(PropertyUtils.getFieldAnnotation(beanClass, field, Prop.class));
                 propertyContext.propertyObject = propertySupply.getPropertyObject(propertyContext.propertyObject, field);
 
             } else {
@@ -243,5 +243,48 @@ public class PropertyUtils {
 
         beanClassMapProperties.put(beanClassCategory, properties);
         return properties;
+    }
+
+    public static @interface NoProperty {
+
+    }
+
+    public static <T extends Annotation> T getFieldAnnotation(Class<?> beanClass, Field field, final Class<T> annotationClass) {
+        final KernelLang.ObjectTemplate<Object> annotationTemplate = new KernelLang.ObjectTemplate<Object>();
+        final String name = field.getName();
+        if (beanClass == null) {
+            beanClass = field.getDeclaringClass();
+        }
+
+        KernelClass.doWithAncestRevertClass(beanClass, new KernelLang.CallbackBreak<Class<?>>() {
+            @Override
+            public void doWith(Class<?> template) throws KernelLang.BreakException {
+                Map<String, Object> properties = getPropertiesForBeanClass(template);
+                if (properties != null && !properties.isEmpty()) {
+                    BeanConfigImpl.ParamsAnnotations annotations = BeanConfigImpl.getParamsAnnotations(properties, name);
+                    if (annotations != null) {
+                        T annotation = annotations.getAnnotation(annotationClass);
+                        if (annotation != null) {
+                            annotationTemplate.object = annotation;
+                            throw new KernelLang.BreakException();
+                        }
+
+                        if (annotations.findAnnotation(NoProperty.class)) {
+                            annotationTemplate.object = KernelLang.NULL_OBJECT;
+                            throw new KernelLang.BreakException();
+                        }
+                    }
+                }
+            }
+
+        }, true);
+
+        Object annotation = annotationTemplate.object;
+        if (annotation == null) {
+            return field.getAnnotation(annotationClass);
+
+        } else {
+            return annotation == KernelLang.NULL_OBJECT ? null : (T) annotation;
+        }
     }
 }

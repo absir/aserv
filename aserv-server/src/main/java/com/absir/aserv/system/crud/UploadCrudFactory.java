@@ -26,6 +26,7 @@ import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.aserv.system.service.utils.SecurityServiceUtils;
 import com.absir.bean.basis.Base;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.*;
 import com.absir.client.helper.HelperClient;
@@ -494,7 +495,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                         String ruleName = null;
                         Accessor accessor = crudProperty.getAccessor();
                         if (accessor != null) {
-                            UploadRule uploadRule = accessor.getAnnotation(UploadRule.class, false);
+                            UploadRule uploadRule = BeanConfigImpl.getAccessorAnnotation(accessor, UploadRule.class, false);
                             if (uploadRule != null) {
                                 ruleName = uploadRule.value();
                                 multipartUploader.ided = ruleName.contains(":id");
