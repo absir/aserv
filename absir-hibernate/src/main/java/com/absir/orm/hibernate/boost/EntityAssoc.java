@@ -7,6 +7,7 @@
  */
 package com.absir.orm.hibernate.boost;
 
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.core.kernel.KernelReflect;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.SessionFactoryBean;
@@ -124,7 +125,7 @@ public class EntityAssoc {
                 continue;
             }
 
-            JaField jaField = field.getAnnotation(JaField.class);
+            JaField jaField = BeanConfigImpl.getFieldAnnotation(field, JaField.class);
             if (jaField == null || jaField.assocClasses().length <= 0) {
                 continue;
             }
@@ -132,7 +133,7 @@ public class EntityAssoc {
             if (referencedEntityName == null) {
                 referencedEntityName = jaField.referenceEntityName();
                 if (KernelString.isEmpty(referencedEntityName)) {
-                    JaNames jaNames = field.getAnnotation(JaNames.class);
+                    JaNames jaNames = BeanConfigImpl.getFieldAnnotation(field, JaNames.class);
                     if (jaNames != null && KernelString.isEmpty(jaNames.value())) {
                         referencedEntityName = jaNames.value();
                     }
@@ -140,7 +141,7 @@ public class EntityAssoc {
 
                 Class<?> referencedEntityClass = jaField.referencEntityClass();
                 if (referencedEntityClass == null || referencedEntityClass == void.class) {
-                    JaClasses jaClasses = field.getAnnotation(JaClasses.class);
+                    JaClasses jaClasses = BeanConfigImpl.getFieldAnnotation(field, JaClasses.class);
                     if (jaClasses != null && jaClasses.value() != void.class) {
                         referencedEntityClass = jaClasses.value();
                     }

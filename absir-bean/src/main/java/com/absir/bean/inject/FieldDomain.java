@@ -4,6 +4,7 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.basis.BeanDefine;
 import com.absir.bean.basis.BeanFactory;
 import com.absir.bean.basis.BeanScope;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanDefineType;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Domain;
@@ -21,7 +22,7 @@ public class FieldDomain implements IFieldSupport {
 
     @Override
     public InjectInvoker getInjectInvoker(BeanScope beanScope, BeanDefine beanDefine, Field field) {
-        Domain domain = field.getAnnotation(Domain.class);
+        Domain domain = BeanConfigImpl.getFieldAnnotation(field, Domain.class);
         return domain == null ? null : new InjectFieldDomain(field, domain);
     }
 

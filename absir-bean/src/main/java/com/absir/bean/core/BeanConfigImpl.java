@@ -23,10 +23,12 @@ import com.absir.core.kernel.KernelLang.CallbackBreak;
 import com.absir.core.kernel.KernelLang.CallbackTemplate;
 import com.absir.core.kernel.KernelLang.MatcherType;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.util.UtilAccessor;
 import com.absir.core.util.UtilAnnotation;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -703,6 +705,8 @@ public class BeanConfigImpl implements BeanConfig {
 
         protected Map<Class<? extends Annotation>, Object> classMapAnnotation;
 
+        protected boolean matchFind;
+
         public <T extends Annotation> T getAnnotation(Class<T> cls) {
             if (cls == null) {
                 return null;
@@ -813,6 +817,7 @@ public class BeanConfigImpl implements BeanConfig {
                             MatchParamsAnnotations paramsAnnotations = new MatchParamsAnnotations();
                             paramsAnnotations.macherEntry = macherEntry;
                             paramsAnnotations.paramsAnnotations = annotations;
+                            annotations.matchFind = true;
                             annotationsList.add(0, paramsAnnotations);
                         }
                     }
@@ -876,11 +881,52 @@ public class BeanConfigImpl implements BeanConfig {
         return type.getAnnotation(annotationClass) != null;
     }
 
-    public static <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationClass) {
-        ParamsAnnotations annotations = getMemberParamsAnnotations(method.toString(), false);
+    public static <T extends Annotation> T getFieldAnnotation(Field field, Class<T> annotationClass) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(field.getDeclaringClass() + "." + field.getName(), false);
         if (annotations != null) {
             T annotation = annotations.getAnnotation(annotationClass);
             if (annotation == null) {
+                if (annotations.findAnnotation(NoConfigure.class)) {
+                    return null;
+                }
+
+            } else {
+                return annotation;
+            }
+        }
+
+        return field.getAnnotation(annotationClass);
+    }
+
+    public static boolean findFieldAnnotation(Field field, Class<? extends Annotation> annotationClass) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(field.getDeclaringClass() + "." + field.getName(), false);
+        if (annotations != null) {
+            if (annotations.findAnnotation(annotationClass)) {
+                return true;
+
+            } else {
+                if (annotations.findAnnotation(NoConfigure.class)) {
+                    return false;
+                }
+            }
+        }
+
+        return field.getAnnotation(annotationClass) != null;
+    }
+
+    public static <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationClass) {
+        return getMethodAnnotation(method, annotationClass, false);
+    }
+
+    public static <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationClass, boolean findMatch) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + "." + method.getName(), findMatch);
+        if (annotations != null) {
+            T annotation = annotations.getAnnotation(annotationClass);
+            if (annotation == null) {
+                if (findMatch && !annotations.matchFind) {
+                    return getMethodAnnotation(method, annotationClass, false);
+                }
+
                 if (annotations.findAnnotation(NoConfigure.class)) {
                     return null;
                 }
@@ -894,12 +940,20 @@ public class BeanConfigImpl implements BeanConfig {
     }
 
     public static boolean findMethodAnnotation(Method method, Class<? extends Annotation> annotationClass) {
-        ParamsAnnotations annotations = getMemberParamsAnnotations(method.toString(), false);
+        return findMethodAnnotation(method, annotationClass, false);
+    }
+
+    public static boolean findMethodAnnotation(Method method, Class<? extends Annotation> annotationClass, boolean findMatch) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + "." + method.getName(), findMatch);
         if (annotations != null) {
             if (annotations.findAnnotation(annotationClass)) {
                 return true;
 
             } else {
+                if (findMatch && !annotations.matchFind) {
+                    return findMethodAnnotation(method, annotationClass, false);
+                }
+
                 if (annotations.findAnnotation(NoConfigure.class)) {
                     return false;
                 }
@@ -907,6 +961,20 @@ public class BeanConfigImpl implements BeanConfig {
         }
 
         return method.getAnnotation(annotationClass) != null;
+    }
+
+    public static <T extends Annotation> T getAccessorAnnotation(UtilAccessor.Accessor accessor, Class<T> annotationClass) {
+        Method getter = accessor.getGetter();
+        if (getter == null) {
+            Field field = accessor.getField();
+            if (field == null) {
+                return getMethodAnnotation(accessor.getSetter(), annotationClass);
+            }
+
+            return getFieldAnnotation(field, annotationClass);
+        }
+
+        return getMethodAnnotation(getter, annotationClass);
     }
 
 }

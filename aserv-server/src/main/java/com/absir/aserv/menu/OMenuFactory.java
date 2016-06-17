@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-9-6 下午12:42:34
  */
 package com.absir.aserv.menu;
@@ -22,6 +22,7 @@ import com.absir.aserv.system.service.AuthService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.bean.basis.Basis;
 import com.absir.bean.basis.BeanDefine;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryImpl;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Started;
@@ -60,7 +61,7 @@ public class OMenuFactory extends AopMethodDefineAbstract<MenuAopInterceptor, St
 
     @Override
     public String getAopInterceptor(String variable, Class<?> beanType) {
-        MaPermission maPermission = beanType.getAnnotation(MaPermission.class);
+        MaPermission maPermission = BeanConfigImpl.getTypeAnnotation(beanType, MaPermission.class);
         if (maPermission == null) {
             return null;
         }
@@ -74,7 +75,7 @@ public class OMenuFactory extends AopMethodDefineAbstract<MenuAopInterceptor, St
             permissions.put(value, maPermission.name());
         }
 
-        if (beanType.getAnnotation(MaPermissionRef.class) == null) {
+        if (!BeanConfigImpl.findTypeAnnotation(beanType, MaPermissionRef.class)) {
             return value;
         }
 
@@ -83,7 +84,7 @@ public class OMenuFactory extends AopMethodDefineAbstract<MenuAopInterceptor, St
 
     @Override
     public String getAopInterceptor(String interceptor, String variable, Class<?> beanType, Method method) {
-        MaPermission maPermission = method.getAnnotation(MaPermission.class);
+        MaPermission maPermission = BeanConfigImpl.getMethodAnnotation(method, MaPermission.class, true);
         if (maPermission == null) {
             if (!RouteFactory.isMethodServering(method)) {
                 return null;

@@ -15,6 +15,7 @@ import com.absir.aserv.data.value.FirstResults;
 import com.absir.aserv.data.value.MaxResults;
 import com.absir.bean.basis.Basis;
 import com.absir.bean.basis.BeanDefine;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanDefineDiscover;
 import com.absir.bean.core.BeanFactoryImpl;
 import com.absir.bean.inject.value.Bean;
@@ -35,7 +36,7 @@ public class DataQueryMethodDefine extends AopMethodDefineAbstract<DataQueryInte
 
     @Override
     public String getVariable(DataQueryInterceptor aopInterceptor, BeanDefine beanDefine, Object beanObject) {
-        DataSession session = beanDefine.getBeanType().getAnnotation(DataSession.class);
+        DataSession session = BeanConfigImpl.getTypeAnnotation(beanDefine.getBeanType(), DataSession.class);
         return session == null ? null : session.value();
     }
 
@@ -46,7 +47,7 @@ public class DataQueryMethodDefine extends AopMethodDefineAbstract<DataQueryInte
 
     @Override
     public DataQueryDetached getAopInterceptor(DataQueryDetached interceptor, String variable, Class<?> beanType, Method method) {
-        DataQuery query = method.getAnnotation(DataQuery.class);
+        DataQuery query = BeanConfigImpl.getMethodAnnotation(method, DataQuery.class);
         if (query == null) {
             return null;
         }

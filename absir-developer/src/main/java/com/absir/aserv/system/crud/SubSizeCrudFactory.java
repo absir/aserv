@@ -14,6 +14,7 @@ import com.absir.aserv.crud.ICrudProcessor;
 import com.absir.aserv.support.developer.JCrudField;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.value.JaSubSize;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.core.kernel.KernelReflect;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAccessor;
@@ -70,7 +71,7 @@ public class SubSizeCrudFactory implements ICrudFactory, ICrudProcessor {
                 return null;
             }
 
-            JaSubSize jaSubSize = field.getAnnotation(JaSubSize.class);
+            JaSubSize jaSubSize = BeanConfigImpl.getFieldAnnotation(field, JaSubSize.class);
             if (jaSubSize == null) {
                 return null;
             }

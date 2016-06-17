@@ -9,6 +9,7 @@ package com.absir.bean.inject;
 
 import com.absir.bean.basis.BeanFactory;
 import com.absir.bean.basis.ParamName;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.inject.value.Value;
 import com.absir.core.kernel.KernelReflect;
 import com.absir.core.kernel.KernelString;
@@ -28,7 +29,7 @@ public class InjectValue extends InjectInvoker {
     public InjectValue(Field field, Value value) {
         this.field = field;
         name = KernelString.isEmpty(value.value()) ? field.getName() : value.value();
-        ParamName beanName = field.getAnnotation(ParamName.class);
+        ParamName beanName = BeanConfigImpl.getFieldAnnotation(field, ParamName.class);
         if (beanName == null) {
             this.beanName = name;
 

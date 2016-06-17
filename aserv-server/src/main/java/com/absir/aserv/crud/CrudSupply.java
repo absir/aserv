@@ -16,6 +16,7 @@ import com.absir.aserv.system.helper.HelperCondition;
 import com.absir.aserv.system.helper.HelperQuery;
 import com.absir.bean.basis.BeanDefine;
 import com.absir.bean.config.IBeanDefineSupply;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryImpl;
 import com.absir.core.base.IBase;
 import com.absir.core.kernel.KernelClass;
@@ -55,9 +56,9 @@ public abstract class CrudSupply<T> implements ICrudSupply, IBeanDefineSupply {
     public List<BeanDefine> getBeanDefines(BeanFactoryImpl beanFactory, Class<?> beanType) {
         Class<?> supplyClass = KernelClass.typeClass(getClass(), TYPE_VARIABLE);
         if (supplyClass.isAssignableFrom(beanType)) {
-            JaEntity jaEntity = beanType.getAnnotation(JaEntity.class);
-            if (jaEntity != null || beanType.getAnnotation(MaEntity.class) != null) {
-                JaName jaName = beanType.getAnnotation(JaName.class);
+            JaEntity jaEntity = BeanConfigImpl.getTypeAnnotation(beanType, JaEntity.class);
+            if (jaEntity != null || BeanConfigImpl.getTypeAnnotation(beanType, MaEntity.class) != null) {
+                JaName jaName = BeanConfigImpl.getTypeAnnotation(beanType, JaName.class);
                 String entityName = jaName == null ? beanType.getSimpleName() : jaName.value();
                 Class<?> type = entityNameMapClass.get(entityName);
                 if (type == null || beanType.isAssignableFrom(type)) {

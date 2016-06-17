@@ -8,6 +8,7 @@
 package com.absir.aserv.configure.xls;
 
 import com.absir.aserv.configure.xls.value.XaWorkbook;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelClass;
@@ -83,7 +84,7 @@ public abstract class XlsUtils {
     public static <T extends XlsBase> void reloadXlsDao(Class<T> xlsClass) throws IOException {
         synchronized (xlsClass) {
             XlsBase xlsBase = KernelClass.newInstance(xlsClass);
-            XaWorkbook xaWorkbook = xlsClass.getAnnotation(XaWorkbook.class);
+            XaWorkbook xaWorkbook = BeanConfigImpl.getTypeAnnotation(xlsClass, XaWorkbook.class);
             String workbook = xaWorkbook == null || KernelString.isEmpty(xaWorkbook.workbook()) ? xlsClass.getSimpleName()
                     : xaWorkbook.workbook();
             getXlsBeans(xlsBase.getHssfWorkbook(workbook), xaWorkbook == null ? null : xaWorkbook.sheets(), xlsClass, xlsBase);

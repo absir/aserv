@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2014年7月29日 下午5:15:42
  */
 package com.absir.aserv.lang;
@@ -384,7 +384,7 @@ public class LangBundleImpl extends LangBundle {
                         LangEntryImpl langEntryImpl = methodMapLangEntryImpl.get(method);
                         if (langEntryImpl == null) {
                             if (method.getParameterTypes().length == 0 && method.getName().startsWith("get")) {
-                                if (method.getAnnotation(Langs.class) != null) {
+                                if (BeanConfigImpl.getMethodAnnotation(method, Langs.class) != null) {
                                     return new LangEntryValue(KernelString.unCapitalize(method.getName().substring(3)), method
                                             .getReturnType());
                                 }

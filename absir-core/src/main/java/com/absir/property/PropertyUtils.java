@@ -110,12 +110,12 @@ public class PropertyUtils {
             name = field.getName();
             if (propertyTree) {
                 PropertyContext propertyContext = getPropertyContext(propertyMap, name);
-                BeanName beanName = field.getAnnotation(BeanName.class);
+                BeanName beanName = BeanConfigImpl.getFieldAnnotation(field, BeanName.class);
                 if (beanName != null) {
                     propertyContext.beanName = beanName.value();
                 }
 
-                propertyContext.prop(field.getAnnotation(Prop.class));
+                propertyContext.prop(BeanConfigImpl.getFieldAnnotation(field, Prop.class));
                 propertyContext.propertyObject = propertySupply.getPropertyObject(propertyContext.propertyObject, field);
 
             } else {
@@ -141,12 +141,12 @@ public class PropertyUtils {
                 if (name != method.getName()) {
                     if (propertyTree) {
                         PropertyContext propertyContext = getPropertyContext(propertyMap, name);
-                        BeanName beanName = method.getAnnotation(BeanName.class);
+                        BeanName beanName = BeanConfigImpl.getMethodAnnotation(method, BeanName.class);
                         if (beanName != null) {
                             propertyContext.beanName = beanName.value();
                         }
 
-                        propertyContext.prop(method.getAnnotation(Prop.class));
+                        propertyContext.prop(BeanConfigImpl.getMethodAnnotation(method, Prop.class));
                         propertyContext.propertyObject = propertySupply.getPropertyObjectGetter(propertyContext.propertyObject, method);
 
                     } else {
@@ -164,7 +164,7 @@ public class PropertyUtils {
                             propertyContext.beanName = beanName;
                         }
 
-                        propertyContext.prop(method.getAnnotation(Prop.class));
+                        propertyContext.prop(BeanConfigImpl.getMethodAnnotation(method, Prop.class));
                         propertyContext.propertyObject = propertySupply.getPropertyObjectSetter(propertyContext.propertyObject, method);
 
                     } else {
@@ -174,7 +174,7 @@ public class PropertyUtils {
             }
         }
 
-        Properties properties = beanClass.getAnnotation(Properties.class);
+        Properties properties = BeanConfigImpl.getTypeAnnotation(beanClass, Properties.class);
         if (properties != null) {
             for (Property property : properties.value()) {
                 if (!KernelString.isEmpty(property.name())) {

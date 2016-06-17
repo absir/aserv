@@ -11,6 +11,7 @@ import com.absir.aop.AopMethodDefineAbstract;
 import com.absir.async.value.Async;
 import com.absir.bean.basis.Basis;
 import com.absir.bean.basis.BeanDefine;
+import com.absir.bean.core.BeanConfigImpl;
 
 import java.lang.reflect.Method;
 
@@ -24,12 +25,12 @@ public class AsyncMethodDefine extends AopMethodDefineAbstract<AysncInterceptor,
 
     @Override
     public Async getAopInterceptor(Object variable, Class<?> beanType) {
-        return beanType.getAnnotation(Async.class);
+        return BeanConfigImpl.getTypeAnnotation(beanType, Async.class);
     }
 
     @Override
     public Async getAopInterceptor(Async interceptor, Object variable, Class<?> beanType, Method method) {
-        Async async = method.getAnnotation(Async.class);
+        Async async = BeanConfigImpl.getMethodAnnotation(method, Async.class, true);
         return async == null ? interceptor : async;
     }
 

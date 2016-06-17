@@ -12,6 +12,7 @@ import com.absir.aserv.data.DataCacheMethodDefine.DataCacheInterceptor;
 import com.absir.aserv.data.value.DataCache;
 import com.absir.bean.basis.Basis;
 import com.absir.bean.basis.BeanDefine;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryImpl;
 import com.absir.bean.inject.value.Bean;
 import com.absir.core.kernel.KernelLang.ObjectTemplate;
@@ -34,13 +35,13 @@ public class DataCacheMethodDefine extends AopMethodDefineAbstract<DataCacheInte
 
     @Override
     public ObjectTemplate<Object> getAopInterceptor(String variable, Class<?> beanType) {
-        DataCache dataCache = beanType.getAnnotation(DataCache.class);
+        DataCache dataCache = BeanConfigImpl.getTypeAnnotation(beanType, DataCache.class);
         return dataCache == null || !dataCache.cacheable() ? null : new ObjectTemplate<Object>(DATA_CACHE_EMPTY);
     }
 
     @Override
     public ObjectTemplate<Object> getAopInterceptor(ObjectTemplate<Object> interceptor, String variable, Class<?> beanType, Method method) {
-        DataCache dataCache = beanType.getAnnotation(DataCache.class);
+        DataCache dataCache = BeanConfigImpl.getMethodAnnotation(method, DataCache.class);
         return dataCache == null ? interceptor : dataCache.cacheable() ? interceptor == null ? new ObjectTemplate<Object>(DATA_CACHE_EMPTY) : interceptor : null;
     }
 

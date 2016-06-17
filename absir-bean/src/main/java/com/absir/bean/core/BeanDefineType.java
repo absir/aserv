@@ -33,7 +33,7 @@ public class BeanDefineType extends BeanDefineAbstractor {
         this.constructor = BeanDefineType.getBeanConstructor(beanType);
         this.beanName = getBeanName(beanName, beanType);
         this.paramNames = BeanDefineDiscover.paramterNames(constructor);
-        BeanType type = beanType.getAnnotation(BeanType.class);
+        BeanType type = BeanConfigImpl.getTypeAnnotation(beanType, BeanType.class);
         if (type == null || !type.value().isAssignableFrom(beanType)) {
             this.beanType = beanType;
 

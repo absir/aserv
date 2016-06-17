@@ -8,6 +8,7 @@
 package com.absir.aop;
 
 import com.absir.aop.value.Proxy;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelCollection;
 import net.sf.cglib.proxy.Enhancer;
@@ -174,14 +175,14 @@ public class AopProxyUtils {
                 beanType = beanObject.getClass();
             }
 
-            Proxy proxy = beanType.getAnnotation(Proxy.class);
+            Proxy proxy = BeanConfigImpl.getTypeAnnotation(beanType, Proxy.class);
             aopProxy = getProxy(beanObject, beanType, interfaces, proxy == null ? false : proxy.jdk(),
                     proxy == null ? true : proxy.impl());
 
         } else {
             aopProxy = (AopProxy) beanObject;
             if (interfaces != null) {
-                Proxy proxy = beanType.getAnnotation(Proxy.class);
+                Proxy proxy = BeanConfigImpl.getTypeAnnotation(beanType, Proxy.class);
                 aopProxy = getProxy(aopProxy.getBeanObject(), beanType, interfaces, proxy == null ? false : proxy.jdk(),
                         proxy == null ? true : proxy.impl());
             }

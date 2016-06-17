@@ -338,7 +338,7 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         METHOD {
             @Override
             public Object find(Method method) {
-                return method.getAnnotation(BaMethod.class);
+                return BeanConfigImpl.getMethodAnnotation(method, BaMethod.class);
             }
 
             @Override
@@ -356,7 +356,7 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         FUNCTION {
             @Override
             public Object find(Method method) {
-                return method.getAnnotation(BaFunction.class);
+                return BeanConfigImpl.getMethodAnnotation(method, BaFunction.class);
             }
 
             @Override
@@ -374,7 +374,7 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         TAG {
             @Override
             public Object find(Method method) {
-                return method.getAnnotation(BaTag.class);
+                return BeanConfigImpl.getMethodAnnotation(method, BaTag.class);
             }
 
             @Override

@@ -15,6 +15,7 @@ import com.absir.aserv.system.admin.AdminServer;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.helper.HelperLang;
 import com.absir.aserv.system.service.utils.SecurityServiceUtils;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
@@ -142,7 +143,7 @@ public abstract class MenuContextUtils {
         }
 
         // 添加实体权限控制
-        if (entityNames != null && (maEntity != null || entityClass.getAnnotation(JaEntity.class) != null)) {
+        if (entityNames != null && (maEntity != null || BeanConfigImpl.findTypeAnnotation(entityClass, JaEntity.class))) {
             if (entityCaption == null) {
                 entityCaption = HelperLang.getTypeCaption(entityClass, entityName);
             }

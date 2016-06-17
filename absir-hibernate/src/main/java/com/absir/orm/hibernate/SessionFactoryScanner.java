@@ -12,6 +12,7 @@ import com.absir.bean.basis.BeanDefine;
 import com.absir.bean.basis.BeanFactory;
 import com.absir.bean.config.IBeanDefineScanner;
 import com.absir.bean.config.IBeanDefineSupply;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryImpl;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
@@ -75,7 +76,7 @@ public class SessionFactoryScanner implements IBeanDefineSupply, IBeanDefineScan
             }
 
             for (Class<?> entityClass : entityClasses) {
-                JaConfig jaConfig = entityClass.getAnnotation(JaConfig.class);
+                JaConfig jaConfig = BeanConfigImpl.getTypeAnnotation(entityClass, JaConfig.class);
                 if (jaConfig != null && jaConfig.value().length == 0) {
                     jaConfig = null;
                 }
@@ -127,7 +128,7 @@ public class SessionFactoryScanner implements IBeanDefineSupply, IBeanDefineScan
 
     @Override
     public List<BeanDefine> getBeanDefines(BeanFactoryImpl beanFactory, Class<?> beanType) {
-        if (beanType.getAnnotation(Entity.class) != null) {
+        if (BeanConfigImpl.getTypeAnnotation(beanType, Entity.class) != null) {
             entityClasses.add(beanType);
             return KernelLang.NULL_LIST_SET;
         }

@@ -67,7 +67,7 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
 
     public static boolean isMethodServering(Method method) {
         return Modifier.isPublic(method.getModifiers()) && !(Modifier.isStatic(method.getModifiers())
-                || method.getName().charAt(0) == '_' || method.getAnnotation(Close.class) != null);
+                || method.getName().charAt(0) == '_' || BeanConfigImpl.findMethodAnnotation(method, Close.class, true));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
     @Override
     public List<BeanDefine> getBeanDefines(BeanFactoryImpl beanFactory, Class<?> beanType) {
         if (!BeanDefineOriginal.isAbstractBeanType(beanType)) {
-            Server server = beanType.getAnnotation(Server.class);
+            Server server = BeanConfigImpl.getTypeAnnotation(beanType, Server.class);
             if (server != null) {
                 RouteDefine routeDefine = new RouteDefine(
                         new InjectBeanDefine(new BeanDefineType(beanType),
@@ -154,7 +154,7 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
             Class<?> beanClass = beanType;
             Interceptors interceptors;
             while (beanClass != null && beanClass != Object.class) {
-                interceptors = beanClass.getAnnotation(Interceptors.class);
+                interceptors = BeanConfigImpl.getTypeAnnotation(beanClass, Interceptors.class);
                 if (interceptors != null) {
                     for (Class<? extends Interceptor> interceptorClass : interceptors.value()) {
                         routeEntry.addInterceptor(BeanFactoryUtils.getRegisterBeanObject(interceptorClass));
@@ -266,7 +266,7 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
         int size = beanDefines.size();
         for (int i = 0; i < size; i++) {
             BeanDefine beanDefine = beanDefines.get(i);
-            if (beanDefine.getBeanType().getAnnotation(Close.class) != null) {
+            if (BeanConfigImpl.findTypeAnnotation(beanDefine.getBeanType(), Close.class)) {
                 continue;
             }
 
@@ -298,7 +298,7 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
 
                                 Class<?> routeClass = beanType;
                                 while (routeClass != null && routeClass != Object.class) {
-                                    mapping = routeClass.getAnnotation(Mapping.class);
+                                    mapping = BeanConfigImpl.getTypeAnnotation(routeClass, Mapping.class);
                                     if (mapping != null) {
                                         break;
                                     }
@@ -308,11 +308,11 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
 
                                 routeClass = beanType;
                                 while (routeClass != null && routeClass != Object.class) {
-                                    if (routeClass.getAnnotation(UrlDecode.class) != null) {
+                                    if (BeanConfigImpl.findTypeAnnotation(routeClass, UrlDecode.class)) {
                                         urlDecode = true;
                                         break;
 
-                                    } else if (routeClass.getAnnotation(UrlBase.class) != null) {
+                                    } else if (BeanConfigImpl.findTypeAnnotation(routeClass, UrlBase.class)) {
                                         break;
                                     }
 
@@ -334,8 +334,8 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
                             iRoute.routeMapping(name, new ObjectEntry<Mapping, List<String>>(mapping, null), method,
                                     parameterPathNames, mappings, inMethods);
                             if (mappings.size() > 0) {
-                                boolean url = (urlDecode || method.getAnnotation(UrlDecode.class) != null)
-                                        && method.getAnnotation(UrlBase.class) == null;
+                                boolean url = (urlDecode || BeanConfigImpl.findMethodAnnotation(method, UrlDecode.class))
+                                        && !BeanConfigImpl.findMethodAnnotation(method, UrlBase.class);
                                 String[] parameterPathNameArray = KernelCollection.toArray(parameterPathNames,
                                         String.class);
                                 routeMapping.routeMapping(

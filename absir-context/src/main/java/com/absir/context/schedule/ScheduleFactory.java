@@ -9,6 +9,7 @@ package com.absir.context.schedule;
 
 import com.absir.bean.basis.BeanDefine;
 import com.absir.bean.basis.BeanScope;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.IMethodInject;
 import com.absir.bean.inject.InjectMethod;
@@ -57,7 +58,7 @@ public class ScheduleFactory extends UtilSchelduer<ScheduleRunnable> implements 
 
     @Override
     public Schedule getInjects(BeanScope beanScope, BeanDefine beanDefine, Method method) {
-        return method.getAnnotation(Schedule.class);
+        return BeanConfigImpl.getMethodAnnotation(method, Schedule.class);
     }
 
     @Override

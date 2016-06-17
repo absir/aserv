@@ -62,19 +62,19 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
 
         @Override
         public InjectInvoker getInjectInvoker(BeanScope beanScope, BeanDefine beanDefine, Field field) {
-            Inject inject = field.getAnnotation(Inject.class);
+            Inject inject = BeanConfigImpl.getFieldAnnotation(field, Inject.class);
             if (inject != null) {
                 return InjectFieldOrders.getInjectField(field, inject.value(), inject.type(),
-                        field.getAnnotation(Orders.class));
+                        BeanConfigImpl.getFieldAnnotation(field, Orders.class));
             }
 
-            Value value = field.getAnnotation(Value.class);
+            Value value = BeanConfigImpl.getFieldAnnotation(field, Value.class);
             if (value != null) {
                 return new InjectValue(field, value);
             }
 
             if (field.getType().isArray() || Collection.class.isAssignableFrom(field.getType())) {
-                InjectConcat injectConcat = field.getAnnotation(InjectConcat.class);
+                InjectConcat injectConcat = BeanConfigImpl.getFieldAnnotation(field, InjectConcat.class);
                 if (injectConcat != null) {
                     return new InjectArrayConcat(field, injectConcat);
                 }
@@ -102,7 +102,7 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
 
                 @Override
                 public Started getInjects(BeanScope beanScope, BeanDefine beanDefine, Method method) {
-                    return method.getAnnotation(Started.class);
+                    return BeanConfigImpl.getMethodAnnotation(method, Started.class);
                 }
 
                 @Override
@@ -121,7 +121,7 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
 
                 @Override
                 public Stopping getInjects(BeanScope beanScope, BeanDefine beanDefine, Method method) {
-                    return method.getAnnotation(Stopping.class);
+                    return BeanConfigImpl.getMethodAnnotation(method, Stopping.class);
                 }
 
                 @Override
@@ -156,14 +156,14 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
                 }
             }
 
-            Inject inject = method.getAnnotation(Inject.class);
+            Inject inject = BeanConfigImpl.getMethodAnnotation(method, Inject.class);
             if (inject == null && !injected) {
                 return null;
             }
 
             injects[length] = required;
             injects[length + 1] = inject;
-            injects[length + 2] = method.getAnnotation(InjectOrder.class);
+            injects[length + 2] = BeanConfigImpl.getMethodAnnotation(method, InjectOrder.class);
             return injects;
         }
 
@@ -280,16 +280,16 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
 
     @Override
     public List<BeanDefine> getBeanDefines(BeanFactoryImpl beanFactory, Class<?> beanType) {
-        Bean bean = beanType.getAnnotation(Bean.class);
+        Bean bean = BeanConfigImpl.getTypeAnnotation(beanType, Bean.class);
         List<BeanDefine> beanDefines = null;
-        if (bean != null || beanType.getAnnotation(Configure.class) != null) {
+        if (bean != null || BeanConfigImpl.findTypeAnnotation(beanType, Configure.class)) {
             BeanDefine beanDefine = bean == null || BeanDefineOriginal.isAbstractBeanType(beanType) ? null
                     : new InjectBeanDefine(new BeanDefineType(bean.value(), beanType), bean.scope());
             beanDefines = getBeanDefines(beanFactory, beanType, beanDefine);
         }
 
         if (beanDefines == null || beanDefines.isEmpty()) {
-            if (beanType.getAnnotation(Inject.class) != null) {
+            if (BeanConfigImpl.findTypeAnnotation(beanType, Inject.class)) {
                 startedInjectInvokers.add(new ObjectEntry<Object, InjectInvoker>(null, new InjectBeanType(beanType)));
             }
         }
@@ -323,7 +323,7 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
                 Method beanMethod = null;
                 Bean bean = null;
                 if (Modifier.isStatic(template.getModifiers())) {
-                    bean = template.getAnnotation(Bean.class);
+                    bean = BeanConfigImpl.getMethodAnnotation(template, Bean.class);
                     if (bean == null) {
                         if (template.getAnnotations().length > 0) {
                             InjectAdapter.inject(template);
@@ -354,7 +354,7 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
                 }
 
                 if (bean == null) {
-                    bean = template.getAnnotation(Bean.class);
+                    bean = BeanConfigImpl.getMethodAnnotation(template, Bean.class);
                     if (bean == null) {
                         return;
                     }

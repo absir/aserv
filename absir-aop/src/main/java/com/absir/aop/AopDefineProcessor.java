@@ -14,6 +14,7 @@ import com.absir.bean.basis.BeanFactory;
 import com.absir.bean.config.IBeanDefineProcessor;
 import com.absir.bean.config.IBeanDefineSupply;
 import com.absir.bean.config.IBeanFactoryAware;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanDefineType;
 import com.absir.bean.core.BeanFactoryImpl;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -157,9 +158,9 @@ public class AopDefineProcessor implements IBeanDefineSupply, IBeanDefineProcess
 
     @Override
     public List<BeanDefine> getBeanDefines(BeanFactoryImpl beanFactory, Class<?> beanType) {
-        Impl basic = beanType.getAnnotation(Impl.class);
+        Impl basic = BeanConfigImpl.getTypeAnnotation(beanType, Impl.class);
         if (basic != null || beanType.isInterface() || Modifier.isAbstract(beanType.getModifiers())) {
-            Bean bean = beanType.getAnnotation(Bean.class);
+            Bean bean = BeanConfigImpl.getTypeAnnotation(beanType, Bean.class);
             if (basic != null || bean != null) {
                 AopImplDefine beanDefine = new AopImplDefine(BeanDefineType.getBeanName(bean == null ? null : bean.value(), beanType), beanType, bean == null ? null : bean.scope(),
                         basic == null ? null : basic.value());

@@ -8,6 +8,7 @@
 package com.absir.server.route;
 
 import com.absir.bean.basis.Base;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
@@ -155,7 +156,7 @@ public class RouteMapping implements IRoute {
 
         // mapping names
         List<String> mappingNames = new ArrayList<String>();
-        Mapping methodMapping = method.getAnnotation(Mapping.class);
+        Mapping methodMapping = BeanConfigImpl.getMethodAnnotation(method, Mapping.class);
         if (methodMapping != null) {
             int length = parameterNames == null ? 0 : parameterNames.length;
             int[][] prameterGroups = null;

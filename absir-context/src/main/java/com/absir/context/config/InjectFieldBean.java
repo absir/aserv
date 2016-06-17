@@ -10,6 +10,7 @@ package com.absir.context.config;
 import com.absir.bean.basis.BeanDefine;
 import com.absir.bean.basis.BeanFactory;
 import com.absir.bean.basis.ParamName;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanDefineDiscover;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.InjectInvoker;
@@ -58,7 +59,7 @@ public class InjectFieldBean extends InjectInvoker {
                 }
 
             } else {
-                ParamName beanName = field.getAnnotation(ParamName.class);
+                ParamName beanName = BeanConfigImpl.getFieldAnnotation(field, ParamName.class);
                 paramName = beanName == null || KernelString.isEmpty(beanName.value()) ? field.getName() : beanName.value();
                 parameterType = field.getGenericType();
             }

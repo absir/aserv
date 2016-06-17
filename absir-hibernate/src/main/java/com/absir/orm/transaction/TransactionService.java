@@ -10,6 +10,7 @@ package com.absir.orm.transaction;
 import com.absir.aop.AopMethodDefineAbstract;
 import com.absir.bean.basis.Basis;
 import com.absir.bean.basis.BeanDefine;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.InjectType;
@@ -113,7 +114,7 @@ public class TransactionService extends AopMethodDefineAbstract<TransactionInter
 
     @Override
     public TransactionManager getAopInterceptor(String variable, Class<?> beanType) {
-        Transactions transactions = beanType.getAnnotation(Transactions.class);
+        Transactions transactions = BeanConfigImpl.getTypeAnnotation(beanType, Transactions.class);
         if (transactions != null) {
             TransactionManager transactionManager = new TransactionManager();
             for (Transaction transaction : transactions.value()) {
@@ -123,14 +124,14 @@ public class TransactionService extends AopMethodDefineAbstract<TransactionInter
             return transactionManager;
         }
 
-        Transaction transaction = beanType.getAnnotation(Transaction.class);
+        Transaction transaction = BeanConfigImpl.getTypeAnnotation(beanType, Transaction.class);
         if (transaction != null) {
             TransactionManager transactionManager = new TransactionManager();
             transactionManager.setTransactionAttribute(transaction, variable);
             return transactionManager;
         }
 
-        Transactional transactional = beanType.getAnnotation(Transactional.class);
+        Transactional transactional = BeanConfigImpl.getTypeAnnotation(beanType, Transactional.class);
         if (transactional != null) {
             TransactionManager transactionManager = new TransactionManager();
             transactionManager.setTransactionAttribute(transactional, variable);
@@ -143,11 +144,11 @@ public class TransactionService extends AopMethodDefineAbstract<TransactionInter
     @Override
     public TransactionManager getAopInterceptor(TransactionManager interceptor, String variable, Class<?> beanType,
                                                 Method method) {
-        Transactions transactions = method.getAnnotation(Transactions.class);
+        Transactions transactions = BeanConfigImpl.getMethodAnnotation(method, Transactions.class, true);
         if (transactions == null) {
-            Transaction transaction = method.getAnnotation(Transaction.class);
+            Transaction transaction = BeanConfigImpl.getMethodAnnotation(method, Transaction.class, true);
             if (transaction == null) {
-                Transactional transactional = beanType.getAnnotation(Transactional.class);
+                Transactional transactional = BeanConfigImpl.getMethodAnnotation(method, Transactional.class, true);
                 if (transactional != null) {
                     if (interceptor == null) {
                         interceptor = new TransactionManager();

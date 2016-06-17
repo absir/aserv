@@ -10,6 +10,7 @@ package com.absir.spring;
 import com.absir.bean.basis.*;
 import com.absir.bean.config.IBeanDefineProcessor;
 import com.absir.bean.config.IBeanFactoryAware;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryImpl;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Stopping;
@@ -108,7 +109,7 @@ public class SpringBeanDefineAware implements IBeanFactoryAware, IBeanDefineProc
 
     @Override
     public BeanDefine getBeanDefine(BeanFactory beanFactory, BeanDefine beanDefine) {
-        if (beanDefine.getBeanType().getAnnotation(ASpring.class) != null) {
+        if (BeanConfigImpl.getTypeAnnotation(beanDefine.getBeanType(), ASpring.class) != null) {
             beanDefine = new SpringBeanDefineWrapper(beanDefine);
         }
 
