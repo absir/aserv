@@ -39,15 +39,15 @@ public class AdviceTest extends AbstractTestInject {
     }
 
     @Bean
-    public static class TestAdvice extends MethodAfter {
+    public static class TestAdvice extends MethodAfter<Boolean> {
 
         @Override
-        public boolean matching(Class<?> beanType, Method method) {
+        public Boolean matching(Class<?> beanType, Method method) {
             return AdviceBean.class.isAssignableFrom(beanType) || UploadCrudFactory.class.isAssignableFrom(beanType);
         }
 
         @Override
-        public void advice(Object proxy, Object returnValue, Method method, Object[] args) {
+        public void advice(Object proxy, Object returnValue, Method method, Object[] args, Boolean advice) {
             System.out.println("after:" + proxy + returnValue + method);
         }
     }

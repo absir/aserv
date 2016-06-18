@@ -9,17 +9,17 @@ package com.absir.aserv.advice;
 
 import java.lang.reflect.Method;
 
-public abstract class MethodReturn extends MethodAdvice {
+public abstract class MethodReturn<O> extends MethodAdvice<O> {
 
     @Override
-    public Object after(Object proxy, Object returnValue, Method method, Object[] args, Throwable e) throws Throwable {
+    public Object after(Object proxy, Object returnValue, Method method, Object[] args, Throwable e, O advice) throws Throwable {
         if (e == null) {
-            returnValue = advice(proxy, returnValue, method, args);
+            returnValue = advice(proxy, returnValue, method, args, advice);
         }
 
         return returnValue;
     }
 
-    public abstract Object advice(Object proxy, Object returnValue, Method method, Object[] args);
+    public abstract Object advice(Object proxy, Object returnValue, Method method, Object[] args, O advice);
 
 }

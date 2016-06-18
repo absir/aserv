@@ -5,6 +5,7 @@ import com.absir.aserv.advice.IMethodAdvice;
 import com.absir.aserv.system.bean.JSingle;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.bean.basis.Base;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Value;
 import com.absir.client.helper.HelperJson;
@@ -22,7 +23,7 @@ import java.lang.reflect.Method;
  */
 @Base
 @Bean
-public class SingleAdvice implements IMethodAdvice {
+public class SingleAdvice implements IMethodAdvice<String> {
 
     @Value("single.idle.time")
     protected long idleTime = 30000;
@@ -35,14 +36,15 @@ public class SingleAdvice implements IMethodAdvice {
     }
 
     @Override
-    public boolean matching(Class<?> beanType, Method method) {
-        return false;
+    public String matching(Class<?> beanType, Method method) {
+        JaSingle single = BeanConfigImpl.getMethodAnnotation(method, JaSingle.class, true);
+        return single == null ? null : single.value();
     }
 
     @Transaction
     @Override
-    public Object before(AdviceInvoker invoker, Object proxy, Method method, Object[] args) throws Throwable {
-        String singleId = getMethodSingleId(proxy, method, args);
+    public Object before(AdviceInvoker invoker, Object proxy, Method method, Object[] args, String advice) throws Throwable {
+        String singleId = advice.length() == 0 ? getMethodSingleId(proxy, method, args) : advice;
         Session session = BeanDao.getSession();
         JSingle single = BeanDao.get(session, JSingle.class, singleId);
         if (single != null) {
@@ -87,7 +89,7 @@ public class SingleAdvice implements IMethodAdvice {
     }
 
     @Override
-    public Object after(Object proxy, Object returnValue, Method method, Object[] args, Throwable e) throws Throwable {
+    public Object after(Object proxy, Object returnValue, Method method, Object[] args, Throwable e, String advice) throws Throwable {
         return returnValue;
     }
 

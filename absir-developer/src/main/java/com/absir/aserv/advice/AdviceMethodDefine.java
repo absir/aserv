@@ -28,7 +28,14 @@ import java.util.List;
 @SuppressWarnings("rawtypes")
 @Basis
 @Bean
-public class AdviceMethodDefine extends AopMethodDefineAbstract<AopMethodInterceptor, IMethodAdvice[], Object> {
+public class AdviceMethodDefine extends AopMethodDefineAbstract<AopMethodInterceptor, AdviceMethodDefine.MethodAdviceO[], Object> {
+
+    protected static class MethodAdviceO {
+
+        protected IMethodAdvice advice;
+
+        protected Object obj;
+    }
 
     @Inject(type = InjectType.Selectable)
     private IMethodAdvice[] methodAdvices;
@@ -39,20 +46,24 @@ public class AdviceMethodDefine extends AopMethodDefineAbstract<AopMethodInterce
     }
 
     @Override
-    public IMethodAdvice[] getAopInterceptor(Object variable, Class<?> beanType) {
+    public MethodAdviceO[] getAopInterceptor(Object variable, Class<?> beanType) {
         return null;
     }
 
     @Override
-    public IMethodAdvice[] getAopInterceptor(IMethodAdvice[] interceptor, Object variable, Class<?> beanType, Method method) {
-        List<IMethodAdvice> advices = new ArrayList<IMethodAdvice>();
+    public MethodAdviceO[] getAopInterceptor(MethodAdviceO[] interceptor, Object variable, Class<?> beanType, Method method) {
+        List<MethodAdviceO> advices = new ArrayList<MethodAdviceO>();
         for (IMethodAdvice advice : methodAdvices) {
-            if (advice.matching(beanType, method)) {
-                advices.add(advice);
+            Object obj = advice.matching(beanType, method);
+            if (obj != null) {
+                MethodAdviceO adviceO = new MethodAdviceO();
+                adviceO.advice = advice;
+                adviceO.obj = obj;
+                advices.add(adviceO);
             }
         }
 
-        return advices.isEmpty() ? null : KernelCollection.toArray(advices, IMethodAdvice.class);
+        return advices.isEmpty() ? null : KernelCollection.toArray(advices, MethodAdviceO.class);
     }
 
     @Override
@@ -60,10 +71,10 @@ public class AdviceMethodDefine extends AopMethodDefineAbstract<AopMethodInterce
         return -1024;
     }
 
-    public static class AopMethodInterceptor extends AopInterceptorAbstract<IMethodAdvice[]> {
+    public static class AopMethodInterceptor extends AopInterceptorAbstract<MethodAdviceO[]> {
 
         @Override
-        public Object before(final Object proxy, final Iterator<AopInterceptor> iterator, final IMethodAdvice[] interceptor, final AopProxyHandler proxyHandler, final Method method,
+        public Object before(final Object proxy, final Iterator<AopInterceptor> iterator, final MethodAdviceO[] interceptor, final AopProxyHandler proxyHandler, final Method method,
                              final Object[] args, final MethodProxy methodProxy) throws Throwable {
             AdviceInvoker adviceInvoker = new AdviceInvoker() {
 
@@ -76,7 +87,8 @@ public class AdviceMethodDefine extends AopMethodDefineAbstract<AopMethodInterce
                     Throwable ex = null;
                     if (index < length) {
                         try {
-                            value = interceptor[index++].before(this, proxy, method, args);
+                            MethodAdviceO adviceO = interceptor[index++];
+                            value = adviceO.advice.before(this, proxy, method, args, adviceO.obj);
                             if (value == AopProxyHandler.VOID) {
                                 value = invoke(value);
                             }
@@ -85,7 +97,8 @@ public class AdviceMethodDefine extends AopMethodDefineAbstract<AopMethodInterce
                             ex = e;
 
                         } finally {
-                            value = interceptor[--index].after(proxy, value, method, args, ex);
+                            MethodAdviceO adviceO = interceptor[--index];
+                            value = adviceO.advice.after(proxy, value, method, args, ex, adviceO.obj);
                         }
 
                     } else {
@@ -100,7 +113,7 @@ public class AdviceMethodDefine extends AopMethodDefineAbstract<AopMethodInterce
         }
 
         @Override
-        public Object after(Object proxy, Object returnValue, IMethodAdvice[] interceptor, AopProxyHandler proxyHandler, Method method, Object[] args, Throwable e) throws Throwable {
+        public Object after(Object proxy, Object returnValue, MethodAdviceO[] interceptor, AopProxyHandler proxyHandler, Method method, Object[] args, Throwable e) throws Throwable {
             return returnValue;
         }
     }

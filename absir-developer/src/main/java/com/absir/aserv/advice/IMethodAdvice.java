@@ -11,12 +11,12 @@ import com.absir.core.kernel.KernelList.Orderable;
 
 import java.lang.reflect.Method;
 
-public interface IMethodAdvice extends Orderable {
+public interface IMethodAdvice<O> extends Orderable {
 
-    public boolean matching(Class<?> beanType, Method method);
+    public O matching(Class<?> beanType, Method method);
 
-    public Object before(AdviceInvoker invoker, Object proxy, Method method, Object[] args) throws Throwable;
+    public Object before(AdviceInvoker invoker, Object proxy, Method method, Object[] args, O advice) throws Throwable;
 
-    public Object after(Object proxy, Object returnValue, Method method, Object[] args, Throwable e) throws Throwable;
+    public Object after(Object proxy, Object returnValue, Method method, Object[] args, Throwable e, O advice) throws Throwable;
 
 }

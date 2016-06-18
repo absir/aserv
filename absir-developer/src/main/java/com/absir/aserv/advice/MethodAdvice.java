@@ -11,7 +11,7 @@ import com.absir.aop.AopProxyHandler;
 
 import java.lang.reflect.Method;
 
-public abstract class MethodAdvice implements IMethodAdvice {
+public abstract class MethodAdvice<O> implements IMethodAdvice<O> {
 
     private int order;
 
@@ -24,12 +24,12 @@ public abstract class MethodAdvice implements IMethodAdvice {
     }
 
     @Override
-    public Object before(AdviceInvoker invoker, Object proxy, Method method, Object[] args) throws Throwable {
+    public Object before(AdviceInvoker invoker, Object proxy, Method method, Object[] args, O advice) throws Throwable {
         return AopProxyHandler.VOID;
     }
 
     @Override
-    public Object after(Object proxy, Object returnValue, Method method, Object[] args, Throwable e) throws Throwable {
+    public Object after(Object proxy, Object returnValue, Method method, Object[] args, Throwable e, O advice) throws Throwable {
         return returnValue;
     }
 }

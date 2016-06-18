@@ -11,14 +11,14 @@ import com.absir.aop.AopProxyHandler;
 
 import java.lang.reflect.Method;
 
-public abstract class MethodBefore extends MethodAdvice {
+public abstract class MethodBefore<O> extends MethodAdvice<O> {
 
     @Override
-    public Object before(AdviceInvoker invoker, Object proxy, Method method, Object[] args) throws Throwable {
-        advice(proxy, method, args);
+    public Object before(AdviceInvoker invoker, Object proxy, Method method, Object[] args, O advice) throws Throwable {
+        advice(proxy, method, args, advice);
         return AopProxyHandler.VOID;
     }
 
-    public abstract void advice(Object proxy, Method method, Object[] args);
+    public abstract void advice(Object proxy, Method method, Object[] args, O advice);
 
 }

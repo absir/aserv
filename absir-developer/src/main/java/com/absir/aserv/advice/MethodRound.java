@@ -9,13 +9,13 @@ package com.absir.aserv.advice;
 
 import java.lang.reflect.Method;
 
-public abstract class MethodRound extends MethodAdvice {
+public abstract class MethodRound<O> extends MethodAdvice<O> {
 
     @Override
-    public Object before(AdviceInvoker invoker, Object proxy, Method method, Object[] args) throws Throwable {
-        return advice(invoker, proxy, method, args);
+    public Object before(AdviceInvoker invoker, Object proxy, Method method, Object[] args, O advice) throws Throwable {
+        return advice(invoker, proxy, method, args, advice);
     }
 
-    public abstract Object advice(AdviceInvoker invoker, Object proxy, Method method, Object[] args);
+    public abstract Object advice(AdviceInvoker invoker, Object proxy, Method method, Object[] args, O advice);
 
 }
