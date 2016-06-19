@@ -16,29 +16,37 @@ public class UtilLinked<T> {
 
     private LinkedList<T> list = new LinkedList<T>();
 
-    private List<T> addList = new ArrayList<T>();
+    private List<T> addList;
 
-    private List<T> removeList = new ArrayList<T>();
+    private List<T> removeList;
 
     public synchronized void add(T element) {
+        if (addList == null) {
+            addList = new ArrayList<T>();
+        }
+
         addList.add(element);
         removeList.remove(element);
     }
 
     public synchronized void remove(T element) {
-        if (!addList.remove(element)) {
+        if (addList == null || !addList.remove(element)) {
+            if (removeList == null) {
+                removeList = new ArrayList<T>();
+            }
+
             removeList.add(element);
         }
     }
 
     public List<T> syncAdds() {
         List<T> adds = addList;
-        if (adds.isEmpty()) {
+        if (adds == null || adds.isEmpty()) {
             return null;
 
         } else {
-            addList = new ArrayList<T>();
             synchronized (this) {
+                addList = null;
                 LinkedList<T> newList = new LinkedList<T>(list);
                 newList.addAll(adds);
                 list = newList;
@@ -50,12 +58,12 @@ public class UtilLinked<T> {
 
     public List<T> syncRemoves() {
         List<T> removes = removeList;
-        if (removes.isEmpty()) {
+        if (removes == null || removes.isEmpty()) {
             return null;
 
         } else {
-            removeList = new ArrayList<T>();
             synchronized (this) {
+                removeList = null;
                 LinkedList<T> newList = new LinkedList<T>(list);
                 newList.removeAll(removes);
                 list = newList;

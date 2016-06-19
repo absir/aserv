@@ -20,6 +20,8 @@ public class JSingle extends JbBeanS {
     @Version
     private long version;
 
+    private transient boolean complete;
+
     public long getPassTime() {
         return passTime;
     }
@@ -34,5 +36,13 @@ public class JSingle extends JbBeanS {
 
     public void setVersion(long version) {
         this.version = version;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
     }
 }

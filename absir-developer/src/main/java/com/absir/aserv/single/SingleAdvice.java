@@ -9,7 +9,9 @@ import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Value;
 import com.absir.client.helper.HelperJson;
+import com.absir.context.core.ContextService;
 import com.absir.context.core.ContextUtils;
+import com.absir.core.util.UtilLinked;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
@@ -23,13 +25,23 @@ import java.lang.reflect.Method;
  */
 @Base
 @Bean
-public class SingleAdvice implements IMethodAdvice<String> {
+public class SingleAdvice extends ContextService implements IMethodAdvice<String> {
 
     @Value("single.idle.time")
     protected long idleTime = 30000;
 
     @Value("single.delay.time")
     protected long delayTime = 15000;
+
+    protected UtilLinked<JSingle> runningSingles;
+
+    @Override
+    public void step(long contextTime) {
+        if (runningSingles != null) {
+            runningSingles.syncAdds();
+
+        }
+    }
 
     public String getMethodSingleId(Object proxy, Method method, Object[] args) {
         return method.toString() + "@" + HelperJson.encodeNull(args);
