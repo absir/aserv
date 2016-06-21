@@ -26,7 +26,9 @@ public class UtilLinked<T> {
         }
 
         addList.add(element);
-        removeList.remove(element);
+        if (removeList != null) {
+            removeList.remove(element);
+        }
     }
 
     public synchronized void remove(T element) {
