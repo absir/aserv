@@ -30,10 +30,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.zip.ZipInputStream;
 
 @Base
 @Bean
@@ -55,19 +57,33 @@ public class DeveloperService implements IDeveloper, IDeploy {
     protected static void postConstruct() {
         String deployPath = HelperFileName.normalizeNoEndSeparator(BeanFactoryUtils.getBeanConfig().getClassPath() + "/../../");
         LOGGER.info("deploy : " + deployPath);
+        File file = new File(BeanFactoryUtils.getBeanConfig().getClassPath() + "deploy");
+        if (file.exists() && file.isDirectory()) {
+            for (File depFile : file.listFiles()) {
+                if (depFile.isFile() && depFile.getName().endsWith(".zip")) {
+                    try {
+                        HelperFile.copyDirectoryOverWrite(new ZipInputStream(new FileInputStream(depFile)), new File(deployPath), false, null, true);
+
+                    } catch (Exception e) {
+                        LOGGER.error("deployDir " + depFile, e);
+                    }
+                }
+            }
+        }
+
         for (IDeploy deploy : BeanFactoryUtils.getOrderBeanObjects(IDeploy.class)) {
             try {
                 HelperFile.copyDirectoryOverWrite(deploy.getClass().getResource("/deploy"), new File(deployPath), false, null, true);
 
             } catch (Throwable e) {
-                e.printStackTrace();
+                LOGGER.error("deployResource " + deploy, e);
             }
         }
 
         if (!KernelString.isEmpty(developerWeb)) {
-            String developePath = HelperFileName.normalizeNoEndSeparator(developerWeb + "/../../../");
-            if (!KernelString.isEmpty(deployPath) && (HelperFileName.getName(developePath)).equals(HelperFileName.getName(deployPath))) {
-                final String resourcesPath = developePath + "/src/main/resources/";
+            String developPath = HelperFileName.normalizeNoEndSeparator(developerWeb + "/../../../");
+            if (!KernelString.isEmpty(deployPath) && (HelperFileName.getName(developPath)).equals(HelperFileName.getName(deployPath))) {
+                final String resourcesPath = developPath + "/src/main/resources/";
                 if (HelperFile.directoryExists(resourcesPath)) {
                     // 复制开发文件到开发环境
                     if (IDeveloper.ME != null) {
@@ -76,7 +92,7 @@ public class DeveloperService implements IDeveloper, IDeploy {
                             // new File(developerWeb), false, null, true);
 
                         } catch (Throwable e) {
-                            e.printStackTrace();
+                            LOGGER.error("developPath " + developPath, e);
                         }
                     }
 
@@ -89,7 +105,7 @@ public class DeveloperService implements IDeveloper, IDeploy {
                                 HelperFile.copyFile(template.getValue(), new File(resourcesPath + template.getKey()));
 
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                LOGGER.error("deployListener " + template, e);
                             }
                         }
                     });

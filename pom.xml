@@ -29,9 +29,7 @@
         <module>absir-developerImpl</module>
         <module>absir-developerWeb</module>
         <module>absir-jsp</module>
-        <module>absir-developerJsp</module>
         <module>absir-jetbrick</module>
-        <module>absir-jetbrickDeveloper</module>
         <module>absir-open</module>
         <module>absir-source</module>
         <module>absir-email</module>
