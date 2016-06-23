@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ public class EmptyLazySerializer extends JsonSerializer<Object> {
 
     @Override
     public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-        if (value == null || value instanceof HibernateProxy) {
+        if (value == null || value instanceof HibernateProxy || value instanceof PersistentCollection) {
             jgen.writeObject(null);
 
         } else {

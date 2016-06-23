@@ -10,6 +10,7 @@ package com.absir.aserv.support.web;
 import com.absir.aserv.developer.Pag;
 import com.absir.aserv.developer.Scenario;
 import com.absir.aserv.facade.DMessage;
+import com.absir.aserv.init.InitBeanFactory;
 import com.absir.aserv.menu.IMenuBean;
 import com.absir.aserv.menu.MenuContextUtils;
 import com.absir.aserv.support.web.WebJetbrickSupply.ConfigureFound;
@@ -303,6 +304,7 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
             globalContext.set("SITE_ROUTE", MenuContextUtils.getSiteRoute());
             globalContext.set("SITE_STATIC", KernelString.isEmpty(MenuContextUtils.getSiteRoute()) ? "/static" : (MenuContextUtils.getSiteRoute() + "static"));
             globalContext.set("ADMIN_ROUTE", MenuContextUtils.getAdminRoute());
+            globalContext.set("APP_VERSION", InitBeanFactory.ME.getVersion());
         }
     }
 

@@ -2,4 +2,4 @@
 
 cd `dirname $0`
 
-rm -rf target/generated-sources
+rm -rf target/*

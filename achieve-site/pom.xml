@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>com.absir</groupId>
-            <artifactId>absir-jetbrickDeveloper</artifactId>
+            <artifactId>absir-jetbrick</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>

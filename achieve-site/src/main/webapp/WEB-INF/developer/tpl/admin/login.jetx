@@ -1,175 +1,49 @@
-\#set(page_title = "${Pag::getLang("登录")}")
+\#set(page_title = "${Pag::getLang("后台登录")}" + APP_VERSION)
 \#set(body_class = "login-layout")
 \#tag layout_block("page_header")
-<style type="text/css">
-    * {
-        font-family: "Verdana", "Tahoma", "Lucida Grande", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
-    }
-
-    body {
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        -o-background-size: cover;
-        background-size: cover;
-    }
-
-    a:link {
-        color: #285e8e;
-    }
-
-    .main_box {
-        width: 600px;
-        height: 460px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-top: -260px;
-        margin-left: -300px;
-        padding: 30px;
-        background: #FAFAFA;
-        background: rgba(255, 255, 255, 0.5);
-        border: 1px #DDD solid;
-        border-radius: 5px;
-        -webkit-box-shadow: 1px 5px 8px #888888;
-        -moz-box-shadow: 1px 5px 8px #888888;
-        box-shadow: 1px 5px 8px #888888;
-    }
-
-    .main_box .setting {
-        position: absolute;
-        top: 5px;
-        right: 10px;
-        width: 10px;
-        height: 10px;
-    }
-
-    .main_box .setting a {
-        color: #FF6600;
-    }
-
-    .main_box .setting a:hover {
-        color: #555;
-    }
-
-    .login_logo {
-        margin-bottom: 20px;
-        height: 45px;
-        text-align: center;
-    }
-
-    .login_logo img {
-        height: 45px;
-    }
-
-    .login_form {
-        padding-top: 20px;
-        font-size: 16px;
-    }
-
-    .login_form label {
-        font-size: 16px;
-        font-weight: normal;
-    }
-
-    .login_box .form-control {
-        display: inline-block;
-        *display: inline;
-        zoom: 1;
-        width: auto;
-        font-size: 18px;
-    }
-
-    .login_box .form-control.x319 {
-        width: 319px;
-    }
-
-    .login_box .form-control.x164 {
-        width: 164px;
-    }
-
-    .login_box .form-group {
-        margin-bottom: 20px;
-    }
-
-    .login_box .form-group label.t {
-        width: 120px;
-        text-align: right;
-        cursor: pointer;
-    }
-
-    .login_box .form-group.space {
-        padding-top: 15px;
-        border-top: 1px #FFF dotted;
-    }
-
-    .login_box .form-group.space input {
-        padding: 0 10px;
-        margin: 0 15px;
-    }
-
-    .login_box .form-group img {
-        margin-top: 1px;
-        height: 32px;
-        vertical-align: top;
-    }
-
-    .login_box .form-control {
-        height: auto;
-    }
-
-    .login_box .m {
-        cursor: pointer;
-    }
-
-    .bottom {
-        text-align: center;
-        font-size: 12px;
-    }
-</style>
-<script type="text/javascript">
-    var COOKIE_NAME = 'sys__username';
-    $(function () {
-        if ($.cookie(COOKIE_NAME)) {
-            $("#j_username").val($.cookie(COOKIE_NAME));
-            $("#j_password").focus();
-            $("#j_remember").attr('checked', true);
-        } else {
-            $("#j_username").focus();
-        }
-        $("#login_form").submit(function () {
-            var issubmit = true;
-            var i_index = 0;
-            $(this).find('.in').each(function (i) {
-                if ($.trim($(this).val()).length == 0) {
-                    $(this).css('border', '1px #ff0000 solid');
-                    issubmit = false;
-                    if (i_index == 0)
-                        i_index = i;
-                }
-            });
-            if (!issubmit) {
-                $(this).find('.in').eq(i_index).focus();
-                return false;
-            }
-            var $remember = $("#j_remember");
-            if ($remember.attr('checked')) {
-                $.cookie(COOKIE_NAME, $("#j_username").val(), {path: '/', expires: 15});
-            } else {
-                $.cookie(COOKIE_NAME, null, {path: '/'});
-            }
-            $("#login_ok").attr("disabled", true).val('${Pag::getLang("登录中")}');
-            return true;
-        });
-
-        var $captcha_img = $("#captcha_img");
-        var captcha_src = $captcha_img.attr('src');
-        $captcha_img.click(function () {
-            $captcha_img.attr('src', captcha_src + "&?time=" + new Date().getTime());
-        });
-    });
-</script>
+<link href="${SITE_STATIC}/h-ui.admin/css/H-ui.login.css" rel="stylesheet" type="text/css"/>
+<link href="${SITE_STATIC}/h-ui.admin/css/style.css" rel="stylesheet" type="text/css"/>
 \#end
 \#tag layout("/WEB-INF/tpl/layout.jetx")
+<div class="header"></div>
+<div class="loginWraper">
+    <div id="loginform" class="loginBox">
+        <form class="form form-horizontal" action="index.html" method="post">
+            <div class="row cl">
+                <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60d;</i></label>
+                <div class="formControls col-xs-8">
+                    <input id="" name="" type="text" placeholder="账户" class="input-text size-L">
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60e;</i></label>
+                <div class="formControls col-xs-8">
+                    <input id="" name="" type="password" placeholder="密码" class="input-text size-L">
+                </div>
+            </div>
+            <div class="row cl">
+                <div class="formControls col-xs-8 col-xs-offset-3">
+                    <input name="verifyCode" class="input-text size-L" type="text" placeholder="${Pag::getLang('验证码')}"
+                           onblur="if(this.value==''){this.value='验证码:'}" style="width:150px;">
+                    <img src="${SITE_ROUTE}asset/verify?width=150&height=35" onclick="javascript:this.src=this.src+'?t='+Math.random()" alt="${Pag::getLang('点击更换')}"></div>
+            </div>
+            <div class="row cl">
+                <div class="formControls col-xs-8 col-xs-offset-3">
+                    <label for="online">
+                        <input type="checkbox" name="online" id="online" value="">${Pag::getLang("记住登陆账号")}</label>
+                </div>
+            </div>
+            <div class="row cl">
+                <div class="formControls col-xs-8 col-xs-offset-3">
+                    <input name="" type="submit" class="btn btn-success radius size-L"
+                           value="${Pag::getLang('登录')}">
+                    <input name="" type="reset" class="btn btn-default radius size-L"
+                           value="${Pag::getLang('重置')}">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <div class="main_box">
     <div class="setting"><a href="javascript:;"><span class="glyphicon glyphicon-th-large"></span></a></div>
     <div class="login_box">
@@ -212,6 +86,9 @@
             </form>
         </div>
     </div>
-    <div class="bottom">Copyright &copy; 2015 - 2016 <a href="absir.com" target="_blank">Absir Studio</a></div>
+    <div class="footer">Copyright &copy; 2015 - 2016 <a href="absir.com" target="_blank">Absir Studio</a></div>
 </div>
 \#end
+
+<script type="text/javascript" src="${SITE_STATIC}/../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${SITE_STATIC}/h-ui/js/H-ui.js"></script>

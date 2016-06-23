@@ -1,33 +1,30 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE HTML>
+<html>
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-    <title>${page_title}</title>
-    <!-- bootstrap - css -->
-    <link href="${SITE_STATIC}/jui/themes/css/bootstrap.min.css" rel="stylesheet">
-    <!-- core - css -->
-    <link href="${SITE_STATIC}/jui/themes/css/style.css" rel="stylesheet">
-    <link href="${SITE_STATIC}/jui/themes/blue/core.css" id="bjui-link-theme" rel="stylesheet">
-    <!-- plug - css -->
-    <link href="${SITE_STATIC}/jui/plugins/niceValidator/jquery.validator.css" rel="stylesheet">
-    <link href="${SITE_STATIC}/jui/plugins/bootstrapSelect/bootstrap-select.css" rel="stylesheet">
-    <link href="${SITE_STATIC}/jui/themes/css/FA/css/font-awesome.min.css" rel="stylesheet">
-    <!--[if lte IE 7]>
-    <link href="${SITE_STATIC}/jui/themes/css/ie7.css" rel="stylesheet"><![endif]-->
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries --><!--[if lte IE 9]>
-    <script src="${SITE_STATIC}/jui/other/html5shiv.min.js"></script>
-    <script src="${SITE_STATIC}/jui/other/respond.min.js"></script><![endif]-->
-    <!-- jquery -->
-    <script src="${SITE_STATIC}/jui/js/jquery-1.11.3.min.js"></script>
-    <script src="${SITE_STATIC}/jui/js/jquery.cookie.js"></script>
-    <script src="${SITE_STATIC}/jui/plugins/bootstrap.min.js"></script>
-    <!--[if lte IE 9]>
-    <script src="${SITE_STATIC}/jui/other/jquery.iframe-transport.js"></script><![endif]-->${page_header}
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <LINK rel="Bookmark" href="/favicon.ico">
+    <LINK rel="Shortcut Icon" href="/favicon.ico"/>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="lib/html5.js"></script>
+    <script type="text/javascript" src="lib/respond.min.js"></script>
+    <script type="text/javascript" src="lib/PIE_IE678.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="${SITE_STATIC}/h-ui/css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="${SITE_STATIC}/../lib/Hui-iconfont/1.0.7/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="${SITE_STATIC}/../lib/icheck/icheck.css"/>
+    <!--[if IE 6]>
+    <script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <title>${page_title}</title>${page_header}
 </head>
 <body class="${body_class}">
-${bodyContent}
+    ${bodyContent}
 </body>
-${page_footer}
+    ${page_footer}
 </html>
