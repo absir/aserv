@@ -1,36 +1,44 @@
-\#set(page_title = "${Pag::getLang("后台登录")}" + APP_VERSION)
+\#set(page_title = "${Pag::getLang("后台登录")}")
 \#set(body_class = "login-layout")
 \#tag layout_block("page_header")
 <link href="${SITE_STATIC}/h-ui.admin/css/H-ui.login.css" rel="stylesheet" type="text/css"/>
 <link href="${SITE_STATIC}/h-ui.admin/css/style.css" rel="stylesheet" type="text/css"/>
 \#end
 \#tag layout("/WEB-INF/tpl/layout.jetx")
-<div class="header"></div>
+<div class="header">\${APP_NAME}${Pag::getLang("后台管理系统")}</div>
 <div class="loginWraper">
     <div id="loginform" class="loginBox">
-        <form class="form form-horizontal" action="index.html" method="post">
+        ${Pag::includeGen("login.error.jetx")}
+        \#if(error != null)
+        <div class="error_msg">
+            \#include('login.error.jetx', {}, 'message')
+            \${message}
+        </div>
+        \#end
+        <form class="form form-horizontal" method="post">
             <div class="row cl">
                 <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60d;</i></label>
                 <div class="formControls col-xs-8">
-                    <input id="" name="" type="text" placeholder="账户" class="input-text size-L">
+                    <input id="" name="username" type="text" placeholder="账户" class="input-text size-L">
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60e;</i></label>
                 <div class="formControls col-xs-8">
-                    <input id="" name="" type="password" placeholder="密码" class="input-text size-L">
+                    <input id="" name="password" type="password" placeholder="密码" class="input-text size-L">
                 </div>
             </div>
             <div class="row cl">
                 <div class="formControls col-xs-8 col-xs-offset-3">
                     <input name="verifyCode" class="input-text size-L" type="text" placeholder="${Pag::getLang('验证码')}"
-                           onblur="if(this.value==''){this.value='验证码:'}" style="width:150px;">
-                    <img src="${SITE_ROUTE}asset/verify?width=150&height=35" onclick="javascript:this.src=this.src+'?t='+Math.random()" alt="${Pag::getLang('点击更换')}"></div>
+                           style="width:150px;">
+                    <img src="${SITE_ROUTE}asset/verify?width=160&height=41"
+                         onclick="javascript:this.src=this.src+'&t='+Math.random()" alt="${Pag::getLang('点击更换')}"></div>
             </div>
             <div class="row cl">
                 <div class="formControls col-xs-8 col-xs-offset-3">
                     <label for="online">
-                        <input type="checkbox" name="online" id="online" value="">${Pag::getLang("记住登陆账号")}</label>
+                        <input type="checkbox" name="remember" id="online" value="86400000" \${remember ? "checked" : ""}>${Pag::getLang("记住登陆账号")}</label>
                 </div>
             </div>
             <div class="row cl">
@@ -44,51 +52,6 @@
         </form>
     </div>
 </div>
-<div class="main_box">
-    <div class="setting"><a href="javascript:;"><span class="glyphicon glyphicon-th-large"></span></a></div>
-    <div class="login_box">
-        <div class="login_logo">
-            ${Pag::includeGen("login.error.jetx")}
-            \#if(error != null)
-            <div class="alert alert-danger alert-dismissable">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                \#include('login.error.jetx', {}, 'message')
-                \${message}
-            </div>
-            \#end
-        </div>
-        <div class="login_form">
-            <input type="hidden" value="${randomKey}" id="j_randomKey"/>
-
-            <form id="login_form" method="post">
-                <div class="form-group">
-                    <label for="j_username" class="t">${Pag::getLang("用户名")}：</label>
-                    <input id="j_username" name="username" type="text" class="form-control x319 in" autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label for="j_password" class="t">${Pag::getLang("密码")}：</label>
-                    <input id="j_password" name="password" type="password" class="form-control x319 in">
-                </div>
-                <div class="form-group">
-                    <label for="j_captcha" class="t">${Pag::getLang("验证码")}：</label>
-                    <input id="j_captcha" name="verifyCode" type="text" class="form-control x164 in">
-                    <img id="captcha_img" src="${SITE_ROUTE}asset/verify?width=150&height=35" class="m">
-                </div>
-                <div class="form-group">
-                    <label class="t"></label>
-                    <label for="j_remember" class="m"><input id="j_remember" type="checkbox" name="remeber">${Pag::getLang("记住登陆账号")}</label>
-                </div>
-                <div class="form-group space">
-                    <label class="t"></label>　　　
-                    <input type="submit" id="login_ok" value='${Pag::getLang("登录")}' class="btn btn-primary btn-lg">
-                    <input type="reset" value='${Pag::getLang("重置")}' class="btn btn-default btn-lg">
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="footer">Copyright &copy; 2015 - 2016 <a href="absir.com" target="_blank">Absir Studio</a></div>
-</div>
+<div class="footer">V${APP_VERSION} Copyright &copy; 2015 - 2016 <a href="http://absir.com" target="_blank">Absir
+    Studio</a></div>
 \#end
-
-<script type="text/javascript" src="${SITE_STATIC}/../lib/jquery/1.9.1/jquery.min.js"></script>
-<script type="text/javascript" src="${SITE_STATIC}/h-ui/js/H-ui.js"></script>

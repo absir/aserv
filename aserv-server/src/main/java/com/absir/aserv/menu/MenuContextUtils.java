@@ -225,7 +225,7 @@ public abstract class MenuContextUtils {
                     Class<?> entityClass = entry.getValue().getKey();
                     if (entityClasses.add(entityClass)) {
                         addMenuBeanRoot(menuBeanRoot, entry.getKey(), entityClass,
-                                LangBundleImpl.ME.getunLang("内容管理", MenuBeanRoot.TAG), "bars",
+                                LangBundleImpl.ME.getunLang("内容管理", MenuBeanRoot.TAG), "reorder",
                                 LangBundleImpl.ME.getunLang("列表", MenuBeanRoot.TAG), "list", entityNames);
                     }
                 }

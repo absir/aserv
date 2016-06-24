@@ -27,4 +27,6 @@
     ${bodyContent}
 </body>
     ${page_footer}
+<script type="text/javascript" src="${SITE_STATIC}/../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${SITE_STATIC}/h-ui/js/H-ui.js"></script>
 </html>

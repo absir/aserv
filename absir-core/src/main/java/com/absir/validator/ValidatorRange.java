@@ -27,8 +27,8 @@ public class ValidatorRange extends PropertyResolverAbstract<ValidatorObject, Ra
             @Override
             public String validateValue(Object value) {
                 float val = DynaBinder.to(value, float.class);
-                if (val >= min || val <= max) {
-                    return "Need " + min + " - " + max + " Range";
+                if (val < min || val > max) {
+                    return min + " - " + max + " Range";
                 }
 
                 return null;

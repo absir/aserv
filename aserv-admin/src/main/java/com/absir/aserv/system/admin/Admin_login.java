@@ -98,6 +98,7 @@ public class Admin_login extends AdminServer {
                 return "admin/login.failed";
             }
 
+            input.getModel().put("remember", remember);
             return "admin/login";
         }
 

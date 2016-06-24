@@ -1,30 +1,36 @@
-<div id="bjui-hnav-navbar-box">
-    <ul id="bjui-hnav-navbar">
-        \#for (IMenuBean adminBean : Pag::menu("admin"))
-        <li class="active">
-            <a href="javascript:;" data-toggle="slidebar"><i class="fa fa-\${adminBean.icon}"></i>\${adminBean.name}</a>
-
-            <div class="items hide" data-noinit="true">
-                <ul class="menu-items" data-faicon="\${adminBean.icon}">
-                    \#for (IMenuBean menuBean : adminBean.getChildren())
-                    <li>
-                        <a href="\${menuBean.url ? menuBean.url : ''}"
-                           data-options="{id:'\${menuBean.ref}', faicon:'\${menuBean.icon ? menuBean.icon :
-                        'asterisk'}', fresh:'true'}">\${menuBean.name}</a>
-                        <b><i class="fa fa-angle-down"></i></b>
-                        <ul class="menu-items-children">
-                            \#for (IMenuBean menu : menuBean.getChildren())
-                            <li>
-                                <a href="\${menu.url}" data-options="{id:'\${menu.ref}', faicon:'\${menu.icon ? menu.icon : 'caret-right'}', fresh:'true'}">\${menu.name}</a>
-                            </li>
-                            \#end
-                        </ul>
-                    </li>
+<div class="menu_dropdown bk_2">
+    \#for (IMenuBean adminBean : Pag::menu("admin"))
+    <dl>
+        <dt class="ab_large">
+            <i class="Hui-iconfont ab_icon icon-\${adminBean.icon}"></i>
+            \${adminBean.name}
+            <i class="Hui-iconfont menu_dropdown-arrow"></i>
+        </dt>
+        <dd>
+            <ul class="Huifold">
+                \#for (IMenuBean menuBean : adminBean.getChildren())
+                <li class="item">
+                    \#if(menuBean.url)
+                    <a _href="\${menuBean.url}" data-title="\${menuBean.name}" href="javascript:void(0)">\${menuBean.name}</a>
+                    \#else
+                    <h4><i class="ab_normal">\${menuBean.name}</i><b>+</b></h4>
+                    <div class="info">
+                        \#for (IMenuBean menu : menuBean.getChildren())
+                        <i class="Hui-iconfont \${menu.icon}"></i>
+                        <a _href="\${menu.url}" data-title="\${menu.name}" href="javascript:void(0)">\${menu.name}</a>
+                        \#end
+                    </div>
                     \#end
-                </ul>
-            </div>
-        </li>
-        \#end
-    </ul>
+                </li>
+                \#end
+            </ul>
+        </dd>
+    </dl>
+    \#end
 </div>
-
+<script type="text/javascript">
+    $(function () {
+        $.Huifold(".Huifold .item h4", ".Huifold .item .info", "fast", 3, "click");
+        /*5个参数顺序不可打乱，分别是：相应区,隐藏显示的内容,速度,类型,事件*/
+    });
+</script>

@@ -36,4 +36,12 @@ public class Admin_route extends AdminServer {
      */
     public void main(InModel model) {
     }
+
+    /**
+     * 欢迎首页
+     *
+     * @param model
+     */
+    public void welcome(InModel model) {
+    }
 }
