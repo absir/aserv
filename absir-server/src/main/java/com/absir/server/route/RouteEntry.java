@@ -90,6 +90,7 @@ public class RouteEntry {
                 throw onPut.getReturnThrowable();
             }
 
+            input.doAfterInvoker();
             dispatcher.resolveReturnedValue(routeBean, onPut);
 
         } catch (Throwable e) {

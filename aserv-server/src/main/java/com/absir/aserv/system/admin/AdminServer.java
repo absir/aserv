@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-4-6 下午1:06:37
  */
 package com.absir.aserv.system.admin;
@@ -55,7 +55,7 @@ public abstract class AdminServer {
     protected SecurityContext onAuthentication(Input input) throws Exception {
         SecurityContext securityContext = SecurityService.ME.autoLogin("admin", true, JeRoleLevel.ROLE_ADMIN.ordinal(), input);
         if (securityContext == null || !securityContext.getUser().isActivation()) {
-            ServerResolverRedirect.redirect(MenuContextUtils.getAdminRoute() + "login", false, input);
+            ServerResolverRedirect.redirect(MenuContextUtils.getAdminRoute() + "login?redirect=/" + input.getUri(), false, input);
         }
 
         return securityContext;

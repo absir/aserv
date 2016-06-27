@@ -33,6 +33,7 @@ import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
+import com.absir.server.in.IAfterInvoker;
 import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
 
@@ -41,7 +42,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 @Configure
-public abstract class SecurityService implements ISecurityService, ISecurity, IEntityMerge<JiUserBase> {
+public abstract class SecurityService implements ISecurityService, ISecurity, IEntityMerge<JiUserBase>, IAfterInvoker<SecurityContext> {
 
     public static final SecurityService ME = BeanFactoryUtils.get(SecurityService.class);
 
@@ -60,6 +61,9 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
 
     @Inject
     private Map<String, SecurityManager> securityManagerMap;
+
+    @Value("security.context.session")
+    private boolean securityContextSession;
 
     public JiUserBase getUserBase(Input input) {
         Object user = input.getModel().get(SECURITY_USER_NAME);
@@ -116,23 +120,28 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
         return getUserBase(session.getUserId());
     }
 
+    protected SecurityContext createSecurityContext(String sessionId) {
+        return new SecurityContext();
+    }
+
     protected Class<? extends SecurityContext> getFactorySecurityContextClass() {
         return SecurityContext.class;
     }
 
-    protected SecurityContext createSecurityContext(SecurityManager securityManager, JiUserBase userBase, JbSession session, long remember) {
+    protected SecurityContext createSecurityContext(SecurityManager securityManager, JiUserBase userBase, JbSession session, long remember, Input input) {
         SecurityContext securityContext = null;
-        Class<? extends SecurityContext> securityContextClass = getFactorySecurityContextClass();
-        if (securityContextClass == null) {
-            securityContext = new SecurityContext();
-            //todo securityContext 销毁时应该检测变化和保存
+        if (securityContextSession) {
+            securityContext = createSecurityContext(session.getId());
+            if (input != null) {
+                input.addAfterInvoker(securityContext, this);
+            }
 
         } else {
             long contextTime = ContextUtils.getContextTime();
-            securityContext = ContextUtils.getContext(securityContextClass, session.getId());
+            securityContext = ContextUtils.getContext(getFactorySecurityContextClass(), session.getId());
             securityContext.setLifeTime(securityManager.getSessionLife());
             securityContext.retainAt(contextTime);
-            securityContext.setMaxExpirationTime(remember);
+            securityContext.setMaxExpirationTime(contextTime + remember);
             securityContext.retainAt();
         }
 
@@ -215,7 +224,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
             return null;
         }
 
-        SecurityContext securityContext = createSecurityContext(securityManager, userBase, session, remember);
+        SecurityContext securityContext = createSecurityContext(securityManager, userBase, session, remember, input);
         if (securityContext == null) {
             return null;
         }
@@ -236,7 +245,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
         return securityContext;
     }
 
-    protected SecurityContext findSecurityContext(String sessionId, SecurityManager securityManager) {
+    protected SecurityContext findSecurityContext(String sessionId, SecurityManager securityManager, Input input) {
         Class<? extends SecurityContext> securityContextClass = getFactorySecurityContextClass();
         if (securityContextClass != null) {
             SecurityContext securityContext = ContextUtils.findContext(securityContextClass, sessionId);
@@ -256,7 +265,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
         }
 
         JiUserBase userBase = findUserBase(session);
-        return createSecurityContext(securityManager, userBase, session, remember);
+        return createSecurityContext(securityManager, userBase, session, remember, input);
     }
 
     @Override
@@ -271,7 +280,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
                 }
 
                 if (sessionId != null) {
-                    securityContext = findSecurityContext(sessionId, securityManager);
+                    securityContext = findSecurityContext(sessionId, securityManager, input);
                     if (securityContext == null) {
                         return null;
                     }
@@ -301,7 +310,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
         }
 
         SecurityManager securityManager = getSecurityManager(name);
-        if (!validator(userBase, password, securityManager.getError(), securityManager.getErrorTime())) {
+        if (!validator(userBase, password, securityManager.getError(), securityManager.getErrorTime(), input.getAddress())) {
             JLog.log(name, "login", input.getAddress(), username, false);
             throw new ServerException(ServerStatus.NO_USER, userBase);
         }
@@ -381,7 +390,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
     }
 
     @Override
-    public boolean validator(JiUserBase userBase, String password, int error, long errorTime) {
+    public boolean validator(JiUserBase userBase, String password, int error, long errorTime, String address) {
         if (password == null || !(userBase instanceof IUser)) {
             return true;
         }
@@ -393,17 +402,22 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
         }
 
         if (PasswordCrudFactory.getPasswordEncrypt(password, user.getSalt(), user.getSaltCount()).equals(user.getPassword())) {
+            user.setLastLogin(contextTime);
+            user.setLoginTimes(user.getLoginTimes() + 1);
+            user.setLoginAddress(address);
+            BeanService.ME.merge(user);
             return true;
         }
 
         int errorLogin = user.getErrorLogin() + 1;
         if (errorLogin >= error) {
-            // 密码错误5次,30分钟内禁止登录
+            // 密码错误error次,errorTime时间内禁止登录
             errorLogin = 0;
             user.setLastErrorLogin(contextTime + errorTime);
         }
 
         user.setErrorLogin(errorLogin);
+        user.setLastErrorTimes(error - errorLogin);
         BeanService.ME.merge(user);
         return false;
     }
@@ -426,5 +440,10 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
                 }
             }
         }
+    }
+
+    @Override
+    public void afterInvoker(SecurityContext obj) {
+        obj.uninitialize();
     }
 }

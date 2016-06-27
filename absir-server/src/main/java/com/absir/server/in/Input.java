@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-12-18 下午5:40:49
  */
 package com.absir.server.in;
@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -36,6 +37,8 @@ import java.util.Map;
 @SuppressWarnings("rawtypes")
 @Inject
 public abstract class Input extends Bean<Serializable> implements IAttributes {
+
+    protected Map<Object, IAfterInvoker<Object>> afterInvoker;
 
     protected IFacade facade;
 
@@ -54,6 +57,24 @@ public abstract class Input extends Bean<Serializable> implements IAttributes {
     private IDispatcher dispatcher;
 
     private RouteMatcher routeMatcher;
+
+    public <T> void addAfterInvoker(T obj, IAfterInvoker<T> callbackTemplate) {
+        if (afterInvoker == null) {
+            afterInvoker = new HashMap<Object, IAfterInvoker<Object>>();
+        }
+
+        afterInvoker.put(obj, (IAfterInvoker<Object>) callbackTemplate);
+    }
+
+    public void doAfterInvoker() {
+        if (afterInvoker != null) {
+            for (Map.Entry<Object, IAfterInvoker<Object>> entry : afterInvoker.entrySet()) {
+                entry.getValue().afterInvoker(entry.getKey());
+            }
+
+            afterInvoker = null;
+        }
+    }
 
     public Input(InModel model) {
         this.model = model;
@@ -181,7 +202,7 @@ public abstract class Input extends Bean<Serializable> implements IAttributes {
     public final String getAddress() {
         if (address == null) {
             address = getFacade().getAddress();
-            if (address != null) {
+            if (address == null) {
                 address = getRemoteAddr();
             }
         }

@@ -30,13 +30,13 @@ public class IdentityServiceLocal implements IdentityService {
     @Value("security.identity.errorTime")
     private int errorTime = 60000;
 
-    public static JiUserBase getUserBase(String identity) {
+    public static JiUserBase getUserBase(String identity, String address) {
         if (!KernelString.isEmpty(identity)) {
             String[] parameters = HelperString.split(identity, ',');
             if (parameters.length > 0) {
                 IdentityService identityService = identityServiceMap.get(parameters[0]);
                 if (identityService != null) {
-                    JiUserBase user = identityService.getUserBase(parameters);
+                    JiUserBase user = identityService.getUserBase(parameters, address);
                     if (user == null || user.isDisabled()) {
                         return null;
                     }
@@ -50,11 +50,11 @@ public class IdentityServiceLocal implements IdentityService {
     }
 
     @Override
-    public JiUserBase getUserBase(String[] parameters) {
+    public JiUserBase getUserBase(String[] parameters, String address) {
         if (parameters.length == 3) {
             JiUserBase userBase = SecurityService.ME.getUserBase(parameters[1]);
             if (userBase != null) {
-                if (SecurityService.ME.validator(userBase, parameters[2], error, errorTime)) {
+                if (SecurityService.ME.validator(userBase, parameters[2], error, errorTime, address)) {
                     return userBase;
                 }
             }

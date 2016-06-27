@@ -88,6 +88,18 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
     private long lastErrorLogin;
 
+    @JaLang("登录次数")
+    @Prop(include = 99)
+    private int loginTimes;
+
+    @JaLang("登录地址")
+    @Prop(include = 99)
+    private String loginAddress;
+
+    @JaLang("剩余错误次数")
+    @Prop(include = 99)
+    private int lastErrorTimes;
+
     @JaLang("邮箱")
     @Prop(include = 1)
     @Email
@@ -152,6 +164,30 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
 
     public void setLastErrorLogin(long lastErrorLogin) {
         this.lastErrorLogin = lastErrorLogin;
+    }
+
+    public int getLoginTimes() {
+        return loginTimes;
+    }
+
+    public void setLoginTimes(int loginTimes) {
+        this.loginTimes = loginTimes;
+    }
+
+    public String getLoginAddress() {
+        return loginAddress;
+    }
+
+    public void setLoginAddress(String loginAddress) {
+        this.loginAddress = loginAddress;
+    }
+
+    public int getLastErrorTimes() {
+        return lastErrorTimes;
+    }
+
+    public void setLastErrorTimes(int lastErrorTimes) {
+        this.lastErrorTimes = lastErrorTimes;
     }
 
     public String getEmail() {

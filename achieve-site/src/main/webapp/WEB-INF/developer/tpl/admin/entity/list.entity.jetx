@@ -1,22 +1,29 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-<div class="bjui-pageHeader">
-    <form id="pagerForm" data-toggle="ajaxsearch" action="\${ADMIN_ROUTE}entity/list/\${entityName}" method="post">
-        <input type="hidden" name="pageIndex" value="\${page.pageIndex}"/>
-        <input type="hidden" name="pageSize" value="\${page.pageSize}"/>
-        <input type="hidden" name="orderField" value="\${orderField}"/>
-        <input type="hidden" name="orderDirection" value="\${orderDirection}"/>
-        ##<input type="hidden" name="searchConditions" value="\${searchConditions}"/>
+<nav class="breadcrumb">
+    <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+       href="javascript:location.replace(location.href);" title="${Pag::getLang('刷新')}">
+        <i class="Hui-iconfont">&#xe68f;</i>
+    </a>
+</nav>
 
-        <div class="bjui-searchBar">
-            #include("bar.jetx")
-        </div>
-        <div class="bjui-moreSearch">
-            ${Pag::includeGen("search/" + entityName + ".jetx", "search.jetx")}
-            \#include("../search/" + entityName + ".jetx")
-        </div>
-    </form>
+<div class="cl pd-5 bg-1 bk-gray mt-20">
+    <span class="l">
+        \#if(insert)
+        <a href="javascript:;" onclick="member_add('添加用户','member-add.html','','510')"
+           class="btn btn-primary radius">
+            <i class="Hui-iconfont">&#xe600;</i>${Pag::getLang('添加')}
+        </a>
+        \#end
+        \#if(delete)
+        <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius">
+            <i class="Hui-iconfont">&#xe6e2;</i>${Pag::getLang('批量删除')}
+        </a>
+        \#end
+    </span>
+    <span
+            class="r">共有数据：<strong>88</strong> 条
+    </span>
 </div>
+
 <div class="bjui-pageContent tableContent">
     <table class="table table-bordered table-hover table-striped table-top">
         ${Pag::includeGen("table/" + entityName + ".jetx", "table.jetx")}
@@ -37,6 +44,7 @@
         </div>
         <span>${Pag::getLang("条，共")} \${page.totalCount} ${Pag::getLang("条")}</span>
     </div>
-    <div class="pagination-box" data-toggle="pagination" data-total="\${page.totalCount}" data-page-size="\${page.pageSize}" data-page-current="\${page.pageIndex}">
+    <div class="pagination-box" data-toggle="pagination" data-total="\${page.totalCount}"
+         data-page-size="\${page.pageSize}" data-page-current="\${page.pageIndex}">
     </div>
 </div>

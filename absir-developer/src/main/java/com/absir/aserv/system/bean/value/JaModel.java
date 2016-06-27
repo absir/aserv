@@ -17,4 +17,6 @@ import java.lang.annotation.Target;
 public @interface JaModel {
 
     boolean desc() default false;
+
+    String options() default "";
 }

@@ -4,7 +4,6 @@
     <div class="navbar navbar-fixed-top">
         <div class="container-fluid cl">
             <a class="logo navbar-logo f-l mr-10" href="${SITE_ROUTE}">${APP_NAME}</a>
-            <span class="logo navbar-slogan f-l mr-10">v2.4</span>
             <a aria-hidden="false" class="nav-toggle Hui-iconfont visible-xs" href="javascript:;">&#xe667;</a>
             <nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
                 <ul class="cl">

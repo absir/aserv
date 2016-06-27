@@ -33,4 +33,16 @@ public interface IUser {
 
     public void setLastErrorLogin(long lastErrorLogin);
 
+    public int getLoginTimes();
+
+    public void setLoginTimes(int loginTimes);
+
+    public String getLoginAddress();
+
+    public void setLoginAddress(String loginAddress);
+
+    public int getLastErrorTimes();
+
+    public void setLastErrorTimes(int lastErrorTimes);
+
 }

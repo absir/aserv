@@ -11,6 +11,6 @@ import com.absir.aserv.system.bean.proxy.JiUserBase;
 
 public interface IdentityService {
 
-    public JiUserBase getUserBase(String[] parameters);
+    public JiUserBase getUserBase(String[] parameters, String address);
 
 }

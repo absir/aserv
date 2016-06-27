@@ -49,6 +49,13 @@ public class SecurityContext extends ContextBean<String> {
 
     private Map<String, Object> metaObjects;
 
+    public SecurityContext() {
+    }
+
+    public SecurityContext(String id) {
+        setId(id);
+    }
+
     public JbSession getSession() {
         return session;
     }

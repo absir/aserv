@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-4-3 下午5:58:37
  */
 package com.absir.aserv.system.api;
@@ -145,7 +145,7 @@ public abstract class ApiServer {
         }
 
         protected JiUserBase getInputUserBase(InputRequest inputRequest) {
-            return IdentityServiceLocal.getUserBase(inputRequest.getRequest().getHeader("identity"));
+            return IdentityServiceLocal.getUserBase(inputRequest.getRequest().getHeader("identity"), inputRequest.getAddress());
         }
     }
 

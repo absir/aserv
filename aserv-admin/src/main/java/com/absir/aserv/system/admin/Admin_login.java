@@ -14,6 +14,7 @@ import com.absir.aserv.system.security.SecurityContext;
 import com.absir.aserv.system.server.ServerResolverRedirect;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.bean.basis.Base;
+import com.absir.core.kernel.KernelString;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.InMethod;
@@ -103,7 +104,8 @@ public class Admin_login extends AdminServer {
         }
 
         if (!HelperInput.isAjax(input)) {
-            ServerResolverRedirect.redirect(getAdminRoute() + "main", false, input);
+            String redirect = input.getParam("redirect");
+            ServerResolverRedirect.redirect(KernelString.isEmpty(redirect) ? (getAdminRoute() + "main") : redirect, false, input);
         }
 
         return "admin/login.success";

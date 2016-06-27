@@ -25,16 +25,16 @@ public class ApiRoute extends Route implements IdentityService {
         String identity = request.getHeader("identity");
         if (identity == null) {
             identity = request.getParameter("identity");
-            return identity == null ? null : SecurityService.ME.openUserBase(identity, null, "Local");
+            return identity == null ? null : SecurityService.ME.openUserBase(identity, null, "Local", inputRequest.getAddress());
         }
 
-        return IdentityServiceLocal.getUserBase(identity);
+        return IdentityServiceLocal.getUserBase(identity, inputRequest.getAddress());
     }
 
     @Override
-    public JiUserBase getUserBase(String[] parameters) {
+    public JiUserBase getUserBase(String[] parameters, String address) {
         if (parameters.length == 2) {
-            return SecurityService.ME.openUserBase(parameters[1], null, "Local");
+            return SecurityService.ME.openUserBase(parameters[1], null, "Local", address);
         }
 
         return null;
