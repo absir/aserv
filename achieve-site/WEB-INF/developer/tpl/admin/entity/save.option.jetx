@@ -1,6 +1,0 @@
-{
-"statusCode": \${message && (message.type == EMessageType::WARN || message.type == EMessageType::ERROR) ? 300 : 200},
-"message": "\${message ? ${Pag::isI18n() ? "message.lang ? Pag::lang(message.lang) : message.value" : "message.value"}  : ${Pag::getLang("操作成功", false)}}",
-"forward": "\${forward}",
-"refresh": "\${refresh}"
-}

@@ -39,6 +39,7 @@ import com.absir.core.kernel.KernelReflect;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAccessor;
 import com.absir.core.util.UtilAccessor.Accessor;
+import com.absir.core.util.UtilContext;
 import com.absir.orm.value.JoEntity;
 import com.absir.server.exception.ServerException;
 import com.absir.servlet.InDispathFilter;
@@ -300,11 +301,12 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
     protected void startedEngine() {
         JetGlobalContext globalContext = getEngine().getGlobalContext();
         if (globalContext != null) {
+            globalContext.set("START_YEAR", UtilContext.getStartYear());
             globalContext.set("APP_NAME", MenuContextUtils.getAppName());
-            globalContext.set("SITE_ROUTE", MenuContextUtils.getSiteRoute());
-            globalContext.set("SITE_STATIC", KernelString.isEmpty(MenuContextUtils.getSiteRoute()) ? "/static" : (MenuContextUtils.getSiteRoute() + "static"));
-            globalContext.set("ADMIN_ROUTE", MenuContextUtils.getAdminRoute());
             globalContext.set("APP_VERSION", InitBeanFactory.ME.getVersion());
+            globalContext.set("SITE_ROUTE", MenuContextUtils.getSiteRoute());
+            globalContext.set("ADMIN_ROUTE", MenuContextUtils.getAdminRoute());
+            globalContext.set("SITE_STATIC", KernelString.isEmpty(MenuContextUtils.getSiteRoute()) ? "/static" : (MenuContextUtils.getSiteRoute() + "static"));
         }
     }
 

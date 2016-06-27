@@ -2,7 +2,7 @@
  * Created by absir on 16/6/26.
  */
 $(function () {
-    $(document).on('click.ab_sel', '', function (e) {
+    $(".ab_sel").click(function () {
         e.preventDefault();
         var $this = $(this);
         $group = $this.parent('ab_sel_grp');
@@ -17,6 +17,5 @@ $(function () {
             }
         }
     });
-
 
 });

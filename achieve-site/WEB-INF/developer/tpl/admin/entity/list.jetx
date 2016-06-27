@@ -1,4 +1,0 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-${Pag::includeGen("list/" + entityName + ".jetx", "list.entity.jetx")}
-\#include("list/" + entityName + ".jetx")

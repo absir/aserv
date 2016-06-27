@@ -113,11 +113,11 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
     }
 
     public JbSession findSession(String sessionId) {
-        return (JbSession) BeanService.ME.selectQuerySingle("SELECT o FROM JSession o WHERE o.id = ? AND o.disable = ? AND o.lastTime > ?", sessionId, false, ContextUtils.getContextTime());
+        return (JbSession) BeanService.ME.selectQuerySingle("SELECT o FROM JSession o WHERE o.id = ? AND o.disable = ? AND o.passTime > ?", sessionId, false, ContextUtils.getContextTime());
     }
 
     public JiUserBase findUserBase(JbSession session) {
-        return getUserBase(session.getUserId());
+        return ME.getUserBase(session.getUserId());
     }
 
     protected SecurityContext createSecurityContext(String sessionId) {
@@ -246,9 +246,8 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
     }
 
     protected SecurityContext findSecurityContext(String sessionId, SecurityManager securityManager, Input input) {
-        Class<? extends SecurityContext> securityContextClass = getFactorySecurityContextClass();
-        if (securityContextClass != null) {
-            SecurityContext securityContext = ContextUtils.findContext(securityContextClass, sessionId);
+        if (!securityContextSession) {
+            SecurityContext securityContext = ContextUtils.findContext(getFactorySecurityContextClass(), sessionId);
             if (securityContext != null) {
                 return securityContext;
             }
@@ -274,8 +273,12 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
         if (securityContext == null) {
             if (input.isInFacade()) {
                 SecurityManager securityManager = getSecurityManager(name);
-                String sessionId = input.getFacade().getCookie(securityManager.getSessionKey());
-                if (sessionId == null && remember) {
+                String sessionId = null;
+                if (remember) {
+                    sessionId = input.getFacade().getCookie(securityManager.getSessionKey());
+                }
+
+                if (sessionId == null) {
                     sessionId = input.getFacade().getSessionValue(securityManager.getSessionKey());
                 }
 
@@ -328,7 +331,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
 
     @Override
     public void logout(String name, Input input) {
-        SecurityContext securityContext = autoLogin(name, false, 0, input);
+        SecurityContext securityContext = autoLogin(name, true, 0, input);
         if (securityContext == null) {
             setUserBase(null, input);
 
@@ -396,12 +399,18 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
         }
 
         IUser user = (IUser) userBase;
+        int errorLogin = user.getErrorLogin();
         long contextTime = ContextUtils.getContextTime();
-        if (error > 0 && user.getLastErrorLogin() > contextTime) {
+        if (user.getLastErrorLogin() <= contextTime) {
+            errorLogin = 0;
+        }
+
+        if (error > 0 && errorLogin >= error) {
             return false;
         }
 
         if (PasswordCrudFactory.getPasswordEncrypt(password, user.getSalt(), user.getSaltCount()).equals(user.getPassword())) {
+            user.setErrorLogin(0);
             user.setLastLogin(contextTime);
             user.setLoginTimes(user.getLoginTimes() + 1);
             user.setLoginAddress(address);
@@ -409,14 +418,9 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
             return true;
         }
 
-        int errorLogin = user.getErrorLogin() + 1;
-        if (errorLogin >= error) {
-            // 密码错误error次,errorTime时间内禁止登录
-            errorLogin = 0;
-            user.setLastErrorLogin(contextTime + errorTime);
-        }
-
-        user.setErrorLogin(errorLogin);
+        // 密码错误error次,errorTime时间内禁止登录
+        user.setErrorLogin(++errorLogin);
+        user.setLastErrorLogin(contextTime + errorTime);
         user.setLastErrorTimes(error - errorLogin);
         BeanService.ME.merge(user);
         return false;

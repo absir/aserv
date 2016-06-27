@@ -47,7 +47,7 @@ public class SecurityServiceImpl extends SecurityService {
     }
 
     @Override
-    public JiUserBase openUserBase(String username, String password, String platform) {
+    public JiUserBase openUserBase(String username, String password, String platform, String address) {
         return null;
     }
 }

@@ -1,6 +1,0 @@
-#options (
-import = "org.jsoup.nodes.*"
-)
-
-#set(val = node.html())
-${request.setAttribute('nodeval', val.substring(2, val.length() - 1))}

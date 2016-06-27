@@ -21,6 +21,8 @@ public class UtilContext {
 
     protected static int currentShort;
 
+    protected static int startYear;
+
     protected static Calendar currentCalendar = computeCalendar();
 
     protected static Thread idleThread;
@@ -91,6 +93,7 @@ public class UtilContext {
         thread.setName("UtilSchelduer.computeCalendar");
         thread.setDaemon(true);
         thread.start();
+        startYear = currentCalendar.get(Calendar.YEAR);
         return currentCalendar;
     }
 
@@ -104,6 +107,10 @@ public class UtilContext {
 
     public final static long getCurrentTime() {
         return currentTime;
+    }
+
+    public final static int getStartYear() {
+        return startYear;
     }
 
     public final static int getCurrentShort() {

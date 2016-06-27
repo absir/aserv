@@ -1,1 +1,0 @@
-${input.attr('value', "${Pag::paramsValue(" + inputval + ")}")}
