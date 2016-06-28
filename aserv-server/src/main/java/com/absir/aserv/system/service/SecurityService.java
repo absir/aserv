@@ -141,7 +141,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
             securityContext = ContextUtils.getContext(getFactorySecurityContextClass(), session.getId());
             securityContext.setLifeTime(securityManager.getSessionLife());
             securityContext.retainAt(contextTime);
-            securityContext.setMaxExpirationTime(contextTime + remember);
+            securityContext.setMaxExpirationTime(remember);
             securityContext.retainAt();
         }
 

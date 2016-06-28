@@ -46,6 +46,8 @@ public class DBField implements IField {
 
     protected Map<String, Object> metas = new HashMap<String, Object>();
 
+    protected int listColType;
+
     protected Object defaultEntity;
 
     private String nodeName;
@@ -128,6 +130,14 @@ public class DBField implements IField {
 
     public Map<String, Object> getMetas() {
         return metas;
+    }
+
+    public void setListColType(int listColType) {
+        this.listColType = listColType;
+    }
+
+    public int getListColType() {
+        return listColType;
     }
 
     @Override

@@ -224,6 +224,12 @@ public class EntityModel implements IModel {
     }
 
     protected void addGroupField(String group, IField field, boolean reference) {
+        if (field != null) {
+            if (field.getListColType() == 0 && group.equals(JaEdit.GROUP_SUGGEST)) {
+                field.setListColType(1);
+            }
+        }
+
         List<IField> fields = groups.get(group);
         if (fields == null) {
             fields = new ArrayList<IField>();

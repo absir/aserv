@@ -287,4 +287,9 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
 
         metaMap.put(key, value);
     }
+
+    @Override
+    public String toString() {
+        return "JUser[" + getId() + "]." + username;
+    }
 }

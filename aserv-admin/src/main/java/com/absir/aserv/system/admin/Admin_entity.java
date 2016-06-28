@@ -97,8 +97,8 @@ public class Admin_entity extends AdminServer {
             model.put("update", false);
         }
 
-        model.put("insert", AuthServiceUtils.insertPermission(entityName, user));
-        model.put("delete", AuthServiceUtils.deletePermission(entityName, user));
+        model.put("insert", AuthServiceUtils.insertPermission(crudSupply, entityName, user));
+        model.put("delete", AuthServiceUtils.deletePermission(crudSupply, entityName, user));
         jdbcPage = InputServiceUtils.getJdbcPage(entityName, jdbcPage, input);
         model.put("page", jdbcPage);
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
@@ -144,8 +144,8 @@ public class Admin_entity extends AdminServer {
             model.put("update", false);
         }
 
-        model.put("insert", AuthServiceUtils.insertPermission(entityName, user));
-        model.put("delete", AuthServiceUtils.deletePermission(entityName, user));
+        model.put("insert", AuthServiceUtils.insertPermission(crudSupply, entityName, user));
+        model.put("delete", AuthServiceUtils.deletePermission(crudSupply, entityName, user));
         model.put("create", id == null);
         JoEntity joEntity = (JoEntity) input.getAttribute("joEntity");
         model.put("multipart", CrudContextUtils.isMultipart(joEntity));

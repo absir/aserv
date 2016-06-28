@@ -25,7 +25,7 @@ public abstract class JbSession extends JbVerifier {
     @JaLang("用户编号")
     private Long userId;
 
-    @JaEdit(groups = JaEdit.GROUP_LIST)
+    @JaEdit(groups = JaEdit.GROUP_LIST, listColType = 1)
     @JaLang("用户名")
     private String username;
 
@@ -37,7 +37,6 @@ public abstract class JbSession extends JbVerifier {
     @JaLang(value = "IP")
     private long ip;
 
-    @JaEdit(groups = JaEdit.GROUP_LIST)
     @JaLang(value = "设备", tag = "device")
     private String agent;
 

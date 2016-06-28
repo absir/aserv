@@ -57,14 +57,14 @@ public class SecurityManager {
         if (sessionLife <= 0) {
             sessionLife = beanConfig.getExpressionValue("security.session.life", null, long.class);
             if (sessionLife <= 60000) {
-                sessionLife = 600000;
+                sessionLife = 180000;
             }
         }
 
         if (sessionExpiration <= 0) {
             sessionExpiration = beanConfig.getExpressionValue("security.session.expiration", null, long.class);
             if (sessionExpiration >= 0 && sessionExpiration < sessionLife) {
-                sessionExpiration = sessionLife * 6;
+                sessionExpiration = 3600000;
             }
         }
 

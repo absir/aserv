@@ -9,6 +9,7 @@ package com.absir.aserv.system.service.utils;
 
 import com.absir.aserv.crud.ICrudSupply;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.aserv.system.bean.value.JaCrud;
 import com.absir.aserv.system.bean.value.JeVotePermission;
 import com.absir.aserv.system.service.AuthService;
 import com.absir.bean.basis.Configure;
@@ -21,10 +22,6 @@ public abstract class AuthServiceUtils {
 
     /**
      * 列表权限
-     *
-     * @param entityName
-     * @param user
-     * @return
      */
     public static boolean selectPermission(String entityName, JiUserBase user) {
         return AuthService.ME.permission(entityName, user, JeVotePermission.SELECTABLE);
@@ -32,10 +29,6 @@ public abstract class AuthServiceUtils {
 
     /**
      * 更新权限
-     *
-     * @param entityName
-     * @param user
-     * @return
      */
     public static boolean updatePermission(String entityName, JiUserBase user) {
         return AuthService.ME.permission(entityName, user, JeVotePermission.UPDATABLE);
@@ -43,10 +36,6 @@ public abstract class AuthServiceUtils {
 
     /**
      * 插入权限
-     *
-     * @param entityName
-     * @param user
-     * @return
      */
     public static boolean insertPermission(String entityName, JiUserBase user) {
         return AuthService.ME.permission(entityName, user, JeVotePermission.INSERTABLE);
@@ -54,22 +43,21 @@ public abstract class AuthServiceUtils {
 
     /**
      * 删除权限
-     *
-     * @param entityName
-     * @param user
-     * @return
      */
     public static boolean deletePermission(String entityName, JiUserBase user) {
         return AuthService.ME.permission(entityName, user, JeVotePermission.DELETEABLE);
     }
 
+    public static boolean insertPermission(ICrudSupply crudSupply, String entityName, JiUserBase user) {
+        return (crudSupply == null || crudSupply.support(JaCrud.Crud.CREATE)) && insertPermission(entityName, user);
+    }
+
+    public static boolean deletePermission(ICrudSupply crudSupply, String entityName, JiUserBase user) {
+        return (crudSupply == null || crudSupply.support(JaCrud.Crud.DELETE)) && deletePermission(entityName, user);
+    }
+
     /**
      * 组合统一权限
-     *
-     * @param entityName
-     * @param user
-     * @param permissions
-     * @return
      */
     public static boolean permissions(String entityName, JiUserBase user, JePermission... permissions) {
         if (permissions == null) {
@@ -91,10 +79,6 @@ public abstract class AuthServiceUtils {
 
     /**
      * 搜索功能过滤
-     *
-     * @param joEntity
-     * @param user
-     * @return
      */
     public static PropertyFilter selectPropertyFilter(JoEntity joEntity, JiUserBase user) {
         return AuthService.ME.permissionFilter(joEntity, user, JeVotePermission.SELECTABLE);
@@ -106,10 +90,6 @@ public abstract class AuthServiceUtils {
 
     /**
      * 更新数据过滤
-     *
-     * @param joEntity
-     * @param user
-     * @return
      */
     public static PropertyFilter updatePropertyFilter(JoEntity joEntity, JiUserBase user) {
         return AuthService.ME.permissionFilter(joEntity, user, JeVotePermission.UPDATABLE);
@@ -121,10 +101,6 @@ public abstract class AuthServiceUtils {
 
     /**
      * 插入数据过滤
-     *
-     * @param joEntity
-     * @param user
-     * @return
      */
     public static PropertyFilter insertPropertyFilter(JoEntity joEntity, JiUserBase user) {
         return AuthService.ME.permissionFilter(joEntity, user, JeVotePermission.INSERTABLE);
@@ -136,9 +112,6 @@ public abstract class AuthServiceUtils {
 
     /**
      * 删除实体过滤
-     *
-     * @param joEntity
-     * @param user
      */
     public static void deletePropertyFilter(JoEntity joEntity, JiUserBase user) {
         AuthService.ME.permissionFilter(joEntity, user, JeVotePermission.DELETEABLE);

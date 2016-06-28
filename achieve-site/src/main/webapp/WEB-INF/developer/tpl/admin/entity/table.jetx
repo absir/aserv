@@ -5,50 +5,62 @@ import = "org.jsoup.nodes.*"
 ${Scenario::set("list", request)}
 <thead>
 <tr>
-    <th width="26"><input type="checkbox" class="checkboxCtrl" data-group="ids" data-toggle="icheck"></th>
+    <th width="26"><input type="checkbox" data-group="ids" data-toggle="icheck"></th>
     #tag script()
     #set(element = document.appendElement("tr"))
-    ##<!--table header
     #for(field : entityModel.getGroupFields("list"))
-        #set(identifier = "<th class=\"th_" + field.getNodeName())
-        #if(!generator.append(identifier, element))
-            #set(node = identifier + "\">" + Pag::getLangName(field.getCaption()) + "</th>")
-            #set(node = ScriptNode::append(element, node).get(0))
-            #set(width = field.getMetas().get("width"))
-            #if(width != null)
-                ${node.attr("width", width.toString()).voidValue()}
-            #end
-            #if(!fieldNotOrder && field.isCanOrder())
-                ${node.attr("data-order-field", field.getName()).voidValue()}
-                ${node.addClass("${orderFieldMap." + field.getName() + " ?! ''}").voidValue()}
+    #set(identifier = "<th class=\"th_" + field.getNodeName())
+    #if(!generator.append(identifier, element))
+                           #set(node = identifier + "\">" + Pag::getLangName(field.getCaption()) + "</th>")
+        #set(node = ScriptNode::append(element, node).get(0))
+        #set(width = field.getMetas().get("width"))
+        #if(width != null)
+            ${node.attr("width", width.toString()).voidValue()}
+        #end
+        #if(!fieldNotOrder && field.isCanOrder())
+            ${node.addClass("sorting").voidValue()}
+            ${node.addClass("${orderFieldMap." + field.getName() + " ?! ''}").voidValue()}
+        #end
+        #if(field.listColType != 1)
+            ${node.addClass("hidden-xs").voidValue()}
+            #if(field.listColType == 2)
+                ${node.addClass("hidden-sm").voidValue()}
+            #elseif(field.listColType == 3)
+                ${node.addClass("hidden-md").voidValue()}
             #end
         #end
     #end
-    ##-->
-    #end
+#end
+#end
     ${ScriptNode::html(element) + "\r\n"}
 </tr>
 </thead>
 <tbody>
 \#for(entity : entities)
 \#set(id=EntityStatics::getPrimary(entity, "${entityModel.getPrimary().getName()}"))
-<tr data-id="\${id}">
+<tr data-id="\${id}" class="ab_sel">
     <td><input type="checkbox" name="ids" data-toggle="icheck" value="\${id}"></td>
     #tag script()
     #set(element = document.appendElement("tr"))
-    ##<!--table body
     #for(field : entityModel.getGroupFields("list"))
-        #set(identifier = "<td class=\"td_" + field.getNodeName())
-        #if(!generator.append(identifier, element))
-            #set(node = identifier + "\">" + "${entity." + field.getName() + "}</td>")
-            #set(nodes = ScriptNode::append(element, node))
-            #set(node = nodes.get(0))
-            ${DeveloperUtils::includeExist("list", field.getTypes(), request)}
+    #set(identifier = "<td class=\"td_" + field.getNodeName())
+    #if(!generator.append(identifier, element))
+                           #set(node = identifier + "\">" + "${entity." + field.getName() + "}</td>")
+        #set(nodes = ScriptNode::append(element, node))
+        #set(node = nodes.get(0))
+        ${DeveloperUtils::includeExist("list", field.getTypes(), request)}
+        #if(field.listColType != 1)
+            ${node.addClass("hidden-xs").voidValue()}
+            #if(field.listColType == 2)
+                ${node.addClass("hidden-sm").voidValue()}
+            #elseif(field.listColType == 3)
+                ${node.addClass("hidden-md").voidValue()}
+            #end
         #end
     #end
+#end
     ${DeveloperUtils::includeExist("list", entityModel.getJoEntity().getEntityName(), request)}
-    ##-->
-    #end
+#end
     ${ScriptNode::html(element) + "\r\n"}
 </tr>
 \#end

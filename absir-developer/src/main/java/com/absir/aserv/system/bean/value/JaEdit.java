@@ -28,29 +28,26 @@ public @interface JaEdit {
 
     /**
      * 是否支持编辑
-     *
-     * @return
      */
     JeEditable editable() default JeEditable.ENABLE;
 
     /**
      * 字段所属组列表
-     *
-     * @return
      */
     String[] groups() default {};
 
     /**
      * 字段自定义类型
-     *
-     * @return
      */
     String[] types() default {};
 
     /**
      * 字段元信息扩展
-     *
-     * @return
      */
     String metas() default "";
+
+    /*
+     * 列表显示类型
+     */
+    int listColType() default 0;
 }

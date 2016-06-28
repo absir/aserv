@@ -33,7 +33,7 @@ public class JMenuCite extends JbBase {
     private String id;
 
     @JaLang("菜单")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
+    @JaEdit(groups = JaEdit.GROUP_LIST, listColType = 1)
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private JMenu menu;

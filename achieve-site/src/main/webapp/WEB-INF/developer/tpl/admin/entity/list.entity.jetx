@@ -13,6 +13,11 @@
             <i class="Hui-iconfont">&#xe600;</i>${Pag::getLang('添加')}
         </a>
         \#end
+        \#if(update)
+        <a href="javascript:;" onclick="datadel()" class="btn btn-secondary radius">
+            <i class="Hui-iconfont">&#xe647;</i>${Pag::getLang('编辑')}
+        </a>
+        \#end
         \#if(delete)
         <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius">
             <i class="Hui-iconfont">&#xe6e2;</i>${Pag::getLang('批量删除')}
@@ -20,12 +25,12 @@
         \#end
     </span>
     <span
-            class="r">共有数据：<strong>88</strong> 条
+            class="r">${Pag::getLang('共有数据：')}<strong>\${page.totalCount}</strong>${Pag::getLang('条')}
     </span>
 </div>
 
 <div class="bjui-pageContent tableContent">
-    <table class="table table-bordered table-hover table-striped table-top">
+    <table class="table table-border table-bordered table-hover table-bg table-sort dataTable ab_sel_grp">
         ${Pag::includeGen("table/" + entityName + ".jetx", "table.jetx")}
         \#include("../table/" + entityName + ".jetx")
     </table>

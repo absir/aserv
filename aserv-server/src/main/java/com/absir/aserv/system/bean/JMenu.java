@@ -29,12 +29,12 @@ import java.util.List;
 public class JMenu extends JbBean implements IMenuBean, JiTree<JMenu> {
 
     @JaLang(value = "父级菜单", tag = "parentMenu")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
+    @JaEdit(groups = JaEdit.GROUP_LIST, listColType = 1)
     @ManyToOne
     private JMenu parent;
 
     @JaLang(value = "菜单名称", tag = "menuName")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST})
+    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST}, listColType = 1)
     private String name;
 
     @JaLang("类型")

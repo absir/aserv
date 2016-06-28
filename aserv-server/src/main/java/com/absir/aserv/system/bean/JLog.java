@@ -32,7 +32,7 @@ public class JLog extends JbBean {
     private String name;
 
     @JaLang("动作")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST})
+    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST}, listColType = 1)
     private String action;
 
     @JaLang("创建时间")
@@ -44,11 +44,11 @@ public class JLog extends JbBean {
     private String ip;
 
     @JaLang("用户名")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST})
+    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST}, listColType = 1)
     private String username;
 
     @JaLang("成功")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
+    @JaEdit(groups = JaEdit.GROUP_LIST, listColType = 1)
     private boolean success;
 
     public JLog() {

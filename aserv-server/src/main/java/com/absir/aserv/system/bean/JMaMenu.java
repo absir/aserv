@@ -33,7 +33,7 @@ public class JMaMenu extends JbBase {
     private String id;
 
     @JaLang("标题")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST})
+    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST}, listColType = 1)
     private String caption;
 
     @JaLang("授权信息")

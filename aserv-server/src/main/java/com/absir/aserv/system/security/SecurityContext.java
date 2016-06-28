@@ -35,7 +35,7 @@ public class SecurityContext extends ContextBean<String> {
     @JaLang("变化")
     private boolean channged;
 
-    @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKNONE)
+    @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKNONE, listColType = 1)
     @JaLang("用户")
     private JiUserBase user;
 
@@ -43,7 +43,7 @@ public class SecurityContext extends ContextBean<String> {
     @JaLang(value = "生命时间")
     private long lifeTime;
 
-    @JaEdit(groups = JaEdit.GROUP_LIST)
+    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
     @JaLang(value = "最大过期时间")
     private long maxExpirationTime;
 
