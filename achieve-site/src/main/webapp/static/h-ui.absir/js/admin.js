@@ -76,7 +76,9 @@ $(function () {
                 }
             }
 
-            _fnBindAction($(this), button, clickHandler);
+            var $this = $(this);
+            $this.unbind();
+            _fnBindAction($this, button, clickHandler);
         });
     }
 
