@@ -8,14 +8,17 @@
 package com.absir.aserv.developer.model;
 
 import com.absir.aserv.crud.CrudUtils;
+import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.support.Developer;
 import com.absir.aserv.system.bean.value.JaCrud;
 import com.absir.aserv.system.helper.HelperLang;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.core.base.Environment;
+import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.core.kernel.KernelLang.CallbackBreak;
 import com.absir.core.kernel.KernelReflect;
+import com.absir.core.kernel.KernelString;
 import com.absir.orm.value.JoEntity;
 
 import java.util.ArrayList;
@@ -72,7 +75,20 @@ public class ModelFactory {
         }
 
         entityModel.setJoEntity(joEntity);
-        entityModel.setCaption(HelperLang.getTypeCaption(joEntity.getEntityClass(), joEntity.getEntityName()));
+        String caption = HelperLang.getTypeCaption(joEntity.getEntityClass(), joEntity.getEntityName());
+        Class<?> entityClass = joEntity.getEntityClass();
+        if (entityClass != null) {
+            if (KernelString.isEmpty(caption) || caption.equals(entityClass.getSimpleName())) {
+                if (entityClass != null) {
+                    MaEntity maEntity = KernelClass.fetchAnnotation(entityClass, MaEntity.class);
+                    if (maEntity != null) {
+                        caption = maEntity.name();
+                    }
+                }
+            }
+        }
+
+        entityModel.setCaption(caption);
         final List<JaCrud> jaCrudList = new ArrayList<JaCrud>();
         final List<JaCrud> jaCrudScope = new ArrayList<JaCrud>();
         KernelReflect.doWithClasses(joEntity.getEntityClass(), new CallbackBreak<Class<?>>() {

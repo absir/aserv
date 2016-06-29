@@ -30,6 +30,7 @@ import com.absir.core.util.UtilAbsir;
 import com.absir.orm.value.JoEntity;
 
 import javax.servlet.ServletRequest;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -209,16 +210,23 @@ public class DeveloperUtils {
                         // 获取生成文件流
                         FileOutputStream output = HelperFile.openOutputStream(file,
                                 entityModel == null ? null : entityModel.lastModified());
+                        ByteArrayOutputStream outputStream = null;
                         if (output != null) {
                             try {
+                                outputStream = new ByteArrayOutputStream();
                                 request.setAttribute("entityModel", entityModel);
-                                IRender.ME.rend(output, includePath, renders);
+                                IRender.ME.rend(outputStream, includePath, renders);
+                                HelperIO.write(outputStream.toByteArray(), output);
                                 fileBuilder = null;
 
                                 // 复制生成文件到开发环境
                                 IDeveloper.ME.copyDeveloper(file, filePath);
 
                             } finally {
+                                if (outputStream != null) {
+                                    HelperIO.closeQuietly(outputStream);
+                                }
+
                                 if (output != null) {
                                     if (fileBuilder != null) {
                                         HelperIO.write(fileBuilder.toString(), output);
