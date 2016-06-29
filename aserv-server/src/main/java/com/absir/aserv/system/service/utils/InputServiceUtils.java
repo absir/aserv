@@ -60,7 +60,8 @@ public class InputServiceUtils {
                     orderQueue += " , ";
 
                 } else {
-                    if (KernelString.isEmpty(orderFields[i])) {
+                    String orderField = orderFields[i];
+                    if (KernelString.isEmpty(orderField) || orderField.indexOf(' ') >= 0) {
                         break;
                     }
 

@@ -5,7 +5,7 @@ import = "org.jsoup.nodes.*"
 ${Scenario::set("list", request)}
 <thead>
 <tr>
-    <th width="26"><input type="checkbox" data-group="ids" data-toggle="icheck"></th>
+    <th width="26"><input type="checkbox"></th>
     #tag script()
     #set(element = document.appendElement("tr"))
     #for(field : entityModel.getGroupFields("list"))
@@ -19,7 +19,7 @@ ${Scenario::set("list", request)}
         #end
         #if(!fieldNotOrder && field.isCanOrder())
             ${node.addClass("sorting").voidValue()}
-            ${node.addClass("${orderFieldMap." + field.getName() + " ?! ''}").voidValue()}
+            ${node.addClass("sorting_${orderFieldMap." + field.getName() + " ?! ''}").voidValue()}
         #end
         #if(field.listColType != 1)
             ${node.addClass("hidden-xs").voidValue()}
@@ -39,7 +39,7 @@ ${Scenario::set("list", request)}
 \#for(entity : entities)
 \#set(id=EntityStatics::getPrimary(entity, "${entityModel.getPrimary().getName()}"))
 <tr data-id="\${id}" class="ab_sel">
-    <td><input type="checkbox" name="ids" data-toggle="icheck" value="\${id}"></td>
+    <td><input type="checkbox" name="ids" value="\${id}"></td>
     #tag script()
     #set(element = document.appendElement("tr"))
     #for(field : entityModel.getGroupFields("list"))

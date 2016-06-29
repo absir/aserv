@@ -251,6 +251,7 @@ public class ContextFactory {
         return getContext(getContextMap(cls), ctxClass, id, cls, concurrent);
     }
 
+    //todo auto free many idle context
     private <T extends Context<ID>, ID extends Serializable> T getContext(Map<Serializable, Context> contextMap,
                                                                           Class<T> ctxClass, ID id, Class<?> cls, boolean concurrent) {
         Context context = contextMap.get(id);

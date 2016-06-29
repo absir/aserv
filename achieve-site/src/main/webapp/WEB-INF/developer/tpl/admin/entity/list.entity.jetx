@@ -1,4 +1,8 @@
 <nav class="breadcrumb">
+    <a class="btn btn-primary radius l" style="line-height:1.6em;margin-top:3px"
+       href="javascript:window.open(location.href);" title="${Pag::getLang('打开')}">
+        <i class="Hui-iconfont">&#xe6f1;</i>
+    </a>
     <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
        href="javascript:location.replace(location.href);" title="${Pag::getLang('刷新')}">
         <i class="Hui-iconfont">&#xe68f;</i>
@@ -8,7 +12,7 @@
 <div class="cl pd-5 bg-1 bk-gray mt-20">
     <span class="l">
         \#if(insert)
-        <a href="javascript:;" onclick="member_add('添加用户','member-add.html','','510')"
+        <a href="javascript:;" onclick="creatIframe('添加', \${ADMIN_ROUTE}entity/edit/\${entityName})"
            class="btn btn-primary radius">
             <i class="Hui-iconfont">&#xe600;</i>${Pag::getLang('添加')}
         </a>
@@ -23,33 +27,32 @@
             <i class="Hui-iconfont">&#xe6e2;</i>${Pag::getLang('批量删除')}
         </a>
         \#end
+        <span class="hidden-xs">
+            <a href="javascript:;" onclick="datadel()" class="btn btn-success radius">
+                <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang('导出全部')}
+            </a>
+            <a href="javascript:;" onclick="datadel()" class="btn btn-success radius">
+                <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang('批量导出')}
+            </a>
+            \#if(insert && update)
+            <a href="javascript:;" onclick="datadel()" class="btn btn-success radius">
+                <i class="Hui-iconfont">&#xe645;</i>${Pag::getLang('批量导入')}
+            </a>
+            \#end
+        </span>
     </span>
-    <span
-            class="r">${Pag::getLang('共有数据：')}<strong>\${page.totalCount}</strong>${Pag::getLang('条')}
+    <span class="r">
+        ${Pag::getLang('共有数据：')}<strong>\${page.totalCount}</strong>${Pag::getLang('条')}
     </span>
 </div>
 
-<div class="bjui-pageContent tableContent">
-    <table class="table table-border table-bordered table-hover table-bg table-sort dataTable ab_sel_grp">
+<div class="mt-20">
+    <table class="table table-border table-bordered table-hover table-bg table-striped ab_sel_grp ab_page_table"
+           pageSize="\${page.pageSize}" pageIndex="\${page.pageIndex}" pageCount="\${page.pageCount}"
+           totalCount="\${page.totalCount}">
         ${Pag::includeGen("table/" + entityName + ".jetx", "table.jetx")}
         \#include("../table/" + entityName + ".jetx")
     </table>
 </div>
-<div class="bjui-pageFooter">
-    <div class="pages">
-        <span>${Pag::getLang("每页")}</span>
 
-        <div class="selectPagesize">
-            <select data-toggle="selectpicker" data-toggle-change="changepagesize">
-                <option value="20">20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="200">200</option>
-            </select>
-        </div>
-        <span>${Pag::getLang("条，共")} \${page.totalCount} ${Pag::getLang("条")}</span>
-    </div>
-    <div class="pagination-box" data-toggle="pagination" data-total="\${page.totalCount}"
-         data-page-size="\${page.pageSize}" data-page-current="\${page.pageIndex}">
-    </div>
-</div>
+<script type="text/javascript" src="${STATIC}/../lib/datatables/1.10.0/jquery.dataTables.js"></script>
