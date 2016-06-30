@@ -32,6 +32,7 @@ import com.absir.bean.basis.Base;
 import com.absir.binder.BinderData;
 import com.absir.binder.BinderResult;
 import com.absir.binder.BinderUtils;
+import com.absir.client.helper.HelperJson;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.value.JoEntity;
@@ -332,6 +333,10 @@ public class Admin_entity extends AdminServer {
         return delete(entityName, HelperString.split(ids, ','), input);
     }
 
+    public String deleteJson(String entityName, @Param String ids, Input input) throws IOException {
+        return delete(entityName, (String[]) HelperJson.decode(ids, String[].class), input);
+    }
+
     /**
      * 导出Excel
      */
@@ -352,6 +357,12 @@ public class Admin_entity extends AdminServer {
         HSSFWorkbook workbook = XlsUtils.getWorkbook(entities, XlsUtils.XLS_BASE);
         response.addHeader("Content-Disposition", "attachment;filename=" + entityName + ".xls");
         workbook.write(response.getOutputStream());
+    }
+
+    @Body
+    public void exportJson(String entityName, @Nullable @Param String ids, Input input, HttpServletResponse response)
+            throws IOException {
+        export(entityName, (String[]) HelperJson.decode(ids, String[].class), input, response);
     }
 
     /**

@@ -66,26 +66,52 @@ function ab_isHasFrame() {
     return iframe && iframe.length > 0;
 }
 
+function ab_open(href) {
+    window.open(href);
+}
+
 function ab_openHref(href, title) {
     if (ab_isHasFrame()) {
         creatIframe(href, title);
 
     } else {
-        window.open(href);
+        ab_open(href);
     }
 }
 
-function ab_getParam(sel, node) {
+function ab_getParam(sel, node, json) {
     $this = $(node ? node : this);
     $group = ab_group($this, 'ab_param_grp');
+    if (!json) {
+        if (sel[0] === '$') {
+            json = true;
+            sel = sel.substring(1);
+        }
+    }
+
     $param = ab_group_sel($group, sel);
     var len = $param.length;
+    var vals;
+
+    if (json) {
+        vals = Array();
+    }
+
     if (len == 0) {
         return undefined;
 
     } else if (len == 1) {
         var val = $param.val();
-        return val ? val : $param.attr('value');
+        if (!val) {
+            val = $param.attr('value');
+        }
+
+        if (json) {
+            vals.push(val);
+
+        } else {
+            return val;
+        }
 
     } else {
         var params = "";
@@ -95,19 +121,137 @@ function ab_getParam(sel, node) {
             if (!val) {
                 val = $t.attr('value');
             }
-            if (params) {
-                params += "," + val;
+
+            if (json) {
+                vals.push(val);
 
             } else {
-                params = val;
+                if (params) {
+                    params += "," + val;
+
+                } else {
+                    params = val;
+                }
             }
         });
 
-        return params;
+        if (!json) {
+            return params;
+        }
+    }
+
+    return vals && vals.length > 0 ? $.toJSON(vals) : undefined;
+}
+
+function ab_ajaxUrl(url) {
+    var opts = url.constructor == Object ? url : {"url": url};
+    opts.success = ab_ajaxCallback;
+    opts.error = function () {
+        layer.alert("请求失败", {icon: 3});
+    }
+
+    $.ajax(opts);
+}
+
+function ab_ajaxCallback(json) {
+    try {
+        var data = $.evalJSON(json);
+        var url = data.url;
+        if (url !== undefined) {
+            if (!url) {
+                url = location.href;
+            }
+
+            location.replace(url);
+        }
+
+        var icon = data.code;
+        var message = data.message;
+        if (!message) {
+            switch (icon) {
+                case 0:
+                    message = "操作成功";
+                    break;
+                case 2:
+                    message = "操作失败";
+                    break;
+                default:
+                    message = "操作未完成";
+                    break;
+            }
+        }
+
+        layer.alert(message, {icon: icon});
+
+    } catch (e) {
+        layer.alert("Parse Json Error", {icon: 2});
+        throw e;
     }
 }
 
 $(function () {
+    $("[ab_click]").each(function () {
+        var $this = $(this);
+        var confirm = $this.attr('ab_confirm');
+        var noParam = $this.attr('ab_noParam');
+        if (!noParam) {
+            noParam = "请先选择对象";
+        }
+
+        var ab_click = $this.attr('ab_click');
+        var ab_eval_params = new Array();
+        var i = 0;
+        var len = ab_click.length;
+        while (i < len) {
+            var pos = ab_click.indexOf("$P{", i);
+            if (pos >= 0) {
+                ab_eval_params.push(ab_click.substring(i, pos));
+                i = pos;
+                pos = ab_click.indexOf("}", i);
+                if (pos >= 0) {
+                    ab_eval_params.push(ab_click.substring(i + 3, pos));
+                    i = pos + 1;
+
+                } else {
+                    break;
+                }
+
+            } else {
+                ab_eval_params.push(ab_click.substring(i));
+                break;
+            }
+        }
+
+        len = ab_eval_params.length;
+        $this.click(function () {
+            var sel;
+            var ab_click = ab_eval_params[0];
+            for (var i = 1; i < len; i++) {
+                var param = ab_getParam(ab_eval_params[i]);
+                if (param === undefined) {
+                    layer.alert(noParam, {icon: 2});
+                    return;
+                }
+
+                ab_click += param;
+                if (++i < len) {
+                    ab_click += ab_eval_params[i];
+                }
+            }
+
+            if (confirm) {
+                layer.confirm(confirm, function (index) {
+                    layer.close(index);
+                    eval(ab_click);
+
+                })
+
+            } else {
+                eval(ab_click);
+            }
+        });
+    });
+
     $(".ab_sel").each(function () {
         var $this = $(this);
         $group = ab_group($this, 'ab_sel_grp');

@@ -29,20 +29,28 @@
         </a>
         \#end
         \#if(update)
-        <a href="javascript:;" onclick="datadel()" class="btn btn-secondary radius">
+        <a href="javascript:;"
+           ab_click="ab_openHref('\${ADMIN_ROUTE}entity/edit/\${entityName}/$P{.ab_sel_select}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('编辑')}')"
+           class="btn btn-secondary radius">
             <i class="Hui-iconfont">&#xe647;</i>${Pag::getLang('编辑')}
         </a>
         \#end
         \#if(delete)
-        <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius">
+        <a href="javascript:;" ab_confirm="${Pag::getLang('批量删除记录?')}"
+           ab_click="ab_ajaxUrl('\${ADMIN_ROUTE}entity/deleteJson/\${entityName}?ids=$P{$[name='ids']:checked}')"
+           class="btn btn-danger radius">
             <i class="Hui-iconfont">&#xe6e2;</i>${Pag::getLang('批量删除')}
         </a>
         \#end
         <span class="hidden-xs">
-            <a href="javascript:;" onclick="datadel()" class="btn btn-success radius">
+            <a href="javascript:;" ab_confirm="${Pag::getLang('导出全部记录?')}"
+               ab_click="ab_open('\${ADMIN_ROUTE}entity/export/\${entityName}')"
+               class="btn btn-success radius">
                 <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang('导出全部')}
             </a>
-            <a href="javascript:;" onclick="datadel()" class="btn btn-success radius">
+            <a href="javascript:;" ab_confirm="${Pag::getLang('批量导出记录?')}"
+               ab_click="ab_open('\${ADMIN_ROUTE}entity/exportJson/\${entityName}?ids=$P{$[name='ids']:checked}')"
+               class="btn btn-success radius">
                 <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang('批量导出')}
             </a>
             \#if(insert && update)
