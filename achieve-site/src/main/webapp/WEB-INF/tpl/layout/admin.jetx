@@ -10,4 +10,3 @@ ${bodyContent}
 #end
 <script type="text/javascript" src="${SITE_STATIC}/../lib/layer/2.1/layer.js"></script>
 <script type="text/javascript" src="${SITE_STATIC}/h-ui.admin/js/H-ui.admin.js"></script>
-<script type="text/javascript" src="${SITE_STATIC}/h-ui.absir/js/admin.js"></script>

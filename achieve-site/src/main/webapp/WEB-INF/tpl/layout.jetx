@@ -17,16 +17,18 @@
     <link rel="stylesheet" type="text/css" href="${SITE_STATIC}/h-ui/css/H-ui.min.css"/>
     <link rel="stylesheet" type="text/css" href="${SITE_STATIC}/../lib/Hui-iconfont/1.0.7/iconfont.css"/>
     <link rel="stylesheet" type="text/css" href="${SITE_STATIC}/../lib/icheck/icheck.css"/>
+    <link rel="stylesheet" type="text/css" href="${SITE_STATIC}/h-ui.absir/css/ext.css"/>
     <!--[if IE 6]>
     <script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js"></script>
     <script>DD_belatedPNG.fix('*');</script>
     <![endif]-->
+    <script type="text/javascript" src="${SITE_STATIC}/../lib/jquery/1.9.1/jquery.min.js"></script>
     <title>${page_title}</title>${page_header}
 </head>
 <body class="${body_class}">
     ${bodyContent}
 </body>
     ${page_footer}
-<script type="text/javascript" src="${SITE_STATIC}/../lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="${SITE_STATIC}/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="${SITE_STATIC}/h-ui.absir/js/ext.js"></script>
 </html>

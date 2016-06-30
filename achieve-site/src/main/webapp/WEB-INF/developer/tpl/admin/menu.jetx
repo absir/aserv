@@ -30,7 +30,7 @@
 </div>
 <script type="text/javascript">
     $(function () {
-        $.Huifold(".Huifold .item h4", ".Huifold .item .info", "fast", 3, "click");
         /*5个参数顺序不可打乱，分别是：相应区,隐藏显示的内容,速度,类型,事件*/
+        $.Huifold(".Huifold .item h4", ".Huifold .item .info", "fast", 3, "click");
     });
 </script>

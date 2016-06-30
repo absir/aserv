@@ -1,8 +1,8 @@
 \#set(page_title = "${Pag::getLang("后台登录")}")
 \#set(body_class = "login-layout")
 \#tag layout_block("page_header")
-<link href="${SITE_STATIC}/h-ui.admin/css/H-ui.login.css" rel="stylesheet" type="text/css"/>
-<link href="${SITE_STATIC}/h-ui.admin/css/style.css" rel="stylesheet" type="text/css"/>
+<link href="\${SITE_STATIC}/h-ui.admin/css/H-ui.login.css" rel="stylesheet" type="text/css"/>
+<link href="\${SITE_STATIC}/h-ui.admin/css/style.css" rel="stylesheet" type="text/css"/>
 \#end
 \#tag layout("/WEB-INF/tpl/layout.jetx")
 <div class="header">\${APP_NAME}${Pag::getLang("后台管理系统")}</div>
@@ -17,13 +17,13 @@
         \#end
         <form class="form form-horizontal" method="post">
             <div class="row cl">
-                <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60d;</i></label>
+                <label class="form-label col-xs-3"><i class="Hui-iconfont hidden-xs">&#xe60d;</i></label>
                 <div class="formControls col-xs-8">
                     <input id="" name="username" type="text" placeholder="账户" class="input-text size-L">
                 </div>
             </div>
             <div class="row cl">
-                <label class="form-label col-xs-3"><i class="Hui-iconfont">&#xe60e;</i></label>
+                <label class="form-label col-xs-3"><i class="Hui-iconfont hidden-xs">&#xe60e;</i></label>
                 <div class="formControls col-xs-8">
                     <input id="" name="password" type="password" placeholder="密码" class="input-text size-L">
                 </div>
@@ -38,7 +38,8 @@
             <div class="row cl">
                 <div class="formControls col-xs-8 col-xs-offset-3">
                     <label for="online">
-                        <input type="checkbox" name="remember" id="online" value="86400000" \${remember ? "checked" : ""}>${Pag::getLang("记住登陆账号")}</label>
+                        <input type="checkbox" name="remember" id="online" value="86400000" \${remember ? "checked" :
+                        ""}>${Pag::getLang("记住登陆账号")}</label>
                 </div>
             </div>
             <div class="row cl">
@@ -52,6 +53,7 @@
         </form>
     </div>
 </div>
-<div class="footer">V${APP_VERSION} Copyright &copy; 2015 - 2016 <a href="http://absir.com" target="_blank">Absir
-    Studio</a></div>
+<div class="footer">Copyright &copy; 2015 - 2016 <a href="http://absir.com" target="_blank">
+    Absir Studio</a> V\${APP_VERSION}
+</div>
 \#end

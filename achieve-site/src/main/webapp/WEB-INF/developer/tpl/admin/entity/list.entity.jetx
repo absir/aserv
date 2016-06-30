@@ -12,10 +12,17 @@
     </a>
 </nav>
 
+<form class="ab_pageForm" action="\${ADMIN_ROUTE}entity/list/\${entityName}" method="get">
+    <input type="hidden" name="pageIndex" value="\${page.pageIndex}"/>
+    <input type="hidden" name="pageSize" value="\${page.pageSize}"/>
+    <input type="hidden" name="orderField" value="\${orderField}"/>
+    <input type="hidden" name="orderDirection" value="\${orderDirection}"/>
+</form>
+
 <div class="cl pd-5 bg-1 bk-gray mt-20">
     <span class="l">
         \#if(insert)
-        <a href="javascript:;" onclick="creatIframe('添加', \${ADMIN_ROUTE}entity/edit/\${entityName})"
+        <a href="javascript:;" onclick="ab_openHref('\${ADMIN_ROUTE}entity/edit/\${entityName}', '添加')"
            class="btn btn-primary radius">
             <i class="Hui-iconfont">&#xe600;</i>${Pag::getLang('添加')}
         </a>
@@ -58,4 +65,4 @@
     </table>
 </div>
 
-<script type="text/javascript" src="${STATIC}/../lib/datatables/1.10.0/jquery.dataTables.js"></script>
+<script type="text/javascript" src="${STATIC}/../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
