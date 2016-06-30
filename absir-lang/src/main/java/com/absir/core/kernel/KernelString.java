@@ -26,12 +26,28 @@ public abstract class KernelString {
         }
     }
 
-    public static boolean empty(String string) {
+    public static boolean empty(CharSequence string) {
         return string.length() == 0;
     }
 
-    public static boolean isEmpty(String string) {
+    public static boolean isEmpty(CharSequence string) {
         return string == null || empty(string);
+    }
+
+    public static boolean isMember(CharSequence string) {
+        int length = string == null ? 0 : string.length();
+        if (length <= 0) {
+            return false;
+        }
+
+        for (int i = 0; i < length; i++) {
+            char chr = string.charAt(i);
+            if (!((chr >= 'A' && chr <= 'Z') || (chr >= 'a' && chr <= 'z') || (chr >= '0' && chr <= '9') || chr == '_' || chr == '.' || chr == '$')) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static boolean capitalize(char chr) {

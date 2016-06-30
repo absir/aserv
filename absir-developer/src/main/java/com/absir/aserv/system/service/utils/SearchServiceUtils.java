@@ -20,12 +20,67 @@ import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class SearchServiceUtils {
+
+    public static Set<String> expressionSet = new HashSet<String>();
+
+    static {
+        expressionSet.add(">");
+        expressionSet.add("<");
+        expressionSet.add("=");
+        expressionSet.add(">=");
+        expressionSet.add("<=");
+        expressionSet.add("like");
+    }
+
+    public static String getQueue(String entityName, String[] orderFields, String[] orderDirections, Map<String, String> orderFieldMap) {
+        if (orderFields != null && orderDirections != null) {
+            int length = orderFields.length;
+            if (length > orderDirections.length) {
+                length = orderDirections.length;
+            }
+
+            if (length > 0) {
+                Map<String, Object[]> fieldMetas = SessionFactoryUtils.getEntityFieldMetas(entityName, null);
+                if (fieldMetas != null) {
+                    String orderQueue = "";
+                    for (int i = 0; i < length; i++) {
+                        String orderDirection = orderDirections[i];
+                        if (!KernelString.isEmpty(orderDirection)) {
+                            String upDirection = orderDirection.toUpperCase();
+                            if (!(upDirection.equals("ASC") || upDirection.equals("DESC"))) {
+                                break;
+                            }
+                        }
+
+                        String orderField = orderFields[i];
+                        if (orderQueue.length() > 0) {
+                            orderQueue += " , ";
+
+                        } else {
+                            if (!fieldMetas.containsKey(orderField)) {
+                                break;
+                            }
+
+                            orderQueue = "ORDER BY ";
+                        }
+
+                        if (orderFieldMap != null) {
+                            orderFieldMap.put(orderField, orderDirection);
+                        }
+
+                        orderQueue += "o." + orderField + " " + orderDirection;
+                    }
+
+                    return KernelString.isEmpty(orderQueue) ? null : orderQueue;
+                }
+            }
+        }
+
+        return null;
+    }
 
     /**
      * 获取查询条件
@@ -74,6 +129,17 @@ public abstract class SearchServiceUtils {
         }
 
         int expressionIndex = propertyExpression.indexOf(' ');
+        if (expressionIndex > 0) {
+            String expressionStr = propertyExpression.substring(expressionIndex + 1);
+            if (!KernelString.isEmpty(expressionStr)) {
+                expressionStr = expressionStr.toUpperCase().trim();
+                if (!expressionSet.contains(expressionStr)) {
+                    propertyExpression = propertyExpression.substring(0, expressionIndex);
+                    expressionIndex = -1;
+                }
+            }
+        }
+
         boolean expression = expressionIndex > 0;
         String[] propertyNames = (expression ? KernelString.leftString(propertyExpression, expressionIndex) : propertyExpression).split("\\.");
         int last = propertyNames.length - 1;

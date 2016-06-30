@@ -45,7 +45,7 @@ public class InputServiceUtils {
         return jdbcPage;
     }
 
-    public static String getOrderQueue(Input input) {
+    public static String getOrderQueue(String entityName, Input input) {
         String[] orderFields = input.getParams("orderField");
         String[] orderDirections = input.getParams("orderDirection");
         if (orderFields != null && orderDirections != null) {
@@ -58,27 +58,8 @@ public class InputServiceUtils {
                 Map<String, String> orderFieldMap = new HashMap<String, String>();
                 input.setAttribute("orderField", orderFields[0]);
                 input.setAttribute("orderDirection", orderDirections[0]);
-
-                String orderQueue = "";
-                for (int i = 0; i < length; i++) {
-                    if (i > 0) {
-                        orderQueue += " , ";
-
-                    } else {
-                        String orderField = orderFields[i];
-                        if (KernelString.isEmpty(orderField) || orderField.indexOf(' ') >= 0) {
-                            break;
-                        }
-
-                        orderQueue = "ORDER BY ";
-                    }
-
-                    orderFieldMap.put(orderFields[i], orderDirections[i]);
-                    orderQueue += "o." + orderFields[i] + " " + orderDirections[i];
-                }
-
                 input.setAttribute("orderFieldMap", orderFieldMap);
-                return KernelString.isEmpty(orderQueue) ? null : orderQueue;
+                return SearchServiceUtils.getQueue(entityName, orderFields, orderDirections, orderFieldMap);
             }
         }
 

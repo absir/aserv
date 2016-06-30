@@ -102,7 +102,7 @@ public class Admin_entity extends AdminServer {
         jdbcPage = InputServiceUtils.getJdbcPage(entityName, jdbcPage, input);
         model.put("page", jdbcPage);
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
-        String queue = InputServiceUtils.getOrderQueue(input);
+        String queue = InputServiceUtils.getOrderQueue(entityName, input);
         model.put("entities", EntityService.ME.list(entityName, crudSupply, user, null,
                 InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), filter, null, input),
                 queue, jdbcPage));
@@ -348,7 +348,7 @@ public class Admin_entity extends AdminServer {
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
         List<Object> entities = ids == null ? EntityService.ME.list(entityName, crudSupply, user, null,
                 InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), filter, null, input),
-                InputServiceUtils.getOrderQueue(input), null) : EntityService.ME.list(entityName, crudSupply, user, null, ids);
+                InputServiceUtils.getOrderQueue(entityName, input), null) : EntityService.ME.list(entityName, crudSupply, user, null, ids);
         HSSFWorkbook workbook = XlsUtils.getWorkbook(entities, XlsUtils.XLS_BASE);
         response.addHeader("Content-Disposition", "attachment;filename=" + entityName + ".xls");
         workbook.write(response.getOutputStream());
@@ -420,7 +420,7 @@ public class Admin_entity extends AdminServer {
         InModel model = input.getModel();
         model.put("page", jdbcPage);
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
-        model.put("entities", crudSupply.list(entityName, jdbcCondition, InputServiceUtils.getOrderQueue(input), jdbcPage));
+        model.put("entities", crudSupply.list(entityName, jdbcCondition, InputServiceUtils.getOrderQueue(entityName, input), jdbcPage));
     }
 
     /**
