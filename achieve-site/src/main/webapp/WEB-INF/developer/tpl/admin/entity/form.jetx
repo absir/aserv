@@ -99,22 +99,27 @@ ${ScriptNode::html(element) + "\r\n"}
 ##选项头部
 #set(entity = request.getAttribute("entity"))
 #tag scriptEcho()
-<div class="tabs">
-    <ul class="nav nav-tabs" role="tablist">
+<script type="text/javascript">
+    $(function(){
+        $.Huitab("#ab_tabDiv .tabBar span","#ab_tabDiv .tabCon","current","click","0");
+    });
+</script>
+<div id="ab_tabDiv" class="HuiTab mt-20">
+    <div class="tabBar cl mb-20">
 
     #end
     ##编辑选项属性遍历(header)
         #set(pan_un_active = true)
         #for(subField : subtableSubFields)
-        #set(identifier = '<li class="li_' + subField.key + '"')
+        #set(identifier = '<span class="li_' + subField.key + '"')
         #if(pan_un_active)
             #set(pan_un_active = false)
-            #set(identifier = '<li class="li_' + subField.key + ' active"')
+            #set(identifier = '<span class="li_' + subField.key + ' current"')
         #end
         #if(!generator.print(identifier, out))
             #set(capition = subField.value[0].getMetas().get("subFieldLang"))
             #tag scriptEcho()
-            ${identifier}><a href="#" role="tab" data-toggle="tab"><span>${capition ? Pag::getLangName(capition) : Pag::getLang(subField.key)}</span></a></li>
+            ${identifier}>${capition ? Pag::getLangName(capition) : Pag::getLang(subField.key)}</span>
 
         #end
     #end
@@ -122,20 +127,20 @@ ${ScriptNode::html(element) + "\r\n"}
 
     ##编辑关联实体遍历(header)
         #for(field : subtableFields)
-        #set(identifier = '<li class="li_' + field.getNodeName() + '"')
+        #set(identifier = '<span class="li_' + field.getNodeName() + '"')
         #if(pan_un_active)
             #set(pan_un_active = false)
-            #set(identifier = '<li class="li_' + field.getNodeName() + ' active"')
+            #set(identifier = '<span class="li_' + field.getNodeName() + ' current"')
         #end
         #if(!generator.print(identifier, out))
             #tag scriptEcho()
-            ${identifier}><a href="#" role="tab" data-toggle="tab"><span>${Pag::getLangName(field.getCaption())}</span></a></li>
+            ${identifier}>${Pag::getLangName(field.getCaption())}</span>
 
         #end
     #end
     #end
         #tag scriptEcho()
-    </ul>
+    </div>
     <div class="tab-content">
 
     #end
@@ -145,10 +150,10 @@ ${ScriptNode::html(element) + "\r\n"}
         #set(pan_un_active = true)
         #for(subField : subtableSubFields)
         #set(element = document.appendElement("div"))
-        #set(identifier = '<div class="tab-pane"')
+        #set(identifier = '<div class="tabCon"')
         #if(pan_un_active)
             #set(pan_un_active = false)
-            #set(identifier = '<div class="tab-pane active"')
+            #set(identifier = '<div class="tabCon active"')
         #end
 
         #if(!generator.print(identifier, out))
@@ -163,10 +168,12 @@ ${ScriptNode::html(element) + "\r\n"}
         #if(!generator.append(identifier, element))
         ##关联字段
             #tag layout_block("node")
-            <p class="p_group_flow">
-                <label>${Pag::getLangName(field.getCaption())}:</label>
-                <input ${identifier} type="text" size="20" value="\${entity.${field.getName()}}"/>
-            </p>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2">${Pag::getLangName(field.getCaption())}:</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <input ${identifier} type="text" class="input-text" value="\${entity.${field.getName()}}"/>
+                </div>
+            </div>
         #end
         #set(nodes = ScriptNode::append(element, node))
         ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
@@ -188,10 +195,10 @@ ${ScriptNode::html(element) + "\r\n"}
     ${request.setAttribute("subtable", true)}
     #for(field : subtableFields)
 ##选项内容开始
-    #set(identifier = '<div class="unitBox tab-pane"')
+    #set(identifier = '<div class="tabCon"')
     #if(pan_un_active)
         #set(pan_un_active = false)
-        #set(identifier = '<div class="unitBox tab-pane active"')
+        #set(identifier = '<div class="tabCon active"')
     #end
     #if(!generator.print(identifier, out))
         #set(subtableNum = KernelDyna::to(field.getMetas().get("subtableNum"), int::class))

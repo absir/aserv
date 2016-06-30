@@ -191,6 +191,11 @@ public class Pag {
         return value(KernelDyna.toString(date, type));
     }
 
+    public static String dateFormat(Object obj, String dateFormat) {
+        Date date = KernelDyna.toDate(obj);
+        return date == null ? "" : KernelDyna.getSimpleDateFormat(dateFormat).format(date);
+    }
+
     public static String ipValue(Object obj) {
         long ip = KernelDyna.to(obj, long.class);
         return HelperLong.longIPV4(ip);

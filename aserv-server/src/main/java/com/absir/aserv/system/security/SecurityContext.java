@@ -35,7 +35,7 @@ public class SecurityContext extends ContextBean<String> {
     @JaLang("变化")
     private boolean channged;
 
-    @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKNONE, listColType = 1)
+    @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKED, listColType = 1)
     @JaLang("用户")
     private JiUserBase user;
 
@@ -94,11 +94,7 @@ public class SecurityContext extends ContextBean<String> {
     }
 
     public void setMaxExpirationTime(long maxExpirationTime) {
-        if (maxExpirationTime == 0) {
-            maxExpirationTime = -1;
-        }
-
-        this.maxExpirationTime = ContextUtils.getContextTime() + maxExpirationTime;
+        this.maxExpirationTime = maxExpirationTime;
     }
 
     public Object getMetaObject(String name) {

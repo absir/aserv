@@ -63,7 +63,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
     private Map<String, SecurityManager> securityManagerMap;
 
     @Value("security.context.session")
-    private boolean securityContextSession;
+    private int securityContextSession;
 
     public JiUserBase getUserBase(Input input) {
         Object user = input.getModel().get(SECURITY_USER_NAME);
@@ -130,19 +130,20 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
 
     protected SecurityContext createSecurityContext(SecurityManager securityManager, JiUserBase userBase, JbSession session, long remember, Input input) {
         SecurityContext securityContext = null;
-        if (securityContextSession) {
+        if (securityContextSession == 1) {
             securityContext = createSecurityContext(session.getId());
-            if (input != null) {
-                input.addAfterInvoker(securityContext, this);
-            }
 
         } else {
             long contextTime = ContextUtils.getContextTime();
             securityContext = ContextUtils.getContext(getFactorySecurityContextClass(), session.getId());
             securityContext.setLifeTime(securityManager.getSessionLife());
             securityContext.retainAt(contextTime);
-            securityContext.setMaxExpirationTime(remember);
+            securityContext.setMaxExpirationTime(ContextUtils.getContextTime() + remember);
             securityContext.retainAt();
+        }
+
+        if ((securityContextSession == 1 || securityContextSession == 2) && input != null) {
+            input.addAfterInvoker(securityContext, this);
         }
 
         securityContext.setSession(session);
@@ -246,7 +247,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
     }
 
     protected SecurityContext findSecurityContext(String sessionId, SecurityManager securityManager, Input input) {
-        if (!securityContextSession) {
+        if (securityContextSession != 1) {
             SecurityContext securityContext = ContextUtils.findContext(getFactorySecurityContextClass(), sessionId);
             if (securityContext != null) {
                 return securityContext;

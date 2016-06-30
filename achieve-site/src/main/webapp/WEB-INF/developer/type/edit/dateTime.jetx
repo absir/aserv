@@ -2,16 +2,8 @@
 import = "org.jsoup.nodes.*"
 )
 
-#tag layout_block("shtml")
-<input name="${input.attr('name')}" value="\${${inputval}}" type="hidden" class="dateTimeInput"/>
-#end
-${input.before(ScriptNode::node(shtml)).voidValue()}
-${input.removeAttr('name')}
-${input.removeAttr('value')}
-${input.attr('data-toggle', 'datepicker')}
-${input.attr('data-width', '200')}
 
-#set(dateFmt = field.getMetas().get("dateFmt"))
-${input.attr('data-pattern' , dateFmt ?! 'yyyy-MM-dd hh:mm:ss')}
-
-${input.parent().addClass('dateTime')}
+#set(dateFmt = field.getMetas().get("dateFmt") ?! 'yyyy-MM-dd hh:mm:ss')
+${input.attr('onfocus', "WdatePicker({dateFmt:'" + dateFmt.replace("hh", "HH") + "'})")}
+${input.addClass('Wdate')}
+${input.attr('value', "${Pag::dateFormat(" + inputval + ", '" + dateFmt + "')}")}

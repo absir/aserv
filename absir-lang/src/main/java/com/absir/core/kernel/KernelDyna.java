@@ -10,6 +10,8 @@ package com.absir.core.kernel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class KernelDyna {
@@ -32,15 +34,31 @@ public abstract class KernelDyna {
 
     public static final Date DATE_ZERO = new Date((long) 0);
 
-    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final Map<String, DateFormat> dateFormatMap = new HashMap<String, DateFormat>();
 
-    public static final DateFormat DATE_FORMAT_DAY = new SimpleDateFormat("yyyy-MM-dd");
+    public static final DateFormat DATE_FORMAT = getSimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public static final DateFormat DATE_FORMAT_TIME = new SimpleDateFormat("HH:mm:ss");
+    public static final DateFormat DATE_FORMAT_DAY = getSimpleDateFormat("yyyy-MM-dd");
+
+    public static final DateFormat DATE_FORMAT_TIME = getSimpleDateFormat("HH:mm:ss");
 
     public static final DateFormat[] DATE_FORMAT_ARRAY = new DateFormat[]{DATE_FORMAT, DATE_FORMAT_DAY, DATE_FORMAT_TIME, DateFormat.getDateTimeInstance(),
             DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG), DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM),
-            new SimpleDateFormat("EEE MMM d hh:mm:ss a z yyyy"), new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy"), new SimpleDateFormat("MM/dd/yy hh:mm:ss a"), new SimpleDateFormat("MM/dd/yy")};
+            getSimpleDateFormat("EEE MMM d hh:mm:ss a z yyyy"), getSimpleDateFormat("EEE MMM d HH:mm:ss z yyyy"), getSimpleDateFormat("MM/dd/yy hh:mm:ss a"), getSimpleDateFormat("MM/dd/yy")};
+
+    public static DateFormat getSimpleDateFormat(String dateFormat) {
+        if (KernelString.isEmpty(dateFormat)) {
+            dateFormat = "yyyy-MM-dd HH:mm:ss";
+        }
+
+        DateFormat format = dateFormatMap.get(dateFormat);
+        if (format == null) {
+            format = new SimpleDateFormat(dateFormat);
+            dateFormatMap.put(dateFormat, format);
+        }
+
+        return format;
+    }
 
     public static <T> T to(Object obj, Class<T> toClass) {
         if (obj == null) {
@@ -377,6 +395,11 @@ public abstract class KernelDyna {
     }
 
     public static Long toLong(String str, Long defaultValue) {
+        if (str.indexOf(':') > 0) {
+            Date date = toDate(str);
+            return date == null ? 0 : date.getTime();
+        }
+
         try {
             return Long.valueOf(str);
 

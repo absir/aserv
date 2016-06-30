@@ -30,5 +30,5 @@
 </body>
     ${page_footer}
 <script type="text/javascript" src="${SITE_STATIC}/h-ui/js/H-ui.js"></script>
-<script type="text/javascript" src="${SITE_STATIC}/h-ui.absir/js/ext.js"></script>
+<script type="text/javascript" src="${SITE_STATIC}/h-ui.absir/js/acom.js"></script>
 </html>

@@ -14,9 +14,9 @@
 
 <div class="page-container mt-20">
     <form
-            action="\${ADMIN_ROUTE}entity/save/${entityName}\${id ? '' : ('/' + id)}"
-            enctype=" ${multipart ? 'multipart/form-data' : 'application/x-www-form-urlencoded'}"
-            class="form form-horizontal">
+            action="\${ADMIN_ROUTE}entity/save/${entityName}\${id ? ('/' + id) : ''}"
+            enctype="${multipart ? 'multipart/form-data' : 'application/x-www-form-urlencoded'}"
+            class="form form-horizontal" method="post">
         <div>
             #include("form.jetx")
         </div>
@@ -41,7 +41,7 @@
                 #if(entityModel.getSubmitOptionMap() != null)
                     <input name="!submitOption" type="hidden"/>
                     #for(options : entityModel.getSubmitOptionMap())
-                    <button type="button" class="btn btn-default radius mb-10" ab_submit="${options.key}">
+                    <button type="button" class="btn btn-default radius mb-5" ab_submit="${options.key}">
                         ${Pag::namesLang(options.value)}
                     </button>
                 #end
@@ -54,7 +54,12 @@
 </div>
 
 <script type="text/javascript" src="\${STATIC}/../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="\${STATIC}/../lib/icheck/jquery.icheck.min.js"></script>
-<script type="text/javascript" src="${STATIC}/../lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
-<script type="text/javascript" src="${STATIC}/../lib/jquery.validation/1.14.0/validate-methods.js"></script>
-<script type="text/javascript" src="${STATIC}/../lib/jquery.validation/1.14.0/messages_zh.min.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/jquery.validation/1.14.0/messages_zh.min.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/My97DatePicker/WdatePicker.js"></script>
+
+<script type="text/javascript" src="\${STATIC}/../lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/ueditor/1.4.3/ueditor.all.min.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
