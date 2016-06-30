@@ -1,23 +1,63 @@
 /**
  * Created by absir on 16/6/26.
  */
-function ab_formSubmit($form, atts, value) {
-    if ($.isArray(atts)) {
-        for (var key in atts) {
-            $input = $("[name='" + key + "']", $form);
-            if ($input) {
-                $input.val(atts[key])
-            }
-        }
-
-    } else {
-        $input = $("[name='" + atts + "']", $form);
-        if ($input) {
-            $input.val(value)
+function ab_group($node, toggle) {
+    var tog = $node.attr(toggle);
+    if (tog) {
+        var $group = $node.parents("[ab_toggle='ab_main'], .ab_main");
+        if ($group && $group.length > 0) {
+            return ab_group_sel($group, "[ab_toggle='" + tog + "'], ." + tog);
         }
     }
 
+    return $node.parents("[ab_toggle='" + toggle + "'], ." + toggle);
+}
+
+function ab_group_sel($group, sel) {
+    return $group && $group.length > 0 ? $(sel, $group) : $(sel);
+}
+
+function ab_formSubmit($form, att, value, attrs) {
+    if (att) {
+        if (att.constructor === Object) {
+            for (var key in att) {
+                $input = $("[name='" + key + "']", $form);
+                if ($input) {
+                    $input.val(att[key])
+                }
+            }
+
+        } else {
+            $input = $("[name='" + att + "']", $form);
+            if ($input) {
+                $input.val(value)
+            }
+        }
+    }
+
+    if (attrs && attrs.constructor === Object) {
+        for (var key in attrs) {
+            var _val = $form.attr(key);
+            $form.attr(key, attrs[key]);
+            attrs[key] = _val;
+        }
+
+    } else {
+        attrs = undefined;
+    }
+
     $form.submit();
+    if (attrs) {
+        for (var key in attrs) {
+            var val = attrs[key];
+            if (val === undefined) {
+                $form.removeAttr(key);
+
+            } else {
+                $form.attr(key, val);
+            }
+        }
+    }
 }
 
 function ab_isHasFrame() {
@@ -35,20 +75,53 @@ function ab_openHref(href, title) {
     }
 }
 
+function ab_getParam(sel, node) {
+    $this = $(node ? node : this);
+    $group = ab_group($this, 'ab_param_grp');
+    $param = ab_group_sel($group, sel);
+    var len = $param.length;
+    if (len == 0) {
+        return undefined;
+
+    } else if (len == 1) {
+        var val = $param.val();
+        return val ? val : $param.attr('value');
+
+    } else {
+        var params = "";
+        $param.each(function () {
+            var $t = $(this);
+            var val = $t.val();
+            if (!val) {
+                val = $t.attr('value');
+            }
+            if (params) {
+                params += "," + val;
+
+            } else {
+                params = val;
+            }
+        });
+
+        return params;
+    }
+}
+
 $(function () {
-    $(".ab_sel").click(function () {
+    $(".ab_sel").each(function () {
         var $this = $(this);
-        $group = $this.parents('.ab_sel_grp');
-        if ($group.attr('multi_sel')) {
+        $group = ab_group($this, 'ab_sel_grp');
+        var multi = $group.attr('multi_sel');
+        $this.click($group.attr('multi_sel') ? function () {
             $this.toggleClass('ab_sel_select');
 
-        } else {
+        } : function () {
             var select = $this.hasClass('ab_sel_select');
-            ($group ? $('.ab_sel_select', $group) : $('.ab_sel_select')).removeClass('ab_sel_select');
+            ab_group_sel($group, '.ab_sel_select').removeClass('ab_sel_select');
             if (!select) {
                 $this.addClass('ab_sel_select');
             }
-        }
+        });
     });
 
     if ($.fn.DataTable) {
@@ -64,8 +137,8 @@ $(function () {
                 aPage.pageIndex = $table.attr('pageIndex');
                 aPage.pageCount = $table.attr('pageCount');
                 aPage.totalCount = $table.attr('totalCount');
-                $group = $table.parents('.ab_form_grp');
-                aPage.form = $group ? $('.ab_pageForm') : $('.ab_pageForm', $group);
+                $group = ab_group($table, 'ab_form_grp');
+                aPage.form = ab_group_sel($group, '.ab_pageForm');
             }
 
             page = aPage.pageIndex - 1;
