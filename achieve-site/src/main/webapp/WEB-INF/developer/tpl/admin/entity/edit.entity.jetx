@@ -1,32 +1,60 @@
-<form action="\${ADMIN_ROUTE}entity/save/${entityName}\${id ? '' : ('/' + id)}" ${multipart ? "enctype=\"multipart/form-data\"" : ""} data-toggle="validate" data-reload="false">
-<div class="bjui-pageContent">
-    #include("form.jetx")
-</div>
-<div class="bjui-pageFooter">
-    <ul class="ab_submit_option">
-        #if(entityModel.getSubmitOptionMap() != null)
-        <input name="!submitOption" type="hidden"/>
-        #for(options : entityModel.getSubmitOptionMap())
-        <li>
-            <button type="button" class="btn-default" data-submit="${options.key}">
-                ${Pag::namesLang(options.value)}
-            </button>
-        </li>
-        #end
-        #end
-        <li>
-            <button type="button" class="btn-close" data-icon="close">${Pag::getLang("取消")}</button>
-        </li>
-        <li>
-            <button type="submit" class="btn-default" data-icon="save">${Pag::getLang("保存")}</button>
-        </li>
-        \#if(insert)
-        <li>
-            <button type="button" class="btn-blue" data-url="\${ADMIN_ROUTE}entity/edit/${entityName}" data-toggle="navtab" data-id="${entityName}_new" data-icon="plus">
-                ${Pag::getLang("新建")}
-            </button>
-        </li>
-        \#end
-    </ul>
+<nav class="breadcrumb text-c">
+    <a class="btn btn-primary radius l" style="line-height:1.6em;margin-top:3px"
+       href="javascript:window.open(location.href);" title="${Pag::getLang('打开')}">
+        <i class="Hui-iconfont">&#xe6f1;</i>
+    </a>
+    <span class="c-gray en">
+        ${Pag::getLang(entityModel.caption)}${Pag::getLang('编辑')}
+    </span>
+    <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+       href="javascript:location.replace(location.href);" title="${Pag::getLang('刷新')}">
+        <i class="Hui-iconfont">&#xe68f;</i>
+    </a>
+</nav>
+
+<div class="page-container mt-20">
+    <form
+            action="\${ADMIN_ROUTE}entity/save/${entityName}\${id ? '' : ('/' + id)}"
+            enctype=" ${multipart ? 'multipart/form-data' : 'application/x-www-form-urlencoded'}"
+            class="form form-horizontal">
+        <div>
+            #include("form.jetx")
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <button type="reset" class="btn btn-default radius mb-5">
+                    ${Pag::getLang("取消")}
+                </button>
+                <button type="submit" class="btn btn-primary radius mb-5">
+                    <i class="Hui-iconfont">&#xe632;</i>${Pag::getLang("保存")}
+                </button>
+                \#if(insert)
+                <button type="button" class="btn btn-secondary radius mb-5"
+                        onclick="ab_openHref('\${ADMIN_ROUTE}entity/edit/\${entityName}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('添加')}')">
+                    <i class="Hui-iconfont">&#xe600;</i>${Pag::getLang("新建")}
+                </button>
+                \#end
+
+
+
+                #if(entityModel.getSubmitOptionMap() != null)
+                    <input name="!submitOption" type="hidden"/>
+                    #for(options : entityModel.getSubmitOptionMap())
+                    <button type="button" class="btn btn-default radius mb-10" ab_submit="${options.key}">
+                        ${Pag::namesLang(options.value)}
+                    </button>
+                #end
+            #end
+
+            </div>
+        </div>
 </div>
 </form>
+</div>
+
+<script type="text/javascript" src="\${STATIC}/../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${STATIC}/../lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${STATIC}/../lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="${STATIC}/../lib/jquery.validation/1.14.0/messages_zh.min.js"></script>

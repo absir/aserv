@@ -24,37 +24,39 @@
         \#if(insert)
         <a href="javascript:;"
            onclick="ab_openHref('\${ADMIN_ROUTE}entity/edit/\${entityName}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('添加')}')"
-           class="btn btn-primary radius">
+           class="btn btn-primary radius mb-5">
             <i class="Hui-iconfont">&#xe600;</i>${Pag::getLang('添加')}
         </a>
         \#end
         \#if(update)
         <a href="javascript:;"
            ab_click="ab_openHref('\${ADMIN_ROUTE}entity/edit/\${entityName}/$P{.ab_sel_select}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('编辑')}')"
-           class="btn btn-secondary radius">
+           class="btn btn-secondary radius mb-5">
             <i class="Hui-iconfont">&#xe647;</i>${Pag::getLang('编辑')}
         </a>
         \#end
         \#if(delete)
         <a href="javascript:;" ab_confirm="${Pag::getLang('批量删除记录?')}"
            ab_click="ab_ajaxUrl('\${ADMIN_ROUTE}entity/deleteJson/\${entityName}?ids=$P{$[name='ids']:checked}')"
-           class="btn btn-danger radius">
+           class="btn btn-danger radius mb-5">
             <i class="Hui-iconfont">&#xe6e2;</i>${Pag::getLang('批量删除')}
         </a>
         \#end
-        <span class="hidden-xs">
+        <span class="">
             <a href="javascript:;" ab_confirm="${Pag::getLang('导出全部记录?')}"
                ab_click="ab_open('\${ADMIN_ROUTE}entity/export/\${entityName}')"
-               class="btn btn-success radius">
+               class="btn btn-success radius mb-5">
                 <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang('导出全部')}
             </a>
             <a href="javascript:;" ab_confirm="${Pag::getLang('批量导出记录?')}"
                ab_click="ab_open('\${ADMIN_ROUTE}entity/exportJson/\${entityName}?ids=$P{$[name='ids']:checked}')"
-               class="btn btn-success radius">
+               class="btn btn-success radius mb-5">
                 <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang('批量导出')}
             </a>
             \#if(insert && update)
-            <a href="javascript:;" onclick="datadel()" class="btn btn-success radius">
+            <a href="javascript:;"
+               ab_click=""
+               class="btn btn-success radius mb-5">
                 <i class="Hui-iconfont">&#xe645;</i>${Pag::getLang('批量导入')}
             </a>
             \#end
@@ -74,4 +76,4 @@
     </table>
 </div>
 
-<script type="text/javascript" src="${STATIC}/../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>

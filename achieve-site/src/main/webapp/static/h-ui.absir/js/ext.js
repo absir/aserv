@@ -185,7 +185,7 @@ function ab_ajaxCallback(json) {
 
     } catch (e) {
         layer.alert("Parse Json Error", {icon: 2});
-        throw e;
+        //throw e;
     }
 }
 

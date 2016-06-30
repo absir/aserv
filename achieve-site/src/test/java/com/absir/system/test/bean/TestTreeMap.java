@@ -28,7 +28,8 @@ public class TestTreeMap extends AbstractTest {
     public static class TreeKey implements IBase<Serializable> {
 
         public void test() {
-
+            //Element element;
+            //element.parent().append("<<div class=\"check-box\">>")
         }
 
         @Override
