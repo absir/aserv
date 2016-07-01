@@ -4,8 +4,8 @@
 $(function () {
     var abToggle = {};
     $.fn.ab_toggle = abToggle;
-    function ab_toggle_fun() {
-        $("[ab_toggle]").each(function () {
+    $.fn.ab_toggle_fun = function (ui) {
+        (ui ? $("[ab_toggle]", $(ui)) : $("[ab_toggle]")).each(function () {
             var $this = $(this);
             var name = $this.attr('ab_toggle');
             if (name) {
@@ -17,7 +17,7 @@ $(function () {
         });
     };
 
-    setTimeout(ab_toggle_fun, 1);
+    setTimeout($.fn.ab_toggle_fun, 1);
 
     abToggle['sel'] = function ($this) {
         $group = ab_group($this, 'ab_selGroup');
