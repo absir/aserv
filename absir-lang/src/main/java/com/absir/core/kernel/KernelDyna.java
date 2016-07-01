@@ -394,8 +394,11 @@ public abstract class KernelDyna {
         return toLong(str, LONG_ZERO);
     }
 
+    protected static final char[] DATE_CHARS = "-: /".toCharArray();
+
     public static Long toLong(String str, Long defaultValue) {
-        if (str.indexOf(':') > 0) {
+        str = str.trim();
+        if (KernelString.indexOf(str, DATE_CHARS) > 0) {
             Date date = toDate(str);
             return date == null ? 0 : date.getTime();
         }

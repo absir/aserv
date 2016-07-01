@@ -1,5 +1,6 @@
 package com.absir.core.test;
 
+import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelUtil;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -11,6 +12,8 @@ public class KernelUtilTest {
 
     @Test
     public void test() {
+        System.out.println(KernelDyna.toLong(" 1"));
+
         testCompareVersion("0", "0.0.1", -1);
         testCompareVersion("1.1", "1.0.1", 1);
         testCompareVersion("1", "1.0.1", -1);

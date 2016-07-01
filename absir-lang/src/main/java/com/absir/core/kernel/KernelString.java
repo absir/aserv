@@ -42,7 +42,7 @@ public abstract class KernelString {
 
         for (int i = 0; i < length; i++) {
             char chr = string.charAt(i);
-            if (!((chr >= 'A' && chr <= 'Z') || (chr >= 'a' && chr <= 'z') || (chr >= '0' && chr <= '9') || chr == '_' || chr == '.' || chr == '$')) {
+            if (!((chr >= 'A' && chr <= 'Z') || (chr >= 'a' && chr <= 'z') || (chr >= '0' && chr <= '9') || chr == '_' || chr == '.')) {
                 return false;
             }
         }
@@ -476,7 +476,7 @@ public abstract class KernelString {
         return 1.0f - (float) compare(str, to, m, n) / Math.max(str.length(), to.length());
     }
 
-    public static int findChars(String string, char[] chars) {
+    public static int indexOf(String string, char[] chars) {
         int length = string.length();
         for (int i = 0; i < length; i++) {
             char ch = string.charAt(i);

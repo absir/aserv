@@ -220,7 +220,7 @@ public class KernelLang {
                     }
 
                 } else {
-                    if (matchReg && KernelString.findChars(match, REG_CHARS) >= 0) {
+                    if (matchReg && KernelString.indexOf(match, REG_CHARS) >= 0) {
                         try {
                             Pattern pattern = Pattern.compile(match);
                             matchEntry.setValue(new MatcherTypeReg(pattern));
