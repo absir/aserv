@@ -2,6 +2,37 @@
  * Created by absir on 16/6/30.
  */
 $(function () {
+    var abToggle = {};
+    $.fn.ab_toggle = abToggle;
+    function ab_toggle_fun() {
+        $("[ab_toggle]").each(function () {
+            var $this = $(this);
+            var name = $this.attr('ab_toggle');
+            if (name) {
+                var toggle = abToggle[name];
+                if (toggle && toggle.constructor == Function) {
+                    toggle($this);
+                }
+            }
+        });
+    };
+    setTimeout(ab_toggle_fun, 1);
+
+    abToggle['sel'] = function ($this) {
+        $group = ab_group($this, 'ab_sel_grp');
+        var multi = $group.attr('multi_sel');
+        $this.click($group.attr('multi_sel') ? function () {
+            $this.toggleClass('ab_sel_select');
+
+        } : function () {
+            var select = $this.hasClass('ab_sel_select');
+            ab_group_sel($group, '.ab_sel_select').removeClass('ab_sel_select');
+            if (!select) {
+                $this.addClass('ab_sel_select');
+            }
+        });
+    }
+
     $(".ab_sel").each(function () {
         var $this = $(this);
         $group = ab_group($this, 'ab_sel_grp');
