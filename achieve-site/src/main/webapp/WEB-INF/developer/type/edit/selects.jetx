@@ -21,6 +21,8 @@ ${suggests}
 
 ${input.tagName('select')}
 ${input.attr('multiple', 'true')}
+${input.addClass('ab_ah')}
+${input.attr('size', field.metas.size ?! '3')}
 ${input.removeAttr('value')}
 ${input.removeAttr('type')}
 ${input.appendChild(ScriptNode::node(shtml)).voidValue()}

@@ -24,6 +24,9 @@ public class JShowForm extends JbBean implements ICrudSubmit<JShowForm.DemoOpiti
     @JaLang("名称")
     public String name;
 
+    @JaLang("标示")
+    public boolean flag;
+
     @JaLang("图片")
     @JaEdit(types = "image")
     public String image;
