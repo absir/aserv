@@ -20,7 +20,7 @@
 </form>
 
 <div class="cl pd-5 bg-1 bk-gray mt-20">
-    <span class="l">
+    <span class="l ab__mt5">
         \#if(insert)
         <a href="javascript:;"
            onclick="ab_openHref('\${ADMIN_ROUTE}entity/edit/\${entityName}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('添加')}')"

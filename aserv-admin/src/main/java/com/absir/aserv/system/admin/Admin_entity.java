@@ -257,8 +257,8 @@ public class Admin_entity extends AdminServer {
             ICrudSubmit submit = (ICrudSubmit<?>) entity;
             Enum<?> option = (Enum<?>) binderData.bind(submitOption, null, submit.classForOption());
             if (option != null) {
-                model.put("message", submit.submitOption(option));
-                return "admin/entity/save.option";
+                String tpl = submit.submitOption(option, model);
+                return KernelString.isEmpty(tpl) ? "admin/entity/save.option" : tpl;
             }
         }
 

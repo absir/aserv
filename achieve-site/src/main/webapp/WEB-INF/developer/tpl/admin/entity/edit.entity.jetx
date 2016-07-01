@@ -22,7 +22,7 @@
         </div>
 
         <div class="row cl">
-            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+            <div class="ml-10 mr-10 ab__mt5">
                 <button type="reset" class="btn btn-default radius mb-5">
                     ${Pag::getLang("取消")}
                 </button>
@@ -36,12 +36,11 @@
                 </button>
                 \#end
 
-
-
                 #if(entityModel.getSubmitOptionMap() != null)
                     <input name="!submitOption" type="hidden"/>
                     #for(options : entityModel.getSubmitOptionMap())
-                    <button type="button" class="btn btn-default radius mb-5" ab_submit="${options.key}">
+                    <button type="button" class="btn btn-default radius mb-5"
+                            onclick="ab_submitOption('${options.key}', this)">
                         ${Pag::namesLang(options.value)}
                     </button>
                 #end

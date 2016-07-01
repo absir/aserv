@@ -188,3 +188,15 @@ function ab_ajaxCallback(json) {
         //throw e;
     }
 }
+
+function ab_submitOption(option, node) {
+    var $form = $(node ? node : this).parents('form');
+    if ($form && $form.length > 0) {
+        var $option = $("[name='!submitOption']", $form);
+        if ($option && $option.length > 0) {
+            $option.val(option);
+            $form.submit();
+            $option.val('');
+        }
+    }
+}

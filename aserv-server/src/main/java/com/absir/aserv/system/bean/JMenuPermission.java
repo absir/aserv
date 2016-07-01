@@ -16,6 +16,7 @@ import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JaName;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -37,11 +38,13 @@ public class JMenuPermission extends JbBase {
     @JaLang(value = "授权角色", tag = "allowUserRoles")
     @JaName(value = "JUser")
     @JaEdit(groups = JaEdit.GROUP_LIST)
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     private long allowIds[];
 
     @JaLang(value = "禁用角色", tag = "forbidUserRoles")
     @JaName(value = "JUser")
     @JaEdit(groups = JaEdit.GROUP_LIST)
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     private long forbidIds[];
 
     public String getId() {

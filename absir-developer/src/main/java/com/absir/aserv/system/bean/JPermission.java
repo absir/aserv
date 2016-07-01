@@ -9,6 +9,7 @@ package com.absir.aserv.system.bean;
 
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JeVote;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
@@ -30,9 +31,11 @@ public class JPermission implements Serializable {
     private JeVote deletable;
 
     @JaLang(value = "允许字段", tag = "allowFields")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     private String[] allows;
 
     @JaLang(value = "禁用字段", tag = "fobidFields")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     private String[] forbiddens;
 
     public JeVote getSelectable() {
