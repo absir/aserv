@@ -16,41 +16,25 @@ $(function () {
             }
         });
     };
+
     setTimeout(ab_toggle_fun, 1);
 
     abToggle['sel'] = function ($this) {
-        $group = ab_group($this, 'ab_sel_grp');
-        var multi = $group.attr('multi_sel');
-        $this.click($group.attr('multi_sel') ? function () {
+        $group = ab_group($this, 'ab_selGroup');
+        var multi = $group.attr('ab_multi');
+        $this.click(multi ? function () {
             $this.toggleClass('ab_sel_select');
 
         } : function () {
             var select = $this.hasClass('ab_sel_select');
-            ab_group_sel($group, '.ab_sel_select').removeClass('ab_sel_select');
+            ab_groupSel($group, '.ab_sel_select').removeClass('ab_sel_select');
             if (!select) {
                 $this.addClass('ab_sel_select');
             }
         });
-    }
+    };
 
-    $(".ab_sel").each(function () {
-        var $this = $(this);
-        $group = ab_group($this, 'ab_sel_grp');
-        var multi = $group.attr('multi_sel');
-        $this.click($group.attr('multi_sel') ? function () {
-            $this.toggleClass('ab_sel_select');
-
-        } : function () {
-            var select = $this.hasClass('ab_sel_select');
-            ab_group_sel($group, '.ab_sel_select').removeClass('ab_sel_select');
-            if (!select) {
-                $this.addClass('ab_sel_select');
-            }
-        });
-    });
-
-    $("[ab_click]").each(function () {
-        var $this = $(this);
+    abToggle['click'] = function ($this) {
         var confirm = $this.attr('ab_confirm');
         var noParam = $this.attr('ab_noParam');
         if (!noParam) {
@@ -109,11 +93,10 @@ $(function () {
                 eval(ab_click);
             }
         });
-    });
+    };
 
     if ($.fn.iCheck) {
-        $('.ab_iCheck').each(function () {
-            var $this = $(this);
+        abToggle[iCheck] = function ($this) {
             var $div = $this.parent().append('<div class="check-box"></div>').children("div");
             $this.remove();
             $div.append($this);
@@ -123,7 +106,7 @@ $(function () {
                 radioClass: 'iradio-blue',
                 increaseArea: '20%'
             });
-        });
+        };
     }
 
     if ($.fn.DataTable) {
@@ -139,8 +122,8 @@ $(function () {
                 aPage.pageIndex = $table.attr('pageIndex');
                 aPage.pageCount = $table.attr('pageCount');
                 aPage.totalCount = $table.attr('totalCount');
-                $group = ab_group($table, 'ab_form_grp');
-                aPage.form = ab_group_sel($group, '.ab_pageForm');
+                $group = ab_group($table, 'ab_pageGroup');
+                aPage.form = ab_groupSel($group, '.ab_pageForm');
             }
 
             page = aPage.pageIndex - 1;
@@ -163,7 +146,7 @@ $(function () {
                         pageIndex = evt + 1;
                     }
 
-                    ab_formSubmit(aPage.form, 'pageIndex', pageIndex);
+                    ab_submit(aPage.form, 'pageIndex', pageIndex);
                 };
 
                 var i = 0, j = -2, l = 0;
@@ -205,8 +188,7 @@ $(function () {
             }
         }
 
-        $(".ab_page_table").each(function () {
-            var $this = $(this);
+        abToggle['tableForm'] = function ($this) {
             var opts = {
                 "processing": true,
                 "bAutoWidth": false,
@@ -224,10 +206,9 @@ $(function () {
             var settings = $dataTable.context[0];
             $dataTable.on('length', function () {
                 if (settings.aPage) {
-                    ab_formSubmit(settings.aPage.form, 'pageSize', settings._iDisplayLength);
+                    ab_submit(settings.aPage.form, 'pageSize', settings._iDisplayLength);
                 }
             });
-        });
+        };
     }
-
 });

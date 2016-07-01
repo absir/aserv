@@ -38,7 +38,7 @@ ${Scenario::set("list", request)}
 <tbody>
 \#for(entity : entities)
 \#set(id=EntityStatics::getPrimary(entity, "${entityModel.getPrimary().getName()}"))
-<tr value="\${id}" class="ab_sel">
+<tr value="\${id}" ab_toggle="sel">
     <td><input type="checkbox" name="ids" value="\${id}"></td>
     #tag script()
     #set(element = document.appendElement("tr"))

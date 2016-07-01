@@ -4,79 +4,15 @@
 function ab_group($node, toggle) {
     var tog = $node.attr(toggle);
     if (tog) {
-        var $group = $node.parents("[ab_toggle='ab_main'], .ab_main");
-        if ($group && $group.length > 0) {
-            return ab_group_sel($group, "[ab_toggle='" + tog + "'], ." + tog);
-        }
+        var $group = $node.parents("[ab_group='ab_main'], .ab_main");
+        return ab_groupSel($group, "[ab_group='" + tog + "'], ." + tog);
     }
 
-    return $node.parents("[ab_toggle='" + toggle + "'], ." + toggle);
+    return $node.parents("[ab_group='" + toggle + "'], ." + toggle);
 }
 
-function ab_group_sel($group, sel) {
+function ab_groupSel($group, sel) {
     return $group && $group.length > 0 ? $(sel, $group) : $(sel);
-}
-
-function ab_formSubmit($form, att, value, attrs) {
-    if (att) {
-        if (att.constructor === Object) {
-            for (var key in att) {
-                $input = $("[name='" + key + "']", $form);
-                if ($input) {
-                    $input.val(att[key])
-                }
-            }
-
-        } else {
-            $input = $("[name='" + att + "']", $form);
-            if ($input) {
-                $input.val(value)
-            }
-        }
-    }
-
-    if (attrs && attrs.constructor === Object) {
-        for (var key in attrs) {
-            var _val = $form.attr(key);
-            $form.attr(key, attrs[key]);
-            attrs[key] = _val;
-        }
-
-    } else {
-        attrs = undefined;
-    }
-
-    $form.submit();
-    if (attrs) {
-        for (var key in attrs) {
-            var val = attrs[key];
-            if (val === undefined) {
-                $form.removeAttr(key);
-
-            } else {
-                $form.attr(key, val);
-            }
-        }
-    }
-}
-
-function ab_isHasFrame() {
-    var topWindow = $(window.parent.document);
-    var iframe = topWindow.find('#iframe_box .show_iframe');
-    return iframe && iframe.length > 0;
-}
-
-function ab_open(href) {
-    window.open(href);
-}
-
-function ab_openHref(href, title) {
-    if (ab_isHasFrame()) {
-        creatIframe(href, title);
-
-    } else {
-        ab_open(href);
-    }
 }
 
 function ab_getParam(sel, node, json) {
@@ -89,7 +25,7 @@ function ab_getParam(sel, node, json) {
         }
     }
 
-    $param = ab_group_sel($group, sel);
+    $param = ab_groupSel($group, sel);
     var len = $param.length;
     var vals;
 
@@ -143,7 +79,26 @@ function ab_getParam(sel, node, json) {
     return vals && vals.length > 0 ? $.toJSON(vals) : undefined;
 }
 
-function ab_ajaxUrl(url) {
+function ab_open(href) {
+    window.open(href);
+}
+
+function ab_openHref(href, title) {
+    if (ab_isHasFrame()) {
+        creatIframe(href, title);
+
+    } else {
+        ab_open(href);
+    }
+}
+
+function ab_isHasFrame() {
+    var topWindow = $(window.parent.document);
+    var iframe = topWindow.find('#iframe_box .show_iframe');
+    return iframe && iframe.length > 0;
+}
+
+function ab_ajax(url) {
     var opts = url.constructor == Object ? url : {"url": url};
     opts.success = ab_ajaxCallback;
     opts.error = function () {
@@ -186,6 +141,49 @@ function ab_ajaxCallback(json) {
     } catch (e) {
         layer.alert("Parse Json Error", {icon: 2});
         //throw e;
+    }
+}
+
+function ab_submit($form, att, value, attrs) {
+    if (att) {
+        if (att.constructor === Object) {
+            for (var key in att) {
+                $input = $("[name='" + key + "']", $form);
+                if ($input) {
+                    $input.val(att[key])
+                }
+            }
+
+        } else {
+            $input = $("[name='" + att + "']", $form);
+            if ($input) {
+                $input.val(value)
+            }
+        }
+    }
+
+    if (attrs && attrs.constructor === Object) {
+        for (var key in attrs) {
+            var _val = $form.attr(key);
+            $form.attr(key, attrs[key]);
+            attrs[key] = _val;
+        }
+
+    } else {
+        attrs = undefined;
+    }
+
+    $form.submit();
+    if (attrs) {
+        for (var key in attrs) {
+            var val = attrs[key];
+            if (val === undefined) {
+                $form.removeAttr(key);
+
+            } else {
+                $form.attr(key, val);
+            }
+        }
     }
 }
 
