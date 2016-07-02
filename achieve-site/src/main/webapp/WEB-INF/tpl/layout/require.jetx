@@ -1,0 +1,7 @@
+#for(Map.Entry entry : Pag::getNameTag(INPUT, 'header'))
+${entry.value}
+#end
+${bodyContent}
+#for(Map.Entry entry : Pag::getNameTag(INPUT, 'footer'))
+${entry.value}
+#end

@@ -1,4 +1,12 @@
 \#tag layout("/WEB-INF/tpl/layout/admin.jetx")
+#tag layout("/WEB-INF/tpl/layout/require.jetx")
 ${Pag::includeGen("list/" + entityName + ".jetx", "list.entity.jetx")}
 \#include("list/" + entityName + ".jetx")
+#end
 \#end
+
+<script type="text/javascript" src="\${STATIC}/../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/jquery/jquery.json.min.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="\${STATIC}/../lib/jquery.validation/1.14.0/messages_zh.min.js"></script>

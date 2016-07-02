@@ -24,6 +24,14 @@ public class JShowForm extends JbBean implements ICrudSubmit<JShowForm.DemoOpiti
     @JaLang("名称")
     public String name;
 
+    @JaLang("创建时间")
+    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
+    public long createTime;
+
+    @JaLang("过期时间")
+    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
+    public long passTime;
+
     @JaLang("标示")
     public boolean flag;
 

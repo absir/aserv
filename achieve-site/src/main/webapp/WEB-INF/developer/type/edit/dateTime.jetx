@@ -7,3 +7,5 @@ import = "org.jsoup.nodes.*"
 ${input.attr('onfocus', "WdatePicker({dateFmt:'" + dateFmt.replace("hh", "HH") + "'})")}
 ${input.addClass('Wdate')}
 ${input.attr('value', "${Pag::dateFormat(" + inputval + ", '" + dateFmt + "')}")}
+
+${Pag::setNameTag(INPUT, 'footer', '<script type="text/javascript" src="${STATIC}/../lib/My97DatePicker/WdatePicker.js"></script>')}

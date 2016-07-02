@@ -265,63 +265,47 @@ public class Pag {
         return null;
     }
 
-    public static Map<String, Object> getNameTag(Input input, String tag) {
-        Object nameTag;
-        if (tag == null) {
-            nameTag = input.getModel().get(NAME_TAG);
+    public static Map<String, Object> getNameTag(Input input, String name) {
+        Object nameTag = input.getModel().get(NAME_TAG);
+        if (name != null) {
+            if (nameTag == null || !(nameTag instanceof Map)) {
+                nameTag = null;
 
-        } else {
-            nameTag = input.getModel().get(NAME_TAGS);
-            if (nameTag != null) {
-                nameTag = nameTag instanceof Map ? ((Map<String, Object>) nameTag).get(tag) : null;
+            } else {
+                nameTag = ((Map<String, Object>) nameTag).get(name);
             }
         }
 
         return nameTag == null || !(nameTag instanceof Map) ? null : (Map<String, Object>) nameTag;
     }
 
+    public static void setNameTag(Input input, String name, String value) {
+        setNameTag(input, name, value, value);
+    }
+
     public static void setNameTag(Input input, String name, String tag, String value) {
         Object nameTag;
         Map<String, Object> nameTagMap;
-        if (tag == null) {
-            nameTag = input.getModel().get(NAME_TAG);
-            if (nameTag == null || !(nameTag instanceof Map)) {
-                nameTagMap = new LinkedHashMap<String, Object>();
-
-            } else {
-                nameTagMap = (Map<String, Object>) nameTag;
-                input.getModel().put(NAME_TAG, nameTagMap);
-            }
+        nameTag = input.getModel().get(NAME_TAG);
+        if (nameTag == null || !(nameTag instanceof Map)) {
+            nameTagMap = new LinkedHashMap<String, Object>();
+            input.getModel().put(NAME_TAG, nameTagMap);
 
         } else {
-            nameTag = input.getModel().get(NAME_TAGS);
+            nameTagMap = (Map<String, Object>) nameTag;
+        }
+
+        if (name != null) {
+            nameTag = nameTagMap.get(name);
             if (nameTag == null || !(nameTag instanceof Map)) {
-                nameTagMap = new HashMap<String, Object>();
-
-            } else {
-                nameTagMap = (Map<String, Object>) nameTag;
-                input.getModel().put(NAME_TAGS, nameTagMap);
+                nameTag = new HashMap<String, Object>();
+                nameTagMap.put(name, nameTag);
             }
 
-            if (nameTag == nameTagMap) {
-                nameTag = nameTagMap.get(tag);
-                if (nameTag != null && nameTag instanceof Map) {
-                    nameTagMap = (Map<String, Object>) nameTag;
-                    nameTag = null;
-                }
-            }
-
-            if (nameTag != null) {
-                nameTag = new LinkedHashMap<String, Object>();
-                nameTagMap.put(tag, nameTag);
-                nameTagMap = (Map<String, Object>) nameTag;
-                nameTag = null;
-            }
+            nameTagMap = (Map<String, Object>) nameTag;
         }
 
-        if (nameTag != nameTagMap || !nameTagMap.containsKey(name)) {
-            nameTagMap.put(name, value);
-        }
+        nameTagMap.put(tag, value);
     }
 
     public static String getForIndex() {

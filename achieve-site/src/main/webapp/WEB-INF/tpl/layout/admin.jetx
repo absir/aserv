@@ -5,7 +5,7 @@ ${page_header}
 <link rel="stylesheet" type="text/css" href="${SITE_STATIC}/h-ui.admin/css/style.css"/>
 <link rel="stylesheet" type="text/css" href="${SITE_STATIC}/../lib/font-Awesome/css/font-awesome.min.css"/>
 #end
-#tag layout("/WEB-INF/tpl/layout.jetx")
+#tag layout("/WEB-INF/tpl/layout/hui.jetx")
 ${bodyContent}
 #end
 <script type="text/javascript" src="${SITE_STATIC}/../lib/layer/2.1/layer.js"></script>

@@ -4,7 +4,7 @@
 <link href="\${SITE_STATIC}/h-ui.admin/css/H-ui.login.css" rel="stylesheet" type="text/css"/>
 <link href="\${SITE_STATIC}/h-ui.admin/css/style.css" rel="stylesheet" type="text/css"/>
 \#end
-\#tag layout("/WEB-INF/tpl/layout.jetx")
+\#tag layout("/WEB-INF/tpl/layout/hui.jetx")
 <div class="header">\${APP_NAME}${Pag::getLang("后台管理系统")}</div>
 <div class="loginWraper">
     <div id="loginform" class="loginBox">
