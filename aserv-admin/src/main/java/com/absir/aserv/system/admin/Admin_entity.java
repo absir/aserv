@@ -449,4 +449,18 @@ public class Admin_entity extends AdminServer {
         input.getModel().put("path", path);
         input.getModel().put("files", UploadCrudFactory.ME.list(path, order));
     }
+
+    /**
+     * UE编辑器后端支持
+     */
+    public String ue(InputRequest inputRequest) {
+        String action = inputRequest.getParam("action");
+        if (!KernelString.isEmpty(action)) {
+            if (action.equals("config")) {
+                return "admin/ue.config";
+            }
+        }
+
+        return "ue.error";
+    }
 }
