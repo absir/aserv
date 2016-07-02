@@ -288,7 +288,7 @@ public class Pag {
         Map<String, Object> nameTagMap;
         nameTag = input.getModel().get(NAME_TAG);
         if (nameTag == null || !(nameTag instanceof Map)) {
-            nameTagMap = new LinkedHashMap<String, Object>();
+            nameTagMap = new HashMap<String, Object>();
             input.getModel().put(NAME_TAG, nameTagMap);
 
         } else {
@@ -298,7 +298,7 @@ public class Pag {
         if (name != null) {
             nameTag = nameTagMap.get(name);
             if (nameTag == null || !(nameTag instanceof Map)) {
-                nameTag = new HashMap<String, Object>();
+                nameTag = new LinkedHashMap<String, Object>();
                 nameTagMap.put(name, nameTag);
             }
 

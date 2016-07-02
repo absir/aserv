@@ -23,9 +23,6 @@ ${suggests}
 #end
 
 ${input.tagName('select')}
-${input.attr('data-toggle', 'selectpicker')}
 ${input.removeAttr('value')}
 ${input.removeAttr('type')}
-${input.removeAttr('size')}
-${input.attr('data-width', '200')}
 ${input.appendChild(ScriptNode::node(shtml)).voidValue()}

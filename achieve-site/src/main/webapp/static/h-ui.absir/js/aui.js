@@ -211,4 +211,10 @@ $(function () {
             });
         };
     }
+
+    if (UE) {
+        abToggle['UE'] = function ($this) {
+            UE.getEditor($this[0]);
+        }
+    }
 });
