@@ -1,3 +1,4 @@
+#tag layout("/WEB-INF/tpl/layout/require.jetx")
 <nav class="breadcrumb text-c">
     <a class="btn btn-primary radius l" style="line-height:1.6em;margin-top:3px"
        href="javascript:window.open(location.href);" title="${Pag::getLang('打开')}">
@@ -75,3 +76,4 @@
         \#include("../table/" + entityName + ".jetx")
     </table>
 </div>
+#end

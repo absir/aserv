@@ -29,6 +29,26 @@ import java.util.zip.ZipInputStream;
 
 public class HelperFile extends FileUtils {
 
+    public static long lastModified(File file) {
+        if (file == null || !file.exists()) {
+            return 0;
+        }
+
+        if (file.isFile()) {
+            return file.lastModified();
+        }
+
+        long modified = 0;
+        for (File f : file.listFiles()) {
+            long last = f.lastModified();
+            if (modified < last) {
+                modified = last;
+            }
+        }
+
+        return modified;
+    }
+
     public static URL existUrl(String filename) {
         try {
             return new URL(filename);

@@ -41,14 +41,15 @@ public class admin_user extends AdminServer {
             return "admin/failed.ajax";
         }
 
-        if (!SecurityService.ME.validator(user, password, 0, 0)) {
+        if (!SecurityService.ME.validator(user, password, 0, 0, input.getAddress())) {
             return "admin/failed.ajax";
         }
 
         user.setPassword(newPassword);
         BinderData binderData = new BinderData();
         BinderResult binderResult = binderData.getBinderResult();
-        // BinderServiceUtils.getValidator().validate(user, bindingResult);
+        //todo repassword validator password
+        //BinderUtils.getValidator().validate(user, bindingResult);
         if (binderResult.contain("password")) {
             return "admin/failed.ajax";
         }

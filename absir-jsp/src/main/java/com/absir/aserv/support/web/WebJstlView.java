@@ -54,8 +54,10 @@ public class WebJstlView extends ReturnedResolverView implements IRender, IRende
     private static String Layout_Name_View = LAYOUT_NAME + ".jsp";
 
     private static String Server_Context_Path = null;
+
     @Value("web.view.prefix")
     private String prefix = "/WEB-INF/jsp/";
+
     @Value("web.view.suffix")
     private String suffix = ".jsp";
 
@@ -148,6 +150,11 @@ public class WebJstlView extends ReturnedResolverView implements IRender, IRende
         if (content != null) {
             response.getWriter().append(content);
         }
+    }
+
+    @Override
+    public String dev(long devTime) {
+        return "<% Pag.dev(" + devTime + "); %>";
     }
 
     @Override

@@ -13,6 +13,8 @@ import com.absir.aserv.configure.JConfigureUtils;
 import com.absir.aserv.crud.CrudUtils;
 import com.absir.aserv.menu.MenuContextUtils;
 import com.absir.aserv.menu.OMenuBean;
+import com.absir.aserv.support.DeveloperBreak;
+import com.absir.aserv.support.developer.IDeveloper;
 import com.absir.aserv.support.developer.IRender;
 import com.absir.aserv.support.developer.RenderUtils;
 import com.absir.aserv.system.configure.JSiteConfigure;
@@ -64,6 +66,17 @@ public class Pag {
         //forEntityMap.put("key", "#for_key#");
         //forEntityMapValue.put("key", "#for_key#");
         forEntityMapValue.put("value", new HashMap<String, Object>());
+    }
+
+    public static void dev(long devTime) {
+        if (IDeveloper.ME != null) {
+            long newTime = IDeveloper.ME.getDeveloperNewTime();
+            if (newTime != 0) {
+                if (devTime < newTime) {
+                    throw new DeveloperBreak();
+                }
+            }
+        }
     }
 
     public static boolean isDebug() {

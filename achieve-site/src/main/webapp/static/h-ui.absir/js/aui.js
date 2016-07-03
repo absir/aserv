@@ -212,7 +212,7 @@ $(function () {
         };
     }
 
-    if (UE) {
+    if (typeof(UE) === "object") {
         abToggle['UE'] = function ($this) {
             UE.getEditor($this[0]);
         }

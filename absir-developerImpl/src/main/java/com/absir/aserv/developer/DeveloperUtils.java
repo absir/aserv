@@ -27,6 +27,7 @@ import com.absir.core.kernel.KernelLang.CallbackBreak;
 import com.absir.core.kernel.KernelLang.ObjectTemplate;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAbsir;
+import com.absir.core.util.UtilContext;
 import com.absir.orm.value.JoEntity;
 
 import javax.servlet.ServletRequest;
@@ -44,6 +45,10 @@ public class DeveloperUtils {
     private static final String DEVELOPER = "developer/";
 
     private static final int DEVELOPER_LENGTH = DEVELOPER.length();
+
+    @Value("developer.direct")
+    protected static boolean direct = true;
+
     @Value("developer.suffix")
     protected static String suffix = getSuffix();
 
@@ -137,7 +142,7 @@ public class DeveloperUtils {
                 }
 
                 // 如果生成文件没过期
-                if (file.exists()) {
+                if (!direct && file.exists()) {
                     if (entityModel == null) {
                         if (joEntity != null) {
                             return;
@@ -209,13 +214,19 @@ public class DeveloperUtils {
 
                         // 获取生成文件流
                         FileOutputStream output = HelperFile.openOutputStream(file,
-                                entityModel == null ? null : entityModel.lastModified());
+                                direct || entityModel == null ? null : entityModel.lastModified());
                         ByteArrayOutputStream outputStream = null;
                         if (output != null) {
                             try {
                                 outputStream = new ByteArrayOutputStream();
                                 request.setAttribute("entityModel", entityModel);
                                 IRender.ME.rend(outputStream, includePath, renders);
+                                String dev = IRender.ME.dev(UtilContext.getCurrentTime());
+                                if (!KernelString.isEmpty(dev)) {
+                                    HelperIO.write(dev, output);
+                                    HelperIO.write("\r\n", output);
+                                }
+
                                 HelperIO.write(outputStream.toByteArray(), output);
                                 fileBuilder = null;
 

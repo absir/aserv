@@ -7,6 +7,7 @@
  */
 package com.absir.aserv.system.server;
 
+import com.absir.aserv.support.DeveloperBreak;
 import com.absir.aserv.support.developer.IDeveloper;
 import com.absir.aserv.support.developer.IRender;
 import com.absir.aserv.support.developer.IRenderSuffix;
@@ -95,7 +96,7 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
                 inModel.put("diy_include", diyInclude);
                 view = diyView;
 
-            } else if (diy == 2 || BeanFactoryUtils.getEnvironment() != Environment.PRODUCT) {
+            } else if (diy == 2 || IDeveloper.ME.getDeveloperNewType() != 0) {
                 renders = getRenders(null, input);
                 if (BeanFactoryUtils.getEnvironment() != Environment.DEVELOP) {
                     try {
@@ -103,7 +104,7 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
                         return;
 
                     } catch (Exception e) {
-                        if (!isNotExist(e, input) || input.getAttribute(DONEGEN_NAME) != null) {
+                        if ((!isDeveloper(e) && !isNotExist(e, input)) || input.getAttribute(DONEGEN_NAME) != null) {
                             throw e;
                         }
                     }
@@ -116,6 +117,20 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
         }
 
         renderView(view, renders, input);
+    }
+
+    protected boolean isDeveloper(Throwable e) {
+        while (true) {
+            if (e.getClass() == DeveloperBreak.class) {
+                return true;
+            }
+
+            if ((e = e.getCause()) == null) {
+                break;
+            }
+        }
+
+        return false;
     }
 
     protected abstract boolean isNotExist(Exception e, InputRequest input);

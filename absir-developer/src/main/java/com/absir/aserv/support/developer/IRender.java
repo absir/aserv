@@ -18,6 +18,8 @@ public interface IRender {
 
     public static final IRender ME = BeanFactoryUtils.get(IRender.class);
 
+    public String dev(long devTime);
+
     public String echo(String value);
 
     public String include(String path);

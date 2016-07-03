@@ -52,7 +52,12 @@ public class WebJetbrickView extends ServerDiyView implements IPagLang {
 
     @Override
     protected boolean isNotExist(Exception e, InputRequest input) {
-        return e.getClass() == ResourceNotFoundException.class;
+        return e.getClass() == ResourceNotFoundException.class || e.getMessage().startsWith("include file not found");
+    }
+
+    @Override
+    public String dev(long devTime) {
+        return "${Pag::dev(" + devTime + "L)}";
     }
 
     @Override

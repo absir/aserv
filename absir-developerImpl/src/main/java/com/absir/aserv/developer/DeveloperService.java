@@ -23,6 +23,7 @@ import com.absir.core.helper.HelperFileName;
 import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelLang.CallbackTemplate;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.util.UtilContext;
 import com.absir.orm.value.JoEntity;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -48,6 +49,44 @@ public class DeveloperService implements IDeveloper, IDeploy {
 
     @Inject(type = InjectType.Selectable)
     private ISecurity security;
+
+    @Value("developer.new.type")
+    protected int developerNewType = 1;
+
+    @Value("developer.new.time")
+    protected long developerNewTime;
+
+    @Value("developer.diy")
+    protected boolean developerDiy;
+
+    public int getDeveloperNewType() {
+        return developerNewType;
+    }
+
+    public long getDeveloperNewTime() {
+        return developerNewTime;
+    }
+
+    public void setDeveloperNewTime(long developerNewTime) {
+        this.developerNewTime = developerNewTime;
+    }
+
+    public boolean isDeveloperDiy() {
+        return developerDiy;
+    }
+
+    @Inject
+    protected void init() {
+        if (developerNewType == 0) {
+            developerNewTime = 0;
+
+        } else if (developerNewType == 1) {
+            developerNewTime = HelperFile.lastModified(new File(BeanFactoryUtils.getBeanConfig().getClassPath()));
+
+        } else {
+            developerNewTime = UtilContext.getCurrentTime();
+        }
+    }
 
     /**
      * 初始化开发环境
@@ -173,13 +212,17 @@ public class DeveloperService implements IDeveloper, IDeploy {
     }
 
     public boolean isDeveloper(Object render) {
-        JiUserBase user = security.loginRender(render);
-        return user != null && user.isDeveloper();
+        if (security != null) {
+            JiUserBase user = security.loginRender(render);
+            return user != null && user.isDeveloper();
+        }
+
+        return false;
     }
 
     @Override
     public int diy(Object render) {
-        if (render != null && render instanceof ServletRequest && security != null) {
+        if (developerDiy && render != null && render instanceof ServletRequest) {
             ServletRequest request = (ServletRequest) render;
             if (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP || isDeveloper(render)) {
                 String parameter = request.getParameter("diy");

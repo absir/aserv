@@ -7,9 +7,7 @@
  */
 package com.absir.aserv.support.developer;
 
-import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.context.core.ContextUtils;
-import com.absir.core.base.Environment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,19 +31,19 @@ public class RenderUtils {
     }
 
     public static void generate(String include, Object... renders) throws IOException {
-        if (BeanFactoryUtils.getEnvironment() != Environment.PRODUCT && IDeveloper.ME != null) {
+        if (IDeveloper.ME != null) {
             generate(include, IRender.ME.getPath(renders), renders);
         }
     }
 
     public static void generate(String include, String generate, Object... renders) throws IOException {
-        if (BeanFactoryUtils.getEnvironment() != Environment.PRODUCT && IDeveloper.ME != null) {
+        if (IDeveloper.ME != null) {
             IDeveloper.ME.generate(IRender.ME.getFullPath(include, renders), IRender.ME.getFullPath(generate, renders), renders);
         }
     }
 
     public static void include(String include, Object... renders) throws IOException {
-        if (BeanFactoryUtils.getEnvironment() != Environment.PRODUCT && IDeveloper.ME != null) {
+        if (IDeveloper.ME != null) {
             include(include, IRender.ME.getPath(renders), renders);
         }
     }

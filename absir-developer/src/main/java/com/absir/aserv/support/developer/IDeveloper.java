@@ -21,6 +21,12 @@ public interface IDeveloper {
 
     public static final IDeveloper ME = BeanFactoryUtils.get(IDeveloper.class);
 
+    public int getDeveloperNewType();
+
+    public long getDeveloperNewTime();
+
+    public void setDeveloperNewTime(long developerNewTime);
+
     public IModel getModelEntity(JoEntity joEntity);
 
     public List<JCrudField> getCrudFields(JoEntity joEntity);
