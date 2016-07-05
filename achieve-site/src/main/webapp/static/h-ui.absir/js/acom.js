@@ -98,9 +98,9 @@ function ab_isHasFrame() {
     return iframe && iframe.length > 0;
 }
 
-function ab_ajax(url) {
+function ab_ajax(url, callback) {
     var opts = url.constructor == Object ? url : {"url": url};
-    opts.success = ab_ajaxCallback;
+    opts.success = callback || ab_ajaxCallback;
     opts.error = function () {
         layer.alert("请求失败", {icon: 3});
     }
@@ -143,6 +143,64 @@ function ab_ajaxCallback(json) {
         //throw e;
     }
 }
+
+var $_ab_ajax_iframe;
+
+function ab_ajaxSubmit(form, callback) {
+    var $document = $(document.documentElement);
+    var $iframe = $_ab_ajax_iframe;
+    if (!$iframe) {
+        $_ab_ajax_iframe = $iframe = $document.append('<iframe id="ab_ajax_iframe" name="ab_ajax_iframe" src="about:blank" style="display:none"></iframe>').children().last();
+    }
+
+    var $form = $(form);
+    if ($form.attr('ab_ajax')) {
+        throw new Error("submit in ajax");
+    }
+
+    $form.attr('ab_ajax', 1);
+    form = $form[0];
+    var target = form.target;
+    form.target = "ab_ajax_iframe";
+    $iframe.bind("load", function (event) {
+        $iframe.unbind("load");
+        $document.trigger("ajaxStop");
+        var src = $iframe.attr('src');
+        if (src == "javascript:'%3Chtml%3E%3C/html%3E';" || // For Safari
+            src == "javascript:'<html></html>';") { // For FF, IE
+            return;
+        }
+
+        var iframe = $iframe[0];
+        var doc = iframe.contentDocument || iframe.document;
+
+        // fixing Opera 9.26,10.00
+        if (doc.readyState && doc.readyState != 'complete') return;
+        // fixing Opera 9.64
+        if (doc.body && doc.body.innerHTML == "false") return;
+
+        var response;
+        if (doc.XMLDocument) {
+            // response is a xml document Internet Explorer property
+            response = doc.XMLDocument;
+        } else if (doc.body) {
+            try {
+                response = $iframe.contents().find("body").text();
+                // response = jQuery.parseJSON(response);
+            } catch (e) { // response is html document or plain text
+                response = doc.body.innerHTML;
+            }
+        } else {
+            // response is a xml document
+            response = doc;
+        }
+
+        (callback || ab_ajaxCallback)(response);
+    });
+
+    $form.trigger('submit');
+    $form.removeAttr('ab_ajax');
+};
 
 function ab_submit($form, att, value, attrs) {
     if (att) {

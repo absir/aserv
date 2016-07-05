@@ -217,4 +217,30 @@ $(function () {
             UE.getEditor($this[0]);
         }
     }
+
+    abToggle['form'] = function ($this) {
+        $this.submit(function () {
+            if ($this.attr('ab_ajax')) {
+                return true;
+            }
+
+            try {
+                ab_ajaxSubmit($this, $this.attr('ab_callback'));
+
+            } catch (e) {
+                console.error(e);
+            }
+
+            return false;
+        });
+
+        if ($.fn.validate && $this.attr('ab_validate')) {
+            $this.validate(
+                {
+                    success: "valid",
+                }
+            );
+        }
+    };
+
 });
