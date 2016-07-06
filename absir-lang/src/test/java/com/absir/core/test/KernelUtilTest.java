@@ -12,6 +12,8 @@ public class KernelUtilTest {
 
     @Test
     public void test() {
+
+        //System.out.println(String.format("%dtest", 1, 2, 3));
         System.out.println(KernelDyna.toLong(" 1"));
 
         testCompareVersion("0", "0.0.1", -1);

@@ -27,8 +27,11 @@ public class ValidatorRegex extends PropertyResolverAbstract<ValidatorObject, Re
 
             @Override
             public String validateValue(Object value) {
-                if (value instanceof String && !pattern.matcher((CharSequence) value).matches()) {
-                    return regex + " Regex";
+                if (value != null && value instanceof CharSequence) {
+                    CharSequence string = (CharSequence) value;
+                    if (string.length() > 0 && !pattern.matcher((CharSequence) value).matches()) {
+                        return regex + " Regex";
+                    }
                 }
 
                 return null;

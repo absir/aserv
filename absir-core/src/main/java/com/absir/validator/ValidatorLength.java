@@ -26,9 +26,14 @@ public class ValidatorLength extends PropertyResolverAbstract<ValidatorObject, L
 
             @Override
             public String validate(Object value) {
-                int length = value == null ? 0 : value instanceof String ? ((String) value).length() : -1;
-                if (length >= 0 && (length < min || length > max)) {
-                    return min + " - " + max + " Length";
+                if (value != null && value instanceof CharSequence) {
+                    CharSequence string = (CharSequence) value;
+                    if (string.length() > 0) {
+                        int length = string.length();
+                        if (length >= 0 && (length < min || length > max)) {
+                            return min + " - " + max + " Length";
+                        }
+                    }
                 }
 
                 return null;

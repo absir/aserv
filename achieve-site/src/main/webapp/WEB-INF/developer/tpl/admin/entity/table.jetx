@@ -20,6 +20,7 @@ ${Scenario::set("list", request)}
         #if(!fieldNotOrder && field.isCanOrder())
             ${node.addClass("sorting").voidValue()}
             ${node.addClass("sorting_${orderFieldMap." + field.getName() + " ?! ''}").voidValue()}
+            ${node.attr("ab_order", field.getName()).voidValue()}
         #end
         #if(field.listColType != 1)
             ${node.addClass("hidden-xs").voidValue()}

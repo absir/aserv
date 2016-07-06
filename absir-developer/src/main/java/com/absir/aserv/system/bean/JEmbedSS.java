@@ -11,6 +11,7 @@ import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JiEmbed;
 import com.absir.core.kernel.KernelObject;
+import com.absir.validator.value.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -20,11 +21,13 @@ import javax.persistence.Embeddable;
 public class JEmbedSS implements JiEmbed {
 
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
+    @NotEmpty
     @JaLang("编号")
     @Column(length = 100)
     private String eid;
 
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
+    @NotEmpty
     @JaLang("关联")
     @Column(length = 230)
     private String mid;

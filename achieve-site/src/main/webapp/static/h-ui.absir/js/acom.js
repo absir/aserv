@@ -108,16 +108,20 @@ function ab_ajax(url, callback) {
     $.ajax(opts);
 }
 
-function ab_ajaxCallback(json) {
+function ab_ajaxCallback(json, $form) {
     try {
         var data = $.evalJSON(json);
         var url = data.url;
-        if (url !== undefined) {
-            if (!url) {
+        if (url !== undefined && url !== '' && url !== 0) {
+            if (!url || url === 1) {
                 url = location.href;
             }
 
             location.replace(url);
+        }
+
+        if ($form && data.errors) {
+            $form.validate().showErrors(data.errors);
         }
 
         var icon = data.code;
@@ -195,7 +199,7 @@ function ab_ajaxSubmit(form, callback) {
             response = doc;
         }
 
-        (callback || ab_ajaxCallback)(response);
+        (callback || ab_ajaxCallback)(response, $form);
     });
 
     $form.trigger('submit');

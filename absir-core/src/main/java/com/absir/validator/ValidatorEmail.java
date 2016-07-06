@@ -29,8 +29,11 @@ public class ValidatorEmail extends PropertyResolverAbstract<ValidatorObject, Em
 
             @Override
             public String validateValue(Object value) {
-                if (value != null && value instanceof String && !PATTERN.matcher((String) value).find()) {
-                    return "Email";
+                if (value != null && value instanceof CharSequence) {
+                    CharSequence string = (CharSequence) value;
+                    if (string.length() > 0 && !PATTERN.matcher(string).find()) {
+                        return "Email";
+                    }
                 }
 
                 return null;

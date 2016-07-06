@@ -27,8 +27,11 @@ public class ValidatorDigits extends PropertyResolverAbstract<ValidatorObject, D
 
             @Override
             public String validateValue(Object value) {
-                if (KernelDyna.to(value, Integer.class) == null) {
-                    return "Digits";
+                if (value != null && value instanceof CharSequence) {
+                    CharSequence string = (CharSequence) value;
+                    if (string.length() > 0 && KernelDyna.to(value, Long.class) == null) {
+                        return "Digits";
+                    }
                 }
 
                 return null;

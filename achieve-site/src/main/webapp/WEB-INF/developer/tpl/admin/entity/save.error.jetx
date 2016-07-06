@@ -1,4 +1,13 @@
 {
-"statusCode": 300,
-"message": "\${message ? ${Pag::isI18n() ? "message.lang ? Pag::lang(message.lang) : message.value" : "message.value"}  : ${Pag::getLang("保存失败", false)}}"
+\#if(errors)
+"errors":{
+\#for(error : errors)
+\${for.index == 1 ? '' : ','}
+"\${error.propertyPath}": "\${error.errorMessage}"
+\#end
+},
+\#end
+
+"icon": "\${icon ?! 3}",
+"message": "\${message ?! ${Pag::getLang('操作失败', false)}}"
 }

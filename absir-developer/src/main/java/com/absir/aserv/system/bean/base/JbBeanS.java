@@ -9,6 +9,7 @@ package com.absir.aserv.system.bean.base;
 
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
+import com.absir.validator.value.NotEmpty;
 
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -17,6 +18,7 @@ import javax.persistence.MappedSuperclass;
 public class JbBeanS extends JbBase {
 
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
+    @NotEmpty
     @JaLang("纪录编号")
     @Id
     private String id;

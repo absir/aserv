@@ -9,6 +9,7 @@ import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JaSubField;
 import com.absir.orm.value.JaClasses;
 import com.absir.server.in.InModel;
+import com.absir.validator.value.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
@@ -21,8 +22,38 @@ import java.util.Map;
 @Entity
 public class JShowForm extends JbBean implements ICrudSubmit<JShowForm.DemoOpition> {
 
+    @NotEmpty
     @JaLang("名称")
     public String name;
+
+    @Range(min = 2, max = 100)
+    @JaLang("标识")
+    public int tag;
+
+    @Min(2)
+    @JaLang("标识1")
+    public int tag1;
+
+    @Max(100)
+    @JaLang("标识2")
+    public int tag2;
+
+    @Email
+    @JaLang("邮箱")
+    public String email;
+
+    @Digits
+    @JaLang("数字")
+    public String number;
+
+    @Length(min = 10, max = 100)
+    @JaLang("内容")
+    @JaEdit(types = "text")
+    public String content;
+
+    @Regex("^((13[0-9])|(15[^4,\\\\D])|(18[0,5-9]))\\\\d{8}$")
+    @JaLang("手机")
+    public String mobilePhone;
 
     @JaLang("创建时间")
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
