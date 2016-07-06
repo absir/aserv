@@ -3,6 +3,7 @@ ${Pag::includeGen("edit/" + entityName + ".jetx", "edit.entity.jetx")}
 \#include("edit/" + entityName + ".jetx")
 \#end
 
+<script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery/jquery.form.min.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery.validation/1.14.0/validate-methods.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery.validation/1.14.0/messages_zh.min.js"></script>

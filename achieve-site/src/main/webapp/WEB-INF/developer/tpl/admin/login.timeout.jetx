@@ -1,0 +1,4 @@
+{
+"url":"\${ADMIN_ROUTE}login?redirect=\${ADMIN_ROUTE}welcome",
+"open":${Pag::getLang('登录超时', false)}
+}

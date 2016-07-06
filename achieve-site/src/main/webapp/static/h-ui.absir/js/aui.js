@@ -239,7 +239,7 @@ $(function () {
     }
 
     abToggle['form'] = function ($this) {
-        $this.submit(function () {
+        function submitHandler() {
             if ($this.attr('ab_ajax')) {
                 return true;
             }
@@ -252,14 +252,18 @@ $(function () {
             }
 
             return false;
-        });
+        };
 
         if ($.fn.validate && $this.attr('ab_validate')) {
             $this.validate(
                 {
                     success: "valid",
+                    submitHandler: submitHandler
                 }
             );
+
+        } else {
+            $this.submit(submitHandler);
         }
     };
 
