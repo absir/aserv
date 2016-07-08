@@ -1,13 +1,13 @@
 #tag layout("/WEB-INF/tpl/layout/require.jetx")
 <nav class="breadcrumb text-c">
-    <a class="btn btn-primary radius l" style="line-height:1.6em;margin-top:3px"
+    <a class="btn btn-primary radius l ab_nav_btn"
        href="javascript:ab_open(location.href);" title="${Pag::getLang('打开')}">
         <i class="Hui-iconfont">&#xe6f1;</i>
     </a>
     <span class="c-gray en">
         ${Pag::getLang(entityModel.caption)}${Pag::getLang('编辑')}
     </span>
-    <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+    <a class="btn btn-success radius r ab_nav_btn"
        href="javascript:location.replace(location.href);" title="${Pag::getLang('刷新')}">
         <i class="Hui-iconfont">&#xe68f;</i>
     </a>

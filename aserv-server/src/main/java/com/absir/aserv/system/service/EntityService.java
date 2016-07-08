@@ -84,7 +84,7 @@ public class EntityService {
     public ICrudSupply getCrudSupply(String entityName) {
         ICrudSupply crudSupply = CrudService.ME.getCrudSupply(entityName);
         if (crudSupply == null) {
-            throw new ServerException(ServerStatus.NO_PARAM, entityName + " not exists!");
+            throw new ServerException(ServerStatus.ON_ERROR, entityName + " not exists!");
         }
 
         return crudSupply;
@@ -145,8 +145,7 @@ public class EntityService {
         binderResult.setPropertyFilter(filter);
         binderData.mapBind((Map) entityObject, entity);
         if (binderResult.hashErrors()) {
-            throw new ServerException(ServerStatus.NO_PARAM, "bind entity " + entityName + " from " + entityObject
-                    + ", has errors = " + binderResult.getPropertyErrors());
+            throw new ServerException(ServerStatus.NO_VERIFY, "bind entity " + entityName + ", has errors = " + binderResult.getPropertyErrors());
         }
 
         CrudService.ME.merge(entityName, crudRecord, entity, crudSupply, create, user, filter);

@@ -20,8 +20,8 @@ import java.util.List;
 
 public class XlsAccessorArray extends XlsAccessorBean {
 
-    public XlsAccessorArray(Field field, Class<?> cls, Class<?> beanClass, XlsBase xlsBase) {
-        super(field, cls, beanClass, xlsBase);
+    public XlsAccessorArray(Field field, Class<?> cls, Class<?> beanClass, XlsBase xlsBase, XlsAccessorContext context) {
+        super(field, cls, beanClass, xlsBase, context);
     }
 
     @Override

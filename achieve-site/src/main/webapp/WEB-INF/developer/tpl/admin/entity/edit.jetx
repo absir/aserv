@@ -7,3 +7,5 @@ ${Pag::includeGen("edit/" + entityName + ".jetx", "edit.entity.jetx")}
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery.validation/1.14.0/validate-methods.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery.validation/1.14.0/messages_zh.min.js"></script>
+<script type="text/javascript" src="\${SITE_STATIC}/../lib/bootstrap-modal/2.2.4/bootstrap-modalmanager.js"></script>
+<script type="text/javascript" src="\${SITE_STATIC}/../lib/bootstrap-modal/2.2.4/bootstrap-modal.js"></script>

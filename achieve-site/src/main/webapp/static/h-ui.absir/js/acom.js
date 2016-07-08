@@ -1,6 +1,12 @@
 /**
  * Created by absir on 16/6/26.
  */
+function ab_getUP(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    return r != null ? unescape(r[2]) : null;
+}
+
 function ab_group($node, toggle) {
     var tog = $node.attr(toggle);
     if (tog) {
@@ -170,6 +176,9 @@ function ab_ajaxCallback(json, $form) {
 function ab_ajaxSubmit($form, callback) {
     $form.ajaxSubmit({
         success: function (data) {
+            (callback || ab_ajaxCallback)(data, $form);
+        },
+        error: function (data) {
             (callback || ab_ajaxCallback)(data, $form);
         }
     });

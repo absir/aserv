@@ -38,4 +38,9 @@ public class PropertyError {
     public void setErrorObject(Object errorObject) {
         this.errorObject = errorObject;
     }
+
+    @Override
+    public String toString() {
+        return "Error[" + propertyPath + "]:" + errorMessage + "=" + errorObject;
+    }
 }

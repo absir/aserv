@@ -7,6 +7,7 @@
  */
 package com.absir.aserv.system.admin;
 
+import com.absir.aserv.configure.xls.XlsAccessorUtils;
 import com.absir.aserv.configure.xls.XlsUtils;
 import com.absir.aserv.crud.*;
 import com.absir.aserv.dyna.DynaBinderUtils;
@@ -376,11 +377,37 @@ public class Admin_entity extends AdminServer {
 
         JiUserBase user = SecurityService.ME.getUserBase(input);
         PropertyFilter filter = AuthServiceUtils.insertPropertyFilter(entityName, crudSupply, user);
-        List<?> entities = XlsUtils.getXlsList(new HSSFWorkbook(xls.getInputStream()), null, crudSupply.getEntityClass(entityName),
-                XlsUtils.XLS_BASE, false);
-        EntityService.ME.merge(entityName, crudSupply, user, entities, filter);
-        JLog.log("admin", "importXls/" + entityName, input.getAddress(), user == null ? null : user.getUsername(), true);
-        return "admin/entity/importXls";
+        if (!xls.getName().toLowerCase().endsWith(".xls")) {
+            return "admin/entity/import.error";
+        }
+
+        List<?> entities;
+        InModel model = input.getModel();
+        try {
+            model.put("xls", 1);
+            HSSFWorkbook workbook = new HSSFWorkbook(xls.getInputStream());
+            if (!XlsAccessorUtils.isHead(workbook, crudSupply.getEntityClass(entityName))) {
+                model.put("xls", 2);
+                return "admin/entity/import.error";
+            }
+
+            entities = XlsUtils.getXlsList(workbook, null, crudSupply.getEntityClass(entityName),
+                    XlsUtils.XLS_BASE, false);
+
+        } catch (Exception e) {
+            return "admin/entity/import.error";
+        }
+
+        try {
+            EntityService.ME.merge(entityName, crudSupply, user, entities, filter);
+            JLog.log("admin", "importXls/" + entityName, input.getAddress(), user == null ? null : user.getUsername(), true);
+            return "admin/entity/import";
+
+        } catch (ServerException e) {
+            model.put("e", e);
+            model.put("message", e.getExceptionData());
+            return "admin/entity/error";
+        }
     }
 
     /**

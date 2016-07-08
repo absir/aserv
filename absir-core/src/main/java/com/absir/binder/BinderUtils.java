@@ -93,7 +93,7 @@ public class BinderUtils {
         String propertyPath = propertyPaths[beganIndex++];
         int length = propertyPath.length();
         if (length > 1 && propertyPath.charAt(0) == '[') {
-            if (length > 4 && propertyPath.charAt(1) == '\'') {
+            if (length > 4 && propertyPath.charAt(1) == '@') {
                 // 字典键值
                 propertyPath = propertyPath.substring(2, length - 2);
                 if (value != null && propertyPath.equals("!for_key") && value instanceof Object[]) {

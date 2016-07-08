@@ -27,17 +27,17 @@ public class XlsAccessorMap extends XlsAccessorBean {
 
     protected List<XlsAccessor> keyAccessors;
 
-    public XlsAccessorMap(Field field, Class<?> cls, Class<?> keyClass, Class<?> beanClass, XlsBase xlsBase) {
+    public XlsAccessorMap(Field field, Class<?> cls, Class<?> keyClass, Class<?> beanClass, XlsBase xlsBase, XlsAccessorContext context) {
         super(field, cls, beanClass);
         this.keyClass = keyClass;
         this.beanClass = beanClass;
         XaReferenced xaReferenced = field.getAnnotation(XaReferenced.class);
         if (!xlsBase.is(keyClass) && (xaReferenced == null || xaReferenced.key())) {
-            keyAccessors = getXlsAccessors(keyClass, xlsBase);
+            keyAccessors = getXlsAccessors(keyClass, xlsBase, context);
         }
 
         if (!xlsBase.is(beanClass) && (xaReferenced == null || xaReferenced.value())) {
-            accessors = getXlsAccessors(beanClass, xlsBase);
+            accessors = getXlsAccessors(beanClass, xlsBase, context);
         }
     }
 

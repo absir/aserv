@@ -1,13 +1,13 @@
 #tag layout("/WEB-INF/tpl/layout/require.jetx")
 <nav class="breadcrumb text-c">
-    <a class="btn btn-primary radius l" style="line-height:1.6em;margin-top:3px"
+    <a class="btn btn-primary radius l ab_nav_btn"
        href="javascript:ab_open(location.href);" title="${Pag::getLang('打开')}">
         <i class="Hui-iconfont">&#xe6f1;</i>
     </a>
     <span class="c-gray en">
         ${Pag::getLang(entityModel.caption)}${Pag::getLang('列表')}
     </span>
-    <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px"
+    <a class="btn btn-success radius r ab_nav_btn"
        href="javascript:location.replace(location.href);" title="${Pag::getLang('刷新')}">
         <i class="Hui-iconfont">&#xe68f;</i>
     </a>
@@ -55,11 +55,36 @@
                 <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang('导出选中')}
             </a>
             \#if(insert && update)
-            <a href="javascript:;"
-               ab_click=""
+            <a data-toggle="modal" href="#importXls"
                class="btn btn-success radius mb-5">
                 <i class="Hui-iconfont">&#xe645;</i>${Pag::getLang('批量导入')}
             </a>
+            <div id="importXls" class="modal hide fade" role="dialog">
+                <div class="page-container">
+                    <form ab_toggle="form" ab_validate="true" action="\${ADMIN_ROUTE}entity/importXls/\${entityName}"
+                          enctype="multipart/form-data" method="post">
+                        <div class="row cl">
+                            <label class="form-label col-xs-4 col-sm-3">${Pag::getLang('导入')}：</label>
+                            <div class="formControls col-xs-8 col-sm-9">
+                                <span class="btn-upload form-group">
+				                    <input class="input-text upload-url required" type="text" style="width:200px"
+                                           readonly/>
+				                    <a href="javascript:void();" class="btn btn-primary radius upload-btn">
+                                        <i class="Hui-iconfont">&#xe642;</i>${Pag::getLang('浏览')}</a>
+				                    <input type="file" name="xls" class="input-file"/>
+				                </span>
+                            </div>
+                        </div>
+                        <div class="row cl">
+                            <div class="ml-10 mr-10 mt-20">
+                                <button type="submit" class="btn btn-primary radius mb-5">
+                                    <i class="Hui-iconfont">&#xe632;</i>${Pag::getLang('提交')}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
             \#end
         </span>
     </span>

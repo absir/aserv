@@ -47,6 +47,10 @@ function ab_evalRequire(evalParams, noParam) {
     return require;
 }
 
+function ab_init(ui) {
+    $.fn.ab_toggle_fun(ui);
+}
+
 $(function () {
     var abToggle = {};
     $.fn.ab_toggle = abToggle;
@@ -267,8 +271,68 @@ $(function () {
         }
     };
 
-    abToggle['layer'] = function ($this) {
+    abToggle['resize'] = function ($this) {
+        var resize = $this.attr('resize');
+        var minSize = $this.attr('minSize');
+        var maxSize = $this.attr('maxSize');
+        var offSize = $this.attr('offSize') || 0;
 
-    }
+        function reszieFun() {
+            var width = $(window).width();
+            var toSize = (width < minSize || width > maxSize) ? (width - offSize) : undefined;
+            if (resize === 'style') {
+                if (toSize) {
+                    $this.css('width', null);
 
+                } else {
+                    $this.css('width', toSize + "px");
+                }
+
+            } else {
+                if (toSize) {
+                    $this.attr(resize, width);
+
+                } else {
+                    $this.removeAttr(resize);
+                }
+            }
+        };
+
+        $(window).bind('resize', reszieFun);
+        reszieFun();
+    };
+
+    abToggle['addItem'] = function ($this) {
+        var $num = $this.parent().find('.num-add');
+        var $table = $this.closest('table');
+        var $archetype = $table.find('.archetype');
+        var $tbody = $table.find('tbody');
+        var html = $archetype.prop("outerHTML");
+        html = html.replace('<!--archetype', '');
+        html = html.replace('archetype-->', '');
+        $this.click(function () {
+            var num = $num ? $num.val() : 1;
+            while (num > 0) {
+                num--;
+                var $tr = $(html).appendTo($tbody);
+                $tr.removeClass('archetype');
+                $tr.find('[aname]').each(function () {
+                    var $this = $(this);
+                    var name = $this.attr('aname');
+                    name = name.replace('#for_index#', '');
+                    $this.attr('name', name);
+                    $this.removeAttr('aname');
+                });
+
+                ab_init($tr);
+            }
+        });
+    };
+
+    abToggle['removeItem'] = function ($this) {
+        $this.click(function () {
+            var $tr = $this.closest('tr');
+            $tr.remove();
+        })
+    };
 });

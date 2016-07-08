@@ -17,7 +17,8 @@ ${Scenario::set("edit", request)}
     <div class="row cl">
         <label class="form-label col-xs-4 col-sm-2">${Pag::getLangName(field.getCaption())}:</label>
         <div class="formControls col-xs-8 col-sm-9">
-            <input ${identifier} type="text" class="input-text" readonly="readonly" value="\${entity.${field.getName()}}"/>
+            <input ${identifier} type="text" class="input-text" readonly="readonly"
+                                 value="\${entity.${field.getName()}}"/>
         </div>
     </div>
     #end
@@ -100,8 +101,8 @@ ${ScriptNode::html(element) + "\r\n"}
 #set(entity = request.getAttribute("entity"))
 #tag scriptEcho()
 <script type="text/javascript">
-    $(function(){
-        $.Huitab("#ab_tabDiv .tabBar span","#ab_tabDiv .tabCon","current","click","0");
+    $(function () {
+        $.Huitab("#ab_tabDiv .tabBar span", "#ab_tabDiv .tabCon", "current", "click", ab_getUP('&tab') || "0");
     });
 </script>
 <div id="ab_tabDiv" class="HuiTab mt-20">
@@ -145,15 +146,17 @@ ${ScriptNode::html(element) + "\r\n"}
 
     #end
 
+        #set(pan_un_idx = -1)
         #set(pan_un_active = true)
     ##编辑选项属性遍历(form)
         #set(pan_un_active = true)
         #for(subField : subtableSubFields)
+        #set(pan_un_idx += 1)
         #set(element = document.appendElement("div"))
         #set(identifier = '<div class="tabCon"')
         #if(pan_un_active)
             #set(pan_un_active = false)
-            #set(identifier = '<div class="tabCon active"')
+            #set(identifier = '<div class="tabCon ab_active"')
         #end
 
         #if(!generator.print(identifier, out))
@@ -194,11 +197,12 @@ ${ScriptNode::html(element) + "\r\n"}
     ::set("subtable", request)}
     ${request.setAttribute("subtable", true)}
     #for(field : subtableFields)
+    #set(pan_un_idx += 1)
 ##选项内容开始
     #set(identifier = '<div class="tabCon"')
     #if(pan_un_active)
         #set(pan_un_active = false)
-        #set(identifier = '<div class="tabCon active"')
+        #set(identifier = '<div class="tabCon ab_active"')
     #end
     #if(!generator.print(identifier, out))
         #set(subtableNum = KernelDyna::to(field.getMetas().get("subtableNum"), int::class))
@@ -220,95 +224,97 @@ ${ScriptNode::html(element) + "\r\n"}
     #tag scriptEcho()
     <input name="!subtables" type="hidden" value="${field.getName()}"/>
     <table class="table table-bordered table-hover table-striped itemDetail" width="100%"
-           addButton="${subtableNum > 0 || !(field.getCrudField().getKeyJoEntity() == null && field.getValueField() == null) ? "" : Pag::getLang("添加纪录")}">
-    <thead>
-    <tr>
-    #end
-        #set(archetype_key = false)
-        #set(archetype_map = 0)
-        #if(field.getValueField() != null)
-        ##显示拥有map.key
-            #set(archetype_key = true)
-            #set(archetype_map = 2)
-            #if(field.getCrudField().getKeyJoEntity() == null || field.getCrudField().getKeyJoEntity().getEntityName() != null)
-            ##map.key为简单类型
-                #tag scriptEcho()
-                <th>${field.getMetas().containsKey("key") ? field.getMetas().get("key") : Pag::getLang("键值")}</th>
+           addButton="${subtableNum > 0 || !(field.getCrudField().getKeyJoEntity() == null && field.getValueField() == null) ? '' : Pag::getLang('添加纪录')}">
+        <thead>
+        <tr>
+        #end
+            #set(archetype_key = false)
+            #set(archetype_map = 0)
+            #if(field.getValueField() != null)
+            ##显示拥有map.key
+                #set(archetype_key = true)
+                #set(archetype_map = 2)
+                #if(field.getCrudField().getKeyJoEntity() == null || field.getCrudField().getKeyJoEntity().getEntityName() != null)
+                ##map.key为简单类型
+                    #tag scriptEcho()
+                    <th>${field.getMetas().containsKey("key") ? field.getMetas().get("key") : Pag::getLang("键值")}</th>
+                #end
+                #set(identifier = 'name="' + field.getName() + '[@!for_key@]"')
+                #if(!generator.append(identifier, element)) {
+                    #tag layout_block("node")
+                    <td><input ${identifier} type="text" class="ab_td_input" value="\${entity.key}"></td>
+                #end
+                #set(nodes = ScriptNode::append(element, node))
+                ${DeveloperUtils::includeExist("subtable", field.getTypes(), request)}
             #end
-            #set(identifier = 'name="' + field.getName() + '[\'!for_key\']"')
+        #end
+        #end
+
+            #if(field.getCrudField().getJoEntity() == null || field.getCrudField().getJoEntity().getEntityName() != null)
+            ##map或array为简单类型
+                #set(map_value = archetype_key ? '.value' : '')
+                #tag scriptEcho()
+                <th>${Pag::getLang("内容")}</th>
+            #end
+            #set(identifier = 'name="' + field.getName() + (map_value ? "[@!!for_key@]" : "[${for_index}]") + '"')
+            #if(!generator.append(identifier, element))
+                #tag layout_block("node")
+                <td><input ${identifier} type="text" class="ab_td_input" value="\${entity${map_value}}"></td>
+            #end
+            #set(nodes = ScriptNode::append(element, node))
+            ${DeveloperUtils::includeExist("subtable", map_value ? field.getValueField().getTypes() : field.getTypes(),
+            request)}
+        #end
+
+        #else
+        ##map或array为实体类型
+            #set(map_value = archetype_key ? '.value' : '')
+            #set(archetype_map = archetype_key ? 3 :1)
+            #for(field : DeveloperModel::forEntityNameClass(field.getCrudField().getJoEntity(), request).getEntityModel().getFields())
+            #tag scriptEcho()
+            <th>${Pag::getLangName(field.getCaption())}</th>
+        #end
+            #set(identifier =
+                'name="' + field.getName() + (map_value ? "[@!!for_key@]" : "[${for_index}]") + "." + field.getName() + '"')
             #if(!generator.append(identifier, element)) {
                 #tag layout_block("node")
-                <td><input ${identifier} type="text" style="width:80%" value="\${entity.key}"></td>
+                <td><input ${identifier} type="text" class="ab_td_input"
+                                         value="\${entity${map_value}.${field.getName()} ?! ''}"></td>
             #end
             #set(nodes = ScriptNode::append(element, node))
             ${DeveloperUtils::includeExist("subtable", field.getTypes(), request)}
         #end
-    #end
-    #end
+        #end
+        #end
 
-        #if(field.getCrudField().getJoEntity() == null || field.getCrudField().getJoEntity().getEntityName() != null)
-        ##map或array为简单类型
-            #set(map_value = archetype_key ? '.value' : '')
+            ${DeveloperUtils::includeExist("subtable", entityModel.getJoEntity().getEntityName(), request)}
+
             #tag scriptEcho()
-            <th>${Pag::getLang("内容")}</th>
-        #end
-        #set(identifier = 'name="' + field.getName() + (map_value ? "['!!for_key']" : "[${for_index}]") + '"')
-        #if(!generator.append(identifier, element))
-            #tag layout_block("node")
-            <td><input ${identifier} type="text" style="width:80%" value="\${entity${map_value}}"></td>
-        #end
-        #set(nodes = ScriptNode::append(element, node))
-        ${DeveloperUtils::includeExist("subtable", map_value ? field.getValueField().getTypes() : field.getTypes(),
-        request)}
-    #end
-
-    #else
-    ##map或array为实体类型
-        #set(map_value = archetype_key ? '.value' : '')
-        #set(archetype_map = archetype_key ? 3 :1)
-        #for(field : DeveloperModel::forEntityNameClass(field.getCrudField().getJoEntity(), request).getEntityModel().getFields())
-        #tag scriptEcho()
-        <th>${Pag::getLangName(field.getCaption())}</th>
-    #end
-        #set(identifier =
-            'name="' + field.getName() + (map_value ? "['!!for_key']" : "[${for_index}]") + "." + field.getName() + '"')
-        #if(!generator.append(identifier, element)) {
-            #tag layout_block("node")
-            <td><input ${identifier} type="text" style="width:80%"
-                                     value="\${entity${map_value}.${field.getName()} ?! ''}"></td>
-        #end
-        #set(nodes = ScriptNode::append(element, node))
-        ${DeveloperUtils::includeExist("subtable", field.getTypes(), request)}
-    #end
-    #end
-    #end
-
-        ${DeveloperUtils::includeExist("subtable", entityModel.getJoEntity().getEntityName(), request)}
-
-        #tag scriptEcho()
-        <th width="100">
+            <th width="100">
                                     <span style="position:relative;">
-                                        <input type="text" value="1" class="form-control num-add" size="2.5">
-                                        <a href="javascript:;" class="row-add" data-toggle="ab_add_item"><i
-                                                class="fa fa-plus-square"></i></a>
+                                        <input type="text" value="1" class="num-add" size="2.5">
+                                        <a href="javascript:;" class="btn btn-primary size-MINI radius"
+                                           ab_toggle="addItem"><i class="Hui-iconfont">&#xe600;</i></a>
                                     </span>
-        </th>
-    </tr>
-    #tag layout_block("node")
-    <td>
-        <a href="javascript:;" class="btn btn-red row-del" data-toggle="ab_remove_item">${Pag::getLang("删")}</a>
-    </td>
-    #end
-    #end
-        #set(nodes = ScriptNode::append(element, node))
-        #set(element_html = ScriptNode::html(element))
-        #for(doc : element.select('[name]'))
-        ${doc.attr('aname', doc.attr('name')).voidValue()}
-        ${doc.removeAttr('name').voidValue()}
-    #end
-    #tag scriptEcho()
-    <tr class="archetype">
-        <!--archetype
+            </th>
+        </tr>
+        #tag layout_block("node")
+        <td>
+            <a href="javascript:;" class="btn btn-danger size-MINI radius" ab_toggle="removeItem"><i
+                    class="Hui-iconfont">
+                &#xe6e2;</i></a>
+        </td>
+        #end
+        #end
+            #set(nodes = ScriptNode::append(element, node))
+            #set(element_html = ScriptNode::html(element))
+            #for(doc : element.select('[name]'))
+            ${doc.attr('aname', doc.attr('name')).voidValue()}
+            ${doc.removeAttr('name').voidValue()}
+        #end
+        #tag scriptEcho()
+        <tr class="archetype">
+            <!--archetype
                                 ##编辑元素集合属性(完成)
                                 ${DeveloperUtils::includeExist("edit", entityModel.getJoEntity().getEntityName(), request)}
                                 \#set(for_index = Pag::getForIndex())

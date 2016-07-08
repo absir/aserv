@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-9-25 下午3:57:49
  */
 package com.absir.aserv.configure.xls;
@@ -11,6 +11,7 @@ import com.absir.aserv.system.bean.JEmbedSS;
 import com.absir.aserv.system.bean.JUpdateXls;
 import com.absir.aserv.system.bean.proxy.JiUpdate;
 import com.absir.aserv.system.helper.HelperAccessor;
+import com.absir.aserv.system.helper.HelperClass;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.client.helper.HelperJson;
 import com.absir.core.dyna.DynaBinder;
@@ -263,9 +264,23 @@ public class XlsAccessorUtils {
         XlsAccessorUtils.calculateUpdate = calculateUpdate;
     }
 
+    private static Map<Class, XlsAccessorContext> clsMapAccessorContext = new HashMap<Class, XlsAccessorContext>();
+
+    public static XlsAccessorContext getAccessorContext(Class beanClass, XlsBase xlsBase, boolean cache) {
+        XlsAccessorContext xlsAccessorContext = clsMapAccessorContext.get(beanClass);
+        if (xlsAccessorContext == null) {
+            xlsAccessorContext = new XlsAccessorContext(beanClass, xlsBase);
+            if (cache) {
+                clsMapAccessorContext.put(beanClass, xlsAccessorContext);
+            }
+        }
+
+        return xlsAccessorContext;
+    }
+
     private static <T> List<T> readXlsBeans(HSSFSheet[] hssfSheets, int[][] accessors, Class<T> beanClass, XlsBase xlsBase,
                                             boolean cacheable) {
-        XlsAccessorContext xlsAccessorContext = new XlsAccessorContext(beanClass, xlsBase);
+        XlsAccessorContext xlsAccessorContext = getAccessorContext(beanClass, xlsBase, false);
         XlsDao<? extends XlsBase, Serializable> xlsDao = null;
         XlsDaoBase xlsDaoBase = null;
         XlsDaoBean xlsDaoBean = null;
@@ -477,6 +492,32 @@ public class XlsAccessorUtils {
         }
     }
 
+    public static HSSFCell getSheetAtRowCell(HSSFWorkbook hssfWorkbook, int at, int rowAt, int cellAt) {
+        if (hssfWorkbook.getNumberOfSheets() > at) {
+            HSSFSheet sheet = hssfWorkbook.getSheetAt(at);
+            if (sheet != null && sheet.getPhysicalNumberOfRows() > rowAt) {
+                HSSFRow row = sheet.getRow(rowAt);
+                if (row != null && row.getPhysicalNumberOfCells() > cellAt) {
+                    return row.getCell(cellAt);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static boolean isHead(HSSFWorkbook hssfWorkbook, Class beanClass) {
+        HSSFCell cell = getSheetAtRowCell(hssfWorkbook, 0, 0, 0);
+        if (cell != null) {
+            String value = getCellValue(cell);
+            if (value != null) {
+                return value.startsWith(HelperClass.getClassIdentity(beanClass, false));
+            }
+        }
+
+        return false;
+    }
+
     public static void writeHssfWorkbook(HSSFWorkbook hssfWorkbook, Class beanClass, Collection beans, XlsBase xlsBase) {
         int[] rowCounts = new int[2];
         rowCounts[1] = SpreadsheetVersion.EXCEL97.getLastRowIndex();
@@ -499,6 +540,10 @@ public class XlsAccessorUtils {
         }
 
         writeHssfSheet(hssfSheet, xlsCellHeader);
+        HSSFCell cell = getSheetAtRowCell(hssfWorkbook, 0, 0, 0);
+        if (cell != null) {
+            cell.setCellValue(HelperClass.getClassIdentity(beanClass, false) + ">" + getCellValue(cell));
+        }
     }
 
     public static class XlsDaoBase extends XlsDao {

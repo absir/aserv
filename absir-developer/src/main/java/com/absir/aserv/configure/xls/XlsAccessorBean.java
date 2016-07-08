@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-9-27 下午4:20:12
  */
 package com.absir.aserv.configure.xls;
@@ -39,12 +39,16 @@ public class XlsAccessorBean extends XlsAccessor {
         this.beanClass = beanClass;
     }
 
-    public XlsAccessorBean(Field field, Class<?> cls, Class<?> beanClass, XlsBase xlsBase) {
+    public XlsAccessorBean(Field field, Class<?> cls, Class<?> beanClass, XlsBase xlsBase, XlsAccessorContext context) {
         this(field, cls, beanClass);
-        if (!xlsBase.is(beanClass)) {
+        if (!xlsBase.is(beanClass) && context != null) {
             XaReferenced xaReferenced = field.getAnnotation(XaReferenced.class);
             if (xaReferenced == null || xaReferenced.value()) {
-                accessors = getXlsAccessors(beanClass, xlsBase);
+                accessors = context.getClassAccessors(beanClass);
+                if (accessors == null && !context.isReferenceAccessors(beanClass)) {
+                    accessors = getXlsAccessors(beanClass, xlsBase, context);
+                    context.setClassAccessor(beanClass, accessors);
+                }
             }
         }
     }
@@ -53,7 +57,7 @@ public class XlsAccessorBean extends XlsAccessor {
         return accessors;
     }
 
-    protected List<XlsAccessor> getXlsAccessors(final Class<?> beanClass, final XlsBase xlsBase) {
+    protected List<XlsAccessor> getXlsAccessors(final Class<?> beanClass, final XlsBase xlsBase, final XlsAccessorContext context) {
         final List<XlsAccessor> xlsAccessors = new ArrayList<XlsAccessor>();
         for (Field field : HelperAccessor.getFields(beanClass, XaIgnore.class)) {
             Class<?> type = field.getType();
@@ -73,11 +77,11 @@ public class XlsAccessorBean extends XlsAccessor {
                         xlsAccessors.add(new XlsAccessorParam(field, beanClass, componentType));
 
                     } else {
-                        xlsAccessors.add(new XlsAccessorArray(field, beanClass, componentType, xlsBase));
+                        xlsAccessors.add(new XlsAccessorArray(field, beanClass, componentType, xlsBase, context));
                     }
 
                 } else if (Collection.class.isAssignableFrom(type)) {
-                    xlsAccessors.add(new XlsAccessorCollection(field, beanClass, KernelClass.componentClass(field.getGenericType()), xlsBase));
+                    xlsAccessors.add(new XlsAccessorCollection(field, beanClass, KernelClass.componentClass(field.getGenericType()), xlsBase, context));
 
                 } else if (Map.class.isAssignableFrom(type)) {
                     Type[] types = KernelClass.typeArguments(field.getGenericType());
@@ -86,11 +90,11 @@ public class XlsAccessorBean extends XlsAccessor {
                         xlsAccessors.add(new XlsAccessorParamMap(field, beanClass, componentType, KernelClass.rawClass(types[1])));
 
                     } else {
-                        xlsAccessors.add(new XlsAccessorMap(field, beanClass, componentType, KernelClass.rawClass(types[1]), xlsBase));
+                        xlsAccessors.add(new XlsAccessorMap(field, beanClass, componentType, KernelClass.rawClass(types[1]), xlsBase, context));
                     }
 
                 } else {
-                    xlsAccessors.add(new XlsAccessorBean(field, beanClass, type, xlsBase));
+                    xlsAccessors.add(new XlsAccessorBean(field, beanClass, type, xlsBase, context));
                 }
             }
         }

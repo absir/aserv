@@ -13,10 +13,14 @@ import com.absir.core.kernel.KernelLang.ObjectTemplate;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class XlsAccessorContext extends XlsAccessorBean {
+
+    private Map<Class<?>, List<XlsAccessor>> clsMapAccessors;
 
     protected String beanName;
 
@@ -27,7 +31,7 @@ public class XlsAccessorContext extends XlsAccessorBean {
     public XlsAccessorContext(Class<?> beanClass, XlsBase xlsBase) {
         super(null, beanClass, beanClass);
         beanName = beanClass.getSimpleName();
-        accessors = getXlsAccessors(beanClass, xlsBase);
+        accessors = getXlsAccessors(beanClass, xlsBase, this);
         if (XlsBase.class.isAssignableFrom(beanClass)) {
             if (XlsBean.class.isAssignableFrom(beanClass)) {
                 isXlsBean = true;
@@ -37,6 +41,31 @@ public class XlsAccessorContext extends XlsAccessorBean {
                 accessors.remove(0);
             }
         }
+    }
+
+    public List<XlsAccessor> getClassAccessors(Class<?> beanClass) {
+        return clsMapAccessors == null ? null : clsMapAccessors.get(beanClass);
+    }
+
+    public boolean isReferenceAccessors(Class<?> beanClass) {
+        if (clsMapAccessors == null) {
+            clsMapAccessors = new HashMap<Class<?>, List<XlsAccessor>>();
+        }
+
+        if (clsMapAccessors.containsKey(beanClass)) {
+            return true;
+        }
+
+        clsMapAccessors.put(beanClass, null);
+        return false;
+    }
+
+    public void setClassAccessor(Class<?> beanClass, List<XlsAccessor> accessors) {
+        if (clsMapAccessors == null) {
+            clsMapAccessors = new HashMap<Class<?>, List<XlsAccessor>>();
+        }
+
+        clsMapAccessors.put(beanClass, accessors);
     }
 
     public boolean isXlsBean() {
