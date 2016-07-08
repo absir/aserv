@@ -151,7 +151,7 @@ ${ScriptNode::html(element) + "\r\n"}
     ##编辑选项属性遍历(form)
         #set(pan_un_active = true)
         #for(subField : subtableSubFields)
-        #set(pan_un_idx += 1)
+        #set(pan_un_idx = pan_un_idx + 1)
         #set(element = document.appendElement("div"))
         #set(identifier = '<div class="tabCon"')
         #if(pan_un_active)
@@ -197,7 +197,7 @@ ${ScriptNode::html(element) + "\r\n"}
     ::set("subtable", request)}
     ${request.setAttribute("subtable", true)}
     #for(field : subtableFields)
-    #set(pan_un_idx += 1)
+    #set(pan_un_idx = pan_un_idx + 1)
 ##选项内容开始
     #set(identifier = '<div class="tabCon"')
     #if(pan_un_active)

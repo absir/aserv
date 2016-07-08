@@ -37,7 +37,13 @@
                     <i class="Hui-iconfont">&#xe600;</i>${Pag::getLang("新建")}
                 </button>
                 \#end
-
+                \#if(id)
+                <button type="button" class="btn btn-success radius mb-5"
+                        ab_toggle="click" ab_confirm="${Pag::getLang('导出记录?')}"
+                        ab_click="ab_open('\${ADMIN_ROUTE}entity/exportId/\${entityName}?id=\${id}')">
+                    <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang("导出")}
+                </button>
+                \#end
                 #if(entityModel.getSubmitOptionMap() != null)
                     <input name="!submitOption" type="hidden"/>
                     #for(options : entityModel.getSubmitOptionMap())

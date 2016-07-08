@@ -361,6 +361,12 @@ public class Admin_entity extends AdminServer {
     }
 
     @Body
+    public void exportId(String entityName, @Param String id, Input input, HttpServletResponse response)
+            throws IOException {
+        export(entityName, new String[]{id}, input, response);
+    }
+
+    @Body
     public void exportJson(String entityName, @Nullable @Param String ids, Input input, HttpServletResponse response)
             throws IOException {
         export(entityName, (String[]) HelperJson.decode(ids, String[].class), input, response);
