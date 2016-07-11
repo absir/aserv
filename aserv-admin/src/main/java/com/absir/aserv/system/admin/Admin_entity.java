@@ -35,6 +35,7 @@ import com.absir.binder.BinderResult;
 import com.absir.binder.BinderUtils;
 import com.absir.client.helper.HelperJson;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
+import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.value.JoEntity;
 import com.absir.server.exception.ServerException;
@@ -110,14 +111,14 @@ public class Admin_entity extends AdminServer {
                 queue, jdbcPage));
     }
 
-    public void edit(String entityName, Input input) {
-        edit(entityName, null, input);
+    public void edit(String entityName, @Nullable @Param FileItem xls, Input input) {
+        edit(entityName, null, xls, input);
     }
 
     /**
      * 编辑页面
      */
-    public void edit(String entityName, Object id, Input input) {
+    public void edit(String entityName, Object id, @Nullable @Param FileItem xls, Input input) {
         ICrudSupply crudSupply = getCrudSupply(entityName, input);
         if (id == null && !crudSupply.support(Crud.CREATE)) {
             throw new ServerException(ServerStatus.IN_404);
@@ -148,11 +149,35 @@ public class Admin_entity extends AdminServer {
 
         model.put("insert", AuthServiceUtils.insertPermission(crudSupply, entityName, user));
         model.put("delete", AuthServiceUtils.deletePermission(crudSupply, entityName, user));
-        model.put("create", id == null);
+        model.put("create", id == null && crudSupply.support(Crud.CREATE));
         JoEntity joEntity = (JoEntity) input.getAttribute("joEntity");
         model.put("multipart", CrudContextUtils.isMultipart(joEntity));
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
         Object entity = edit(entityName, id, crudSupply, user);
+        if (xls != null) {
+            if (!xls.getName().toLowerCase().endsWith(".xls")) {
+                model.put("xls", 1);
+
+            } else {
+                try {
+                    HSSFWorkbook workbook = new HSSFWorkbook(xls.getInputStream());
+                    if (!XlsAccessorUtils.isHead(workbook, crudSupply.getEntityClass(entityName))) {
+                        model.put("xls", 2);
+
+                    } else {
+                        List<?> entities = XlsUtils.getXlsList(workbook, null, crudSupply.getEntityClass(entityName),
+                                XlsUtils.XLS_BASE, false);
+                        if (entities.size() > 0) {
+                            KernelObject.clone(entities.get(0), entity);
+                        }
+                    }
+
+                } catch (Exception e) {
+                    model.put("xls", 3);
+                }
+            }
+        }
+
         BinderData binderData = input.getBinderData();
         BinderResult binderResult = binderData.getBinderResult();
         binderResult.setValidation(true);
@@ -425,7 +450,7 @@ public class Admin_entity extends AdminServer {
      * 关联实体
      */
     public String mapped(String entityName, String id, String field, Input input) {
-        edit(entityName, id, input);
+        edit(entityName, id, null, input);
         return "admin/entity/mapped/" + entityName + '.' + field;
     }
 

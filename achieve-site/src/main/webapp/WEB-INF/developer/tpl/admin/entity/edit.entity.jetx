@@ -37,7 +37,7 @@
                     <i class="Hui-iconfont">&#xe600;</i>${Pag::getLang("新建")}
                 </button>
                 \#end
-                \#if(id)
+                \#if(!create)
                 <button type="button" class="btn btn-success radius mb-5"
                         ab_toggle="click" ab_confirm="${Pag::getLang('导出记录?')}"
                         ab_click="ab_open('\${ADMIN_ROUTE}entity/exportId/${entityName}?id=\${id}')">
