@@ -47,11 +47,16 @@ function ab_evalRequire(evalParams, noParam) {
     return require;
 }
 
-function ab_init(ui) {
-    $.fn.ab_toggle_fun(ui);
-}
-
 $(function () {
+    var _ab_init_ = ab_init;
+    ab_init = function (ui) {
+        if (_ab_init_) {
+            _ab_init_(ui);
+        }
+
+        $.fn.ab_toggle_fun(ui);
+    }
+
     var abToggle = {};
     $.fn.ab_toggle = abToggle;
     $.fn.ab_toggle_fun = function (ui) {
@@ -335,4 +340,27 @@ $(function () {
             $tr.remove();
         })
     };
+
+    abToggle['removeItem'] = function ($this) {
+        $this.click(function () {
+            var $tr = $this.closest('tr');
+            $tr.remove();
+        })
+    };
+
+    abToggle['checkAll'] = function ($this) {
+        var target = $this.attr('target');
+        if (target) {
+            $this.change(function () {
+                $param = ab_groupParam("[name='" + target + "']", $this);
+                $param.prop('checked', $this.prop('checked'));
+            });
+        }
+    }
+
+    abToggle['stop'] = function ($this) {
+        $this.click(function (e) {
+            e.stopPropagation();
+        });
+    }
 });

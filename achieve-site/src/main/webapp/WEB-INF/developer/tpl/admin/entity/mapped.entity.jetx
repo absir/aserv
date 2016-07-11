@@ -5,44 +5,41 @@ import = "org.jsoup.nodes.*"
 ${Scenario::set("mapped", request)}
 #set(subEntityModel = DeveloperModel::getModelEntity(subJoEntity))
 \#set(entities = entity.${subField.getName()})
-<div class="cl pd-5 bg-1 bk-gray mt-20">
+<div class="ab_param_grp">
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
     <span class="l ab__mt5">
         \#if(AuthServiceUtils::insertPermission("${subJoEntity.getEntityName()}", USER))
         <button type="button" class="btn btn-primary radius mb-5"
-                data-url="\${ADMIN_ROUTE}entity/edit/${subJoEntity.getEntityName()}?${subField.getMappedBy()}=\${EntityStatics::getPrimary(entity, '${entityModel.getPrimary().getName()}')}"
-                data-toggle="dialog" data-icon="plus">
+                onclick="ab_openHref('\${ADMIN_ROUTE}entity/edit/${subJoEntity.getEntityName()}?${subField.getMappedBy()}=\${EntityStatics::getPrimary(entity, '${entityModel.getPrimary().getName()}')}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('添加')}')">
             <i class="Hui-iconfont">&#xe600;</i>${Pag::getLang("添加")}
         </button>
         \#end
         \#if(AuthServiceUtils::updatePermission("${subJoEntity.getEntityName()}", USER))
-        <button type="button" class="btn btn-secondary radius mb-5"
-                data-url="\${ADMIN_ROUTE}entity/edit/${subJoEntity.getEntityName()}/{#bjui-selected}"
-                data-warn="${Pag::getLang('请选择一条记录！')}" data-toggle="dialog" data-id="${entityName}_edit"
-                data-icon="edit" data-unit-box="true">
+        <button type="button" class="btn btn-secondary radius mb-5" ab_toggle="click"
+                ab_click="ab_openHref('\${ADMIN_ROUTE}entity/edit/${subJoEntity.getEntityName()}/$P{.ab_sel_select}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('编辑')}')">
             <i class="Hui-iconfont">&#xe647;</i>${Pag::getLang("编辑")}
         </button>
         \#end
         \#if(AuthServiceUtils::deletePermission("${subJoEntity.getEntityName()}", USER))
         <button type="button" class="btn btn-danger radius mb-5"
-                data-url="\${ADMIN_ROUTE}entity/delete/${subJoEntity.getEntityName()}" data-toggle="doajaxchecked"
-                data-confirm-msg="${Pag::getLang('确定要删除选中项吗？')}" data-icon="remove"
-                data-idname="ids" data-group="ids">
+                ab_toggle="click" ab_confirm="${Pag::getLang('批量删除记录?')}"
+                ab_click="ab_ajax('\${ADMIN_ROUTE}entity/deleteJson/${subJoEntity.getEntityName()}?ids=$P{$[name='@ids']:checked}&@mapped=1', ab_groupTrigger('.ab_refresh', $(this)))">
             <i class="Hui-iconfont">&#xe6e2;</i>${Pag::getLang("删除选中行")}
         </button>
         \#end
-        <button type="button" class="btn btn-default radius mb-5"
-                data-url="\${ADMIN_ROUTE}entity/mapped/${entityName}/${id}/${subField.getName()}" data-toggle="ajaxload"
-                data-target=".ab_mapped_load" data-icon="refresh">
+        <button type="button" class="btn btn-default radius mb-5 ab_refresh" ab_toggle="click"
+                ab_click="ab_ajaxLoad(ab_group($(this), 'ab_mapped_load'), '\${ADMIN_ROUTE}entity/mapped/${entityName}/${id}/${subField.getName()}')">
             <i class="Hui-iconfont">&#xe68f;</i>${Pag::getLang("刷新")}
         </button>
     </span>
     <span class="r">
     </span>
-</div>
-\#set(entities = entity.${subField.name})
-<table class="table table-bordered table-hover table-striped table-top">
-    ${request.setAttribute("fieldNotOrder", true)}
+    </div>
+    \#set(entities = entity.${subField.name})
+    <table class="table table-bordered table-hover table-striped table-top">
+        ${request.setAttribute("fieldNotOrder", true)}
     #set(entityModel = subEntityModel)
     #include("table.jetx")
-</table>
+    </table>
+</div>
 ${Scenario::pop(request).voidValue()}

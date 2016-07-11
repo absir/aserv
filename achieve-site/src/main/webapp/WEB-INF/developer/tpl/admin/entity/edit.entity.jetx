@@ -26,21 +26,21 @@
         <div class="row cl">
             <div class="ml-10 mr-10 ab__mt5">
                 <button type="reset" class="btn btn-default radius mb-5">
-                    ${Pag::getLang("取消")}
+                    ${Pag::getLang("重置")}
                 </button>
                 <button type="submit" class="btn btn-primary radius mb-5">
                     <i class="Hui-iconfont">&#xe632;</i>${Pag::getLang("保存")}
                 </button>
                 \#if(insert)
                 <button type="button" class="btn btn-secondary radius mb-5"
-                        onclick="ab_openHref('\${ADMIN_ROUTE}entity/edit/\${entityName}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('添加')}')">
+                        onclick="ab_openHref('\${ADMIN_ROUTE}entity/edit/${entityName}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('添加')}')">
                     <i class="Hui-iconfont">&#xe600;</i>${Pag::getLang("新建")}
                 </button>
                 \#end
                 \#if(id)
                 <button type="button" class="btn btn-success radius mb-5"
                         ab_toggle="click" ab_confirm="${Pag::getLang('导出记录?')}"
-                        ab_click="ab_open('\${ADMIN_ROUTE}entity/exportId/\${entityName}?id=\${id}')">
+                        ab_click="ab_open('\${ADMIN_ROUTE}entity/exportId/${entityName}?id=\${id}')">
                     <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang("导出")}
                 </button>
                 \#end

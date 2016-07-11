@@ -13,44 +13,74 @@
     </a>
 </nav>
 
-<form class="ab_pageForm" action="\${ADMIN_ROUTE}entity/list/\${entityName}" method="get">
-    <input type="hidden" name="pageIndex" value="\${page.pageIndex}"/>
-    <input type="hidden" name="pageSize" value="\${page.pageSize}"/>
-    <input type="hidden" name="orderField" value="\${orderField}"/>
-    <input type="hidden" name="orderDirection" value="\${orderDirection}"/>
-</form>
+\${EntityStatics::searchConditionMap(INPUT)}
+<div class="text-c mt-20">
+    <form class="ab_pageForm ab__mt5" action="\${ADMIN_ROUTE}entity/list/${entityName}" method="get">
+        <input type="hidden" name="pageIndex" value="\${page.pageIndex}"/>
+        <input type="hidden" name="pageSize" value="\${page.pageSize}"/>
+        <input type="hidden" name="orderField" value="\${orderField}"/>
+        <input type="hidden" name="orderDirection" value="\${orderDirection}"/>
+
+        <span class="mb-5">${Pag::getLang('模糊搜索')}：</span>
+        <input type="text" name="!suggest" class="input-text ab_search_input mb-5"
+               value="\${searchConditionMap['!suggest'] ?! ''}">
+        <button class="btn btn-primary mb-5" type="button" data-toggle="dropdown" href="#searchMore">
+            <i class="Hui-iconfont">&#xe715;</i>${Pag::getLang('详细')}
+        </button>
+        <button class="btn btn-success mb-5" type="submit">
+            <i class="Hui-iconfont">&#xe665;</i>${Pag::getLang('搜索')}
+        </button>
+        <div id="searchMore" class="dropDown ab_search_more" ab_toggle="stop">
+            <div class="page-container form">
+                ${Pag::includeGen("search/" + entityName + ".jetx", "search.jetx")}
+                \#include("../search/" + entityName + ".jetx")
+                <div class="row cl">
+                    <div class="ml-10 mr-10 ab__mt5">
+                        <button type="reset" class="btn btn-default radius mb-5">
+                            ${Pag::getLang("重置")}
+                        </button>
+                        <button type="button" onclick="$('#searchMore').clearForm()"
+                                class="btn btn-danger radius mb-5">
+                            ${Pag::getLang("清空")}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
 <div class="cl pd-5 bg-1 bk-gray mt-20">
     <span class="l ab__mt5">
         \#if(insert)
         <a href="javascript:;"
-           onclick="ab_openHref('\${ADMIN_ROUTE}entity/edit/\${entityName}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('添加')}')"
+           onclick="ab_openHref('\${ADMIN_ROUTE}entity/edit/${entityName}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('添加')}')"
            class="btn btn-primary radius mb-5">
             <i class="Hui-iconfont">&#xe600;</i>${Pag::getLang('添加')}
         </a>
         \#end
         \#if(update)
         <a href="javascript:;" ab_toggle="click"
-           ab_click="ab_openHref('\${ADMIN_ROUTE}entity/edit/\${entityName}/$P{.ab_sel_select}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('编辑')}')"
+           ab_click="ab_openHref('\${ADMIN_ROUTE}entity/edit/${entityName}/$P{.ab_sel_select}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('编辑')}')"
            class="btn btn-secondary radius mb-5">
             <i class="Hui-iconfont">&#xe647;</i>${Pag::getLang('编辑')}
         </a>
         \#end
         \#if(delete)
         <a href="javascript:;" ab_toggle="click" ab_confirm="${Pag::getLang('批量删除记录?')}"
-           ab_click="ab_ajax('\${ADMIN_ROUTE}entity/deleteJson/\${entityName}?ids=$P{$[name='ids']:checked}')"
+           ab_click="ab_ajax('\${ADMIN_ROUTE}entity/deleteJson/${entityName}?ids=$P{$[name='@ids']:checked}')"
            class="btn btn-danger radius mb-5">
             <i class="Hui-iconfont">&#xe6e2;</i>${Pag::getLang('批量删除')}
         </a>
         \#end
         <span class="">
             <a href="javascript:;" ab_toggle="click" ab_confirm="${Pag::getLang('导出全部记录?')}"
-               ab_click="ab_open('\${ADMIN_ROUTE}entity/export/\${entityName}')"
+               ab_click="ab_open('\${ADMIN_ROUTE}entity/export/${entityName}')"
                class="btn btn-success radius mb-5">
                 <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang('导出全部')}
             </a>
             <a href="javascript:;" ab_toggle="click" ab_confirm="${Pag::getLang('导出选中记录?')}"
-               ab_click="ab_open('\${ADMIN_ROUTE}entity/exportJson/\${entityName}?ids=$P{$[name='ids']:checked}')"
+               ab_click="ab_open('\${ADMIN_ROUTE}entity/exportJson/${entityName}?ids=$P{$[name='@ids']:checked}')"
                class="btn btn-success radius mb-5">
                 <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang('导出选中')}
             </a>
@@ -59,9 +89,10 @@
                class="btn btn-success radius mb-5">
                 <i class="Hui-iconfont">&#xe645;</i>${Pag::getLang('批量导入')}
             </a>
-            <div id="importXls" class="modal hide fade" role="dialog">
+            <div id="importXls" class="modal hide fade" role="dialog"
+                 ab_toggle="resize" resize="data-width" minSize="500">
                 <div class="page-container">
-                    <form ab_toggle="form" ab_validate="true" action="\${ADMIN_ROUTE}entity/importXls/\${entityName}"
+                    <form ab_toggle="form" ab_validate="true" action="\${ADMIN_ROUTE}entity/importXls/${entityName}"
                           enctype="multipart/form-data" method="post">
                         <div class="row cl">
                             <label class="form-label col-xs-4 col-sm-3">${Pag::getLang('导入')}：</label>

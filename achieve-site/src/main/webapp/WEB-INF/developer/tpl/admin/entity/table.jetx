@@ -5,7 +5,7 @@ import = "org.jsoup.nodes.*"
 ${Scenario::set("list", request)}
 <thead>
 <tr>
-    <th width="26"><input type="checkbox"></th>
+    <th width="26"><input type="checkbox" ab_toggle="checkAll" target="@ids"></th>
     #tag script()
     #set(element = document.appendElement("tr"))
     #for(field : entityModel.getGroupFields("list"))
@@ -40,7 +40,7 @@ ${Scenario::set("list", request)}
 \#for(entity : entities)
 \#set(id=EntityStatics::getPrimary(entity, "${entityModel.getPrimary().getName()}"))
 <tr value="\${id}" ab_toggle="sel">
-    <td><input type="checkbox" name="ids" value="\${id}"></td>
+    <td><input type="checkbox" name="@ids" value="\${id}"></td>
     #tag script()
     #set(element = document.appendElement("tr"))
     #for(field : entityModel.getGroupFields("list"))

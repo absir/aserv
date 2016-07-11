@@ -21,9 +21,21 @@ function ab_groupSel($group, sel) {
     return $group && $group.length > 0 ? $(sel, $group) : $(sel);
 }
 
-function ab_getParam(sel, node, json) {
+function ab_groupParam(sel, node) {
     $this = $(node ? node : this);
     $group = ab_group($this, 'ab_param_grp');
+    return ab_groupSel($group, sel);
+}
+
+function ab_groupTrigger(sel, node, trigger) {
+    var target = ab_groupParam(sel, node);
+    trigger = trigger || 'click';
+    return function () {
+        target.trigger(trigger);
+    }
+}
+
+function ab_getParam(sel, node, json) {
     if (!json) {
         if (sel[0] === '$') {
             json = true;
@@ -31,7 +43,7 @@ function ab_getParam(sel, node, json) {
         }
     }
 
-    $param = ab_groupSel($group, sel);
+    $param = ab_groupParam(sel, node);
     var len = $param.length;
     var vals;
 
@@ -113,9 +125,12 @@ function ab_isHasFrame() {
     return iframe && iframe.length > 0;
 }
 
-function ab_ajax(url, callback) {
+function ab_ajax(url, callback, complete) {
     var opts = url.constructor == Object ? url : {"url": url};
-    opts.success = callback || ab_ajaxCallback;
+    callback = callback || ab_ajaxCallback;
+    opts.success = complete ? function (data) {
+        callback(data), complete(data)
+    } : callback;
     opts.error = function () {
         layer.alert("请求失败", {icon: 3});
     }
@@ -147,7 +162,7 @@ function ab_ajaxCallback(json, $form) {
             $form.validate().showErrors(data.errors);
         }
 
-        var icon = data.code;
+        var icon = data.icon;
         var message = data.message;
         if (!message) {
             switch (icon) {
@@ -237,4 +252,14 @@ function ab_submitOption(option, node) {
             $option.val('');
         }
     }
+}
+
+function ab_init(ui) {
+
+}
+
+function ab_ajaxLoad($node, url) {
+    ab_ajax(url, function (html) {
+        ab_init($node.html(html));
+    });
 }

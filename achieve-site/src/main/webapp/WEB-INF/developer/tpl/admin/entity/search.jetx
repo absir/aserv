@@ -7,20 +7,23 @@ ${Scenario::set("search", request)}
 ##<!--table header
 #set(element = document.appendElement("tr"))
 #for(field : entityModel.getGroupFields("search"))
-    ##显示搜索内容
-    #if(entityModel.getPrimary() != field)
-        #set(identifier = 'name="' + field.getName() + '"')
-        #if(!generator.append(identifier, element))
-            #tag layout_block("node")
-            <p class="p_group_flow">
-                <label>${Pag::getLangName(field.getCaption())}:</label>
-                <input ${identifier} type="text" size="10" value="\${searchConditionMap['${field.getName()}']}" />
-            </p>
-            #end
-            #set(nodes = ScriptNode::append(element, node))
-            ${DeveloperUtils::includeExist("search", field.getTypes(), request)}
-        #end
+##显示搜索内容
+#if(entityModel.getPrimary() != field)
+    #set(identifier = 'name="' + field.getName() + '"')
+    #if(!generator.append(identifier, element))
+    #tag layout_block("node")
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-4">${Pag::getLangName(field.getCaption())}:</label>
+        <div class="formControls col-xs-8 col-sm-8">
+            <input ${identifier} type="text" type="text" class="input-text"
+                                 value="\${searchConditionMap['${field.getName()}']}"/>
+        </div>
+    </div>
     #end
+    #set(nodes = ScriptNode::append(element, node))
+    ${DeveloperUtils::includeExist("search", field.getTypes(), request)}
+#end
+#end
 #end
 ${DeveloperUtils::includeExist("search", entityModel.getJoEntity().getEntityName(), request)}
 #tag scriptEcho()

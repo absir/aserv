@@ -327,6 +327,11 @@ public class Admin_entity extends AdminServer {
         }
 
         JLog.logs(logs);
+        String _mapped = input.getParam("@mapped");
+        if (!KernelString.isEmpty(_mapped)) {
+            input.getModel().put("_mapped", _mapped);
+        }
+
         return "admin/entity/delete";
     }
 
