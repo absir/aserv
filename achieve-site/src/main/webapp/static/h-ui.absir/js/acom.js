@@ -101,6 +101,15 @@ function ab_open(href) {
     window.open(href);
 }
 
+function ab_goBack() {
+    if (ab_isHasFrame()) {
+        removeIframe();
+
+    } else {
+        window.close();
+    }
+}
+
 function ab_openHref(href, title) {
     if (ab_isHasFrame()) {
         creatIframe(href, title);
