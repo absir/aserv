@@ -222,7 +222,7 @@ public class BinderData extends DynaBinder {
             property.getAccessor().set(toObject, value);
 
         } catch (Throwable e) {
-            addPropertyError("Fail to convert", value);
+            addPropertyError("Fail Bind Value", value);
             return;
         }
 

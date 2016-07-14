@@ -57,10 +57,8 @@
                     </button>
                 #end
             #end
-
             </div>
         </div>
-</div>
-</form>
+    </form>
 </div>
 #end

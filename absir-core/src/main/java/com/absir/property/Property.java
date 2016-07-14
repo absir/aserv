@@ -132,7 +132,7 @@ public class Property {
     }
 
     public boolean allow(int group) {
-        return group == 0 || ((exclude & group) == 0 && (include == 0 || (include & group) != 0));
+        return group == 0 || ((exclude & group) == 0 && (include & group) != 0);
     }
 
     public String getBeanName() {

@@ -12,12 +12,14 @@ import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.binder.BinderData;
-import com.absir.binder.BinderResult;
 import com.absir.server.in.InMethod;
 import com.absir.server.in.Input;
 import com.absir.server.value.Mapping;
 import com.absir.server.value.Param;
 import com.absir.server.value.Server;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Server
 public class admin_user extends AdminServer {
@@ -45,12 +47,11 @@ public class admin_user extends AdminServer {
             return "admin/failed.ajax";
         }
 
-        user.setPassword(newPassword);
+        Map<String, String> map = new HashMap<String, String>();
         BinderData binderData = new BinderData();
-        BinderResult binderResult = binderData.getBinderResult();
-        //todo repassword validator password
-        //BinderUtils.getValidator().validate(user, bindingResult);
-        if (binderResult.contain("password")) {
+        binderData.getBinderResult().setValidation(true);
+        binderData.mapBind(map, user);
+        if (binderData.getBinderResult().contain("password")) {
             return "admin/failed.ajax";
         }
 

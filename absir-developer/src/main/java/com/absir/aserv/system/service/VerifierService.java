@@ -57,11 +57,6 @@ public class VerifierService {
 
     /**
      * 添加验证
-     *
-     * @param dist
-     * @param tag
-     * @param value
-     * @param lifeTime
      */
     public void persistVerifier(Object dist, String tag, String value, long lifeTime) {
         String id = randVerifierId(dist);
@@ -73,11 +68,17 @@ public class VerifierService {
         BeanService.ME.persist(verifier);
     }
 
+    public void mergeVerifier(String id, String tag, String value, long lifeTime) {
+        JVerifier verifier = new JVerifier();
+        verifier.setId(id);
+        verifier.setTag(tag);
+        verifier.setValue(value);
+        verifier.setPassTime(ContextUtils.getContextTime() + lifeTime);
+        BeanService.ME.merge(verifier);
+    }
+
     /**
      * 查找验证
-     *
-     * @param id
-     * @return
      */
     @Transaction(readOnly = true)
     public JVerifier findVerifier(String id, String tag) {

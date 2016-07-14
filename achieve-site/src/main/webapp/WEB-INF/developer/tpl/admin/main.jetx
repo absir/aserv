@@ -12,7 +12,9 @@
                             class="Hui-iconfont">
                         &#xe6d5;</i></a>
                         <ul class="dropDown-menu menu radius box-shadow">
-                            <li><a href="\${ADMIN_ROUTE}user/password">${Pag::getLang("修改密码")}</a></li>
+                            <li><a ab_toggle="open" _href="\${ADMIN_ROUTE}user/password" title="${Pag::getLang('修改密码')}"
+                                   href="javascript:void(0)">${Pag::getLang("修改密码")}
+                            </a></li>
                             <li><a href="\${ADMIN_ROUTE}login/out">${Pag::getLang("注销登陆")}</a></li>
                         </ul>
                     </li>

@@ -1,0 +1,45 @@
+\#set(page_title = APP_NAME + "${Pag::getLang("通行证登录")}")
+\#tag layout("/WEB-INF/tpl/layout/hui.jetx")
+<nav class="breadcrumb text-c">
+    <span class="c-gray en">
+        <span class="logo">\${APP_NAME + ${Pag::getLang("通行证登录", false)}}</span>
+    </span>
+</nav>
+<div class="container-fluid">
+    <form ab_toggle="form" ab_validate="true"
+          action="/admin/entity/save/JLog"
+          enctype="application/x-www-form-urlencoded"
+          class="form form-horizontal" method="post">
+        <div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2">纪录编号:</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <input name="id" type="text" class="input-text" readonly="readonly" value=""/>
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-2">名称:</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                    <input name="name" type="text" class="input-text" value=""/>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="ml-10 mr-10 ab__mt5 text-c">
+                <button type="submit" class="btn btn-primary radius mb-5">
+                    ${Pag::getLang("登录")}
+                </button>
+                <a class="btn btn-secondary-outline radius size-S mb-5" href="\${SITE_ROUTE}user/register">
+                    ${Pag::getLang("注册")}
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+\#end
+
+<script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery/jquery.form.min.js"></script>
+<script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+<script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery.validation/1.14.0/messages_zh.min.js"></script>
+<script type="text/javascript" src="\${SITE_STATIC}/h-ui.absir/js/acom.js"></script>
+<script type="text/javascript" src="\${SITE_STATIC}/h-ui.absir/js/aui.js"></script>

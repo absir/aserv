@@ -147,6 +147,11 @@ function ab_ajax(url, callback, complete) {
     $.ajax(opts);
 }
 
+var ab_lang_map = {};
+ab_lang_map.option_success = "操作成功";
+ab_lang_map.option_fail = "操作失败";
+ab_lang_map.option_uncomplete = "操作未完成";
+
 function ab_ajaxCallback(json, $form) {
     try {
         var data = $.evalJSON(json);
@@ -176,13 +181,13 @@ function ab_ajaxCallback(json, $form) {
         if (!message) {
             switch (icon) {
                 case 0:
-                    message = "操作成功";
+                    message = ab_lang_map.option_success;
                     break;
                 case 2:
-                    message = "操作失败";
+                    message = ab_lang_map.option_fail;
                     break;
                 default:
-                    message = "操作未完成";
+                    message = ab_lang_map.option_uncomplete;
                     break;
             }
         }
@@ -190,10 +195,8 @@ function ab_ajaxCallback(json, $form) {
         layer.alert(message, {icon: icon});
 
     }
-    catch
-        (e) {
+    catch (e) {
         layer.alert("Parse Json Error", {icon: 2});
-        //throw e;
     }
 }
 

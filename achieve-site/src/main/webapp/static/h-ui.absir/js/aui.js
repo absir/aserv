@@ -59,6 +59,8 @@ $(function () {
 
     var abToggle = {};
     $.fn.ab_toggle = abToggle;
+    var abValidator = {};
+    $.fn.ab_validator = abValidator;
     $.fn.ab_toggle_fun = function (ui) {
         (ui ? $("[ab_toggle]", $(ui)) : $("[ab_toggle]")).each(function () {
             var $this = $(this);
@@ -247,6 +249,37 @@ $(function () {
         }
     }
 
+    abToggle['validator'] = function ($this, submitHandler) {
+        var opt = {success: "valid"};
+        if (submitHandler) {
+            opt.submitHandler = submitHandler;
+        }
+
+        $inputs = $('[ab_validate]', $this);
+        if ($inputs && $inputs.length > 0) {
+            var rules = {};
+            var messages = {};
+            $('[ab_validate]', $this).each(function () {
+                var $input = $(this);
+                var validate = abValidator[$input.validate('ab_validate')];
+                if (validate) {
+                    var name = $input.attr('name');
+                    if (name) {
+                        validate($input, name, rules, messages);
+                    }
+                }
+            });
+
+            if (!$.isEmptyObject(rules)) {
+                opt.rules = rules;
+                opt.messages = messages;
+            }
+        }
+
+
+        $this.validate(opt);
+    };
+
     abToggle['form'] = function ($this) {
         function submitHandler() {
             if ($this.attr('ab_ajax')) {
@@ -356,11 +389,19 @@ $(function () {
                 $param.prop('checked', $this.prop('checked'));
             });
         }
-    }
+    };
 
     abToggle['stop'] = function ($this) {
         $this.click(function (e) {
             e.stopPropagation();
+        });
+    };
+
+    abToggle['open'] = function ($this) {
+        var href = $this.attr('_href');
+        var title = $this.attr('title');
+        $this.click(function (e) {
+            ab_openHref(href, title);
         });
     }
 });
