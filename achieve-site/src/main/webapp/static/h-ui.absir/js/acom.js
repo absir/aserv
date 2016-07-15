@@ -202,6 +202,7 @@ function ab_ajaxCallback(json, $form) {
 
 function ab_ajaxSubmit($form, callback) {
     $form.ajaxSubmit({
+        //iframe: true,
         success: function (data) {
             (callback || ab_ajaxCallback)(data, $form);
         },
@@ -254,10 +255,22 @@ function ab_submit($form, att, value, attrs) {
     }
 }
 
+function ab_submitAttrs(attrs, node) {
+    var $form = $(node ? node : this).parents('form');
+    if ($form && $form.length > 0) {
+        ab_submit($form, null, null, attrs);
+    }
+}
+
 function ab_submitOption(option, node) {
     var $form = $(node ? node : this).parents('form');
     if ($form && $form.length > 0) {
         var $option = $("[name='!submitOption']", $form);
+        if (!$option || $option.length == 0) {
+            $option = $('<input name="!submitOption" type="hidden"/>');
+            $form.append($option);
+        }
+
         if ($option && $option.length > 0) {
             $option.val(option);
             $form.submit();

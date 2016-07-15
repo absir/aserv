@@ -10,6 +10,7 @@ package com.absir.aserv.configure.xls;
 import com.absir.aserv.crud.CrudSupply;
 import com.absir.aserv.jdbc.JdbcCondition;
 import com.absir.aserv.menu.value.MaSupply;
+import com.absir.aserv.system.bean.value.JaCrud;
 import com.absir.bean.basis.Basis;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
@@ -26,6 +27,11 @@ import java.util.Collection;
 public class XlsCrudSupply extends CrudSupply<XlsBase> {
 
     public static final XlsCrudSupply ME = BeanFactoryUtils.get(XlsCrudSupply.class);
+
+    @Override
+    public boolean support(JaCrud.Crud crud) {
+        return true;
+    }
 
     @Override
     public String getIdentifierName(String entityName) {

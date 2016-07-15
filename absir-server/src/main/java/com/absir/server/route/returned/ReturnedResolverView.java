@@ -43,7 +43,11 @@ public class ReturnedResolverView implements ReturnedResolver<String> {
     public void resolveReturnedValue(Object returnValue, String returned, OnPut onPut) throws Exception {
         if (returnValue != null) {
             if (returnValue instanceof String) {
-                resolveReturnedView((String) returnValue, onPut);
+                String view = (String) returnValue;
+                if (view.length() > 0) {
+                    resolveReturnedView(view, onPut);
+                }
+
                 return;
             }
         }

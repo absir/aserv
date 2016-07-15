@@ -149,7 +149,7 @@ public class Admin_entity extends AdminServer {
 
         model.put("insert", AuthServiceUtils.insertPermission(crudSupply, entityName, user));
         model.put("delete", AuthServiceUtils.deletePermission(crudSupply, entityName, user));
-        model.put("create", id == null && crudSupply.support(Crud.CREATE));
+        model.put("create", id == null && crudSupply.support(Crud.COMPLETE));
         JoEntity joEntity = (JoEntity) input.getAttribute("joEntity");
         model.put("multipart", CrudContextUtils.isMultipart(joEntity));
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
@@ -215,14 +215,14 @@ public class Admin_entity extends AdminServer {
         }
     }
 
-    public String save(String entityName, Input input) {
+    public String save(String entityName, Input input) throws IOException {
         return save(entityName, null, input);
     }
 
     /**
      * 保存实体
      */
-    public String save(String entityName, Object id, Input input) {
+    public String save(String entityName, Object id, Input input) throws IOException {
         ICrudSupply crudSupply = getCrudSupply(entityName, input);
         if (!crudSupply.support(id == null ? Crud.CREATE : Crud.UPDATE)) {
             throw new ServerException(ServerStatus.IN_404);
@@ -279,12 +279,14 @@ public class Admin_entity extends AdminServer {
         }
 
         String submitOption = input.getParam("!submitOption");
-        if (!KernelString.isEmpty(submitOption) && entity instanceof ICrudSubmit) {
-            ICrudSubmit submit = (ICrudSubmit<?>) entity;
-            Enum<?> option = (Enum<?>) binderData.bind(submitOption, null, submit.classForOption());
-            if (option != null) {
-                String tpl = submit.submitOption(option, model);
-                return KernelString.isEmpty(tpl) ? "admin/entity/save.option" : tpl;
+        if (!KernelString.isEmpty(submitOption)) {
+            if (entity instanceof ICrudSubmit) {
+                ICrudSubmit submit = (ICrudSubmit<?>) entity;
+                Enum<?> option = (Enum<?>) binderData.bind(submitOption, null, submit.classForOption());
+                if (option != null) {
+                    String tpl = submit.submitOption(option, model);
+                    return KernelString.isEmpty(tpl) ? "admin/entity/save.option" : tpl;
+                }
             }
         }
 
@@ -391,9 +393,22 @@ public class Admin_entity extends AdminServer {
     }
 
     @Body
-    public void exportId(String entityName, @Param String id, Input input, HttpServletResponse response)
+    public void exportId(String entityName, @Nullable @Param String id, Input input, HttpServletResponse response)
             throws IOException {
-        export(entityName, new String[]{id}, input, response);
+        ICrudSupply crudSupply = getCrudSupply(entityName, input);
+        if (id == null && crudSupply.support(Crud.COMPLETE)) {
+            throw new ServerException(ServerStatus.IN_404);
+        }
+
+        JiUserBase user = SecurityService.ME.getUserBase(input);
+        PropertyFilter filter = AuthServiceUtils.selectPropertyFilter(entityName, crudSupply, user);
+        TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
+        Object entity = edit(entityName, id, crudSupply, user);
+        List<Object> entities = new ArrayList<Object>();
+        entities.add(entity);
+        HSSFWorkbook workbook = XlsUtils.getWorkbook(entities, XlsUtils.XLS_BASE);
+        response.addHeader("Content-Disposition", "attachment;filename=" + entityName + (id == null ? "" : ("." + id)) + ".xls");
+        workbook.write(response.getOutputStream());
     }
 
     @Body

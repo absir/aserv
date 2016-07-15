@@ -44,12 +44,18 @@
                 \#if(!create)
                 <button type="button" class="btn btn-success radius mb-5"
                         ab_toggle="click" ab_confirm="${Pag::getLang('导出记录?')}"
-                        ab_click="ab_open('\${ADMIN_ROUTE}entity/exportId/${entityName}?id=\${id}')">
+                        ab_click="ab_open('\${ADMIN_ROUTE}entity/exportId/${entityName}\${id ? ('?id=' + id) : ''}')">
                     <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang("导出")}
                 </button>
                 \#end
+                \#if(create || (!create && update))
+                \#set(importXls = 1)
+                <a data-toggle="modal" href="#importXls"
+                   class="btn btn-success radius mb-5">
+                    <i class="Hui-iconfont">&#xe645;</i>${Pag::getLang('导入记录')}
+                </a>
+                \#end
                 #if(entityModel.getSubmitOptionMap() != null)
-                    <input name="!submitOption" type="hidden"/>
                     #for(options : entityModel.getSubmitOptionMap())
                     <button type="button" class="btn btn-default radius mb-5"
                             onclick="ab_submitOption('${options.key}', this)">
@@ -62,3 +68,32 @@
     </form>
 </div>
 #end
+\#if(importXls)
+<div id="importXls" class="modal hide fade" role="dialog"
+     ab_toggle="resize" resize="data-width" minSize="500">
+    <div class="page-container">
+        <form action="\${ADMIN_ROUTE}entity/edit/${entityName}${id ? ('/' + id) : ''}"
+              enctype="multipart/form-data" method="post">
+            <div class="row cl">
+                <label class="form-label col-xs-4 col-sm-3">${Pag::getLang('导入')}：</label>
+                <div class="formControls col-xs-8 col-sm-9">
+                                <span class="btn-upload form-group">
+				                    <input class="input-text upload-url required" type="text" style="width:200px"
+                                           readonly/>
+				                    <a href="javascript:void();" class="btn btn-primary radius upload-btn">
+                                        <i class="Hui-iconfont">&#xe642;</i>${Pag::getLang('浏览')}</a>
+				                    <input type="file" name="xls" class="input-file"/>
+				                </span>
+                </div>
+            </div>
+            <div class="row cl">
+                <div class="ml-10 mr-10 mt-20">
+                    <button type="submit" class="btn btn-primary radius mb-5">
+                        <i class="Hui-iconfont">&#xe632;</i>${Pag::getLang('提交')}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+\#end

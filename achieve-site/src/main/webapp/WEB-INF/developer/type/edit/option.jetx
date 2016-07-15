@@ -2,8 +2,20 @@
 import = "org.jsoup.nodes.*"
 )
 
+#tag layout_block("shtml")
+<input type="hidden" name="${input.attr('name')}" value="\${inputval ? 1 : 0}"}/>
+#end
+
 ${input.attr('type', 'checkbox')}
 ${input.removeClass('input-text')}
-${input.removeAttr('value')}
+${input.attr('value', '1')}
 ${input.addClass('ab_check')}
 ${ScriptNode::attr(input, "${" + inputval+ " ? 'checked' : 'u'}", '1')}
+
+${input.removeAttr('name')}
+${input.parent().appendChild(ScriptNode::node(shtml)).voidValue()}
+${input.attr('ab_toggle', 'check')}
+
+##${input.attr('ab_toggle', 'iCheck')}
+##${Pag::setNameTag(INPUT, 'footer', '<link rel="stylesheet" type="text/css" href="${SITE_STATIC}/../lib/icheck/icheck.css"/>')}
+##${Pag::setNameTag(INPUT, 'footer', '<script type="text/javascript" src="${SITE_STATIC}/../lib/icheck/jquery.icheck.min.js"></script>')}

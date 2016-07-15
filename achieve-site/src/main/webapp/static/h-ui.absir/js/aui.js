@@ -48,6 +48,10 @@ function ab_evalRequire(evalParams, noParam) {
 }
 
 $(function () {
+    $.fn.ab_eval = function (expr) {
+        eval(expr);
+    };
+
     var _ab_init_ = ab_init;
     ab_init = function (ui) {
         if (_ab_init_) {
@@ -108,18 +112,26 @@ $(function () {
             if (confirm) {
                 layer.confirm(confirm, function (index) {
                     layer.close(index);
-                    eval(require);
-
-                })
+                    $this.ab_eval(require);
+                });
 
             } else {
-                eval(require);
+                $this.ab_eval(require);
             }
         });
     };
 
+    abToggle['check'] = function ($this) {
+        $input = $('[type=hidden]', $this.parent());
+        if ($input && $input.length > 0) {
+            $this.change(function () {
+                $input.attr('value', $this.prop('checked') ? 1 : 0);
+            });
+        }
+    };
+
     if ($.fn.iCheck) {
-        abToggle[iCheck] = function ($this) {
+        abToggle['iCheck'] = function ($this) {
             var $div = $this.parent().append('<div class="check-box"></div>').children("div");
             $this.remove();
             $div.append($this);
