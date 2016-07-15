@@ -32,7 +32,6 @@ import com.absir.aserv.transaction.TransactionIntercepter;
 import com.absir.bean.basis.Base;
 import com.absir.binder.BinderData;
 import com.absir.binder.BinderResult;
-import com.absir.binder.BinderUtils;
 import com.absir.client.helper.HelperJson;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
 import com.absir.core.kernel.KernelObject;
@@ -154,6 +153,8 @@ public class Admin_entity extends AdminServer {
         model.put("multipart", CrudContextUtils.isMultipart(joEntity));
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
         Object entity = edit(entityName, id, crudSupply, user);
+        String identifierName = crudSupply.getIdentifierName(entityName);
+        Object identifier = KernelString.isEmpty(identifierName) ? null : crudSupply.getIdentifier(entityName, entity);
         if (xls != null) {
             if (!xls.getName().toLowerCase().endsWith(".xls")) {
                 model.put("xls", 1);
@@ -182,7 +183,12 @@ public class Admin_entity extends AdminServer {
         BinderResult binderResult = binderData.getBinderResult();
         binderResult.setValidation(true);
         binderResult.setPropertyFilter(filter);
-        binderData.mapBind(BinderUtils.getDataMap(input.getParamMap()), entity);
+        Map<String, Object> dataMap = ParameterResolverBinder.getPropertyMap(input);
+        if (!KernelString.isEmpty(identifierName)) {
+            dataMap.put(identifierName, identifier);
+        }
+
+        binderData.mapBind(dataMap, entity);
         CrudContextUtils.crud(Crud.CREATE, false, null, joEntity, entity, user, filter);
         model.put("entity", entity);
     }
@@ -242,6 +248,8 @@ public class Admin_entity extends AdminServer {
 
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_WRITE);
         Object entity = edit(entityName, id, crudSupply, user);
+        String identifierName = crudSupply.getIdentifierName(entityName);
+        Object identifier = KernelString.isEmpty(identifierName) ? null : crudSupply.getIdentifier(entityName, entity);
         if (id != null) {
             crudSupply.evict(entity);
         }
@@ -264,8 +272,8 @@ public class Admin_entity extends AdminServer {
 
         binderResult.setValidation(true);
         Map<String, Object> dataMap = ParameterResolverBinder.getPropertyMap(input);
-        if (!create) {
-            dataMap.remove(crudSupply.getIdentifierName(entityName));
+        if (!KernelString.isEmpty(identifierName)) {
+            dataMap.put(identifierName, identifier);
         }
 
         binderData.mapBind(dataMap, entity);
