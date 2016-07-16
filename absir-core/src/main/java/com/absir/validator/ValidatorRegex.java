@@ -8,14 +8,19 @@
 package com.absir.validator;
 
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.lang.ILangMessage;
+import com.absir.bean.lang.LangCodeUtils;
 import com.absir.property.PropertyResolverAbstract;
 import com.absir.validator.value.Regex;
 
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 @Bean
 public class ValidatorRegex extends PropertyResolverAbstract<ValidatorObject, Regex> {
+
+    public static final String REGEX = LangCodeUtils.get("请输入正确的格式", ValidatorRegex.class);
 
     public ValidatorObject getPropertyObjectPattern(ValidatorObject propertyObject, final String regex) {
         if (propertyObject == null) {
@@ -26,11 +31,11 @@ public class ValidatorRegex extends PropertyResolverAbstract<ValidatorObject, Re
         propertyObject.addValidator(new ValidatorValue() {
 
             @Override
-            public String validateValue(Object value) {
+            public String validateValue(Object value, ILangMessage langMessage) {
                 if (value != null && value instanceof CharSequence) {
                     CharSequence string = (CharSequence) value;
                     if (string.length() > 0 && !pattern.matcher((CharSequence) value).matches()) {
-                        return regex + " Regex";
+                        return langMessage == null ? (regex + " Regex") : MessageFormat.format(langMessage.getLangMessage(REGEX), regex);
                     }
                 }
 

@@ -181,6 +181,7 @@ public class Admin_entity extends AdminServer {
         }
 
         BinderData binderData = input.getBinderData();
+        binderData.setLangMessage(input);
         BinderResult binderResult = binderData.getBinderResult();
         binderResult.setValidation(true);
         binderResult.setPropertyFilter(filter);
@@ -259,6 +260,7 @@ public class Admin_entity extends AdminServer {
         Map<String, Object> crudRecord = create ? null : CrudUtils.crudRecord(new JoEntity(entityName, entity.getClass()), entity,
                 filter);
         BinderData binderData = input.getBinderData();
+        binderData.setLangMessage(input);
         BinderResult binderResult = binderData.getBinderResult();
         binderResult.setPropertyFilter(filter);
         String[] subtables = input.getParams("!subtables");

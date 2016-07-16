@@ -9,6 +9,8 @@ package com.absir.binder;
 
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
+import com.absir.bean.lang.ILangMessage;
+import com.absir.bean.lang.LangCodeUtils;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelLang.BreakException;
@@ -32,7 +34,17 @@ public class BinderData extends DynaBinder {
 
     protected static ValidatorSupply validatorSupply = BeanFactoryUtils.get(ValidatorSupply.class);
 
-    private BinderResult binderResult = new BinderResult();
+    protected ILangMessage langMessage;
+
+    protected BinderResult binderResult = new BinderResult();
+
+    public ILangMessage getLangMessage() {
+        return langMessage;
+    }
+
+    public void setLangMessage(ILangMessage langMessage) {
+        this.langMessage = langMessage;
+    }
 
     @Override
     public List<BinderConvert> getConverts() {
@@ -69,19 +81,23 @@ public class BinderData extends DynaBinder {
         return toObject;
     }
 
+    protected static final String FAIL_INSTANCE = LangCodeUtils.get("初始化失败", BinderData.class);
+
     @Override
     protected <T> T newInstance(Class<T> toClass) {
         T toObj = super.newInstance(toClass);
         if (toObj == null) {
-            addPropertyError("Fail to instance", toClass);
+            addPropertyError(langMessage == null ? "Fail to instance" : langMessage.getLangMessage(FAIL_INSTANCE), toClass);
         }
 
         return toObj;
     }
 
+    protected static final String FAIL_CONVERT = LangCodeUtils.get("转化类型失败", BinderData.class);
+
     @Override
     protected <T> T nullTo(Class<T> toClass, Object obj) {
-        addPropertyError("Fail to convert", obj);
+        addPropertyError(langMessage == null ? "Fail to convert" : langMessage.getLangMessage(FAIL_CONVERT), obj);
         return KernelDyna.nullTo(toClass);
     }
 
@@ -216,13 +232,15 @@ public class BinderData extends DynaBinder {
         }
     }
 
+    protected static final String FAIL_BINDER = LangCodeUtils.get("绑定值失败", BinderData.class);
+
     protected void bindValue(Object value, PropertyData propertyData, Property property, Object toObject) {
         value = binderSupply.bindValue(propertyData, value, null, this, property.getAccessor().get(toObject));
         try {
             property.getAccessor().set(toObject, value);
 
         } catch (Throwable e) {
-            addPropertyError("Fail Bind Value", value);
+            addPropertyError(langMessage == null ? "Fail Bind Value" : langMessage.getLangMessage(FAIL_BINDER), value);
             return;
         }
 
@@ -237,7 +255,7 @@ public class BinderData extends DynaBinder {
                 }
 
                 for (Validator validator : validators) {
-                    String errorMessage = validator.validate(value);
+                    String errorMessage = validator.validate(value, langMessage);
                     if (errorMessage != null) {
                         addPropertyError(errorMessage, value);
                         break;

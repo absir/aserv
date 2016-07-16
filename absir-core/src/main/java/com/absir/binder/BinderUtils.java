@@ -7,6 +7,7 @@
  */
 package com.absir.binder;
 
+import com.absir.bean.lang.ILangMessage;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelDyna;
@@ -227,7 +228,7 @@ public class BinderUtils {
         public Map<String, List<String>> pathMapKeys;
     }
 
-    public static void validate(BinderResult binderResult, Object bean, String... names) {
+    public static void validate(BinderResult binderResult, Object bean, ILangMessage langMessage, String... names) {
         ValidatorSupply validatorSupply = getValidatorSupply();
         PropertyHolder propertyHolder = PropertyUtils.getPropertyMap(bean.getClass(), validatorSupply);
         for (Entry<String, PropertyData> entry : propertyHolder.getNameMapPropertyData().entrySet()) {
@@ -244,7 +245,7 @@ public class BinderUtils {
                     }
 
                     for (Validator validator : validators) {
-                        String errorMessage = validator.validate(value);
+                        String errorMessage = validator.validate(value, langMessage);
                         if (errorMessage != null) {
                             PropertyError propertyError = new PropertyError();
                             propertyError.setPropertyPath(binderResult.getPropertyPath());

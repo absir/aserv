@@ -7,11 +7,13 @@
  */
 package com.absir.validator;
 
+import com.absir.bean.lang.ILangMessage;
+
 import java.util.Map;
 
 public interface Validator {
 
-    public String validate(Object value);
+    public String validate(Object value, ILangMessage langMessage);
 
     public String getValidateClass(Map<String, Object> validatorMap);
 

@@ -85,6 +85,7 @@ public class HelperLang {
         return getFieldCaption(valueTag[0], valueTag.length > 1 ? valueTag[1] : name, field.getName(), cls);
     }
 
+    //todo 理清楚 cls Jalang的关系
     public static String getFieldCaption(String lang, String tag, String field, Class<?> cls) {
         return getLangName(lang, tag, KernelString.capitalize(field));
     }

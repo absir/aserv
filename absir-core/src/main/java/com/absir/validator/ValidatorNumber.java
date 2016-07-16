@@ -10,28 +10,32 @@ package com.absir.validator;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.lang.ILangMessage;
 import com.absir.bean.lang.LangCodeUtils;
+import com.absir.core.kernel.KernelDyna;
 import com.absir.property.PropertyResolverAbstract;
-import com.absir.validator.value.NotEmpty;
+import com.absir.validator.value.Digits;
 
 import java.util.Map;
 
 @Bean
-public class ValidatorNotEmpty extends PropertyResolverAbstract<ValidatorObject, NotEmpty> {
+public class ValidatorNumber extends PropertyResolverAbstract<ValidatorObject, Digits> {
 
-    public static final String NOT_EMPTY = LangCodeUtils.get("这是必填字段", ValidatorNotEmpty.class);
+    public static final String NUMBER = LangCodeUtils.get("请输入合法的数字", ValidatorNumber.class);
 
     @Override
-    public ValidatorObject getPropertyObjectAnnotation(ValidatorObject propertyObject, NotEmpty annotation) {
+    public ValidatorObject getPropertyObjectAnnotation(ValidatorObject propertyObject, Digits annotation) {
         if (propertyObject == null) {
             propertyObject = new ValidatorObject();
         }
 
-        propertyObject.addValidator(new Validator() {
+        propertyObject.addValidator(new ValidatorValue() {
 
             @Override
-            public String validate(Object value, ILangMessage langMessage) {
-                if (value == null || "".equals(value)) {
-                    return langMessage == null ? "Required" : langMessage.getLangMessage(NOT_EMPTY);
+            public String validateValue(Object value, ILangMessage langMessage) {
+                if (value != null && value instanceof CharSequence) {
+                    CharSequence string = (CharSequence) value;
+                    if (string.length() > 0 && KernelDyna.to(value, Double.class) == null) {
+                        return langMessage == null ? "Number" : langMessage.getLangMessage(NUMBER);
+                    }
                 }
 
                 return null;
@@ -39,7 +43,7 @@ public class ValidatorNotEmpty extends PropertyResolverAbstract<ValidatorObject,
 
             @Override
             public String getValidateClass(Map<String, Object> validatorMap) {
-                return "required";
+                return "number";
             }
 
         });

@@ -64,8 +64,10 @@ public class ParameterResolverBinder implements ParameterResolver<Binder> {
     }
 
     public Object getParameterValue(OnPut onPut, String name, int group, boolean validation, Class<?> parameterType, String beanName, RouteMethod routeMethod) {
-        Map<String, Object> propertyMap = getPropertyMap(onPut.getInput());
+        Input input = onPut.getInput();
+        Map<String, Object> propertyMap = getPropertyMap(input);
         BinderData binderData = onPut.getBinderData();
+        binderData.setLangMessage(input);
         BinderResult binderResult = binderData.getBinderResult();
         binderResult.setGroup(group);
         binderResult.setValidation(validation);

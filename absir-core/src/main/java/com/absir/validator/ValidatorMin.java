@@ -8,14 +8,19 @@
 package com.absir.validator;
 
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.lang.ILangMessage;
+import com.absir.bean.lang.LangCodeUtils;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.property.PropertyResolverAbstract;
 import com.absir.validator.value.Min;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 @Bean
 public class ValidatorMin extends PropertyResolverAbstract<ValidatorObject, Min> {
+
+    public static final String MIN = LangCodeUtils.get("请输入不大于 {0} 的数值", ValidatorMin.class);
 
     public ValidatorObject getPropertyObjectMin(ValidatorObject propertyObject, final int min) {
         if (propertyObject == null) {
@@ -25,9 +30,9 @@ public class ValidatorMin extends PropertyResolverAbstract<ValidatorObject, Min>
         propertyObject.addValidator(new ValidatorValue() {
 
             @Override
-            public String validateValue(Object value) {
+            public String validateValue(Object value, ILangMessage langMessage) {
                 if (DynaBinder.to(value, int.class) < min) {
-                    return min + " Min";
+                    return langMessage == null ? (min + " Min") : MessageFormat.format(langMessage.getLangMessage(MIN), min);
                 }
 
                 return null;

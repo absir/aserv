@@ -8,14 +8,19 @@
 package com.absir.validator;
 
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.lang.ILangMessage;
+import com.absir.bean.lang.LangCodeUtils;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.property.PropertyResolverAbstract;
 import com.absir.validator.value.Range;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 @Bean
 public class ValidatorRange extends PropertyResolverAbstract<ValidatorObject, Range> {
+
+    public static final String RANGE = LangCodeUtils.get("请输入范围在 {0} 到 {1} 之间的数值", ValidatorRange.class);
 
     public ValidatorObject getPropertyObjectLength(ValidatorObject propertyObject, final float min, final float max) {
         if (propertyObject == null) {
@@ -25,10 +30,10 @@ public class ValidatorRange extends PropertyResolverAbstract<ValidatorObject, Ra
         propertyObject.addValidator(new ValidatorValue() {
 
             @Override
-            public String validateValue(Object value) {
+            public String validateValue(Object value, ILangMessage langMessage) {
                 float val = DynaBinder.to(value, float.class);
                 if (val < min || val > max) {
-                    return min + " - " + max + " Range";
+                    return langMessage == null ? (min + " - " + max + " Range") : MessageFormat.format(langMessage.getLangMessage(RANGE), min, max);
                 }
 
                 return null;

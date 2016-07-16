@@ -8,14 +8,19 @@
 package com.absir.validator;
 
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.lang.ILangMessage;
+import com.absir.bean.lang.LangCodeUtils;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.property.PropertyResolverAbstract;
 import com.absir.validator.value.Max;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 @Bean
 public class ValidatorMax extends PropertyResolverAbstract<ValidatorObject, Max> {
+
+    public static final String MAX = LangCodeUtils.get("请输入不大于 {0} 的数值", ValidatorMax.class);
 
     public ValidatorObject getPropertyObjectMax(ValidatorObject propertyObject, final int max) {
         if (propertyObject == null) {
@@ -25,9 +30,9 @@ public class ValidatorMax extends PropertyResolverAbstract<ValidatorObject, Max>
         propertyObject.addValidator(new ValidatorValue() {
 
             @Override
-            public String validateValue(Object value) {
+            public String validateValue(Object value, ILangMessage langMessage) {
                 if (DynaBinder.to(value, int.class) > max) {
-                    return max + " Max";
+                    return langMessage == null ? (max + " Max") : MessageFormat.format(langMessage.getLangMessage(MAX), max);
                 }
 
                 return null;

@@ -10,6 +10,7 @@ package com.absir.server.in;
 import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
+import com.absir.bean.lang.ILangMessage;
 import com.absir.binder.BinderData;
 import com.absir.context.core.Bean;
 import com.absir.context.core.ContextUtils;
@@ -36,7 +37,7 @@ import java.util.Map;
 
 @SuppressWarnings("rawtypes")
 @Inject
-public abstract class Input extends Bean<Serializable> implements IAttributes {
+public abstract class Input extends Bean<Serializable> implements IAttributes, ILangMessage {
 
     protected Map<Object, IAfterInvoker<Object>> afterInvoker;
 
@@ -132,12 +133,16 @@ public abstract class Input extends Bean<Serializable> implements IAttributes {
     }
 
     public String getLang(String lang) {
-        Locale locale = getLocale();
-        if (resourceBundle == null) {
-            resourceBundle = LangBundle.ME.getResourceBundle(locale);
+        if (LangBundle.isI18n()) {
+            Locale locale = getLocale();
+            if (resourceBundle == null) {
+                resourceBundle = LangBundle.ME.getResourceBundle(locale);
+            }
+
+            return LangBundle.ME.getLangResource(lang, resourceBundle, locale);
         }
 
-        return LangBundle.ME.getLangResource(lang, resourceBundle, locale);
+        return lang;
     }
 
     public String getLangValue(String lang) {
@@ -263,5 +268,10 @@ public abstract class Input extends Bean<Serializable> implements IAttributes {
 
     public ReturnedResolver<?> getReturnedResolver(OnPut onPut) {
         return ReturnedResolverView.ME;
+    }
+
+    @Override
+    public String getLangMessage(String langCode) {
+        return getLang(langCode);
     }
 }

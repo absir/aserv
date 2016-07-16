@@ -7,12 +7,14 @@
  */
 package com.absir.validator;
 
+import com.absir.bean.lang.ILangMessage;
+
 public abstract class ValidatorValue implements Validator {
 
     @Override
-    public final String validate(Object value) {
-        return value == null ? null : validateValue(value);
+    public final String validate(Object value, ILangMessage langMessage) {
+        return value == null ? null : validateValue(value, langMessage);
     }
 
-    public abstract String validateValue(Object value);
+    public abstract String validateValue(Object value, ILangMessage langMessage);
 }
