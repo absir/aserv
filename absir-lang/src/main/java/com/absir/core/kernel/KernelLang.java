@@ -476,7 +476,7 @@ public class KernelLang {
             this.group = group;
         }
 
-        public PropertyFilter inlcude(String property) {
+        public PropertyFilter include(String property) {
             if (includes == null) {
                 includes = new HashMap<String, Entry<String, IMatcherType>>();
 
@@ -494,7 +494,7 @@ public class KernelLang {
             }
         }
 
-        public PropertyFilter exlcude(String property) {
+        public PropertyFilter exclude(String property) {
             if (excludes == null) {
                 excludes = new HashMap<String, Entry<String, IMatcherType>>();
 

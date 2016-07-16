@@ -9,10 +9,6 @@ ${request.setAttribute('input', input)}
 ${request.setAttribute('inputval', val.substring(2, val.length() - 1))}
 
 #if(Scenario::get(request) != "search")
-    #if(field.getEditable() == JeEditable::LOCKED)
-        ${input.attr("readonly", "readonly")}
-    #end
-
     #if(!field.isNullable())
         ${input.addClass("required")}
     #end

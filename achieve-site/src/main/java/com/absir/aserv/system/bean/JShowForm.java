@@ -7,6 +7,7 @@ import com.absir.aserv.system.bean.base.JbBean;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JaSubField;
+import com.absir.aserv.system.bean.value.JeEditable;
 import com.absir.orm.value.JaClasses;
 import com.absir.server.in.InModel;
 import com.absir.validator.value.*;
@@ -38,6 +39,7 @@ public class JShowForm extends JbBean implements ICrudSubmit<JShowForm.DemoOpiti
     @JaLang("标识2")
     public int tag2;
 
+    @NotEmpty
     @Email
     @JaLang("邮箱")
     public String email;
@@ -60,7 +62,7 @@ public class JShowForm extends JbBean implements ICrudSubmit<JShowForm.DemoOpiti
     public long createTime;
 
     @JaLang("过期时间")
-    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
+    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKABLE)
     public long passTime;
 
     @JaLang("标示")

@@ -337,7 +337,7 @@ public class AuthService {
         for (Entry<String, JeVote> entry : fieldVotes.entrySet()) {
             JeVote jeVote = entry.getValue();
             if (jeVote == null || jeVote == JeVote.FORBID) {
-                propertyFilter.exlcude(entry.getKey());
+                propertyFilter.exclude(entry.getKey());
             }
         }
 

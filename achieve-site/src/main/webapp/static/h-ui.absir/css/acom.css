@@ -12,5 +12,6 @@
 .ab_search_input{width: 260px}
 .ab_search_more{width: 100%; display: none}
 .ab_search_more.open{display: block}
-.ab_nav_close{margin-left: 5px; margin-right: -20px;}
+.ab_nav_close{margin-left: 5px; margin-right: -20px}
+.ab_locked{background: #f6f6f6 !important}
 input.required{background: url("../images/required.png") right center no-repeat}

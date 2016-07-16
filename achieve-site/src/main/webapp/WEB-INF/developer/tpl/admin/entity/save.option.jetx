@@ -1,5 +1,5 @@
 {
 \${icon ? '"icon" : "' + icon + '",' : ''}
-\${message ? '"message" : "' + message + '",' : ''}
 \${url ? '"url" : "' + url + '",' : ''}
+"message": "\${message ?! ${Pag::getLang("操作成功", false)}}"
 }

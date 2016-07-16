@@ -1,0 +1,32 @@
+#options (
+import = "org.jsoup.nodes.*",
+import = "com.absir.aserv.system.bean.value.JeEditable"
+)
+
+#if(Scenario::get(request) != "search")
+    #set(readonly = input.tagName() == 'input')
+    #if(field.getEditable() == JeEditable::LOCKED || field.getEditable() == JeEditable::LOCKABLE )
+        #if(readonly)
+            ${input.attr("readonly", "1")}
+        #else
+            ${input.attr("disable", "1")}
+        #end
+
+        ${input.addClass("ab_locked")}
+
+    #else
+
+    #tag layout_block("shtml")
+    \#set(readonly = filter && !filter.isMatch('${inputname}'))
+    #end
+    ${input.before(ScriptNode::node(shtml)).voidValue()}
+
+    #if(readonly)
+        ${input.attr("${readonly ? 'readonly' : '' }", "1")}
+    #else
+        ${input.attr("${readonly ? 'disable' : '' }", "1")}
+    #end
+
+    ${input.addClass("${readonly ? 'ab_locked' : '' }")}
+#end
+#end

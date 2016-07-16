@@ -88,7 +88,7 @@ public class SocketSessionResolver implements ISessionResolver {
         if (includes != null && includes.length > 0) {
             filter = new PropertyFilter();
             for (String include : includes) {
-                filter.inlcude(include);
+                filter.include(include);
             }
         }
 
@@ -98,7 +98,7 @@ public class SocketSessionResolver implements ISessionResolver {
             }
 
             for (String exclude : excludes) {
-                filter.inlcude(exclude);
+                filter.include(exclude);
             }
         }
 

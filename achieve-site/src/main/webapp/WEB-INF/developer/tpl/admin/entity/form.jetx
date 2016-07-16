@@ -17,7 +17,7 @@ ${Scenario::set("edit", request)}
     <div class="row cl">
         <label class="form-label col-xs-4 col-sm-2">${Pag::getLangName(field.getCaption())}:</label>
         <div class="formControls col-xs-8 col-sm-9">
-            <input ${identifier} type="text" class="input-text" readonly="readonly"
+            <input ${identifier} type="text" class="input-text ab_locked" readonly="1"
                                  value="\${entity.${field.getName()}}"/>
         </div>
     </div>

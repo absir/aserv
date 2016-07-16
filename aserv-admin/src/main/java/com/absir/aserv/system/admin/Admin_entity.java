@@ -142,10 +142,11 @@ public class Admin_entity extends AdminServer {
             }
 
             filter = new PropertyFilter();
-            filter.exlcude("*");
+            filter.exclude("*");
             model.put("update", false);
         }
 
+        model.put("filter", filter);
         model.put("insert", AuthServiceUtils.insertPermission(crudSupply, entityName, user));
         model.put("delete", AuthServiceUtils.deletePermission(crudSupply, entityName, user));
         model.put("create", id == null && crudSupply.support(Crud.COMPLETE));
