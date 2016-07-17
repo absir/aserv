@@ -100,13 +100,13 @@ public class Pag {
         return LangBundle.isI18n() ? LangBundle.ME.getLocale() : getInput().getLocale();
     }
 
-    public static String lang(String name) {
+    public static String lang(String code) {
         Input input = getInput();
-        return input == null ? name : input.getLang(name);
+        return input == null ? code : input.getLang(code);
     }
 
-    public static String lang(String name, ServletRequest request) {
-        return lang(name);
+    public static String lang(String code, ServletRequest request) {
+        return lang(code);
     }
 
     public static String getLang(String lang) {
@@ -114,27 +114,30 @@ public class Pag {
     }
 
     public static String getLang(String lang, boolean echo) {
-        return getLang(HelperLang.getCaptionLang(lang), lang, echo);
+        return getLang(HelperLang.getLangCode(lang), lang, echo);
     }
 
-    public static String getLang(String name, String lang, boolean echo) {
-        LangBundle.ME.setResourceLang(name, lang);
-        return getLangRequest(name, lang, echo);
-    }
-
-    public static String getLangName(String name) {
-        return getLangName(name, true);
-    }
-
-    public static String getLangName(String name, boolean echo) {
-        return getLangRequest(name, lang(name), echo);
-    }
-
-    protected static String getLangRequest(String name, String lang, boolean echo) {
+    public static String getLang(String code, String lang, boolean echo) {
         if (LangBundle.isI18n()) {
-            name = KernelString.transferred(name);
-            name = PAG_LANG == null ? "Pag.lang(" + name + ")" : PAG_LANG.getPagLang(name);
-            return echo ? IRender.ME.echo(name) : name;
+            LangBundle.ME.setResourceLang(code, lang);
+        }
+
+        return getLangRequest(code, lang, echo);
+    }
+
+    public static String getCaptionLang(String caption) {
+        return getCaptionLang(caption, true);
+    }
+
+    public static String getCaptionLang(String caption, boolean echo) {
+        return getLangRequest(caption, caption, echo);
+    }
+
+    protected static String getLangRequest(String code, String lang, boolean echo) {
+        if (LangBundle.isI18n()) {
+            code = KernelString.transferred(code);
+            code = PAG_LANG == null ? "Pag.lang(" + code + ")" : PAG_LANG.getPagLang(code);
+            return echo ? IRender.ME.echo(code) : code;
 
         } else {
             return echo ? lang : KernelString.transferred(lang);
@@ -228,15 +231,15 @@ public class Pag {
         if (obj != null) {
             if (obj.getClass().isEnum()) {
                 Enum<?> e = (Enum<?>) obj;
-                return namesLang(CrudUtils.getEnumMetaMap(e.getClass()).get(e.name()));
+                return captionLang(CrudUtils.getEnumMetaMap(e.getClass()).get(e.name()));
             }
         }
 
         return value(obj);
     }
 
-    public static String namesLang(String[] names) {
-        return isI18n() || names.length < 2 ? lang(names[0]) : names[1];
+    public static String captionLang(String caption) {
+        return isI18n() ? lang(caption) : caption;
     }
 
     public static String param(Object obj) {

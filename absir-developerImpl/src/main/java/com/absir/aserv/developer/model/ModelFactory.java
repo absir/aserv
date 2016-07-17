@@ -75,7 +75,7 @@ public class ModelFactory {
         }
 
         entityModel.setJoEntity(joEntity);
-        String caption = HelperLang.getTypeCaption(joEntity.getEntityClass(), joEntity.getEntityName());
+        String caption = HelperLang.getTypeCaption(joEntity.getEntityClass());
         Class<?> entityClass = joEntity.getEntityClass();
         if (entityClass != null) {
             if (KernelString.isEmpty(caption) || caption.equals(entityClass.getSimpleName())) {

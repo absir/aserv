@@ -37,7 +37,7 @@ public class InjectMethod extends InjectInvokerObserver {
         this.method = method;
         this.beanMethod = beanMethod == null ? method : beanMethod;
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-        this.paramNames = BeanDefineDiscover.paramterNames(method, parameterAnnotations);
+        this.paramNames = BeanDefineDiscover.parameterNames(method, parameterAnnotations);
         int length = parameterAnnotations.length;
         if (length > 0 && KernelString.isEmpty(paramNames[0]) && !KernelString.isEmpty(injectName)) {
             paramNames[0] = injectName;

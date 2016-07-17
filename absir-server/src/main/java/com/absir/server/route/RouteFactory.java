@@ -181,11 +181,11 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
         RouteMethod routeMethod = new RouteMethod(beanMethod);
         Annotation[][] parameterAnnotations = beanMethod.getParameterAnnotations();
         int length = parameterAnnotations.length;
-        String[] parameterNames = BeanDefineDiscover.paramterNames(beanMethod, parameterAnnotations);
+        String[] parameterNames = BeanDefineDiscover.parameterNames(beanMethod, parameterAnnotations);
         routeMethod.parameterTypes = beanMethod.getParameterTypes();
         routeMethod.parameters = new Object[length];
         routeMethod.parameterResolvers = new ParameterResolver[length];
-        routeMethod.beanNames = PropertyUtils.paramterBeanNames(parameterAnnotations);
+        routeMethod.beanNames = PropertyUtils.parameterBeanNames(parameterAnnotations);
         routeMethod.nullables = new boolean[length];
         routeMethod.noBody = (method == null ? beanMethod : method).getAnnotation(NoBody.class) != null;
         for (int i = 0; i < length; i++) {

@@ -18,7 +18,6 @@ import com.absir.aserv.system.crud.PasswordCrudFactory;
 import com.absir.orm.value.JaColum;
 import com.absir.property.value.Prop;
 import com.absir.validator.value.Email;
-import com.absir.validator.value.NotEmpty;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -103,7 +102,6 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @JaLang("邮箱")
     @Prop(include = 1)
     @Email
-    @NotEmpty
     private String email;
 
     @JaLang("手机")

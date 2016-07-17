@@ -32,19 +32,19 @@ public class PropertyUtils {
 
     private static Map<Class<?>, PropertyHolder> Class_Map_Property_Holder = new HashMap<Class<?>, PropertyHolder>();
 
-    public static String[] paramterBeanNames(Annotation[][] parameterAnnotations) {
+    public static String[] parameterBeanNames(Annotation[][] parameterAnnotations) {
         int length = parameterAnnotations.length;
         if (length == 0) {
             return null;
         }
 
-        String[] paramterBeanNames = new String[length];
+        String[] parameterBeanNames = new String[length];
         for (int i = 0; i < length; i++) {
             for (Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof BeanName) {
                     String name = ((BeanName) annotation).value();
                     if (!KernelString.isEmpty(name)) {
-                        paramterBeanNames[i] = name;
+                        parameterBeanNames[i] = name;
                     }
 
                     break;
@@ -52,7 +52,7 @@ public class PropertyUtils {
             }
         }
 
-        return paramterBeanNames;
+        return parameterBeanNames;
     }
 
     public static PropertyHolder getPropertyMap(Class<?> beanClass, PropertySupply propertySupply) {
@@ -159,7 +159,7 @@ public class PropertyUtils {
                     name = KernelString.unCapitalize(name.substring(3));
                     if (propertyTree) {
                         PropertyContext propertyContext = getPropertyContext(propertyMap, name);
-                        String beanName = paramterBeanNames(method.getParameterAnnotations())[0];
+                        String beanName = parameterBeanNames(method.getParameterAnnotations())[0];
                         if (!KernelString.isEmpty(beanName)) {
                             propertyContext.beanName = beanName;
                         }

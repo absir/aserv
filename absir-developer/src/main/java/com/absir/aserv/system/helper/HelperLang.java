@@ -7,7 +7,6 @@
  */
 package com.absir.aserv.system.helper;
 
-import com.absir.aserv.lang.LangBundleImpl;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.bean.core.BeanConfigImpl;
 import com.absir.context.lang.LangBundle;
@@ -22,53 +21,67 @@ import java.lang.reflect.Method;
 @SuppressWarnings("rawtypes")
 public class HelperLang {
 
-    public static String getLangName(JaLang lang, String name) {
-        return getLangName(lang == null ? null : lang.value(), lang == null ? null : lang.tag(), name);
+    public static String getLangCaption(String lang, String tag, String name, String cls) {
+        return getLangCaption(lang, tag, cls, name, false);
     }
 
-    public static String[] getLangNameLang(JaLang lang, String name) {
-        return getLangNameLang(lang == null ? null : lang.value(), lang == null ? null : lang.tag(), name);
-    }
+    public static String getLangCaption(String lang, String tag, String name, String cls, boolean simple) {
+        if (lang == null) {
+            lang = name;
+        }
 
-    public static String getLangName(String lang, String tag, String name) {
-        if (!KernelString.isEmpty(tag)) {
-            if (name != null) {
-                int length = tag.length();
-                if (length > 1) {
-                    if (tag.charAt(0) == '.') {
-                        tag = name + tag.substring(1);
+        if (LangBundle.isI18n() && LangBundle.ME != null) {
+            if (KernelString.isEmpty(tag)) {
+                lang = getLangCode(lang);
 
-                    } else if (tag.charAt(length - 1) == '.') {
-                        tag = tag.substring(0, length - 1) + name;
+            } else {
+                if (cls != null && cls.length() > 0) {
+                    int length = tag.length();
+                    if (length > 1) {
+                        if (tag.charAt(0) == '.') {
+                            tag = cls + tag.substring(1);
+
+                        } else if (tag.charAt(length - 1) == '.') {
+                            tag = tag.substring(0, length - 1) + cls;
+                        }
+                    }
+
+                    if (simple || LangBundle.ME.getResourceBundle().containsKey(tag)) {
+                        lang = tag;
+                    }
+
+                } else {
+                    cls = cls + '.' + tag;
+                    if (LangBundle.ME.getResourceBundle().containsKey(cls)) {
+                        lang = cls;
+
+                    } else {
+                        lang = tag;
                     }
                 }
             }
-
-            name = tag;
         }
 
-        if (LangBundle.ME == null) {
-            return lang == null ? name : lang;
-        }
-
-        if (lang != null) {
-            LangBundle.ME.setResourceLang(name, lang);
-        }
-
-        return LangBundle.isStrictTag() || KernelString.isEmpty(lang) ? name : lang;
+        return lang;
     }
 
-    public static String[] getLangNameLang(String lang, String tag, String name) {
-        name = getLangName(lang, tag, name);
-        return new String[]{name, lang == null ? name : lang};
+    public static String getLangCaption(String lang, String tag, String name, Class<?> cls) {
+        if (LangBundle.isI18n()) {
+            lang = getLangCaption(lang, tag, name, cls.getName());
+            if (lang == tag) {
+                lang = getLangCaption(lang, tag, name, cls.getSimpleName(), true);
+            }
+        }
+
+        return lang;
+    }
+
+    public static String getLangCaption(JaLang lang, String name, Class<?> cls) {
+        return getLangCaption(lang == null ? null : lang.value(), lang == null ? null : lang.tag(), name, cls);
     }
 
     public static String getTypeCaption(Class<?> type) {
-        return getTypeCaption(type, null);
-    }
-
-    public static String getTypeCaption(Class<?> type, String typeName) {
-        return getLangName(BeanConfigImpl.getTypeAnnotation(type, JaLang.class), typeName == null ? type.getSimpleName() : typeName);
+        return getLangCaption(BeanConfigImpl.getTypeAnnotation(type, JaLang.class), type.getSimpleName(), type);
     }
 
     public static String getFieldCaption(Field field) {
@@ -76,18 +89,7 @@ public class HelperLang {
     }
 
     public static String getFieldCaption(Field field, Class<?> cls) {
-        String name = cls + "." + field;
-        String[] valueTag = LangBundleImpl.ME == null ? null : LangBundleImpl.ME.getLangValueTag(name);
-        if (valueTag == null || valueTag.length == 0) {
-            return getLangName(PropertyUtils.getFieldAnnotation(cls, field, JaLang.class), KernelString.capitalize(field.getName()));
-        }
-
-        return getFieldCaption(valueTag[0], valueTag.length > 1 ? valueTag[1] : name, field.getName(), cls);
-    }
-
-    //todo 理清楚 cls Jalang的关系
-    public static String getFieldCaption(String lang, String tag, String field, Class<?> cls) {
-        return getLangName(lang, tag, KernelString.capitalize(field));
+        return getLangCaption(PropertyUtils.getFieldAnnotation(cls, field, JaLang.class), KernelString.capitalize(field.getName()), cls);
     }
 
     public static String getMethodCaption(Method method) {
@@ -95,25 +97,33 @@ public class HelperLang {
     }
 
     public static String getMethodCaption(Method method, Class<?> cls) {
-        return getLangName(BeanConfigImpl.getMethodAnnotation(method, JaLang.class), KernelString.capitalize(method.getName()));
+        return getLangCaption(BeanConfigImpl.getMethodAnnotation(method, JaLang.class), method.getName(), cls);
     }
 
-    public static String getEnumNameCaption(Enum enumerate) {
-        return getLangName(PropertyUtils.getFieldAnnotation(enumerate.getClass(), KernelReflect.declaredField(enumerate.getClass(), enumerate.name()), JaLang.class),
-                enumerate.name());
+    public static String getEnumCaption(Enum enumerate) {
+        return getLangCaption(PropertyUtils.getFieldAnnotation(enumerate.getClass(), KernelReflect.declaredField(enumerate.getClass(), enumerate.name()), JaLang.class),
+                enumerate.name(), enumerate.getClass());
     }
 
-    public static String[] getEnumNameCaptions(Enum enumerate) {
-        return getLangNameLang(PropertyUtils.getFieldAnnotation(enumerate.getClass(), KernelReflect.declaredField(enumerate.getClass(), enumerate.name()), JaLang.class),
-                enumerate.name());
-    }
+    public static String getLangCode(String lang) {
+        if (LangBundle.isI18n() && !LangBundle.ME.getResourceBundle().containsKey(lang)) {
+            String name = KernelMap.getKey(LangBundle.ME.getResourceBundle(), lang);
+            if (name == null) {
+                name = lang;
+            }
 
-    public static String getCaptionLang(String lang) {
-        String name = KernelMap.getKey(LangBundle.ME.getResourceBundle(), lang);
-        if (name == null) {
-            name = lang;
+            return name;
         }
 
-        return name;
+        return lang;
+    }
+
+    public static String getLangMessage(String lang) {
+        String message = LangBundle.ME.getResourceBundle().get(lang);
+        if (message == null) {
+            message = lang;
+        }
+
+        return message;
     }
 }

@@ -10,7 +10,7 @@ import = "org.jsoup.nodes.*"
 #for(entry : field.metas.values)
 #set(value = entry.key)
 <option value="${value}" \${selected=='${value}' ? 'selected' : ''}>
-${Pag::namesLang(entry.value)}
+${Pag::captionLang(entry.value)}
 </option>
 #end
 

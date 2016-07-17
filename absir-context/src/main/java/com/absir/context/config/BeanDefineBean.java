@@ -40,7 +40,7 @@ public class BeanDefineBean extends BeanDefineAbstractor {
         this.beanName = BeanDefineType.getBeanName(beanName, beanType);
         this.constructor = BeanDefineType.getBeanConstructor(beanType, constructorBeanDefine == null ? 0 : constructorBeanDefine
                 .getBeanDefines().size());
-        this.paramNames = BeanDefineDiscover.paramterNames(constructor);
+        this.paramNames = BeanDefineDiscover.parameterNames(constructor);
         this.constructorBeanDefine = paramNames == null ? null : constructorBeanDefine;
     }
 

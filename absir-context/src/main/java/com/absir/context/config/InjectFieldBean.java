@@ -51,7 +51,7 @@ public class InjectFieldBean extends InjectInvoker {
             if (field == null) {
                 Method setter = accessor.getSetter();
                 if (setter != null) {
-                    paramName = BeanDefineDiscover.paramterNames(setter)[0];
+                    paramName = BeanDefineDiscover.parameterNames(setter)[0];
                     parameterClass = setter.getParameterTypes()[0];
 
                 } else {

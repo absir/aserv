@@ -27,7 +27,7 @@ public class InjectMethodBean extends InjectInvoker {
 
     public InjectMethodBean(Method method, BeanDefineArray beanDefineArray) {
         this.method = method;
-        this.paramNames = BeanDefineDiscover.paramterNames(method);
+        this.paramNames = BeanDefineDiscover.parameterNames(method);
         this.beanDefineArray = paramNames == null ? null : beanDefineArray;
     }
 

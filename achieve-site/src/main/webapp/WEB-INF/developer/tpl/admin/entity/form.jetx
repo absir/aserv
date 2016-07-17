@@ -15,7 +15,7 @@ ${Scenario::set("edit", request)}
     ##自增长主键
     #tag layout_block("node")
     <div class="row cl">
-        <label class="form-label col-xs-4 col-sm-2">${Pag::getLangName(field.getCaption())}:</label>
+        <label class="form-label col-xs-4 col-sm-2">${Pag::getCaptionLang(field.getCaption())}:</label>
         <div class="formControls col-xs-8 col-sm-9">
             <input ${identifier} type="text" class="input-text ab_locked" readonly="1"
                                  value="\${entity.${field.getName()}}"/>
@@ -27,7 +27,7 @@ ${Scenario::set("edit", request)}
 ##一般主键
 #tag layout_block("node")
 <div class="row cl">
-    <label class="form-label col-xs-4 col-sm-2">${Pag::getLangName(field.getCaption())}:</label>
+    <label class="form-label col-xs-4 col-sm-2">${Pag::getCaptionLang(field.getCaption())}:</label>
     <div class="formControls col-xs-8 col-sm-9">
         <input ${identifier} type="text" class="input-text" value="\${entity.${field.getName()}}"/>
     </div>
@@ -71,7 +71,7 @@ ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
         #if(!generator.append(identifier, element))
         #tag layout_block("node")
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2">${Pag::getLangName(field.getCaption())}:</label>
+            <label class="form-label col-xs-4 col-sm-2">${Pag::getCaptionLang(field.getCaption())}:</label>
             <div class="formControls col-xs-8 col-sm-9">
                 <input ${identifier} type="text" class="input-text" value="\${entity.${field.getName()}}"/>
             </div>
@@ -135,7 +135,7 @@ ${ScriptNode::html(element) + "\r\n"}
         #end
         #if(!generator.print(identifier, out))
             #tag scriptEcho()
-            ${identifier}>${Pag::getLangName(field.getCaption())}</span>
+            ${identifier}>${Pag::getCaptionLang(field.getCaption())}</span>
 
         #end
     #end
@@ -172,7 +172,7 @@ ${ScriptNode::html(element) + "\r\n"}
         ##关联字段
             #tag layout_block("node")
             <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">${Pag::getLangName(field.getCaption())}:</label>
+                <label class="form-label col-xs-4 col-sm-2">${Pag::getCaptionLang(field.getCaption())}:</label>
                 <div class="formControls col-xs-8 col-sm-9">
                     <input ${identifier} type="text" class="input-text" value="\${entity.${field.getName()}}"/>
                 </div>
@@ -272,7 +272,7 @@ ${ScriptNode::html(element) + "\r\n"}
             #set(archetype_map = archetype_key ? 3 :1)
             #for(field : DeveloperModel::forEntityNameClass(field.getCrudField().getJoEntity(), request).getEntityModel().getFields())
             #tag scriptEcho()
-            <th>${Pag::getLangName(field.getCaption())}</th>
+            <th>${Pag::getCaptionLang(field.getCaption())}</th>
         #end
             #set(identifier =
                 'name="' + field.getName() + (map_value ? "[@!!for_key@]" : "[${for_index}]") + "." + field.getName() + '"')

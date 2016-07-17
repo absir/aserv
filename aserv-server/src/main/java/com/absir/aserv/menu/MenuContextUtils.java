@@ -89,7 +89,7 @@ public abstract class MenuContextUtils {
         int length = parent == null ? 0 : parent.length;
         int index = length - 2;
         menuBeanRoot = menuBeanRoot.getChildrenRoot(index >= 0 ? parent[index] : null, menuName, menuIcon);
-        String entityCaption = HelperLang.getTypeCaption(entityClass, entityName);
+        String entityCaption = HelperLang.getTypeCaption(entityClass);
         menuBeanRoot = menuBeanRoot.getChildrenRoot(++index >= 0 ? parent[index] : null, entityCaption, null);
         while (++index < length) {
             menuBeanRoot = menuBeanRoot.getChildrenRoot(parent[index], null, null);
@@ -125,7 +125,7 @@ public abstract class MenuContextUtils {
         String entityCaption = null;
         MaEntity maEntity = KernelClass.fetchAnnotation(entityClass, MaEntity.class);
         if (maEntity != null && !maEntity.closed()) {
-            entityCaption = HelperLang.getTypeCaption(entityClass, entityName);
+            entityCaption = HelperLang.getTypeCaption(entityClass);
             int index = maEntity.parent().length - 2;
             menuBeanRoot = menuBeanRoot.getChildrenRoot(index >= 0 ? maEntity.parent()[index] : null, menuName,
                     index >= 0 ? null : menuIcon);
@@ -145,7 +145,7 @@ public abstract class MenuContextUtils {
         // 添加实体权限控制
         if (entityNames != null && (maEntity != null || BeanConfigImpl.findTypeAnnotation(entityClass, JaEntity.class))) {
             if (entityCaption == null) {
-                entityCaption = HelperLang.getTypeCaption(entityClass, entityName);
+                entityCaption = HelperLang.getTypeCaption(entityClass);
             }
 
             entityNames.add(entityName);

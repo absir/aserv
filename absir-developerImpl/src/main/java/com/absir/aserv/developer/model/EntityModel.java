@@ -67,7 +67,7 @@ public class EntityModel implements IModel {
 
     private IField crudField;
 
-    private Map<String, String[]> submitOptionMap;
+    private Map<String, String> submitOptionMap;
 
     private static void addReferencedMap(String from, String... tos) {
         Set<String> set = REFERENCED_MAP.get(from);
@@ -104,7 +104,7 @@ public class EntityModel implements IModel {
         }
     }
 
-    public Map<String, String[]> getSubmitOptionMap() {
+    public Map<String, String> getSubmitOptionMap() {
         return submitOptionMap;
     }
 

@@ -36,11 +36,11 @@ public class BeanDefineDiscover {
         }
     }
 
-    public static String[] paramterNames(AccessibleObject methodOrCtor) {
-        return paramterNames(methodOrCtor, methodOrCtor instanceof Method ? ((Method) methodOrCtor).getParameterAnnotations() : ((Constructor<?>) methodOrCtor).getParameterAnnotations());
+    public static String[] parameterNames(AccessibleObject methodOrCtor) {
+        return parameterNames(methodOrCtor, methodOrCtor instanceof Method ? ((Method) methodOrCtor).getParameterAnnotations() : ((Constructor<?>) methodOrCtor).getParameterAnnotations());
     }
 
-    public static String[] paramterNames(AccessibleObject methodOrCtor, Annotation[][] parameterAnnotations) {
+    public static String[] parameterNames(AccessibleObject methodOrCtor, Annotation[][] parameterAnnotations) {
         if (parameterAnnotations == null || parameterAnnotations.length == 0) {
             return null;
         }

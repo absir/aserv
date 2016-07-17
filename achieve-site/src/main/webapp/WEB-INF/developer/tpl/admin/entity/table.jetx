@@ -11,7 +11,7 @@ ${Scenario::set("list", request)}
     #for(field : entityModel.getGroupFields("list"))
     #set(identifier = "<th class=\"th_" + field.getNodeName())
     #if(!generator.append(identifier, element))
-                           #set(node = identifier + "\">" + Pag::getLangName(field.getCaption()) + "</th>")
+                           #set(node = identifier + "\">" + Pag::getCaptionLang(field.getCaption()) + "</th>")
         #set(node = ScriptNode::append(element, node).get(0))
         #set(width = field.getMetas().get("width"))
         #if(width != null)

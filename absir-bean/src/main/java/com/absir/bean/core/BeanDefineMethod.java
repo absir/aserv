@@ -38,7 +38,7 @@ public class BeanDefineMethod extends BeanDefineAbstractor {
         this.beanName = getBeanName(beanName, method);
         this.beanDefine = beanDefine;
         this.method = method;
-        this.paramNames = BeanDefineDiscover.paramterNames(method);
+        this.paramNames = BeanDefineDiscover.parameterNames(method);
     }
 
     public static String getBeanName(String beanName, Method method) {
@@ -57,7 +57,7 @@ public class BeanDefineMethod extends BeanDefineAbstractor {
     }
 
     public static Object getBeanObject(BeanFactory beanFactory, Object factory, Method method) {
-        return getBeanObject(beanFactory, factory, method, BeanDefineDiscover.paramterNames(method));
+        return getBeanObject(beanFactory, factory, method, BeanDefineDiscover.parameterNames(method));
     }
 
     public static Object getBeanObject(BeanFactory beanFactory, Object factory, Method method, String[] paramNames) {

@@ -45,7 +45,8 @@ public abstract class CrudUtils {
     private static final Map<JoEntity, DModel> Jo_Entity_Map_Crud_Model = new HashMap<JoEntity, DModel>();
 
     private static final Map<String, String[]> Jo_Entity_Map_Crud_Fields = new HashMap<String, String[]>();
-    private static Map<Class<? extends Enum>, Map<String, String[]>> enumMapMetaMap = new HashMap<Class<? extends Enum>, Map<String, String[]>>();
+
+    private static Map<Class<? extends Enum>, Map<String, String>> enumMapMetaMap = new HashMap<Class<? extends Enum>, Map<String, String>>();
 
     public static JoEntity newJoEntity(String entityName, Class<?> entityClass) {
         if (entityName == null) {
@@ -242,16 +243,16 @@ public abstract class CrudUtils {
         return model;
     }
 
-    public static Map<String, String[]> getEnumMetaMap(Class<? extends Enum> enumClass) {
-        Map<String, String[]> enumMap = enumMapMetaMap.get(enumClass);
+    public static Map<String, String> getEnumMetaMap(Class<? extends Enum> enumClass) {
+        Map<String, String> enumMap = enumMapMetaMap.get(enumClass);
         if (enumMap == null) {
             synchronized (enumClass) {
                 enumMap = enumMapMetaMap.get(enumClass);
                 if (enumMap == null) {
-                    enumMap = new LinkedHashMap<String, String[]>();
+                    enumMap = new LinkedHashMap<String, String>();
                     Enum<?>[] enums = enumClass.getEnumConstants();
                     for (Enum<?> enumerate : enums) {
-                        enumMap.put(enumerate.name(), HelperLang.getEnumNameCaptions(enumerate));
+                        enumMap.put(enumerate.name(), HelperLang.getEnumCaption(enumerate));
                     }
 
                     enumMapMetaMap.put(enumClass, enumMap);

@@ -74,7 +74,7 @@ public class EntityField extends DBField {
         generated = editorObject.isGenerated();
         embedd = editorObject.isEmbedd();
         String field = HelperString.substringAfter(name, ".");
-        caption = HelperLang.getFieldCaption(editorObject.getLang(), editorObject.getTag(), KernelString.isEmpty(field) ? name : field, joEntity.getEntityClass());
+        caption = HelperLang.getLangCaption(editorObject.getLang(), editorObject.getTag(), KernelString.capitalize(KernelString.isEmpty(field) ? name : field), joEntity.getEntityClass());
 
         // set joEntity
         Accessor accessor = null;

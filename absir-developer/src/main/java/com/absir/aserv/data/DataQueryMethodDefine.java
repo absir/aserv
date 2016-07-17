@@ -68,7 +68,7 @@ public class DataQueryMethodDefine extends AopMethodDefineAbstract<DataQueryInte
         }
 
         DataQueryDetached queryDetached = new DataQueryDetached(query.value(), query.nativeQuery(), variable, method.getReturnType(), query.cacheable(), query.excuteType(), query.aliasType(),
-                parameterTypes, BeanDefineDiscover.paramterNames(method), firstResultsPos, maxResultsPos);
+                parameterTypes, BeanDefineDiscover.parameterNames(method), firstResultsPos, maxResultsPos);
         return queryDetached;
     }
 
