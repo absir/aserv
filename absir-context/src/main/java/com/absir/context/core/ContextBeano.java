@@ -9,12 +9,12 @@ package com.absir.context.core;
 
 import java.io.Serializable;
 
-public abstract class ContextBeano<ID extends Serializable> extends ContextBean<ID> {
+public abstract class ContextBeanO<ID extends Serializable> extends ContextBean<ID> {
 
-    Class<?> keyClass;
+    Class<?> contextClass;
 
-    public Class<?> getKeyClass() {
-        return keyClass == null ? getClass() : keyClass;
+    public Class<?> getContextClass() {
+        return contextClass == null ? getClass() : contextClass;
     }
 
 }

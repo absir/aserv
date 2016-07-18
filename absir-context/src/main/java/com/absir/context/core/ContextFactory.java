@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2014-1-14 下午4:12:13
  */
 package com.absir.context.core;
@@ -56,8 +56,14 @@ public class ContextFactory {
     @Value("context.stopDelay")
     private int stopDelay = 1000;
 
-    @Value("context.uninitCount")
-    private int uninitCount = 3;
+    @Value("context.unInitCount")
+    private int unInitCount = 3;
+
+    @Value("context.removeIdleTime")
+    private long removeIdleTime = 60000;
+
+    @Value("context.minUsableMemory")
+    private long minUsableMemory = 4096000;
 
     private Timer contextTimer = new Timer();
 
@@ -77,7 +83,7 @@ public class ContextFactory {
 
                                 @Override
                                 public void run() {
-                                    for (int i = 0; i < uninitCount; i++) {
+                                    for (int i = 0; i < unInitCount; i++) {
                                         try {
                                             contextBase.uninitialize();
                                             break;
@@ -96,14 +102,19 @@ public class ContextFactory {
                 }
             }
 
+            long minIdleTime = 0;
+            if (UtilContext.getUsableMemory() < minUsableMemory) {
+                minIdleTime = contextTime - removeIdleTime * UtilContext.getUsableMemory() / minUsableMemory;
+            }
+
             Iterator<ContextBean> contextBeanIterator = contextBeans.iterator();
             while (contextBeanIterator.hasNext()) {
                 final ContextBean contextBean = contextBeanIterator.next();
                 try {
-                    if (contextBean.isExpiration() || contextBean.stepDone(contextTime)) {
+                    if (contextBean.isExpiration() || contextBean.stepDone(contextTime) || (minIdleTime > 0 && contextBean.retainAt >= 0 && contextBean.retainAt < minIdleTime)) {
                         contextBeanIterator.remove();
                         contextBean.setExpiration();
-                        final Map<Serializable, Context> contextMap = classMapIdMapContext.get(contextBean.getKeyClass());
+                        final Map<Serializable, Context> contextMap = classMapIdMapContext.get(contextBean.getContextClass());
                         if (contextBean.uninitializeDone()) {
                             if (contextMap != null) {
                                 synchronized (contextMap) {
@@ -121,7 +132,7 @@ public class ContextFactory {
 
                                 @Override
                                 public void run() {
-                                    for (int i = 0; i < uninitCount; i++) {
+                                    for (int i = 0; i < unInitCount; i++) {
                                         try {
                                             contextBean.uninitialize();
                                             if (contextMap != null) {
@@ -172,8 +183,8 @@ public class ContextFactory {
         return threadPoolExecutor;
     }
 
-    public int getUninitCount() {
-        return uninitCount;
+    public int getUnInitCount() {
+        return unInitCount;
     }
 
     @Started
@@ -251,7 +262,6 @@ public class ContextFactory {
         return getContext(getContextMap(cls), ctxClass, id, cls, concurrent);
     }
 
-    //todo auto free many idle context
     private <T extends Context<ID>, ID extends Serializable> T getContext(Map<Serializable, Context> contextMap,
                                                                           Class<T> ctxClass, ID id, Class<?> cls, boolean concurrent) {
         Context context = contextMap.get(id);
@@ -287,8 +297,8 @@ public class ContextFactory {
 
                             if (context instanceof ContextBean) {
                                 ((ContextBean) context).retainAt(contextTime);
-                                if (ctxClass != cls && context instanceof ContextBeano) {
-                                    ((ContextBeano) context).keyClass = cls;
+                                if (ctxClass != cls && context instanceof ContextBeanO) {
+                                    ((ContextBeanO) context).contextClass = cls;
                                 }
 
                                 contextBeans.add((ContextBean) context);
@@ -360,7 +370,7 @@ public class ContextFactory {
                 @Override
                 public void run() {
                     try {
-                        for (int i = 0; i < uninitCount; i++) {
+                        for (int i = 0; i < unInitCount; i++) {
                             try {
                                 contextBase.uninitialize();
                                 break;
@@ -392,7 +402,7 @@ public class ContextFactory {
                     @Override
                     public void run() {
                         try {
-                            for (int i = 0; i < uninitCount; i++) {
+                            for (int i = 0; i < unInitCount; i++) {
                                 try {
                                     context.uninitialize();
                                     break;

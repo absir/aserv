@@ -236,7 +236,7 @@ public class SlaveUpgradeService {
      * 保存全部数据
      */
     public void saveAll() {
-        saveAll(ContextUtils.getContextFactory().getUninitCount());
+        saveAll(ContextUtils.getContextFactory().getUnInitCount());
     }
 
     /**

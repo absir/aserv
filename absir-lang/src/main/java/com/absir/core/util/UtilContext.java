@@ -31,6 +31,8 @@ public class UtilContext {
 
     protected static int minIdlePool = 2;
 
+    protected static long usableMemory = Runtime.getRuntime().freeMemory();
+
     private static ThreadPoolExecutor threadPoolExecutor;
 
     private static ThreadPoolExecutor rejectedThreadPoolExecutor;
@@ -129,6 +131,10 @@ public class UtilContext {
         UtilContext.minIdlePool = minIdlePool;
     }
 
+    public static long getUsableMemory() {
+        return usableMemory;
+    }
+
     public static ThreadPoolExecutor getThreadPoolExecutor() {
         if (threadPoolExecutor == null) {
             setThreadPoolExecutor(new ThreadPoolExecutor(32, 128, 90000, TimeUnit.MILLISECONDS,
@@ -153,10 +159,13 @@ public class UtilContext {
                             warnIdlePool = minIdlePool <= 0 ? false
                                     : rejectedThreadPoolExecutor.getActiveCount() > 0 || (threadPoolExecutor.getMaximumPoolSize()
                                     - threadPoolExecutor.getActiveCount()) < minIdlePool;
+
+                            Runtime runtime = Runtime.getRuntime();
+                            usableMemory = runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
                         }
 
                         try {
-                            Thread.sleep(30000);
+                            Thread.sleep(10000);
 
                         } catch (InterruptedException e) {
                             break;

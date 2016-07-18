@@ -13,6 +13,8 @@ import java.io.Serializable;
 
 public abstract class ContextBean<ID extends Serializable> extends Context<ID> implements IContext {
 
+    protected long retainAt;
+
     protected long expirationTime;
 
     public final boolean isExpiration() {
@@ -21,6 +23,10 @@ public abstract class ContextBean<ID extends Serializable> extends Context<ID> i
 
     public final void setExpiration() {
         expirationTime = -1;
+    }
+
+    public void setIdleRemove(boolean flag) {
+        retainAt = flag ? expirationTime : -1;
     }
 
     protected long getLifeTime() {
@@ -33,6 +39,10 @@ public abstract class ContextBean<ID extends Serializable> extends Context<ID> i
 
     @Override
     public void retainAt(long contextTime) {
+        if (retainAt >= 0) {
+            retainAt = contextTime;
+        }
+
         expirationTime = contextTime + getLifeTime();
     }
 
@@ -41,7 +51,7 @@ public abstract class ContextBean<ID extends Serializable> extends Context<ID> i
         return expirationTime < contextTime;
     }
 
-    public Class<?> getKeyClass() {
+    public Class<?> getContextClass() {
         return getClass();
     }
 
