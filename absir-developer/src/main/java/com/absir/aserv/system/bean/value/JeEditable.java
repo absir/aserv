@@ -15,12 +15,12 @@ public enum JeEditable {
     ENABLE,
 
     /**
-     * 不可编辑|不显示
+     * 不显示(不安全,可以透传;建议用locked或者group屏蔽)
      */
     DISABLE,
 
     /**
-     * 锁定的
+     * 锁定的(安全)
      */
     LOCKED,
 
@@ -30,12 +30,12 @@ public enum JeEditable {
     OPTIONAL,
 
     /**
-     * 锁定不管
+     * 锁定不管(不安全)
      */
     LOCKABLE,
 
     /**
-     * 锁定不显示
+     * 锁定不显示(安全)
      */
     LOCKNONE,
 }

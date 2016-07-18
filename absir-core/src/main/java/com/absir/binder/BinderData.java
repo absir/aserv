@@ -16,7 +16,6 @@ import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.property.Property;
 import com.absir.property.PropertyData;
-import com.absir.property.PropertyError;
 import com.absir.validator.Validator;
 import com.absir.validator.ValidatorSupply;
 
@@ -300,10 +299,6 @@ public class BinderData extends DynaBinder {
     }
 
     protected void addPropertyError(String errorMessage, Object errorObject) {
-        PropertyError propertyError = new PropertyError();
-        propertyError.setPropertyPath(binderResult.getPropertyPath());
-        propertyError.setErrorMessage(errorMessage);
-        propertyError.setErrorObject(errorObject);
-        binderResult.addPropertyError(propertyError);
+        binderResult.addPropertyError(binderResult.getPropertyPath(), errorMessage, errorObject);
     }
 }

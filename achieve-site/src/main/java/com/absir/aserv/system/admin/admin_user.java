@@ -8,24 +8,28 @@
 package com.absir.aserv.system.admin;
 
 import com.absir.aserv.system.bean.JUser;
+import com.absir.aserv.system.crud.PasswordCrudFactory;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
-import com.absir.binder.BinderData;
+import com.absir.binder.BinderResult;
+import com.absir.core.kernel.KernelString;
 import com.absir.server.in.InMethod;
 import com.absir.server.in.Input;
 import com.absir.server.value.Mapping;
 import com.absir.server.value.Param;
 import com.absir.server.value.Server;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Server
 public class admin_user extends AdminServer {
 
     public void password(Input input) {
         input.getModel().put("userId", SecurityService.ME.getUserBase(input).getUserId());
+    }
+
+    //todo 修改密码用DTO 试试
+    protected static class  ddd {
+
     }
 
     /**
@@ -37,25 +41,35 @@ public class admin_user extends AdminServer {
      * @return
      */
     @Mapping(method = InMethod.POST)
-    public String password(@Param String password, @Param String newPassword, Input input) {
+    public String password(@Param String password, @Param String newPassword, @Param String confirmPassword, Input input) {
         JUser user = BeanService.ME.get(JUser.class, SecurityService.ME.getUserBase(input).getUserId());
         if (user == null) {
-            return "admin/failed.ajax";
+            return "admin/failed";
+        }
+
+        if (KernelString.isEmpty(newPassword)) {
+            BinderResult result = new BinderResult();
+            result.addPropertyError("newPassword", PasswordCrudFactory.PASSWORD_EMPTY, password);
+            input.getModel().put("errors", result.getPropertyErrors());
+            return "admin/failed";
+        }
+
+        if (!confirmPassword.equals(newPassword)) {
+            BinderResult result = new BinderResult();
+            result.addPropertyError("confirmPassword", PasswordCrudFactory.PASSWORD_NOT_CONFIRM, password);
+            input.getModel().put("errors", result.getPropertyErrors());
+            return "admin/failed";
         }
 
         if (!SecurityService.ME.validator(user, password, 0, 0, input.getAddress())) {
-            return "admin/failed.ajax";
+            BinderResult result = new BinderResult();
+            result.addPropertyError("password", PasswordCrudFactory.PASSWORD_ERROR, password);
+            input.getModel().put("errors", result.getPropertyErrors());
+            return "admin/failed";
         }
 
-        Map<String, String> map = new HashMap<String, String>();
-        BinderData binderData = new BinderData();
-        binderData.getBinderResult().setValidation(true);
-        binderData.mapBind(map, user);
-        if (binderData.getBinderResult().contain("password")) {
-            return "admin/failed.ajax";
-        }
-
+        user.setPasswordBase(newPassword);
         CrudServiceUtils.merge("JUser", null, user, false, user, null);
-        return "admin/successed.ajax";
+        return "admin/success";
     }
 }

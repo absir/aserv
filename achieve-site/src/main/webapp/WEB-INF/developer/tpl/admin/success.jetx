@@ -1,0 +1,4 @@
+{
+\${icon ? '"icon" : "' + icon + '",' : ''}
+"message": "\${message ?! ${Pag::getLang("操作成功", false)}}"
+}

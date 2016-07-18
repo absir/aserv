@@ -62,23 +62,23 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @Column(columnDefinition = "char(32)")
     private String password;
 
+    @Transient
+    @JaEdit(editable = JeEditable.LOCKNONE)
+    private String passwordBase;
+
     @JaLang(value = "加密", tag = "encryption")
-    @Prop(include = 99)
     @JaEdit(editable = JeEditable.DISABLE)
     private String salt;
 
     @JaLang(value = "加密次数", tag = "encryptionCount")
-    @Prop(include = 99)
     @JaEdit(editable = JeEditable.DISABLE)
     private int saltCount;
 
     @JaLang("最后登录")
-    @Prop(include = 99)
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
     private long lastLogin;
 
     @JaLang("错误登录")
-    @Prop(include = 99)
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private int errorLogin;
 
@@ -122,6 +122,14 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPasswordBase() {
+        return passwordBase;
+    }
+
+    public void setPasswordBase(String passwordBase) {
+        this.passwordBase = passwordBase;
     }
 
     public String getSalt() {

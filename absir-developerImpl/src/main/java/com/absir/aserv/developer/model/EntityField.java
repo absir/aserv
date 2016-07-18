@@ -511,7 +511,7 @@ public class EntityField extends DBField {
                     }
 
                     if (entityField.getEditable() == JeEditable.ENABLE) {
-                        entityModel.addGroupField("editable", entityField);
+                        //entityModel.addGroupField("editable", entityField);
 
                     } else if (entityField.getEditable() == JeEditable.OPTIONAL) {
                         entityModel.addGroupField("optional", entityField);
@@ -524,7 +524,9 @@ public class EntityField extends DBField {
 
                     } else if (entityField.getEditable() == JeEditable.LOCKNONE) {
                         entityField.editable = JeEditable.LOCKED;
-                        entityModel.addGroupField("none", entityField);
+                        entityModel.addGroupField("locked", entityField);
+                        //entityModel.addGroupField("none", entityField);
+                        entityField.types.add("none");
                     }
                 }
             }

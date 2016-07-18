@@ -22,6 +22,14 @@ public class PropertyErrors {
         propertyErrors.add(propertyError);
     }
 
+    public void addPropertyError(String propertyPath, String errorMessage, Object errorObject) {
+        PropertyError propertyError = new PropertyError();
+        propertyError.setPropertyPath(propertyPath);
+        propertyError.setErrorMessage(errorMessage);
+        propertyError.setErrorObject(errorObject);
+        addPropertyError(propertyError);
+    }
+
     public void rejectValue(String propertyPath, String errorMessage, Object errorObject) {
         int size = propertyErrors.size();
         if (size > 0) {
