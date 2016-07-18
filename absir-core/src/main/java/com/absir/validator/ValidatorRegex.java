@@ -10,6 +10,7 @@ package com.absir.validator;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.lang.ILangMessage;
 import com.absir.bean.lang.LangCodeUtils;
+import com.absir.core.kernel.KernelString;
 import com.absir.property.PropertyResolverAbstract;
 import com.absir.validator.value.Regex;
 
@@ -22,11 +23,17 @@ public class ValidatorRegex extends PropertyResolverAbstract<ValidatorObject, Re
 
     public static final String REGEX = LangCodeUtils.get("请输入正确的格式", ValidatorRegex.class);
 
-    public ValidatorObject getPropertyObjectPattern(ValidatorObject propertyObject, final String regex) {
+    public ValidatorObject getPropertyObjectPattern(ValidatorObject propertyObject, final String regex, String lang) {
         if (propertyObject == null) {
             propertyObject = new ValidatorObject();
         }
 
+        String langCode = null;
+        if (!KernelString.isEmpty(lang)) {
+            langCode = LangCodeUtils.get(lang, ValidatorRegex.class);
+        }
+
+        final String caption = langCode;
         final Pattern pattern = java.util.regex.Pattern.compile(regex);
         propertyObject.addValidator(new ValidatorValue() {
 
@@ -35,7 +42,7 @@ public class ValidatorRegex extends PropertyResolverAbstract<ValidatorObject, Re
                 if (value != null && value instanceof CharSequence) {
                     CharSequence string = (CharSequence) value;
                     if (string.length() > 0 && !pattern.matcher((CharSequence) value).matches()) {
-                        return langMessage == null ? (regex + " Regex") : MessageFormat.format(langMessage.getLangMessage(REGEX), regex);
+                        return langMessage == null ? (regex + " Regex") : MessageFormat.format(langMessage.getLangMessage(caption == null ? REGEX : caption), regex);
                     }
                 }
 
@@ -54,11 +61,11 @@ public class ValidatorRegex extends PropertyResolverAbstract<ValidatorObject, Re
 
     @Override
     public ValidatorObject getPropertyObjectAnnotation(ValidatorObject propertyObject, Regex annotation) {
-        return getPropertyObjectPattern(propertyObject, annotation.value());
+        return getPropertyObjectPattern(propertyObject, annotation.value(), annotation.lang());
     }
 
     @Override
     public ValidatorObject getPropertyObjectAnnotationValue(ValidatorObject propertyObject, String annotationValue) {
-        return getPropertyObjectPattern(propertyObject, annotationValue);
+        return getPropertyObjectPattern(propertyObject, annotationValue, null);
     }
 }

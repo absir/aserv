@@ -1,4 +1,4 @@
-㳧g\#set(page_title = APP_NAME + "${Pag::getLang("通行证注册")}")
+\#set(page_title = APP_NAME + "${Pag::getLang("通行证注册")}")
 \#tag layout("/WEB-INF/tpl/layout/hui.jetx")
 <nav class="breadcrumb text-c ab_ah">
     <h3 class="pt-10">\${APP_NAME + ${Pag::getLang("通行证注册", false)}}</h3>
@@ -21,7 +21,7 @@
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"></label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input class="{required:true}" name="name" type="checkbox"/>
+                    <input class="{required:true}" name="agreement" type="checkbox"/>
                     <a class="btn btn-link" data-toggle="modal" href="#registerAgreement">${Pag::getLang("注册协议")}</a>
                 </div>
             </div>
@@ -50,7 +50,7 @@
                     </p>
                     <div class="row cl">
                         <div class="text-c mb-10">
-                            <button type="submit" class="btn btn-primary radius size-L">
+                            <button id="agreementButton" class="btn btn-primary radius size-L" data-dismiss="modal">
                                 ${Pag::getLang("同意并继续")}
                             </button>
                         </div>
@@ -58,6 +58,12 @@
                 </div>
             </div>
         </div>
+
+        <script type="text/javascript">
+            $('#agreementButton').bind('click', function () {
+                $('[name="agreement"]').prop('checked', 1);
+            });
+        </script>
 
         <div class="row cl">
             <div class="text-c">

@@ -1,9 +1,7 @@
 \#set(page_title = APP_NAME + "${Pag::getLang("通行证登录")}")
 \#tag layout("/WEB-INF/tpl/layout/hui.jetx")
-<nav class="breadcrumb text-c">
-    <span class="c-gray en">
-        <span class="logo">\${APP_NAME + ${Pag::getLang("通行证登录", false)}}</span>
-    </span>
+<nav class="breadcrumb text-c ab_ah">
+    <h3 class="pt-10">\${APP_NAME + ${Pag::getLang("通行证登录", false)}}</h3>
 </nav>
 <div class="container-fluid">
     <form ab_toggle="form" ab_validate="true"

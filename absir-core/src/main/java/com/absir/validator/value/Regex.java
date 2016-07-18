@@ -17,4 +17,7 @@ import java.lang.annotation.Target;
 public @interface Regex {
 
     String value();
+
+    String lang() default "";
+
 }
