@@ -20,7 +20,7 @@ import com.absir.aserv.system.crud.value.IUploadRule;
 import com.absir.aserv.system.crud.value.UploadRule;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
-import com.absir.aserv.system.helper.HelperRandom;
+import com.absir.aserv.system.domain.DSequence;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
@@ -77,6 +77,9 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(UploadCrudFactory.class);
+
+    @Domain
+    private DSequence nameSequence;
 
     private static String uploadUrl;
 
@@ -179,11 +182,9 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         UploadCrudFactory.uploadPath = uploadPath;
     }
 
-
     public String randUploadFile(int hashCode) {
         Date date = new Date();
-        //todo 随机命名需要Sequence
-        return DATE_FORMAT.format(date) + '/' + HelperRandom.randSecondId(date.getTime(), 16, hashCode);
+        return DATE_FORMAT.format(date) + '/' + nameSequence.getNextId();
     }
 
     public void upload(String uploadFile, InputStream inputStream) throws IOException {

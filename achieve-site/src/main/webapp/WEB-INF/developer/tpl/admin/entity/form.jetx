@@ -9,6 +9,9 @@ ${Scenario::set("edit", request)}
 #set(readonly = "${create ? 'edit' : ' readonly'}")
 ##编辑实体主键
 #for(field : entityModel.getPrimaries())
+#if(!generator.allow(field))
+#continue
+#end
 #set(identifier = 'name="' + field.getName() + '"')
 #if(!generator.append(identifier, element))
     #if(field.isGenerated())
@@ -40,11 +43,14 @@ ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
 #end
 #end
 
-// 编辑其他字段
+##编辑其他字段
 #set(subtableFields = new ArrayList())
 #set(subtableSubFields = new LinkedHashMap())
 #set(subFieldCurrent = null)
 #for(field : entityModel.getFields())
+#if(!generator.allow(field))
+#continue
+#end
 #if(field.getTypes().size() > 0 && "subtable".equals(field.getTypes().get(0)))
 ##关联实体字段
     #if(field.getValueField() != null && field.getCrudField().getKeyJoEntity() != null && field.getCrudField().getKeyJoEntity().getEntityName() == null)

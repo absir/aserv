@@ -38,6 +38,7 @@ import com.absir.server.on.OnPut;
 import com.absir.servlet.InDispathFilter;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 
@@ -339,6 +340,10 @@ public class Pag {
             default:
                 return null;
         }
+    }
+
+    public static void setJoEntity(String entityName, Class<?> entityClass, HttpServletRequest request) {
+        request.setAttribute("joEntity", new JoEntity(entityName, entityClass));
     }
 
     public static boolean isEmptyFieldGroup(JoEntity entity, String group) {

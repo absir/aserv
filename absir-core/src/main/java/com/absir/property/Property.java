@@ -9,6 +9,7 @@ package com.absir.property;
 
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.core.kernel.KernelClass;
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.util.UtilAccessor;
 import com.absir.core.util.UtilAccessor.Accessor;
 import com.absir.property.value.Allow;
@@ -132,7 +133,7 @@ public class Property {
     }
 
     public boolean allow(int group) {
-        return group == 0 || ((exclude & group) == 0 && (include & group) != 0);
+        return KernelLang.PropertyFilter.isAllow(include, exclude, group);
     }
 
     public String getBeanName() {

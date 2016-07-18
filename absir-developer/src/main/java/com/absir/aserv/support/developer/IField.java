@@ -16,6 +16,10 @@ public interface IField {
 
     public JCrudField getCrudField();
 
+    public int getInclude();
+
+    public int getExclude();
+
     public String getName();
 
     public Class<?> getType();

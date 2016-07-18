@@ -1,4 +1,4 @@
-\#set(page_title = APP_NAME + "${Pag::getLang("通行证注册")}")
+㳧g\#set(page_title = APP_NAME + "${Pag::getLang("通行证注册")}")
 \#tag layout("/WEB-INF/tpl/layout/hui.jetx")
 <nav class="breadcrumb text-c ab_ah">
     <h3 class="pt-10">\${APP_NAME + ${Pag::getLang("通行证注册", false)}}</h3>
@@ -30,8 +30,6 @@
                 <div class="container-fluid">
                     <h4 class="text-c">${Pag::getLang("注册协议")}</h4>
                     <p>
-                        钱宝网注册协议
-
                         为切实维护您的合法权益，特制订《钱宝网注册协议》（以下简称“本协议”）。
 
                         请您务必审慎阅读、充分理解本协议各条款内容，特别是免除或者限制责任的条款，以及加粗、加下划线的条款，以及钱宝网所有者南京钱宝信息传媒有限公司（以下简称“钱宝网”）推出的各项活动的单独协议，并选择接受或不接受。

@@ -464,8 +464,12 @@ public class KernelLang {
             propertyPath = "";
         }
 
-        public boolean allow(int include, int exclude) {
+        public static final boolean isAllow(int include, int exclude, int group) {
             return group == 0 || ((exclude & group) == 0 && (include == 0 || (include & group) != 0));
+        }
+
+        public boolean allow(int include, int exclude) {
+            return isAllow(include, exclude, group);
         }
 
         public int getGroup() {

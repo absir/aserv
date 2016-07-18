@@ -27,7 +27,7 @@ import com.absir.core.util.UtilAccessor;
 import com.absir.core.util.UtilAnnotation;
 
 import java.io.*;
-import java.lang.annotation.Annotation;
+import java.lang.annotation.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -809,13 +809,13 @@ public class BeanConfigImpl implements BeanConfig {
                 for (String name : properties.keySet()) {
                     ParamsAnnotations annotations = BeanConfigImpl.getParamsAnnotations(properties, name);
                     if (annotations != null) {
-                        Entry<String, KernelLang.IMatcherType> macherEntry = KernelLang.MatcherType.getMatchEntry(name);
-                        if (macherEntry.getValue() == MatcherType.NORMAL) {
-                            annotationsMap.put(macherEntry.getKey(), annotations);
+                        Entry<String, KernelLang.IMatcherType> matcherEntry = KernelLang.MatcherType.getMatchEntry(name);
+                        if (matcherEntry.getValue() == MatcherType.NORMAL) {
+                            annotationsMap.put(matcherEntry.getKey(), annotations);
 
                         } else {
                             MatchParamsAnnotations paramsAnnotations = new MatchParamsAnnotations();
-                            paramsAnnotations.macherEntry = macherEntry;
+                            paramsAnnotations.macherEntry = matcherEntry;
                             paramsAnnotations.paramsAnnotations = annotations;
                             annotations.matchFind = true;
                             annotationsList.add(0, paramsAnnotations);
@@ -830,13 +830,28 @@ public class BeanConfigImpl implements BeanConfig {
     }
 
     public static ParamsAnnotations getMemberParamsAnnotations(String classNameMember, boolean findMatch) {
+        return getMemberParamsAnnotations(classNameMember, findMatch, null);
+    }
+
+    public static ParamsAnnotations getMemberParamsAnnotations(String classNameMember, boolean findMatch, Class<? extends Annotation> annotationCls) {
         loadParamsAnnotations();
         ParamsAnnotations paramsAnnotations = nameMapParamsAnnotations.get(classNameMember);
+        if (paramsAnnotations != null && findMatch && annotationCls != null) {
+            if (!(paramsAnnotations.findAnnotation(annotationCls) || paramsAnnotations.findAnnotation(NoConfigure.class))) {
+                paramsAnnotations = null;
+            }
+        }
+
         if (paramsAnnotations == null && findMatch) {
             for (MatchParamsAnnotations matchParamsAnnotations : matchParamsAnnotationsList) {
                 if (MatcherType.isMatch(classNameMember, matchParamsAnnotations.macherEntry)) {
                     paramsAnnotations = matchParamsAnnotations.paramsAnnotations;
-                    break;
+                    if (annotationCls == null || paramsAnnotations.findAnnotation(annotationCls) || paramsAnnotations.findAnnotation(NoConfigure.class)) {
+                        break;
+
+                    } else {
+                        paramsAnnotations = null;
+                    }
                 }
             }
         }
@@ -844,6 +859,8 @@ public class BeanConfigImpl implements BeanConfig {
         return paramsAnnotations;
     }
 
+    @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
     public static @interface NoConfigure {
 
     }
@@ -918,16 +935,11 @@ public class BeanConfigImpl implements BeanConfig {
         return getMethodAnnotation(method, annotationClass, false);
     }
 
-    //todo findMatch Need Fetch ALL
     public static <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationClass, boolean findMatch) {
-        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + ":" + method.getName(), findMatch);
+        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + ":" + method.getName(), true, annotationClass);
         if (annotations != null) {
             T annotation = annotations.getAnnotation(annotationClass);
             if (annotation == null) {
-                if (findMatch && !annotations.matchFind) {
-                    return getMethodAnnotation(method, annotationClass, false);
-                }
-
                 if (annotations.findAnnotation(NoConfigure.class)) {
                     return null;
                 }
@@ -945,16 +957,12 @@ public class BeanConfigImpl implements BeanConfig {
     }
 
     public static boolean findMethodAnnotation(Method method, Class<? extends Annotation> annotationClass, boolean findMatch) {
-        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + ":" + method.getName(), findMatch);
+        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + ":" + method.getName(), findMatch, annotationClass);
         if (annotations != null) {
             if (annotations.findAnnotation(annotationClass)) {
                 return true;
 
             } else {
-                if (findMatch && !annotations.matchFind) {
-                    return findMethodAnnotation(method, annotationClass, false);
-                }
-
                 if (annotations.findAnnotation(NoConfigure.class)) {
                     return false;
                 }

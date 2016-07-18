@@ -57,6 +57,8 @@ public class EntityField extends DBField {
     public EntityField(String name, Property property, EditorObject editorObject, JoEntity joEntity) {
         // set properties
         crudField.setName(name);
+        include = property.getInclude();
+        exclude = property.getExclude();
         if (property == null) {
             return;
         }

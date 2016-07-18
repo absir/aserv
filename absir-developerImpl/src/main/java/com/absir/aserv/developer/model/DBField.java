@@ -20,6 +20,10 @@ public class DBField implements IField {
 
     protected JCrudField crudField;
 
+    protected int include;
+
+    protected int exclude;
+
     protected IField valueField;
 
     protected String entityName;
@@ -62,6 +66,14 @@ public class DBField implements IField {
 
     public JCrudField getCrudField() {
         return crudField;
+    }
+
+    public int getInclude() {
+        return include;
+    }
+
+    public int getExclude() {
+        return exclude;
     }
 
     public String getName() {

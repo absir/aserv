@@ -189,21 +189,32 @@ public class DeveloperUtils {
                                             throw new DeveloperBreak();
                                         }
 
-                                        if (define.startsWith("<%-- G_BEGAN")) {
-                                            if (gDefine.object == null) {
-                                                gDefine.object = "\r\n";
-                                            }
-                                        }
+                                        int pos = define.indexOf("<%-- G_TAG[");
+                                        if (pos >= 0) {
+                                            int start = pos + "<%-- G_TAG[".length();
+                                            int nPos = define.indexOf("]", start);
+                                            String tag = nPos < start ? define.substring(start) : define.substring(start, nPos);
+                                            generator.setTag(tag);
 
-                                        if (gDefine.object != null) {
-                                            gDefine.object += template + "\r\n";
-                                            if (define.endsWith("G_END --%>")) {
-                                                generator.addGeneratorDefine(gDefine.object);
-                                                gDefine.object = null;
+                                        } else {
+                                            pos = define.indexOf("<%-- G_BEGAN");
+                                            if (pos >= 0) {
+                                                if (gDefine.object == null) {
+                                                    gDefine.object = "\r\n";
+                                                }
+                                            }
+
+                                            if (gDefine.object != null) {
+                                                gDefine.object += template + "\r\n";
+                                                if (define.endsWith("G_END --%>")) {
+                                                    generator.addGeneratorDefine(gDefine.object);
+                                                    gDefine.object = null;
+                                                }
                                             }
                                         }
                                     }
                                 });
+
                             } catch (IOException e) {
                                 // 显示生成错误
                                 if (BeanFactoryUtils.getBeanConfig().getEnvironment() == Environment.DEVELOP) {
@@ -218,6 +229,7 @@ public class DeveloperUtils {
                         ByteArrayOutputStream outputStream = null;
                         if (output != null) {
                             try {
+                                generator.setTag(null);
                                 outputStream = new ByteArrayOutputStream();
                                 request.setAttribute("entityModel", entityModel);
                                 IRender.ME.rend(outputStream, includePath, renders);
