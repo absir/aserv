@@ -39,7 +39,7 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @Column(unique = true, length = 64)
     @NotEmpty
-    @Regex(value = "^[a-zA-Z\\u4e00-\\u9fa5][\\w\\u4e00-\\u9fa5]{0,32}$", lang = "请输入首字母不为数字的32字以内子母,数字,中文")
+    @Regex(value = "^[a-zA-Z\\u4e00-\\u9fa5][\\w\\u4e00-\\u9fa5]{0,32}$", lang = "请输入首位不是数字,0-32位字母|数字|中文")
     private String username;
 
     @JaLang("邮箱")
