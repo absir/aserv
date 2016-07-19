@@ -30,7 +30,8 @@ public class RouteMethod {
 
     String[] beanNames;
 
-    boolean[] nullables;
+    boolean[] nullAbles;
+
     /**
      * 返回值不作为服务返回值
      */
@@ -78,7 +79,7 @@ public class RouteMethod {
         Object[] parameterValues = length == 0 ? KernelLang.NULL_OBJECTS : new Object[length];
         for (int i = 0; i < length; i++) {
             parameterValue = parameterResolvers[i].getParameterValue(onPut, parameters[i], parameterTypes[i], beanNames[i], this);
-            if (parameterValue == null && !nullables[i]) {
+            if (parameterValue == null && !nullAbles[i]) {
                 throw new ServerException(ServerStatus.IN_404);
             }
 

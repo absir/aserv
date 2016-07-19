@@ -9,6 +9,7 @@ package com.absir.aserv.system.admin;
 
 import com.absir.aserv.menu.MenuContextUtils;
 import com.absir.aserv.system.bean.value.JeRoleLevel;
+import com.absir.aserv.system.helper.HelperInput;
 import com.absir.aserv.system.security.SecurityContext;
 import com.absir.aserv.system.server.ServerResolverRedirect;
 import com.absir.aserv.system.service.SecurityService;
@@ -27,10 +28,8 @@ import com.absir.server.route.IRoute;
 import com.absir.server.route.RouteAction;
 import com.absir.server.route.RouteMapping;
 import com.absir.server.route.returned.ReturnedResolverView;
-import com.absir.server.value.After;
-import com.absir.server.value.Before;
-import com.absir.server.value.Interceptors;
-import com.absir.server.value.Mapping;
+import com.absir.server.value.*;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -82,6 +81,18 @@ public abstract class AdminServer {
                     onPut.setReturnedResolver(ReturnedResolverView.ME);
                 }
             }
+        }
+    }
+
+    @OnException(Exception.class)
+    protected void onException(Exception e, OnPut onPut) {
+        Input input = onPut.getInput();
+        if (HelperInput.isAjax(input)) {
+            if (e instanceof ConstraintViolationException) {
+                input.getModel().put("message", e.getCause().getMessage());
+            }
+
+            ReturnedResolverView.setReturnView(onPut, "admin/exception");
         }
     }
 

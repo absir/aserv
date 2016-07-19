@@ -27,6 +27,13 @@ public class ReturnedResolverView implements ReturnedResolver<String> {
 
     public static final String ROOT_REGX = "^([/\\\\]*)[^/\\\\]*([/\\\\]+)";
 
+    public static void setReturnView(OnPut onPut, String view) {
+        onPut.setReturned(null);
+        onPut.setReturnValue(view);
+        onPut.setReturnedResolver(ReturnedResolverView.ME);
+        onPut.setReturnedFixed(true);
+    }
+
     @Override
     public String getReturned(Method method) {
         View view = method.getAnnotation(View.class);

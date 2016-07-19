@@ -186,7 +186,7 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
         routeMethod.parameters = new Object[length];
         routeMethod.parameterResolvers = new ParameterResolver[length];
         routeMethod.beanNames = PropertyUtils.parameterBeanNames(parameterAnnotations);
-        routeMethod.nullables = new boolean[length];
+        routeMethod.nullAbles = new boolean[length];
         routeMethod.noBody = (method == null ? beanMethod : method).getAnnotation(NoBody.class) != null;
         for (int i = 0; i < length; i++) {
             Object parameter = null;
@@ -204,7 +204,7 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
 
             if (parameterPathAnnotations != null
                     && KernelArray.getAssignable(parameterAnnotations[i], Nullable.class) != null) {
-                routeMethod.nullables[i] = true;
+                routeMethod.nullAbles[i] = true;
             }
 
             if (parameter == null) {
