@@ -52,6 +52,7 @@ public class ValidatorRegex extends PropertyResolverAbstract<ValidatorObject, Re
             @Override
             public String getValidateClass(Map<String, Object> validatorMap) {
                 validatorMap.put("pattern", regex);
+                validatorMap.put("error", caption == null ? REGEX : caption);
                 return null;
             }
         });

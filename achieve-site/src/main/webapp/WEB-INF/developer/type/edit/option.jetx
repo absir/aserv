@@ -16,6 +16,6 @@ ${input.removeAttr('name')}
 ${input.parent().appendChild(ScriptNode::node(shtml)).voidValue()}
 ${input.attr('ab_toggle', 'check')}
 
-##${input.attr('ab_toggle', 'iCheck')}
+##${input.attr('ab_toggles', 'iCheck')}
 ##${Pag::setNameTag(INPUT, 'footer', '<link rel="stylesheet" type="text/css" href="${SITE_STATIC}/../lib/icheck/icheck.css"/>')}
 ##${Pag::setNameTag(INPUT, 'footer', '<script type="text/javascript" src="${SITE_STATIC}/../lib/icheck/jquery.icheck.min.js"></script>')}

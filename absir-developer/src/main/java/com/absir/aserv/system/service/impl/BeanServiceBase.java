@@ -21,7 +21,6 @@ import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.helper.HelperCondition;
 import com.absir.aserv.system.service.BeanService;
-import com.absir.core.base.IBase;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.orm.hibernate.SessionFactoryUtils;
@@ -385,7 +384,8 @@ public class BeanServiceBase implements BeanService, ICrudSupply {
     @Transaction(rollback = Throwable.class)
     @Override
     public void mergeEntity(String entityName, Object entity, boolean create) {
-        if (create && !(entity instanceof IBase && ((IBase) entity).getId() != null)) {
+        //&& !(entity instanceof IBase && ((IBase) entity).getId() != null)
+        if (create) {
             persist(entityName, entity);
 
         } else {

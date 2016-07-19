@@ -18,6 +18,8 @@ import com.absir.aserv.system.crud.PasswordCrudFactory;
 import com.absir.orm.value.JaColum;
 import com.absir.property.value.Prop;
 import com.absir.validator.value.Email;
+import com.absir.validator.value.NotEmpty;
+import com.absir.validator.value.Regex;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -36,7 +38,19 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @JaColum(indexs = @Index(name = "username", columnList = "username"))
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @Column(unique = true, length = 64)
+    @NotEmpty
+    @Regex(value = "^[a-zA-Z\\u4e00-\\u9fa5][\\w\\u4e00-\\u9fa5]{0,32}$", lang = "请输入首字母不为数字的32字以内子母,数字,中文")
     private String username;
+
+    @JaLang("邮箱")
+    @Prop(include = 1)
+    @Email
+    private String email;
+
+    @JaLang("手机")
+    @Prop(include = 1)
+    @Regex(value = "^\\d*$")
+    private String mobile;
 
     @JaLang("用户类型")
     @JaEdit(groups = {JaEdit.GROUP_LIST})
@@ -99,14 +113,6 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @Prop(include = 99)
     private int lastErrorTimes;
 
-    @JaLang("邮箱")
-    @Prop(include = 1)
-    @Email
-    private String email;
-
-    @JaLang("手机")
-    @Prop(include = 1)
-    private String mobile;
 
     @JaLang("沉默")
     @Transient
@@ -196,22 +202,6 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
         this.lastErrorTimes = lastErrorTimes;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
     public boolean isSlient() {
         return slient;
     }
@@ -226,6 +216,22 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     public JeUserType getUserType() {

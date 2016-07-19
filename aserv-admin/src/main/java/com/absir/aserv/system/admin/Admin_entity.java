@@ -275,7 +275,7 @@ public class Admin_entity extends AdminServer {
 
         binderResult.setValidation(true);
         Map<String, Object> dataMap = ParameterResolverBinder.getPropertyMap(input);
-        if (!KernelString.isEmpty(identifierName)) {
+        if (identifier != null && !KernelString.isEmpty(identifierName)) {
             dataMap.put(identifierName, identifier);
         }
 

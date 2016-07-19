@@ -96,7 +96,7 @@
             <div id="importXls" class="modal hide fade" role="dialog"
                  ab_toggle="resize" resize="data-width" minSize="500">
                 <div class="page-container">
-                    <form ab_toggle="form" ab_validate="true" action="\${ADMIN_ROUTE}entity/importXls/${entityName}"
+                    <form ab_toggle="form" ab_validator="true" action="\${ADMIN_ROUTE}entity/importXls/${entityName}"
                           enctype="multipart/form-data" method="post">
                         <div class="row cl">
                             <label class="form-label col-xs-4 col-sm-3">${Pag::getLang('导入')}：</label>
