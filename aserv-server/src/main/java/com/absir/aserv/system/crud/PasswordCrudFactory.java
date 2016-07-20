@@ -24,8 +24,9 @@ import com.absir.servlet.InputRequest;
 @Configure
 public class PasswordCrudFactory implements ICrudFactory {
 
-    @Value("password.slat.count")
-    private static int slatCountDefault = 8;
+    @Value("password.salt.count")
+    private static int saltCountDefault = 8;
+
     private final ICrudProcessor PASSWORD_PROCESSOR = new ICrudProcessorInput<String>() {
 
         @Override
@@ -68,14 +69,16 @@ public class PasswordCrudFactory implements ICrudFactory {
                     }
                 }
 
-                requestBody = getPasswordEncrypt(requestBody, salt);
+                Accessor countAccessor = UtilAccessor.getAccessorProperty(entity.getClass(), "saltCount");
+                boolean setCount = countAccessor == null ? false : countAccessor.set(entity, saltCountDefault);
+                requestBody = getPasswordEncrypt(requestBody, salt, setCount ? saltCountDefault : 0);
                 crudProperty.set(entity, requestBody);
             }
         }
     };
 
-    public static int getSlatCountDefault() {
-        return slatCountDefault;
+    public static int getSaltCountDefault() {
+        return saltCountDefault;
     }
 
     public static String getPasswordEncrypt(String password, String salt) {
@@ -83,7 +86,7 @@ public class PasswordCrudFactory implements ICrudFactory {
     }
 
     public static String getPasswordEncrypt(String password, String salt, int saltCount) {
-        return HelperEncrypt.encryptionMD5(password, salt == null ? null : salt.getBytes(), 0);
+        return HelperEncrypt.encryptionMD5(password, salt == null ? null : salt.getBytes(), saltCount);
     }
 
     @Override

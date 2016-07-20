@@ -27,7 +27,7 @@ public abstract class UserService {
 
     @Transaction(rollback = Throwable.class)
     public void register(IUser user) {
-        user.setSaltCount(PasswordCrudFactory.getSlatCountDefault());
+        user.setSaltCount(PasswordCrudFactory.getSaltCountDefault());
         user.setPassword(getPasswordEntry(user.getPassword(), user));
         BeanDao.getSession().persist(user);
     }

@@ -11,7 +11,6 @@ import com.absir.aserv.support.Developer;
 import com.absir.aserv.system.bean.JUser;
 import com.absir.aserv.system.bean.JUserRole;
 import com.absir.aserv.system.bean.value.JeUserType;
-import com.absir.aserv.system.crud.PasswordCrudFactory;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.JUserDao;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
@@ -29,14 +28,14 @@ public class InitialTask {
     @Transaction(rollback = Throwable.class)
     protected void started() {
         if (Developer.isDeveloper()) {
-            JUserRole userRole = inserUserRole(1L, "系统管理员");
-            inserUserRole(2L, "管理员");
+            JUserRole userRole = insertUserRole(1L, "系统管理员");
+            insertUserRole(2L, "管理员");
             insertUser("absir", "developer", userRole, true);
             insertUser("admin", "admin888", userRole, false);
         }
     }
 
-    private JUserRole inserUserRole(Long id, String rolename) {
+    private JUserRole insertUserRole(Long id, String rolename) {
         Session session = BeanDao.getSession();
         JUserRole userRole = BeanDao.get(session, JUserRole.class, id);
         if (userRole == null) {
@@ -54,8 +53,7 @@ public class InitialTask {
         if (user == null) {
             user = new JUser();
             user.setUsername(username);
-            user.setSalt(Integer.toHexString(password.hashCode()));
-            user.setPassword(PasswordCrudFactory.getPasswordEncrypt(password, user.getSalt()));
+            user.setPasswordBase(password);
             user.setActivation(true);
             user.setUserType(JeUserType.USER_ADMIN);
             if (user.getUserRoles() == null) {
