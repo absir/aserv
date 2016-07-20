@@ -19,7 +19,7 @@
 
 <div class="page-container mt-20">
     <form
-            ab_toggle="form" ab_validator="true"
+            ab_toggle="form" ab_validator="true" ab_reset="true"
             action="\${ADMIN_ROUTE}entity/save/${entityName}\${id ? ('/' + id) : ''}"
             enctype="${multipart ? 'multipart/form-data' : 'application/x-www-form-urlencoded'}"
             class="form form-horizontal" method="post">

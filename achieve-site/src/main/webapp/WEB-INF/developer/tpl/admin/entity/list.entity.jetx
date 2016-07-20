@@ -19,7 +19,7 @@
 
 \${EntityStatics::searchConditionMap(INPUT)}
 <div class="text-c mt-20">
-    <form class="ab_pageForm ab__mt5" action="\${ADMIN_ROUTE}entity/list/${entityName}" method="get">
+    <form ab_toggle="reset" class="ab_pageForm ab__mt5" action="\${ADMIN_ROUTE}entity/list/${entityName}" method="get">
         <input type="hidden" name="pageIndex" value="\${page.pageIndex}"/>
         <input type="hidden" name="pageSize" value="\${page.pageSize}"/>
         <input type="hidden" name="orderField" value="\${orderField}"/>
