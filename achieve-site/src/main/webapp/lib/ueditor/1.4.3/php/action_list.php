@@ -52,14 +52,14 @@ for ($i = min($end, $len) - 1, $list = array(); $i < $len && $i >= 0 && $i >= $s
 //}
 
 /* 返回数据 */
-$result = json_encode(array(
+$binderName = json_encode(array(
     "state" => "SUCCESS",
     "list" => $list,
     "start" => $start,
     "total" => count($files)
 ));
 
-return $result;
+return $binderName;
 
 
 /**

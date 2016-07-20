@@ -43,6 +43,13 @@ public class JoEntity implements Serializable {
         this.entityClass = entityClass;
     }
 
+    public JoEntity(String entityName, Class<?> entityClass, boolean simpleName) {
+        this(entityName, entityClass);
+        if (entityName == null && entityClass != null) {
+            entityName = entityClass.getSimpleName();
+        }
+    }
+
     public static Class<?> entityClass(Class<?> entityClass) {
         while (AopProxy.class.isAssignableFrom(entityClass) || HibernateProxy.class.isAssignableFrom(entityClass)) {
             entityClass = entityClass.getSuperclass();

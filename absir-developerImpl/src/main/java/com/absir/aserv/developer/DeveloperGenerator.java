@@ -8,6 +8,7 @@
 package com.absir.aserv.developer;
 
 import com.absir.aserv.support.developer.IField;
+import com.absir.aserv.system.bean.value.JeEditable;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelLang.ObjectEntry;
@@ -94,6 +95,10 @@ public class DeveloperGenerator {
     }
 
     public boolean allow(IField field) {
+        if (field.getEditable() == JeEditable.DISABLE) {
+            return false;
+        }
+
         if (propertyFilter != null) {
             return propertyFilter.allow(field.getInclude(), field.getExclude()) && propertyFilter.isMatchPath(field.getName());
         }

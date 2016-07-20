@@ -26,6 +26,9 @@ ${request.setAttribute('inputval', val.substring(2, val.length() - 1))}
     #else
         #if(entry.getKey().equals("pattern"))
             ${input.attr("ab_validate", "pattern")}
+        #elseif(entry.getKey().equals("confirm"))
+            ${input.attr("ab_validate", "confirm")}
+            ${input.removeAttr('name')}
         #end
         ${input.attr(entry.getKey().toString(), entry.getValue().toString())}
     #end

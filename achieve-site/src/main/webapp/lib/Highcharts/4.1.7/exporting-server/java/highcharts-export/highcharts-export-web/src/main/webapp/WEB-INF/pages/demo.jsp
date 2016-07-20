@@ -218,7 +218,7 @@
 			<input id="preview" type="submit" value="Preview" />
 		</form>
 	</div>
-	<div id="result">
+	<div id="binderName">
 		<h4>Preview</h4>
 		<div id="container"></div>
 	</div>

@@ -28,6 +28,7 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Domain;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Value;
+import com.absir.bean.lang.LangCodeUtils;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.boost.IEntityMerge;
@@ -43,6 +44,10 @@ import java.util.Map;
 
 @Configure
 public abstract class SecurityService implements ISecurityService, ISecurity, IEntityMerge<JiUserBase>, IAfterInvoker<SecurityContext> {
+
+    public static final String USER_NO_LOGIN = LangCodeUtils.get("用户没有登录", SecurityService.class);
+
+    public static final String PASSWORD_ERROR = LangCodeUtils.get("密码错误", SecurityService.class);
 
     public static final SecurityService ME = BeanFactoryUtils.get(SecurityService.class);
 

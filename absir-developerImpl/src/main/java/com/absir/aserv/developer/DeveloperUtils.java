@@ -31,6 +31,7 @@ import com.absir.core.util.UtilContext;
 import com.absir.orm.value.JoEntity;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -72,13 +73,13 @@ public class DeveloperUtils {
         return suffix;
     }
 
-    public static String getGeneraterPath(String generaterPath) {
-        int prefix = generaterPath.indexOf("/", 1) + 1;
-        if (generaterPath.startsWith(DEVELOPER, prefix)) {
-            return generaterPath.substring(0, prefix) + generaterPath.substring(prefix + DEVELOPER_LENGTH);
+    public static String getGeneratePath(String generatePath) {
+        int prefix = generatePath.indexOf("/", 1) + 1;
+        if (generatePath.startsWith(DEVELOPER, prefix)) {
+            return generatePath.substring(0, prefix) + generatePath.substring(prefix + DEVELOPER_LENGTH);
         }
 
-        return generaterPath;
+        return generatePath;
     }
 
     public static String getDeveloperPath(String includePath) {
@@ -90,19 +91,29 @@ public class DeveloperUtils {
         return includePath.substring(0, prefix) + DEVELOPER + includePath.substring(prefix);
     }
 
-    public static void clearToken(String filepath) {
-        UtilAbsir.clearToken(filepath, Generator_Map_Token);
+    public static void clearToken(String filePath) {
+        UtilAbsir.clearToken(filePath, Generator_Map_Token);
     }
 
-    protected static void generateRenders(String filepath, String includePath, Object... renders) throws IOException {
+    protected static void generateRenders(String filePath, String includePath, Object... renders) throws IOException {
         ServletRequest request = KernelArray.getAssignable(renders, ServletRequest.class);
         if (request != null) {
-            generate(filepath, includePath, request, renders);
+            generate(filePath, includePath, request, renders);
         }
     }
 
     public static void diy(ServletRequest request, boolean diy) {
         request.setAttribute(DIY, diy);
+    }
+
+    public static void setJoEntity(String entityName, Class<?> entityClass, HttpServletRequest request) {
+        request.setAttribute("joEntity", new JoEntity(entityName, entityClass));
+    }
+
+    public static void setEntityModel(String entityName, Class<?> entityClass, HttpServletRequest request) {
+        JoEntity joEntity = new JoEntity(entityName, entityClass, true);
+        request.setAttribute("joEntity", joEntity);
+        request.setAttribute("entityModel", ModelFactory.getModelEntity((JoEntity) joEntity));
     }
 
     public static void generate(String filePath, String includePath, ServletRequest request, Object... renders) throws IOException {
@@ -128,7 +139,7 @@ public class DeveloperUtils {
                 }
             }
 
-            filePath = getGeneraterPath(filePath);
+            filePath = getGeneratePath(filePath);
             File file = new File(IRender.ME.getRealPath(filePath));
             EntityModel entityModel = joEntity == null ? null : ModelFactory.getModelEntity((JoEntity) joEntity);
             // DIY生成
@@ -246,16 +257,21 @@ public class DeveloperUtils {
                                 IDeveloper.ME.copyDeveloper(file, filePath);
 
                             } finally {
-                                if (outputStream != null) {
-                                    HelperIO.closeQuietly(outputStream);
-                                }
-
                                 if (output != null) {
                                     if (fileBuilder != null) {
                                         HelperIO.write(fileBuilder.toString(), output);
+                                        if (outputStream != null) {
+                                            if (BeanFactoryUtils.getBeanConfig().getEnvironment() == Environment.DEVELOP) {
+
+                                            }
+                                        }
                                     }
 
                                     output.close();
+                                }
+
+                                if (outputStream != null) {
+                                    HelperIO.closeQuietly(outputStream);
                                 }
                             }
                         }
@@ -281,12 +297,12 @@ public class DeveloperUtils {
         }
     }
 
-    public static void generate(String filepath, Object... renders) throws IOException {
-        generate(filepath, IRender.ME.getPath(renders), renders);
+    public static void generate(String filePath, Object... renders) throws IOException {
+        generate(filePath, IRender.ME.getPath(renders), renders);
     }
 
-    public static void generate(String filepath, String includePath, Object... renders) throws IOException {
-        generateRenders(IRender.ME.getFullPath(filepath, renders), includePath, renders);
+    public static void generate(String filePath, String includePath, Object... renders) throws IOException {
+        generateRenders(IRender.ME.getFullPath(filePath, renders), includePath, renders);
     }
 
     public static void includeExist(String option, List<String> types, Object... renders) throws IOException {
@@ -313,11 +329,11 @@ public class DeveloperUtils {
         }
     }
 
-    public static void includeExist(String option, String entityName, Object... renders) throws IOException {
-        includeExist(option, entityName, new String[]{"/WEB-INF/developer/bean/"}, renders);
+    public static void includeExistName(String option, String entityName, Object... renders) throws IOException {
+        includeExistName(option, entityName, new String[]{"/WEB-INF/developer/bean/"}, renders);
     }
 
-    public static void includeExist(String option, String entityName, String[] relativePaths, Object... renders) throws IOException {
+    public static void includeExistName(String option, String entityName, String[] relativePaths, Object... renders) throws IOException {
         for (String relativePath : relativePaths) {
             RenderUtils.includeExist(relativePath + option + "/" + entityName + suffix, renders);
         }

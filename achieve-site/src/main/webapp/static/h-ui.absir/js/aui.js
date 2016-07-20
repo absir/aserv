@@ -444,4 +444,22 @@ $(function () {
             }, error];
         }
     }
+
+    abValidates['confirm'] = function ($form, $input, name) {
+        var confirm = $input.attr('confirm');
+        if (confirm) {
+            var $confirm = $('[name="' + confirm + '"]', $form);
+            if ($confirm && $confirm.length > 0) {
+                var error = $input.attr('error');
+                if (!error) {
+                    error = "内容不一致";
+                }
+
+                return [function (value, element) {
+                    return value === $confirm.val();
+
+                }, error];
+            }
+        }
+    }
 });

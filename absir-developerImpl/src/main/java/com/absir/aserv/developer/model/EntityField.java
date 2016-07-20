@@ -526,7 +526,6 @@ public class EntityField extends DBField {
                         entityField.editable = JeEditable.DISABLE;
                         entityModel.addGroupField("locked", entityField);
                         //entityModel.addGroupField("none", entityField);
-                        //entityField.types.add("none");
                     }
                 }
             }

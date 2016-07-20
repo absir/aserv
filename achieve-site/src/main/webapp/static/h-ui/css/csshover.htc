@@ -59,14 +59,14 @@ nodes = getSelectedNodes(parts[i], nodes);
 return nodes; 
 }; 
 function getSelectedNodes(select, elements){ 
-var result, node, nodes = []; 
+var binderName, node, nodes = [];
 var classname = (/\.([a-z0-9_-]+)/i).exec(select); 
 var identify = (/\#([a-z0-9_-]+)/i).exec(select); 
 var tagName = select.replace(/(\.|\#|\:)[a-z0-9_-]+/i, ''); 
 for(var i = 0; i < elements.length; i++){ 
-result = tagName ? elements[i].all.tags(tagName) : elements[i].all; 
-for(var j = 0; j < result.length; j++){ 
-node = result[j]; 
+binderName = tagName ? elements[i].all.tags(tagName) : elements[i].all;
+for(var j = 0; j < binderName.length; j++){
+node = binderName[j];
 if((identify && node.id != identify[1]) || (classname && !(new RegExp('\\b' + classname[1] + '\\b').exec(node.className)))) continue; 
 nodes[nodes.length] = node; 
 }; 

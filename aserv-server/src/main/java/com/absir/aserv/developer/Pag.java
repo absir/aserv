@@ -342,10 +342,6 @@ public class Pag {
         }
     }
 
-    public static void setJoEntity(String entityName, Class<?> entityClass, HttpServletRequest request) {
-        request.setAttribute("joEntity", new JoEntity(entityName, entityClass));
-    }
-
     public static boolean isEmptyFieldGroup(JoEntity entity, String group) {
         String[] fields = CrudUtils.getGroupFields(entity, group);
         return fields == null || fields.length == 0;
@@ -378,5 +374,9 @@ public class Pag {
     public static interface IPagLang {
 
         public String getPagLang(String transferredName);
+    }
+
+    public static void forEntity(HttpServletRequest request) {
+        request.setAttribute("entity", forEntity);
     }
 }

@@ -39,8 +39,8 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
 
             } catch (Throwable e) {
                 if (e instanceof ServerException) {
-                    ServerStatus servStatus = ((ServerException) e).getServerStatus();
-                    switch (servStatus) {
+                    ServerStatus serverStatus = ((ServerException) e).getServerStatus();
+                    switch (serverStatus) {
                         case IN_404:
                             return false;
 

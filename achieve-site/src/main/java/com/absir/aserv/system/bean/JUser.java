@@ -15,7 +15,6 @@ import com.absir.aserv.system.bean.proxy.JpMeta;
 import com.absir.aserv.system.bean.value.*;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.aserv.system.crud.PasswordCrudFactory;
-import com.absir.orm.value.JaColum;
 import com.absir.property.value.Prop;
 import com.absir.validator.value.Email;
 import com.absir.validator.value.Regex;
@@ -34,7 +33,6 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
 
     @JaLang("用户名")
     @Prop(include = 1)
-    @JaColum(indexs = @Index(name = "username", columnList = "username"))
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @Column(unique = true, length = 64)
     @Regex(value = "^[a-zA-Z\\u4e00-\\u9fa5][\\w\\u4e00-\\u9fa5]{0,32}$", lang = "请输入首位不是数字,0-32位字母|数字|中文")

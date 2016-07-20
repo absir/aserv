@@ -31,6 +31,7 @@ import com.absir.server.on.OnScope;
 import com.absir.server.route.entity.EntityMutil;
 import com.absir.server.route.entity.EntityOnPut;
 import com.absir.server.route.entity.EntitySingleton;
+import com.absir.server.route.invoker.InvokerResolver;
 import com.absir.server.route.parameter.ParameterResolver;
 import com.absir.server.route.parameter.ParameterResolverPath;
 import com.absir.server.route.returned.ReturnedResolver;
@@ -56,6 +57,10 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
     ParameterResolver[] parameterResolvers;
 
     ParameterResolverPath parameterResolverPath = new ParameterResolverPath();
+
+    @Inject(type = InjectType.Selectable)
+    @Orders
+    InvokerResolver[] invokerResolvers;
 
     @Inject(type = InjectType.Selectable)
     @Orders
@@ -224,6 +229,47 @@ public class RouteFactory implements IBeanDefineSupply, IBeanFactoryAware, IMeth
 
                 routeMethod.parameters[i] = parameter;
                 routeMethod.parameterResolvers[i] = parameterResolverPath;
+            }
+        }
+
+        if (invokerResolvers != null) {
+            List<Object> invokers = new ArrayList<Object>();
+            List<InvokerResolver> resolvers = new ArrayList<InvokerResolver>();
+            for (InvokerResolver invokerResolver : invokerResolvers) {
+                Object invoker = invokerResolver.getInvoker(beanType);
+                if (invoker != null) {
+                    invokers.add(invoker);
+                    resolvers.add(invokerResolver);
+                }
+            }
+
+            if (beanMethod != null && beanMethod.getAnnotation(NoInvoker.class) != null) {
+                invokers.clear();
+                resolvers.clear();
+            }
+
+            Method iMethod = method == null ? beanMethod : method;
+            while (iMethod != null) {
+                for (InvokerResolver invokerResolver : invokerResolvers) {
+                    Object invoker = invokerResolver.getInvoker(iMethod);
+                    if (invoker != null) {
+                        int idx = KernelCollection.indexOf(resolvers, invokerResolver);
+                        if (idx < 0) {
+                            invokers.add(invoker);
+                            resolvers.add(invokerResolver);
+
+                        } else {
+                            invokers.set(idx, invoker);
+                        }
+                    }
+                }
+
+                iMethod = iMethod == beanMethod ? null : beanMethod;
+            }
+
+            if (!invokers.isEmpty()) {
+                routeMethod.invokers = KernelCollection.toArray(invokers, Object.class);
+                routeMethod.invokerResolvers = KernelCollection.toArray(resolvers, InvokerResolver.class);
             }
         }
 

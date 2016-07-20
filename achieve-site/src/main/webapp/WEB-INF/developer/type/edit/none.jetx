@@ -1,0 +1,5 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+${input.removeAttr('name')}

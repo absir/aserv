@@ -8,6 +8,8 @@
 package com.absir.server.route;
 
 import com.absir.core.kernel.KernelLang;
+import com.absir.server.exception.ServerException;
+import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.IDispatcher;
 import com.absir.server.in.Input;
 import com.absir.server.in.Interceptor;
@@ -99,6 +101,14 @@ public class RouteEntry {
             }
 
             onPut.setReturnThrowable(e);
+            if (e.getClass() == ServerException.class) {
+                if (((ServerException) e).getServerStatus() == ServerStatus.ON_SUCCESS) {
+                    input.doAfterInvoker();
+                    dispatcher.resolveReturnedValue(routeBean, onPut);
+                    return onPut;
+                }
+            }
+
             if (!dispatcher.returnThrowable(e, routeBean, onPut)) {
                 throw e;
             }

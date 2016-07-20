@@ -10,7 +10,7 @@ $action = $_GET['action'];
 
 switch ($action) {
     case 'config':
-        $result =  json_encode($CONFIG);
+        $binderName =  json_encode($CONFIG);
         break;
 
     /* 上传图片 */
@@ -21,25 +21,25 @@ switch ($action) {
     case 'uploadvideo':
     /* 上传文件 */
     case 'uploadfile':
-        $result = include("action_upload.php");
+        $binderName = include("action_upload.php");
         break;
 
     /* 列出图片 */
     case 'listimage':
-        $result = include("action_list.php");
+        $binderName = include("action_list.php");
         break;
     /* 列出文件 */
     case 'listfile':
-        $result = include("action_list.php");
+        $binderName = include("action_list.php");
         break;
 
     /* 抓取远程文件 */
     case 'catchimage':
-        $result = include("action_crawler.php");
+        $binderName = include("action_crawler.php");
         break;
 
     default:
-        $result = json_encode(array(
+        $binderName = json_encode(array(
             'state'=> '请求地址出错'
         ));
         break;
@@ -48,12 +48,12 @@ switch ($action) {
 /* 输出结果 */
 if (isset($_GET["callback"])) {
     if (preg_match("/^[\w_]+$/", $_GET["callback"])) {
-        echo htmlspecialchars($_GET["callback"]) . '(' . $result . ')';
+        echo htmlspecialchars($_GET["callback"]) . '(' . $binderName . ')';
     } else {
         echo json_encode(array(
             'state'=> 'callback参数不合法'
         ));
     }
 } else {
-    echo $result;
+    echo $binderName;
 }

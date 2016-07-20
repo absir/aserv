@@ -90,7 +90,7 @@ ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
 #end
 #end
 ##编辑一般字段结束
-${DeveloperUtils::includeExist("edit", entityModel.getJoEntity().getEntityName(), request)}
+${DeveloperUtils::includeExistName("edit", entityModel.getJoEntity().getEntityName(), request)}
 #tag scriptEcho()
 ${ScriptNode::html(element) + "\r\n"}
 #end
@@ -285,7 +285,7 @@ ${ScriptNode::html(element) + "\r\n"}
             #if(!generator.append(identifier, element)) {
                 #tag layout_block("node")
                 <td><input ${identifier} type="text" class="ab_td_input"
-                                         value="\${entity${map_value}.${field.getName()} ?! ''}"></td>
+                                         value="\${entity${map_value}.${field.getName()}}"></td>
             #end
             #set(nodes = ScriptNode::append(element, node))
             ${DeveloperUtils::includeExist("subtable", field.getTypes(), request)}
@@ -293,7 +293,7 @@ ${ScriptNode::html(element) + "\r\n"}
         #end
         #end
 
-            ${DeveloperUtils::includeExist("subtable", entityModel.getJoEntity().getEntityName(), request)}
+            ${DeveloperUtils::includeExistName("subtable", entityModel.getJoEntity().getEntityName(), request)}
 
             #tag scriptEcho()
             <th width="100">

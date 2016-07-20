@@ -24,13 +24,19 @@ public class KernelCollection {
     }
 
     public static <T> boolean contain(List<T> collection, T element) {
+        return indexOf(collection, element) >= 0;
+    }
+
+    public static <T> int indexOf(List<T> collection, T element) {
+        int i = -1;
         for (T ele : collection) {
+            i++;
             if (ele == element) {
-                return true;
+                return i;
             }
         }
 
-        return false;
+        return i;
     }
 
     public static <T> T anyObject(Collection<? extends T> collection) {

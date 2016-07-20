@@ -60,7 +60,7 @@ ${Scenario::set("list", request)}
         #end
     #end
 #end
-    ${DeveloperUtils::includeExist("list", entityModel.getJoEntity().getEntityName(), request)}
+    ${DeveloperUtils::includeExistName("list", entityModel.getJoEntity().getEntityName(), request)}
 #end
     ${ScriptNode::html(element) + "\r\n"}
 </tr>

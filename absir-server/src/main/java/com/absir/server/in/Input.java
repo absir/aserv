@@ -12,6 +12,7 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.lang.ILangMessage;
 import com.absir.binder.BinderData;
+import com.absir.binder.BinderResult;
 import com.absir.context.core.Bean;
 import com.absir.context.core.ContextUtils;
 import com.absir.context.lang.LangBundle;
@@ -192,6 +193,10 @@ public abstract class Input extends Bean<Serializable> implements IAttributes, I
         return routeEntry == null ? null : routeEntry.intercept(iterator, this);
     }
 
+    public boolean hasBinderData() {
+        return binderData != null;
+    }
+
     public BinderData getBinderData() {
         if (binderData == null) {
             binderData = new BinderData();
@@ -273,5 +278,13 @@ public abstract class Input extends Bean<Serializable> implements IAttributes, I
     @Override
     public String getLangMessage(String langCode) {
         return getLang(langCode);
+    }
+
+    public void addPropertyError(String propertyPath, String errorMessage, Object errorObject, boolean setErrors) {
+        BinderResult result = getBinderData().getBinderResult();
+        result.addPropertyError(propertyPath, errorMessage, errorObject);
+        if (setErrors) {
+            getModel().put("errors", result.getPropertyErrors());
+        }
     }
 }

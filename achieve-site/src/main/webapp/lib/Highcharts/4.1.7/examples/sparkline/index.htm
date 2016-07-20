@@ -6,7 +6,7 @@
 
 		<script type="text/javascript" src="http://cdn.hcharts.cn/jquery/jquery-1.8.2.min.js"></script>
 		<style type="text/css">
-#result {
+#binderName {
 	text-align: right;
 	color: gray;
 	min-height: 2em;
@@ -184,7 +184,7 @@ $(function () {
 
             // Print a feedback on the performance
             if (n === fullLen) {
-                $('#result').html('Generated ' + fullLen + ' sparklines in ' + (new Date() - start) + ' ms');
+                $('#binderName').html('Generated ' + fullLen + ' sparklines in ' + (new Date() - start) + ' ms');
             }
         }
     }
@@ -196,7 +196,7 @@ $(function () {
 	<body>
 <script src="../../js/highcharts.js"></script>
 
-<div id="result"></div>
+<div id="binderName"></div>
 <table id="table-sparkline">
     <thead>
         <tr>

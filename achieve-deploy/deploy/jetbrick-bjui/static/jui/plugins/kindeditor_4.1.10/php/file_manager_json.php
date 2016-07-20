@@ -119,19 +119,19 @@ function cmp_func($a, $b) {
 }
 usort($file_list, 'cmp_func');
 
-$result = array();
+$binderName = array();
 //相对于根目录的上一级目录
-$result['moveup_dir_path'] = $moveup_dir_path;
+$binderName['moveup_dir_path'] = $moveup_dir_path;
 //相对于根目录的当前目录
-$result['current_dir_path'] = $current_dir_path;
+$binderName['current_dir_path'] = $current_dir_path;
 //当前目录的URL
-$result['current_url'] = $current_url;
+$binderName['current_url'] = $current_url;
 //文件数
-$result['total_count'] = count($file_list);
+$binderName['total_count'] = count($file_list);
 //文件列表数组
-$result['file_list'] = $file_list;
+$binderName['file_list'] = $file_list;
 
 //输出JSON字符串
 header('Content-type: application/json; charset=UTF-8');
 $json = new Services_JSON();
-echo $json->encode($result);
+echo $json->encode($binderName);

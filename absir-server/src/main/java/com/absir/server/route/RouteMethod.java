@@ -12,6 +12,7 @@ import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.InMethod;
 import com.absir.server.on.OnPut;
+import com.absir.server.route.invoker.InvokerResolver;
 import com.absir.server.route.parameter.ParameterResolver;
 import com.absir.server.route.parameter.ParameterResolverMethod;
 import com.absir.server.route.returned.ReturnedResolver;
@@ -27,6 +28,10 @@ public class RouteMethod {
     Object[] parameters;
 
     ParameterResolver[] parameterResolvers;
+
+    Object[] invokers;
+
+    InvokerResolver[] invokerResolvers;
 
     String[] beanNames;
 
@@ -86,6 +91,11 @@ public class RouteMethod {
             parameterValues[i] = parameterValue;
         }
 
+        length = invokers == null ? 0 : invokers.length;
+        for (int i = 0; i < length; i++) {
+            invokerResolvers[i].resolveBefore(invokers[0], onPut);
+        }
+
         onPut.setReturnedFixed(returnedFixed);
         parameterValue = method.invoke(routeBean, parameterValues);
         if (!noBody && method.getReturnType() != void.class) {
@@ -95,6 +105,10 @@ public class RouteMethod {
         if (returnedResolver != null && !onPut.isReturnedFixed()) {
             onPut.setReturned(returned);
             onPut.setReturnedResolver(returnedResolver);
+        }
+
+        for (int i = 0; i < length; i++) {
+            invokerResolvers[i].resolveAfter(parameterValue, invokers[0], onPut);
         }
     }
 }

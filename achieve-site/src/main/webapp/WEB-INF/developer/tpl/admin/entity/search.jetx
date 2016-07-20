@@ -25,7 +25,7 @@ ${Scenario::set("search", request)}
 #end
 #end
 #end
-${DeveloperUtils::includeExist("search", entityModel.getJoEntity().getEntityName(), request)}
+${DeveloperUtils::includeExistName("search", entityModel.getJoEntity().getEntityName(), request)}
 #tag scriptEcho()
 ${ScriptNode::html(element) + "\r\n"}
 #end

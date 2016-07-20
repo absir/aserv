@@ -7,7 +7,7 @@
  */
 package com.absir.aserv.system.server;
 
-import com.absir.aserv.system.server.value.Result;
+import com.absir.aserv.system.server.value.BinderName;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
@@ -104,8 +104,8 @@ public class ServerResolverBody extends ReturnedResolverBody implements Paramete
     protected Object getParameter(IServerResolverBody body, int i, String[] parameterNames, Class<?>[] parameterTypes, Annotation[][] annotations, Method method, boolean defaultBody) {
         Integer value = body.getBodyParameter(i, parameterNames, parameterTypes, annotations, method);
         if (defaultBody || value != null) {
-            Result binderResult = KernelArray.getAssignable(annotations[i], Result.class);
-            return binderResult == null ? value : binderResult;
+            BinderName binderName = KernelArray.getAssignable(annotations[i], BinderName.class);
+            return binderName == null ? value : binderName;
         }
 
         return null;
@@ -123,18 +123,18 @@ public class ServerResolverBody extends ReturnedResolverBody implements Paramete
     }
 
     public Object getParameterValue(IServerResolverBody body, OnPut onPut, Object parameter, Class<?> parameterType, String beanName, RouteMethod routeMethod) throws Exception {
-        if (parameter instanceof Result) {
+        if (parameter instanceof BinderName) {
             Object bodyObject = onPut.getInput().getAttribute(BODY_OBJECT_NAME);
             if (bodyObject == null) {
                 bodyObject = body.getBodyParameterValue(onPut, 0, Object.class, null, routeMethod);
                 onPut.getInput().setAttribute(BODY_OBJECT_NAME, bodyObject);
             }
 
-            Result result = (Result) parameter;
+            BinderName binderName = (BinderName) parameter;
             BinderData binderData = onPut.getBinderData();
-            binderData.getBinderResult().setGroup(result.group());
-            binderData.getBinderResult().setValidation(result.validation());
-            String name = result.name();
+            binderData.getBinderResult().setGroup(binderName.group());
+            binderData.getBinderResult().setValidation(binderName.validation());
+            String name = binderName.name();
             return binderData.bind(KernelString.isEmpty(name) || !(bodyObject instanceof Map) ? bodyObject : ((Map<?, ?>) bodyObject).get(name), beanName, parameterType);
 
         } else {

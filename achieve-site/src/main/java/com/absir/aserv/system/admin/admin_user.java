@@ -8,17 +8,18 @@
 package com.absir.aserv.system.admin;
 
 import com.absir.aserv.system.bean.JUser;
-import com.absir.aserv.system.crud.PasswordCrudFactory;
+import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
-import com.absir.binder.BinderResult;
-import com.absir.core.kernel.KernelString;
 import com.absir.server.in.InMethod;
 import com.absir.server.in.Input;
+import com.absir.server.value.Errors;
 import com.absir.server.value.Mapping;
-import com.absir.server.value.Param;
 import com.absir.server.value.Server;
+import com.absir.server.value.Validate;
+import com.absir.validator.value.Confirm;
+import com.absir.validator.value.NotEmpty;
 
 @Server
 public class admin_user extends AdminServer {
@@ -27,49 +28,41 @@ public class admin_user extends AdminServer {
         input.getModel().put("userId", SecurityService.ME.getUserBase(input).getUserId());
     }
 
-    /**
-     * 修改密码
-     *
-     * @param password
-     * @param newPassword
-     * @param input
-     * @return
-     */
-    @Mapping(method = InMethod.POST)
-    public String password(@Param String password, @Param String newPassword, @Param String confirmPassword, Input input) {
-        JUser user = BeanService.ME.get(JUser.class, SecurityService.ME.getUserBase(input).getUserId());
-        if (user == null) {
-            return "admin/failed";
-        }
+    public static class FPassword {
 
-        if (KernelString.isEmpty(newPassword)) {
-            BinderResult result = new BinderResult();
-            result.addPropertyError("newPassword", PasswordCrudFactory.PASSWORD_EMPTY, password);
-            input.getModel().put("errors", result.getPropertyErrors());
-            return "admin/failed";
-        }
+        @JaLang("原密码")
+        @NotEmpty
+        public String oldPassword;
 
-        if (!confirmPassword.equals(newPassword)) {
-            BinderResult result = new BinderResult();
-            result.addPropertyError("confirmPassword", PasswordCrudFactory.PASSWORD_NOT_CONFIRM, password);
-            input.getModel().put("errors", result.getPropertyErrors());
-            return "admin/failed";
-        }
+        @JaLang("新密码")
+        @NotEmpty
+        public String newPassword;
 
-        if (!SecurityService.ME.validator(user, password, 0, 0, input.getAddress())) {
-            BinderResult result = new BinderResult();
-            result.addPropertyError("password", PasswordCrudFactory.PASSWORD_ERROR, password);
-            input.getModel().put("errors", result.getPropertyErrors());
-            return "admin/failed";
-        }
-
-        user.setPasswordBase(newPassword);
-        CrudServiceUtils.merge("JUser", null, user, false, user, null);
-        return "admin/success";
+        @JaLang("确认密码")
+        @NotEmpty
+        @Confirm("newPassword")
+        public String confirmPassword;
     }
 
-    //todo 修改密码用DTO 试试
-    protected static class ddd {
+    /**
+     * 修改密码
+     */
+    @Errors
+    @Mapping(method = InMethod.POST)
+    public String password(@Validate FPassword password, Input input) {
+        JUser user = BeanService.ME.get(JUser.class, SecurityService.ME.getUserBase(input).getUserId());
+        if (user == null) {
+            input.getModel().put("message", input.getLang(SecurityService.USER_NO_LOGIN));
+            return "admin/failed";
+        }
 
+        if (!SecurityService.ME.validator(user, password.oldPassword, 0, 0, input.getAddress())) {
+            input.addPropertyError("oldPassword", input.getLang(SecurityService.PASSWORD_ERROR), password, true);
+            return "admin/failed";
+        }
+
+        user.setPasswordBase(password.newPassword);
+        CrudServiceUtils.merge("JUser", null, user, false, user, null);
+        return "admin/success";
     }
 }

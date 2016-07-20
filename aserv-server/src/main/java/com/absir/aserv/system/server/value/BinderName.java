@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Result {
+public @interface BinderName {
 
     String name() default KernelLang.NULL_STRING;
 
