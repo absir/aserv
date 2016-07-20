@@ -52,15 +52,6 @@ public class BeanFactoryImpl implements BeanFactory {
 
     private List<BeanSupply> beanSupplies;
 
-    public static BeanConfig forBeanConfig(String classPath) {
-        if (Instance == null) {
-            new BeanFactoryImpl(new BeanConfigImpl(null, classPath), new ConcurrentHashMap<String, BeanDefine>(), new ArrayList<IBeanDefineAware>(), new ArrayList<IBeanDefineProcessor>(),
-                    new ArrayList<IBeanObjectProcessor>(), new ArrayList<IBeanSoftReferenceAware>());
-        }
-
-        return Instance.beanConfig;
-    }
-
     protected BeanFactoryImpl(BeanConfig beanConfig, ConcurrentHashMap<String, BeanDefine> beanNameDefineMap,
                               List<IBeanDefineAware> beanDefineAwares, List<IBeanDefineProcessor> beanDefineProcessors,
                               List<IBeanObjectProcessor> beanObjectProcessors, List<IBeanSoftReferenceAware> beanSoftReferenceAwares) {
@@ -72,6 +63,15 @@ public class BeanFactoryImpl implements BeanFactory {
         this.beanDefineProcessors = beanDefineProcessors;
         this.beanObjectProcessors = beanObjectProcessors;
         this.beanSoftReferenceAwares = beanSoftReferenceAwares;
+    }
+
+    public static BeanConfig forBeanConfig(String classPath) {
+        if (Instance == null) {
+            new BeanFactoryImpl(new BeanConfigImpl(null, classPath), new ConcurrentHashMap<String, BeanDefine>(), new ArrayList<IBeanDefineAware>(), new ArrayList<IBeanDefineProcessor>(),
+                    new ArrayList<IBeanObjectProcessor>(), new ArrayList<IBeanSoftReferenceAware>());
+        }
+
+        return Instance.beanConfig;
     }
 
     protected static BeanFactoryImpl getInstance() {

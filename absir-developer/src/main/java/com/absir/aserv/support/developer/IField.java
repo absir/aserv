@@ -50,9 +50,9 @@ public interface IField {
 
     public Map<String, Object> getMetas();
 
-    public void setListColType(int listColType);
-
     public int getListColType();
+
+    public void setListColType(int listColType);
 
     public Object getDefaultEntity();
 }

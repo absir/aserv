@@ -24,6 +24,7 @@ import java.util.List;
 public class ScriptNode extends TextNode {
 
     public static final EscapeMode NONE = KernelObject.serializeClone(EscapeMode.extended);
+    protected static final Field attrKeyField = KernelReflect.declaredField(Attribute.class, "key");
 
     static {
         KernelObject.declaredSet(ScriptNode.NONE, "map", new HashMap<Object, Object>());
@@ -76,8 +77,6 @@ public class ScriptNode extends TextNode {
 
         return accum.toString();
     }
-
-    protected static final Field attrKeyField = KernelReflect.declaredField(Attribute.class, "key");
 
     public static void attr(Node node, String key, String value) {
         Attribute attribute = new Attribute(key, value);

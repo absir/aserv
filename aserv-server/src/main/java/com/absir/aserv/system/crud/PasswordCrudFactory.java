@@ -33,11 +33,6 @@ public class PasswordCrudFactory implements ICrudFactory {
 
     @Value("password.slat.count")
     private static int slatCountDefault = 8;
-
-    public static int getSlatCountDefault() {
-        return slatCountDefault;
-    }
-
     private final ICrudProcessor PASSWORD_PROCESSOR = new ICrudProcessorInput<String>() {
 
         @Override
@@ -83,6 +78,10 @@ public class PasswordCrudFactory implements ICrudFactory {
             }
         }
     };
+
+    public static int getSlatCountDefault() {
+        return slatCountDefault;
+    }
 
     public static String getPasswordEncrypt(String password, String salt) {
         return HelperEncrypt.encryptionMD5(password, salt == null ? null : salt.getBytes());

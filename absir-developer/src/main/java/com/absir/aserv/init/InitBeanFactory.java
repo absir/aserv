@@ -87,14 +87,6 @@ public class InitBeanFactory {
 
     private Map<String, Object> nameMapInitBean = new HashMap<String, Object>();
 
-    public boolean isRequireInit() {
-        return initCheck && KernelObject.equals(oldVersion, "0");
-    }
-
-    public boolean isVersionChange() {
-        return initCheck && (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP || !KernelObject.equals(oldVersion, version));
-    }
-
     /**
      * 升级删除文件
      *
@@ -129,6 +121,14 @@ public class InitBeanFactory {
                 }
             }
         }
+    }
+
+    public boolean isRequireInit() {
+        return initCheck && KernelObject.equals(oldVersion, "0");
+    }
+
+    public boolean isVersionChange() {
+        return initCheck && (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP || !KernelObject.equals(oldVersion, version));
     }
 
     public String getAppName() {

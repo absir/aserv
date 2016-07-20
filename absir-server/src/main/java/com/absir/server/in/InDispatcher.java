@@ -94,6 +94,10 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
     public void resolveReturnedValue(Object routeBean, OnPut onPut) throws Throwable {
         ReturnedResolver returnedResolver = onPut.getReturnedResolver();
         if (returnedResolver == null) {
+            if (onPut.isReturnedFixed()) {
+                return;
+            }
+
             returnedResolver = onPut.getInput().getReturnedResolver(onPut);
             if (returnedResolver == null) {
                 return;

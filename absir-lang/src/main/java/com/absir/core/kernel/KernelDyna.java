@@ -33,15 +33,11 @@ public abstract class KernelDyna {
     public static final Character CHARACTER_ZERO = Character.valueOf((char) 0);
 
     public static final Date DATE_ZERO = new Date((long) 0);
-
+    protected static final char[] DATE_CHARS = "-: /".toCharArray();
     private static final Map<String, DateFormat> dateFormatMap = new HashMap<String, DateFormat>();
-
     public static final DateFormat DATE_FORMAT = getSimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     public static final DateFormat DATE_FORMAT_DAY = getSimpleDateFormat("yyyy-MM-dd");
-
     public static final DateFormat DATE_FORMAT_TIME = getSimpleDateFormat("HH:mm:ss");
-
     public static final DateFormat[] DATE_FORMAT_ARRAY = new DateFormat[]{DATE_FORMAT, DATE_FORMAT_DAY, DATE_FORMAT_TIME, DateFormat.getDateTimeInstance(),
             DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG), DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM),
             getSimpleDateFormat("EEE MMM d hh:mm:ss a z yyyy"), getSimpleDateFormat("EEE MMM d HH:mm:ss z yyyy"), getSimpleDateFormat("MM/dd/yy hh:mm:ss a"), getSimpleDateFormat("MM/dd/yy")};
@@ -393,8 +389,6 @@ public abstract class KernelDyna {
     public static Long toLong(String str) {
         return toLong(str, LONG_ZERO);
     }
-
-    protected static final char[] DATE_CHARS = "-: /".toCharArray();
 
     public static Long toLong(String str, Long defaultValue) {
         str = str.trim();

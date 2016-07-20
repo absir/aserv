@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2015年11月18日 上午10:46:28
  */
 package com.absir.platform.service;
@@ -34,16 +34,13 @@ import java.util.Iterator;
 public class PlatformService {
 
     public static final PlatformService ME = BeanFactoryUtils.get(PlatformService.class);
+    @Value("platform.lifeTime")
+    private long lifeTime = 3600000 * 24;
+    @Domain
+    private DSequence sessionSequence;
 
     public static String getPlatformUserRefId(String platform, String username) {
         return platform + ',' + username;
-    }
-
-    @Value("platform.lifeTime")
-    private long lifeTime = 3600000 * 24;
-
-    public long getLifeTime() {
-        return lifeTime;
     }
 
     /**
@@ -55,6 +52,10 @@ public class PlatformService {
         }
 
         return ME.getPlatformUser("JUser", String.valueOf(userBase.getUserId()), channel);
+    }
+
+    public long getLifeTime() {
+        return lifeTime;
     }
 
     /**
@@ -152,9 +153,6 @@ public class PlatformService {
     public JPlatformUser reSessionPlatformUser(String platform, String username, String channel, long lifeTime) {
         return loginSessionUserType(getPlatformUser(platform, username, channel), lifeTime, 2);
     }
-
-    @Domain
-    private DSequence sessionSequence;
 
     public String nextSessionId() {
         return sessionSequence.getNextHexId();

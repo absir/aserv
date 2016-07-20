@@ -73,7 +73,7 @@ public class RouteMethod {
         return inMethods;
     }
 
-    public void invoke(Object routeBean, OnPut onPut) throws Throwable {
+    public void invoke(Object routeBean, OnPut onPut, boolean returnedFixed) throws Throwable {
         int length = beanNames == null ? 0 : beanNames.length;
         Object parameterValue;
         Object[] parameterValues = length == 0 ? KernelLang.NULL_OBJECTS : new Object[length];
@@ -86,7 +86,7 @@ public class RouteMethod {
             parameterValues[i] = parameterValue;
         }
 
-        onPut.setReturnedFixed(false);
+        onPut.setReturnedFixed(returnedFixed);
         parameterValue = method.invoke(routeBean, parameterValues);
         if (!noBody && method.getReturnType() != void.class) {
             onPut.setReturnValue(parameterValue);

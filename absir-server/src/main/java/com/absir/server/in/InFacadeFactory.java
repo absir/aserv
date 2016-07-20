@@ -14,12 +14,6 @@ import java.util.Map;
 @Configure
 public abstract class InFacadeFactory {
 
-    @Orders
-    @Inject(type = InjectType.Selectable)
-    private static InFacadeFactory[] facadeFactories;
-
-    private static final Map<Class<?>, InFacadeFactory> inputClassMapFacadeFactory = new HashMap<Class<?>, InFacadeFactory>();
-
     public static final InFacade<?> IN_FACADE = new InFacade() {
         @Override
         public String getAddress() {
@@ -71,7 +65,6 @@ public abstract class InFacadeFactory {
             return null;
         }
     };
-
     public static final InFacadeFactory IN_FACADE_FACTORY = new InFacadeFactory() {
         @Override
         public boolean isSupport(Input input) {
@@ -83,6 +76,10 @@ public abstract class InFacadeFactory {
             return IN_FACADE;
         }
     };
+    private static final Map<Class<?>, InFacadeFactory> inputClassMapFacadeFactory = new HashMap<Class<?>, InFacadeFactory>();
+    @Orders
+    @Inject(type = InjectType.Selectable)
+    private static InFacadeFactory[] facadeFactories;
 
     public static InFacadeFactory forFacadeFactory(Input input) {
         Class<?> inputClass = input.getClass();

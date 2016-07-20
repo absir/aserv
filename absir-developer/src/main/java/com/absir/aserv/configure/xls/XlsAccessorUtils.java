@@ -35,6 +35,7 @@ public class XlsAccessorUtils {
     private static final Map<Class, XlsDao> Base_Class_Map_Dao = new HashMap<Class, XlsDao>();
 
     private static boolean calculateUpdate = true;
+    private static Map<Class, XlsAccessorContext> clsMapAccessorContext = new HashMap<Class, XlsAccessorContext>();
 
     public static Object getCellObject(HSSFCell hssfCell) {
         if (hssfCell == null) {
@@ -263,8 +264,6 @@ public class XlsAccessorUtils {
     public static void setCalculateUpdate(boolean calculateUpdate) {
         XlsAccessorUtils.calculateUpdate = calculateUpdate;
     }
-
-    private static Map<Class, XlsAccessorContext> clsMapAccessorContext = new HashMap<Class, XlsAccessorContext>();
 
     public static XlsAccessorContext getAccessorContext(Class beanClass, XlsBase xlsBase, boolean cache) {
         XlsAccessorContext xlsAccessorContext = clsMapAccessorContext.get(beanClass);

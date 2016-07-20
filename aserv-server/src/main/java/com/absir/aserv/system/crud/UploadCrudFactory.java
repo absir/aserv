@@ -77,17 +77,12 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(UploadCrudFactory.class);
-
-    @Domain
-    private DSequence nameSequence;
-
     private static String uploadUrl;
-
     private static String uploadPath;
-
     @Value(value = "upload.passTime")
     private static long uploadPassTime = 3600000;
-
+    @Domain
+    private DSequence nameSequence;
     @Value("upload.image.extension")
     private String imageExtension = "gif|jpg|jpeg|png|bmp";
 

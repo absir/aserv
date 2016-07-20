@@ -134,6 +134,7 @@ public class KernelLang {
         public void set(Object e) {
         }
     };
+    public static final char[] REG_CHARS = new char[]{'*', '{', '(', '['};
 
     public static int min(int one, int two, int three) {
         return (one = one < two ? one : two) < three ? one : three;
@@ -153,13 +154,6 @@ public class KernelLang {
             }
         }
     }
-
-    public static interface IMatcherType {
-
-        public boolean matchString(String match, String string);
-    }
-
-    public static final char[] REG_CHARS = new char[]{'*', '{', '(', '['};
 
     public static enum MatcherType implements IMatcherType {
 
@@ -254,18 +248,9 @@ public class KernelLang {
 
     }
 
-    public static class MatcherTypeReg implements IMatcherType {
+    public static interface IMatcherType {
 
-        protected Pattern pattern;
-
-        MatcherTypeReg(Pattern pattern) {
-            this.pattern = pattern;
-        }
-
-        @Override
-        public boolean matchString(String match, String string) {
-            return pattern.matcher(string).find();
-        }
+        public boolean matchString(String match, String string);
     }
 
     public static interface CloneTemplate<T> extends Cloneable {
@@ -292,6 +277,20 @@ public class KernelLang {
     public static interface GetTemplate<T, K> {
 
         K getWith(T template);
+    }
+
+    public static class MatcherTypeReg implements IMatcherType {
+
+        protected Pattern pattern;
+
+        MatcherTypeReg(Pattern pattern) {
+            this.pattern = pattern;
+        }
+
+        @Override
+        public boolean matchString(String match, String string) {
+            return pattern.matcher(string).find();
+        }
     }
 
     @SuppressWarnings("serial")
@@ -452,6 +451,10 @@ public class KernelLang {
 
         private String propertyPath = "";
 
+        public static final boolean isAllow(int include, int exclude, int group) {
+            return group == 0 || ((exclude & group) == 0 && (include == 0 || (include & group) != 0));
+        }
+
         public PropertyFilter newly() {
             PropertyFilter filter = new PropertyFilter();
             filter.group = group;
@@ -462,10 +465,6 @@ public class KernelLang {
 
         public void begin() {
             propertyPath = "";
-        }
-
-        public static final boolean isAllow(int include, int exclude, int group) {
-            return group == 0 || ((exclude & group) == 0 && (include == 0 || (include & group) != 0));
         }
 
         public boolean allow(int include, int exclude) {

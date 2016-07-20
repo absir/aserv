@@ -92,7 +92,7 @@ public abstract class AdminServer {
                 input.getModel().put("message", e.getCause().getMessage());
             }
 
-            ReturnedResolverView.setReturnView(onPut, "admin/exception");
+            onPut.setReturnedResolver(ReturnedResolverView.ME, "admin/exception");
         }
     }
 

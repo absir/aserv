@@ -81,6 +81,7 @@ public class SocketAdapter {
     private int callbackIndex;
 
     private Socket acceptSocket;
+    private boolean tryConntecting;
 
     public static void printException(Throwable e) {
         printException(e);
@@ -261,8 +262,6 @@ public class SocketAdapter {
     public boolean isRetryConnectMax() {
         return retryConnect >= 3;
     }
-
-    private boolean tryConntecting;
 
     /**
      * 开始连接

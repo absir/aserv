@@ -1,9 +1,8 @@
 package G2.Protocol;
 
-import com.baidu.bjf.remoting.protobuf.FieldType;
-import com.baidu.bjf.remoting.protobuf.EnumReadable;
-import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.absir.data.value.IProto;
+import com.baidu.bjf.remoting.protobuf.FieldType;
+import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 
 public class PLoginMessage implements IProto {
 

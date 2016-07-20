@@ -1,5 +1,5 @@
 package com.baidu.ueditor.define;
 
-public enum ActionState {
-	UNKNOW_ERROR
-}
+publicenum ActionState{
+        UNKNOW_ERROR
+        }

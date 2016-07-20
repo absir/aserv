@@ -23,6 +23,7 @@ import java.util.TreeSet;
 public class HelperClass {
 
     public static final String CLASS_FILE_EXTENSION = ".class";
+    private static Map<Class, String> clsMapIdentity = new HashMap<Class, String>();
 
     public static File getClassFile(Class cls) {
         File file = new File(cls.getResource(cls.getSimpleName().concat(CLASS_FILE_EXTENSION)).getFile());
@@ -36,8 +37,6 @@ public class HelperClass {
     public static Long lastModified(Class cls) {
         return getClassFile(cls).lastModified();
     }
-
-    private static Map<Class, String> clsMapIdentity = new HashMap<Class, String>();
 
     public static String getClassIdentity(Class cls, boolean cache) {
         String identity = clsMapIdentity.get(cls);

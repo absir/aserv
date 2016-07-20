@@ -64,6 +64,8 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
 
     @Value("security.context.session")
     private int securityContextSession;
+    @Domain
+    private DSequence sessionSequence;
 
     public JiUserBase getUserBase(Input input) {
         Object user = input.getModel().get(SECURITY_USER_NAME);
@@ -92,9 +94,6 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
 
     protected abstract JbSession createSession(JiUserBase userBase, long remember,
                                                String address, String agent);
-
-    @Domain
-    private DSequence sessionSequence;
 
     public String nextSecurityId() {
         return sessionSequence.getNextHexId();

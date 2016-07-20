@@ -5,5 +5,5 @@ package com.absir.dubbo.service.slave;
  */
 public interface SlaveService {
 
-    
+
 }

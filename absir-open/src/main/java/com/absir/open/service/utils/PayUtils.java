@@ -35,6 +35,7 @@ public abstract class PayUtils {
 
     @Inject(type = InjectType.Selectable)
     private static IPayProcessor payService;
+    private static Map<String, Object> payInterfaceIdMapConfigure = new HashMap<String, Object>();
 
     public static Object order(String platform, String channel, JPayTrade payTrade, Map<String, Object> paramMap)
             throws Exception {
@@ -51,8 +52,6 @@ public abstract class PayUtils {
 
         return null;
     }
-
-    private static Map<String, Object> payInterfaceIdMapConfigure = new HashMap<String, Object>();
 
     protected static <T> T getPayInterfaceConfigure(IPayInterface<T> payInterface, String platform, int configureId) {
         String id = platform + "@" + configureId;

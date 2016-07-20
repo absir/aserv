@@ -20,10 +20,8 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class XlsAccessorContext extends XlsAccessorBean {
 
-    private Map<Class<?>, List<XlsAccessor>> clsMapAccessors;
-
     protected String beanName;
-
+    private Map<Class<?>, List<XlsAccessor>> clsMapAccessors;
     private boolean isXlsBean;
 
     private Class<? extends Serializable> idType;

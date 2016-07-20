@@ -39,37 +39,20 @@ import java.util.Map.Entry;
 public class SessionFactoryBean implements IBeanFactoryStopping {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryBean.class);
-
-    @Inject
-    public void setSessionFactoryScanner(SessionFactoryScanner scanner) {
-        LOGGER.info("setSessionFactoryScanner " + scanner);
-    }
-
     @Value("driver.shared")
     private boolean driverShared;
-
     @Value("driver.stopping.command")
     private Set<String> driverStoppingCommand;
-
     private SessionFactoryImpl sessionFactory;
-
     private Map<String, SessionFactoryImpl> nameMapSessionFactory = new HashMap<String, SessionFactoryImpl>();
-
     private Map<SessionFactoryImpl, String> sessionFactoryMapName = new HashMap<SessionFactoryImpl, String>();
-
     @Value(value = "entity.assoc.depth")
     private int assocDepth = 8;
-
     private Map<String, JePermission[]> nameMapPermissions = new HashMap<String, JePermission[]>();
-
     private Map<String, List<AssocEntity>> nameMapAssocEntities = new HashMap<String, List<AssocEntity>>();
-
     private Map<String, List<AssocField>> nameMapAssocFields = new HashMap<String, List<AssocField>>();
-
     private Map<String, EntityAssocEntity> nameMapEntityAssocEntity = new HashMap<String, EntityAssocEntity>();
-
     private Map<String, String> entityNameMapJpaEntityName = new HashMap<String, String>();
-
     private Map<String, Entry<Class<?>, SessionFactory>> jpaEntityNameMapEntityClassFactory = new HashMap<String, Entry<Class<?>, SessionFactory>>();
 
     public static ConnectionProvider getConnectionProvider(SessionFactoryImpl sessionFactory) {
@@ -128,6 +111,11 @@ public class SessionFactoryBean implements IBeanFactoryStopping {
         if (ds != null) {
             KernelObject.declaredSend(ds, "close", true);
         }
+    }
+
+    @Inject
+    public void setSessionFactoryScanner(SessionFactoryScanner scanner) {
+        LOGGER.info("setSessionFactoryScanner " + scanner);
     }
 
     protected void setSessionFactory(String name, SessionFactoryImpl sessionFactory) {

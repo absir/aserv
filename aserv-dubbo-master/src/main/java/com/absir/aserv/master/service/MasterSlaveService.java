@@ -27,10 +27,9 @@ import java.util.*;
 public class MasterSlaveService implements NotifyListener {
 
     public static final MasterSlaveService ME = BeanFactoryUtils.get(MasterSlaveService.class);
-
+    protected Map<String, Object> slaveInterfaceMapService = new HashMap<String, Object>();
     @Inject
     private RegistryService registryService;
-
     private DCache<JSlave, JSlave> slaveDCache;
 
     public RegistryService getRegistryService() {
@@ -91,8 +90,6 @@ public class MasterSlaveService implements NotifyListener {
         slave.setLastConnectTime(contextTime);
         BeanService.ME.merge(slave);
     }
-
-    protected Map<String, Object> slaveInterfaceMapService = new HashMap<String, Object>();
 
     public <T> T getSlaveReferenceService(JSlave slave, Class<T> serviceInterface) {
         String id = slave.getAddress() + serviceInterface.getName();

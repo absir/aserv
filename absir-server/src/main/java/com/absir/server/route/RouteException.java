@@ -31,7 +31,7 @@ public class RouteException {
     public boolean invoke(Throwable e, Object routeBean, OnPut onPut) throws Throwable {
         for (Class<? extends Throwable> exception : exceptions) {
             if (exception.isAssignableFrom(e.getClass())) {
-                routeMethod.invoke(routeBean, onPut);
+                routeMethod.invoke(routeBean, onPut, true);
                 return true;
             }
         }

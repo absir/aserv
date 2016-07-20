@@ -29,7 +29,7 @@ import java.util.*;
 public class PropertyUtils {
 
     public static final int TRANSIENT_MODIFIER = Modifier.TRANSIENT | Modifier.STATIC | Modifier.FINAL;
-
+    protected static final Map<String, Map<String, Object>> beanClassMapProperties = new HashMap<String, Map<String, Object>>();
     private static Map<Class<?>, PropertyHolder> Class_Map_Property_Holder = new HashMap<Class<?>, PropertyHolder>();
 
     public static String[] parameterBeanNames(Annotation[][] parameterAnnotations) {
@@ -217,8 +217,6 @@ public class PropertyUtils {
         }, true);
     }
 
-    protected static final Map<String, Map<String, Object>> beanClassMapProperties = new HashMap<String, Map<String, Object>>();
-
     public static Map<String, Object> getPropertiesForBeanClass(Class<?> beanClass) {
         return getPropertiesForBeanClass(beanClass, "properties");
     }
@@ -243,10 +241,6 @@ public class PropertyUtils {
 
         beanClassMapProperties.put(beanClassCategory, properties);
         return properties;
-    }
-
-    public static @interface NoProperty {
-
     }
 
     public static <T extends Annotation> T getFieldAnnotation(Class<?> beanClass, Field field, final Class<T> annotationClass) {
@@ -286,5 +280,9 @@ public class PropertyUtils {
         } else {
             return annotation == KernelLang.NULL_OBJECT ? null : (T) annotation;
         }
+    }
+
+    public static @interface NoProperty {
+
     }
 }

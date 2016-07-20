@@ -113,4 +113,15 @@ public class OnPut {
     public boolean isContainFlagObj(Object flagObj) {
         return flagObjs == null ? false : flagObjs.contains(flagObj);
     }
+
+    public <T> void setReturnedResolver(ReturnedResolver<T> resolver, T returnValue) {
+        setReturnedResolver(resolver, returnValue);
+    }
+
+    public <T> void setReturnedResolver(ReturnedResolver<T> resolver, T returnValue, Object returned) {
+        setReturnedFixed(true);
+        setReturnedResolver(resolver);
+        setReturnValue(returnValue);
+        setReturned(returned);
+    }
 }

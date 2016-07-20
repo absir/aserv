@@ -37,16 +37,13 @@ import java.util.Map.Entry;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class BeanConfigImpl implements BeanConfig {
 
+    protected static Map<String, ParamsAnnotations> nameMapParamsAnnotations;
+    protected static List<MatchParamsAnnotations> matchParamsAnnotationsList;
     protected boolean outEnvironmentDenied = true;
-
     private BeanConfig beanConfig;
-
     private String classPath;
-
     private String resourcePath;
-
     private Environment environment = Environment.getEnvironment();
-
     private Map<String, Object> configMap = new HashMap<String, Object>();
 
     public BeanConfigImpl(IBeanConfigProvider beanConfigProvider) {
@@ -400,6 +397,240 @@ public class BeanConfigImpl implements BeanConfig {
         return null;
     }
 
+    public static ParamsAnnotations getParamsAnnotations(Object property) {
+        ParamsAnnotations annotations = null;
+        if (property != null) {
+            if (property.getClass() == ParamsAnnotations.class) {
+                annotations = (ParamsAnnotations) property;
+
+            } else {
+                List<Object> list;
+                if (property.getClass() == String.class) {
+                    list = new ArrayList<Object>();
+                    list.add(property);
+
+                } else {
+                    list = DynaBinder.to(property, List.class);
+                }
+
+                Map<String, String[]> nameMapParams = new HashMap<String, String[]>();
+                for (Object obj : list) {
+                    String param = DynaBinder.to(obj, String.class);
+                    if (!KernelString.isEmpty(param)) {
+                        String[] params = param.split(",");
+                        nameMapParams.put(params[0], params);
+                    }
+                }
+
+                if (!nameMapParams.isEmpty()) {
+                    annotations = new ParamsAnnotations();
+                    annotations.nameMapParams = nameMapParams;
+                }
+            }
+        }
+
+        return annotations;
+    }
+
+    public static ParamsAnnotations getParamsAnnotations(Map<String, Object> properties, String name) {
+        ParamsAnnotations annotations = null;
+        Object property = properties.get(name);
+        if (property != null) {
+            annotations = getParamsAnnotations(property);
+            if (annotations == null) {
+                properties.remove(name);
+
+            } else if ((Object) annotations != properties) {
+                properties.put(name, annotations);
+            }
+        }
+
+        return annotations;
+    }
+
+    protected static void loadParamsAnnotations() {
+        if (nameMapParamsAnnotations == null) {
+            Map<String, ParamsAnnotations> annotationsMap = new HashMap<String, ParamsAnnotations>();
+            List<MatchParamsAnnotations> annotationsList = new ArrayList<MatchParamsAnnotations>();
+            BeanConfig config = BeanFactoryUtils.getBeanConfig();
+            File annotationsFile = new File(config.getClassPath() + "annotations");
+            if (annotationsFile.exists()) {
+                Map<String, Object> properties = new LinkedHashMap<String, Object>();
+                BeanConfigImpl.readDirProperties(config, properties, annotationsFile, null);
+                for (String name : properties.keySet()) {
+                    ParamsAnnotations annotations = BeanConfigImpl.getParamsAnnotations(properties, name);
+                    if (annotations != null) {
+                        Entry<String, KernelLang.IMatcherType> matcherEntry = KernelLang.MatcherType.getMatchEntry(name);
+                        if (matcherEntry.getValue() == MatcherType.NORMAL) {
+                            annotationsMap.put(matcherEntry.getKey(), annotations);
+
+                        } else {
+                            MatchParamsAnnotations paramsAnnotations = new MatchParamsAnnotations();
+                            paramsAnnotations.macherEntry = matcherEntry;
+                            paramsAnnotations.paramsAnnotations = annotations;
+                            annotations.matchFind = true;
+                            annotationsList.add(0, paramsAnnotations);
+                        }
+                    }
+                }
+            }
+
+            nameMapParamsAnnotations = annotationsMap;
+            matchParamsAnnotationsList = annotationsList;
+        }
+    }
+
+    public static ParamsAnnotations getMemberParamsAnnotations(String classNameMember, boolean findMatch) {
+        return getMemberParamsAnnotations(classNameMember, findMatch, null);
+    }
+
+    public static ParamsAnnotations getMemberParamsAnnotations(String classNameMember, boolean findMatch, Class<? extends Annotation> annotationCls) {
+        loadParamsAnnotations();
+        ParamsAnnotations paramsAnnotations = nameMapParamsAnnotations.get(classNameMember);
+        if (paramsAnnotations != null && findMatch && annotationCls != null) {
+            if (!(paramsAnnotations.findAnnotation(annotationCls) || paramsAnnotations.findAnnotation(NoConfigure.class))) {
+                paramsAnnotations = null;
+            }
+        }
+
+        if (paramsAnnotations == null && findMatch) {
+            for (MatchParamsAnnotations matchParamsAnnotations : matchParamsAnnotationsList) {
+                if (MatcherType.isMatch(classNameMember, matchParamsAnnotations.macherEntry)) {
+                    paramsAnnotations = matchParamsAnnotations.paramsAnnotations;
+                    if (annotationCls == null || paramsAnnotations.findAnnotation(annotationCls) || paramsAnnotations.findAnnotation(NoConfigure.class)) {
+                        break;
+
+                    } else {
+                        paramsAnnotations = null;
+                    }
+                }
+            }
+        }
+
+        return paramsAnnotations;
+    }
+
+    public static <T extends Annotation> T getTypeAnnotation(Class<?> type, Class<T> annotationClass) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(type.getName(), false);
+        if (annotations != null) {
+            T annotation = annotations.getAnnotation(annotationClass);
+            if (annotation == null) {
+                if (annotations.findAnnotation(NoConfigure.class)) {
+                    return null;
+                }
+
+            } else {
+                return annotation;
+            }
+        }
+
+        return type.getAnnotation(annotationClass);
+    }
+
+    public static boolean findTypeAnnotation(Class<?> type, Class<? extends Annotation> annotationClass) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(type.getName(), false);
+        if (annotations != null) {
+            if (annotations.findAnnotation(annotationClass)) {
+                return true;
+
+            } else {
+                if (annotations.findAnnotation(NoConfigure.class)) {
+                    return false;
+                }
+            }
+        }
+
+        return type.getAnnotation(annotationClass) != null;
+    }
+
+    public static <T extends Annotation> T getFieldAnnotation(Field field, Class<T> annotationClass) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(field.getDeclaringClass() + "." + field.getName(), false);
+        if (annotations != null) {
+            T annotation = annotations.getAnnotation(annotationClass);
+            if (annotation == null) {
+                if (annotations.findAnnotation(NoConfigure.class)) {
+                    return null;
+                }
+
+            } else {
+                return annotation;
+            }
+        }
+
+        return field.getAnnotation(annotationClass);
+    }
+
+    public static boolean findFieldAnnotation(Field field, Class<? extends Annotation> annotationClass) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(field.getDeclaringClass() + "." + field.getName(), false);
+        if (annotations != null) {
+            if (annotations.findAnnotation(annotationClass)) {
+                return true;
+
+            } else {
+                if (annotations.findAnnotation(NoConfigure.class)) {
+                    return false;
+                }
+            }
+        }
+
+        return field.getAnnotation(annotationClass) != null;
+    }
+
+    public static <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationClass) {
+        return getMethodAnnotation(method, annotationClass, false);
+    }
+
+    public static <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationClass, boolean findMatch) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + ":" + method.getName(), true, annotationClass);
+        if (annotations != null) {
+            T annotation = annotations.getAnnotation(annotationClass);
+            if (annotation == null) {
+                if (annotations.findAnnotation(NoConfigure.class)) {
+                    return null;
+                }
+
+            } else {
+                return annotation;
+            }
+        }
+
+        return method.getAnnotation(annotationClass);
+    }
+
+    public static boolean findMethodAnnotation(Method method, Class<? extends Annotation> annotationClass) {
+        return findMethodAnnotation(method, annotationClass, false);
+    }
+
+    public static boolean findMethodAnnotation(Method method, Class<? extends Annotation> annotationClass, boolean findMatch) {
+        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + ":" + method.getName(), findMatch, annotationClass);
+        if (annotations != null) {
+            if (annotations.findAnnotation(annotationClass)) {
+                return true;
+
+            } else {
+                if (annotations.findAnnotation(NoConfigure.class)) {
+                    return false;
+                }
+            }
+        }
+
+        return method.getAnnotation(annotationClass) != null;
+    }
+
+    public static <T extends Annotation> T getAccessorAnnotation(UtilAccessor.Accessor accessor, Class<T> annotationClass, boolean getter) {
+        Method method = getter ? accessor.getGetter() : accessor.getSetter();
+        if (method == null) {
+            Field field = accessor.getField();
+            if (field == null) {
+                return getMethodAnnotation(getter ? accessor.getSetter() : accessor.getGetter(), annotationClass);
+            }
+
+            return getFieldAnnotation(field, annotationClass);
+        }
+
+        return getMethodAnnotation(method, annotationClass);
+    }
+
     public boolean isOutEnvironmentDenied() {
         return outEnvironmentDenied;
     }
@@ -699,6 +930,12 @@ public class BeanConfigImpl implements BeanConfig {
         return filename;
     }
 
+    @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    public static @interface NoConfigure {
+
+    }
+
     public static class ParamsAnnotations {
 
         protected Map<String, String[]> nameMapParams;
@@ -734,256 +971,12 @@ public class BeanConfigImpl implements BeanConfig {
         }
     }
 
-    public static ParamsAnnotations getParamsAnnotations(Object property) {
-        ParamsAnnotations annotations = null;
-        if (property != null) {
-            if (property.getClass() == ParamsAnnotations.class) {
-                annotations = (ParamsAnnotations) property;
-
-            } else {
-                List<Object> list;
-                if (property.getClass() == String.class) {
-                    list = new ArrayList<Object>();
-                    list.add(property);
-
-                } else {
-                    list = DynaBinder.to(property, List.class);
-                }
-
-                Map<String, String[]> nameMapParams = new HashMap<String, String[]>();
-                for (Object obj : list) {
-                    String param = DynaBinder.to(obj, String.class);
-                    if (!KernelString.isEmpty(param)) {
-                        String[] params = param.split(",");
-                        nameMapParams.put(params[0], params);
-                    }
-                }
-
-                if (!nameMapParams.isEmpty()) {
-                    annotations = new ParamsAnnotations();
-                    annotations.nameMapParams = nameMapParams;
-                }
-            }
-        }
-
-        return annotations;
-    }
-
-    public static ParamsAnnotations getParamsAnnotations(Map<String, Object> properties, String name) {
-        ParamsAnnotations annotations = null;
-        Object property = properties.get(name);
-        if (property != null) {
-            annotations = getParamsAnnotations(property);
-            if (annotations == null) {
-                properties.remove(name);
-
-            } else if ((Object) annotations != properties) {
-                properties.put(name, annotations);
-            }
-        }
-
-        return annotations;
-    }
-
-    protected static Map<String, ParamsAnnotations> nameMapParamsAnnotations;
-
-    protected static List<MatchParamsAnnotations> matchParamsAnnotationsList;
-
     protected static class MatchParamsAnnotations {
 
         protected Entry<String, KernelLang.IMatcherType> macherEntry;
 
         protected ParamsAnnotations paramsAnnotations;
 
-    }
-
-    protected static void loadParamsAnnotations() {
-        if (nameMapParamsAnnotations == null) {
-            Map<String, ParamsAnnotations> annotationsMap = new HashMap<String, ParamsAnnotations>();
-            List<MatchParamsAnnotations> annotationsList = new ArrayList<MatchParamsAnnotations>();
-            BeanConfig config = BeanFactoryUtils.getBeanConfig();
-            File annotationsFile = new File(config.getClassPath() + "annotations");
-            if (annotationsFile.exists()) {
-                Map<String, Object> properties = new LinkedHashMap<String, Object>();
-                BeanConfigImpl.readDirProperties(config, properties, annotationsFile, null);
-                for (String name : properties.keySet()) {
-                    ParamsAnnotations annotations = BeanConfigImpl.getParamsAnnotations(properties, name);
-                    if (annotations != null) {
-                        Entry<String, KernelLang.IMatcherType> matcherEntry = KernelLang.MatcherType.getMatchEntry(name);
-                        if (matcherEntry.getValue() == MatcherType.NORMAL) {
-                            annotationsMap.put(matcherEntry.getKey(), annotations);
-
-                        } else {
-                            MatchParamsAnnotations paramsAnnotations = new MatchParamsAnnotations();
-                            paramsAnnotations.macherEntry = matcherEntry;
-                            paramsAnnotations.paramsAnnotations = annotations;
-                            annotations.matchFind = true;
-                            annotationsList.add(0, paramsAnnotations);
-                        }
-                    }
-                }
-            }
-
-            nameMapParamsAnnotations = annotationsMap;
-            matchParamsAnnotationsList = annotationsList;
-        }
-    }
-
-    public static ParamsAnnotations getMemberParamsAnnotations(String classNameMember, boolean findMatch) {
-        return getMemberParamsAnnotations(classNameMember, findMatch, null);
-    }
-
-    public static ParamsAnnotations getMemberParamsAnnotations(String classNameMember, boolean findMatch, Class<? extends Annotation> annotationCls) {
-        loadParamsAnnotations();
-        ParamsAnnotations paramsAnnotations = nameMapParamsAnnotations.get(classNameMember);
-        if (paramsAnnotations != null && findMatch && annotationCls != null) {
-            if (!(paramsAnnotations.findAnnotation(annotationCls) || paramsAnnotations.findAnnotation(NoConfigure.class))) {
-                paramsAnnotations = null;
-            }
-        }
-
-        if (paramsAnnotations == null && findMatch) {
-            for (MatchParamsAnnotations matchParamsAnnotations : matchParamsAnnotationsList) {
-                if (MatcherType.isMatch(classNameMember, matchParamsAnnotations.macherEntry)) {
-                    paramsAnnotations = matchParamsAnnotations.paramsAnnotations;
-                    if (annotationCls == null || paramsAnnotations.findAnnotation(annotationCls) || paramsAnnotations.findAnnotation(NoConfigure.class)) {
-                        break;
-
-                    } else {
-                        paramsAnnotations = null;
-                    }
-                }
-            }
-        }
-
-        return paramsAnnotations;
-    }
-
-    @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
-    @Retention(RetentionPolicy.RUNTIME)
-    public static @interface NoConfigure {
-
-    }
-
-    public static <T extends Annotation> T getTypeAnnotation(Class<?> type, Class<T> annotationClass) {
-        ParamsAnnotations annotations = getMemberParamsAnnotations(type.getName(), false);
-        if (annotations != null) {
-            T annotation = annotations.getAnnotation(annotationClass);
-            if (annotation == null) {
-                if (annotations.findAnnotation(NoConfigure.class)) {
-                    return null;
-                }
-
-            } else {
-                return annotation;
-            }
-        }
-
-        return type.getAnnotation(annotationClass);
-    }
-
-    public static boolean findTypeAnnotation(Class<?> type, Class<? extends Annotation> annotationClass) {
-        ParamsAnnotations annotations = getMemberParamsAnnotations(type.getName(), false);
-        if (annotations != null) {
-            if (annotations.findAnnotation(annotationClass)) {
-                return true;
-
-            } else {
-                if (annotations.findAnnotation(NoConfigure.class)) {
-                    return false;
-                }
-            }
-        }
-
-        return type.getAnnotation(annotationClass) != null;
-    }
-
-    public static <T extends Annotation> T getFieldAnnotation(Field field, Class<T> annotationClass) {
-        ParamsAnnotations annotations = getMemberParamsAnnotations(field.getDeclaringClass() + "." + field.getName(), false);
-        if (annotations != null) {
-            T annotation = annotations.getAnnotation(annotationClass);
-            if (annotation == null) {
-                if (annotations.findAnnotation(NoConfigure.class)) {
-                    return null;
-                }
-
-            } else {
-                return annotation;
-            }
-        }
-
-        return field.getAnnotation(annotationClass);
-    }
-
-    public static boolean findFieldAnnotation(Field field, Class<? extends Annotation> annotationClass) {
-        ParamsAnnotations annotations = getMemberParamsAnnotations(field.getDeclaringClass() + "." + field.getName(), false);
-        if (annotations != null) {
-            if (annotations.findAnnotation(annotationClass)) {
-                return true;
-
-            } else {
-                if (annotations.findAnnotation(NoConfigure.class)) {
-                    return false;
-                }
-            }
-        }
-
-        return field.getAnnotation(annotationClass) != null;
-    }
-
-    public static <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationClass) {
-        return getMethodAnnotation(method, annotationClass, false);
-    }
-
-    public static <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationClass, boolean findMatch) {
-        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + ":" + method.getName(), true, annotationClass);
-        if (annotations != null) {
-            T annotation = annotations.getAnnotation(annotationClass);
-            if (annotation == null) {
-                if (annotations.findAnnotation(NoConfigure.class)) {
-                    return null;
-                }
-
-            } else {
-                return annotation;
-            }
-        }
-
-        return method.getAnnotation(annotationClass);
-    }
-
-    public static boolean findMethodAnnotation(Method method, Class<? extends Annotation> annotationClass) {
-        return findMethodAnnotation(method, annotationClass, false);
-    }
-
-    public static boolean findMethodAnnotation(Method method, Class<? extends Annotation> annotationClass, boolean findMatch) {
-        ParamsAnnotations annotations = getMemberParamsAnnotations(method.getDeclaringClass() + ":" + method.getName(), findMatch, annotationClass);
-        if (annotations != null) {
-            if (annotations.findAnnotation(annotationClass)) {
-                return true;
-
-            } else {
-                if (annotations.findAnnotation(NoConfigure.class)) {
-                    return false;
-                }
-            }
-        }
-
-        return method.getAnnotation(annotationClass) != null;
-    }
-
-    public static <T extends Annotation> T getAccessorAnnotation(UtilAccessor.Accessor accessor, Class<T> annotationClass, boolean getter) {
-        Method method = getter ? accessor.getGetter() : accessor.getSetter();
-        if (method == null) {
-            Field field = accessor.getField();
-            if (field == null) {
-                return getMethodAnnotation(getter ? accessor.getSetter() : accessor.getGetter(), annotationClass);
-            }
-
-            return getFieldAnnotation(field, annotationClass);
-        }
-
-        return getMethodAnnotation(method, annotationClass);
     }
 
 }

@@ -59,6 +59,10 @@ public abstract class Input extends Bean<Serializable> implements IAttributes, I
 
     private RouteMatcher routeMatcher;
 
+    public Input(InModel model) {
+        this.model = model;
+    }
+
     public <T> void addAfterInvoker(T obj, IAfterInvoker<T> callbackTemplate) {
         if (afterInvoker == null) {
             afterInvoker = new HashMap<Object, IAfterInvoker<Object>>();
@@ -75,10 +79,6 @@ public abstract class Input extends Bean<Serializable> implements IAttributes, I
 
             afterInvoker = null;
         }
-    }
-
-    public Input(InModel model) {
-        this.model = model;
     }
 
     public InModel getModel() {

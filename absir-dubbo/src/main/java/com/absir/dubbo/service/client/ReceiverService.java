@@ -12,5 +12,4 @@ public interface ReceiverService {
     public void mergeConfigure(String name, byte[] configureBytes);
 
 
-
 }

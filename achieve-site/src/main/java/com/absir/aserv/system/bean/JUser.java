@@ -18,7 +18,6 @@ import com.absir.aserv.system.crud.PasswordCrudFactory;
 import com.absir.orm.value.JaColum;
 import com.absir.property.value.Prop;
 import com.absir.validator.value.Email;
-import com.absir.validator.value.NotEmpty;
 import com.absir.validator.value.Regex;
 import org.hibernate.annotations.Type;
 
@@ -38,18 +37,19 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @JaColum(indexs = @Index(name = "username", columnList = "username"))
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @Column(unique = true, length = 64)
-    @NotEmpty
     @Regex(value = "^[a-zA-Z\\u4e00-\\u9fa5][\\w\\u4e00-\\u9fa5]{0,32}$", lang = "请输入首位不是数字,0-32位字母|数字|中文")
     private String username;
 
     @JaLang("邮箱")
     @Prop(include = 1)
     @Email
+    @Column(unique = true)
     private String email;
 
     @JaLang("手机")
     @Prop(include = 1)
     @Regex(value = "^\\d*$")
+    @Column(unique = true)
     private String mobile;
 
     @JaLang("用户类型")

@@ -27,11 +27,6 @@ public class admin_user extends AdminServer {
         input.getModel().put("userId", SecurityService.ME.getUserBase(input).getUserId());
     }
 
-    //todo 修改密码用DTO 试试
-    protected static class  ddd {
-
-    }
-
     /**
      * 修改密码
      *
@@ -71,5 +66,10 @@ public class admin_user extends AdminServer {
         user.setPasswordBase(newPassword);
         CrudServiceUtils.merge("JUser", null, user, false, user, null);
         return "admin/success";
+    }
+
+    //todo 修改密码用DTO 试试
+    protected static class ddd {
+
     }
 }

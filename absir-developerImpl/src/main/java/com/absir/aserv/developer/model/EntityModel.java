@@ -29,6 +29,7 @@ import java.util.*;
 
 public class EntityModel implements IModel {
 
+    protected static final TypeVariable<?> TYPE_VARIABLE = ICrudSubmit.class.getTypeParameters()[0];
     private static final Map<String, Set<String>> REFERENCED_MAP = new HashMap<String, Set<String>>();
 
     static {
@@ -36,8 +37,6 @@ public class EntityModel implements IModel {
         addReferencedMap(JaEdit.GROUP_SUGGEST, JaEdit.GROUP_SEARCH);
         addReferencedMap(JaEdit.GROUP_LIST, JaEdit.GROUP_SEARCH);
     }
-
-    protected static final TypeVariable<?> TYPE_VARIABLE = ICrudSubmit.class.getTypeParameters()[0];
 
     // private boolean filter;
 

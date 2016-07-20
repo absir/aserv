@@ -46,47 +46,14 @@ public class DeveloperService implements IDeveloper, IDeploy {
 
     @Value("developer.web")
     private static String developerWeb;
-
-    @Inject(type = InjectType.Selectable)
-    private ISecurity security;
-
     @Value("developer.new.type")
     protected int developerNewType = 1;
-
     @Value("developer.new.time")
     protected long developerNewTime;
-
     @Value("developer.diy")
     protected boolean developerDiy;
-
-    public int getDeveloperNewType() {
-        return developerNewType;
-    }
-
-    public long getDeveloperNewTime() {
-        return developerNewTime;
-    }
-
-    public void setDeveloperNewTime(long developerNewTime) {
-        this.developerNewTime = developerNewTime;
-    }
-
-    public boolean isDeveloperDiy() {
-        return developerDiy;
-    }
-
-    @Inject
-    protected void init() {
-        if (developerNewType == 0) {
-            developerNewTime = 0;
-
-        } else if (developerNewType == 1) {
-            developerNewTime = HelperFile.lastModified(new File(BeanFactoryUtils.getBeanConfig().getClassPath()));
-
-        } else {
-            developerNewTime = UtilContext.getCurrentTime();
-        }
-    }
+    @Inject(type = InjectType.Selectable)
+    private ISecurity security;
 
     /**
      * 初始化开发环境
@@ -159,6 +126,35 @@ public class DeveloperService implements IDeveloper, IDeploy {
 
     public static String getDeveloperWeb() {
         return developerWeb;
+    }
+
+    public int getDeveloperNewType() {
+        return developerNewType;
+    }
+
+    public long getDeveloperNewTime() {
+        return developerNewTime;
+    }
+
+    public void setDeveloperNewTime(long developerNewTime) {
+        this.developerNewTime = developerNewTime;
+    }
+
+    public boolean isDeveloperDiy() {
+        return developerDiy;
+    }
+
+    @Inject
+    protected void init() {
+        if (developerNewType == 0) {
+            developerNewTime = 0;
+
+        } else if (developerNewType == 1) {
+            developerNewTime = HelperFile.lastModified(new File(BeanFactoryUtils.getBeanConfig().getClassPath()));
+
+        } else {
+            developerNewTime = UtilContext.getCurrentTime();
+        }
     }
 
     @Override

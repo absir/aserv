@@ -30,13 +30,6 @@ import java.util.List;
 @Bean
 public class AdviceMethodDefine extends AopMethodDefineAbstract<AopMethodInterceptor, AdviceMethodDefine.MethodAdviceO[], Object> {
 
-    protected static class MethodAdviceO {
-
-        protected IMethodAdvice advice;
-
-        protected Object obj;
-    }
-
     @Inject(type = InjectType.Selectable)
     private IMethodAdvice[] methodAdvices;
 
@@ -69,6 +62,13 @@ public class AdviceMethodDefine extends AopMethodDefineAbstract<AopMethodInterce
     @Override
     public int getOrder() {
         return -1024;
+    }
+
+    protected static class MethodAdviceO {
+
+        protected IMethodAdvice advice;
+
+        protected Object obj;
     }
 
     public static class AopMethodInterceptor extends AopInterceptorAbstract<MethodAdviceO[]> {

@@ -223,11 +223,6 @@ public class BinderUtils {
         return dataMap;
     }
 
-    protected static class DataObjectHandler {
-
-        public Map<String, List<String>> pathMapKeys;
-    }
-
     public static void validate(BinderResult binderResult, Object bean, ILangMessage langMessage, String... names) {
         ValidatorSupply validatorSupply = getValidatorSupply();
         PropertyHolder propertyHolder = PropertyUtils.getPropertyMap(bean.getClass(), validatorSupply);
@@ -258,5 +253,10 @@ public class BinderUtils {
                 }
             }
         }
+    }
+
+    protected static class DataObjectHandler {
+
+        public Map<String, List<String>> pathMapKeys;
     }
 }

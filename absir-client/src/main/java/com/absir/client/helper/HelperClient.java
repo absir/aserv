@@ -7,7 +7,6 @@
  */
 package com.absir.client.helper;
 
-import com.absir.core.base.Environment;
 import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelCharset;
 import org.slf4j.Logger;

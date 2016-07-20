@@ -1,8 +1,8 @@
 /**
  * Copyright 2013 ABSir's Studio
- * <p>
+ * <p/>
  * All right reserved
- * <p>
+ * <p/>
  * Create on 2013-5-28 下午4:49:18
  */
 package com.absir.aserv.system.helper;
@@ -216,96 +216,6 @@ public class HelperRandom {
         stringBuilder.append(chars, offset, size);
     }
 
-    public enum FormatType {
-
-        NUMBER {
-            @Override
-            public int intLen() {
-                return 10;
-            }
-
-            @Override
-            public char[] charsForInt(int i) {
-                return String.valueOf(i).toCharArray();
-            }
-
-            @Override
-            public int longLen() {
-                return 19;
-            }
-
-            @Override
-            public char[] charsForLong(long l) {
-                return String.valueOf(l).toCharArray();
-            }
-        },
-
-        HEX {
-            @Override
-            public int intLen() {
-                return 8;
-            }
-
-            @Override
-            public char[] charsForInt(int i) {
-                return Integer.toHexString(i).toCharArray();
-            }
-
-            @Override
-            public int longLen() {
-                return 16;
-            }
-
-            @Override
-            public char[] charsForLong(long l) {
-                return Long.toHexString(l).toCharArray();
-            }
-        },
-
-        HEX_DIG {
-            @Override
-            public int intLen() {
-                return 6;
-            }
-
-            @Override
-            public char[] charsForInt(int i) {
-                return charsForLong(i);
-            }
-
-            @Override
-            public int longLen() {
-                return 11;
-            }
-
-            @Override
-            public char[] charsForLong(long l) {
-                if (l < 0) {
-                    l = -l;
-                }
-
-                int length = HEX_DIG_CHARS.length;
-                char[] chars = new char[l <= Integer.MAX_VALUE ? intLen() : longLen()];
-                int i = 0;
-                while (l > 0) {
-                    chars[i] = HEX_DIG_CHARS[(int) (l % length)];
-                    l /= length;
-                    i++;
-                }
-
-                return Arrays.copyOfRange(chars, 0, i);
-            }
-        };
-
-        public abstract int intLen();
-
-        public abstract char[] charsForInt(int i);
-
-        public abstract int longLen();
-
-        public abstract char[] charsForLong(long l);
-    }
-
     public static void appendFormat(StringBuilder stringBuilder, FormatType type, int i) {
         appendFormat(stringBuilder, type, i, 0, type.intLen());
     }
@@ -451,6 +361,96 @@ public class HelperRandom {
         time = (((time & 0xf0f0f0f0) >> 4) | ((time & 0x0f0f0f0f) << 4));
         time = (((time & 0xff00ff00) >> 8) | ((time & 0x00ff00ff) << 8));
         return ((time >> 16) | (time << 16));
+    }
+
+    public enum FormatType {
+
+        NUMBER {
+            @Override
+            public int intLen() {
+                return 10;
+            }
+
+            @Override
+            public char[] charsForInt(int i) {
+                return String.valueOf(i).toCharArray();
+            }
+
+            @Override
+            public int longLen() {
+                return 19;
+            }
+
+            @Override
+            public char[] charsForLong(long l) {
+                return String.valueOf(l).toCharArray();
+            }
+        },
+
+        HEX {
+            @Override
+            public int intLen() {
+                return 8;
+            }
+
+            @Override
+            public char[] charsForInt(int i) {
+                return Integer.toHexString(i).toCharArray();
+            }
+
+            @Override
+            public int longLen() {
+                return 16;
+            }
+
+            @Override
+            public char[] charsForLong(long l) {
+                return Long.toHexString(l).toCharArray();
+            }
+        },
+
+        HEX_DIG {
+            @Override
+            public int intLen() {
+                return 6;
+            }
+
+            @Override
+            public char[] charsForInt(int i) {
+                return charsForLong(i);
+            }
+
+            @Override
+            public int longLen() {
+                return 11;
+            }
+
+            @Override
+            public char[] charsForLong(long l) {
+                if (l < 0) {
+                    l = -l;
+                }
+
+                int length = HEX_DIG_CHARS.length;
+                char[] chars = new char[l <= Integer.MAX_VALUE ? intLen() : longLen()];
+                int i = 0;
+                while (l > 0) {
+                    chars[i] = HEX_DIG_CHARS[(int) (l % length)];
+                    l /= length;
+                    i++;
+                }
+
+                return Arrays.copyOfRange(chars, 0, i);
+            }
+        };
+
+        public abstract int intLen();
+
+        public abstract char[] charsForInt(int i);
+
+        public abstract int longLen();
+
+        public abstract char[] charsForLong(long l);
     }
 
     public static class RandomPool<T> {

@@ -144,12 +144,12 @@ public class DBField implements IField {
         return metas;
     }
 
-    public void setListColType(int listColType) {
-        this.listColType = listColType;
-    }
-
     public int getListColType() {
         return listColType;
+    }
+
+    public void setListColType(int listColType) {
+        this.listColType = listColType;
     }
 
     @Override

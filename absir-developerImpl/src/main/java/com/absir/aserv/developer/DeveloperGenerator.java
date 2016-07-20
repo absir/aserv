@@ -35,30 +35,6 @@ public class DeveloperGenerator {
 
     protected Map<String, List<ObjectEntry<String, Boolean>>> tagMapGDefines;
 
-    public DeveloperGenerator readyDeveloperGenerator(ServletRequest request) {
-        if (readyGenerator == null) {
-            readyGenerator = new DeveloperGenerator();
-        }
-
-        return readyGenerator;
-    }
-
-    public KernelLang.PropertyFilter filter() {
-        if (propertyFilter == null) {
-            propertyFilter = new KernelLang.PropertyFilter();
-        }
-
-        return propertyFilter;
-    }
-
-    public boolean allow(IField field) {
-        if (propertyFilter != null) {
-            return propertyFilter.allow(field.getInclude(), field.getExclude()) && propertyFilter.isMatchPath(field.getName());
-        }
-
-        return true;
-    }
-
     public static DeveloperGenerator getDeveloperGenerator(ServletRequest request) {
         Stack<DeveloperGenerator> generators = (Stack<DeveloperGenerator>) request.getAttribute(GENERATOR_STACK_KEY);
         return generators == null ? null : generators.peek();
@@ -99,6 +75,30 @@ public class DeveloperGenerator {
         } else {
             request.setAttribute("generator", generators.peek());
         }
+    }
+
+    public DeveloperGenerator readyDeveloperGenerator(ServletRequest request) {
+        if (readyGenerator == null) {
+            readyGenerator = new DeveloperGenerator();
+        }
+
+        return readyGenerator;
+    }
+
+    public KernelLang.PropertyFilter filter() {
+        if (propertyFilter == null) {
+            propertyFilter = new KernelLang.PropertyFilter();
+        }
+
+        return propertyFilter;
+    }
+
+    public boolean allow(IField field) {
+        if (propertyFilter != null) {
+            return propertyFilter.allow(field.getInclude(), field.getExclude()) && propertyFilter.isMatchPath(field.getName());
+        }
+
+        return true;
     }
 
     protected void addGeneratorDefine(String gDefine) {

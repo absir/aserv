@@ -114,14 +114,14 @@ public class RouteEntry {
         if (routeEntry == null) {
             RouteAction routeAction = onPut.getInput().getRouteAction();
             if (routeAction != null) {
-                routeAction.getRouteMethod().invoke(routeBean, onPut);
+                routeAction.getRouteMethod().invoke(routeBean, onPut, false);
             }
 
         } else {
             List<RouteMethod> routeMethods = routeEntry.beforeMethods;
             if (routeMethods != null) {
                 for (RouteMethod routeMethod : routeMethods) {
-                    routeMethod.invoke(routeBean, onPut);
+                    routeMethod.invoke(routeBean, onPut, false);
                 }
             }
 
@@ -129,7 +129,7 @@ public class RouteEntry {
             routeMethods = routeEntry.afterMethods;
             if (routeMethods != null) {
                 for (RouteMethod routeMethod : routeMethods) {
-                    routeMethod.invoke(routeBean, onPut);
+                    routeMethod.invoke(routeBean, onPut, false);
                 }
             }
         }
