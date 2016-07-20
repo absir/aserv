@@ -115,7 +115,7 @@ public class OnPut {
     }
 
     public <T> void setReturnedResolver(ReturnedResolver<T> resolver, T returnValue) {
-        setReturnedResolver(resolver, returnValue);
+        setReturnedResolver(resolver, returnValue, null);
     }
 
     public <T> void setReturnedResolver(ReturnedResolver<T> resolver, T returnValue, Object returned) {
