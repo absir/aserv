@@ -18,6 +18,7 @@ import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.aserv.system.crud.DateCrudFactory;
 import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.orm.value.JaColum;
+import com.absir.server.in.Input;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -138,7 +139,7 @@ public class JUpload extends JbBean implements JiPass, ICrudBean {
     }
 
     @Override
-    public void processCrud(Crud crud, CrudHandler handler) {
+    public void processCrud(Crud crud, CrudHandler handler, Input input) {
         UploadCrudFactory.ME.crud(this, crud, handler);
     }
 }

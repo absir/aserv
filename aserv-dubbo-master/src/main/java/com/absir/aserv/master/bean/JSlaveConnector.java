@@ -20,6 +20,7 @@ import com.absir.aserv.system.bean.value.JeEditable;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.value.JaColum;
+import com.absir.server.in.Input;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -170,7 +171,7 @@ public class JSlaveConnector extends JbBean implements ICrudBean {
     }
 
     @Override
-    public void processCrud(Crud crud, CrudHandler handler) {
+    public void processCrud(Crud crud, CrudHandler handler, Input input) {
         if (crud == Crud.CREATE && host != null) {
             if (KernelString.isEmpty(serverIP)) {
                 serverIP = host.getServerIP();

@@ -305,7 +305,7 @@ public class LangBundleImpl extends LangBundle {
                             @Override
                             public Object invoke(LangInterceptor interceptor, Object proxy, Iterator<AopInterceptor> iterator,
                                                  AopProxyHandler proxyHandler, Method method, Object[] args, MethodProxy methodProxy) {
-                                ((ICrudBean) proxyHandler.getBeanObject()).processCrud((Crud) args[0], (CrudHandler) args[1]);
+                                ((ICrudBean) proxyHandler.getBeanObject()).processCrud((Crud) args[0], (CrudHandler) args[1], null);
                                 invoke(interceptor, proxy, iterator, proxyHandler, method, args, methodProxy);
                                 return null;
                             }

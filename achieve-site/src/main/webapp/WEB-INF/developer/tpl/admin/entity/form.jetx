@@ -37,7 +37,7 @@ ${Scenario::set("edit", request)}
 </div>
 #end
 #set(nodes = ScriptNode::append(element, node))
-${nodes.get(0).getElementsByTag("input").get(0).attr(readonly, "true").voidValue()}
+${nodes.get(0).getElementsByTag("input").get(0).attr(readonly, "1").voidValue()}
 ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
 #end
 #end
@@ -322,7 +322,7 @@ ${ScriptNode::html(element) + "\r\n"}
         <tr class="archetype">
             <!--archetype
                                 ##编辑元素集合属性(完成)
-                                ${DeveloperUtils::includeExist("edit", entityModel.getJoEntity().getEntityName(), request)}
+                                ${DeveloperUtils::includeExistName("edit", entityModel.getJoEntity().getEntityName(), request)}
                                 \#set(for_index = Pag::getForIndex())
                                 \#set(for_entity = entity)
                                 \#set(entity = Pag::getForEntityMap(${archetype_map}))

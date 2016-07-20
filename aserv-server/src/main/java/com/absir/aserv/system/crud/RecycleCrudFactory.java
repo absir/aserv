@@ -18,11 +18,12 @@ import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelObject;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.value.JoEntity;
+import com.absir.server.in.Input;
 
 public class RecycleCrudFactory implements ICrudFactory, ICrudProcessor {
 
     @Override
-    public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user) {
+    public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, Input input) {
         String recycleName = crudProperty.getCrudEntity().getJoEntity().getEntityName() + "Recycle";
         Class<?> recycleClass = SessionFactoryUtils.getEntityClass(recycleName);
         if (recycleClass != null) {

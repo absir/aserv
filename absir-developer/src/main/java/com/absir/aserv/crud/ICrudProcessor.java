@@ -9,8 +9,9 @@ package com.absir.aserv.crud;
 
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.bean.inject.InjectRetain;
+import com.absir.server.in.Input;
 
 public interface ICrudProcessor extends InjectRetain {
 
-    public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user);
+    public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, Input input);
 }

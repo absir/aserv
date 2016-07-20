@@ -20,6 +20,7 @@ import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAccessor;
 import com.absir.core.util.UtilAccessor.Accessor;
 import com.absir.orm.value.JoEntity;
+import com.absir.server.in.Input;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -27,7 +28,7 @@ import java.util.Collection;
 public class SubSizeCrudFactory implements ICrudFactory, ICrudProcessor {
 
     @Override
-    public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user) {
+    public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user, Input input) {
         Object property = crudProperty.get(entity);
         if (property == null) {
             crudProperty.set(entity, 0);

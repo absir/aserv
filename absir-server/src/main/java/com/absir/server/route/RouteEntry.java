@@ -103,6 +103,7 @@ public class RouteEntry {
             onPut.setReturnThrowable(e);
             if (e.getClass() == ServerException.class) {
                 if (((ServerException) e).getServerStatus() == ServerStatus.ON_SUCCESS) {
+                    onPut.setReturnedFixed(true);
                     input.doAfterInvoker();
                     dispatcher.resolveReturnedValue(routeBean, onPut);
                     return onPut;

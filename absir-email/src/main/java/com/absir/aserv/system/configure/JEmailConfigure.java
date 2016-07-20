@@ -15,6 +15,7 @@ import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.service.utils.EmailServiceUtils;
+import com.absir.server.in.Input;
 
 @MaEntity(parent = {@MaMenu("接口配置")}, name = "邮件")
 public class JEmailConfigure extends JConfigureBase implements ICrudBean {
@@ -69,7 +70,7 @@ public class JEmailConfigure extends JConfigureBase implements ICrudBean {
     }
 
     @Override
-    public void processCrud(Crud crud, CrudHandler handler) {
+    public void processCrud(Crud crud, CrudHandler handler, Input input) {
         if (crud == Crud.UPDATE) {
             EmailServiceUtils.ME.clearSession();
         }

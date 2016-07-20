@@ -29,7 +29,17 @@ public class PasswordCrudFactory implements ICrudFactory {
     private final ICrudProcessor PASSWORD_PROCESSOR = new ICrudProcessorInput<String>() {
 
         @Override
-        public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user) {
+        public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user, Input input) {
+            if (input == null) {
+                Accessor accessor = UtilAccessor.getAccessorProperty(entity.getClass(), crudProperty.getName() + "Base");
+                if (accessor != null) {
+                    String requestBody = (String) accessor.get(entity);
+                    if (!KernelString.isEmpty(requestBody)) {
+                        accessor.set(entity, null);
+                        crud(crudProperty, entity, crudHandler, user, requestBody);
+                    }
+                }
+            }
         }
 
         @Override
@@ -43,19 +53,11 @@ public class PasswordCrudFactory implements ICrudFactory {
                 return ((InputRequest) input).getRequest().getParameter(handler.getFilter().getPropertyPath() + "Base");
             }
 
-            return "";
+            return null;
         }
 
         @Override
         public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, String requestBody) {
-            if (KernelString.isEmpty(requestBody)) {
-                Accessor accessor = UtilAccessor.getAccessorProperty(entity.getClass(), crudProperty.getName() + "Base");
-                if (accessor != null) {
-                    requestBody = (String) accessor.get(entity);
-                    accessor.set(entity, null);
-                }
-            }
-
             if (!KernelString.isEmpty(requestBody)) {
                 Accessor accessor = UtilAccessor.getAccessorProperty(entity.getClass(), "salt");
                 String salt = null;

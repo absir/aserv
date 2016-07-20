@@ -98,7 +98,7 @@ public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object
 
     @Transaction
     @Override
-    public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user) {
+    public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, Input input) {
         if (handler.getCrud() == Crud.DELETE) {
             String assocId = getAssocId(handler);
             if (assocId != null) {

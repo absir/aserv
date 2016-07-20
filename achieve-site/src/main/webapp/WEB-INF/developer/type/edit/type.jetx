@@ -7,9 +7,9 @@ import = "com.absir.aserv.system.bean.value.JeEditable"
     #set(readonly = input.tagName() == 'input')
     #if(field.getEditable() == JeEditable::LOCKED || field.getEditable() == JeEditable::LOCKABLE )
         #if(readonly)
-            ${input.attr("readonly", "1")}
+            ${ScriptNode::attr(input, "${readonly ? 'readonly' : '' }")}
         #else
-            ${input.attr("disable", "1")}
+            ${ScriptNode::attr(input, "${readonly ? 'disable' : '' }")}
         #end
 
         ${input.addClass("ab_locked")}
@@ -22,9 +22,9 @@ import = "com.absir.aserv.system.bean.value.JeEditable"
     ${input.before(ScriptNode::node(shtml)).voidValue()}
 
     #if(readonly)
-        ${input.attr("${readonly ? 'readonly' : '' }", "1")}
+        ${ScriptNode::attr(input, "${readonly ? 'readonly' : '' }")}
     #else
-        ${input.attr("${readonly ? 'disable' : '' }", "1")}
+        ${ScriptNode::attr(input, "${readonly ? 'disable' : '' }")}
     #end
 
     ${input.addClass("${readonly ? 'ab_locked' : '' }")}

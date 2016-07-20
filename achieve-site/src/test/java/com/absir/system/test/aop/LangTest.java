@@ -32,12 +32,12 @@ public class LangTest extends AbstractTestInject {
 
             CrudHandler crudHandler = new CrudHandler(null, null, null, null, langBean) {
             };
-            ((ICrudBean) langBean).processCrud(Crud.CREATE, crudHandler);
+            ((ICrudBean) langBean).processCrud(Crud.CREATE, crudHandler, null);
 
             ((ILangBase) langBean).setLang("name", 33, "test");
             ((ILangBase) langBean.getLangEmbed()).setLang("name", 33, "test123333");
-            ((ICrudBean) langBean).processCrud(Crud.CREATE, crudHandler);
-            ((ICrudBean) langBean.getLangEmbed()).processCrud(Crud.CREATE, crudHandler);
+            ((ICrudBean) langBean).processCrud(Crud.CREATE, crudHandler, null);
+            ((ICrudBean) langBean.getLangEmbed()).processCrud(Crud.CREATE, crudHandler, null);
 
             ILangBase langBase = (ILangBase) langBean.getLangEmbed();
             System.out.println(langBase.getLang("name", 33, String.class));

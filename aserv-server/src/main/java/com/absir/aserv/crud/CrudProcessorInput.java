@@ -8,10 +8,11 @@
 package com.absir.aserv.crud;
 
 import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.server.in.Input;
 
 public abstract class CrudProcessorInput<T> implements ICrudProcessorInput<T> {
 
     @Override
-    public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user) {
+    public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, Input input) {
     }
 }

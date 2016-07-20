@@ -138,17 +138,16 @@ public abstract class CrudUtils {
 
             @Override
             public void crudInvoke(CrudProperty crudProperty, Object entity) {
-                crudProperty.crudProcessor.crud(crudProperty, entity, this, user);
+                crudProperty.crudProcessor.crud(crudProperty, entity, this, user, null);
             }
         };
 
         crudInvoker.persist = persist;
+        crud(entity, crudEntity, crudInvoker);
 
         if (entity instanceof ICrudBean) {
-            ((ICrudBean) entity).processCrud(crud, crudInvoker);
+            ((ICrudBean) entity).processCrud(crud, crudInvoker, null);
         }
-
-        crud(entity, crudEntity, crudInvoker);
     }
 
     protected static void crud(Object entity, CrudEntity crudEntity, CrudInvoker crudInvoker) {

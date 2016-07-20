@@ -16,12 +16,13 @@ import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.dao.BaseDao;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.orm.value.JoEntity;
+import com.absir.server.in.Input;
 
 @SuppressWarnings("unchecked")
 public class DaoCrudFactory implements ICrudFactory, ICrudProcessor {
 
     @Override
-    public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user) {
+    public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user, Input input) {
         BaseDao<Object, ?> baseDao = (BaseDao<Object, ?>) BeanDao.getBaseDao(entity.getClass());
         if (baseDao == null) {
             return;

@@ -548,7 +548,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     }
 
     @Override
-    public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user) {
+    public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user, Input input) {
         if (crudHandler.getCrud() == Crud.DELETE) {
             String uploadFile = (String) crudProperty.get(entity);
             if (!KernelString.isEmpty(uploadFile)) {

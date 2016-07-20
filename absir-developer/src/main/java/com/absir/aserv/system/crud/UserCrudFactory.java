@@ -15,11 +15,12 @@ import com.absir.aserv.support.developer.JCrudField;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.orm.value.JoEntity;
+import com.absir.server.in.Input;
 
 public class UserCrudFactory implements ICrudFactory, ICrudProcessor {
 
     @Override
-    public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user) {
+    public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user, Input input) {
         if (user != null) {
             if (crudProperty.getType().isAssignableFrom(user.getClass())) {
                 crudProperty.set(entity, user);

@@ -103,6 +103,7 @@ public abstract class CrudContextUtils extends CrudUtils {
                 }
             };
 
+            crudInvoker.persist = persist;
             crud(entity, crudEntity, crudInvoker);
             if (errors.hashErrors()) {
                 return;
@@ -125,17 +126,16 @@ public abstract class CrudContextUtils extends CrudUtils {
 
             @Override
             public void crudInvoke(CrudProperty crudProperty, Object entity) {
-                crudProperty.crudProcessor.crud(crudProperty, entity, this, user);
+                crudProperty.crudProcessor.crud(crudProperty, entity, this, user, input);
             }
         };
 
         crudInvoker.persist = persist;
+        crud(entity, crudEntity, crudInvoker);
 
         if (entity instanceof ICrudBean) {
-            ((ICrudBean) entity).processCrud(crud, crudInvoker);
+            ((ICrudBean) entity).processCrud(crud, crudInvoker, input);
         }
-
-        crud(entity, crudEntity, crudInvoker);
     }
 
     public static void crud(JaCrud.Crud crud, boolean persist, Map<String, Object> crudRecord, JoEntity joEntity, Object entity, JiUserBase user, PropertyFilter filter) {

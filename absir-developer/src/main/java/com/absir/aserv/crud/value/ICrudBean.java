@@ -9,8 +9,9 @@ package com.absir.aserv.crud.value;
 
 import com.absir.aserv.crud.CrudHandler;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
+import com.absir.server.in.Input;
 
 public interface ICrudBean {
 
-    public void processCrud(Crud crud, CrudHandler handler);
+    public void processCrud(Crud crud, CrudHandler handler, Input input);
 }

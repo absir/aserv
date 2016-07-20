@@ -30,6 +30,23 @@ public class ScriptNode extends TextNode {
         KernelObject.declaredSet(ScriptNode.NONE, "map", new HashMap<Object, Object>());
     }
 
+    public static class ScriptAttribute extends Attribute {
+
+        public ScriptAttribute(String key, String value) {
+            super(key, "");
+        }
+
+        @Override
+        public String html() {
+            return getKey();
+        }
+
+        @Override
+        protected void html(StringBuilder accum, Document.OutputSettings out) {
+            accum.append(getKey());
+        }
+    }
+
     public ScriptNode(String text) {
         this(text, "");
     }
@@ -76,6 +93,12 @@ public class ScriptNode extends TextNode {
         }
 
         return accum.toString();
+    }
+
+    public static void attr(Node node, String key) {
+        ScriptAttribute attribute = new ScriptAttribute(key, null);
+        KernelReflect.set(attribute, attrKeyField, key);
+        node.attributes.put(attribute);
     }
 
     public static void attr(Node node, String key, String value) {

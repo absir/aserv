@@ -15,13 +15,14 @@ import com.absir.aserv.crud.value.ICrudBean;
 import com.absir.aserv.support.developer.JCrudField;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.orm.value.JoEntity;
+import com.absir.server.in.Input;
 
 public class BeanCrudFactory implements ICrudFactory, ICrudProcessor {
 
     @Override
-    public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user) {
+    public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user, Input input) {
         if (crudHandler.getRoot() != entity && entity instanceof ICrudBean) {
-            ((ICrudBean) entity).processCrud(crudHandler.getCrud(), crudHandler);
+            ((ICrudBean) entity).processCrud(crudHandler.getCrud(), crudHandler, input);
         }
     }
 
