@@ -10,11 +10,13 @@ package com.absir.aserv.system.service;
 import com.absir.aserv.configure.JConfigureUtils;
 import com.absir.aserv.system.configure.JEmailConfigure;
 import com.absir.bean.basis.Base;
+import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
+import com.absir.core.base.Environment;
+import com.absir.core.kernel.KernelCharset;
 
 import javax.mail.*;
 import javax.mail.Message.RecipientType;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Calendar;
@@ -22,11 +24,27 @@ import java.util.Properties;
 
 @Base
 @Bean
-public class EmailService {
+public class EmailService implements IEmailService {
+
+    public static final EmailService ME = BeanFactoryUtils.get(EmailService.class);
 
     public static final JEmailConfigure emailConfigure = JConfigureUtils.getConfigure(JEmailConfigure.class);
 
     private Session session;
+
+    public static class SimpleAuthenticator extends Authenticator {
+
+        private PasswordAuthentication passwordAuthentication;
+
+        public SimpleAuthenticator(String username, String password) {
+            passwordAuthentication = new PasswordAuthentication(username, password);
+        }
+
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return passwordAuthentication;
+        }
+    }
 
     protected Session createSession() {
         Properties props = new Properties();
@@ -62,20 +80,20 @@ public class EmailService {
         return session;
     }
 
-    public MimeMessage createMimeMessage() throws AddressException, MessagingException {
+    public MimeMessage createMimeMessage() throws MessagingException {
         MimeMessage mimeMessage = new MimeMessage(getSession());
         mimeMessage.setFrom(new InternetAddress(emailConfigure.getFrom()));
         mimeMessage.setSentDate(Calendar.getInstance().getTime());
         return mimeMessage;
     }
 
-    public MimeMessage createMimeMessage(String to) throws AddressException, MessagingException {
+    public MimeMessage createMimeMessage(String to) throws MessagingException {
         MimeMessage mimeMessage = createMimeMessage();
         mimeMessage.setRecipient(RecipientType.TO, new InternetAddress(to));
         return mimeMessage;
     }
 
-    public MimeMessage createMimeMessage(String[] tos) throws AddressException, MessagingException {
+    public MimeMessage createMimeMessage(String[] tos) throws MessagingException {
         MimeMessage mimeMessage = createMimeMessage();
         int length = tos.length;
         Address[] addresses = new Address[length];
@@ -91,17 +109,33 @@ public class EmailService {
         Transport.send(mimeMessage, mimeMessage.getRecipients(RecipientType.TO));
     }
 
-    public static class SimpleAuthenticator extends Authenticator {
+    public void sendMimeMessage(MimeMessage mimeMessage, String subject, String content, boolean html) throws MessagingException {
+        mimeMessage.setSubject(subject, KernelCharset.UTF8.displayName());
+        mimeMessage.setContent(content, html ? "text/html;charset=utf-8" : "text/plain;charset=utf-8");
+        sendMimeMessage(mimeMessage);
+    }
 
-        private PasswordAuthentication passwordAuthentication;
+    @Override
+    public boolean sendMail(String subject, String content, boolean html, String to) {
+        try {
+            sendMimeMessage(createMimeMessage(to), subject, content, html);
 
-        public SimpleAuthenticator(String username, String password) {
-            passwordAuthentication = new PasswordAuthentication(username, password);
+        } catch (Exception e) {
+            Environment.throwable(e);
         }
 
-        @Override
-        protected PasswordAuthentication getPasswordAuthentication() {
-            return passwordAuthentication;
+        return false;
+    }
+
+    @Override
+    public boolean sendMail(String subject, String content, boolean html, String... tos) {
+        try {
+            sendMimeMessage(createMimeMessage(tos), subject, content, html);
+
+        } catch (Exception e) {
+            Environment.throwable(e);
         }
+
+        return false;
     }
 }

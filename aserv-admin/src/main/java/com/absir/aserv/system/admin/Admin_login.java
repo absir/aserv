@@ -44,7 +44,7 @@ public class Admin_login extends AdminServer {
     public String route(Input input) {
         input.getModel().put("remember", remember);
         if (HelperInput.isAjax(input)) {
-            return "admin/login.timeout";
+            return "admin/login.ajax";
         }
 
         return "admin/login";

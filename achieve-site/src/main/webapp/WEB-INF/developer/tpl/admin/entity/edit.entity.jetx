@@ -32,9 +32,11 @@
                 <button type="reset" class="btn btn-default radius mb-5">
                     ${Pag::getLang("重置")}
                 </button>
+                \#if(create || update)
                 <button type="submit" class="btn btn-primary radius mb-5">
                     <i class="Hui-iconfont">&#xe632;</i>${Pag::getLang("保存")}
                 </button>
+                \#end
                 \#if(insert)
                 <button type="button" class="btn btn-secondary radius mb-5"
                         onclick="ab_openHref('\${ADMIN_ROUTE}entity/edit/${entityName}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('添加')}')">
@@ -59,7 +61,7 @@
                     #for(options : entityModel.getSubmitOptionMap())
                     <button type="button" class="btn btn-default radius mb-5"
                             onclick="ab_submitOption('${options.key}', this)">
-                        ${Pag::namesLang(options.value)}
+                        ${Pag::getCaptionLang(options.value)}
                     </button>
                 #end
             #end

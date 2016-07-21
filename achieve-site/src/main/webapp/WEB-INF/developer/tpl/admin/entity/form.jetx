@@ -276,12 +276,13 @@ ${ScriptNode::html(element) + "\r\n"}
         ##map或array为实体类型
             #set(map_value = archetype_key ? '.value' : '')
             #set(archetype_map = archetype_key ? 3 :1)
+            #set(field_name = field.getName())
             #for(field : DeveloperModel::forEntityNameClass(field.getCrudField().getJoEntity(), request).getEntityModel().getFields())
             #tag scriptEcho()
             <th>${Pag::getCaptionLang(field.getCaption())}</th>
         #end
             #set(identifier =
-                'name="' + field.getName() + (map_value ? "[@!!for_key@]" : "[${for_index}]") + "." + field.getName() + '"')
+                'name="' + field_name + (map_value ? "[@!!for_key@]" : "[${for_index}]") + "." + field.getName() + '"')
             #if(!generator.append(identifier, element)) {
                 #tag layout_block("node")
                 <td><input ${identifier} type="text" class="ab_td_input"

@@ -21,7 +21,9 @@ import com.absir.core.helper.HelperFileName;
 import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelString;
+import com.absir.server.exception.ServerException;
 import com.absir.server.in.InMethod;
+import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
 import com.absir.server.route.IRoute;
@@ -85,13 +87,26 @@ public abstract class AdminServer {
     }
 
     @OnException(Exception.class)
-    protected void onException(Exception e, OnPut onPut) {
+    protected void onException(Exception e, OnPut onPut) throws Exception {
         Input input = onPut.getInput();
-        if (HelperInput.isAjax(input)) {
-            if (e instanceof ConstraintViolationException) {
-                input.getModel().put("message", e.getCause().getMessage());
-            }
+        InModel model = input.getModel();
+        model.put("e", e);
+        if (e instanceof ConstraintViolationException) {
+            model.put("message", e.getCause().getMessage());
 
+        } else {
+            if (e.getClass() == ServerException.class) {
+                model.put("message", ((ServerException) e).getServerStatus());
+
+            } else {
+                throw e;
+            }
+        }
+
+        if (HelperInput.isAjax(input)) {
+            onPut.setReturnedResolver(ReturnedResolverView.ME, "admin/exception.ajax");
+
+        } else {
             onPut.setReturnedResolver(ReturnedResolverView.ME, "admin/exception");
         }
     }

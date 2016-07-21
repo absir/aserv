@@ -63,13 +63,16 @@
             <i class="Hui-iconfont">&#xe600;</i>${Pag::getLang('添加')}
         </a>
         \#end
-        \#if(update)
         <a href="javascript:;" ab_toggle="click"
            ab_click="ab_openHref('\${ADMIN_ROUTE}entity/edit/${entityName}/$P{.ab_sel_select}', '${Pag::getLang(entityModel.caption)}${Pag::getLang('编辑')}')"
            class="btn btn-secondary radius mb-5">
-            <i class="Hui-iconfont">&#xe647;</i>${Pag::getLang('编辑')}
+            <i class="Hui-iconfont">&#xe647;</i>
+            \#if(update)
+            ${Pag::getLang('编辑')}
+            \#else
+            ${Pag::getLang('查看')}
+            \#end
         </a>
-        \#end
         \#if(delete)
         <a href="javascript:;" ab_toggle="click" ab_confirm="${Pag::getLang('批量删除记录?')}"
            ab_click="ab_ajax('\${ADMIN_ROUTE}entity/deleteJson/${entityName}?ids=$P{$[name='@ids']:checked}')"

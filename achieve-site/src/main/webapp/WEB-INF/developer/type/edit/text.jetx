@@ -1,0 +1,18 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+${input.tagName('textarea')}
+${input.removeClass('input-text')}
+${input.addClass('textarea')}
+${ScriptNode::append(input, input.attr('value')).voidValue()}
+${input.removeAttr('value')}
+
+#set(validators = field.getMetas().get("validators"))
+#if(validators)
+    #set(maxlength = validators.get('maxlength'))
+    #if(maxlength)
+        ${input.attr('onKeyUp', 'textarealength(this,' + maxlength + ')')}
+        ${input.after('<p class="textarea-numberbar"><em class="textarea-length">0</em>/' + maxlength + '</p>').voidValue()}
+    #end
+#end

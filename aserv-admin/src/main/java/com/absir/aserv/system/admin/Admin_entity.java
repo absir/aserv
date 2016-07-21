@@ -256,7 +256,7 @@ public class Admin_entity extends AdminServer {
             crudSupply.evict(entity);
         }
 
-        boolean create = id == null;
+        boolean create = id == null && crudSupply.support(Crud.COMPLETE);
         Map<String, Object> crudRecord = create ? null : CrudUtils.crudRecord(new JoEntity(entityName, entity.getClass()), entity,
                 filter);
         BinderData binderData = input.getBinderData();

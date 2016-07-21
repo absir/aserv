@@ -57,14 +57,18 @@ public class BinderUtils {
     }
 
     public static Object getDataObject(Map<String, Object> propertyMap, String from) {
-        int length = from == null ? 0 : from.length();
+        int length = from == null ? 0 : (from.length() + 1);
         Object dataObject = null;
         Object dataValue = null;
         DataObjectHandler handler = new DataObjectHandler();
+        if (length != 0) {
+            from += '.';
+        }
+
         for (Entry<String, Object> entry : propertyMap.entrySet()) {
             String propertyPath = entry.getKey();
             if (length != 0) {
-                if (length >= propertyPath.length()) {
+                if (length >= propertyPath.length() || !propertyPath.startsWith(from)) {
                     continue;
 
                 } else {

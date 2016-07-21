@@ -8,6 +8,7 @@
 package com.absir.aserv.system.admin;
 
 import com.absir.aserv.system.bean.JUser;
+import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.SecurityService;
@@ -31,14 +32,17 @@ public class admin_user extends AdminServer {
     public static class FPassword {
 
         @JaLang("原密码")
+        @JaEdit(types = "passwordType")
         @NotEmpty
         public String oldPassword;
 
         @JaLang("新密码")
+        @JaEdit(types = "passwordType")
         @NotEmpty
         public String newPassword;
 
         @JaLang("确认密码")
+        @JaEdit(types = "passwordType")
         @NotEmpty
         @Confirm("newPassword")
         public String confirmPassword;

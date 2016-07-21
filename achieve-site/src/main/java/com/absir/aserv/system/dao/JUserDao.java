@@ -20,4 +20,7 @@ public interface JUserDao {
     @DataQuery("SELECT o FROM JUser o WHERE o.username = ?")
     public JUser findByUsername(String username);
 
+    @DataQuery("SELECT o FROM JUser o WHERE o.username = :p0 OR o.email = :p0 OR o.mobile = :p0")
+    public JUser findByRefUsername(String loginUsername);
+
 }
