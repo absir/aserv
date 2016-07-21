@@ -6,6 +6,12 @@
 <div class="container-fluid">
     <form ab_toggle="form" ab_validator="true" ab_reset="true" class="form form-horizontal" method="post">
         <div>
+            <div class="tabBar cl mb-20">
+                <span class="current">${Pag::getLang("用户名注册")}</span>
+                <span class="">${Pag::getLang("邮箱注册")}</span>
+                <span class="">${Pag::getLang("手机注册")}</span>
+            </div>
+
             \${Pag::forEntity(request)}
             ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FMobileCode::class, request)}
             #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")

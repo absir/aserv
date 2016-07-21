@@ -48,7 +48,7 @@
                            value="${Pag::getLang('登录')}">
                     <input name="" type="reset" class="btn btn-default radius size-L"
                            value="${Pag::getLang('重置')}">
-                    \#if(Pag::CONFIGURE.allowRegister)
+                    \#if(Pag::CONFIGURE.hasAllowUserRegister())
                     <a href="\${SITE_ROUTE}user/register">${Pag::getLang('注册新帐号')}</a>
                     \#end
                 </div>

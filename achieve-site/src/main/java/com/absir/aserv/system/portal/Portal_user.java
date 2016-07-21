@@ -69,6 +69,26 @@ public class portal_user extends PortalServer {
             throw new ServerException(ServerStatus.ON_DENIED);
         }
 
+        //默认注册类型
+        if (type == 0) {
+            type = Pag.CONFIGURE.getDefaultRegisterType();
+        }
+
+        if (type == 1) {
+            if (!Pag.CONFIGURE.isAllowUsernameRegister()) {
+                type = 2;
+            }
+
+        } else if (type == 3) {
+            if (!Pag.CONFIGURE.isAllowMessageRegister()) {
+                type = 2;
+            }
+
+        } else {
+            type = 2;
+        }
+
+
 //        if (input.getMethod() == InMethod.POST) {
 //            JUser user = ParameterResolverBinder.getBinderObject(null, JUser.class, 1, input);
 //            if (Pag.CONFIGURE.getVerifyTime() > 0) {

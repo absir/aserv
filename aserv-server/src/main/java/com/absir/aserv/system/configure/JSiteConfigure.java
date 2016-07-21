@@ -17,6 +17,7 @@ import com.absir.aserv.system.bean.value.JaSubField;
 import com.absir.aserv.system.service.IEmailService;
 import com.absir.aserv.system.service.IMessageService;
 import com.absir.validator.value.Length;
+import com.absir.validator.value.Range;
 
 @MaEntity(parent = @MaMenu("网站设置"), name = "全局")
 public class JSiteConfigure extends JConfigureBase {
@@ -36,26 +37,31 @@ public class JSiteConfigure extends JConfigureBase {
     @JaLang("上传扩展名")
     private String uploadExtension = "gif|jpg|jpeg|png|txt|doc|xls|zip|rar";
 
-    @JaLang("允许使用短信")
+    @JaLang("使用短信")
     private boolean allowUseMessage;
 
     @JaSubField("注册设置")
-    @JaLang("允许用户名注册")
+    @JaLang("默认注册类型")
+    //1 用户名注册 2 邮件注册 3 邮件注册
+    @Range(min = 1, max = 3)
+    private int defaultRegisterType = 2;
+
+    @JaLang("用户名注册")
     private boolean allowUsernameRegister;
 
-    @JaLang("允许邮件注册")
+    @JaLang("邮件注册")
     private boolean allowEmailRegister;
 
-    @JaLang("允许短信注册")
+    @JaLang("短信注册")
     private boolean allowMessageRegister;
 
-    @JaLang("注册用户不激活")
+    @JaLang("手动激活")
     private boolean registerUserNoActive;
 
-    @JaLang("允许验证密码修改")
+    @JaLang("验证密码修改")
     private boolean allowConfirmPasswordModify;
 
-    @JaLang("允许邮件密码修改")
+    @JaLang("邮件密码修改")
     private boolean allowEmailPasswordModify;
 
     @JaSubField("模版设置")
@@ -63,12 +69,12 @@ public class JSiteConfigure extends JConfigureBase {
     @JaEdit(types = "html")
     private String registerAgreement = "本服务协议双方为本平台与本平台客户，本服务协议具有合同效力。您确认本服务协议后，本服务协议即在您和本网站之间产生法律效力。请您务必在注册之前认真阅读全部服务协议内容，如有任何疑问，可向本网站咨询。 无论您事实上是否在注册之前认真阅读了本服务协议，只要您点击协议正本下方的\"注册\"按钮并按照本网站注册程序成功注册为用户，您的行为仍然表示您同意并签署了本服务协议。";
 
-    @JaLang("验证码消息模版")
+    @JaLang("验证消息模版")
     @Length(max = 255)
     @JaEdit(types = "text")
     private String codeMessageTpl = "";
 
-    @JaLang("验证码邮件模版")
+    @JaLang("验证邮件模版")
     @JaEdit(types = "html")
     private String codeEmailTpl = "";
 
@@ -121,6 +127,14 @@ public class JSiteConfigure extends JConfigureBase {
 
     public void setAllowUseMessage(boolean allowUseMessage) {
         this.allowUseMessage = allowUseMessage;
+    }
+
+    public int getDefaultRegisterType() {
+        return defaultRegisterType;
+    }
+
+    public void setDefaultRegisterType(int defaultRegisterType) {
+        this.defaultRegisterType = defaultRegisterType;
     }
 
     public boolean isAllowUsernameRegister() {

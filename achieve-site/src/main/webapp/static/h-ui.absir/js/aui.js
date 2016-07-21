@@ -269,9 +269,16 @@ $(function () {
             };
         }
 
+        var UEI = 0;
         if (typeof(UE) === "object") {
             abToggles['UE'] = function ($this) {
-                UE.getEditor($this[0]);
+                var id = $this.attr('id');
+                if (!id) {
+                    id = "__ab_ue_" + (++UEI);
+                    $this.attr('id', id);
+                }
+
+                UE.getEditor(id, {autoHeightEnabled: false});
             }
         }
 
