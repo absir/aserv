@@ -4,24 +4,25 @@
     <h3 class="pt-10">\${APP_NAME + ${Pag::getLang("通行证注册", false)}}</h3>
 </nav>
 <div class="container-fluid">
-    <form ab_toggle="form" ab_validate="true" class="form form-horizontal" method="post">
+    <form ab_toggle="form" ab_validator="true" ab_reset="true" class="form form-horizontal" method="post">
         <div>
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("用户名")}:</label>
-                <div class="formControls col-xs-8 col-sm-9">
-                    <input name="id" type="text" class="input-text" readonly="readonly" value=""/>
-                </div>
-            </div>
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("密码")}:</label>
-                <div class="formControls col-xs-8 col-sm-9">
-                    <input name="name" type="text" class="input-text required" value=""/>
-                </div>
-            </div>
+            \${Pag::forEntity(request)}
+            ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FMobileCode::class, request)}
+            #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+
+            ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FEmailCode::class, request)}
+            #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+
+            ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.portal.portal_user.FUsername::class, request)}
+            #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+
+            ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.portal.portal_user.FRegister::class, request)}
+            #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"></label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input class="{required:true}" name="agreement" type="checkbox"/>
+                    <input class="required" name="agreement" type="checkbox" error="${Pag::getLang('必选')}"/>
                     <a class="btn btn-link" data-toggle="modal" href="#registerAgreement">${Pag::getLang("注册协议")}</a>
                 </div>
             </div>
@@ -29,25 +30,9 @@
                  ab_toggle="resize" resize="data-width" minSize="500">
                 <div class="container-fluid">
                     <h4 class="text-c">${Pag::getLang("注册协议")}</h4>
-                    <p>
-                        为切实维护您的合法权益，特制订《钱宝网注册协议》（以下简称“本协议”）。
-
-                        请您务必审慎阅读、充分理解本协议各条款内容，特别是免除或者限制责任的条款，以及加粗、加下划线的条款，以及钱宝网所有者南京钱宝信息传媒有限公司（以下简称“钱宝网”）推出的各项活动的单独协议，并选择接受或不接受。
-
-                        钱宝网推出的各项活动的单独协议不在本协议中体现，但为本协议的组成部分，与本协议法律效力相比具有优先性。
-
-                        除非您已阅读并接受本协议所有条款，否则您无权申请成为钱宝网会员。您申请成为钱宝网会员的行为即视为您已阅读并同意受本协议的约束。
-
-                        本协议不为格式合同，可以按照您的要求及双方协商的结果进行变更。本协议成立前，如您要求变更本协议，则您可本人亲自至钱宝网进行商谈。钱宝网同意您变更要求的，可与您另行达成有关协议。
-
-                        本协议主要包括三部分内容，一是您与钱宝网之间的委托合同成立生效前，您参加钱宝网推出的各项活动及享受钱宝网相应服务部分；二是您与钱宝网之间的委托合同成立生效及履行部分；三是您与钱宝网之间的委托合同生效后，您在具有钱宝网受托人身份的同时，参加钱宝网推出的各项活动并享受钱宝网相应服务部分。
-
-                        您经同意本协议并成功注册成为钱宝网会员但未与钱宝网签订生效委托合同的，您仅具有“普通会员”身份。
-
-                        您经同意本协议并成功注册成为钱宝网会员且与钱宝网签订生效委托合同后，您具有“特定会员”身份，签订委托合同的方式参见本协议相关约定。
-
-                        为方便运营管理，钱宝网可能在有关文件、公告等资料上统一称“普通会员”与“特定会员”为“会员”。您同意本协议的，视为您同意钱宝网对您统一称谓的做法。请您根据自己“普通会员”或“特定会员”的身份参加钱宝网推出的相应活动。
-                    </p>
+                    <div>
+                        \${Pag::CONFIGURE.registerAgreement}
+                    </div>
                     <div class="row cl">
                         <div class="text-c mb-10">
                             <button id="agreementButton" class="btn btn-primary radius size-L" data-dismiss="modal">

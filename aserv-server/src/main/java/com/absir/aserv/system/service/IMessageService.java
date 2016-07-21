@@ -7,5 +7,9 @@ import com.absir.bean.core.BeanFactoryUtils;
  */
 public interface IMessageService {
 
-    public static final IEmailService ME = BeanFactoryUtils.get(IEmailService.class);
+    public static final IMessageService ME = BeanFactoryUtils.get(IMessageService.class);
+
+    public boolean sendMessage(String content, String to);
+
+    public boolean sendMessage(String content, String... tos);
 }

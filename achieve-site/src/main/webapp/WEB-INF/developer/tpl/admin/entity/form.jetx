@@ -124,9 +124,9 @@ ${ScriptNode::html(element) + "\r\n"}
             #set(identifier = '<span class="li_' + subField.key + ' current"')
         #end
         #if(!generator.print(identifier, out))
-            #set(capition = subField.value[0].getMetas().get("subFieldLang"))
+            #set(capition = Pag::isI18n ? subField.value[0].getMetas().get("subFieldLang") : null)
             #tag scriptEcho()
-            ${identifier}>${capition ? Pag::getLangName(capition) : Pag::getLang(subField.key)}</span>
+            ${identifier}>${capition ? "Pag::getCaptionLang(" + capition + ")" : Pag::getLang(subField.key)}</span>
 
         #end
     #end

@@ -9,6 +9,8 @@ package com.absir.aserv.developer.editor;
 
 import com.absir.aserv.system.bean.value.JaSubField;
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.lang.LangCodeUtils;
+import com.absir.core.kernel.KernelString;
 import com.absir.property.PropertyResolverAbstract;
 
 @Bean
@@ -20,8 +22,11 @@ public class EditorSubField extends PropertyResolverAbstract<EditorObject, JaSub
             propertyObject = new EditorObject();
         }
 
-        propertyObject.setMeta("subField", annotation.value());
-        propertyObject.setMeta("subFieldLang", annotation.capition());
+        String lang = annotation.value();
+        lang = LangCodeUtils.get(lang, EditorSubField.class);
+        propertyObject.setMeta("subField", lang);
+        String caption = annotation.capition();
+        propertyObject.setMeta("subFieldLang", KernelString.isEmpty(caption) ? lang : caption);
         return propertyObject;
     }
 

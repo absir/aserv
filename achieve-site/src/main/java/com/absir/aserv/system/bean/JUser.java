@@ -50,6 +50,9 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @Column(unique = true)
     private String mobile;
 
+    @JaLang("昵称")
+    private String nickname;
+
     @JaLang("用户类型")
     @JaEdit(groups = {JaEdit.GROUP_LIST})
     @Enumerated
@@ -214,6 +217,14 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getEmail() {

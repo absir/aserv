@@ -281,10 +281,11 @@ $(function () {
                 opt.submitHandler = submitHandler;
             }
 
-            $inputs = $('[ab_validate]', $this);
+            $inputs = $('[ab_validate],[error]', $this);
             if ($inputs && $inputs.length > 0) {
                 var rules = {};
-                $('[ab_validate]', $this).each(function () {
+                var messages = {};
+                $inputs.each(function () {
                     var $input = $(this);
                     var validate = abValidates[$input.attr('ab_validate')];
                     if (validate) {
@@ -297,11 +298,24 @@ $(function () {
                                 };
                             }
                         }
+
+                    } else {
+                        var error = $input.attr('error');
+                        if (error) {
+                            var name = $input.attr('name');
+                            if (name) {
+                                messages[name] = error;
+                            }
+                        }
                     }
                 });
 
                 if (!$.isEmptyObject(rules)) {
                     opt.rules = rules;
+                }
+
+                if (!$.isEmptyObject(messages)) {
+                    opt.messages = messages;
                 }
             }
 
@@ -473,5 +487,6 @@ $(function () {
                 }
             }
         }
+
     }
 );
