@@ -193,8 +193,20 @@ public class JSiteConfigure extends JConfigureBase {
         return IEmailService.ME != null;
     }
 
+    public boolean hasAllowUsernameRegister() {
+        return allowUsernameRegister;
+    }
+
+    public boolean hasAllowEmailRegister() {
+        return allowEmailRegister && hasEmail();
+    }
+
+    public boolean hasAllowMessageRegister() {
+        return allowMessageRegister && hasMessage();
+    }
+
     public boolean hasAllowUserRegister() {
-        return allowUsernameRegister || (allowEmailRegister && hasEmail()) || (allowMessageRegister && hasMessage());
+        return hasAllowUsernameRegister() || hasAllowEmailRegister() || hasAllowMessageRegister();
     }
 
     @Langs

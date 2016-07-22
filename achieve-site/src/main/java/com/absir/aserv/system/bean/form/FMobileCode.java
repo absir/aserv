@@ -1,5 +1,6 @@
 package com.absir.aserv.system.bean.form;
 
+import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.validator.value.NotEmpty;
 import com.absir.validator.value.Regex;
@@ -16,6 +17,7 @@ public class FMobileCode {
 
     @JaLang("验证码")
     @NotEmpty
+    @JaEdit(types = "code")
     public String code;
 
 }

@@ -1,0 +1,19 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+#set(div = nodes.get(0).getElementsByClass('formControls').get(0))
+${div.removeClass('col-xs-8')}
+${div.removeClass('col-sm-9')}
+${div.addClass('col-xs-5')}
+${div.addClass('col-sm-6')}
+
+#tag layout_block("shtml")
+<div class="formControls col-xs-3 col-sm-3">
+    <button ab_toggle="code" class="btn btn-secondary-outline radius size-S" type="button">
+        ${Pag::getLang("发送")}
+    </button>
+</div>
+#end
+
+${ScriptNode::append(nodes.get(0), shtml).voidValue()}

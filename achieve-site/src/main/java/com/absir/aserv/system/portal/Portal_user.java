@@ -13,6 +13,7 @@ import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.InMethod;
+import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
 import com.absir.server.value.Param;
 import com.absir.server.value.Server;
@@ -87,6 +88,9 @@ public class portal_user extends PortalServer {
         } else {
             type = 2;
         }
+
+        InModel model = input.getModel();
+        model.put("type", type);
 
 
 //        if (input.getMethod() == InMethod.POST) {

@@ -326,7 +326,6 @@ $(function () {
                 }
             }
 
-
             $this.validate(opt);
         };
 
@@ -459,7 +458,17 @@ $(function () {
             $this.click(function (e) {
                 ab_openHref(href, title);
             });
-        }
+        };
+
+        abToggles['subForm'] = function ($this) {
+            var $form = $this.closest('form');
+            if ($form && $form.length > 0) {
+                var $group = ab_group($this, 'subForm');
+                if ($group && $group.length > 0) {
+                    //todo subform Attrs foreach
+                }
+            }
+        };
 
         abValidates['pattern'] = function ($form, $input, name) {
             var pattern = $input.attr('pattern');
@@ -475,7 +484,7 @@ $(function () {
 
                 }, error];
             }
-        }
+        };
 
         abValidates['confirm'] = function ($form, $input, name) {
             var confirm = $input.attr('confirm');
@@ -493,7 +502,7 @@ $(function () {
                     }, error];
                 }
             }
-        }
+        };
 
     }
 );

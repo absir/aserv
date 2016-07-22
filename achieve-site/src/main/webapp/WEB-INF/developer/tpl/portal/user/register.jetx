@@ -7,20 +7,50 @@
     <form ab_toggle="form" ab_validator="true" ab_reset="true" class="form form-horizontal" method="post">
         <div>
             <div class="tabBar cl mb-20">
-                <span class="current">${Pag::getLang("用户名注册")}</span>
-                <span class="">${Pag::getLang("邮箱注册")}</span>
-                <span class="">${Pag::getLang("手机注册")}</span>
+                \#if(Pag::CONFIGURE.hasAllowMessageRegister())
+                <span class="\${type == 3 ? 'current' : ''}">
+                    \#if(type == 3)
+                    ${Pag::getLang("手机注册")}
+                    \#else
+                    <a href="${SITE_ROUTE}user/register?type=3">${Pag::getLang("手机注册")}</a>
+                    \#end
+                </span>
+                \#end
+                \#if(Pag::CONFIGURE.hasAllowEmailRegister())
+                <span class="\${type == 2 ? 'current' : ''}">
+                    \#if(type == 2)
+                    ${Pag::getLang("邮箱注册")}
+                    \#else
+                    <a href="${SITE_ROUTE}user/register?type=2">${Pag::getLang("邮箱注册")}</a>
+                    \#end
+                </span>
+                \#end
+                \#if(Pag::CONFIGURE.hasAllowUsernameRegister())
+                <span class="\${type == 1 ? 'current' : ''}">
+                    \#if(type == 1)
+                    ${Pag::getLang("用户名注册")}
+                    \#else
+                    <a href="${SITE_ROUTE}user/register?type=1">${Pag::getLang("用户名注册")}</a>
+                    \#end
+                </span>
+                \#end
             </div>
 
             \${Pag::forEntity(request)}
+            ##\#if(type == 3)
             ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FMobileCode::class, request)}
             #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+            ##\#end
 
+            \#if(type == 2)
             ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FEmailCode::class, request)}
             #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+            \#end
 
+            \#if(type == 1)
             ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.portal.portal_user.FUsername::class, request)}
             #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+            \#end
 
             ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.portal.portal_user.FRegister::class, request)}
             #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")

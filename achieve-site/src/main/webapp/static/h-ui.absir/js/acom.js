@@ -10,11 +10,11 @@ function ab_getUP(name) {
 function ab_group($node, toggle) {
     var tog = $node.attr(toggle);
     if (tog) {
-        var $group = $node.parents("[ab_group='ab_main'], .ab_main");
+        var $group = $node.closest("[ab_group='ab_main'], .ab_main");
         return ab_groupSel($group, "[ab_group='" + tog + "'], ." + tog);
     }
 
-    return $node.parents("[ab_group='" + toggle + "'], ." + toggle);
+    return $node.closest("[ab_group='" + toggle + "'], ." + toggle);
 }
 
 function ab_groupSel($group, sel) {
@@ -256,14 +256,14 @@ function ab_submit($form, att, value, attrs) {
 }
 
 function ab_submitAttrs(attrs, node) {
-    var $form = $(node ? node : this).parents('form');
+    var $form = $(node ? node : this).closest('form');
     if ($form && $form.length > 0) {
         ab_submit($form, null, null, attrs);
     }
 }
 
 function ab_submitOption(option, node) {
-    var $form = $(node ? node : this).parents('form');
+    var $form = $(node ? node : this).closest('form');
     if ($form && $form.length > 0) {
         var $option = $("[name='!submitOption']", $form);
         if (!$option || $option.length == 0) {
