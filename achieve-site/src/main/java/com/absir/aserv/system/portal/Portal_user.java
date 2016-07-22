@@ -62,10 +62,7 @@ public class portal_user extends PortalServer {
 
     }
 
-    /**
-     * 用户注册
-     */
-    public String register(@Param int type, Input input) {
+    protected int getRegisterType(int type) {
         if (!Pag.CONFIGURE.hasAllowUserRegister()) {
             throw new ServerException(ServerStatus.ON_DENIED);
         }
@@ -89,6 +86,41 @@ public class portal_user extends PortalServer {
             type = 2;
         }
 
+        if (type == 2 && !Pag.CONFIGURE.isAllowEmailRegister()) {
+            if (Pag.CONFIGURE.isAllowMessageRegister()) {
+                type = 3;
+
+            } else if (Pag.CONFIGURE.isAllowUsernameRegister()) {
+                type = 1;
+
+            } else {
+                throw new ServerException(ServerStatus.ON_DENIED);
+            }
+        }
+
+        return type;
+    }
+
+    /**
+     * 发送激活
+     */
+    public void registerCode(@Param int type, Input input) {
+        type = getRegisterType(type);
+        if (type == 2) {
+
+        } else if (type == 3) {
+
+
+        } else {
+            throw new ServerException(ServerStatus.ON_DENIED);
+        }
+    }
+
+    /**
+     * 用户注册
+     */
+    public String register(@Param int type, Input input) {
+        type = getRegisterType(type);
         InModel model = input.getModel();
         model.put("type", type);
 
@@ -122,10 +154,5 @@ public class portal_user extends PortalServer {
         return "portal/user/password";
     }
 
-    /**
-     * 发送激活
-     */
-    public void activate(@Param String verifierId) {
 
-    }
 }

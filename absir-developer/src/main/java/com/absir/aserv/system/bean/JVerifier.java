@@ -23,6 +23,9 @@ public class JVerifier extends JbVerifier {
     @JaLang("内容")
     private String value;
 
+    @JaLang("整数内容")
+    private int intValue;
+
     public String getTag() {
         return tag;
     }
@@ -37,5 +40,13 @@ public class JVerifier extends JbVerifier {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public int getIntValue() {
+        return intValue;
+    }
+
+    public void setIntValue(int intValue) {
+        this.intValue = intValue;
     }
 }

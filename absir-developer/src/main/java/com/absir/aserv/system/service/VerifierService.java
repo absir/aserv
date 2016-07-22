@@ -27,7 +27,9 @@ import com.absir.orm.hibernate.SessionFactoryBean;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.orm.value.JoEntity;
+import org.hibernate.LockMode;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,23 +60,27 @@ public class VerifierService {
     /**
      * 添加验证
      */
-    public void persistVerifier(Object dist, String tag, String value, long lifeTime) {
+    @Transaction
+    public JVerifier persistVerifier(Object dist, String tag, String value, long lifeTime) {
         String id = randVerifierId(dist);
         JVerifier verifier = new JVerifier();
         verifier.setId(id);
         verifier.setTag(tag);
         verifier.setValue(value);
         verifier.setPassTime(ContextUtils.getContextTime() + lifeTime);
-        BeanService.ME.persist(verifier);
+        BeanDao.getSession().persist(verifier);
+        return verifier;
     }
 
-    public void mergeVerifier(String id, String tag, String value, long lifeTime) {
+    @Transaction
+    public JVerifier mergeVerifier(String id, String tag, String value, long lifeTime) {
         JVerifier verifier = new JVerifier();
         verifier.setId(id);
         verifier.setTag(tag);
         verifier.setValue(value);
         verifier.setPassTime(ContextUtils.getContextTime() + lifeTime);
-        BeanService.ME.merge(verifier);
+        BeanDao.getSession().merge(verifier);
+        return verifier;
     }
 
     /**
@@ -94,6 +100,29 @@ public class VerifierService {
 
     protected void setNameMapCrudEntity(Map<String, CrudEntity> nameMapCrudEntity) {
         this.nameMapCrudEntity = nameMapCrudEntity;
+    }
+
+    public static JVerifier getOperationVerifier(Session session, String id, boolean forUpdate) {
+        JVerifier verifier = session.get(JVerifier.class, id, forUpdate ? LockMode.PESSIMISTIC_WRITE : LockMode.NONE);
+        return verifier == null || verifier.getPassTime() <= ContextUtils.getContextTime() ? null : verifier;
+    }
+
+    public static void doneOperation(Session session, String id, long lifeTime, JVerifier verifier) {
+        if (verifier == null || verifier.getPassTime() <= ContextUtils.getContextTime()) {
+            verifier = VerifierService.ME.mergeVerifier(id, null, null, lifeTime);
+        }
+    }
+
+    public static JVerifier doneOperationCount(Session session, String id, long lifeTime, JVerifier verifier) {
+        if (verifier == null || verifier.getPassTime() <= ContextUtils.getContextTime()) {
+            verifier = VerifierService.ME.mergeVerifier(id, null, null, lifeTime);
+
+        } else {
+            verifier.setIntValue(verifier.getIntValue() + 1);
+            session.merge(verifier);
+        }
+
+        return verifier;
     }
 
     /**

@@ -37,6 +37,7 @@
             </div>
 
             \${Pag::forEntity(request)}
+            ${request.setAttribute('action', '${SITE_ROUTE}user/registerCode')}
             \#if(type == 3)
             <div class="subForm">
                 ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FMobileCode::class, request)}
