@@ -200,14 +200,14 @@ function ab_ajaxCallback(json, $form) {
     }
 }
 
-function ab_ajaxSubmit($form, callback) {
+function ab_ajaxSubmit($form, callback, $tForm) {
     $form.ajaxSubmit({
         //iframe: true,
         success: function (data) {
-            (callback || ab_ajaxCallback)(data, $form);
+            (callback || ab_ajaxCallback)(data, $tForm || $form);
         },
         error: function (data) {
-            (callback || ab_ajaxCallback)(data, $form);
+            (callback || ab_ajaxCallback)(data, $tForm || $form);
         }
     });
 };

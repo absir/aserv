@@ -465,7 +465,61 @@ $(function () {
             if ($form && $form.length > 0) {
                 var $group = ab_group($this, 'subForm');
                 if ($group && $group.length > 0) {
-                    //todo subform Attrs foreach
+                    var $inputs = $('[name]', $group);
+                    if ($inputs && $inputs.length > 0) {
+                        var tExclude = $this.attr('exclude');
+                        var gExclude = $group.attr('exclude');
+                        var exclude = ',' + (tExclude ? (tExclude + ',') : '') + (gExclude ? (gExclude + ',') : '');
+                        if (exclude.length > 1) {
+                            var $includes = new Array();
+                            $inputs.each(function () {
+                                var $input = $(this);
+                                if (exclude.indexOf(',' + $input.attr('name') + ',') < 0) {
+                                    $includes.push($input);
+                                }
+                            });
+
+                            $inputs = $($includes);
+                        }
+
+                        var validator = $form.data('validator');
+                        $this.bind('click', function () {
+                            if (validator) {
+                                var errors = false;
+                                $inputs.each(function () {
+                                    if (!validator.element('[name=' + $(this).attr('name') + ']')) {
+                                        errors = true;
+                                    }
+                                });
+
+                                if (errors) {
+                                    return;
+                                }
+                            }
+
+                            $nForm = $('<form></form>');
+                            for (attr in $("form")[0].attributes) {
+                                $nForm.attr(attr, $group.attr(attr));
+                            }
+
+                            if (!$nForm.attr('action')) {
+                                var action = $this.attr('action');
+                                if (!action) {
+                                    action = $form.attr('action');
+                                }
+
+                                if (action) {
+                                    $nForm.attr('action', action);
+                                }
+                            }
+
+                            $inputs.each(function () {
+                                $nForm.append($(this).clone());
+                            });
+
+                            ab_ajaxSubmit($nForm, $group.attr('ab_callback'));
+                        });
+                    }
                 }
             }
         };

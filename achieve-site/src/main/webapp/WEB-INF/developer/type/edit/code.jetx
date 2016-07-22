@@ -10,7 +10,8 @@ ${div.addClass('col-sm-6')}
 
 #tag layout_block("shtml")
 <div class="formControls col-xs-3 col-sm-3">
-    <button ab_toggle="code" class="btn btn-secondary-outline radius size-S" type="button">
+    <button ab_toggle="subForm" exclude="${input.attr('name')}" class="btn btn-secondary-outline radius size-S"
+            type="button">
         ${Pag::getLang("发送")}
     </button>
 </div>

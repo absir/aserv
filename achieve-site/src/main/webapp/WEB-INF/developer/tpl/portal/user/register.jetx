@@ -37,14 +37,18 @@
             </div>
 
             \${Pag::forEntity(request)}
-            ##\#if(type == 3)
-            ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FMobileCode::class, request)}
-            #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
-            ##\#end
+            \#if(type == 3)
+            <div class="subForm">
+                ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FMobileCode::class, request)}
+                #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+            </div>
+            \#end
 
             \#if(type == 2)
-            ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FEmailCode::class, request)}
-            #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+            <div class="subForm">
+                ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FEmailCode::class, request)}
+                #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+            </div>
             \#end
 
             \#if(type == 1)
