@@ -20,8 +20,7 @@ public class JTplConfigure extends JConfigureBase {
     @JaEdit(types = "html")
     private String registerAgreement = "本服务协议双方为本平台与本平台客户，本服务协议具有合同效力。您确认本服务协议后，本服务协议即在您和本网站之间产生法律效力。请您务必在注册之前认真阅读全部服务协议内容，如有任何疑问，可向本网站咨询。 无论您事实上是否在注册之前认真阅读了本服务协议，只要您点击协议正本下方的\"注册\"按钮并按照本网站注册程序成功注册为用户，您的行为仍然表示您同意并签署了本服务协议。";
 
-    @JaLang("验证邮件")
-    @JaEdit(types = "html")
+    @JaLang("验证邮件标题")
     private String codeEmailSubject = "【{0}】邮箱验证";
 
     @JaLang("验证邮件")
@@ -40,6 +39,15 @@ public class JTplConfigure extends JConfigureBase {
 
     public void setRegisterAgreement(String registerAgreement) {
         this.registerAgreement = registerAgreement;
+    }
+
+    @Langs
+    public String getCodeEmailSubject() {
+        return codeEmailSubject;
+    }
+
+    public void setCodeEmailSubject(String codeEmailSubject) {
+        this.codeEmailSubject = codeEmailSubject;
     }
 
     @Langs

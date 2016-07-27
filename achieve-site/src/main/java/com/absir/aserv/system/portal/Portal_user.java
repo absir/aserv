@@ -8,12 +8,14 @@
 package com.absir.aserv.system.portal;
 
 import com.absir.aserv.developer.Pag;
+import com.absir.aserv.developer.Site;
 import com.absir.aserv.system.bean.form.FEmailCode;
 import com.absir.aserv.system.bean.form.FMobileCode;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JeRoleLevel;
 import com.absir.aserv.system.security.SecurityContext;
+import com.absir.aserv.system.service.PortalService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.binder.BinderData;
 import com.absir.server.exception.ServerException;
@@ -120,17 +122,25 @@ public class portal_user extends PortalServer {
             throw new ServerException(ServerStatus.ON_DENIED);
         }
 
-        //String value = input.getParam(type == 2 ? "email" : "mobile");
-        long idleTime = type == 2 ? Pag.CONFIGURE.getEmailIdleTime() : Pag.CONFIGURE.getMessageIdleTime();
+        long idleTime;
+        long sendTime;
         BinderData binderData = input.getBinderData();
         binderData.getBinderResult().setValidation(true);
+        binderData.getBinderResult().getPropertyFilter().exclude("code");
         if (type == 2) {
             FEmailCode emailCode = binderData.bind(input.getParamMap(), null, FEmailCode.class);
             InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
+            idleTime = Pag.CONFIGURE.getEmailIdleTime();
+            sendTime = PortalService.ME.sendEmailCode(emailCode.email, PortalService.REGISTER_TAG, Site.TPL.getCodeEmailSubject(), Site.TPL.getCodeEmail(), idleTime, Site.REGISTER_OPERATION, input);
 
         } else {
             FMobileCode mobileCode = binderData.bind(input.getParamMap(), null, FMobileCode.class);
+            InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
+            idleTime = Pag.CONFIGURE.getMessageIdleTime();
+            sendTime = PortalService.ME.sendMessageCode(mobileCode.mobile, PortalService.REGISTER_TAG, Site.TPL.getCodeMessage(), idleTime, Site.REGISTER_OPERATION, input);
         }
+
+        
     }
 
     /**

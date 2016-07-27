@@ -21,6 +21,10 @@ public class PortalService {
 
     public static final PortalService ME = BeanFactoryUtils.get(PortalService.class);
 
+    public static final String REGISTER_TAG = "register";
+
+    public static final String PASSWORD_TAG = "password";
+
     public String randomCode() {
         StringBuilder stringBuilder = new StringBuilder();
         HelperRandom.appendFormat(stringBuilder, HelperRandom.FormatType.NUMBER, HelperRandom.nextInt(999999));
