@@ -67,7 +67,10 @@ public class VerifierService {
         verifier.setId(id);
         verifier.setTag(tag);
         verifier.setValue(value);
-        verifier.setPassTime(ContextUtils.getContextTime() + lifeTime);
+        if (lifeTime > 0) {
+            verifier.setPassTime(ContextUtils.getContextTime() + lifeTime);
+        }
+
         BeanDao.getSession().persist(verifier);
         return verifier;
     }
@@ -78,7 +81,10 @@ public class VerifierService {
         verifier.setId(id);
         verifier.setTag(tag);
         verifier.setValue(value);
-        verifier.setPassTime(ContextUtils.getContextTime() + lifeTime);
+        if (lifeTime > 0) {
+            verifier.setPassTime(ContextUtils.getContextTime() + lifeTime);
+        }
+
         BeanDao.getSession().merge(verifier);
         return verifier;
     }
@@ -107,9 +113,15 @@ public class VerifierService {
         return verifier == null || verifier.getPassTime() <= ContextUtils.getContextTime() ? null : verifier;
     }
 
-    public static void doneOperation(Session session, String id, long lifeTime, JVerifier verifier) {
+    public static long getOperationIdleTime(Session session, String id, boolean forUpdate) {
+        JVerifier verifier = session.get(JVerifier.class, id, forUpdate ? LockMode.PESSIMISTIC_WRITE : LockMode.NONE);
+        long contextTime = ContextUtils.getContextTime();
+        return verifier == null || verifier.getPassTime() <= contextTime ? 0 : (verifier.getPassTime() - contextTime);
+    }
+
+    public static void doneOperation(Session session, String id, long lifeTime, String tag, String value, JVerifier verifier) {
         if (verifier == null || verifier.getPassTime() <= ContextUtils.getContextTime()) {
-            verifier = VerifierService.ME.mergeVerifier(id, null, null, lifeTime);
+            verifier = VerifierService.ME.mergeVerifier(id, tag, value, lifeTime);
         }
     }
 

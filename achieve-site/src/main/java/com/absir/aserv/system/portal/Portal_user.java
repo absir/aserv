@@ -8,13 +8,21 @@
 package com.absir.aserv.system.portal;
 
 import com.absir.aserv.developer.Pag;
+import com.absir.aserv.system.bean.form.FEmailCode;
+import com.absir.aserv.system.bean.form.FMobileCode;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
+import com.absir.aserv.system.bean.value.JeRoleLevel;
+import com.absir.aserv.system.security.SecurityContext;
+import com.absir.aserv.system.service.SecurityService;
+import com.absir.binder.BinderData;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.InMethod;
 import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
+import com.absir.server.route.invoker.InvokerResolverErrors;
+import com.absir.server.value.Mapping;
 import com.absir.server.value.Param;
 import com.absir.server.value.Server;
 import com.absir.validator.value.Confirm;
@@ -31,11 +39,13 @@ public class portal_user extends PortalServer {
      * 用户登录
      */
     public String login(Input input) {
-        if (input.getMethod() == InMethod.POST) {
-
-        }
-
         return "portal/user/login";
+    }
+
+    @Mapping(method = InMethod.POST)
+    public String login(@Param String username, @Param String password, @Param long remember, Input input) {
+        SecurityContext securityContext = SecurityService.ME.login(username, password, remember, JeRoleLevel.ROLE_USER.ordinal(), "api", input);
+        return "";
     }
 
     public static class FUsername {
@@ -106,13 +116,20 @@ public class portal_user extends PortalServer {
      */
     public void registerCode(@Param int type, Input input) {
         type = getRegisterType(type);
+        if (!(type == 2 || type == 3)) {
+            throw new ServerException(ServerStatus.ON_DENIED);
+        }
+
+        //String value = input.getParam(type == 2 ? "email" : "mobile");
+        long idleTime = type == 2 ? Pag.CONFIGURE.getEmailIdleTime() : Pag.CONFIGURE.getMessageIdleTime();
+        BinderData binderData = input.getBinderData();
+        binderData.getBinderResult().setValidation(true);
         if (type == 2) {
-
-        } else if (type == 3) {
-
+            FEmailCode emailCode = binderData.bind(input.getParamMap(), null, FEmailCode.class);
+            InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
 
         } else {
-            throw new ServerException(ServerStatus.ON_DENIED);
+            FMobileCode mobileCode = binderData.bind(input.getParamMap(), null, FMobileCode.class);
         }
     }
 

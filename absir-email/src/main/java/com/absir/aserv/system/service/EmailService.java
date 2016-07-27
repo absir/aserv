@@ -128,7 +128,7 @@ public class EmailService implements IEmailService {
     }
 
     @Override
-    public boolean sendMail(String subject, String content, boolean html, String... tos) {
+    public boolean sendMailTos(String subject, String content, boolean html, String... tos) {
         try {
             sendMimeMessage(createMimeMessage(tos), subject, content, html);
 

@@ -34,6 +34,7 @@ import com.absir.bean.inject.InjectBeanFactory;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Stopping;
+import com.absir.bean.lang.ILangCode;
 import com.absir.binder.BinderData;
 import com.absir.binder.IBinder;
 import com.absir.context.lang.LangBundle;
@@ -56,7 +57,7 @@ import java.util.Map.Entry;
 @SuppressWarnings({"unchecked", "rawtypes"})
 @Base(order = -1)
 @Bean
-public class LangBundleImpl extends LangBundle {
+public class LangBundleImpl extends LangBundle implements ILangCode {
 
     public static final LangBundleImpl ME = BeanFactoryUtils.get(LangBundleImpl.class);
 
@@ -781,6 +782,27 @@ public class LangBundleImpl extends LangBundle {
                 Developer.doEntry(file);
             }
         }
+    }
+
+    @Override
+    public String getLandCode(String lang, Class<?> cls) {
+        if (isI18n()) {
+            String name = KernelMap.getKey(LangBundle.ME.getResourceBundle(), lang);
+            if (!KernelString.isEmpty(name)) {
+                String newName = cls.getName() + '.' + name;
+                if (LangBundle.ME.getResourceBundle().containsKey(newName)) {
+                    lang = newName;
+
+                } else {
+                    newName = cls.getSimpleName() + '.' + name;
+                    if (LangBundle.ME.getResourceBundle().containsKey(newName)) {
+                        lang = newName;
+                    }
+                }
+            }
+        }
+
+        return lang;
     }
 
     protected static interface LangEntry {

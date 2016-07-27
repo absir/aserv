@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 public class InvokerResolverErrors implements InvokerResolver<Boolean> {
 
     @Value("server.errors.view")
-    protected String errorView = "errors";
+    protected static String errorView = "errors";
 
     @Override
     public Boolean getInvoker(Method method) {
@@ -35,19 +35,54 @@ public class InvokerResolverErrors implements InvokerResolver<Boolean> {
 
     @Override
     public void resolveBefore(Boolean invoker, OnPut onPut) throws Exception {
-        Input input = onPut.getInput();
-        if (input.hasBinderData()) {
-            BinderResult binderResult = input.getBinderData().getBinderResult();
-            if (binderResult.hashErrors()) {
-                input.getModel().put("errors", binderResult.getPropertyErrors());
-                onPut.setReturnedResolver(ReturnedResolverView.ME, errorView);
-                throw new ServerException(ServerStatus.ON_SUCCESS);
-            }
-        }
+        checkError(null, onPut);
     }
 
     @Override
     public void resolveAfter(Object returnValue, Boolean invoker, OnPut onPut) throws Exception {
 
     }
+
+    public static void checkError(BinderResult binderResult, OnPut onPut) {
+        if (binderResult != null && !binderResult.hashErrors()) {
+            return;
+        }
+
+        if (onPut == null) {
+            onPut = OnPut.get();
+            if (onPut == null) {
+                return;
+            }
+        }
+
+        Input input = onPut.getInput();
+        if (binderResult == null) {
+            if (!input.hasBinderData()) {
+                return;
+            }
+
+            binderResult = input.getBinderData().getBinderResult();
+            if (!binderResult.hashErrors()) {
+                return;
+            }
+        }
+
+        input.getModel().put("errors", binderResult.getPropertyErrors());
+        onPut.setReturnedResolver(ReturnedResolverView.ME, errorView);
+        throw new ServerException(ServerStatus.ON_SUCCESS);
+    }
+
+    public static void onError(String propertyPath, String error, String errorObject, OnPut onPut) {
+        onErrorMessage(propertyPath, onPut.getInput().getLangMessage(error), errorObject, onPut);
+    }
+
+    public static void onErrorMessage(String propertyPath, String errorMessage, String errorObject, OnPut onPut) {
+        Input input = onPut.getInput();
+        BinderResult binderResult = input.getBinderData().getBinderResult();
+        binderResult.addPropertyError(propertyPath, errorMessage, errorObject);
+        input.getModel().put("errors", binderResult.getPropertyErrors());
+        onPut.setReturnedResolver(ReturnedResolverView.ME, errorView);
+        throw new ServerException(ServerStatus.ON_SUCCESS);
+    }
+
 }

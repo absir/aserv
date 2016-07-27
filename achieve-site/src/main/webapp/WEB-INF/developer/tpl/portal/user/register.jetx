@@ -1,7 +1,7 @@
-\#set(page_title = APP_NAME + "${Pag::getLang("通行证注册")}")
+\#set(page_title = Pag::CONFIGURE.siteName + "${Pag::getLang("通行证注册")}")
 \#tag layout("/WEB-INF/tpl/layout/hui.jetx")
 <nav class="breadcrumb text-c ab_ah">
-    <h3 class="pt-10">\${APP_NAME + ${Pag::getLang("通行证注册", false)}}</h3>
+    <h3 class="pt-10">\${Pag::CONFIGURE.siteName + ${Pag::getLang("通行证注册", false)}}</h3>
 </nav>
 <div class="container-fluid">
     <form ab_toggle="form" ab_validator="true" ab_reset="true" class="form form-horizontal" method="post">
@@ -72,7 +72,7 @@
                 <div class="container-fluid">
                     <h4 class="text-c">${Pag::getLang("注册协议")}</h4>
                     <div>
-                        \${Pag::CONFIGURE.registerAgreement}
+                        \${Site::TPL.registerAgreement}
                     </div>
                     <div class="row cl">
                         <div class="text-c mb-10">

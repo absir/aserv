@@ -17,7 +17,7 @@ import com.absir.aserv.support.web.WebJetbrickSupply.ConfigureFound;
 import com.absir.aserv.support.web.value.BaFunction;
 import com.absir.aserv.support.web.value.BaMethod;
 import com.absir.aserv.support.web.value.BaTag;
-import com.absir.aserv.system.bean.JEmbedLL;
+import com.absir.aserv.system.bean.JConfigure;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.statics.EntityStatics;
@@ -112,7 +112,7 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
             getVariableResolverBean().importClass(JoEntity.class.getName());
             getVariableResolverBean().importClass(IMenuBean.class.getName());
             getVariableResolverBean().importPackage(KernelObject.class.getPackage().getName());
-            getVariableResolverBean().importPackage(JEmbedLL.class.getPackage().getName());
+            getVariableResolverBean().importPackage(JConfigure.class.getPackage().getName());
             getVariableResolverBean().importPackage(JiUserBase.class.getPackage().getName());
             getVariableResolverBean().importPackage(ServerException.class.getPackage().getName());
             getVariableResolverBean().importPackage(Pag.class.getPackage().getName());
