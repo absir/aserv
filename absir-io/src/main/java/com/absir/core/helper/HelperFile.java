@@ -277,7 +277,7 @@ public class HelperFile extends FileUtils {
             while ((zipEntry = inputStream.getNextEntry()) != null) {
                 if (!zipEntry.isDirectory()) {
                     File destFile = new File(destPath + zipEntry.getName());
-                    if ((overWrite || destFile.exists()) && (filter == null || filter.accept(destFile))) {
+                    if ((overWrite || !destFile.exists()) && (filter == null || filter.accept(destFile))) {
                         try {
                             FileOutputStream output = HelperFile.openOutputStream(destFile);
                             try {

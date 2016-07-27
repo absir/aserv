@@ -373,7 +373,7 @@ public class HelperRandom {
 
             @Override
             public char[] charsForInt(int i) {
-                return String.valueOf(i).toCharArray();
+                return String.valueOf(i < 0 ? -i : i).toCharArray();
             }
 
             @Override
@@ -383,7 +383,7 @@ public class HelperRandom {
 
             @Override
             public char[] charsForLong(long l) {
-                return String.valueOf(l).toCharArray();
+                return String.valueOf(l < 0 ? -l : l).toCharArray();
             }
         },
 
