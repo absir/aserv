@@ -10,5 +10,6 @@
 \#else
 "message": "\${message ?! ${Pag::getLang('操作失败', false)}}",
 \#end
+\${click ? ('"click": "' + click +'",') : ''}
 "icon": "\${icon ?! 2}"
 }

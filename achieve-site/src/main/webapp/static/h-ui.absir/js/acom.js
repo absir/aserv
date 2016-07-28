@@ -176,6 +176,13 @@ function ab_ajaxCallback(json, $form) {
             $form.data('validator').showErrors(data.errors);
         }
 
+        if (data.click) {
+            var $click = $form ? $(data.click, $form) : $(data.click);
+            if ($click) {
+                $click.click();
+            }
+        }
+
         var icon = data.icon;
         var message = data.message;
         if (!message) {

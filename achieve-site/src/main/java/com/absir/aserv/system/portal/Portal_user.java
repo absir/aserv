@@ -166,6 +166,7 @@ public class portal_user extends PortalServer {
         if (input.getMethod() == InMethod.POST) {
             if (type == 1) {
                 if (!Asset_verify.verifyInput(input)) {
+                    model.put("click", "#verifyCode");
                     InvokerResolverErrors.onError("verifyCode", Site.VERIFY_ERROR, null, null);
                 }
             }
