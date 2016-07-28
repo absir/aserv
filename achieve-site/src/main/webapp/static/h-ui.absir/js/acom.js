@@ -173,7 +173,7 @@ function ab_ajaxCallback(json, $form) {
         }
 
         if ($form && data.errors) {
-            $form.validate().showErrors(data.errors);
+            $form.data('validator').showErrors(data.errors);
         }
 
         var icon = data.icon;
@@ -194,9 +194,9 @@ function ab_ajaxCallback(json, $form) {
 
         layer.alert(message, {icon: icon});
 
-    }
-    catch (e) {
+    } catch (e) {
         layer.alert("Parse Json Error", {icon: 2});
+        throw e;
     }
 }
 

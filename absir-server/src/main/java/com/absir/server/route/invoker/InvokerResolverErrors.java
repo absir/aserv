@@ -73,10 +73,24 @@ public class InvokerResolverErrors implements InvokerResolver<Boolean> {
     }
 
     public static void onError(String propertyPath, String error, String errorObject, OnPut onPut) {
+        if (onPut == null) {
+            onPut = OnPut.get();
+            if (onPut == null) {
+                return;
+            }
+        }
+
         onErrorMessage(propertyPath, onPut.getInput().getLangMessage(error), errorObject, onPut);
     }
 
     public static void onErrorMessage(String propertyPath, String errorMessage, String errorObject, OnPut onPut) {
+        if (onPut == null) {
+            onPut = OnPut.get();
+            if (onPut == null) {
+                return;
+            }
+        }
+
         Input input = onPut.getInput();
         BinderResult binderResult = input.getBinderData().getBinderResult();
         binderResult.addPropertyError(propertyPath, errorMessage, errorObject);

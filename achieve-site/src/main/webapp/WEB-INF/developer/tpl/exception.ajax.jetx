@@ -1,0 +1,14 @@
+{
+\#if(errors)
+"errors":{
+\#for(error : errors)
+\${for.index == 1 ? '' : ','}
+"\${error.propertyPath}": "\${error.errorMessage}"
+\#end
+},
+"message": "\${message ?! ${Pag::getLang('数据验证失败', false)}}",
+\#else
+"message": "\${message ?! ${Pag::getLang('服务异常,请稍后再试', false)}}",
+\#end
+"icon": "\${icon ?! 2}"
+}

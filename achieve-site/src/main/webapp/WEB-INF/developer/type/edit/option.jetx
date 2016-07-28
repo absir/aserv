@@ -3,7 +3,7 @@ import = "org.jsoup.nodes.*"
 )
 
 #tag layout_block("shtml")
-<input type="hidden" name="${input.attr('name')}" value="\${inputval ? 1 : 0}"}/>
+<input type="hidden" name="${input.attr('name')}" value="\${${inputval} ? 1 : 0}" }/>
 #end
 
 ${input.attr('type', 'checkbox')}

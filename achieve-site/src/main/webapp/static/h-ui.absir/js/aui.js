@@ -517,7 +517,7 @@ $(function () {
                                 $nForm.append($(this).clone());
                             });
 
-                            ab_ajaxSubmit($nForm, $group.attr('ab_callback'));
+                            ab_ajaxSubmit($nForm, $group.attr('ab_callback'), $form);
                         });
                     }
                 }

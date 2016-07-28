@@ -1,4 +1,4 @@
 {
-"icon": 0,
+"icon": 1,
 "url": \${_mapped ? 0 : 1}
 }

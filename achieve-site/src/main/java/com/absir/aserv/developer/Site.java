@@ -19,9 +19,19 @@ public class Site implements KernelLang.GetTemplate<String, JetTemplate> {
 
     public static final JTplConfigure TPL = JConfigureUtils.getConfigure(JTplConfigure.class);
 
+    public static final String SEND_SUCCESS = LangCodeUtils.get("发送成功", Site.class);
+
+    public static final String USERNAME_REGISTERED = LangCodeUtils.get("用户名已注册", Site.class);
+
+    public static final String EMAIL_REGISTERED = LangCodeUtils.get("邮箱已注册", Site.class);
+
+    public static final String MOBILE_REGISTERED = LangCodeUtils.get("手机号已注册", Site.class);
+
     public static final String REGISTER_OPERATION = LangCodeUtils.get("注册", Site.class);
 
     public static final String PASSWORD_OPERATION = LangCodeUtils.get("修改密码", Site.class);
+
+    public static final String VERIFY_ERROR = LangCodeUtils.get("验证码错误", Site.class);
 
     @Override
     public JetTemplate getWith(String template) {

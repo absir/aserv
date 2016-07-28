@@ -68,9 +68,12 @@ public class Asset_verify extends AssetServer {
         }
 
         int fontCount = (int) (width * heightWidth / height);
-        if (fontCount < 1) {
-            fontCount = 1;
-            width = (int) (height / heightWidth);
+        if (fontCount < 4) {
+            fontCount = 4;
+            int newWidth = (int) (height / heightWidth);
+            if (newWidth > width) {
+                width = newWidth;
+            }
 
         } else if (fontCount > 12) {
             fontCount = 12;

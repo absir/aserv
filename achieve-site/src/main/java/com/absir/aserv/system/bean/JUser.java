@@ -50,6 +50,10 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @Column(unique = true)
     private String mobile;
 
+    @JaLang("创建时间")
+    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
+    private long createTime;
+
     @JaLang("昵称")
     private String nickname;
 
@@ -114,13 +118,123 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @Prop(include = 99)
     private int lastErrorTimes;
 
-
     @JaLang("沉默")
     @Transient
-    private transient boolean slient;
+    private transient boolean silent;
 
     public Long getUserId() {
         return getId();
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public JeUserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(JeUserType userType) {
+        this.userType = userType;
+    }
+
+    public Set<JUserRole> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(Set<JUserRole> userRoles) {
+        this.userRoles = userRoles;
+    }
+
+    public Map<String, String> getMetaMap() {
+        return metaMap;
+    }
+
+    public void setMetaMap(Map<String, String> metaMap) {
+        this.metaMap = metaMap;
+    }
+
+    // 用户角色
+    public Set<JUserRole> userRoles() {
+        return userRoles;
+    }
+
+    // 角色等级
+    public int getUserRoleLevel() {
+        return userType == null ? -1 : userType.ordinal();
+    }
+
+    // 角色等级
+    public JeRoleLevel getJeRoleLevel() {
+        if (isDeveloper()) {
+            return JeRoleLevel.ROLE_DEVELOPER;
+        }
+
+        if (userType == null) {
+            return null;
+        }
+
+        if (userType.ordinal() >= JeUserType.USER_ADMIN.ordinal()) {
+            return JeRoleLevel.ROLE_ADMIN;
+
+        } else if (userType.ordinal() >= JeUserType.USER_NORMAL.ordinal()) {
+            return JeRoleLevel.ROLE_USER;
+        }
+
+        return null;
+    }
+
+    public Object getMetaMap(String key) {
+        return metaMap == null ? null : metaMap.get(key);
+    }
+
+    public void setMetaMap(String key, String value) {
+        if (metaMap == null) {
+            metaMap = new HashMap<String, String>();
+        }
+
+        metaMap.put(key, value);
+    }
+
+    @Override
+    public String toString() {
+        return "JUser[" + getId() + "]." + username;
     }
 
     public String getPassword() {
@@ -203,114 +317,12 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
         this.lastErrorTimes = lastErrorTimes;
     }
 
-    public boolean isSlient() {
-        return slient;
+    public boolean isSilent() {
+        return silent;
     }
 
-    public void setSlient(boolean slient) {
-        this.slient = slient;
+    public void setSilent(boolean silent) {
+        this.silent = silent;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public JeUserType getUserType() {
-        return userType;
-    }
-
-    public void setUserType(JeUserType userType) {
-        this.userType = userType;
-    }
-
-    public Set<JUserRole> getUserRoles() {
-        return userRoles;
-    }
-
-    public void setUserRoles(Set<JUserRole> userRoles) {
-        this.userRoles = userRoles;
-    }
-
-    public Map<String, String> getMetaMap() {
-        return metaMap;
-    }
-
-    public void setMetaMap(Map<String, String> metaMap) {
-        this.metaMap = metaMap;
-    }
-
-    // 用户角色
-    public Set<JUserRole> userRoles() {
-        return userRoles;
-    }
-
-    // 角色等级
-    public int getUserRoleLevel() {
-        return userType == null ? -1 : userType.ordinal();
-    }
-
-    // 角色等级
-    public JeRoleLevel getJeRoleLevel() {
-        if (isDeveloper()) {
-            return JeRoleLevel.ROLE_DEVELOPER;
-        }
-
-        if (userType == null) {
-            return null;
-        }
-
-        if (userType.ordinal() >= JeUserType.USER_ADMIN.ordinal()) {
-            return JeRoleLevel.ROLE_ADMIN;
-
-        } else if (userType.ordinal() >= JeUserType.USER_NORMAL.ordinal()) {
-            return JeRoleLevel.ROLE_USER;
-        }
-
-        return null;
-    }
-
-    public Object getMetaMap(String key) {
-        return metaMap == null ? null : metaMap.get(key);
-    }
-
-    public void setMetaMap(String key, String value) {
-        if (metaMap == null) {
-            metaMap = new HashMap<String, String>();
-        }
-
-        metaMap.put(key, value);
-    }
-
-    @Override
-    public String toString() {
-        return "JUser[" + getId() + "]." + username;
-    }
 }

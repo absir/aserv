@@ -9,15 +9,20 @@ package com.absir.aserv.system.portal;
 
 import com.absir.aserv.developer.Pag;
 import com.absir.aserv.developer.Site;
+import com.absir.aserv.system.asset.Asset_verify;
+import com.absir.aserv.system.bean.JUser;
 import com.absir.aserv.system.bean.form.FEmailCode;
 import com.absir.aserv.system.bean.form.FMobileCode;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JeRoleLevel;
+import com.absir.aserv.system.bean.value.JeUserType;
 import com.absir.aserv.system.security.SecurityContext;
 import com.absir.aserv.system.service.PortalService;
 import com.absir.aserv.system.service.SecurityService;
+import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.binder.BinderData;
+import com.absir.context.core.ContextUtils;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.InMethod;
@@ -31,6 +36,7 @@ import com.absir.validator.value.Confirm;
 import com.absir.validator.value.Length;
 import com.absir.validator.value.NotEmpty;
 import com.absir.validator.value.Regex;
+import org.hibernate.exception.ConstraintViolationException;
 
 @Server
 public class portal_user extends PortalServer {
@@ -116,7 +122,7 @@ public class portal_user extends PortalServer {
     /**
      * 发送激活
      */
-    public void registerCode(@Param int type, Input input) {
+    public String registerCode(@Param int type, Input input) {
         type = getRegisterType(type);
         if (!(type == 2 || type == 3)) {
             throw new ServerException(ServerStatus.ON_DENIED);
@@ -130,17 +136,25 @@ public class portal_user extends PortalServer {
         if (type == 2) {
             FEmailCode emailCode = binderData.bind(input.getParamMap(), null, FEmailCode.class);
             InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
+            if (PortalService.ME.findUser(emailCode.email, type) != null) {
+                InvokerResolverErrors.onError("email", Site.EMAIL_REGISTERED, null, null);
+            }
+
             idleTime = Pag.CONFIGURE.getEmailIdleTime();
             sendTime = PortalService.ME.sendEmailCode(emailCode.email, PortalService.REGISTER_TAG, Site.TPL.getCodeEmailSubject(), Site.TPL.getCodeEmail(), idleTime, Site.REGISTER_OPERATION, input);
 
         } else {
             FMobileCode mobileCode = binderData.bind(input.getParamMap(), null, FMobileCode.class);
             InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
+            if (PortalService.ME.findUser(mobileCode.mobile, type) != null) {
+                InvokerResolverErrors.onError("mobile", Site.MOBILE_REGISTERED, null, null);
+            }
+
             idleTime = Pag.CONFIGURE.getMessageIdleTime();
             sendTime = PortalService.ME.sendMessageCode(mobileCode.mobile, PortalService.REGISTER_TAG, Site.TPL.getCodeMessage(), idleTime, Site.REGISTER_OPERATION, input);
         }
 
-        
+        return "success";
     }
 
     /**
@@ -149,28 +163,65 @@ public class portal_user extends PortalServer {
     public String register(@Param int type, Input input) {
         type = getRegisterType(type);
         InModel model = input.getModel();
+        if (input.getMethod() == InMethod.POST) {
+            if (type == 1) {
+                if (!Asset_verify.verifyInput(input)) {
+                    InvokerResolverErrors.onError("verifyCode", Site.VERIFY_ERROR, null, null);
+                }
+            }
+
+            BinderData binderData = input.getBinderData();
+            binderData.getBinderResult().setValidation(true);
+            FRegister register = binderData.bind(input.getParamMap(), null, FRegister.class);
+            JUser user = new JUser();
+            if (type == 1) {
+                FUsername username = binderData.bind(input.getParamMap(), null, FUsername.class);
+                InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
+                user.setUsername(username.username);
+
+
+            } else if (type == 2) {
+                FEmailCode emailCode = binderData.bind(input.getParamMap(), null, FEmailCode.class);
+                InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
+                if (PortalService.ME.verifyCode(emailCode.email, PortalService.REGISTER_TAG) != 0) {
+                    InvokerResolverErrors.onError("code", Site.VERIFY_ERROR, null, null);
+                }
+
+                user.setEmail(emailCode.email);
+
+            } else {
+                FMobileCode mobileCode = binderData.bind(input.getParamMap(), null, FMobileCode.class);
+                InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
+                if (PortalService.ME.verifyCode(mobileCode.mobile, PortalService.REGISTER_TAG) != 0) {
+                    InvokerResolverErrors.onError("code", Site.VERIFY_ERROR, null, null);
+                }
+
+                user.setMobile(mobileCode.mobile);
+            }
+
+            user.setCreateTime(ContextUtils.getContextTime());
+            user.setPasswordBase(register.password);
+            user.setUserType(type == 1 ? JeUserType.USER_VALIDATING : JeUserType.USER_NORMAL);
+            user.setActivation(!Pag.CONFIGURE.isRegisterUserNoActive());
+            try {
+                CrudServiceUtils.merge("JUser", null, user, true, null, null);
+
+            } catch (ConstraintViolationException e) {
+                if (type == 1) {
+                    InvokerResolverErrors.onError("username", Site.USERNAME_REGISTERED, null, null);
+
+                } else if (type == 2) {
+                    InvokerResolverErrors.onError("email", Site.EMAIL_REGISTERED, null, null);
+
+                } else {
+                    InvokerResolverErrors.onError("mobile", Site.MOBILE_REGISTERED, null, null);
+                }
+            }
+
+            return "success";
+        }
+
         model.put("type", type);
-
-
-//        if (input.getMethod() == InMethod.POST) {
-//            JUser user = ParameterResolverBinder.getBinderObject(null, JUser.class, 1, input);
-//            if (Pag.CONFIGURE.getVerifyTime() > 0) {
-//                user.setActivation(false);
-//
-//            } else {
-//                user.setActivation(true);
-//            }
-//
-//            user.setDisabled(Pag.CONFIGURE.isRegisterUserDisable());
-//            CrudServiceUtils.merge("JUser", null, user, true, null,
-//                    input.getBinderData().getBinderResult().getPropertyFilter());
-//            SecurityService.ME.setUserBase(user, input);
-//            // 通知激活
-//            if (!user.isActivation()) {
-//                VerifierService.ME.persistVerifier(user, TAG, user.getId().toString(), Pag.CONFIGURE.getVerifyTime());
-//            }
-//        }
-
         return "portal/user/register";
     }
 

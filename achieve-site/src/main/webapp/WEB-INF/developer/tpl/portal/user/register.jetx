@@ -60,6 +60,19 @@
             ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.portal.portal_user.FRegister::class, request)}
             #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
 
+            \#if(type == 1)
+            <div class="row cl ab_requiredDiv">
+                <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("验证码")}:</label>
+                <div class="formControls col-xs-4 col-sm-6">
+                    <input name="verifyCode" class="input-text required" value="">
+                </div>
+                <div class="formControls col-xs-4 col-sm-3 ab_p0">
+                    <img src="\${SITE_ROUTE}asset/verify?width=92&height=31"
+                         onclick="javascript:this.src=this.src+'&='+Math.random()" alt="${Pag::getLang('点击更换')}">
+                </div>
+            </div>
+            \#end
+
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-2"></label>
                 <div class="formControls col-xs-8 col-sm-9">
@@ -105,6 +118,7 @@
 </div>
 \#end
 
+<script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery/jquery.json.min.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery/jquery.form.min.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery.validation/1.14.0/messages_zh.min.js"></script>

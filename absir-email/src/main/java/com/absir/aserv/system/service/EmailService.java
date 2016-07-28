@@ -119,6 +119,7 @@ public class EmailService implements IEmailService {
     public boolean sendMail(String subject, String content, boolean html, String to) {
         try {
             sendMimeMessage(createMimeMessage(to), subject, content, html);
+            return true;
 
         } catch (Exception e) {
             Environment.throwable(e);
@@ -131,6 +132,7 @@ public class EmailService implements IEmailService {
     public boolean sendMailTos(String subject, String content, boolean html, String... tos) {
         try {
             sendMimeMessage(createMimeMessage(tos), subject, content, html);
+            return true;
 
         } catch (Exception e) {
             Environment.throwable(e);

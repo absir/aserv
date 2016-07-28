@@ -1,0 +1,1 @@
+\${message ?! ${Pag::getLang('访问失败', false)}}
