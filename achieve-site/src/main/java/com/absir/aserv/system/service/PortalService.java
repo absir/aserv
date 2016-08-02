@@ -19,6 +19,7 @@ import com.absir.orm.transaction.value.Transaction;
 import com.absir.server.in.Input;
 import com.absir.server.route.invoker.InvokerResolverErrors;
 import org.hibernate.LockMode;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 
 import java.text.MessageFormat;
@@ -118,7 +119,13 @@ public class PortalService {
     public int verifyCode(String emailOrMobile, String tag) {
         String id = emailOrMobile + "@Code";
         Session session = BeanDao.getSession();
-        JVerifier verifier = session.load(JVerifier.class, id, LockMode.PESSIMISTIC_WRITE);
+        JVerifier verifier = null;
+        try {
+            verifier = session.load(JVerifier.class, id, LockMode.PESSIMISTIC_WRITE);
+
+        } catch (ObjectNotFoundException e) {
+        }
+
         if (verifier == null || !KernelObject.equals(verifier.getTag(), tag)) {
             return -1;
         }
