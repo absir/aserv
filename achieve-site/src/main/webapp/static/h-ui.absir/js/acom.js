@@ -153,7 +153,7 @@ ab_lang_map.option_success = "操作成功";
 ab_lang_map.option_fail = "操作失败";
 ab_lang_map.option_uncomplete = "操作未完成";
 
-function ab_ajaxCallback(json, $form, $tForm) {
+function ab_ajaxCallback(json, $form, $tForm, callback) {
     try {
         var data = $.evalJSON(json);
         var url = data.url;
@@ -175,13 +175,48 @@ function ab_ajaxCallback(json, $form, $tForm) {
 
         $tForm = $tForm || $form;
         if ($tForm && data.errors) {
-            if (data.errors.verifyCode) {
+            if (callback && data.errors.verifyCode) {
                 var $verifyCode = $('[name="verifyCode"]', $tForm);
-                if (!($verifyCode && $verifyCode.length)) {
-                    if (Object.getOwnPropertyNames().length == 1) {
-                        layer.open({
-                            type: 2,
-                            content: 'http://sentsin.com' //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+                if (!($verifyCode && $verifyCode.length) || $verifyCode.attr('type') === 'hidden') {
+                    if (Object.getOwnPropertyNames(data.errors).length == 1) {
+                        var verify = ab_com.verify || (ab_com.route + 'portal/verify');
+                        $.get(verify, {}, function (data) {
+                            var width = $(window).width() - 80;
+                            if (width > 320) {
+                                width = 320;
+                            }
+
+                            var l = layer.open({
+                                type: 1,
+                                title: 0,
+                                area: [width + 'px', 'auto'],
+                                content: data,
+                            });
+                            var $layer = $('#layui-layer' + l);
+                            if ($layer && $layer.length) {
+                                ab_init($layer);
+                                if ($.fn.ab_toggles) {
+                                    $f = $('form', $layer);
+                                    if ($f && $f.length) {
+                                        var $v = $('[name="verifyCode"]', $f);
+                                        if ($v && $v.length) {
+                                            $.fn.ab_toggles['validator']($f, function () {
+                                                var v = $v.val();
+                                                $v = $('[name="verifyCode"]', $form);
+                                                if ($v && $v.length) {
+                                                    $v.val(v);
+
+                                                } else {
+                                                    $form.append('<input type="hidden" name="verifyCode" value="' + v + '">');
+                                                }
+
+                                                layer.close(l);
+                                                ab_ajaxSubmit($form, callback, $tForm);
+                                            });
+                                        }
+                                    }
+                                }
+                            }
                         });
                         return;
 
@@ -226,13 +261,14 @@ function ab_ajaxCallback(json, $form, $tForm) {
 }
 
 function ab_ajaxSubmit($form, callback, $tForm) {
+    callback = callback || ab_ajaxCallback;
     $form.ajaxSubmit({
         //iframe: true,
         success: function (data) {
-            (callback || ab_ajaxCallback)(data, $form, $tForm);
+            callback(data, $form, $tForm, callback);
         },
         error: function (data) {
-            (callback || ab_ajaxCallback)(data, $form, $tForm);
+            callback(data, $form, $tForm, callback);
         }
     });
 };

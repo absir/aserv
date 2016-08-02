@@ -13,6 +13,7 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.lang.ILangMessage;
 import com.absir.context.core.ContextUtils;
+import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.server.in.Input;
@@ -77,12 +78,12 @@ public class PortalService {
         }
 
         String code = randomCode();
+        VerifierService.doneOperation(session, verifier, tag, code, 1);
         content = MessageFormat.format(content, Pag.CONFIGURE.getSiteName(), langMessage == null ? operation : langMessage.getLangMessage(operation), code);
         if (!IMessageService.ME.sendMessage(content, mobile)) {
             return -1;
         }
 
-        VerifierService.doneOperation(session, verifier, tag, code, 1);
         return 0;
     }
 
@@ -100,13 +101,13 @@ public class PortalService {
         }
 
         String code = randomCode();
+        VerifierService.doneOperation(session, verifier, tag, code, 1);
         subject = MessageFormat.format(subject, Pag.CONFIGURE.getSiteName());
         content = MessageFormat.format(content, Pag.CONFIGURE.getSiteName(), langMessage == null ? operation : langMessage.getLangMessage(operation), code);
         if (!IEmailService.ME.sendMail(subject, content, true, email)) {
             return -1;
         }
 
-        VerifierService.doneOperation(session, verifier, tag, code, 1);
         return 0;
     }
 
@@ -118,7 +119,7 @@ public class PortalService {
         String id = emailOrMobile + "@Code";
         Session session = BeanDao.getSession();
         JVerifier verifier = session.load(JVerifier.class, id, LockMode.PESSIMISTIC_WRITE);
-        if (verifier == null || !verifier.getTag().equals(tag)) {
+        if (verifier == null || !KernelObject.equals(verifier.getTag(), tag)) {
             return -1;
         }
 
@@ -127,7 +128,6 @@ public class PortalService {
             return -2;
         }
 
-        //verifier.setPassTime(contextTime);
         BeanService.ME.delete(verifier);
         return 0;
     }

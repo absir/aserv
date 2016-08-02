@@ -122,21 +122,21 @@ public class VerifierService {
                 if (unique) {
                     return null;
                 }
-
-
             }
 
-            return unique ? null : verifier;
+            QueryDaoUtils.createQueryArray(session, "DELETE FROM JVerifier o WHERE o.id = ? AND o.passTime = ?", verifier.getId(), verifier.getPassTime()).executeUpdate();
+            session.clear();
         }
 
-        QueryDaoUtils.createQueryArray(session, "DELETE o FROM JVerifier o WHERE o.id = ? AND o.passTime = ?", verifier.getId(), verifier.getPassTime());
         verifier = new JVerifier();
         verifier.setId(id);
         verifier.setPassTime(contextTime + idleTime);
         try {
             session.persist(verifier);
+            session.flush();
 
         } catch (ConstraintViolationException e) {
+            session.clear();
             return unique ? null : session.get(JVerifier.class, id, LockMode.PESSIMISTIC_WRITE);
         }
 
@@ -255,7 +255,7 @@ public class VerifierService {
                 }
 
                 QueryDaoUtils.createQueryArray(BeanDao.getSession(),
-                        "DELETE o FROM " + entry.getKey() + " o WHERE o.passTime > 0 AND o.passTime < ?", passTime)
+                        "DELETE FROM " + entry.getKey() + " o WHERE o.passTime > 0 AND o.passTime < ?", passTime)
                         .executeUpdate();
 
             } catch (Throwable e) {

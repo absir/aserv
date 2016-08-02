@@ -38,17 +38,30 @@
 
             \${Pag::forEntity(request)}
             ${request.setAttribute('action', '${SITE_ROUTE}user/registerCode')}
-            \#if(type == 3)
+            \#if(type == 3 || type == 2)
             <div class="subForm">
+                \#if(type == 3)
                 ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FMobileCode::class, request)}
                 #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
-            </div>
-            \#end
+                \#end
 
-            \#if(type == 2)
-            <div class="subForm">
+                \#if(type == 2)
                 ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FEmailCode::class, request)}
                 #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+                \#end
+
+                \#if(verify)
+                <div class="row cl ab_requiredDiv">
+                    <label class="form-label col-xs-4 col-sm-2"></label>
+                    <div class="formControls col-xs-4 col-sm-6">
+                        <input name="verifyCode" class="input-text required" value="">
+                    </div>
+                    <div class="formControls col-xs-4 col-sm-3 ab_p0">
+                        \${Pag::verifyShow('id="verifyCode"', 92, 31, INPUT)}
+                    </div>
+                </div>
+                \#end
+
             </div>
             \#end
 

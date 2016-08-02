@@ -105,7 +105,7 @@ public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object
                 Session session = BeanDao.getSession();
                 List<JUploadCite> uploadCites = getUploadCites(session, assocId);
                 if (!uploadCites.isEmpty()) {
-                    QueryDaoUtils.createQueryArray(session, "DELETE o FROM JUploadCite o WHERE o.id.eid = ?", assocId).executeUpdate();
+                    QueryDaoUtils.createQueryArray(session, "DELETE FROM JUploadCite o WHERE o.id.eid = ?", assocId).executeUpdate();
                     session.flush();
                     long contextTime = ContextUtils.getContextTime();
                     for (JUploadCite uploadCite : uploadCites) {

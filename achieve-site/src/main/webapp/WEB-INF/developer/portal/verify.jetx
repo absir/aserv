@@ -1,21 +1,18 @@
-<div id="importXls" class="modal hide fade in" role="dialog" ab_toggle="resize" resize="data-width" minsize="500" tabindex="-1" aria-hidden="false" style="display: block; margin-top: -61px;">
-    <div class="page-container">
-        <form ab_toggle="form" ab_validator="true" action="/admin/entity/importXls/JShowForm" enctype="multipart/form-data" method="post" novalidate="novalidate">
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-3">导入：</label>
-                <div class="formControls col-xs-8 col-sm-9">
-                                <span class="btn-upload form-group">
-				                    <input class="input-text upload-url required" type="text" style="width:200px" readonly="" aria-required="true">
-				                    <a href="javascript:void();" class="btn btn-primary radius upload-btn">
-                                        <i class="Hui-iconfont"></i>浏览</a>
-				                    <input type="file" name="xls" class="input-file">
-				                </span>
+<div class="page-container mb-20">
+    <div class="container-fluid ">
+        <form class="form form-horizontal">
+            <div class="row cl ab_requiredDiv">
+                <div class="formControls col-xs-8 col-sm-8">
+                    <input name="verifyCode" class="input-text required" value="">
+                </div>
+                <div class="formControls col-xs-4 col-sm-4 ab_p0">
+                    \${Pag::verifyShow('id="verifyCode"', 108, 31, INPUT)}
                 </div>
             </div>
             <div class="row cl">
-                <div class="ml-10 mr-10 mt-20">
-                    <button type="submit" class="btn btn-primary radius mb-5">
-                        <i class="Hui-iconfont"></i>提交
+                <div class="text-c">
+                    <button type="submit" class="btn btn-primary radius">
+                        ${Pag::getLang("确认")}
                     </button>
                 </div>
             </div>
