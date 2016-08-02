@@ -1,6 +1,26 @@
 /**
  * Created by absir on 16/6/26.
  */
+function ab_humanTime(time, max) {
+    if (time < (max || 1000)) {
+        return time + 's';
+    }
+
+    if (time < 600) {
+        return Math.floor(time / 60) + 'm' + (time % 60) + 's';
+    }
+
+    if (time < (max ? max * 60 : 60000)) {
+        return Math.ceil(time / 60) + 'm';
+    }
+
+    if (time < 36000) {
+        return Math.floor(time / 3600) + 'h' + Math.ceil((time % 3600) / 60) + 'm';
+    }
+
+    return Math.ceil(time / 3600) + 'h';
+}
+
 function ab_getUP(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
     var r = window.location.search.substr(1).match(reg);
