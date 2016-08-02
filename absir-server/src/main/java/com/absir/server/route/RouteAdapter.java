@@ -228,7 +228,7 @@ public class RouteAdapter implements IBeanFactoryStarted {
                     // 通用路由参数
                     if (mlen == imlen && slen == islen) {
                         if (routeParameter != mRouteParameter
-                                && (parameters.length != 1 || mRouteParameter.getClass() != RouteParameter.class)) {
+                                && (parameters == null || parameters.length != 1 || mRouteParameter.getClass() != RouteParameter.class)) {
                             routeParameter = mRouteParameter;
                             parameters = routeParameter.findParameters(parameterPath);
                         }

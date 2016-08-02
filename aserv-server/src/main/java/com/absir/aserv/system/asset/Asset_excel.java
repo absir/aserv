@@ -10,9 +10,9 @@ package com.absir.aserv.system.asset;
 import com.absir.aserv.configure.xls.XlsAccessorUtils;
 import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.system.helper.HelperHtml;
-import com.absir.bean.basis.Base;
+import com.absir.bean.lang.LangCodeUtils;
+import com.absir.server.route.invoker.InvokerResolverErrors;
 import com.absir.server.value.Body;
-import com.absir.server.value.Server;
 import com.absir.servlet.InputRequest;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -23,9 +23,11 @@ import java.io.PrintWriter;
 import java.util.Map;
 import java.util.TreeMap;
 
-@Base
-@Server
 public class Asset_excel extends AssetServer {
+
+    public static final String READ_ERROR = LangCodeUtils.get("读取失败", Asset_excel.class);
+
+    public static final String FILE_NOT_FOUND = LangCodeUtils.get("文件未找到", Asset_excel.class);
 
     @Body
     public Object route(int index, InputRequest input) {
@@ -38,26 +40,27 @@ public class Asset_excel extends AssetServer {
         if (excel != null) {
             try {
                 HSSFWorkbook hssfWorkbook = new HSSFWorkbook(excel.getInputStream());
-                Map<String, Object> workmap = new TreeMap<String, Object>();
+                Map<String, Object> workMap = new TreeMap<String, Object>();
                 try {
-                    workmap.put("version", hssfWorkbook.getSummaryInformation().getOSVersion());
+                    workMap.put("version", hssfWorkbook.getSummaryInformation().getOSVersion());
 
                 } catch (Exception e) {
                 }
 
-                workmap.put("sheets", XlsAccessorUtils.getSheetList(hssfWorkbook, index, orientation));
-                return workmap;
+                workMap.put("sheets", XlsAccessorUtils.getSheetList(hssfWorkbook, index, orientation));
+                return workMap;
 
             } catch (IOException e) {
-                return "read excel file:" + excel.getName() + " is error!";
+                InvokerResolverErrors.onError("excel", READ_ERROR, null, null);
             }
         }
 
-        return "can not find upload excel!";
+        InvokerResolverErrors.onError("excel", FILE_NOT_FOUND, null, null);
+        return null;
     }
 
     @Body
-    public void test(HttpServletResponse response) throws IOException {
+    public void upload(HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
         out.println(HelperHtml.HTML4_DOC_TYPE);
         out.println("<form action='./' enctype='multipart/form-data' method='POST'>");

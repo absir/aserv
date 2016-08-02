@@ -32,8 +32,8 @@
                 <div class="formControls col-xs-8 col-xs-offset-3">
                     <input name="verifyCode" class="input-text size-L" type="text" placeholder="${Pag::getLang('验证码')}"
                            style="width:150px;">
-                    <img src="${SITE_ROUTE}asset/verify?width=160&height=41"
-                         onclick="javascript:this.src=this.src+'&t='+Math.random()" alt="${Pag::getLang('点击更换')}"></div>
+                    \${Pag::verifyShow(null, 160, 41, INPUT)}
+                </div>
             </div>
             <div class="row cl">
                 <div class="formControls col-xs-8 col-xs-offset-3">

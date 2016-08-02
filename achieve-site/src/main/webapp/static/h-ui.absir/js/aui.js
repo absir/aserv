@@ -47,6 +47,10 @@ function ab_evalRequire(evalParams, noParam) {
     return require;
 }
 
+ab_lang_map.first_select_target = "请先选择对象";
+ab_lang_map.format_error = "格式错误";
+ab_lang_map.confirm_error = "内容不一致";
+
 $(function () {
         $.fn.ab_eval = function (expr) {
             eval(expr);
@@ -113,7 +117,7 @@ $(function () {
             var confirm = $this.attr('ab_confirm');
             var noParam = $this.attr('ab_noParam');
             if (!noParam) {
-                noParam = "请先选择对象";
+                noParam = ab_lang_map.first_select_target;
             }
 
             var evalParams = ab_evalParams($this.attr('ab_click'));
@@ -137,7 +141,7 @@ $(function () {
 
         abToggles['check'] = function ($this) {
             $input = $('[type=hidden]', $this.parent());
-            if ($input && $input.length > 0) {
+            if ($input && $input.length) {
                 $this.change(function () {
                     $input.attr('value', $this.prop('checked') ? 1 : 0);
                 });
@@ -289,7 +293,7 @@ $(function () {
             }
 
             $inputs = $('[ab_validate],[error]', $this);
-            if ($inputs && $inputs.length > 0) {
+            if ($inputs && $inputs.length) {
                 var rules = {};
                 var messages = {};
                 $inputs.each(function () {
@@ -462,11 +466,11 @@ $(function () {
 
         abToggles['subForm'] = function ($this) {
             var $form = $this.closest('form');
-            if ($form && $form.length > 0) {
+            if ($form && $form.length) {
                 var $group = ab_group($this, 'subForm');
-                if ($group && $group.length > 0) {
+                if ($group && $group.length) {
                     var $inputs = $('[name]', $group);
-                    if ($inputs && $inputs.length > 0) {
+                    if ($inputs && $inputs.length) {
                         var tExclude = $this.attr('exclude');
                         var gExclude = $group.attr('exclude');
                         var exclude = ',' + (tExclude ? (tExclude + ',') : '') + (gExclude ? (gExclude + ',') : '');
@@ -530,7 +534,7 @@ $(function () {
             if (pattern) {
                 var error = $input.attr('error');
                 if (!error) {
-                    error = "格式错误";
+                    error = ab_lang_map.format_error;
                 }
 
                 return [function (value, element) {
@@ -544,10 +548,10 @@ $(function () {
             var confirm = $input.attr('confirm');
             if (confirm) {
                 var $confirm = $('[name="' + confirm + '"]', $form);
-                if ($confirm && $confirm.length > 0) {
+                if ($confirm && $confirm.length) {
                     var error = $input.attr('error');
                     if (!error) {
-                        error = "内容不一致";
+                        error = ab_lang_map.confirm_error;
                     }
 
                     return [function (value, element) {

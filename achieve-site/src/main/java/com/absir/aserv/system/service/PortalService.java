@@ -60,11 +60,9 @@ public class PortalService {
 
         Session session = BeanDao.getSession();
         String id = mobile + "@Code";
-        if (idleTime > 0) {
-            long time = VerifierService.getOperationIdleTime(session, id, true);
-            if (time > 0) {
-                return time;
-            }
+        JVerifier verifier = VerifierService.getOperationVerifier(session, id, idleTime, true);
+        if (verifier == null) {
+            return VerifierService.getOperationIdleTime(session, verifier, id);
         }
 
         String code = randomCode();
@@ -73,7 +71,7 @@ public class PortalService {
             return -1;
         }
 
-        VerifierService.doneOperation(session, id, idleTime, tag, code, null);
+        VerifierService.doneOperation(session, verifier, tag, code, 1);
         return 0;
     }
 
@@ -85,11 +83,9 @@ public class PortalService {
 
         Session session = BeanDao.getSession();
         String id = email + "@Code";
-        if (idleTime > 0) {
-            long time = VerifierService.getOperationIdleTime(session, id, true);
-            if (time > 0) {
-                return time;
-            }
+        JVerifier verifier = VerifierService.getOperationVerifier(session, id, idleTime, true);
+        if (verifier == null) {
+            return VerifierService.getOperationIdleTime(session, verifier, id);
         }
 
         String code = randomCode();
@@ -99,7 +95,7 @@ public class PortalService {
             return -1;
         }
 
-        VerifierService.doneOperation(session, id, idleTime, tag, code, null);
+        VerifierService.doneOperation(session, verifier, tag, code, 1);
         return 0;
     }
 
@@ -120,6 +116,7 @@ public class PortalService {
             return -2;
         }
 
+        //verifier.setPassTime(contextTime);
         BeanService.ME.delete(verifier);
         return 0;
     }

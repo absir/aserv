@@ -96,7 +96,7 @@ public class portal_user extends PortalServer {
             }
 
         } else if (type == 3) {
-            if (!Pag.CONFIGURE.isAllowMessageRegister()) {
+            if (Pag.CONFIGURE.getMessageRegisterNumber() < 0) {
                 type = 2;
             }
 
@@ -104,8 +104,8 @@ public class portal_user extends PortalServer {
             type = 2;
         }
 
-        if (type == 2 && !Pag.CONFIGURE.isAllowEmailRegister()) {
-            if (Pag.CONFIGURE.isAllowMessageRegister()) {
+        if (type == 2 && Pag.CONFIGURE.getEmailRegisterNumber() < 0) {
+            if (Pag.CONFIGURE.getMessageRegisterNumber() >= 0) {
                 type = 3;
 
             } else if (Pag.CONFIGURE.isAllowUsernameRegister()) {

@@ -17,6 +17,7 @@ import com.absir.aserv.support.DeveloperBreak;
 import com.absir.aserv.support.developer.IDeveloper;
 import com.absir.aserv.support.developer.IRender;
 import com.absir.aserv.support.developer.RenderUtils;
+import com.absir.aserv.system.asset.Asset_verify;
 import com.absir.aserv.system.configure.JSiteConfigure;
 import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.system.helper.HelperLang;
@@ -378,5 +379,9 @@ public class Pag {
 
     public static void forEntity(HttpServletRequest request) {
         request.setAttribute("entity", forEntity);
+    }
+
+    public static String verifyShow(String attrs, int width, int height, Input input) {
+        return Asset_verify.ME.show(attrs, width, height, input);
     }
 }

@@ -7,9 +7,13 @@
  */
 package com.absir.aserv.system.asset;
 
+import com.absir.aserv.menu.MenuContextUtils;
 import com.absir.aserv.system.helper.HelperRandom;
 import com.absir.bean.basis.Base;
+import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Value;
+import com.absir.bean.lang.LangCodeUtils;
+import com.absir.core.kernel.KernelString;
 import com.absir.server.in.Input;
 import com.absir.server.value.Body;
 import com.absir.server.value.Nullable;
@@ -26,6 +30,20 @@ import java.awt.image.BufferedImage;
 @Base
 @Server
 public class Asset_verify extends AssetServer {
+
+    public static final Asset_verify ME = BeanFactoryUtils.get(Asset_verify.class);
+
+    public static final String CLICK_REFRESH = LangCodeUtils.get("点击刷新", Asset_verify.class);
+
+    public String show(String attrs, int width, int height, Input input) {
+        String img = "<img";
+        if (!KernelString.isEmpty(attrs)) {
+            img += ' ' + attrs;
+        }
+
+        img += " src=\"" + MenuContextUtils.getSiteRoute() + "asset/verify?width=" + width + "&height=" + height + "\" onclick=\"javascript:this.src=this.src+'&t='+Math.random()\" alt=\"" + input.getLangMessage(CLICK_REFRESH) + "\">";
+        return img;
+    }
 
     @Value(value = "asset.verify.fontSize")
     private static float fontSize = 18.0f;

@@ -9,6 +9,7 @@ package com.absir.server.in;
 
 import com.absir.bean.basis.Configure;
 import com.absir.bean.inject.value.Inject;
+import com.absir.core.util.UtilAbsir;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.on.OnPut;
@@ -38,8 +39,9 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
                 return on(input(routes.length < 4 ? uri : (String) routes[3], (InMethod) routes[1], (InModel) routes[2], req, res), (RouteMatcher) routes[0]);
 
             } catch (Throwable e) {
-                if (e instanceof ServerException) {
-                    ServerStatus serverStatus = ((ServerException) e).getServerStatus();
+                Throwable throwable = UtilAbsir.forCauseThrowable(e);
+                if (throwable instanceof ServerException) {
+                    ServerStatus serverStatus = ((ServerException) throwable).getServerStatus();
                     switch (serverStatus) {
                         case IN_404:
                             return false;

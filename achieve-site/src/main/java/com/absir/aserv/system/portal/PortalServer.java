@@ -1,7 +1,9 @@
 package com.absir.aserv.system.portal;
 
 import com.absir.aserv.system.helper.HelperInput;
+import com.absir.core.util.UtilAbsir;
 import com.absir.server.exception.ServerException;
+import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
@@ -18,13 +20,19 @@ public class PortalServer {
     protected void onException(Exception e, OnPut onPut) throws Exception {
         Input input = onPut.getInput();
         InModel model = input.getModel();
-        model.put("e", e);
-        if (e instanceof ConstraintViolationException) {
-            model.put("message", e.getCause().getMessage());
+        Throwable throwable = UtilAbsir.forCauseThrowable(e);
+        model.put("e", throwable);
+        if (throwable instanceof ConstraintViolationException) {
+            model.put("message", throwable.getCause().getMessage());
 
         } else {
-            if (e.getClass() == ServerException.class) {
-                model.put("message", ((ServerException) e).getServerStatus());
+            if (throwable.getClass() == ServerException.class) {
+                ServerStatus serverStatus = ((ServerException) throwable).getServerStatus();
+                if (serverStatus == ServerStatus.IN_404) {
+                    throw e;
+                }
+
+                model.put("message", serverStatus);
 
             } else {
                 throw e;

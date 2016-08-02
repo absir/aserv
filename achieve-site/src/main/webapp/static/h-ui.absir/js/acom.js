@@ -18,7 +18,7 @@ function ab_group($node, toggle) {
 }
 
 function ab_groupSel($group, sel) {
-    return $group && $group.length > 0 ? $(sel, $group) : $(sel);
+    return $group && $group.length ? $(sel, $group) : $(sel);
 }
 
 function ab_groupParam(sel, node) {
@@ -94,7 +94,7 @@ function ab_getParam(sel, node, json) {
         }
     }
 
-    return vals && vals.length > 0 ? $.toJSON(vals) : undefined;
+    return vals && vals.length ? $.toJSON(vals) : undefined;
 }
 
 function ab_open(href) {
@@ -131,7 +131,7 @@ function ab_safeHref(href, title) {
 function ab_isHasFrame() {
     var topWindow = $(window.parent.document);
     var iframe = topWindow.find('#iframe_box .show_iframe');
-    return iframe && iframe.length > 0;
+    return iframe && iframe.length;
 }
 
 function ab_ajax(url, callback, complete) {
@@ -141,18 +141,19 @@ function ab_ajax(url, callback, complete) {
         callback(data), complete(data)
     } : callback;
     opts.error = function () {
-        layer.alert("请求失败", {icon: 3});
+        layer.alert(ab_lang_map.request_fail, {icon: 3});
     }
 
     $.ajax(opts);
 }
 
 var ab_lang_map = {};
+ab_lang_map.request_fail = "请求失败";
 ab_lang_map.option_success = "操作成功";
 ab_lang_map.option_fail = "操作失败";
 ab_lang_map.option_uncomplete = "操作未完成";
 
-function ab_ajaxCallback(json, $form) {
+function ab_ajaxCallback(json, $form, $tForm) {
     try {
         var data = $.evalJSON(json);
         var url = data.url;
@@ -172,8 +173,21 @@ function ab_ajaxCallback(json, $form) {
             return;
         }
 
-        if ($form && data.errors) {
-            $form.data('validator').showErrors(data.errors);
+        $tForm = $tForm || $form;
+        if ($tForm && data.errors) {
+            if (data.errors.verifyCode) {
+                var $verifyCode = $('[name="verifyCode"]', $tForm);
+                if (!($verifyCode && $verifyCode.length)) {
+                    if (Object.getOwnPropertyNames().length == 1) {
+
+
+                    } else {
+                        delete data.errors.verifyCode;
+                    }
+                }
+            }
+
+            $tForm.data('validator').showErrors(data.errors);
         }
 
         if (data.click) {
@@ -211,10 +225,10 @@ function ab_ajaxSubmit($form, callback, $tForm) {
     $form.ajaxSubmit({
         //iframe: true,
         success: function (data) {
-            (callback || ab_ajaxCallback)(data, $tForm || $form);
+            (callback || ab_ajaxCallback)(data, $form, $tForm);
         },
         error: function (data) {
-            (callback || ab_ajaxCallback)(data, $tForm || $form);
+            (callback || ab_ajaxCallback)(data, $form, $tForm);
         }
     });
 };
@@ -264,21 +278,21 @@ function ab_submit($form, att, value, attrs) {
 
 function ab_submitAttrs(attrs, node) {
     var $form = $(node ? node : this).closest('form');
-    if ($form && $form.length > 0) {
+    if ($form && $form.length) {
         ab_submit($form, null, null, attrs);
     }
 }
 
 function ab_submitOption(option, node) {
     var $form = $(node ? node : this).closest('form');
-    if ($form && $form.length > 0) {
+    if ($form && $form.length) {
         var $option = $("[name='!submitOption']", $form);
         if (!$option || $option.length == 0) {
             $option = $('<input name="!submitOption" type="hidden"/>');
             $form.append($option);
         }
 
-        if ($option && $option.length > 0) {
+        if ($option && $option.length) {
             $option.val(option);
             $form.submit();
             $option.val('');

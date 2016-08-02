@@ -32,6 +32,8 @@ import java.io.IOException;
 
 public abstract class ServerDiyView extends ReturnedResolverView implements IRender, IRenderSuffix {
 
+    public static final ServerDiyView ME = BeanFactoryUtils.get(ServerDiyView.class);
+
     private static final String READERS_NAME = ServerDiyView.class + "@READERS_NAME";
 
     private static final String DONEGEN_NAME = ServerDiyView.class + "@DONEGEN_NAME";
@@ -104,7 +106,7 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
                         return;
 
                     } catch (Exception e) {
-                        if ((!isDeveloper(e) && !isNotExist(e, input)) || input.getAttribute(DONEGEN_NAME) != null) {
+                        if (isNotDeveloperNotExist(e, input) || input.getAttribute(DONEGEN_NAME) != null) {
                             throw e;
                         }
                     }
@@ -134,6 +136,10 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
     }
 
     protected abstract boolean isNotExist(Exception e, InputRequest input);
+
+    public boolean isNotDeveloperNotExist(Exception e, InputRequest inputRequest) {
+        return !(isDeveloper(e) || isNotExist(e, inputRequest));
+    }
 
     public String getDiyRestore(String view) throws IOException {
         if (IDeveloper.ME != null) {

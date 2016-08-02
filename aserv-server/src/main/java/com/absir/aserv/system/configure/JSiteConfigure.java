@@ -48,7 +48,6 @@ public class JSiteConfigure extends JConfigureBase {
     private long messageIdleTime = 300000;
 
     @JaSubField("注册设置")
-
     @JaLang("默认注册类型")
     //1 用户名注册 2 邮件注册 3 邮件注册
     @Range(min = 1, max = 3)
@@ -57,11 +56,11 @@ public class JSiteConfigure extends JConfigureBase {
     @JaLang("用户名注册")
     private boolean allowUsernameRegister;
 
-    @JaLang("邮件注册")
-    private boolean allowEmailRegister;
+    @JaLang("邮件注册数")
+    private int emailRegisterNumber;
 
-    @JaLang("短信注册")
-    private boolean allowMessageRegister;
+    @JaLang("短信注册数")
+    private int messageRegisterNumber;
 
     @JaLang("手动激活")
     private boolean registerUserNoActive;
@@ -164,20 +163,20 @@ public class JSiteConfigure extends JConfigureBase {
         this.allowUsernameRegister = allowUsernameRegister;
     }
 
-    public boolean isAllowEmailRegister() {
-        return allowEmailRegister;
+    public int getEmailRegisterNumber() {
+        return emailRegisterNumber;
     }
 
-    public void setAllowEmailRegister(boolean allowEmailRegister) {
-        this.allowEmailRegister = allowEmailRegister;
+    public void setEmailRegisterNumber(int emailRegisterNumber) {
+        this.emailRegisterNumber = emailRegisterNumber;
     }
 
-    public boolean isAllowMessageRegister() {
-        return allowMessageRegister;
+    public int getMessageRegisterNumber() {
+        return messageRegisterNumber;
     }
 
-    public void setAllowMessageRegister(boolean allowMessageRegister) {
-        this.allowMessageRegister = allowMessageRegister;
+    public void setMessageRegisterNumber(int messageRegisterNumber) {
+        this.messageRegisterNumber = messageRegisterNumber;
     }
 
     public boolean isRegisterUserNoActive() {
@@ -217,11 +216,11 @@ public class JSiteConfigure extends JConfigureBase {
     }
 
     public boolean hasAllowEmailRegister() {
-        return allowEmailRegister && hasEmail();
+        return emailRegisterNumber >= 0 && hasEmail();
     }
 
     public boolean hasAllowMessageRegister() {
-        return allowMessageRegister && hasMessage();
+        return messageRegisterNumber >= 0 && hasMessage();
     }
 
     public boolean hasAllowUserRegister() {

@@ -31,6 +31,7 @@ import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,33 +109,51 @@ public class VerifierService {
         this.nameMapCrudEntity = nameMapCrudEntity;
     }
 
-    public static JVerifier getOperationVerifier(Session session, String id, boolean forUpdate) {
-        JVerifier verifier = session.get(JVerifier.class, id, forUpdate ? LockMode.PESSIMISTIC_WRITE : LockMode.NONE);
-        return verifier == null || verifier.getPassTime() <= ContextUtils.getContextTime() ? null : verifier;
-    }
-
-    public static long getOperationIdleTime(Session session, String id, boolean forUpdate) {
-        JVerifier verifier = session.get(JVerifier.class, id, forUpdate ? LockMode.PESSIMISTIC_WRITE : LockMode.NONE);
-        long contextTime = ContextUtils.getContextTime();
-        return verifier == null || verifier.getPassTime() <= contextTime ? 0 : (verifier.getPassTime() - contextTime);
-    }
-
-    public static void doneOperation(Session session, String id, long lifeTime, String tag, String value, JVerifier verifier) {
-        if (verifier == null || verifier.getPassTime() <= ContextUtils.getContextTime()) {
-            verifier = VerifierService.ME.mergeVerifier(id, tag, value, lifeTime);
+    public static JVerifier getOperationVerifier(Session session, String id, long idleTime, boolean unique) {
+        if (idleTime < 1000) {
+            idleTime = 1000;
         }
-    }
 
-    public static JVerifier doneOperationCount(Session session, String id, long lifeTime, JVerifier verifier) {
-        if (verifier == null || verifier.getPassTime() <= ContextUtils.getContextTime()) {
-            verifier = VerifierService.ME.mergeVerifier(id, null, null, lifeTime);
+        JVerifier verifier = session.get(JVerifier.class, id, unique ? LockMode.NONE : LockMode.PESSIMISTIC_WRITE);
+        long contextTime = ContextUtils.getContextTime();
+        if (verifier != null) {
+            if (verifier.getPassTime() > contextTime) {
+                if (unique) {
+                    return null;
+                }
 
-        } else {
-            verifier.setIntValue(verifier.getIntValue() + 1);
-            session.merge(verifier);
+
+            }
+
+            return unique ? null : verifier;
+        }
+
+        QueryDaoUtils.createQueryArray(session, "DELETE o FROM JVerifier o WHERE o.id = ? AND o.passTime = ?", verifier.getId(), verifier.getPassTime());
+        verifier = new JVerifier();
+        verifier.setId(id);
+        verifier.setPassTime(contextTime + idleTime);
+        try {
+            session.persist(verifier);
+
+        } catch (ConstraintViolationException e) {
+            return unique ? null : session.get(JVerifier.class, id, LockMode.PESSIMISTIC_WRITE);
         }
 
         return verifier;
+    }
+
+    public static long getOperationIdleTime(Session session, JVerifier verifier, String id) {
+        if (verifier != null) {
+            return 0;
+        }
+
+        verifier = session.get(JVerifier.class, id);
+        long passTime = verifier.getPassTime() - ContextUtils.getContextTime();
+        return passTime < 1 ? 1 : passTime;
+    }
+
+    public static void doneOperation(Session session, JVerifier verifier, String tag, String value, int intValue) {
+        QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.tag = ?, o.value = ?, o.intValue = ? WHERE o.id = ? AND o.passTime = ?", tag, value, intValue, verifier.getId(), verifier.getPassTime()).executeUpdate();
     }
 
     /**
@@ -180,20 +199,20 @@ public class VerifierService {
             return;
         }
 
-        long contextTime = ContextUtils.getContextTime();
+        long passTime = ContextUtils.getContextTime() - 3600000;
         for (Entry<String, CrudEntity> entry : nameMapCrudEntity.entrySet()) {
             try {
                 if (entry.getValue() != null) {
                     Iterator<Object> iterator = QueryDaoUtils.createQueryArray(BeanDao.getSession(),
                             "SELECT o FROM " + entry.getKey() + " o WHERE o.passTime > 0 AND o.passTime < ?",
-                            contextTime).iterate();
+                            passTime).iterate();
                     while (iterator.hasNext()) {
                         CrudUtils.crud(Crud.DELETE, true, null, entry.getValue().getJoEntity(), iterator.next(), null, null);
                     }
                 }
 
                 QueryDaoUtils.createQueryArray(BeanDao.getSession(),
-                        "DELETE o FROM " + entry.getKey() + " o WHERE o.passTime > 0 AND o.passTime < ?", contextTime)
+                        "DELETE o FROM " + entry.getKey() + " o WHERE o.passTime > 0 AND o.passTime < ?", passTime)
                         .executeUpdate();
 
             } catch (Throwable e) {

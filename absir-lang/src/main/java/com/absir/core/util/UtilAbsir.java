@@ -8,6 +8,7 @@
 package com.absir.core.util;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -44,5 +45,19 @@ public class UtilAbsir {
 
     public static Object getToken(Class<?> cls, Serializable id, Map<?, ?> tokenMap) {
         return getToken(getId(cls, id), tokenMap);
+    }
+
+    public static Throwable forCauseThrowable(Throwable e) {
+        while (true) {
+            Class<?> cls = e.getClass();
+            if (cls == InvocationTargetException.class) {
+                e = e.getCause();
+                continue;
+            }
+
+            break;
+        }
+
+        return e;
     }
 }

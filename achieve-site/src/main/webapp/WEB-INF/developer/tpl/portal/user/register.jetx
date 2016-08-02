@@ -67,8 +67,7 @@
                     <input name="verifyCode" class="input-text required" value="">
                 </div>
                 <div class="formControls col-xs-4 col-sm-3 ab_p0">
-                    <img id="verifyCode" src="\${SITE_ROUTE}asset/verify?width=92&height=31"
-                         onclick="javascript:this.src=this.src+'&='+Math.random()" alt="${Pag::getLang('点击更换')}">
+                    \${Pag::verifyShow('id="verifyCode"', 92, 31, INPUT)}
                 </div>
             </div>
             \#end
