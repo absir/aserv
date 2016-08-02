@@ -106,7 +106,7 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
                         return;
 
                     } catch (Exception e) {
-                        if (isNotDeveloperNotExist(e, input) || input.getAttribute(DONEGEN_NAME) != null) {
+                        if (!isDeveloperNotExist(e, input) || input.getAttribute(DONEGEN_NAME) != null) {
                             throw e;
                         }
                     }
@@ -137,8 +137,8 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
 
     protected abstract boolean isNotExist(Exception e, InputRequest input);
 
-    public boolean isNotDeveloperNotExist(Exception e, InputRequest inputRequest) {
-        return !(isDeveloper(e) || isNotExist(e, inputRequest));
+    public boolean isDeveloperNotExist(Exception e, InputRequest inputRequest) {
+        return isDeveloper(e) || isNotExist(e, inputRequest);
     }
 
     public String getDiyRestore(String view) throws IOException {

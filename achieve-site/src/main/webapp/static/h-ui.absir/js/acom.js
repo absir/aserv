@@ -309,3 +309,7 @@ function ab_ajaxLoad($node, url) {
         ab_init($node.html(html));
     });
 }
+
+$(function () {
+
+});

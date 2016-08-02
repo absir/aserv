@@ -1,22 +1,5 @@
-#tag layout("/WEB-INF/tpl/layout/require.jetx")
-<nav class="breadcrumb text-c">
-    <a class="btn btn-secondary radius l ab_nav_btn"
-       href="javascript:ab_open(location.href);" title="${Pag::getLang('打开')}">
-        <i class="Hui-iconfont">&#xe6f1;</i>
-    </a>
-    <span class="c-gray en">
-        ${Pag::getLang(entityModel.caption)}${Pag::getLang('列表')}
-    </span>
-    <a class="btn btn-danger radius r ab_nav_btn ab_nav_close"
-       href="javascript:ab_goBack();" title="${Pag::getLang('返回')}">
-        <i class="Hui-iconfont">&#xe6a6;</i>
-    </a>
-    <a class="btn btn-success radius r ab_nav_btn"
-       href="javascript:location.replace(location.href);" title="${Pag::getLang('刷新')}">
-        <i class="Hui-iconfont">&#xe68f;</i>
-    </a>
-</nav>
-
+#tag layout("/WEB-INF/developer/layout/admin.page.jetx")
+#set(page_title= Pag::getLang(entityModel.caption) + Pag::getLang('列表'))
 \${EntityStatics::searchConditionMap(INPUT)}
 <div class="text-c mt-20">
     <form ab_toggle="reset" class="ab_pageForm ab__mt5" action="\${ADMIN_ROUTE}entity/list/${entityName}" method="get">

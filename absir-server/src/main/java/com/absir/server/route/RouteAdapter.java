@@ -178,7 +178,7 @@ public class RouteAdapter implements IBeanFactoryStarted {
             InMethod inMethod = dispatcher.getInMethod(req);
             String parameterPath = null;
             String[] parameters = null;
-            int mlen = 0, slen = 0;
+            int mlen = -1, slen = -1;
             int mmlen, imlen, islen;
             RouteParameter mRouteParameter;
             RouteParameter routeParameter = null;
@@ -227,8 +227,7 @@ public class RouteAdapter implements IBeanFactoryStarted {
 
                     // 通用路由参数
                     if (mlen == imlen && slen == islen) {
-                        if (routeParameter != mRouteParameter
-                                && (parameters == null || parameters.length != 1 || mRouteParameter.getClass() != RouteParameter.class)) {
+                        if (routeParameter != mRouteParameter && (parameters.length != 1 || mRouteParameter.getClass() != RouteParameter.class)) {
                             routeParameter = mRouteParameter;
                             parameters = routeParameter.findParameters(parameterPath);
                         }
@@ -268,6 +267,13 @@ public class RouteAdapter implements IBeanFactoryStarted {
 
     public void registerAllMatcher(List<RouteMatcher> matchers) {
         Collections.sort(matchers, ROUTE_MATCHER_COMPARATOR);
+        if (routeMatchers.size() > 1) {
+            RouteMatcher routeMatcher = routeMatchers.get(0);
+            if (routeMatcher.getMapping().length == 0 && routeMatcher.getSuffixLength() == 0) {
+                matchers.add(routeMatcher);
+            }
+        }
+
         routeMatchers = matchers;
         for (RouteMatcher routeMatcher : routeMatchers) {
             LOGGER.info(routeMatcher.toString());
