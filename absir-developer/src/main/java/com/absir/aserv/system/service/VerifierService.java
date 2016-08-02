@@ -23,6 +23,7 @@ import com.absir.bean.inject.value.Started;
 import com.absir.bean.inject.value.Value;
 import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.cron.CronFixDelayRunnable;
+import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.SessionFactoryBean;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
@@ -154,6 +155,48 @@ public class VerifierService {
 
     public static void doneOperation(Session session, JVerifier verifier, String tag, String value, int intValue) {
         QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.tag = ?, o.value = ?, o.intValue = ? WHERE o.id = ? AND o.passTime = ?", tag, value, intValue, verifier.getId(), verifier.getPassTime()).executeUpdate();
+    }
+
+    public static boolean isOperationCount(String id, int maxCount) {
+        if (maxCount <= -1) {
+            return false;
+        }
+
+        if (maxCount == 0 || id == null) {
+            return true;
+        }
+
+        JVerifier verifier = BeanService.ME.get(JVerifier.class, id);
+        return verifier == null || verifier.getPassTime() <= ContextUtils.getContextTime() ? false : true;
+    }
+
+    public static boolean isOperationCount(String address, String tag, int maxCount) {
+        return isOperationCount(KernelString.isEmpty(address) ? null : (address + '@' + tag), maxCount);
+    }
+
+    @Transaction
+    public JVerifier doneOperationCount(String id, long idleTime) {
+        Session session = BeanDao.getSession();
+        JVerifier verifier = getOperationVerifier(session, id, idleTime, false);
+        verifier.setIntValue(verifier.getIntValue() + 1);
+        session.merge(verifier);
+        return verifier;
+    }
+
+    public static boolean doneOperationCount(String id, long idleTime, int maxCount) {
+        if (maxCount <= -1) {
+            return false;
+        }
+
+        if (maxCount == 0 || id == null) {
+            return true;
+        }
+
+        return VerifierService.ME.doneOperationCount(id, idleTime).getIntValue() > maxCount;
+    }
+
+    public static boolean doneOperationCount(String address, String tag, long idleTime, int maxCount) {
+        return doneOperationCount(KernelString.isEmpty(address) ? null : (address + '@' + tag), idleTime, maxCount);
     }
 
     /**

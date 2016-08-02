@@ -35,30 +35,20 @@ public class Asset_verify extends AssetServer {
 
     public static final String CLICK_REFRESH = LangCodeUtils.get("点击刷新", Asset_verify.class);
 
-    public String show(String attrs, int width, int height, Input input) {
-        String img = "<img";
-        if (!KernelString.isEmpty(attrs)) {
-            img += ' ' + attrs;
-        }
-
-        img += " src=\"" + MenuContextUtils.getSiteRoute() + "asset/verify?width=" + width + "&height=" + height + "\" onclick=\"javascript:this.src=this.src+'&t='+Math.random()\" alt=\"" + input.getLangMessage(CLICK_REFRESH) + "\">";
-        return img;
-    }
-
     @Value(value = "asset.verify.fontSize")
-    private static float fontSize = 18.0f;
+    protected static float fontSize = 18.0f;
 
     @Value(value = "asset.verify.fontName")
-    private static String fontName = "Times New Roman";
+    protected static String fontName = "Times New Roman";
 
     @Value(value = "asset.verify.minHeight")
-    private static int minHeight = 16;
+    protected static int minHeight = 16;
 
     @Value(value = "asset.verify.heightWidth")
-    private static float heightWidth = 1.28f;
+    protected static float heightWidth = 1.28f;
 
     @Value(value = "asset.verify.heightDefault")
-    private static float heightDefault = 28.0f;
+    protected static float heightDefault = 28.0f;
 
     public static boolean verifyInput(Input input) {
         String verifyCode = input.getFacade().getSessionValue("verifyCode");
@@ -138,5 +128,15 @@ public class Asset_verify extends AssetServer {
         ImageIO.write(image, "JPEG", out);
         out.flush();
         out.close();
+    }
+
+    public String show(String attrs, int width, int height, Input input) {
+        String img = "<img";
+        if (!KernelString.isEmpty(attrs)) {
+            img += ' ' + attrs;
+        }
+
+        img += " src=\"" + MenuContextUtils.getSiteRoute() + "asset/verify?width=" + width + "&height=" + height + "\" onclick=\"javascript:this.src=this.src+'&t='+Math.random()\" alt=\"" + input.getLangMessage(CLICK_REFRESH) + "\">";
+        return img;
     }
 }

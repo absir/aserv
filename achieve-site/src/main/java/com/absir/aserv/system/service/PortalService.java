@@ -1,8 +1,11 @@
 package com.absir.aserv.system.service;
 
 import com.absir.aserv.developer.Pag;
+import com.absir.aserv.developer.Site;
+import com.absir.aserv.system.asset.Asset_verify;
 import com.absir.aserv.system.bean.JUser;
 import com.absir.aserv.system.bean.JVerifier;
+import com.absir.aserv.system.configure.JSiteConfigure;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.JUserDao;
 import com.absir.aserv.system.helper.HelperRandom;
@@ -10,11 +13,15 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.lang.ILangMessage;
 import com.absir.context.core.ContextUtils;
+import com.absir.core.kernel.KernelString;
 import com.absir.orm.transaction.value.Transaction;
+import com.absir.server.in.Input;
+import com.absir.server.route.invoker.InvokerResolverErrors;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 
 import java.text.MessageFormat;
+import java.util.Map;
 
 /**
  * Created by absir on 16/7/23.
@@ -23,6 +30,10 @@ import java.text.MessageFormat;
 public class PortalService {
 
     public static final PortalService ME = BeanFactoryUtils.get(PortalService.class);
+
+    public static final String EMAIL_REGISTER_TAG = "emailRegister";
+
+    public static final String MESSAGE_REGISTER_TAG = "messageRegister";
 
     public static final String REGISTER_TAG = "register";
 
@@ -121,5 +132,63 @@ public class PortalService {
         return 0;
     }
 
+    public static JSiteConfigure.OperationVerify getOperationVerify(String tag) {
+        Map<String, JSiteConfigure.OperationVerify> map = Pag.CONFIGURE.getOperationVerifyMap();
+        if (map != null) {
+            JSiteConfigure.OperationVerify operationVerify = map.get(tag);
+            if (operationVerify != null) {
+                if (!KernelString.isEmpty(operationVerify.alias)) {
+                    JSiteConfigure.OperationVerify verify = map.get(operationVerify.alias);
+                    if (verify != null) {
+                        if (verify.tag != operationVerify.alias) {
+                            verify.tag = operationVerify.alias;
+                        }
+
+                        return verify;
+                    }
+                }
+
+                if (operationVerify.tag != tag) {
+                    operationVerify.tag = tag;
+                }
+            }
+
+            return operationVerify;
+        }
+
+        return null;
+    }
+
+    public boolean setOperationVerify(String address, String tag, Input input) {
+        JSiteConfigure.OperationVerify verify = getOperationVerify(tag);
+        if (VerifierService.isOperationCount(input.getAddress(), verify == null ? "" : verify.tag, verify == null ? Pag.CONFIGURE.getOperationVerifyCount() : verify.maxCount)) {
+            if (input != null) {
+                input.getModel().put("verify", true);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean doneOperationVerify(String address, String tag, Input input) {
+        JSiteConfigure.OperationVerify verify = getOperationVerify(tag);
+        tag = verify == null ? "" : verify.tag;
+        long idleTime = verify == null ? Pag.CONFIGURE.getOperationVerifyTime() : verify.idleTime;
+        int maxCount = verify == null ? Pag.CONFIGURE.getOperationVerifyCount() : verify.maxCount;
+        if (VerifierService.isOperationCount(input.getAddress(), tag, maxCount)) {
+            if (input != null) {
+                if (!Asset_verify.verifyInput(input)) {
+                    input.getModel().put("click", "#verifyCode");
+                    InvokerResolverErrors.onError("verifyCode", Site.VERIFY_ERROR, null, null);
+                }
+            }
+
+            return true;
+        }
+
+        return VerifierService.doneOperationCount(address, tag, idleTime, maxCount);
+    }
 
 }

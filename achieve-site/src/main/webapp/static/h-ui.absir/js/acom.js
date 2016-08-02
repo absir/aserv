@@ -179,7 +179,11 @@ function ab_ajaxCallback(json, $form, $tForm) {
                 var $verifyCode = $('[name="verifyCode"]', $tForm);
                 if (!($verifyCode && $verifyCode.length)) {
                     if (Object.getOwnPropertyNames().length == 1) {
-
+                        layer.open({
+                            type: 2,
+                            content: 'http://sentsin.com' //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+                        });
+                        return;
 
                     } else {
                         delete data.errors.verifyCode;
@@ -310,6 +314,15 @@ function ab_ajaxLoad($node, url) {
     });
 }
 
+var ab_com = {};
 $(function () {
-
+    var $am = $('#ab_com');
+    if ($am && $am.length) {
+        var atts = $am[0].attributes;
+        var len = atts.length;
+        for (var i = 0; i < len; i++) {
+            var att = atts[i];
+            ab_com[att.name] = att.value;
+        }
+    }
 });

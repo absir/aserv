@@ -21,6 +21,12 @@ public class Site implements KernelLang.GetTemplate<String, JetTemplate> {
 
     public static final String SEND_SUCCESS = LangCodeUtils.get("发送成功", Site.class);
 
+    public static final String SEND_FAIL = LangCodeUtils.get("发送失败", Site.class);
+
+    public static final String SEND_IDLE = LangCodeUtils.get("发送过快", Site.class);
+
+    public static final String CLOUD_NOT_SEND = LangCodeUtils.get("无法发送", Site.class);
+
     public static final String USERNAME_REGISTERED = LangCodeUtils.get("用户名已注册", Site.class);
 
     public static final String EMAIL_REGISTERED = LangCodeUtils.get("邮箱已注册", Site.class);

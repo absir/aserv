@@ -96,7 +96,7 @@ public class portal_user extends PortalServer {
             }
 
         } else if (type == 3) {
-            if (Pag.CONFIGURE.getMessageRegisterNumber() < 0) {
+            if (!Pag.CONFIGURE.hasAllowMessageRegister()) {
                 type = 2;
             }
 
@@ -104,8 +104,8 @@ public class portal_user extends PortalServer {
             type = 2;
         }
 
-        if (type == 2 && Pag.CONFIGURE.getEmailRegisterNumber() < 0) {
-            if (Pag.CONFIGURE.getMessageRegisterNumber() >= 0) {
+        if (type == 2 && !Pag.CONFIGURE.hasAllowEmailRegister()) {
+            if (Pag.CONFIGURE.hasAllowMessageRegister()) {
                 type = 3;
 
             } else if (Pag.CONFIGURE.isAllowUsernameRegister()) {
@@ -140,6 +140,7 @@ public class portal_user extends PortalServer {
                 InvokerResolverErrors.onError("email", Site.EMAIL_REGISTERED, null, null);
             }
 
+            PortalService.ME.doneOperationVerify(input.getAddress(), PortalService.EMAIL_REGISTER_TAG, input);
             idleTime = Pag.CONFIGURE.getEmailIdleTime();
             sendTime = PortalService.ME.sendEmailCode(emailCode.email, PortalService.REGISTER_TAG, Site.TPL.getCodeEmailSubject(), Site.TPL.getCodeEmail(), idleTime, Site.REGISTER_OPERATION, input);
 
@@ -150,8 +151,22 @@ public class portal_user extends PortalServer {
                 InvokerResolverErrors.onError("mobile", Site.MOBILE_REGISTERED, null, null);
             }
 
+            PortalService.ME.doneOperationVerify(input.getAddress(), PortalService.MESSAGE_REGISTER_TAG, input);
             idleTime = Pag.CONFIGURE.getMessageIdleTime();
             sendTime = PortalService.ME.sendMessageCode(mobileCode.mobile, PortalService.REGISTER_TAG, Site.TPL.getCodeMessage(), idleTime, Site.REGISTER_OPERATION, input);
+        }
+
+        InModel model = input.getModel();
+        if (sendTime == 0) {
+            model.put("message", input.getLang(Site.SEND_SUCCESS));
+            model.put("idleTime", idleTime);
+
+        } else {
+            model.put("icon", 2);
+            model.put("message", input.getLang(sendTime == -2 ? Site.CLOUD_NOT_SEND : sendTime == -1 ? Site.SEND_FAIL : Site.SEND_IDLE));
+            if (sendTime > 0) {
+                model.put("idleTime", sendTime);
+            }
         }
 
         return "success";
@@ -223,6 +238,10 @@ public class portal_user extends PortalServer {
         }
 
         model.put("type", type);
+        if (type != 1) {
+            PortalService.ME.setOperationVerify(input.getAddress(), type == 1 ? PortalService.EMAIL_REGISTER_TAG : PortalService.MESSAGE_REGISTER_TAG, input);
+        }
+
         return "portal/user/register";
     }
 

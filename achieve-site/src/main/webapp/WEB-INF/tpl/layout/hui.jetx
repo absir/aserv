@@ -31,4 +31,5 @@
 <script type="text/javascript" src="${SITE_STATIC}/h-ui/js/H-ui.js"></script>
 <script type="text/javascript" src="${SITE_STATIC}/h-ui.absir/js/acom.js"></script>
 <script type="text/javascript" src="${SITE_STATIC}/../lib/layer/2.1/layer.js"></script>
+<script id="ab_com" route="${SITE_ROUTE}"></script>
 </html>

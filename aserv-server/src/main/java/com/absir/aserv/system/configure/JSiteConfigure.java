@@ -11,11 +11,15 @@ import com.absir.aserv.configure.JConfigureBase;
 import com.absir.aserv.lang.value.Langs;
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
+import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JaSubField;
+import com.absir.aserv.system.bean.value.JeEditable;
 import com.absir.aserv.system.service.IEmailService;
 import com.absir.aserv.system.service.IMessageService;
 import com.absir.validator.value.Range;
+
+import java.util.Map;
 
 @MaEntity(parent = @MaMenu("网站设置"), name = "全局")
 public class JSiteConfigure extends JConfigureBase {
@@ -47,6 +51,15 @@ public class JSiteConfigure extends JConfigureBase {
     @JaLang("短信发送间隔")
     private long messageIdleTime = 300000;
 
+    @JaLang("操作验证时间")
+    private long operationVerifyTime = 3600000;
+
+    @JaLang("操作验证次数")
+    private int operationVerifyCount;
+
+    @JaLang("操作验证配置")
+    private Map<String, OperationVerify> operationVerifyMap;
+
     @JaSubField("注册设置")
     @JaLang("默认注册类型")
     //1 用户名注册 2 邮件注册 3 邮件注册
@@ -56,11 +69,11 @@ public class JSiteConfigure extends JConfigureBase {
     @JaLang("用户名注册")
     private boolean allowUsernameRegister;
 
-    @JaLang("邮件注册数")
-    private int emailRegisterNumber;
+    @JaLang("邮箱注册")
+    private boolean allowEmailRegister;
 
-    @JaLang("短信注册数")
-    private int messageRegisterNumber;
+    @JaLang("短信注册")
+    private boolean allowMessageRegister;
 
     @JaLang("手动激活")
     private boolean registerUserNoActive;
@@ -70,6 +83,21 @@ public class JSiteConfigure extends JConfigureBase {
 
     @JaLang("邮件密码修改")
     private boolean allowEmailPasswordModify;
+
+    public static class OperationVerify {
+
+        @JaLang("别名")
+        public String alias;
+
+        @JaLang("空闲时间")
+        public long idleTime;
+
+        @JaLang("最大次数")
+        public int maxCount;
+
+        @JaEdit(editable = JeEditable.DISABLE)
+        public String tag;
+    }
 
     @Langs
     public String getSiteName() {
@@ -147,6 +175,30 @@ public class JSiteConfigure extends JConfigureBase {
         this.messageIdleTime = messageIdleTime;
     }
 
+    public long getOperationVerifyTime() {
+        return operationVerifyTime;
+    }
+
+    public void setOperationVerifyTime(long operationVerifyTime) {
+        this.operationVerifyTime = operationVerifyTime;
+    }
+
+    public int getOperationVerifyCount() {
+        return operationVerifyCount;
+    }
+
+    public void setOperationVerifyCount(int operationVerifyCount) {
+        this.operationVerifyCount = operationVerifyCount;
+    }
+
+    public Map<String, OperationVerify> getOperationVerifyMap() {
+        return operationVerifyMap;
+    }
+
+    public void setOperationVerifyMap(Map<String, OperationVerify> operationVerifyMap) {
+        this.operationVerifyMap = operationVerifyMap;
+    }
+
     public int getDefaultRegisterType() {
         return defaultRegisterType;
     }
@@ -163,20 +215,20 @@ public class JSiteConfigure extends JConfigureBase {
         this.allowUsernameRegister = allowUsernameRegister;
     }
 
-    public int getEmailRegisterNumber() {
-        return emailRegisterNumber;
+    public boolean isAllowEmailRegister() {
+        return allowEmailRegister;
     }
 
-    public void setEmailRegisterNumber(int emailRegisterNumber) {
-        this.emailRegisterNumber = emailRegisterNumber;
+    public void setAllowEmailRegister(boolean allowEmailRegister) {
+        this.allowEmailRegister = allowEmailRegister;
     }
 
-    public int getMessageRegisterNumber() {
-        return messageRegisterNumber;
+    public boolean isAllowMessageRegister() {
+        return allowMessageRegister;
     }
 
-    public void setMessageRegisterNumber(int messageRegisterNumber) {
-        this.messageRegisterNumber = messageRegisterNumber;
+    public void setAllowMessageRegister(boolean allowMessageRegister) {
+        this.allowMessageRegister = allowMessageRegister;
     }
 
     public boolean isRegisterUserNoActive() {
@@ -216,11 +268,11 @@ public class JSiteConfigure extends JConfigureBase {
     }
 
     public boolean hasAllowEmailRegister() {
-        return emailRegisterNumber >= 0 && hasEmail();
+        return allowEmailRegister && hasEmail();
     }
 
     public boolean hasAllowMessageRegister() {
-        return messageRegisterNumber >= 0 && hasMessage();
+        return allowMessageRegister && hasMessage();
     }
 
     public boolean hasAllowUserRegister() {
