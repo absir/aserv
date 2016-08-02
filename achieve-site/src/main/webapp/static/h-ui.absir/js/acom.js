@@ -250,7 +250,7 @@ function ab_ajaxCallback(json, $form, $tForm, callback) {
         }
 
         if (data.click) {
-            var $click = $form ? $(data.click, $form) : $(data.click);
+            var $click = $tForm ? $(data.click, $tForm) : $(data.click);
             if ($click) {
                 $click.click();
             }
@@ -282,14 +282,23 @@ function ab_ajaxCallback(json, $form, $tForm, callback) {
 
 function ab_ajaxSubmit($form, callback, $tForm) {
     callback = callback || ab_ajaxCallback;
+    var load = $form.attr('load');
+    if (load !== undefined) {
+        load = layer.load(load);
+    }
+
+    var _callback = function (data) {
+        if (load) {
+            layer.close(load);
+        }
+
+        callback(data, $form, $tForm, callback);
+    }
+
     $form.ajaxSubmit({
         //iframe: true,
-        success: function (data) {
-            callback(data, $form, $tForm, callback);
-        },
-        error: function (data) {
-            callback(data, $form, $tForm, callback);
-        }
+        success: _callback,
+        error: _callback
     });
 };
 

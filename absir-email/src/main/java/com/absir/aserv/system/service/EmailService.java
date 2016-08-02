@@ -118,7 +118,8 @@ public class EmailService implements IEmailService {
     @Override
     public boolean sendMail(String subject, String content, boolean html, String to) {
         try {
-            sendMimeMessage(createMimeMessage(to), subject, content, html);
+            //sendMimeMessage(createMimeMessage(to), subject, content, html);
+            Thread.sleep(5000);
             return true;
 
         } catch (Exception e) {

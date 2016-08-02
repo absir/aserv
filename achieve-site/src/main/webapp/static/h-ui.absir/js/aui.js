@@ -502,8 +502,11 @@ $(function () {
                             }
 
                             $nForm = $('<form></form>');
-                            for (attr in $("form")[0].attributes) {
-                                $nForm.attr(attr, $group.attr(attr));
+                            var atts = $group[0].attributes;
+                            var len = atts.length;
+                            for (var i = 0; i < len; i++) {
+                                var att = atts[i];
+                                $nForm.attr(att.name, att.value);
                             }
 
                             if (!$nForm.attr('action')) {
