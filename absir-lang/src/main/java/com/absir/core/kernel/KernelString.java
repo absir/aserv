@@ -490,6 +490,23 @@ public abstract class KernelString {
         return -1;
     }
 
+    public static String hiddenString(int start, int end, String string) {
+        StringBuilder stringBuilder = new StringBuilder();
+        int len = string.length();
+        stringBuilder.append(string, 0, start > len ? len : start);
+        stringBuilder.append("...");
+        end = len - end;
+        if (end < start) {
+            end = start;
+        }
+
+        if (end < len) {
+            stringBuilder.append(string, end, len);
+        }
+
+        return stringBuilder.toString();
+    }
+
     public static String implode(Object[] array, Object... glues) {
         return implode(array, null, null, glues);
     }

@@ -15,6 +15,7 @@ import com.absir.aserv.system.bean.proxy.JpMeta;
 import com.absir.aserv.system.bean.value.*;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.aserv.system.crud.PasswordCrudFactory;
+import com.absir.core.kernel.KernelString;
 import com.absir.property.value.Prop;
 import com.absir.validator.value.Email;
 import com.absir.validator.value.Regex;
@@ -159,6 +160,15 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     }
 
     public String getNickname() {
+        if (KernelString.isEmpty(nickname)) {
+            if (!KernelString.isEmpty(username)) {
+                nickname = username;
+
+            } else {
+                nickname = "User." + getId();
+            }
+        }
+
         return nickname;
     }
 

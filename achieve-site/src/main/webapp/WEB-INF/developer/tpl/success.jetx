@@ -1,4 +1,7 @@
 {
+\#if(url)
+"url": "\${url}",
+\#end
 \#if(idleTime)
 "idleTime": \${idleTime},
 "idleButton": \${Pag::transferred(idleButton)},

@@ -37,13 +37,13 @@ public class Site implements KernelLang.GetTemplate<String, JetTemplate> {
 
     public static final String REGISTER_OPERATION = LangCodeUtils.get("注册", Site.class);
 
-    public static final String PASSWORD_OPERATION = LangCodeUtils.get("修改密码", Site.class);
-
     public static final String VERIFY_ERROR = LangCodeUtils.get("验证码错误", Site.class);
 
     public static final String USER_NOT_EXIST = LangCodeUtils.get("用户不存在", Site.class);
 
     public static final String PASSWORD_ERROR = LangCodeUtils.get("密码错误", Site.class);
+
+    public static final String PASSWORD_SUCCESS = LangCodeUtils.get("密码修改成功", Site.class);
 
     public static final String LOGIN_SUCCESS = LangCodeUtils.get("登录成功", Site.class);
 

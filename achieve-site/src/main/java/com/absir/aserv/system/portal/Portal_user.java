@@ -9,18 +9,22 @@ package com.absir.aserv.system.portal;
 
 import com.absir.aserv.developer.Pag;
 import com.absir.aserv.developer.Site;
+import com.absir.aserv.menu.MenuContextUtils;
 import com.absir.aserv.system.asset.Asset_verify;
 import com.absir.aserv.system.bean.JUser;
 import com.absir.aserv.system.bean.form.FEmailCode;
 import com.absir.aserv.system.bean.form.FMobileCode;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.value.*;
+import com.absir.aserv.system.crud.PasswordCrudFactory;
 import com.absir.aserv.system.security.SecurityContext;
+import com.absir.aserv.system.server.ServerResolverRedirect;
 import com.absir.aserv.system.service.PortalService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.binder.BinderData;
 import com.absir.context.core.ContextUtils;
+import com.absir.core.kernel.KernelString;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.InMethod;
@@ -30,6 +34,7 @@ import com.absir.server.route.invoker.InvokerResolverErrors;
 import com.absir.server.value.Mapping;
 import com.absir.server.value.Param;
 import com.absir.server.value.Server;
+import com.absir.validator.ValidatorNotEmpty;
 import com.absir.validator.value.Confirm;
 import com.absir.validator.value.Length;
 import com.absir.validator.value.NotEmpty;
@@ -46,18 +51,22 @@ public class portal_user extends PortalServer {
     /**
      * 用户登录
      */
-    public String login(Input input) {
+    public String login(Input input) throws Exception {
+        if (SecurityService.ME.getSecurityContext(input) != null) {
+            String redirect = input.getParam("redirect");
+            ServerResolverRedirect.redirect(KernelString.isEmpty(redirect) ? (MenuContextUtils.getSiteRoute() + "user/center") : redirect, false, input);
+        }
+
         PortalService.ME.setOperationVerify(input.getAddress(), PortalService.LOGIN_TAG, input);
-        return "portal/user/login";
+        return "user/login";
     }
 
     @Mapping(method = InMethod.POST)
-    public String login(@Param String username, @Param String password, @Param long remember, Input input) {
+    public String login(@Param String username, @Param String password, @Param long remember, Input input) throws Exception {
         PortalService.ME.doneOperationVerify(input.getAddress(), PortalService.LOGIN_TAG, input);
         InModel model = input.getModel();
         try {
-            SecurityContext securityContext = SecurityService.ME.login(username, password, remember, JeRoleLevel.ROLE_USER.ordinal(), "api", input);
-            model.put("message", input.getLangValue(Site.LOGIN_SUCCESS));
+            SecurityContext securityContext = SecurityService.ME.login(username, password, remember, JeRoleLevel.ROLE_USER.ordinal(), SECURITY_NAME, input);
 
         } catch (ServerException e) {
             JiUserBase userBase = (JiUserBase) e.getExceptionData();
@@ -81,7 +90,19 @@ public class portal_user extends PortalServer {
             }
         }
 
+        String redirect = input.getParam("redirect");
+        if (!KernelString.isEmpty(redirect)) {
+            ServerResolverRedirect.redirect(redirect, false, input);
+        }
+
+        model.put("message", input.getLangValue(Site.LOGIN_SUCCESS));
+        model.put("url", MenuContextUtils.getSiteRoute() + "user/center");
         return "success";
+    }
+
+    public void logout(Input input) throws Exception {
+        SecurityService.ME.logout(SECURITY_NAME, input);
+        ServerResolverRedirect.redirect(MenuContextUtils.getSiteRoute() + "user/login", false, input);
     }
 
     public static class FUsername {
@@ -210,7 +231,6 @@ public class portal_user extends PortalServer {
         if (input.getMethod() == InMethod.POST) {
             if (type == 1) {
                 if (!Asset_verify.verifyInput(input)) {
-                    model.put("click", ".verifyCode");
                     InvokerResolverErrors.onError("verifyCode", Site.VERIFY_ERROR, null, null);
                 }
             }
@@ -252,7 +272,6 @@ public class portal_user extends PortalServer {
                 CrudServiceUtils.merge("JUser", null, user, true, null, null);
 
             } catch (ConstraintViolationException e) {
-                model.put("click", ".verifyCode");
                 if (type == 1) {
                     InvokerResolverErrors.onError("username", Site.USERNAME_REGISTERED, null, null);
 
@@ -264,6 +283,8 @@ public class portal_user extends PortalServer {
                 }
             }
 
+            SecurityService.ME.loginUser(SECURITY_NAME, user, input);
+            model.put("url", MenuContextUtils.getSiteRoute() + "user/center");
             return "success";
         }
 
@@ -272,15 +293,53 @@ public class portal_user extends PortalServer {
             PortalService.ME.setOperationVerify(input.getAddress(), type == 1 ? PortalService.EMAIL_REGISTER_TAG : PortalService.MESSAGE_REGISTER_TAG, input);
         }
 
-        return "portal/user/register";
+        return "user/register";
+    }
+
+    /*
+     * 用户中心
+     */
+    public void center(Input input) throws Exception {
+        SecurityContext securityContext = SecurityService.ME.getSecurityContext(input);
+        if (securityContext == null) {
+            ServerResolverRedirect.redirect(MenuContextUtils.getSiteRoute() + "user/login", false, input);
+        }
     }
 
     /**
      * 修改密码
      */
-    public String password(Input input) {
-        return "portal/user/password";
-    }
+    public String password(Input input) throws Exception {
+        SecurityContext securityContext = SecurityService.ME.getSecurityContext(input);
+        JiUserBase userBase = securityContext == null ? null : securityContext.getUser();
+        if (userBase == null || !(userBase instanceof JUser)) {
+            ServerResolverRedirect.redirect(MenuContextUtils.getSiteRoute() + "user/login", false, input);
+        }
 
+        if (input.getMethod() == InMethod.POST) {
+            BinderData binderData = input.getBinderData();
+            binderData.getBinderResult().setValidation(true);
+            String oldPassword = input.getParam("oldPassword");
+            if (KernelString.isEmpty(oldPassword)) {
+                binderData.getBinderResult().addPropertyError("oldPassword", input.getLangMessage(ValidatorNotEmpty.NOT_EMPTY), null);
+            }
+
+            FRegister register = binderData.bind(input.getParamMap(), null, FRegister.class);
+            InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
+            PortalService.ME.doneOperationVerify(input.getAddress(), PortalService.PASSWORD_TAG, input);
+
+            JUser user = (JUser) userBase;
+            if (!PasswordCrudFactory.getPasswordEncrypt(oldPassword, user.getSalt(), user.getSaltCount()).equals(user.getPassword())) {
+                InvokerResolverErrors.onError("oldPassword", Site.PASSWORD_ERROR, null, null);
+            }
+
+            user.setPasswordBase(register.password);
+            CrudServiceUtils.merge("JUser", null, user, false, null, null);
+            return "success";
+        }
+
+        PortalService.ME.setOperationVerify(input.getAddress(), PortalService.PASSWORD_TAG, input);
+        return "user/password";
+    }
 
 }

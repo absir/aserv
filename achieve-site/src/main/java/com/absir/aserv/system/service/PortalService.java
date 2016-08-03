@@ -182,7 +182,6 @@ public class PortalService {
         if (VerifierService.isOperationCount(input.getAddress(), tag, maxCount)) {
             if (input != null) {
                 if (!Asset_verify.verifyInput(input)) {
-                    input.getModel().put("click", ".verifyCode");
                     InvokerResolverErrors.onError("verifyCode", Site.VERIFY_ERROR, null, null);
                 }
             }
