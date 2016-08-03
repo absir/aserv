@@ -187,6 +187,10 @@ public class Pag {
         RenderUtils.generate(generate, include, ServerDiyView.getRenders(OnPut.get().getInput()));
     }
 
+    public static String transferred(String str) {
+        return KernelString.transferred(str);
+    }
+
     public static String value(Object obj) {
         return obj == null ? "" : obj.toString();
     }

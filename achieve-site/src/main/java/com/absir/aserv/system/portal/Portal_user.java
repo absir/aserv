@@ -13,10 +13,8 @@ import com.absir.aserv.system.asset.Asset_verify;
 import com.absir.aserv.system.bean.JUser;
 import com.absir.aserv.system.bean.form.FEmailCode;
 import com.absir.aserv.system.bean.form.FMobileCode;
-import com.absir.aserv.system.bean.value.JaEdit;
-import com.absir.aserv.system.bean.value.JaLang;
-import com.absir.aserv.system.bean.value.JeRoleLevel;
-import com.absir.aserv.system.bean.value.JeUserType;
+import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.aserv.system.bean.value.*;
 import com.absir.aserv.system.security.SecurityContext;
 import com.absir.aserv.system.service.PortalService;
 import com.absir.aserv.system.service.SecurityService;
@@ -38,6 +36,8 @@ import com.absir.validator.value.NotEmpty;
 import com.absir.validator.value.Regex;
 import org.hibernate.exception.ConstraintViolationException;
 
+import java.text.MessageFormat;
+
 @Server
 public class portal_user extends PortalServer {
 
@@ -47,13 +47,41 @@ public class portal_user extends PortalServer {
      * 用户登录
      */
     public String login(Input input) {
+        PortalService.ME.setOperationVerify(input.getAddress(), PortalService.LOGIN_TAG, input);
         return "portal/user/login";
     }
 
     @Mapping(method = InMethod.POST)
     public String login(@Param String username, @Param String password, @Param long remember, Input input) {
-        SecurityContext securityContext = SecurityService.ME.login(username, password, remember, JeRoleLevel.ROLE_USER.ordinal(), "api", input);
-        return "";
+        PortalService.ME.doneOperationVerify(input.getAddress(), PortalService.LOGIN_TAG, input);
+        InModel model = input.getModel();
+        try {
+            SecurityContext securityContext = SecurityService.ME.login(username, password, remember, JeRoleLevel.ROLE_USER.ordinal(), "api", input);
+            model.put("message", input.getLangValue(Site.LOGIN_SUCCESS));
+
+        } catch (ServerException e) {
+            JiUserBase userBase = (JiUserBase) e.getExceptionData();
+            if (userBase == null) {
+                InvokerResolverErrors.onError("username", Site.USER_NOT_EXIST, null, null);
+
+            } else {
+                if (userBase instanceof IUser) {
+                    IUser user = (IUser) userBase;
+                    if (user.getLastErrorTimes() >= 0) {
+                        if (user.getLastErrorTimes() == 0) {
+                            model.put("tip", MessageFormat.format(input.getLang(Site.LOGIN_LAST_ERROR_TIME), Site.getHumanTime((int) (user.getLastErrorLogin() - ContextUtils.getContextTime()) / 1000, 1, input)));
+
+                        } else {
+                            model.put("tip", MessageFormat.format(input.getLang(Site.LOGIN_LAST_ERROR_TIMES), user.getLastErrorTimes()));
+                        }
+                    }
+                }
+
+                InvokerResolverErrors.onError("password", Site.PASSWORD_ERROR, null, null);
+            }
+        }
+
+        return "success";
     }
 
     public static class FUsername {
@@ -159,16 +187,17 @@ public class portal_user extends PortalServer {
         InModel model = input.getModel();
         if (sendTime == 0) {
             model.put("message", input.getLang(Site.SEND_SUCCESS));
-            model.put("idleTime", idleTime);
+            model.put("idleTime", idleTime / 1000);
 
         } else {
             model.put("icon", 2);
             model.put("message", input.getLang(sendTime == -2 ? Site.CLOUD_NOT_SEND : sendTime == -1 ? Site.SEND_FAIL : Site.SEND_IDLE));
             if (sendTime > 0) {
-                model.put("idleTime", sendTime);
+                model.put("idleTime", sendTime / 1000);
             }
         }
 
+        model.put("idleButton", "[ab_toggle='subForm']");
         return "success";
     }
 
@@ -181,7 +210,7 @@ public class portal_user extends PortalServer {
         if (input.getMethod() == InMethod.POST) {
             if (type == 1) {
                 if (!Asset_verify.verifyInput(input)) {
-                    model.put("click", "#verifyCode");
+                    model.put("click", ".verifyCode");
                     InvokerResolverErrors.onError("verifyCode", Site.VERIFY_ERROR, null, null);
                 }
             }
@@ -223,6 +252,7 @@ public class portal_user extends PortalServer {
                 CrudServiceUtils.merge("JUser", null, user, true, null, null);
 
             } catch (ConstraintViolationException e) {
+                model.put("click", ".verifyCode");
                 if (type == 1) {
                     InvokerResolverErrors.onError("username", Site.USERNAME_REGISTERED, null, null);
 

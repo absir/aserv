@@ -14,6 +14,8 @@ import java.util.Map;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class UtilAbsir {
 
+    public static final int DAY_SHORT = 24 * 3600;
+
     public static final long DAY_TIME = 24 * 3600000;
 
     public static final long WEEK_TIME = 7 * DAY_TIME;

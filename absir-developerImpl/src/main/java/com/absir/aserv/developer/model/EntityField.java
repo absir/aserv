@@ -517,10 +517,10 @@ public class EntityField extends DBField {
                         entityModel.addGroupField("optional", entityField);
 
                     } else if (entityField.getEditable() == JeEditable.LOCKED) {
-                        entityModel.addGroupField("locked", entityField);
 
                     } else if (entityField.getEditable() == JeEditable.LOCKABLE) {
                         entityField.editable = JeEditable.LOCKED;
+                        entityModel.addGroupField("locked", entityField);
 
                     } else if (entityField.getEditable() == JeEditable.LOCKNONE) {
                         entityField.editable = JeEditable.DISABLE;

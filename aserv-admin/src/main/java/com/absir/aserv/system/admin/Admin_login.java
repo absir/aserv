@@ -87,7 +87,8 @@ public class Admin_login extends AdminServer {
     public String route(@Param String username, @Param String password, @Param @Nullable long remember, Input input) throws Exception {
         try {
             SecurityService.ME.logout("admin", input);
-            if (!HelperInput.isAjax(input) && !Asset_verify.verifyInput(input)) {
+            //!HelperInput.isAjax(input) &&
+            if (!Asset_verify.verifyInput(input)) {
                 throw new ServerException(ServerStatus.NO_VERIFY);
             }
 

@@ -10,9 +10,8 @@ package com.absir.aserv.system.bean;
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.base.JbBase;
-import com.absir.aserv.system.bean.value.JaEdit;
-import com.absir.aserv.system.bean.value.JaLang;
-import com.absir.aserv.system.bean.value.JiOpenValue;
+import com.absir.aserv.system.bean.value.*;
+import com.absir.aserv.system.crud.DateCrudFactory;
 import com.absir.validator.value.NotEmpty;
 import org.hibernate.annotations.Type;
 
@@ -38,6 +37,11 @@ public class JDict extends JbBase implements JiOpenValue<String> {
     @JaLang("值")
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     private String value;
+
+    @JaLang("更新时间")
+    @JaEdit(types = "dateTime", editable = JeEditable.LOCKED, groups = JaEdit.GROUP_LIST)
+    @JaCrud(value = "dateCrudFactory", cruds = {JaCrud.Crud.CREATE, JaCrud.Crud.UPDATE}, factory = DateCrudFactory.class)
+    private long updateTime;
 
     /**
      * @author absir 扩展存储
@@ -68,6 +72,14 @@ public class JDict extends JbBase implements JiOpenValue<String> {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
     }
 
     public Map<String, String> getMetaMap() {

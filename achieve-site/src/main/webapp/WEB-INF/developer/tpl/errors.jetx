@@ -6,6 +6,9 @@
 "\${error.propertyPath}": "\${error.errorMessage}"
 \#end
 },
+\#if(tip)
+"tip": "<div class='row cl ab_close'><div class='col-xs-12 text-c'><div class='Huialert \${tipClass ?! 'Huialert-danger'}'><i class='Hui-iconfont' ab_toggle='close'>&#xe6a6;</i>\${tip}</div></div></div>",
+\#end
 "message": "\${message ?! ${Pag::getLang('数据验证失败', false)}}",
 \#else
 "message": "\${message ?! ${Pag::getLang('操作失败', false)}}",

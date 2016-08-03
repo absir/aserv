@@ -136,7 +136,7 @@ public class Asset_verify extends AssetServer {
             img += ' ' + attrs;
         }
 
-        img += " class=\"verifyCode\" src=\"" + MenuContextUtils.getSiteRoute() + "asset/verify?m+ " + System.currentTimeMillis() + " + width=" + width + "&height=" + height + "\" onclick=\"javascript:this.src=this.src+'&t='+Math.random()\" alt=\"" + input.getLangMessage(CLICK_REFRESH) + "\">";
+        img += " class=\"verifyCode\" src=\"" + MenuContextUtils.getSiteRoute() + "asset/verify?m=" + System.currentTimeMillis() + "&width=" + width + "&height=" + height + "\" onclick=\"javascript:this.src=this.src+'&t='+Math.random()\" alt=\"" + input.getLangMessage(CLICK_REFRESH) + "\">";
         return img;
     }
 }

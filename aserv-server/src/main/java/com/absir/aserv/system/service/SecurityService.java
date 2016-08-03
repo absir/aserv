@@ -424,10 +424,16 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
         }
 
         // 密码错误error次,errorTime时间内禁止登录
-        user.setErrorLogin(++errorLogin);
-        user.setLastErrorLogin(contextTime + errorTime);
-        user.setLastErrorTimes(error - errorLogin);
-        BeanService.ME.merge(user);
+        if (error != 0) {
+            user.setErrorLogin(++errorLogin);
+            user.setLastErrorLogin(contextTime + errorTime);
+            user.setLastErrorTimes(error - errorLogin);
+            BeanService.ME.merge(user);
+
+        } else {
+            user.setLastErrorTimes(-1);
+        }
+
         return false;
     }
 

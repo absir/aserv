@@ -28,7 +28,10 @@ import com.absir.orm.hibernate.SessionFactoryBean;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.orm.value.JoEntity;
-import org.hibernate.*;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,13 +115,7 @@ public class VerifierService {
             idleTime = 1000;
         }
 
-        JVerifier verifier = null;
-        try {
-            verifier = session.load(JVerifier.class, id, unique ? LockMode.NONE : LockMode.PESSIMISTIC_WRITE);
-
-        } catch (ObjectNotFoundException e) {
-        }
-
+        JVerifier verifier = BeanDao.loadReal(session, JVerifier.class, id, unique ? LockMode.NONE : LockMode.PESSIMISTIC_WRITE);
         long contextTime = ContextUtils.getContextTime();
         if (verifier != null) {
             if (verifier.getPassTime() > contextTime) {
@@ -144,11 +141,7 @@ public class VerifierService {
                 return null;
             }
 
-            try {
-                verifier = session.load(JVerifier.class, id, LockMode.PESSIMISTIC_WRITE);
-
-            } catch (ObjectNotFoundException ex) {
-            }
+            verifier = BeanDao.loadReal(session, JVerifier.class, id, LockMode.PESSIMISTIC_WRITE);
         }
 
         return verifier;

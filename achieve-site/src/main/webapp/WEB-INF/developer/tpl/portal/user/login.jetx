@@ -4,23 +4,33 @@
     <h3 class="pt-10">\${Pag::CONFIGURE.siteName + ${Pag::getLang("通行证登录", false)}}</h3>
 </nav>
 <div class="container-fluid">
-    <form ab_toggle="form" ab_validate="true"
-          action="/admin/entity/save/JLog"
-          enctype="application/x-www-form-urlencoded"
+    <form ab_toggle="form" ab_validator="true"
           class="form form-horizontal" method="post">
         <div>
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">纪录编号:</label>
+            <div class="row cl ab_requiredDiv">
+                <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("用户名")}:</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input name="id" type="text" class="input-text" readonly="readonly" value=""/>
+                    <input name="username" type="text" class="input-text required"
+                           placeholder="${Pag::getLang('用户名/邮箱/手机号')}"/>
                 </div>
             </div>
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2">名称:</label>
+            <div class="row cl ab_requiredDiv">
+                <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("密码")}:</label>
                 <div class="formControls col-xs-8 col-sm-9">
-                    <input name="name" type="text" class="input-text" value=""/>
+                    <input name="password" type="password" class="input-text required" value=""/>
                 </div>
             </div>
+            \#if(verify)
+            <div class="row cl ab_requiredDiv">
+                <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("验证码")}:</label>
+                <div class="formControls col-xs-4 col-sm-6">
+                    <input name="verifyCode" class="input-text required" value="">
+                </div>
+                <div class="formControls col-xs-4 col-sm-3 ab_p0">
+                    \${Pag::verifyShow(null, 92, 31, INPUT)}
+                </div>
+            </div>
+            \#end
         </div>
         <div class="row cl">
             <div class="ml-10 mr-10 ab__mt5 text-c">

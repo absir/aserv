@@ -21,6 +21,31 @@ function ab_humanTime(time, max) {
     return Math.ceil(time / 3600) + 'h';
 }
 
+function ab_buttonIdle($btn, time) {
+    var idle = $btn.data('idle');
+    if (idle && idle.id) {
+        clearInterval(idle.id);
+
+    } else {
+        idle = {};
+        idle.value = $btn.text();
+        $btn.data('idle', idle);
+    }
+
+    var next = function () {
+        $btn.text(ab_humanTime(time));
+        if (--time <= 0) {
+            $btn.text(idle.value);
+            clearInterval(idle.id);
+            idle.id = 0;
+            $btn.removeAttr("disabled");
+        }
+    };
+    $btn.attr("disabled", "true");
+    next();
+    idle.id = setInterval(next, 1000);
+}
+
 function ab_getUP(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
     var r = window.location.search.substr(1).match(reg);
@@ -175,7 +200,7 @@ ab_lang_map.option_uncomplete = "操作未完成";
 
 function ab_ajaxCallback(json, $form, $tForm, callback) {
     try {
-        var data = $.evalJSON(json);
+        var data = $.parseJSON(json);
         var url = data.url;
         if (url !== undefined && url !== '' && url !== 0) {
             if (!url || url === 1) {
@@ -201,7 +226,7 @@ function ab_ajaxCallback(json, $form, $tForm, callback) {
                     if (Object.getOwnPropertyNames(data.errors).length == 1) {
                         var verify = ab_com.verify || (ab_com.route + 'portal/verify');
                         $.get(verify, {}, function (data) {
-                            var width = $(window).width() - 80;
+                            var width = $(window).width() - 40;
                             if (width > 320) {
                                 width = 320;
                             }
@@ -251,9 +276,28 @@ function ab_ajaxCallback(json, $form, $tForm, callback) {
 
         if (data.click) {
             var $click = $tForm ? $(data.click, $tForm) : $(data.click);
-            if ($click) {
+            if ($click && $click.length) {
                 $click.click();
             }
+
+        } else {
+            if ($tForm) {
+                var $verifyCode = $('.verifyCode', $tForm);
+                if ($verifyCode && $verifyCode.length) {
+                    $verifyCode.click();
+                }
+            }
+        }
+
+        if (data.idleTime) {
+            var $btn = $tForm ? $(data.idleButton, $tForm) : $(data.idleButton);
+            if ($btn && $btn.length) {
+                ab_buttonIdle($btn, data.idleTime);
+            }
+        }
+
+        if ($tForm && data.tip) {
+            ab_init($tForm.prepend(data.tip).children(":first"));
         }
 
         var icon = data.icon;

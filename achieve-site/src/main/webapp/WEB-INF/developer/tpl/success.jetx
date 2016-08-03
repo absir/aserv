@@ -1,4 +1,8 @@
 {
+\#if(idleTime)
+"idleTime": \${idleTime},
+"idleButton": \${Pag::transferred(idleButton)},
+\#end
 "message": "\${message ?! ${Pag::getLang('操作成功', false)}}",
 "icon": \${icon ?! 1}
 }

@@ -57,7 +57,7 @@ public class JSiteConfigure extends JConfigureBase {
     @JaLang("操作验证次数")
     private int operationVerifyCount;
 
-    @JaLang("操作验证配置")
+    @JaLang("操作验证")
     private Map<String, OperationVerify> operationVerifyMap;
 
     @JaSubField("注册设置")

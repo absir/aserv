@@ -6,7 +6,7 @@
                     <input name="verifyCode" class="input-text required" value="">
                 </div>
                 <div class="formControls col-xs-4 col-sm-4 ab_p0">
-                    \${Pag::verifyShow('id="verifyCode"', 108, 31, INPUT)}
+                    \${Pag::verifyShow(null, 92, 31, INPUT)}
                 </div>
             </div>
             <div class="row cl">

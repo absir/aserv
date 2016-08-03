@@ -299,7 +299,7 @@ ${ScriptNode::html(element) + "\r\n"}
             ${DeveloperUtils::includeExistName("subtable", entityModel.getJoEntity().getEntityName(), request)}
 
             #tag scriptEcho()
-            <th width="100">
+            <th>
                                     <span style="position:relative;">
                                         <input type="text" value="1" class="num-add" size="2.5">
                                         <a href="javascript:;" class="btn btn-primary size-MINI radius"

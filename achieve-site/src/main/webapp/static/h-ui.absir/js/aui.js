@@ -531,6 +531,15 @@ $(function () {
             }
         };
 
+        abToggles['close'] = function ($this) {
+            var $target = ab_group($this, 'ab_close');
+            if ($target) {
+                $this.bind('click', function () {
+                    $target.remove();
+                });
+            }
+        };
+
         abValidates['pattern'] = function ($form, $input, name) {
             var pattern = $input.attr('pattern');
             pattern = '/' + pattern + '/g';

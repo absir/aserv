@@ -14,6 +14,8 @@ import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.TransactionAttribute;
 import com.absir.orm.transaction.TransactionContext;
 import com.absir.orm.transaction.TransactionUtils;
+import org.hibernate.LockMode;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.EntityEntry;
@@ -133,5 +135,37 @@ public abstract class BeanDao {
 
     public static void commit(TransactionContext<?> transactionContext, Throwable e) {
         transactionContext.closeCurrent(e, null);
+    }
+
+    public static Object loadReal(Session session, String entityName, Serializable id, LockMode lockMode) {
+        if (lockMode == LockMode.NONE) {
+            return session.get(entityName, id);
+        }
+
+        try {
+            Object entity = session.load(entityName, id, lockMode);
+            entity.hashCode();
+            return entity;
+
+        } catch (ObjectNotFoundException e) {
+        }
+
+        return null;
+    }
+
+    public static <T> T loadReal(Session session, Class<T> entityClass, Serializable id, LockMode lockMode) {
+        if (lockMode == LockMode.NONE) {
+            return session.get(entityClass, id);
+        }
+
+        try {
+            T entity = session.load(entityClass, id, lockMode);
+            entity.hashCode();
+            return entity;
+
+        } catch (ObjectNotFoundException e) {
+        }
+
+        return null;
     }
 }

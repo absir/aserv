@@ -1,13 +1,13 @@
 #tag script()
 #if(error.serverStatus == ServerStatus::NO_VERIFY)
-    #return('验证码错误')
+    #return(Pag::getLang('验证码错误'))
 #else
     #if(error.exceptionData == null)
-        #return('用户不存在')
+        #return(Pag::getLang('用户不存在'))
     #elseif(error.exceptionData.lastErrorLogin > TIME)
-        #return('登录次数过多，请稍后')
+        #return(Pag::getLang('登录次数过多，请稍后'))
     #else
-        #return('用户密码错误')
+        #return(Pag::getLang('用户密码错误'))
     #end
 #end
 #end

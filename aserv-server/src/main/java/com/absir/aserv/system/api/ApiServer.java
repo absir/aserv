@@ -90,7 +90,6 @@ public abstract class ApiServer {
         public int code;
 
         public MessageCode() {
-
         }
 
         public MessageCode(Throwable e) {

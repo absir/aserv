@@ -19,7 +19,6 @@ import com.absir.orm.transaction.value.Transaction;
 import com.absir.server.in.Input;
 import com.absir.server.route.invoker.InvokerResolverErrors;
 import org.hibernate.LockMode;
-import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 
 import java.text.MessageFormat;
@@ -38,6 +37,8 @@ public class PortalService {
     public static final String MESSAGE_REGISTER_TAG = "messageRegister";
 
     public static final String REGISTER_TAG = "register";
+
+    public static final String LOGIN_TAG = "login";
 
     public static final String PASSWORD_TAG = "password";
 
@@ -119,13 +120,7 @@ public class PortalService {
     public int verifyCode(String emailOrMobile, String tag) {
         String id = emailOrMobile + "@Code";
         Session session = BeanDao.getSession();
-        JVerifier verifier = null;
-        try {
-            verifier = session.load(JVerifier.class, id, LockMode.PESSIMISTIC_WRITE);
-
-        } catch (ObjectNotFoundException e) {
-        }
-
+        JVerifier verifier = BeanDao.loadReal(session, JVerifier.class, id, LockMode.PESSIMISTIC_WRITE);
         if (verifier == null || !KernelObject.equals(verifier.getTag(), tag)) {
             return -1;
         }
@@ -187,7 +182,7 @@ public class PortalService {
         if (VerifierService.isOperationCount(input.getAddress(), tag, maxCount)) {
             if (input != null) {
                 if (!Asset_verify.verifyInput(input)) {
-                    input.getModel().put("click", "#verifyCode");
+                    input.getModel().put("click", ".verifyCode");
                     InvokerResolverErrors.onError("verifyCode", Site.VERIFY_ERROR, null, null);
                 }
             }
