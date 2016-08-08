@@ -1,50 +1,45 @@
 \#set(page_title = Pag::CONFIGURE.siteName + "${Pag::getLang("通行证登录")}")
-\#tag layout("/WEB-INF/tpl/layout/hui.jetx")
-<nav class="breadcrumb text-c ab_ah">
-    <h3 class="pt-10">\${Pag::CONFIGURE.siteName + ${Pag::getLang("通行证登录", false)}}</h3>
-</nav>
-<div class="container-fluid">
-    <form ab_toggle="form" ab_validator="true"
-          class="form form-horizontal" method="post">
-        <div>
-            <div class="row cl ab_requiredDiv">
-                <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("用户名")}:</label>
-                <div class="formControls col-xs-8 col-sm-9">
-                    <input name="username" type="text" class="input-text required"
-                           placeholder="${Pag::getLang('用户名/邮箱/手机号')}"/>
-                </div>
-            </div>
-            <div class="row cl ab_requiredDiv">
-                <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("密码")}:</label>
-                <div class="formControls col-xs-8 col-sm-9">
-                    <input name="password" type="password" class="input-text required" value=""/>
-                </div>
-            </div>
-            \#if(verify)
-            <div class="row cl ab_requiredDiv">
-                <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("验证码")}:</label>
-                <div class="formControls col-xs-4 col-sm-6">
-                    <input name="verifyCode" class="input-text required" value="">
-                </div>
-                <div class="formControls col-xs-4 col-sm-3 ab_p0">
-                    \${Pag::verifyShow(null, 92, 31, INPUT)}
-                </div>
-            </div>
-            \#end
-        </div>
-        <div class="row cl">
-            <div class="ml-10 mr-10 ab__mt5 text-c">
-                <button type="submit" class="btn btn-primary radius mb-5">
-                    ${Pag::getLang("登录")}
-                </button>
-                <a class="btn btn-secondary-outline radius size-S mb-5" href="\${SITE_ROUTE}user/register">
-                    ${Pag::getLang("注册")}
-                </a>
+#tag layout("/WEB-INF/developer/layout/portal.page.jetx")
+<form ab_toggle="form" ab_validator="true" class="form form-horizontal" method="post">
+    <div>
+        <div class="row cl ab_requiredDiv">
+            <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("用户名")}:</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input name="username" type="text" class="input-text required"
+                       placeholder="${Pag::getLang('用户名/邮箱/手机号')}"/>
             </div>
         </div>
-    </form>
+        <div class="row cl ab_requiredDiv">
+            <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("密码")}:</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input name="password" type="password" class="input-text required" value=""/>
+            </div>
+        </div>
+        \#if(verify)
+        <div class="row cl ab_requiredDiv">
+            <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("验证码")}:</label>
+            <div class="formControls col-xs-4 col-sm-6">
+                <input name="verifyCode" class="input-text required" value="">
+            </div>
+            <div class="formControls col-xs-4 col-sm-3 ab_p0">
+                \${Pag::verifyShow(null, 92, 31, INPUT)}
+            </div>
+        </div>
+        \#end
+    </div>
+    <div class="row cl">
+        <div class="ml-10 mr-10 ab__mt5 text-c">
+            <button type="submit" class="btn btn-primary radius mb-5">
+                ${Pag::getLang("登录")}
+            </button>
+            <a class="btn btn-secondary-outline radius size-S mb-5" href="\${SITE_ROUTE}user/register">
+                ${Pag::getLang("注册")}
+            </a>
+        </div>
+    </div>
+</form>
 </div>
-\#end
+#end
 
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery/jquery.form.min.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>

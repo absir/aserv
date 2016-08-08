@@ -388,4 +388,20 @@ public class Pag {
     public static String verifyShow(String attrs, int width, int height, Input input) {
         return Asset_verify.ME.show(attrs, width, height, input);
     }
+
+    public static String hiddenEmail(String email) {
+        if (KernelString.isEmpty(email)) {
+            return email;
+        }
+
+        return KernelString.hiddenString(2, email.indexOf('@') - 1, email);
+    }
+
+    public static String hiddenMobile(String mobile) {
+        if (KernelString.isEmpty(mobile)) {
+            return mobile;
+        }
+
+        return KernelString.hiddenString(mobile.length() - 8, 2, mobile);
+    }
 }

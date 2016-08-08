@@ -494,7 +494,7 @@ public abstract class KernelString {
         StringBuilder stringBuilder = new StringBuilder();
         int len = string.length();
         stringBuilder.append(string, 0, start > len ? len : start);
-        stringBuilder.append("...");
+        stringBuilder.append("***");
         end = len - end;
         if (end < start) {
             end = start;

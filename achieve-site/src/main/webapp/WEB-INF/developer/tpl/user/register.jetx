@@ -1,13 +1,9 @@
 \#set(page_title = Pag::CONFIGURE.siteName + "${Pag::getLang("通行证注册")}")
-\#tag layout("/WEB-INF/tpl/layout/hui.jetx")
-<nav class="breadcrumb text-c ab_ah">
-    <h3 class="pt-10">\${Pag::CONFIGURE.siteName + ${Pag::getLang("通行证注册", false)}}</h3>
-</nav>
-<div class="container-fluid">
-    <form ab_toggle="form" ab_validator="true" ab_reset="true" class="form form-horizontal" method="post">
-        <div>
-            <div class="tabBar cl mb-20">
-                \#if(Pag::CONFIGURE.hasAllowMessageRegister())
+#tag layout("/WEB-INF/developer/layout/portal.page.jetx")
+<form ab_toggle="form" ab_validator="true" ab_reset="true" class="form form-horizontal" method="post">
+    <div>
+        <div class="tabBar cl mb-20">
+            \#if(Pag::CONFIGURE.hasAllowMessageRegister())
                 <span class="\${type == 3 ? 'current' : ''}">
                     \#if(type == 3)
                     ${Pag::getLang("手机注册")}
@@ -15,8 +11,8 @@
                     <a href="${SITE_ROUTE}user/register?type=3">${Pag::getLang("手机注册")}</a>
                     \#end
                 </span>
-                \#end
-                \#if(Pag::CONFIGURE.hasAllowEmailRegister())
+            \#end
+            \#if(Pag::CONFIGURE.hasAllowEmailRegister())
                 <span class="\${type == 2 ? 'current' : ''}">
                     \#if(type == 2)
                     ${Pag::getLang("邮箱注册")}
@@ -24,8 +20,8 @@
                     <a href="${SITE_ROUTE}user/register?type=2">${Pag::getLang("邮箱注册")}</a>
                     \#end
                 </span>
-                \#end
-                \#if(Pag::CONFIGURE.hasAllowUsernameRegister())
+            \#end
+            \#if(Pag::CONFIGURE.hasAllowUsernameRegister())
                 <span class="\${type == 1 ? 'current' : ''}">
                     \#if(type == 1)
                     ${Pag::getLang("用户名注册")}
@@ -33,49 +29,26 @@
                     <a href="${SITE_ROUTE}user/register?type=1">${Pag::getLang("用户名注册")}</a>
                     \#end
                 </span>
-                \#end
-            </div>
-
-            \${Pag::forEntity(request)}
-            ${request.setAttribute('action', '${SITE_ROUTE}user/registerCode')}
-            \#if(type == 3 || type == 2)
-            <div class="subForm" load="0">
-                \#if(type == 3)
-                ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FMobileCode::class, request)}
-                #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
-                \#end
-
-                \#if(type == 2)
-                ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FEmailCode::class, request)}
-                #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
-                \#end
-
-                \#if(verify)
-                <div class="row cl ab_requiredDiv">
-                    <label class="form-label col-xs-4 col-sm-2"></label>
-                    <div class="formControls col-xs-4 col-sm-6">
-                        <input name="verifyCode" class="input-text required" value="">
-                    </div>
-                    <div class="formControls col-xs-4 col-sm-3 ab_p0">
-                        \${Pag::verifyShow(null, 92, 31, INPUT)}
-                    </div>
-                </div>
-                \#end
-
-            </div>
             \#end
+        </div>
 
-            \#if(type == 1)
-            ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.portal.portal_user.FUsername::class, request)}
+        \${Pag::forEntity(request)}
+        ${request.setAttribute('action', '${SITE_ROUTE}user/registerCode')}
+        \#if(type == 3 || type == 2)
+        <div class="subForm" load="0">
+            \#if(type == 3)
+            ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FMobileCode::class, request)}
             #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
             \#end
 
-            ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.portal.portal_user.FRegister::class, request)}
+            \#if(type == 2)
+            ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.bean.form.FEmailCode::class, request)}
             #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+            \#end
 
-            \#if(type == 1)
+            \#if(verify)
             <div class="row cl ab_requiredDiv">
-                <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("验证码")}:</label>
+                <label class="form-label col-xs-4 col-sm-2"></label>
                 <div class="formControls col-xs-4 col-sm-6">
                     <input name="verifyCode" class="input-text required" value="">
                 </div>
@@ -85,50 +58,73 @@
             </div>
             \#end
 
-            <div class="row cl">
-                <label class="form-label col-xs-4 col-sm-2"></label>
-                <div class="formControls col-xs-8 col-sm-9">
-                    <input class="required" name="agreement" type="checkbox" error="${Pag::getLang('必选')}"/>
-                    <a class="btn btn-link" data-toggle="modal" href="#registerAgreement">${Pag::getLang("注册协议")}</a>
-                </div>
+        </div>
+        \#end
+
+        \#if(type == 1)
+        ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.portal.portal_user.FUsername::class, request)}
+        #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+        \#end
+
+        ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.portal.portal_user.FRegister::class, request)}
+        #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
+
+        \#if(type == 1)
+        <div class="row cl ab_requiredDiv">
+            <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("验证码")}:</label>
+            <div class="formControls col-xs-4 col-sm-6">
+                <input name="verifyCode" class="input-text required" value="">
             </div>
-            <div id="registerAgreement" class="modal hide fade" role="dialog"
-                 ab_toggle="resize" resize="data-width" minSize="500">
-                <div class="container-fluid">
-                    <h4 class="text-c">${Pag::getLang("注册协议")}</h4>
-                    <div>
-                        \${Site::TPL.registerAgreement}
-                    </div>
-                    <div class="row cl">
-                        <div class="text-c mb-10">
-                            <button id="agreementButton" class="btn btn-primary radius size-L" data-dismiss="modal">
-                                ${Pag::getLang("同意并继续")}
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <div class="formControls col-xs-4 col-sm-3 ab_p0">
+                \${Pag::verifyShow(null, 92, 31, INPUT)}
             </div>
         </div>
-
-        <script type="text/javascript">
-            $('#agreementButton').bind('click', function () {
-                $('[name="agreement"]').prop('checked', 1);
-            });
-        </script>
+        \#end
 
         <div class="row cl">
-            <div class="text-c">
-                <button type="submit" class="btn btn-primary radius size-L">
-                    ${Pag::getLang("同意协议并注册")}
-                </button>
-                <a class="btn btn-secondary-outline radius size-S" href="\${SITE_ROUTE}user/login">
-                    ${Pag::getLang("登录")}
-                </a>
+            <label class="form-label col-xs-4 col-sm-2"></label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input class="required" name="agreement" type="checkbox" error="${Pag::getLang('必选')}"/>
+                <a class="btn btn-link" data-toggle="modal" href="#registerAgreement">${Pag::getLang("注册协议")}</a>
             </div>
         </div>
-    </form>
+        <div id="registerAgreement" class="modal hide fade" role="dialog"
+             ab_toggle="resize" resize="data-width" minSize="500">
+            <div class="container-fluid">
+                <h4 class="text-c">${Pag::getLang("注册协议")}</h4>
+                <div>
+                    \${Site::TPL.registerAgreement}
+                </div>
+                <div class="row cl">
+                    <div class="text-c mb-10">
+                        <button id="agreementButton" class="btn btn-primary radius size-L" data-dismiss="modal">
+                            ${Pag::getLang("同意并继续")}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $('#agreementButton').bind('click', function () {
+            $('[name="agreement"]').prop('checked', 1);
+        });
+    </script>
+
+    <div class="row cl">
+        <div class="text-c">
+            <button type="submit" class="btn btn-primary radius size-L">
+                ${Pag::getLang("同意协议并注册")}
+            </button>
+            <a class="btn btn-secondary-outline radius size-S" href="\${SITE_ROUTE}user/login">
+                ${Pag::getLang("登录")}
+            </a>
+        </div>
+    </div>
+</form>
 </div>
-\#end
+#end
 
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery/jquery.json.min.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery/jquery.form.min.js"></script>
@@ -136,7 +132,6 @@
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery.validation/1.14.0/messages_zh.min.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/h-ui.absir/js/acom.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/h-ui.absir/js/aui.js"></script>
-
 
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/bootstrap-modal/2.2.4/bootstrap-modalmanager.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/bootstrap-modal/2.2.4/bootstrap-modal.js"></script>

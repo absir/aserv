@@ -1,0 +1,14 @@
+\#tag layout("/WEB-INF/tpl/layout/hui.jetx")
+#for(Map.Entry entry : Pag::getNameTag(INPUT, 'header'))
+${entry.value}
+#end
+<nav class="breadcrumb text-c ab_ah">
+    <h3 class="pt-10">\${nav_title ?! page_title}</h3>
+</nav>
+<div class="container-fluid">
+    ${bodyContent}
+</div>
+\#end
+#for(Map.Entry entry : Pag::getNameTag(INPUT, 'footer'))
+${entry.value}
+#end

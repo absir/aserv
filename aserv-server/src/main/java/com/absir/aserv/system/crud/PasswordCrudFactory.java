@@ -10,6 +10,7 @@ package com.absir.aserv.system.crud;
 import com.absir.aserv.crud.*;
 import com.absir.aserv.support.developer.JCrudField;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.aserv.system.helper.HelperRandom;
 import com.absir.bean.basis.Configure;
 import com.absir.bean.inject.value.Value;
 import com.absir.client.helper.HelperEncrypt;
@@ -63,7 +64,7 @@ public class PasswordCrudFactory implements ICrudFactory {
                 Accessor accessor = UtilAccessor.getAccessorProperty(entity.getClass(), "salt");
                 String salt = null;
                 if (accessor != null) {
-                    salt = Integer.toHexString(requestBody.hashCode());
+                    salt = Integer.toHexString(HelperRandom.RANDOM.nextInt());
                     if (!accessor.set(entity, salt)) {
                         salt = null;
                     }

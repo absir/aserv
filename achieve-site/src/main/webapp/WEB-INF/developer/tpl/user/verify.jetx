@@ -1,0 +1,18 @@
+<form ab_toggle="form" ab_validator="true" class="form form-horizontal" method="post">
+    <div class="row cl">
+        <label class="form-label col-xs-4 col-sm-2">${Pag::getLang("验证方式")}:</label>
+        <div class="formControls col-xs-8 col-sm-9">
+            <select name="opition" class="input-text ">
+                <option value="">未选择</option>
+                <option value="test1">
+                    测试1
+                </option>
+                <option value="test2">
+                    测试2
+                </option>
+                <option value="test3">
+                    测试3
+                </option>
+        </div>
+    </div>
+</form>

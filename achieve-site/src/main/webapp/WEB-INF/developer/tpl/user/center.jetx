@@ -1,31 +1,40 @@
 \#set(page_title = Pag::CONFIGURE.siteName + "${Pag::getLang("用户中心")}")
-\#tag layout("/WEB-INF/tpl/layout/hui.jetx")
-<nav class="breadcrumb text-c ab_ah">
-    <h3 class="pt-10">\${Pag::CONFIGURE.siteName + ${Pag::getLang("用户中心", false)}}</h3>
-</nav>
-<div class="container-fluid">
-    <form ab_toggle="form" ab_validator="true" ab_reset="true" class="form form-horizontal" method="post">
-        <div>
-            <div class="tabBar cl mb-20">
-               <span class="\${type == 1 ? 'current' : ''}">
-                    \#if(type == 1)
-                   ${Pag::getLang("登录信息")}
-                    \#else
-                    <a href="${SITE_ROUTE}user/register?type=1">${Pag::getLang("登录信息")}</a>
-                    \#end
-                </span>
-                <span class="\${type == 2 ? 'current' : ''}">
-                    \#if(type == 2)
-                    ${Pag::getLang("修改密码")}
-                    \#else
-                    <a href="${SITE_ROUTE}user/register?type=2">${Pag::getLang("修改密码")}</a>
-                    \#end
-                </span>
-            </div>
-        </div>
-    </form>
+#tag layout("/WEB-INF/developer/layout/portal.page.jetx")
+<p>${Pag::lang("欢迎进入")}\${APP_NAME}${Pag::lang("用户中心")}！</p>
+<p>${Pag::lang("登录次数：")}\${USER.loginTimes} </p>
+<p>${Pag::lang("上次登录IP：")}\${USER.loginAddress ?: ${Pag::getLang("未知", false)}}</p>
+<p>${Pag::lang("上次登录时间：")}\${Pag::dateValue(USER.lastLogin)}</p>
+<table class="table table-border table-bordered table-bg mt-20">
+    <thead>
+    <tr>
+        <th colspan="2" scope="col">用户信息</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th width="30%">\${USER.username}</th>
+        <td><a href="\${SITE_ROUTE}user/logout">${Pag::lang('注销')}</a></td>
+    </tr>
+    <tr>
+        <td>${Pag::lang('密码')}</td>
+        <td><a href="\${SITE_ROUTE}user/password">${Pag::lang('修改')}</a></td>
+    </tr>
+    \#if(Pag::CONFIGURE.hasEmail())
+    <tr>
+        <td>${Pag::lang('邮箱')}:\${USER.email}</td>
+        <td><a href="\${SITE_ROUTE}user/email">${Pag::lang('修改')}</a></td>
+    </tr>
+    \#end
+    \#if(Pag::CONFIGURE.hasMessage())
+    <tr>
+        <td>${Pag::lang('手机号')}:\${USER.mobile}</td>
+        <td><a href="\${SITE_ROUTE}user/password">${Pag::lang('修改')}</a></td>
+    </tr>
+    \#end
+    </tbody>
+</table>
 </div>
-\#end
+#end
 
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery/jquery.json.min.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery/jquery.form.min.js"></script>

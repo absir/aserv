@@ -224,54 +224,67 @@ function ab_ajaxCallback(json, $form, $tForm, callback) {
                 var $verifyCode = $('[name="verifyCode"]', $tForm);
                 if (!($verifyCode && $verifyCode.length) || $verifyCode.attr('type') === 'hidden') {
                     if (Object.getOwnPropertyNames(data.errors).length == 1) {
-                        var verify = ab_com.verify || (ab_com.route + 'portal/verify');
-                        $.get(verify, {}, function (data) {
-                            var width = $(window).width() - 40;
-                            if (width > 320) {
-                                width = 320;
-                            }
-
-                            var l = layer.open({
-                                type: 1,
-                                title: 0,
-                                area: [width + 'px', 'auto'],
-                                content: data,
-                            });
-                            var $layer = $('#layui-layer' + l);
-                            if ($layer && $layer.length) {
-                                ab_init($layer);
-                                if ($.fn.ab_toggles) {
-                                    $f = $('form', $layer);
-                                    if ($f && $f.length) {
-                                        var $v = $('[name="verifyCode"]', $f);
-                                        if ($v && $v.length) {
-                                            $.fn.ab_toggles['validator']($f, function () {
-                                                var v = $v.val();
-                                                $v = $('[name="verifyCode"]', $form);
-                                                if ($v && $v.length) {
-                                                    $v.val(v);
-
-                                                } else {
-                                                    $form.append('<input type="hidden" name="verifyCode" value="' + v + '">');
-                                                }
-
-                                                layer.close(l);
-                                                ab_ajaxSubmit($form, callback, $tForm);
-                                            });
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                        return;
+                        if (!data.verifyUrl) {
+                            data.verifyUrl = ab_com.verify || (ab_com.route + 'portal/verify');
+                        }
 
                     } else {
                         delete data.errors.verifyCode;
+
                     }
                 }
             }
 
-            $tForm.data('validator').showErrors(data.errors);
+            var v = $tForm.data('validator') || $tForm.validator();
+            if (v) {
+                v.showErrors(data.errors);
+            }
+        }
+
+        if ($tForm && data.verifyUrl) {
+            $.get(data.verifyUrl, {}, function (data) {
+                var width = $(window).width() - 32;
+                if (width > 320) {
+                    width = 320;
+                }
+
+                var l = layer.open({
+                    type: 1,
+                    title: 0,
+                    area: [width + 'px', 'auto'],
+                    content: data,
+                });
+                var $layer = $('#layui-layer' + l);
+                if ($layer && $layer.length) {
+                    ab_init($layer);
+                    if ($.fn.ab_toggles) {
+                        $f = $('form', $layer);
+                        if ($f && $f.length) {
+                            var $is = $('[name]', $f);
+                            if ($is && $is.length) {
+                                $.fn.ab_toggles['validator']($f, function () {
+                                    $is.each(function () {
+                                        var $i = $(this);
+                                        var v = $i.val();
+                                        $v = $('[name="' + $i.attr('name') + '"]', $form);
+                                        if ($v && $v.length) {
+                                            $v.val(v);
+
+                                        } else {
+                                            $form.append('<input type="hidden" name="verifyCode" value="' + v + '">');
+                                        }
+                                    });
+
+                                    layer.close(l);
+                                    ab_ajaxSubmit($form, callback, $tForm);
+                                });
+                            }
+                        }
+                    }
+                }
+            });
+
+            return;
         }
 
         if (data.click) {
