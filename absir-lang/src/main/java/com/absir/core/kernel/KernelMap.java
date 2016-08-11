@@ -7,6 +7,7 @@
  */
 package com.absir.core.kernel;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -68,5 +69,21 @@ public abstract class KernelMap {
         for (Entry<Object, Object> entry : map.entrySet()) {
             to.put(entry.getKey(), entry.getValue());
         }
+    }
+
+    public static Map<Object, Object> newMap(Object key, Object value) {
+        Map<Object, Object> map = new HashMap<Object, Object>();
+        map.put(key, value);
+        return map;
+    }
+
+    public static Map<Object, Object> newMapKeysValues(Object... keysValues) {
+        Map<Object, Object> map = new HashMap<Object, Object>();
+        int len = keysValues.length;
+        for (int i = 1; i < len; i += 2) {
+            map.put(keysValues[i - 1], keysValues[i]);
+        }
+
+        return map;
     }
 }

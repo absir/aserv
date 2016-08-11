@@ -43,9 +43,21 @@ public class Site implements KernelLang.GetTemplate<String, JetTemplate> {
 
     public static final String PASSWORD_ERROR = LangCodeUtils.get("密码错误", Site.class);
 
-    public static final String PASSWORD_SUCCESS = LangCodeUtils.get("密码修改成功", Site.class);
+    public static final String MODIFY_SUCCESS = LangCodeUtils.get("修改成功", Site.class);
+
+    public static final String LOGIN_FAILURE = LangCodeUtils.get("登录失效", Site.class);
+
+    public static final String COULD_NOT_USE = LangCodeUtils.get("无法使用", Site.class);
 
     public static final String LOGIN_SUCCESS = LangCodeUtils.get("登录成功", Site.class);
+
+    public static final String USERNAME_HAD = LangCodeUtils.get("不必绑定用户名", Site.class);
+
+    public static final String EMAIL_ERROR = LangCodeUtils.get("请输入有效的邮箱", Site.class);
+
+    public static final String MOBILE_ERROR = LangCodeUtils.get("请输入有效的手机号", Site.class);
+
+    public static final String EMAIL_OR_MOBILE_ERROR = LangCodeUtils.get("请输入有效的邮箱或手机号", Site.class);
 
     public static final String LOGIN_LAST_ERROR_TIMES = LangCodeUtils.get("再登录{0}次,账户会锁定一段时间", Site.class);
 

@@ -17,6 +17,7 @@ import com.absir.aserv.system.bean.value.JaSubField;
 import com.absir.aserv.system.bean.value.JeEditable;
 import com.absir.aserv.system.service.IEmailService;
 import com.absir.aserv.system.service.IMessageService;
+import com.absir.core.kernel.KernelString;
 import com.absir.validator.value.Range;
 
 import java.util.Map;
@@ -279,4 +280,30 @@ public class JSiteConfigure extends JConfigureBase {
         return hasAllowUsernameRegister() || hasAllowEmailRegister() || hasAllowMessageRegister();
     }
 
+    public JSiteConfigure.OperationVerify getOperationVerify(String tag) {
+        Map<String, JSiteConfigure.OperationVerify> map = operationVerifyMap;
+        if (map != null) {
+            JSiteConfigure.OperationVerify operationVerify = map.get(tag);
+            if (operationVerify != null) {
+                if (!KernelString.isEmpty(operationVerify.alias)) {
+                    JSiteConfigure.OperationVerify verify = map.get(operationVerify.alias);
+                    if (verify != null) {
+                        if (verify.tag != operationVerify.alias) {
+                            verify.tag = operationVerify.alias;
+                        }
+
+                        return verify;
+                    }
+                }
+
+                if (operationVerify.tag != tag) {
+                    operationVerify.tag = tag;
+                }
+            }
+
+            return operationVerify;
+        }
+
+        return null;
+    }
 }

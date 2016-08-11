@@ -51,12 +51,24 @@ public class Asset_verify extends AssetServer {
     protected static float heightDefault = 28.0f;
 
     public static boolean verifyInput(Input input) {
-        String verifyCode = input.getFacade().getSessionValue("verifyCode");
+        return verifyInput(input, null, true);
+    }
+
+    public static boolean verifyInput(Input input, String tag, boolean remove) {
+        String name = "verifyCode";
+        if (tag != null) {
+            name += tag;
+        }
+
+        String verifyCode = input.getFacade().getSessionValue(name);
         if (verifyCode != null) {
             String paramVerify = input.getParam("verifyCode");
             if (paramVerify != null) {
                 if (verifyCode.equals(paramVerify.toLowerCase())) {
-                    input.getFacade().removeSession("verifyCode");
+                    if (remove) {
+                        input.getFacade().removeSession(name);
+                    }
+
                     return true;
                 }
             }
@@ -66,11 +78,11 @@ public class Asset_verify extends AssetServer {
     }
 
     @Body
-    public void route(@Param @Nullable Integer width, @Param @Nullable Integer height, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        verifyCode(width == null ? 64 : width, height == null ? 18 : height, 0, request, response);
+    public void route(@Param @Nullable Integer width, @Param @Nullable Integer height, @Nullable @Param String tag, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        verifyCode(width == null ? 64 : width, height == null ? 18 : height, 0, tag, request, response);
     }
 
-    protected void verifyCode(int width, int height, int type, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public static void verifyCode(int width, int height, int type, String tag, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (height < minHeight) {
             height = minHeight;
         }
@@ -118,7 +130,7 @@ public class Asset_verify extends AssetServer {
             graphics.drawString(String.valueOf(chr), (int) left, line);
         }
 
-        request.getSession().setAttribute("verifyCode", verifyCode.toLowerCase());
+        request.getSession().setAttribute(tag == null ? "verifyCode" : ("verifyCode" + tag), verifyCode.toLowerCase());
         response.setContentType("image/jpeg");
         response.setHeader("Pragma", "No-cache");
         response.setHeader("Cache-Control", "no-cache");

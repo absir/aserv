@@ -174,6 +174,11 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
     }
 
     @BaMethod
+    public static String jsonSafe(Object obj) throws IOException {
+        return HelperJson.encodeNull(obj);
+    }
+
+    @BaMethod
     public static void echoValue(Object obj) {
         if (obj != null) {
             echo().append(obj);

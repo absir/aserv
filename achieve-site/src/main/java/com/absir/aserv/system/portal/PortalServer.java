@@ -37,7 +37,9 @@ public class PortalServer {
         Throwable throwable = UtilAbsir.forCauseThrowable(e);
         model.put("e", throwable);
         if (throwable instanceof ConstraintViolationException) {
-            model.put("message", throwable.getCause().getMessage());
+            if (!model.containsKey("message")) {
+                model.put("message", throwable.getCause().getMessage());
+            }
 
         } else {
             if (throwable.getClass() == ServerException.class) {
@@ -46,7 +48,9 @@ public class PortalServer {
                     throw e;
                 }
 
-                model.put("message", serverStatus);
+                if (!model.containsKey("message")) {
+                    model.put("message", serverStatus);
+                }
 
             } else {
                 throw e;

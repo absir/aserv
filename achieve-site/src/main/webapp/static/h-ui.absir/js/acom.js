@@ -192,13 +192,44 @@ function ab_ajax(url, callback, complete) {
     $.ajax(opts);
 }
 
+function ab_formData($form, excludes) {
+    var data = {};
+    var $is = $('[name]', $form);
+    if ($is && $is.length) {
+        $is.each(function () {
+            var $i = $(this);
+            var n = $i.attr('name');
+            if (!excludes || !excludes[n]) {
+                data[n] = $i.val();
+            }
+        });
+    }
+
+    return data;
+}
+
+function ab_formSetData($form, data, excludes) {
+    for (var n in data) {
+        if (!excludes || !excludes[n]) {
+            var v = data[n];
+            $v = $('[name="' + n + '"]', $form);
+            if ($v && $v.length) {
+                $v.val(v);
+
+            } else {
+                $form.append('<input type="hidden" name="' + n + '" value="' + v + '">');
+            }
+        }
+    }
+}
+
 var ab_lang_map = {};
 ab_lang_map.request_fail = "请求失败";
 ab_lang_map.option_success = "操作成功";
 ab_lang_map.option_fail = "操作失败";
 ab_lang_map.option_uncomplete = "操作未完成";
 
-function ab_ajaxCallback(json, $form, $tForm, callback) {
+function ab_ajaxCallbackBefore(json, $form, $tForm, callback) {
     try {
         var data = $.parseJSON(json);
         var url = data.url;
@@ -262,22 +293,27 @@ function ab_ajaxCallback(json, $form, $tForm, callback) {
                         if ($f && $f.length) {
                             var $is = $('[name]', $f);
                             if ($is && $is.length) {
-                                $.fn.ab_toggles['validator']($f, function () {
-                                    $is.each(function () {
-                                        var $i = $(this);
-                                        var v = $i.val();
-                                        $v = $('[name="' + $i.attr('name') + '"]', $form);
-                                        if ($v && $v.length) {
-                                            $v.val(v);
-
-                                        } else {
-                                            $form.append('<input type="hidden" name="verifyCode" value="' + v + '">');
-                                        }
-                                    });
+                                var submitHandler = function (data) {
+                                    ab_formSetData($form, data || ab_formData($form));
 
                                     layer.close(l);
                                     ab_ajaxSubmit($form, callback, $tForm);
-                                });
+                                };
+
+                                if ($f.attr('action')) {
+                                    $.fn.ab_toggles['form']($f, function (json, $form, $tForm, callback) {
+                                        var data = ab_ajaxCallbackBefore(json, $form, $tForm, callback);
+                                        if (data.ok) {
+                                            submitHandler(data.verifies);
+
+                                        } else {
+                                            ab_ajaxCallbackData(data);
+                                        }
+                                    });
+
+                                } else {
+                                    $.fn.ab_toggles['validator']($f, submitHandler);
+                                }
                             }
                         }
                     }
@@ -313,6 +349,16 @@ function ab_ajaxCallback(json, $form, $tForm, callback) {
             ab_init($tForm.prepend(data.tip).children(":first"));
         }
 
+        return data;
+
+    } catch (e) {
+        layer.alert("Parse Json Error", {icon: 2});
+        throw e;
+    }
+}
+
+function ab_ajaxCallbackData(data) {
+    if (data) {
         var icon = data.icon;
         var message = data.message;
         if (!message) {
@@ -330,11 +376,11 @@ function ab_ajaxCallback(json, $form, $tForm, callback) {
         }
 
         layer.alert(message, {icon: icon});
-
-    } catch (e) {
-        layer.alert("Parse Json Error", {icon: 2});
-        throw e;
     }
+}
+
+function ab_ajaxCallback(json, $form, $tForm, callback) {
+    ab_ajaxCallbackData(ab_ajaxCallbackBefore(json, $form, $tForm, callback));
 }
 
 function ab_ajaxSubmit($form, callback, $tForm) {

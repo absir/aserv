@@ -309,9 +309,10 @@ ${ScriptNode::html(element) + "\r\n"}
         </tr>
         #tag layout_block("node")
         <td>
-            <a href="javascript:;" class="btn btn-danger size-MINI radius" ab_toggle="removeItem"><i
-                    class="Hui-iconfont">
-                &#xe6e2;</i></a>
+            <a href="javascript:;" class="btn btn-danger size-MINI radius" ab_toggle="removeItem">
+                <i class="Hui-iconfont">&#xe6e2;</i></a>
+            <a href="javascript:;" class="btn btn-success size-MINI radius" ab_toggle="upItem">
+                <i class="Hui-iconfont">&#xe679;</i></a>
         </td>
         #end
         #end

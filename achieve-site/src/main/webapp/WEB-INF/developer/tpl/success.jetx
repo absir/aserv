@@ -1,4 +1,10 @@
 {
+\#if(ok)
+"ok": 1,
+\#end
+\#if(verifies)
+"verifies": \${verifies.jsonSafe())},
+\#end
 \#if(url)
 "url": "\${url}",
 \#end

@@ -337,16 +337,16 @@ $(function () {
             setTimeout(function () {
                 $this[0].reset();
             }, 1);
-        }
+        };
 
-        abToggles['form'] = function ($this) {
+        abToggles['form'] = function ($this, callback) {
             function submitHandler() {
                 if ($this.attr('ab_ajax')) {
                     return true;
                 }
 
                 try {
-                    ab_ajaxSubmit($this, $this.attr('ab_callback'));
+                    ab_ajaxSubmit($this, callback || $this.attr('ab_callback'));
 
                 } catch (e) {
                     console.error(e);
@@ -365,8 +365,7 @@ $(function () {
             } else {
                 $this.submit(submitHandler);
             }
-        }
-        ;
+        };
 
         abToggles['resize'] = function ($this) {
             var resize = $this.attr('resize');
@@ -433,10 +432,13 @@ $(function () {
             })
         };
 
-        abToggles['removeItem'] = function ($this) {
+        abToggles['upItem'] = function ($this) {
             $this.click(function () {
                 var $tr = $this.closest('tr');
-                $tr.remove();
+                var $pre = $tr.prev();
+                if ($pre || $pre.is('tr')) {
+                    $tr.insertBefore($pre);
+                }
             })
         };
 

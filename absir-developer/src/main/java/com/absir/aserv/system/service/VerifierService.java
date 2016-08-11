@@ -59,34 +59,32 @@ public class VerifierService {
         return HelperRandom.randHashId(dist);
     }
 
+    public static JVerifier createVerifier(String id, String tag, String value, int intValue, long lifeTime) {
+        JVerifier verifier = new JVerifier();
+        verifier.setId(id);
+        verifier.setTag(tag);
+        verifier.setValue(value);
+        verifier.setIntValue(intValue);
+        if (lifeTime > 0) {
+            verifier.setPassTime(ContextUtils.getContextTime() + lifeTime);
+        }
+
+        return verifier;
+    }
+
     /**
      * 添加验证
      */
     @Transaction
     public JVerifier persistVerifier(Object dist, String tag, String value, long lifeTime) {
-        String id = randVerifierId(dist);
-        JVerifier verifier = new JVerifier();
-        verifier.setId(id);
-        verifier.setTag(tag);
-        verifier.setValue(value);
-        if (lifeTime > 0) {
-            verifier.setPassTime(ContextUtils.getContextTime() + lifeTime);
-        }
-
+        JVerifier verifier = createVerifier(randVerifierId(dist), tag, value, 0, lifeTime);
         BeanDao.getSession().persist(verifier);
         return verifier;
     }
 
     @Transaction
     public JVerifier mergeVerifier(String id, String tag, String value, long lifeTime) {
-        JVerifier verifier = new JVerifier();
-        verifier.setId(id);
-        verifier.setTag(tag);
-        verifier.setValue(value);
-        if (lifeTime > 0) {
-            verifier.setPassTime(ContextUtils.getContextTime() + lifeTime);
-        }
-
+        JVerifier verifier = createVerifier(id, tag, value, 0, lifeTime);
         BeanDao.getSession().merge(verifier);
         return verifier;
     }
