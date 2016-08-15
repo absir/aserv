@@ -75,13 +75,13 @@ public class SingleAdvice implements IMethodAdvice<String> {
     @Override
     public Object before(AdviceInvoker invoker, Object proxy, Method method, Object[] args, String advice) throws Throwable {
         String singleId = advice.length() == 0 ? getMethodSingleId(proxy, method, args) : advice;
-        JVerifier verifier = ME.entrySingle(singleId);
+        JVerifier verifier = ME.enterSingle(singleId);
         if (verifier != null) {
             try {
                 return invoker.invoke(proxy);
 
             } finally {
-                ME.leftSingle(verifier);
+                ME.exitSingle(verifier);
             }
         }
 
@@ -123,7 +123,7 @@ public class SingleAdvice implements IMethodAdvice<String> {
     }
 
     @Transaction
-    public JVerifier entrySingle(String singleId) {
+    public JVerifier enterSingle(String singleId) {
         if (verifierQueue == null) {
             synchronized (this) {
                 if (verifierQueue == null) {
@@ -143,7 +143,7 @@ public class SingleAdvice implements IMethodAdvice<String> {
     }
 
     @Transaction
-    public void leftSingle(JVerifier verifier) {
+    public void exitSingle(JVerifier verifier) {
         Session session = BeanDao.getSession();
         if (verifierQueue != null) {
             verifierQueue.remove(verifier);

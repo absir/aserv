@@ -24,6 +24,7 @@ import com.absir.bean.inject.value.Value;
 import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.cron.CronFixDelayRunnable;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.util.UtilAbsir;
 import com.absir.orm.hibernate.SessionFactoryBean;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
@@ -52,6 +53,9 @@ public class VerifierService {
 
     @Value("verifier.clear")
     private long clearFixDelay = 8 * 3600000;
+
+    @Value("verifier.before")
+    private long clearBeforeDelay = UtilAbsir.DAY_TIME;
 
     private Map<String, CrudEntity> nameMapCrudEntity;
 
@@ -249,7 +253,8 @@ public class VerifierService {
             return;
         }
 
-        long passTime = ContextUtils.getContextTime() - 3600000;
+        // 清理一天前的
+        long passTime = ContextUtils.getContextTime() - clearBeforeDelay;
         for (Entry<String, CrudEntity> entry : nameMapCrudEntity.entrySet()) {
             try {
                 if (entry.getValue() != null) {
@@ -259,11 +264,12 @@ public class VerifierService {
                     while (iterator.hasNext()) {
                         CrudUtils.crud(Crud.DELETE, true, null, entry.getValue().getJoEntity(), iterator.next(), null, null);
                     }
-                }
 
-                QueryDaoUtils.createQueryArray(BeanDao.getSession(),
-                        "DELETE FROM " + entry.getKey() + " o WHERE o.passTime > 0 AND o.passTime < ?", passTime)
-                        .executeUpdate();
+                } else {
+                    QueryDaoUtils.createQueryArray(BeanDao.getSession(),
+                            "DELETE FROM " + entry.getKey() + " o WHERE o.passTime > 0 AND o.passTime < ?", passTime)
+                            .executeUpdate();
+                }
 
             } catch (Throwable e) {
                 LOGGER.error("clear expired verifier " + entry.getKey() + " error!", e);

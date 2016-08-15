@@ -8,6 +8,7 @@
 package com.absir.data.helper;
 
 import com.absir.core.helper.HelperIO;
+import com.absir.core.kernel.KernelLang;
 import com.absir.data.json.DataDeserializationContext;
 import com.absir.data.json.DataDeserializationContext.JsonDeserializerResolver;
 import com.absir.data.json.ProtoJsonDeserializer;
@@ -151,6 +152,10 @@ public class HelperDatabind {
     }
 
     public static Object[] readArray(InputStream inputStream, Type... toTypes) throws IOException {
+        if (toTypes.length == 0) {
+            return KernelLang.NULL_OBJECTS;
+        }
+
         return readArray(MESSAGE_PACK_FACTORY.createParser(inputStream), toTypes);
     }
 
@@ -175,6 +180,10 @@ public class HelperDatabind {
     }
 
     public static Object[] readArray(byte[] bytes, int off, int len, Type... toTypes) throws IOException {
+        if (toTypes.length == 0) {
+            return KernelLang.NULL_OBJECTS;
+        }
+
         if (len <= 0) {
             len = bytes.length;
         }
