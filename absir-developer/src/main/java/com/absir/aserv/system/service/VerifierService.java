@@ -155,6 +155,11 @@ public class VerifierService {
         return passTime < 1 ? 1 : passTime;
     }
 
+    public static void passOperation(Session session, long passTime, JVerifier verifier) {
+        QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.passTime = ? WHERE o.id = ? AND o.passTime = ?", passTime, verifier.getId(), verifier.getPassTime()).executeUpdate();
+        verifier.setPassTime(passTime);
+    }
+
     public static void doneOperation(Session session, JVerifier verifier, String tag, String value, int intValue) {
         QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.tag = ?, o.value = ?, o.intValue = ? WHERE o.id = ? AND o.passTime = ?", tag, value, intValue, verifier.getId(), verifier.getPassTime()).executeUpdate();
     }

@@ -9,7 +9,7 @@ package com.absir.server.socket.resolver;
 
 import com.absir.core.kernel.KernelLang.PropertyFilter;
 import com.absir.core.util.UtilContext;
-import com.absir.core.util.UtilContext.RunnableGuaranted;
+import com.absir.core.util.UtilContext.RunnableGuarantee;
 import com.absir.server.socket.SelSession;
 import com.absir.server.socket.SocketBuffer;
 import com.absir.server.socket.SocketServer;
@@ -242,7 +242,7 @@ public class SocketSessionResolver implements ISessionResolver {
     public void unRegister(final Serializable id, final SocketChannel socketChannel, final SelSession selSession)
             throws Throwable {
         final long currentTime = System.currentTimeMillis();
-        UtilContext.getThreadPoolExecutor().execute(new RunnableGuaranted() {
+        UtilContext.getThreadPoolExecutor().execute(new RunnableGuarantee() {
 
             @Override
             public void run() {

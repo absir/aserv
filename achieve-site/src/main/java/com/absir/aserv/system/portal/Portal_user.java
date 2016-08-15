@@ -212,6 +212,10 @@ public class portal_user extends PortalServer {
      */
     @Errors
     public void email(@Validate FEmailCode emailCode, Input input) {
+        if (!Pag.CONFIGURE.hasMessage()) {
+            throw new ServerException(ServerStatus.ON_DENIED);
+        }
+
         JUser user = PortalService.ME.verifyUser(input);
         PortalService.ME.verifyEmailOrMobile(emailCode.email, PortalService.BIND_EMAIL_TAG, emailCode.code, 2, true);
         user.setEmail(emailCode.email);
@@ -223,9 +227,13 @@ public class portal_user extends PortalServer {
      */
     @Errors
     public void mobile(@Validate FMobileCode mobileCode, Input input) {
+        if (!Pag.CONFIGURE.hasMessage()) {
+            throw new ServerException(ServerStatus.ON_DENIED);
+        }
+
         JUser user = PortalService.ME.verifyUser(input);
-        PortalService.ME.verifyEmailOrMobile(mobileCode.mobile, PortalService.BIND_EMAIL_TAG, mobileCode.code, 2, true);
-        user.setEmail(mobileCode.mobile);
+        PortalService.ME.verifyEmailOrMobile(mobileCode.mobile, PortalService.BIND_MOBILE_TAG, mobileCode.code, 3, true);
+        user.setMobile(mobileCode.mobile);
         CrudServiceUtils.merge("JUser", null, user, true, null, null);
     }
 

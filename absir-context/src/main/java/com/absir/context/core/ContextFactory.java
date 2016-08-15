@@ -16,7 +16,7 @@ import com.absir.core.kernel.KernelClass;
 import com.absir.core.util.UtilAbsir;
 import com.absir.core.util.UtilAtom;
 import com.absir.core.util.UtilContext;
-import com.absir.core.util.UtilContext.RunnableGuaranted;
+import com.absir.core.util.UtilContext.RunnableGuarantee;
 import com.absir.core.util.UtilDump;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class ContextFactory {
                     if (contextBase.isExpiration() || contextBase.stepDone(contextTime)) {
                         contextBaseIterator.remove();
                         if (!contextBase.uninitializeDone()) {
-                            threadPoolExecutor.execute(new RunnableGuaranted() {
+                            threadPoolExecutor.execute(new RunnableGuarantee() {
 
                                 @Override
                                 public void run() {
@@ -128,7 +128,7 @@ public class ContextFactory {
                             }
 
                         } else {
-                            threadPoolExecutor.execute(new RunnableGuaranted() {
+                            threadPoolExecutor.execute(new RunnableGuarantee() {
 
                                 @Override
                                 public void run() {
@@ -365,7 +365,7 @@ public class ContextFactory {
             }
 
             utilAtom.increment();
-            threadPoolExecutor.execute(new RunnableGuaranted() {
+            threadPoolExecutor.execute(new RunnableGuarantee() {
 
                 @Override
                 public void run() {
@@ -397,7 +397,7 @@ public class ContextFactory {
                 }
 
                 utilAtom.increment();
-                threadPoolExecutor.execute(new RunnableGuaranted() {
+                threadPoolExecutor.execute(new RunnableGuarantee() {
 
                     @Override
                     public void run() {

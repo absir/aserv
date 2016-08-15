@@ -38,7 +38,7 @@ public abstract class InputSocket extends Input {
 
     public static final byte[] NONE_RESPONSE_BYTES = NONE_RESPONSE.getBytes();
 
-    private SelSession selSession;
+    protected SelSession selSession;
 
     private SocketChannel socketChannel;
 
@@ -64,6 +64,7 @@ public abstract class InputSocket extends Input {
 
     public InputSocket(InModel model, InputSocketAtt inputSocketAtt, SocketChannel socketChannel) {
         super(model);
+        this.selSession = inputSocketAtt.selSession;
         this.socketChannel = socketChannel;
         setId(inputSocketAtt.getId());
         uri = inputSocketAtt.getUrl();
@@ -141,6 +142,16 @@ public abstract class InputSocket extends Input {
 
     public SocketChannel getSocketChannel() {
         return socketChannel;
+    }
+
+    public Object getMeta(String name) {
+        return selSession == null ? null : selSession.getMeta(name);
+    }
+
+    public void setMeta(String name, Object value) {
+        if (selSession != null) {
+            selSession.setMeta(name, value);
+        }
     }
 
     @Override
@@ -316,6 +327,8 @@ public abstract class InputSocket extends Input {
 
         protected byte flag;
 
+        protected SelSession selSession;
+
         protected int callbackIndex;
 
         protected String url;
@@ -342,22 +355,23 @@ public abstract class InputSocket extends Input {
             this.id = id;
             this.buffer = buffer;
             this.flag = buffer[off];
-            int headerlength = off + 1;
+            this.selSession = selSession;
+            int headerLength = off + 1;
             if ((flag & SocketAdapter.STREAM_FLAG) != 0) {
-                headerlength += 4;
+                headerLength += 4;
             }
 
             if ((flag & SocketAdapter.CALLBACK_FLAG) != 0) {
-                callbackIndex = KernelByte.getLength(buffer, headerlength);
-                headerlength += 4;
+                callbackIndex = KernelByte.getLength(buffer, headerLength);
+                headerLength += 4;
             }
 
             if ((flag & SocketAdapter.POST_FLAG) != 0) {
-                postDataLength = KernelByte.getLength(buffer, headerlength);
-                headerlength += 4;
+                postDataLength = KernelByte.getLength(buffer, headerLength);
+                headerLength += 4;
             }
 
-            url = new String(buffer, headerlength, buffer.length - headerlength - postDataLength,
+            url = new String(buffer, headerLength, buffer.length - headerLength - postDataLength,
                     ContextUtils.getCharset());
             this.inputStream = inputStream;
         }
@@ -372,6 +386,10 @@ public abstract class InputSocket extends Input {
 
         public byte getFlag() {
             return flag;
+        }
+
+        public SelSession getSelSession() {
+            return selSession;
         }
 
         public InMethod getMethod() {
