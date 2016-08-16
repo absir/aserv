@@ -10,7 +10,7 @@ package com.absir.aserv.system.service;
 import com.absir.aserv.crud.CrudEntity;
 import com.absir.aserv.crud.CrudUtils;
 import com.absir.aserv.system.bean.JVerifier;
-import com.absir.aserv.system.bean.proxy.JiPass;
+import com.absir.aserv.system.bean.proxy.IPassClear;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
@@ -222,7 +222,7 @@ public class VerifierService {
             for (Entry<String, Entry<Class<?>, SessionFactory>> entry : sessionFactoryBean
                     .getJpaEntityNameMapEntityClassFactory().entrySet()) {
                 Entry<Class<?>, SessionFactory> value = entry.getValue();
-                if (value.getValue() == sessionFactory && JiPass.class.isAssignableFrom(value.getClass())) {
+                if (value.getValue() == sessionFactory && IPassClear.class.isAssignableFrom(value.getClass())) {
                     JoEntity joEntity = new JoEntity(entry.getKey(), entry.getValue().getKey());
                     nameMapCrudEntity.put(entry.getKey(), CrudUtils.getCrudEntity(joEntity));
                 }
@@ -255,24 +255,32 @@ public class VerifierService {
 
         // 清理一天前的
         long passTime = ContextUtils.getContextTime() - clearBeforeDelay;
+        Session session = BeanDao.getSession();
         for (Entry<String, CrudEntity> entry : nameMapCrudEntity.entrySet()) {
             try {
                 if (entry.getValue() != null) {
-                    Iterator<Object> iterator = QueryDaoUtils.createQueryArray(BeanDao.getSession(),
+                    Iterator<Object> iterator = QueryDaoUtils.createQueryArray(session,
                             "SELECT o FROM " + entry.getKey() + " o WHERE o.passTime > 0 AND o.passTime < ?",
                             passTime).iterate();
                     while (iterator.hasNext()) {
-                        CrudUtils.crud(Crud.DELETE, true, null, entry.getValue().getJoEntity(), iterator.next(), null, null);
+                        Object entity = iterator.next();
+                        try {
+                            CrudUtils.crud(Crud.DELETE, true, null, entry.getValue().getJoEntity(), entity, null, null);
+
+                        } catch (Exception e) {
+                            LOGGER.error("clear expired verifier " + entry.getKey() + " crud " + entity + " error", e);
+                            session.clear();
+                        }
                     }
 
                 } else {
-                    QueryDaoUtils.createQueryArray(BeanDao.getSession(),
+                    QueryDaoUtils.createQueryArray(session,
                             "DELETE FROM " + entry.getKey() + " o WHERE o.passTime > 0 AND o.passTime < ?", passTime)
                             .executeUpdate();
                 }
 
             } catch (Throwable e) {
-                LOGGER.error("clear expired verifier " + entry.getKey() + " error!", e);
+                LOGGER.error("clear expired verifier " + entry.getKey() + " error", e);
             }
         }
     }

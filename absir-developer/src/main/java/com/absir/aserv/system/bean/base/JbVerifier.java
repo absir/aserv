@@ -7,7 +7,7 @@
  */
 package com.absir.aserv.system.bean.base;
 
-import com.absir.aserv.system.bean.proxy.JiPass;
+import com.absir.aserv.system.bean.proxy.IPassClear;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.validator.value.NotEmpty;
@@ -16,7 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public class JbVerifier extends JbBase implements JiPass {
+public class JbVerifier extends JbBase implements IPassClear {
 
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @NotEmpty
