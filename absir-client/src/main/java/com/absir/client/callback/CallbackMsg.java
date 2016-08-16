@@ -110,11 +110,11 @@ public abstract class CallbackMsg<T> implements CallbackAdapterStream {
     }
 
     protected Object read(byte[] bytes, int off, int len, Type toType) throws IOException {
-        return HelperDatabind.read(bytes, off, len, toType);
+        return HelperDatabind.PACK.read(bytes, off, len, toType);
     }
 
     protected Object read(InputStream inputStream, Type toType) throws IOException {
-        return HelperDatabind.read(inputStream, toType);
+        return HelperDatabind.PACK.read(inputStream, toType);
     }
 
     public abstract void doWithBean(T bean, boolean ok, byte[] buffer, SocketAdapter adapter);

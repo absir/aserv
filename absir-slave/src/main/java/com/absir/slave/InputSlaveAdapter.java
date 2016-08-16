@@ -186,7 +186,7 @@ public class InputSlaveAdapter extends SocketAdapterSel {
 
     public void sendData(String uri, Object postData, int timeout, CallbackMsg<?> callbackMsg) throws IOException {
         sendData(uri.getBytes(ContextUtils.getCharset()), true, false,
-                postData == null ? null : HelperDatabind.writeAsBytes(postData), timeout, callbackMsg);
+                postData == null ? null : HelperDatabind.PACK.writeAsBytes(postData), timeout, callbackMsg);
     }
 
 }

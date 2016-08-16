@@ -9,6 +9,7 @@ package com.absir.proto.test;
 
 import G2.Protocol.PActivateHorseGenius;
 import com.absir.data.helper.HelperDatabind;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
@@ -22,8 +23,8 @@ public class UtilMsgTest {
 
     @Test
     public void test() {
-        JavaType type = HelperDatabind.OBJECT_MAPPER.constructType(PActivateHorseGenius.class);
-        HelperDatabind.OBJECT_MAPPER.canDeserialize(type);
+        JavaType type = HelperDatabind.JSON_MAPPER.constructType(PActivateHorseGenius.class);
+        HelperDatabind.JSON_MAPPER.canDeserialize(type);
 
         try {
             TestA testA = new TestA();
@@ -36,35 +37,40 @@ public class UtilMsgTest {
 
             ObjectMapper mapper = new ObjectMapper();
             System.out.println(mapper.writeValueAsString(testA));
+            byte[] buffer = new HelperDatabind.DataBind(new ObjectMapper(), new JsonFactory()).writeAsBytesArray(testA, testA, testA);
+            System.out.println(new String(buffer));
+            Object[] testAs = new HelperDatabind.DataBind(new ObjectMapper(), new JsonFactory()).readArray(buffer, TestA.class, TestA.class, TestA.class);
+            System.out.println(mapper.writeValueAsString(testAs));
 
-            
 
-            byte[] dataBytes = HelperDatabind.writeAsBytesArray(testA);
-            Object[] values = HelperDatabind.readArray(dataBytes, (Type) null);
+            byte[] dataBytes = HelperDatabind.PACK.writeAsBytesArray(testA);
+
+
+            Object[] values = HelperDatabind.PACK.readArray(dataBytes, (Type) null);
+
 
             System.out.println(mapper.writeValueAsString(values));
             System.out.println(mapper.writeValueAsString(values[0]));
 
-            byte[] bytes = HelperDatabind.writeAsBytes(testA);
+            byte[] bytes = HelperDatabind.PACK.writeAsBytes(testA);
             for (int i = 0; i < 10; i++) {
-                bytes = HelperDatabind.writeAsBytes(testA);
+                bytes = HelperDatabind.PACK.writeAsBytes(testA);
             }
 
             System.out.println(new String(bytes));
 
 
-
-            TestA a = (TestA) HelperDatabind.read(bytes, TestA.class);
+            TestA a = (TestA) HelperDatabind.PACK.read(bytes, TestA.class);
             for (int i = 0; i < 10; i++) {
-                HelperDatabind.read(bytes, TestA.class);
+                HelperDatabind.PACK.read(bytes, TestA.class);
             }
 
             System.out.println(a.genius.getGeniusId());
             System.out.println(a.genius.getIndex());
 
-            bytes = HelperDatabind.writeAsBytes(testA.genius);
+            bytes = HelperDatabind.PACK.writeAsBytes(testA.genius);
             System.out.println(new String(bytes));
-            PActivateHorseGenius genius = (PActivateHorseGenius) HelperDatabind.read(bytes, PActivateHorseGenius.class);
+            PActivateHorseGenius genius = (PActivateHorseGenius) HelperDatabind.PACK.read(bytes, PActivateHorseGenius.class);
             System.out.println(genius.getGeniusId());
             System.out.println(genius.getIndex());
 

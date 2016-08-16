@@ -20,22 +20,22 @@ public class MsgBodyConverter implements IBodyConverter {
 
     @Override
     public Object readBodyParameterValue(OnPut onPut, int group, String input, Class<?> parameterType) throws Exception {
-        return HelperDatabind.read(input.getBytes(ContextUtils.getCharset()), parameterType);
+        return HelperDatabind.PACK.read(input.getBytes(ContextUtils.getCharset()), parameterType);
     }
 
     @Override
     public Object readBodyParameterValue(OnPut onPut, int group, InputStream inputStream, Class<?> parameterType) throws Exception {
-        return HelperDatabind.read(inputStream, parameterType);
+        return HelperDatabind.PACK.read(inputStream, parameterType);
     }
 
     @Override
     public byte[] writeAsBytes(OnPut onPut, Object returnValue) throws Exception {
-        return HelperDatabind.writeAsBytes(returnValue);
+        return HelperDatabind.PACK.writeAsBytes(returnValue);
     }
 
     @Override
     public void writeValue(OnPut onPut, Object returnValue, OutputStream outputStream) throws Exception {
-        HelperDatabind.write(outputStream, returnValue);
+        HelperDatabind.PACK.write(outputStream, returnValue);
     }
 
     @Override

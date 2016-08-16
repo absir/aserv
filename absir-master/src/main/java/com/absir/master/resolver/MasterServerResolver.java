@@ -110,7 +110,7 @@ public class MasterServerResolver extends SocketServerResolver {
 
     public void sendData(SocketChannel socketChannel, String uri, Object postData, CallbackMsg<?> callbackMsg)
             throws IOException {
-        sendDataBytes(socketChannel, uri, postData == null ? null : HelperDatabind.writeAsBytes(postData), callbackMsg);
+        sendDataBytes(socketChannel, uri, postData == null ? null : HelperDatabind.PACK.writeAsBytes(postData), callbackMsg);
     }
 
     public void sendDataBytes(SocketChannel socketChannel, String uri, byte[] postData, CallbackMsg<?> callbackMsg)

@@ -39,6 +39,8 @@ public class Site implements KernelLang.GetTemplate<String, JetTemplate> {
 
     public static final String VERIFY_ERROR = LangCodeUtils.get("验证码错误", Site.class);
 
+    public static final String REGISTER_SUCCESS = LangCodeUtils.get("注册成功", Site.class);
+
     public static final String USER_NOT_EXIST = LangCodeUtils.get("用户不存在", Site.class);
 
     public static final String PASSWORD_ERROR = LangCodeUtils.get("密码错误", Site.class);
@@ -50,8 +52,6 @@ public class Site implements KernelLang.GetTemplate<String, JetTemplate> {
     public static final String COULD_NOT_USE = LangCodeUtils.get("无法使用", Site.class);
 
     public static final String LOGIN_SUCCESS = LangCodeUtils.get("登录成功", Site.class);
-
-    public static final String REGISTER_SUCCESS = LangCodeUtils.get("注册成功", Site.class);
 
     public static final String USERNAME_HAD = LangCodeUtils.get("不必绑定用户名", Site.class);
 

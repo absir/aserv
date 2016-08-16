@@ -8,6 +8,7 @@
 package com.absir.data.base;
 
 import com.absir.data.value.IDirty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,7 @@ public class DDirtyM implements IDirty {
         return false;
     }
 
+    @JsonIgnore
     @Override
     public boolean isDirty() {
         return dirty != null;

@@ -17,13 +17,13 @@ public abstract class CallbackJson<T> extends CallbackMsg<T> {
 
     @Override
     protected Object read(byte[] bytes, int off, int len, Type toType) throws IOException {
-        return HelperDatabind.OBJECT_MAPPER.readValue(bytes, off, len,
-                HelperDatabind.OBJECT_MAPPER.constructType(toType));
+        return HelperDatabind.JSON_MAPPER.readValue(bytes, off, len,
+                HelperDatabind.JSON_MAPPER.constructType(toType));
     }
 
     @Override
     protected Object read(InputStream inputStream, Type toType) throws IOException {
-        return HelperDatabind.OBJECT_MAPPER.readValue(inputStream, HelperDatabind.OBJECT_MAPPER.constructType(toType));
+        return HelperDatabind.JSON_MAPPER.readValue(inputStream, HelperDatabind.JSON_MAPPER.constructType(toType));
     }
 
 }

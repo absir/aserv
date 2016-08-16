@@ -135,7 +135,7 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
         slaveSynch.setSlaveAutoSynch(autoSynch);
         try {
             slaveSynch.setPostData(postData == null ? null
-                    : postData.getClass() == byte[].class ? (byte[]) postData : HelperDatabind.writeAsBytes(postData));
+                    : postData.getClass() == byte[].class ? (byte[]) postData : HelperDatabind.PACK.writeAsBytes(postData));
             BeanDao.getSession().merge(slaveSynch);
             if (slaveSynch.isSynched()) {
                 ME.addSlaveSynch(slaveSynch);

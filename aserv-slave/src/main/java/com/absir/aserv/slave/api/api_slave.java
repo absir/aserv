@@ -44,7 +44,7 @@ public class api_slave extends ApiSlave {
     public void option(String entityName, int option, @Body byte[] postData) throws IOException {
         ICrudSupply crudSupply = CrudService.ME.getCrudSupply(entityName);
         Class<?> entityClass = crudSupply.getEntityClass(entityName);
-        Object entity = HelperDatabind.read(postData, 0, postData.length, entityClass);
+        Object entity = HelperDatabind.PACK.read(postData, 0, postData.length, entityClass);
         if (option == 0) {
             crudSupply.mergeEntity(entityName, entity, false);
 

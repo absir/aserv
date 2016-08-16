@@ -12,8 +12,11 @@ import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelCharset;
 import com.absir.core.kernel.KernelString;
+import com.absir.data.helper.HelperDatabind;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.apache.commons.codec.binary.Base64;
@@ -31,13 +34,7 @@ import java.util.Map.Entry;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class HelperJson {
 
-    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-    static {
-        // OBJECT_MAPPER.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
-        OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    }
+    public static final ObjectMapper OBJECT_MAPPER = HelperDatabind.JSON_MAPPER;
 
     public static String encode(Object obj) throws IOException {
         if (obj == null) {

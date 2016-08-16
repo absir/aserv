@@ -58,7 +58,7 @@ public class SlaverMasterService {
         masterSynch.setUpdateTime(System.currentTimeMillis());
         try {
             masterSynch.setPostData(postData == null ? null
-                    : postData.getClass() == byte[].class ? (byte[]) postData : HelperDatabind.writeAsBytes(postData));
+                    : postData.getClass() == byte[].class ? (byte[]) postData : HelperDatabind.PACK.writeAsBytes(postData));
             BeanDao.getSession().merge(masterSynch);
             ME.checkSyncs();
             return true;

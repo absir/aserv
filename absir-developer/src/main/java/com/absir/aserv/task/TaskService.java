@@ -96,7 +96,7 @@ public class TaskService implements IMethodInject<String> {
     public boolean invokeTask(String name, byte[] dataParams) throws IOException, InvocationTargetException, IllegalAccessException {
         TaskMethod taskMethod = taskMethodMap == null ? null : taskMethodMap.get(name);
         if (taskMethod != null) {
-            Object[] params = HelperDatabind.readArray(dataParams, (Type[]) taskMethod.paramTypes);
+            Object[] params = HelperDatabind.PACK.readArray(dataParams, (Type[]) taskMethod.paramTypes);
             return invokeTaskMethod(name, taskMethod, params);
         }
 

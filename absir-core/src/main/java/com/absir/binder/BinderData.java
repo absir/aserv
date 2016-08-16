@@ -16,6 +16,7 @@ import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.property.Property;
 import com.absir.property.PropertyData;
+import com.absir.validator.IValidator;
 import com.absir.validator.Validator;
 import com.absir.validator.ValidatorSupply;
 
@@ -174,6 +175,10 @@ public class BinderData extends DynaBinder {
                             }
                         }
                     }
+                }
+
+                if (toObject instanceof IValidator) {
+                    ((IValidator) toObject).validatorResult(propertyPath, binderResult);
                 }
 
                 binderResult.setPropertyPath(propertyPath);
