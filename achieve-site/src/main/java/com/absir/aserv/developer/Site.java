@@ -51,6 +51,8 @@ public class Site implements KernelLang.GetTemplate<String, JetTemplate> {
 
     public static final String LOGIN_SUCCESS = LangCodeUtils.get("登录成功", Site.class);
 
+    public static final String REGISTER_SUCCESS = LangCodeUtils.get("注册成功", Site.class);
+
     public static final String USERNAME_HAD = LangCodeUtils.get("不必绑定用户名", Site.class);
 
     public static final String EMAIL_ERROR = LangCodeUtils.get("请输入有效的邮箱", Site.class);

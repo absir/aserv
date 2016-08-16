@@ -3,7 +3,7 @@
 "ok": 1,
 \#end
 \#if(verifies)
-"verifies": \${verifies.jsonSafe())},
+"verifies": \${verifies.jsonSafe()},
 \#end
 \#if(url)
 "url": "\${url}",

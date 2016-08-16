@@ -114,6 +114,7 @@ public class portal_user extends PortalServer {
         InModel model = input.getModel();
         if (input.getMethod() == InMethod.POST) {
             PortalService.ME.register(type, SECURITY_NAME, input);
+            model.put("message", input.getLangValue(Site.REGISTER_SUCCESS));
             model.put("url", MenuContextUtils.getSiteRoute() + "user/center");
             return "success";
         }
