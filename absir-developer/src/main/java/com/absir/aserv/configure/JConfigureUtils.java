@@ -15,6 +15,7 @@ import com.absir.aserv.system.bean.JConfigure;
 import com.absir.aserv.system.bean.JEmbedSS;
 import com.absir.aserv.system.helper.HelperAccessor;
 import com.absir.aserv.system.service.BeanService;
+import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
@@ -73,7 +74,7 @@ public abstract class JConfigureUtils {
                             initConfigure(configure);
 
                         } catch (Throwable e) {
-                            e.printStackTrace();
+                            Environment.throwable(e);
                         }
 
                     } else {
@@ -88,7 +89,7 @@ public abstract class JConfigureUtils {
         return (T) configure;
     }
 
-    private static void initConfigure(final JConfigureBase configureBase) {
+    protected static void initConfigure(final JConfigureBase configureBase) {
         String identifier = configureBase.getIdentifier();
         Map<String, JConfigure> configureMap = new HashMap<String, JConfigure>();
         for (JConfigure configure : (List<JConfigure>) BeanService.ME.list("JConfigure", null, 0, 0, "o.id.eid", identifier)) {
@@ -109,8 +110,48 @@ public abstract class JConfigureUtils {
         }
     }
 
+    public static <T extends JConfigureBase> void clearConfigure(Class<T> cls) {
+        synchronized (cls) {
+            JConfigureBase configure = Configure_Class_Map_Instance.get(cls);
+            if (configure != null) {
+                configure.merge();
+                Configure_Class_Map_Instance.remove(cls);
+            }
+        }
+
+        Class<? extends JConfigureBase> configureClass = Configure_Class_Map_Class.get(cls);
+        if (configureClass != null) {
+            clearConfigure(configureClass);
+        }
+    }
+
+    public static <T extends JConfigureBase> void cloneConfigureBase(T configureTo, T configureFrom) {
+        for (Map.Entry<Field, JConfigure> entry : configureFrom.fieldMapConfigure.entrySet()) {
+            configureTo.fieldMapConfigure.put(entry.getKey(), entry.getValue());
+            configureTo.set(entry.getValue().getValue(), entry.getKey());
+        }
+    }
+
+    public static <T extends JConfigureBase> T createCrudConfigure(Class<T> cls) {
+        Class<? extends JConfigureBase> configureClass = Configure_Class_Map_Class.get(cls);
+        if (configureClass != null) {
+            cls = (Class<T>) configureClass;
+        }
+
+        configureClass = cls;
+        T configure = KernelClass.newInstance(cls);
+        configure = LangBundleImpl.ME == null ? configure : LangBundleImpl.ME.getLangProxy(cls.getSimpleName(),
+                configure);
+        cloneConfigureBase(configure, getConfigure(configureClass));
+        return configure;
+    }
+
     public static <T extends JConfigureBase> String getConfigureId(Class<T> cls, Object... args) {
         return cls.getName() + KernelString.implode(args, ',');
+    }
+
+    public <T extends JConfigureBase> T getConfigure(Class<T> cls, Object... initargs) {
+        return initargs.length == 0 ? getConfigure(cls) : getConfigure(cls, getConfigureId(cls, initargs), initargs);
     }
 
     public static <T extends JConfigureBase> T getConfigure(Class<T> cls, String configureKey, Object... initargs) {
@@ -120,11 +161,13 @@ public abstract class JConfigureUtils {
                 configure = Configure_Class_Map_Instance.get(configureKey);
                 if (configure == null) {
                     configure = AopBeanDefine.instanceBeanObject(cls, initargs);
+                    configure = LangBundleImpl.ME == null ? configure : LangBundleImpl.ME.getLangProxy(cls.getSimpleName(),
+                            configure);
                     try {
                         initConfigure(configure);
 
                     } catch (Throwable e) {
-                        e.printStackTrace();
+                        Environment.throwable(e);
                     }
 
                     Configure_Class_Map_Instance.put(configureKey, configure);
@@ -133,20 +176,6 @@ public abstract class JConfigureUtils {
         }
 
         return (T) configure;
-    }
-
-    public static <T extends JConfigureBase> void clearConfigure(Class<T> cls) {
-        synchronized (cls) {
-            JConfigureBase configure = Configure_Class_Map_Instance.get(cls);
-            if (configure != null) {
-                configure.merge();
-                Configure_Class_Map_Instance.remove(cls);
-            }
-        }
-    }
-
-    public static <T extends JConfigureBase> void clearConfigure(Class<T> cls, Object... initargs) {
-        clearConfigure(getConfigureId(cls, initargs));
     }
 
     public static <T extends JConfigureBase> void clearConfigure(String configureKey) {
@@ -159,7 +188,7 @@ public abstract class JConfigureUtils {
         }
     }
 
-    public <T extends JConfigureBase> T getConfigure(Class<T> cls, Object... initargs) {
-        return initargs.length == 0 ? getConfigure(cls) : getConfigure(cls, getConfigureId(cls, initargs), initargs);
+    public static <T extends JConfigureBase> void clearConfigure(Class<T> cls, Object... initargs) {
+        clearConfigure(getConfigureId(cls, initargs));
     }
 }

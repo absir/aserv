@@ -32,12 +32,14 @@ public class JConfigureSupply extends CrudSupply<JConfigureBase> {
 
     @Override
     public Object create(String entityName) {
-        return JConfigureUtils.getConfigure(getEntityClass(entityName));
+        return JConfigureUtils.createCrudConfigure(getEntityClass(entityName));
     }
 
     @Override
     public void mergeEntity(String entityName, Object entity, boolean create) {
-        ((JConfigureBase) entity).merge();
+        JConfigureBase configure = (JConfigureBase) entity;
+        configure.merge();
+        JConfigureUtils.clearConfigure(getEntityClass(entityName));
     }
 
     @Transaction
@@ -47,5 +49,7 @@ public class JConfigureSupply extends CrudSupply<JConfigureBase> {
         for (JConfigure configure : ((JConfigureBase) entity).fieldMapConfigure.values()) {
             session.delete(session.merge(configure));
         }
+
+        JConfigureUtils.clearConfigure(getEntityClass(entityName));
     }
 }

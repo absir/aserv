@@ -10,9 +10,12 @@ package com.absir.proto.test;
 import G2.Protocol.PActivateHorseGenius;
 import com.absir.data.helper.HelperDatabind;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.lang.reflect.Type;
 
 @RunWith(value = JUnit4.class)
 public class UtilMsgTest {
@@ -31,12 +34,25 @@ public class UtilMsgTest {
             testA.genius.setHorseId(2L);
             testA.genius.setIndex(3);
 
+            ObjectMapper mapper = new ObjectMapper();
+            System.out.println(mapper.writeValueAsString(testA));
+
+            
+
+            byte[] dataBytes = HelperDatabind.writeAsBytesArray(testA);
+            Object[] values = HelperDatabind.readArray(dataBytes, (Type) null);
+
+            System.out.println(mapper.writeValueAsString(values));
+            System.out.println(mapper.writeValueAsString(values[0]));
+
             byte[] bytes = HelperDatabind.writeAsBytes(testA);
             for (int i = 0; i < 10; i++) {
                 bytes = HelperDatabind.writeAsBytes(testA);
             }
 
             System.out.println(new String(bytes));
+
+
 
             TestA a = (TestA) HelperDatabind.read(bytes, TestA.class);
             for (int i = 0; i < 10; i++) {

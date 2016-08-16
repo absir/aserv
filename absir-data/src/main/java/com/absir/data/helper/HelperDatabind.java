@@ -127,8 +127,10 @@ public class HelperDatabind {
         parser.nextToken();
         int length = toTypes.length;
         Object[] objects = new Object[length];
+        Type type;
         for (int i = 0; i < length; i++) {
-            objects[i] = OBJECT_MAPPER.readValue(parser, OBJECT_MAPPER.constructType(toTypes[i]));
+            type = toTypes[i];
+            objects[i] = type == null ? OBJECT_MAPPER.reader().readValue(parser) : OBJECT_MAPPER.readValue(parser, OBJECT_MAPPER.constructType(type));
         }
 
         return objects;

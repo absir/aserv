@@ -62,11 +62,11 @@
         \#end
 
         \#if(type == 1)
-        ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.portal.portal_user.FUsername::class, request)}
+        ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.service.PortalService.FUsername::class, request)}
         #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
         \#end
 
-        ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.portal.portal_user.FRegister::class, request)}
+        ${DeveloperUtils::setEntityModel(null, com.absir.aserv.system.service.PortalService.FRegister::class, request)}
         #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
 
         \#if(type == 1)

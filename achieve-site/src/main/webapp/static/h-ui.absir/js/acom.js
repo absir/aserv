@@ -238,15 +238,35 @@ function ab_ajaxCallbackBefore(json, $form, $tForm, callback) {
                 url = location.href;
             }
 
-            var open = data.open;
-            if (open) {
-                ab_safeHref(url, open);
+            var nav_url = function () {
+                if (url === undefined) {
+                    return;
+                }
 
-            } else {
-                location.replace(url);
+                var open = data.open;
+                if (open) {
+                    ab_safeHref(url, open);
+
+                } else {
+                    location.replace(url);
+                }
+
+                nav_url = undefined;
             }
 
-            return;
+            var time = parseInt(data.time);
+            time = isNaN(time) ? 0 : time;
+            if (time < 0) {
+                nav_url();
+                return;
+
+            } else {
+                if (!data.end) {
+                    data.end = nav_url;
+                }
+
+                setTimeout(nav_url, time === 0 ? 3000 : time);
+            }
         }
 
         $tForm = $tForm || $form;
@@ -375,7 +395,12 @@ function ab_ajaxCallbackData(data) {
             }
         }
 
-        layer.alert(message, {icon: icon});
+        var opts = {icon: icon};
+        if (data.end) {
+            opts.end = data.end;
+        }
+
+        layer.alert(message, opts);
     }
 }
 
