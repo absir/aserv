@@ -109,7 +109,9 @@ public abstract class InputSocket extends Input {
     public static boolean writeByteBuffer(SocketBufferResolver bufferResolver, SelSession selSession,
                                           SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes, int offset, int length) {
         int headerLength = callbackIndex == 0 ? flag == 0 ? 0 : 1 : 5;
-        byte[] headerBytes = bufferResolver.createByteHeader(headerLength);
+        ByteBuffer byteBuffer = bufferResolver.createByteBuffer(socketChannel, headerLength, bytes, offset,
+                length);
+        byte[] headerBytes = bufferResolver.createByteHeader(headerLength, byteBuffer);
         if (headerBytes == null) {
             return false;
         }
@@ -123,9 +125,6 @@ public abstract class InputSocket extends Input {
         if (headerLength > 0) {
             headerBytes[headerOffset] = flag;
         }
-
-        ByteBuffer byteBuffer = bufferResolver.createByteBuffer(socketChannel, headerLength, headerBytes, bytes, offset,
-                length);
         synchronized (socketChannel) {
             try {
                 SocketNIO.writeTimeout(socketChannel, ByteBuffer.wrap(headerBytes));

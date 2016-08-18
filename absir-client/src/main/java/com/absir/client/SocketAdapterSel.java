@@ -299,6 +299,9 @@ public class SocketAdapterSel extends SocketAdapter {
         }
     }
 
+    /**
+     * @return make varints mode right set postBuffLen 128(127 VARINTS_1_LENGTH) ~ 10240(16383 VARINTS_2_LENGTH)
+     */
     protected int getPostBuffLen() {
         return 1024;
     }
@@ -334,7 +337,14 @@ public class SocketAdapterSel extends SocketAdapter {
                         try {
                             while ((len = inputStream.read(sendBufer, 9, sendBufer.length)) > 0) {
                                 len += 5;
-                                KernelByte.setLength(sendBufer, 0, len);
+                                if (varints) {
+                                    sendBufer[0] = (byte) ((len & 0x7F) | 0x80);
+                                    sendBufer[1] = (byte) ((len >> 7) & 0x7F);
+
+                                } else {
+                                    KernelByte.setLength(sendBufer, 0, len);
+                                }
+
                                 if (nextIndex.object == null || !sendData(sendBufer, 0, len + 9)) {
                                     return;
                                 }

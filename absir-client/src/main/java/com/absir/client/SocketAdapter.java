@@ -8,6 +8,7 @@
 package com.absir.client;
 
 import com.absir.core.base.Environment;
+import com.absir.core.kernel.KernelByte;
 import com.absir.core.kernel.KernelLang.ObjectEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +88,16 @@ public class SocketAdapter {
     private int disconnectNumber;
 
     protected int maxDisconnectCount = 1;
+
+    protected boolean varints = true;
+
+    public boolean isVarints() {
+        return varints;
+    }
+
+    public void setVarints(boolean varints) {
+        this.varints = varints;
+    }
 
     public static void printException(Throwable e) {
         printException(e);
@@ -455,14 +466,37 @@ public class SocketAdapter {
         for (; off < len; off++) {
             if (buff == null) {
                 if (lengthIndex < 4) {
-                    int length = buffer[off] & 0xFF;
-                    if (lengthIndex > 0) {
-                        length = buffLength + (length << (8 * lengthIndex));
+                    if (varints) {
+                        byte b = buffer[off];
+                        switch (lengthIndex) {
+                            case 0:
+                                buffLength = b & 0x7F;
+                                break;
+                            case 1:
+                                buffLength = (b & 0x7F) << 7;
+                                break;
+                            case 2:
+                                buffLength = (b & 0x7F) << 14;
+                                break;
+                            case 3:
+                                buffLength = (b & 0x7F) << 22;
+                                break;
+                        }
+
+                        if (lengthIndex < 3 && (b & 0x80) == 0) {
+                            lengthIndex = 3;
+                        }
+
+                    } else {
+                        int length = buffer[off] & 0xFF;
+                        if (lengthIndex > 0) {
+                            length = buffLength + (length << (8 * lengthIndex));
+                        }
+
+                        buffLength = length;
                     }
 
-                    buffLength = length;
-                    lengthIndex++;
-                    if (lengthIndex == 4) {
+                    if (++lengthIndex == 4) {
                         if (buffLength >= 0 && buffLength < getMaxBufferLength()) {
                             buff = new byte[buffLength];
                             buffLengthIndex = 0;
@@ -668,10 +702,18 @@ public class SocketAdapter {
                 callbackIndex, postData, 0, postData == null ? 0 : postData.length);
     }
 
+    public static final int VARINTS_1_LENGTH = 0x7F;
+
+    public static final int VARINTS_2_LENGTH = VARINTS_1_LENGTH + (0x7F << 7);
+
+    public static final int VARINTS_3_LENGTH = VARINTS_2_LENGTH + (0x7F << 14);
+
+    public static final int VARINTS_4_LENGTH = VARINTS_3_LENGTH + (0x7F << 22);
+
     public byte[] sendDataBytes(int off, byte[] dataBytes, int dataOff, int dataLen, boolean head, boolean debug,
                                 int flag, int callbackIndex, byte[] postData, int postOff, int postLen) {
         byte headFlag = 0x00;
-        int headLength = off + (callbackIndex == 0 ? 4 : 8);
+        int headLength = off + (callbackIndex == 0 ? 0 : 4);
         if (head) {
             headLength++;
         } else if (callbackIndex != 0) {
@@ -680,10 +722,18 @@ public class SocketAdapter {
         }
 
         int dataLength = dataLen - dataOff;
+        int length;
         byte[] sendDataBytes;
         if (postData == null) {
             // no post
-            dataLength += headLength;
+            length = dataLength += headLength;
+            if (varints) {
+                dataLength += KernelByte.getVarintsLength(dataLength);
+
+            } else {
+                dataLength += 4;
+            }
+
             sendDataBytes = new byte[dataLength];
             if (dataBytes != null) {
                 System.arraycopy(dataBytes, dataOff, sendDataBytes, headLength, dataLength - headLength);
@@ -699,7 +749,14 @@ public class SocketAdapter {
             headFlag |= POST_FLAG;
             headLength += 4;
             int postLength = postLen - postOff;
-            dataLength += headLength + postLength;
+            length = dataLength += headLength + postLength;
+            if (varints) {
+                dataLength += KernelByte.getVarintsLength(dataLength);
+
+            } else {
+                dataLength += 4;
+            }
+
             sendDataBytes = new byte[dataLength];
             if (dataBytes != null) {
                 System.arraycopy(dataBytes, dataOff, sendDataBytes, headLength, dataLength - headLength - postLength);
@@ -731,11 +788,34 @@ public class SocketAdapter {
         }
 
         // send data bytes length
-        dataLength -= 4;
-        sendDataBytes[0] = (byte) dataLength;
-        sendDataBytes[1] = (byte) (dataLength >> 8);
-        sendDataBytes[2] = (byte) (dataLength >> 16);
-        sendDataBytes[3] = (byte) (dataLength >> 24);
+        if (varints) {
+            if (length > VARINTS_1_LENGTH) {
+                sendDataBytes[0] = (byte) ((length & 0x7F) | 0x80);
+                if (length > VARINTS_2_LENGTH) {
+                    sendDataBytes[1] = (byte) (((length >> 7) & 0x7F) | 0x80);
+                    if (length > VARINTS_3_LENGTH) {
+                        sendDataBytes[2] = (byte) (((length >> 14) & 0x7F) | 0x80);
+                        sendDataBytes[3] = (byte) ((length >> 22) & 0x7F);
+
+                    } else {
+                        sendDataBytes[2] = (byte) ((length >> 14) & 0x7F);
+                    }
+
+                } else {
+                    sendDataBytes[1] = (byte) ((length >> 7) & 0x7F);
+                }
+
+            } else {
+                sendDataBytes[0] = (byte) (length & 0x7F);
+            }
+
+        } else {
+            sendDataBytes[0] = (byte) length;
+            sendDataBytes[1] = (byte) (length >> 8);
+            sendDataBytes[2] = (byte) (length >> 16);
+            sendDataBytes[3] = (byte) (length >> 24);
+        }
+
         return sendDataBytes;
     }
 

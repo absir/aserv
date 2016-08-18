@@ -34,10 +34,9 @@ public class SocketBufferResolver implements IBufferResolver {
 
     public static byte[] createByteBufferFull(IBufferResolver bufferResolver, SocketChannel socketChannel,
                                               int headerLength, byte[] bytes, int offset, int length) {
-        byte[] headers = bufferResolver.createByteHeader(headerLength);
-        ByteBuffer byteBuffer = bufferResolver.createByteBuffer(socketChannel, headerLength, headers, bytes, offset,
+        ByteBuffer byteBuffer = bufferResolver.createByteBuffer(socketChannel, headerLength, bytes, offset,
                 length);
-
+        byte[] headers = bufferResolver.createByteHeader(headerLength, byteBuffer);
         int headerLen = headers == null ? 0 : headers.length;
         int bufferOffset = byteBuffer.arrayOffset();
         int bufferLen = headers == null ? 0 : byteBuffer.limit() - bufferOffset;
@@ -85,9 +84,9 @@ public class SocketBufferResolver implements IBufferResolver {
 
     public static boolean writeBufferTimeout(SelSession selSession, IBufferResolver bufferResolver,
                                              SocketChannel socketChannel, int headerLength, byte[] bytes, int offset, int length, long writeTimeout) {
-        byte[] headers = bufferResolver.createByteHeader(headerLength);
-        ByteBuffer byteBuffer = bufferResolver.createByteBuffer(socketChannel, headerLength, headers, bytes, offset,
+        ByteBuffer byteBuffer = bufferResolver.createByteBuffer(socketChannel, headerLength, bytes, offset,
                 length);
+        byte[] headers = bufferResolver.createByteHeader(headerLength, byteBuffer);
         synchronized (socketChannel) {
             try {
                 if (headers != null) {
@@ -156,14 +155,36 @@ public class SocketBufferResolver implements IBufferResolver {
     }
 
     @Override
-    public byte[] createByteHeader(int headerLength) {
-        return new byte[4 + headerLength];
+    public ByteBuffer createByteBuffer(SocketChannel socketChannel, int headerLength, byte[] bytes, int offset, int length) {
+        return ByteBuffer.wrap(bytes, offset, length);
+    }
+
+    protected boolean varints = true;
+
+    public boolean isVarints() {
+        return varints;
+    }
+
+    public void setVarints(boolean varints) {
+        this.varints = varints;
     }
 
     @Override
-    public ByteBuffer createByteBuffer(SocketChannel socketChannel, int headerLength, byte[] headerBytes, byte[] bytes,
-                                       int offset, int length) {
-        KernelByte.setLength(headerBytes, 0, headerLength + length - offset);
-        return ByteBuffer.wrap(bytes, offset, length);
+    public byte[] createByteHeader(int headerLength, ByteBuffer byteBuffer) {
+        int length = headerLength + byteBuffer.limit();
+        if (varints) {
+            if (length > KernelByte.VARINTS_4_LENGTH) {
+                throw new RuntimeException("varints buffer size to max = " + length);
+            }
+
+            byte[] header = new byte[KernelByte.getVarintsLength(length) + headerLength];
+            KernelByte.setVarintsLength(header, 0, length);
+            return header;
+
+        } else {
+            byte[] header = new byte[4 + headerLength];
+            KernelByte.setLength(header, 0, length);
+            return header;
+        }
     }
 }

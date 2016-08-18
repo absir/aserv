@@ -35,4 +35,69 @@ public class KernelByte {
         System.arraycopy(source, sourceIndex, destination, destionationIndex, length);
     }
 
+    public static final int VARINTS_1_LENGTH = 0x7F;
+
+    public static final int VARINTS_2_LENGTH = VARINTS_1_LENGTH + (0x7F << 7);
+
+    public static final int VARINTS_3_LENGTH = VARINTS_2_LENGTH + (0x7F << 14);
+
+    public static final int VARINTS_4_LENGTH = VARINTS_3_LENGTH + (0x7F << 22);
+
+    public static int getVarintsLength(int varints) {
+        if (varints <= VARINTS_1_LENGTH) {
+            return 1;
+        }
+
+        if (varints <= VARINTS_2_LENGTH) {
+            return 2;
+        }
+
+        if (varints <= VARINTS_3_LENGTH) {
+            return 3;
+        }
+
+        return 4;
+    }
+
+    public static int getVarintsLength(byte[] destination, int destionationIndex) {
+        byte b = destination[destionationIndex];
+        int length = b & 0x7F;
+        if ((b & 0x80) != 0) {
+            b = destination[++destionationIndex];
+            length += (b & 0x7F) << 7;
+            if ((b & 0x80) != 0) {
+                b = destination[++destionationIndex];
+                length += (b & 0x7F) << 14;
+                if ((b & 0x80) != 0) {
+                    b = destination[++destionationIndex];
+                    length += (b & 0x7F) << 22;
+                }
+            }
+        }
+
+        return length;
+    }
+
+    public static void setVarintsLength(byte[] destination, int destionationIndex, int length) {
+        if (length > VARINTS_1_LENGTH) {
+            destination[destionationIndex] = (byte) ((length & 0x7F) | 0x80);
+            if (length > VARINTS_2_LENGTH) {
+                destination[++destionationIndex] = (byte) (((length >> 7) & 0x7F) | 0x80);
+                if (length > VARINTS_3_LENGTH) {
+                    destination[++destionationIndex] = (byte) (((length >> 14) & 0x7F) | 0x80);
+                    destination[++destionationIndex] = (byte) ((length >> 22) & 0x7F);
+
+                } else {
+                    destination[++destionationIndex] = (byte) ((length >> 14) & 0x7F);
+                }
+
+            } else {
+                destination[++destionationIndex] = (byte) ((length >> 7) & 0x7F);
+            }
+
+        } else {
+            destination[destionationIndex] = (byte) (length & 0x7F);
+        }
+    }
+
 }

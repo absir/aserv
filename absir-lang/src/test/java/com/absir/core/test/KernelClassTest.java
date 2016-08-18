@@ -1,5 +1,6 @@
 package com.absir.core.test;
 
+import com.absir.core.kernel.KernelByte;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelReflect;
 import org.junit.Test;
@@ -28,5 +29,45 @@ public class KernelClassTest {
         for (Class<?> cls : KernelClass.componentClasses(a2Field.getGenericType())) {
             System.out.println(cls);
         }
+
+        System.out.println(KernelByte.VARINTS_1_LENGTH);
+        System.out.println(KernelByte.VARINTS_2_LENGTH);
+        System.out.println(KernelByte.VARINTS_3_LENGTH);
+        System.out.println(KernelByte.VARINTS_4_LENGTH);
+
+        testVarints(KernelByte.VARINTS_4_LENGTH);
+        testVarints(KernelByte.VARINTS_4_LENGTH - 1);
+        testVarints(KernelByte.VARINTS_4_LENGTH + 1);
+
+        testVarints(0);
+        testVarints(-100);
+        testVarints(65535);
+        testVarints(1024);
+
+        testVarints(Integer.MAX_VALUE);
+
+        testVarints(KernelByte.VARINTS_1_LENGTH);
+        testVarints(KernelByte.VARINTS_2_LENGTH);
+        testVarints(KernelByte.VARINTS_3_LENGTH);
+        testVarints(KernelByte.VARINTS_4_LENGTH);
+
+        testVarints(KernelByte.VARINTS_1_LENGTH + 1);
+        testVarints(KernelByte.VARINTS_2_LENGTH + 1);
+        testVarints(KernelByte.VARINTS_3_LENGTH + 1);
+        testVarints(KernelByte.VARINTS_4_LENGTH + 1);
+
+        testVarints(KernelByte.VARINTS_1_LENGTH - 1);
+        testVarints(KernelByte.VARINTS_2_LENGTH - 1);
+        testVarints(KernelByte.VARINTS_3_LENGTH - 1);
+        testVarints(KernelByte.VARINTS_4_LENGTH - 1);
+    }
+
+    public void testVarints(int varints) {
+        int len = KernelByte.getVarintsLength(varints);
+        byte[] buffer = new byte[len];
+        KernelByte.setVarintsLength(buffer, 0, varints);
+        int readVarints = KernelByte.getVarintsLength(buffer, 0);
+        System.out.println("testVarints[" + varints + "] len:" + len + " read:" + readVarints);
+
     }
 }

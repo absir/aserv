@@ -20,9 +20,8 @@ public interface IBufferResolver {
 
     public void readByteBufferDone(SocketBuffer socketBuffer);
 
-    public byte[] createByteHeader(int headerLength);
-
-    public ByteBuffer createByteBuffer(SocketChannel socketChannel, int headerLength, byte[] headerBytes, byte[] bytes,
+    public ByteBuffer createByteBuffer(SocketChannel socketChannel, int headerLength, byte[] bytes,
                                        int offset, int length);
 
+    public byte[] createByteHeader(int headerLength, ByteBuffer byteBuffer);
 }

@@ -270,9 +270,9 @@ public class SocketServer {
 
     public static byte[] getWriteByteBuffer(IBufferResolver resolver, SocketChannel socketChannel, int headerLength,
                                             byte[] headerBytes, byte[] bytes, int offset, int length) {
-        byte[] headers = resolver.createByteHeader(headerLength);
-        ByteBuffer byteBuffer = resolver.createByteBuffer(socketChannel, headerLength, headerBytes, bytes, offset,
+        ByteBuffer byteBuffer = resolver.createByteBuffer(socketChannel, headerLength, bytes, offset,
                 length);
+        byte[] headers = resolver.createByteHeader(headerLength, byteBuffer);
         byte[] bodys = byteBuffer.array();
         int bOffset = byteBuffer.position();
         int bLimit = byteBuffer.limit();
