@@ -1,5 +1,6 @@
 package com.absir.validator;
 
+import com.absir.bean.lang.ILangMessage;
 import com.absir.binder.BinderResult;
 
 /**
@@ -7,6 +8,6 @@ import com.absir.binder.BinderResult;
  */
 public interface IValidator {
 
-    public void validatorResult(String propertyPath, BinderResult result);
+    public void validatorResult(String propertyPath, BinderResult result, ILangMessage langMessage);
 
 }

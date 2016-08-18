@@ -30,7 +30,7 @@ public enum JeEditable {
     OPTIONAL,
 
     /**
-     * 锁定的(安全)
+     * 锁定显示(安全)
      */
     LOCKABLE,
 

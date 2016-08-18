@@ -13,4 +13,5 @@ import java.lang.annotation.Target;
 public @interface JaSingle {
 
     String value() default "";
+
 }

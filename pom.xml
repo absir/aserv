@@ -55,6 +55,7 @@
         <module>aserv-dubbo-master</module>
         <module>aserv-dubbo-slave</module>
         <module>absir-redis</module>
+        <module>absir-rpc</module>
     </modules>
     <dependencies>
         <dependency>

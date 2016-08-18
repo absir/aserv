@@ -340,6 +340,10 @@ public class SocketAdapterSel extends SocketAdapter {
                                 }
 
                                 if (callbackTimeout != null) {
+                                    if (callbackTimeout.socketAdapter == null) {
+                                        return;
+                                    }
+
                                     callbackTimeout.timeout = UtilContext.getCurrentTime() + timeout;
                                 }
                             }
@@ -394,8 +398,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 }
             };
 
-            registeredRunnables.add(runnable);
-            lastedResgiter();
+            addRegisterRunnable(runnable);
             return runnable;
 
         } finally {

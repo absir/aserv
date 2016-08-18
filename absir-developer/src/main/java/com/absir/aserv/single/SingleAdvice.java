@@ -32,13 +32,20 @@ public class SingleAdvice implements IMethodAdvice<String> {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(SingleAdvice.class);
 
+    @Value("single.agent")
+    protected boolean agent;
+
     @Value("single.idle.time")
-    protected long idleTime = 30000;
+    protected long idleTime = 300000;
 
     @Value("single.delay.time")
-    protected long delayTime = 15000;
+    protected long delayTime = 30000;
 
     protected ConcurrentHashMap<JVerifier, Boolean> verifierQueue;
+
+    public boolean isAgent() {
+        return agent;
+    }
 
     @Inject
     public void init() {

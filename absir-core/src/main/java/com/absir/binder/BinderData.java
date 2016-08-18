@@ -178,7 +178,7 @@ public class BinderData extends DynaBinder {
                 }
 
                 if (toObject instanceof IValidator) {
-                    ((IValidator) toObject).validatorResult(propertyPath, binderResult);
+                    ((IValidator) toObject).validatorResult(propertyPath, binderResult, langMessage);
                 }
 
                 binderResult.setPropertyPath(propertyPath);

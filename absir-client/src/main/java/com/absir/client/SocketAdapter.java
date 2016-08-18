@@ -44,11 +44,11 @@ public class SocketAdapter {
 
     protected boolean registered;
 
-    protected LinkedList<RegisteredRunnable> registeredRunnables = new LinkedList<RegisteredRunnable>();
+    private LinkedList<RegisteredRunnable> registeredRunnables = new LinkedList<RegisteredRunnable>();
 
-    protected CallbackAdapter receiveCallback;
+    private CallbackAdapter receiveCallback;
 
-    protected Map<Integer, ObjectEntry<CallbackAdapter, CallbackTimeout>> receiveCallbacks = new HashMap<Integer, ObjectEntry<CallbackAdapter, CallbackTimeout>>();
+    private Map<Integer, ObjectEntry<CallbackAdapter, CallbackTimeout>> receiveCallbacks = new HashMap<Integer, ObjectEntry<CallbackAdapter, CallbackTimeout>>();
 
     protected boolean receiveStarted;
 
@@ -81,7 +81,12 @@ public class SocketAdapter {
     private int callbackIndex;
 
     private Socket acceptSocket;
-    private boolean tryConntecting;
+
+    private boolean tryConnecting;
+
+    private int disconnectNumber;
+
+    protected int maxDisconnectCount = 1;
 
     public static void printException(Throwable e) {
         printException(e);
@@ -91,8 +96,8 @@ public class SocketAdapter {
      * 开启超时线程
      */
     public static TimeoutThread startTimeout() {
-        TimeoutThread thead = timeoutThread;
-        if (thead == null) {
+        TimeoutThread thread = timeoutThread;
+        if (thread == null) {
             synchronized (SocketAdapter.class) {
                 if (timeoutThread == null) {
                     timeoutThread = new TimeoutThread();
@@ -101,11 +106,11 @@ public class SocketAdapter {
                     timeoutThread.start();
                 }
 
-                thead = timeoutThread;
+                thread = timeoutThread;
             }
         }
 
-        return thead;
+        return thread;
     }
 
     /**
@@ -120,6 +125,10 @@ public class SocketAdapter {
                 }
             }
         }
+    }
+
+    public boolean isConnecting() {
+        return receiveStarted || tryConnecting;
     }
 
     /**
@@ -271,14 +280,14 @@ public class SocketAdapter {
             disconnect(socket);
         }
 
-        if (tryConntecting) {
+        if (tryConnecting) {
             return;
         }
 
         if (socket == null && callbackConnect != null) {
             synchronized (this) {
                 try {
-                    tryConntecting = true;
+                    tryConnecting = true;
                     if (socket == null && !isRetryConnectMax()) {
                         retryConnect++;
                         callbackConnect.doWith(this, 0, null);
@@ -288,13 +297,38 @@ public class SocketAdapter {
                     }
 
                 } finally {
-                    tryConntecting = false;
+                    tryConnecting = false;
                 }
             }
         }
     }
 
+    public final int getDisconnectNumber() {
+        return disconnectNumber;
+    }
+
+    public final int getDisconnectCount(int number) {
+        if (disconnectNumber < number) {
+            return Integer.MAX_VALUE - number + disconnectNumber;
+
+        } else {
+            return disconnectNumber - number;
+        }
+    }
+
+    public final int getMaxDisconnectCount() {
+        return maxDisconnectCount;
+    }
+
+    public void setMaxDisconnectCount(int maxDisconnectCount) {
+        this.maxDisconnectCount = maxDisconnectCount;
+    }
+
     public void close() {
+        if (++disconnectNumber >= Integer.MAX_VALUE) {
+            disconnectNumber = 1;
+        }
+
         if (socket != null) {
             try {
                 socket.close();
@@ -350,44 +384,59 @@ public class SocketAdapter {
     /**
      * 最新登录
      */
-    public boolean lastedResgiter() {
+    public boolean lastedRegister() {
         if (registered) {
-            clearRetryConnect();
             lastedBeat();
-            // 执行登录等待请求
-            if (!registeredRunnables.isEmpty()) {
-                try {
-                    List<RegisteredRunnable> runnables = registeredRunnables;
-                    registeredRunnables = new LinkedList<RegisteredRunnable>();
-                    boolean failed = false;
-                    Socket st = socket;
-                    for (RegisteredRunnable runnable : runnables) {
-                        if (failed) {
-                            if (runnable.removed) {
-
-                            } else {
-                                registeredRunnables.add(runnable);
-                            }
-
-                        } else {
-                            runnable.run();
-                            failed = runnable.failed;
-                            if (failed) {
-                                registeredRunnables.add(runnable);
-                                disconnect(st);
-                            }
-                        }
-                    }
-
-                } catch (Throwable e) {
-                    printException(e);
-                }
-            }
-
+            afterRegisterRunnable();
             return true;
         }
 
         return false;
+    }
+
+    public void afterRegisterRunnable() {
+        clearRetryConnect();
+        if (registered) {
+            // 执行登录等待请求
+            if (!registeredRunnables.isEmpty()) {
+                synchronized (this) {
+                    try {
+                        List<RegisteredRunnable> runnables = registeredRunnables;
+                        registeredRunnables = new LinkedList<RegisteredRunnable>();
+                        boolean failed = false;
+                        Socket st = socket;
+                        for (RegisteredRunnable runnable : runnables) {
+                            if (failed) {
+                                if (runnable.removed) {
+
+                                } else {
+                                    registeredRunnables.add(runnable);
+                                }
+
+                            } else {
+                                runnable.run();
+                                failed = runnable.failed;
+                                if (failed) {
+                                    registeredRunnables.add(runnable);
+                                    disconnect(st);
+                                }
+                            }
+                        }
+
+                    } catch (Throwable e) {
+                        printException(e);
+                    }
+                }
+            }
+        }
+    }
+
+    protected void addRegisterRunnable(RegisteredRunnable registeredRunnable) {
+        synchronized (this) {
+            registeredRunnables.add(registeredRunnable);
+        }
+
+        afterRegisterRunnable();
     }
 
     /**
@@ -483,7 +532,7 @@ public class SocketAdapter {
             acceptSocket = socket;
             if (acceptCallback != null) {
                 acceptCallback.doWith(this, 0, buffer);
-                lastedResgiter();
+                lastedRegister();
                 return;
             }
         }
@@ -491,7 +540,7 @@ public class SocketAdapter {
         // 注册请求
         if (!registered) {
             registerCallback.doWith(this, 0, buffer);
-            lastedResgiter();
+            lastedRegister();
             return;
         }
 
@@ -726,10 +775,8 @@ public class SocketAdapter {
                 failed = !sendData(buffer);
             }
         };
-
-        registeredRunnables.add(runnable);
-        //lastedResgiter();
-        clearRetryConnect();
+        addRegisterRunnable(runnable);
+        afterRegisterRunnable();
         return runnable;
     }
 
@@ -840,7 +887,10 @@ public class SocketAdapter {
         protected abstract void doRun();
     }
 
+
     public static class CallbackTimeout {
+
+        public int disconnectNumber;
 
         public long timeout;
 
@@ -850,26 +900,51 @@ public class SocketAdapter {
 
         public int callbackIndex;
 
+        public boolean isAdapterDisconnect() {
+            SocketAdapter adapter = socketAdapter;
+            if (adapter == null) {
+                return true;
+
+            } else {
+                if (disconnectNumber == 0) {
+                    disconnectNumber = adapter.getDisconnectNumber();
+
+                } else {
+                    if (!adapter.isConnecting() || adapter.getDisconnectCount(disconnectNumber) > adapter.getMaxDisconnectCount()) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         /**
          * 超时执行
          */
         public void run() {
-            if (registeredRunnable != null) {
-                registeredRunnable.removed = true;
+            RegisteredRunnable runnable = registeredRunnable;
+            if (runnable != null) {
+                runnable.removed = true;
             }
 
-            if (socketAdapter != null) {
+            SocketAdapter adapter = socketAdapter;
+            if (adapter != null) {
                 try {
-                    socketAdapter.receiveCallback(0, null, (byte) 0, callbackIndex);
+                    adapter.receiveCallback(0, null, (byte) 0, callbackIndex);
 
                 } catch (Throwable e) {
                     LOGGER.error("socket adapter timeout run", e);
                 }
+
+                socketAdapter = null;
             }
         }
     }
 
     protected static class TimeoutThread extends Thread {
+
+        private boolean stopped;
 
         private final List<CallbackTimeout> addTimeouts = new ArrayList<CallbackTimeout>();
 
@@ -878,8 +953,38 @@ public class SocketAdapter {
          */
         private final List<CallbackTimeout> callbackTimeouts = new LinkedList<CallbackTimeout>();
 
+        public final boolean isStopped() {
+            return stopped;
+        }
+
         public synchronized void add(CallbackTimeout timeout) {
-            addTimeouts.add(timeout);
+            if (stopped) {
+                if (timeout.socketAdapter != null) {
+                    timeout.run();
+                }
+
+            } else {
+                addTimeouts.add(timeout);
+            }
+        }
+
+        private void clearTimeout(boolean stop) {
+            for (CallbackTimeout callbackTimeout : callbackTimeouts) {
+                callbackTimeout.run();
+            }
+
+            synchronized (this) {
+                if (stop) {
+                    stopped = true;
+                }
+
+                for (CallbackTimeout callbackTimeout : addTimeouts) {
+                    callbackTimeout.run();
+                }
+
+                callbackTimeouts.clear();
+                addTimeouts.clear();
+            }
         }
 
         @Override
@@ -887,11 +992,17 @@ public class SocketAdapter {
             try {
                 // 超时执行检测
                 long contextTime;
+                long lastTime = 0;
                 Iterator<CallbackTimeout> iterator;
                 CallbackTimeout callbackTimeout;
                 while (Environment.isActive()) {
-                    Thread.sleep(5000);
+                    Thread.sleep(2000);
                     contextTime = System.currentTimeMillis();
+                    // 防止系统时间往后设置, 超时失败
+                    if (contextTime < lastTime) {
+                        clearTimeout(true);
+                    }
+
                     if (!addTimeouts.isEmpty()) {
                         synchronized (this) {
                             callbackTimeouts.addAll(addTimeouts);
@@ -902,7 +1013,7 @@ public class SocketAdapter {
                     iterator = callbackTimeouts.iterator();
                     while (iterator.hasNext()) {
                         callbackTimeout = iterator.next();
-                        if (callbackTimeout.socketAdapter == null || callbackTimeout.timeout <= contextTime) {
+                        if (callbackTimeout.timeout <= contextTime || callbackTimeout.isAdapterDisconnect()) {
                             callbackTimeout.run();
                             iterator.remove();
                         }
@@ -911,6 +1022,8 @@ public class SocketAdapter {
 
             } catch (InterruptedException e) {
             }
+
+            clearTimeout(true);
         }
     }
 }
