@@ -28,7 +28,7 @@ import java.nio.channels.SocketChannel;
 
 @Base
 @Bean
-public class InputSlaveDispather extends InDispatcher<InputSlaveAtt, SocketChannel> implements ISlaveCallback {
+public class InputSlaveDispatcher extends InDispatcher<InputSlaveAtt, SocketChannel> implements ISlaveCallback {
 
     @Override
     public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {

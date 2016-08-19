@@ -39,6 +39,8 @@ public class SocketAdapter {
 
     public static final byte DEBUG_FLAG = 0x01 << 6;
 
+    public static final byte VARINTS_FLAG = (byte) (0x01 << 7);
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(SocketAdapter.class);
 
     private static TimeoutThread timeoutThread;
@@ -596,13 +598,33 @@ public class SocketAdapter {
         // 转发请求
         int length = buffer.length;
         Integer callbackIndex = null;
-        if (length > 4 && (flag & CALLBACK_FLAG) != 0) {
-            offset += 4;
-            int index = buffer[1] & 0xFF;
-            index += (buffer[2] & 0xFF) << 8;
-            index += (buffer[3] & 0xFF) << 16;
-            index += (buffer[4] & 0xFF) << 24;
-            callbackIndex = index;
+        if (length > 1) {
+            if ((flag & VARINTS_FLAG) != 0) {
+                int b = buffer[1];
+                int index = b & 0x7F;
+                if (length > 2 && (b & 0x80) != 0) {
+                    b = buffer[2];
+                    index += (b & 0x7F) << 7;
+                    if (length > 3 && (b & 0x80) != 0) {
+                        b = buffer[3];
+                        index += (b & 0x7F) << 14;
+                        if (length > 4 && (b & 0x80) != 0) {
+                            b = buffer[4];
+                            index += (b & 0x7F) << 22;
+                        }
+                    }
+                }
+
+                callbackIndex = index;
+
+            } else if (length > 4 && (flag & CALLBACK_FLAG) != 0) {
+                offset += 4;
+                int index = buffer[1] & 0xFF;
+                index += (buffer[2] & 0xFF) << 8;
+                index += (buffer[3] & 0xFF) << 16;
+                index += (buffer[4] & 0xFF) << 24;
+                callbackIndex = index;
+            }
         }
 
         receiveCallback(offset, buffer, flag, callbackIndex);

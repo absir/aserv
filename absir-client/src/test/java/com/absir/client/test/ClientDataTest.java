@@ -18,6 +18,7 @@ public class ClientDataTest {
     @Test
     public void test() {
         System.out.println(SocketAdapter.DEBUG_FLAG);
+        System.out.println(SocketAdapter.VARINTS_FLAG);
     }
 
 }
