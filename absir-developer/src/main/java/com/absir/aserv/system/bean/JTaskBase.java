@@ -51,9 +51,9 @@ public abstract class JTaskBase implements JiActive, IValidator {
     @JaLang("启动时间")
     private long startTime;
 
-    @JaLang("剩余重试次数")
+    @JaLang("重试次数")
     @JaEdit(groups = JaEdit.GROUP_LIST)
-    private int leftRetryCount;
+    private int retryCount;
 
     public String getName() {
         return name;
@@ -128,12 +128,12 @@ public abstract class JTaskBase implements JiActive, IValidator {
         this.startTime = startTime;
     }
 
-    public int getLeftRetryCount() {
-        return leftRetryCount;
+    public int getRetryCount() {
+        return retryCount;
     }
 
-    public void setLeftRetryCount(int leftRetryCount) {
-        this.leftRetryCount = leftRetryCount;
+    public void setRetryCount(int retryCount) {
+        this.retryCount = retryCount;
     }
 
     @Override

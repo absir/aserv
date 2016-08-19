@@ -275,16 +275,15 @@ public class TaskService extends ContextService implements IMethodInject<String>
 
                     } catch (Throwable e) {
                         LOGGER.error("do taskId[" + task.getId() + "] " + task.getName() + " error", e);
-                        int leftRetryCount = task.getLeftRetryCount();
+                        int retryCount = task.getRetryCount();
                         boolean doContinue = true;
-                        if (leftRetryCount >= 0) {
-                            if (leftRetryCount == 0) {
+                        if (retryCount >= 0) {
+                            if (retryCount == 0) {
                                 doContinue = false;
-                                task.setPassTime(ContextUtils.getContextTime());
+                                task.setPassTime(ContextUtils.getContextTime() - 1);
 
                             } else {
-                                task.setLeftRetryCount(--leftRetryCount);
-
+                                task.setRetryCount(--retryCount);
                             }
 
                             session.merge(task);
@@ -306,5 +305,34 @@ public class TaskService extends ContextService implements IMethodInject<String>
         }
 
         return false;
+    }
+
+    /*
+     * 添加任务
+     */
+    @Transaction
+    public void addTask(String name, long beginTime, long passTime, int retryCount, Object... params) throws IOException {
+        JTask task = new JTask();
+        task.setName(name);
+        task.setTaskData(HelperDatabind.PACK.writeAsBytesArray(params));
+        task.setBeginTime(beginTime);
+        task.setPassTime(passTime);
+        task.setRetryCount(retryCount);
+        BeanDao.getSession().persist(task);
+    }
+
+    /*
+     * 添加计划
+     */
+    @Transaction
+    public void addPanel(String id, String name, long beginTime, long passTime, int retryCount, Object... params) throws IOException {
+        JPlan plan = new JPlan();
+        plan.setId(id);
+        plan.setName(name);
+        plan.setTaskData(HelperDatabind.PACK.writeAsBytesArray(params));
+        plan.setBeginTime(beginTime);
+        plan.setPassTime(passTime);
+        plan.setRetryCount(retryCount);
+        BeanDao.getSession().merge(plan);
     }
 }

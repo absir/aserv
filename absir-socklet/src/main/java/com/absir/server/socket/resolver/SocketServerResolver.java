@@ -77,7 +77,7 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
 
                     @Override
                     public void run() {
-                        doDispath(selSession, socketChannel, socketBuffer.getId(), buffer, socketBuffer, inputStream, currentTime);
+                        doDispatch(selSession, socketChannel, socketBuffer.getId(), buffer, socketBuffer, inputStream, currentTime);
                     }
                 });
             }
@@ -110,15 +110,15 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
     @Override
     public void receiveByteBuffer(SocketChannel socketChannel, SelSession selSession, SocketBuffer socketBuffer,
                                   byte[] buffer, long currentTime) {
-        doDispath(selSession, socketChannel, socketBuffer.getId(), buffer, socketBuffer, null, currentTime);
+        doDispatch(selSession, socketChannel, socketBuffer.getId(), buffer, socketBuffer, null, currentTime);
     }
 
     @Override
     public void unRegister(Serializable id, SocketChannel socketChannel, SelSession selSession, long currentTime) {
     }
 
-    protected void doDispath(SelSession selSession, SocketChannel socketChannel, Serializable id, byte[] buffer,
-                             SocketBuffer socketBuffer, InputStream inputStream, long currentTime) {
+    protected void doDispatch(SelSession selSession, SocketChannel socketChannel, Serializable id, byte[] buffer,
+                              SocketBuffer socketBuffer, InputStream inputStream, long currentTime) {
         if (buffer.length > 0) {
             byte flag = buffer[0];
             if ((flag & SocketAdapter.STREAM_FLAG) != 0 && buffer.length > 5) {
