@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Column;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
 import java.io.IOException;
 
 /**
@@ -33,6 +32,7 @@ public abstract class JTaskBase implements JiActive, IValidator {
     private byte[] taskData;
 
     @JaLang("任务数据")
+    @JaEdit(types = "text")
     private transient String taskJson;
 
     @JaLang("开始时间")
@@ -43,16 +43,17 @@ public abstract class JTaskBase implements JiActive, IValidator {
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
     private long passTime;
 
-    @JaLang("版本")
-    @JaEdit(editable = JeEditable.LOCKED)
-    @Version
-    private int version;
+    @JaLang("启动标示")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private String startTag;
 
-    @JaLang("重试剩于次数")
-    private int retryLeftCount;
+    @JaEdit(editable = JeEditable.LOCKABLE, types = "dateTime", groups = JaEdit.GROUP_LIST)
+    @JaLang("启动时间")
+    private long startTime;
 
-    @JaLang("重试间隔时间")
-    private int retryIdleTime;
+    @JaLang("剩余重试次数")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private int leftRetryCount;
 
     public String getName() {
         return name;
@@ -111,28 +112,28 @@ public abstract class JTaskBase implements JiActive, IValidator {
         this.passTime = passTime;
     }
 
-    public int getVersion() {
-        return version;
+    public String getStartTag() {
+        return startTag;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
+    public void setStartTag(String startTag) {
+        this.startTag = startTag;
     }
 
-    public int getRetryLeftCount() {
-        return retryLeftCount;
+    public long getStartTime() {
+        return startTime;
     }
 
-    public void setRetryLeftCount(int retryLeftCount) {
-        this.retryLeftCount = retryLeftCount;
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
     }
 
-    public int getRetryIdleTime() {
-        return retryIdleTime;
+    public int getLeftRetryCount() {
+        return leftRetryCount;
     }
 
-    public void setRetryIdleTime(int retryIdleTime) {
-        this.retryIdleTime = retryIdleTime;
+    public void setLeftRetryCount(int leftRetryCount) {
+        this.leftRetryCount = leftRetryCount;
     }
 
     @Override

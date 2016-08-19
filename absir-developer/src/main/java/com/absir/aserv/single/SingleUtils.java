@@ -9,6 +9,10 @@ public class SingleUtils {
 
     public static final JVerifier VERIFIER = new JVerifier();
 
+    static {
+        VERIFIER.setTag("-1");
+    }
+
     public static JVerifier enterSingle(String singleId) {
         if (ISingle.ME == null) {
             return VERIFIER;

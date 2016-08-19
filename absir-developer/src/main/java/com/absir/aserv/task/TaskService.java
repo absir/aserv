@@ -1,9 +1,11 @@
 package com.absir.aserv.task;
 
 import com.absir.aop.AopProxyUtils;
+import com.absir.aserv.single.SingleUtils;
 import com.absir.aserv.system.bean.JPlan;
 import com.absir.aserv.system.bean.JTask;
 import com.absir.aserv.system.bean.JTaskBase;
+import com.absir.aserv.system.bean.JVerifier;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.domain.DActiver;
 import com.absir.async.value.Async;
@@ -28,7 +30,6 @@ import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.hibernate.boost.L2EntityMergeService;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.Session;
-import org.hibernate.StaleObjectStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -200,7 +201,9 @@ public class TaskService extends ContextService implements IMethodInject<String>
     @Async(notifier = true)
     @Transaction
     public void reloadTask(long contextTime) {
-        while (true) {
+        final boolean[] doContinues = new boolean[]{true};
+        while (doContinues[0]) {
+            doContinues[0] = false;
             List<JTask> tasks = taskDActiver.reloadActives(contextTime);
             if (tasks.isEmpty()) {
                 break;
@@ -212,7 +215,9 @@ public class TaskService extends ContextService implements IMethodInject<String>
                         ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
                             @Override
                             public void run() {
-                                ME.doTaskBase(null, task, taskAtom);
+                                if (ME.doTaskBaseContinue(null, "JTask", task, taskAtom)) {
+                                    doContinues[0] = true;
+                                }
                             }
                         });
 
@@ -232,28 +237,67 @@ public class TaskService extends ContextService implements IMethodInject<String>
     public void reloadPlan(long contextTime) {
         final Session session = BeanDao.getSession();
         List<JPlan> plans = planDActiver.reloadActives(contextTime);
-        for (final JPlan plan : plans) {
-            doTaskBase(session, plan, null);
+        boolean doContinue = true;
+        while (doContinue) {
+            doContinue = false;
+            for (final JPlan plan : plans) {
+                if (doTaskBaseContinue(session, "JPlan", plan, null)) {
+                    doContinue = true;
+                }
+            }
         }
     }
 
     @Transaction
-    protected boolean doTaskBase(Session session, JTaskBase task, UtilAtom atom) {
-        if (session == null) {
-            session = BeanDao.getSession();
-        }
-
+    protected boolean doTaskBaseContinue(Session session, String name, JTaskBase task, UtilAtom atom) {
         try {
-            TaskMethod taskMethod = taskMethodMap == null ? null : taskMethodMap.get(task.getName());
-            if (taskMethod != null) {
-                taskMethod.method.invoke(taskMethod.beanObject, HelperDatabind.PACK.readArray(task.getTaskData(), taskMethod.paramTypes));
-                return true;
+            JVerifier verifier = SingleUtils.enterSingle(name + "@" + task.getId());
+            if (verifier == null) {
+                return false;
             }
 
-        } catch (StaleObjectStateException e) {
+            try {
+                if (session == null) {
+                    session = BeanDao.getSession();
+                }
 
-        } catch (Throwable e) {
-            LOGGER.error("do taskId[" + task.getId() + "] " + task.getName() + " error", e);
+                task.setStartTag(verifier.getTag());
+                task.setStartTime(ContextUtils.getContextTime());
+                session.merge(task);
+                session.flush();
+                TaskMethod taskMethod = taskMethodMap == null ? null : taskMethodMap.get(task.getName());
+                task.setStartTag("0");
+                if (taskMethod != null) {
+                    try {
+                        taskMethod.method.invoke(taskMethod.beanObject, HelperDatabind.PACK.readArray(task.getTaskData(), taskMethod.paramTypes));
+                        task.setPassTime(ContextUtils.getContextTime());
+                        session.merge(task);
+
+                    } catch (Throwable e) {
+                        LOGGER.error("do taskId[" + task.getId() + "] " + task.getName() + " error", e);
+                        int leftRetryCount = task.getLeftRetryCount();
+                        boolean doContinue = true;
+                        if (leftRetryCount >= 0) {
+                            if (leftRetryCount == 0) {
+                                doContinue = false;
+                                task.setPassTime(ContextUtils.getContextTime());
+
+                            } else {
+                                task.setLeftRetryCount(--leftRetryCount);
+
+                            }
+
+                            session.merge(task);
+                        }
+
+                        return doContinue;
+                    }
+                }
+
+            } finally {
+                SingleUtils.exitSingle(verifier);
+
+            }
 
         } finally {
             if (atom != null) {
