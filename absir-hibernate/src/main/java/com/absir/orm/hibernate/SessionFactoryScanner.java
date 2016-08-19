@@ -20,6 +20,7 @@ import com.absir.bean.inject.value.Inject;
 import com.absir.context.lang.LangBundle;
 import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelLang;
+import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.boost.EntityAssoc;
 import com.absir.orm.value.JaConfig;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -77,7 +78,7 @@ public class SessionFactoryScanner implements IBeanDefineSupply, IBeanDefineScan
 
             for (Class<?> entityClass : entityClasses) {
                 JaConfig jaConfig = BeanConfigImpl.getTypeAnnotation(entityClass, JaConfig.class);
-                if (jaConfig != null && jaConfig.value().length == 0) {
+                if (jaConfig != null && (jaConfig.value().length == 0 || KernelString.isEmpty(jaConfig.value()[0]))) {
                     jaConfig = null;
                 }
 

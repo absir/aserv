@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.lang.reflect.Field;
+import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,19 @@ public class KernelClassTest {
 
     @Test
     public void test() {
+        InetAddress ia = null;
+        try {
+            ia = ia.getLocalHost();
+
+            String localname = ia.getHostName();
+            String localip = ia.getHostAddress();
+            System.out.println("本机名称是：" + localname);
+            System.out.println("本机的ip是 ：" + localip);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         Field a1Field = KernelReflect.field(KernelClassTest.class, "a1");
         for (Class<?> cls : KernelClass.componentClasses(a1Field.getGenericType())) {
             System.out.println(cls);

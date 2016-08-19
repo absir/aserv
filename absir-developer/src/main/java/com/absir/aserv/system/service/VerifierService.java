@@ -21,10 +21,12 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Started;
 import com.absir.bean.inject.value.Value;
+import com.absir.context.core.ContextService;
 import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.cron.CronFixDelayRunnable;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAbsir;
+import com.absir.core.util.UtilLinked;
 import com.absir.orm.hibernate.SessionFactoryBean;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
@@ -45,7 +47,7 @@ import java.util.Map.Entry;
 @SuppressWarnings("unchecked")
 @Base
 @Bean
-public class VerifierService {
+public class VerifierService extends ContextService {
 
     public static final VerifierService ME = BeanFactoryUtils.get(VerifierService.class);
 
@@ -159,11 +161,6 @@ public class VerifierService {
         return passTime < 1 ? 1 : passTime;
     }
 
-    public static void passOperation(Session session, long passTime, JVerifier verifier) {
-        QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.passTime = ? WHERE o.id = ? AND o.passTime = ?", passTime, verifier.getId(), verifier.getPassTime()).executeUpdate();
-        verifier.setPassTime(passTime);
-    }
-
     public static void doneOperation(Session session, JVerifier verifier, String tag, String value, int intValue) {
         QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.tag = ?, o.value = ?, o.intValue = ? WHERE o.id = ? AND o.passTime = ?", tag, value, intValue, verifier.getId(), verifier.getPassTime()).executeUpdate();
     }
@@ -208,6 +205,76 @@ public class VerifierService {
 
     public static boolean doneOperationCount(String address, String tag, long idleTime, int maxCount) {
         return doneOperationCount(KernelString.isEmpty(address) ? null : (address + '@' + tag), idleTime, maxCount);
+    }
+
+    private UtilLinked<PassVerifier> passVerifierUtilLinked;
+
+    protected static class PassVerifier {
+
+        protected long passTime;
+
+        protected JVerifier verifier;
+
+    }
+
+    @Transaction
+    public void passOperation(long passTime, JVerifier verifier, boolean cuarantee) {
+        try {
+            Session session = BeanDao.getSession();
+            QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.passTime = ? WHERE o.id = ? AND o.passTime = ?", passTime, verifier.getId(), verifier.getPassTime()).executeUpdate();
+            //session.flush();
+
+        } catch (Exception e) {
+            if (cuarantee) {
+                if (passVerifierUtilLinked == null) {
+                    synchronized (this) {
+                        if (passVerifierUtilLinked == null) {
+                            passVerifierUtilLinked = new UtilLinked<PassVerifier>();
+                        }
+                    }
+                }
+
+                PassVerifier passVerifier = new PassVerifier();
+                passVerifier.passTime = passTime;
+                passVerifier.verifier = verifier;
+                passVerifierUtilLinked.add(passVerifier);
+            }
+
+            return;
+        }
+
+        verifier.setPassTime(passTime);
+    }
+
+    @Override
+    public void step(long contextTime) {
+        if (passVerifierUtilLinked != null) {
+            passVerifierUtilLinked.syncAdds();
+            if (!passVerifierUtilLinked.getList().isEmpty()) {
+                ME.clearPassVerifier();
+            }
+        }
+    }
+
+    @Async(notifier = true)
+    @Transaction
+    protected void clearPassVerifier() {
+        Session session = BeanDao.getSession();
+        Iterator<PassVerifier> iterator = passVerifierUtilLinked.iterator();
+        while (iterator.hasNext()) {
+            PassVerifier passVerifier = iterator.next();
+            long passTime = passVerifier.passTime;
+            JVerifier verifier = passVerifier.verifier;
+            try {
+                QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.passTime = ? WHERE o.id = ? AND o.passTime = ?", passTime, verifier.getId(), verifier.getPassTime()).executeUpdate();
+                iterator.remove();
+
+            } catch (Exception e) {
+                return;
+            }
+
+            verifier.setPassTime(passTime);
+        }
     }
 
     /**
@@ -284,4 +351,6 @@ public class VerifierService {
             }
         }
     }
+
+
 }

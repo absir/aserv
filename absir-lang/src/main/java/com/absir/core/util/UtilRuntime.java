@@ -7,6 +7,7 @@
  */
 package com.absir.core.util;
 
+import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelObject;
 
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class UtilRuntime {
             return KernelObject.unserialize(UtilFile.read(RUNTIME_PATH + runtimeName));
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Environment.throwable(e);
         }
 
         return null;
@@ -42,7 +43,7 @@ public class UtilRuntime {
             UtilFile.write(RUNTIME_PATH + runtimeName, KernelObject.serialize(obj));
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Environment.throwable(e);
         }
     }
 
