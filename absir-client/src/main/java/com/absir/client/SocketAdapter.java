@@ -1014,7 +1014,7 @@ public class SocketAdapter {
                     adapter.receiveCallback(0, null, (byte) 0, callbackIndex);
 
                 } catch (Throwable e) {
-                    LOGGER.error("socket adapter timeout run", e);
+                    LOGGER.error("socket adapter timeout error", e);
                 }
 
                 socketAdapter = null;
