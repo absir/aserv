@@ -229,10 +229,10 @@ public abstract class Input extends Bean<Serializable> implements IAttributes, I
     public abstract void setStatus(int status);
 
     public boolean isDebug() {
-        return BeanFactoryUtils.getEnvironment() != Environment.PRODUCT && paramDebug();
+        return BeanFactoryUtils.getEnvironment() != Environment.PRODUCT && paramHuman();
     }
 
-    public abstract boolean paramDebug();
+    public abstract boolean paramHuman();
 
     public abstract String getParam(String name);
 

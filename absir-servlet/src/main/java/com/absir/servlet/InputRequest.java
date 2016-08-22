@@ -114,7 +114,7 @@ public class InputRequest extends Input {
     }
 
     @Override
-    public boolean paramDebug() {
+    public boolean paramHuman() {
         return request.getParameter("DEBUG") != null;
     }
 

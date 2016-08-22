@@ -119,22 +119,30 @@ public class MasterServerResolver extends SocketServerResolver {
                 callbackMsg);
     }
 
-    public void sendDataBytes(SocketChannel socketChannel, byte[] dataBytes, boolean head, boolean debug,
+    public void sendDataBytes(SocketChannel socketChannel, byte[] dataBytes, boolean head, boolean human,
                               byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
         int callbackIndex = masterAdapter.generateCallbackIndex();
         if (callbackAdapter != null) {
             masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
         }
 
-        byte[] buffer = masterAdapter.sendDataBytes(5, dataBytes, head, debug, callbackIndex, postData);
-        buffer[4] = SocketAdapter.CALLBACK_FLAG;
-        KernelByte.setLength(buffer, 5, 1);
+        boolean varints = masterAdapter.isVarints();
+        byte[] buffer = masterAdapter.sendDataBytes(varints ? 2 : 5, dataBytes, head, human, callbackIndex, postData);
+        int offset = varints ? SocketAdapter.getVarintsLength(SocketAdapter.getVarints(buffer, 0, 4)) : 4;
+        buffer[offset] = SocketAdapter.CALLBACK_FLAG;
+        if (varints) {
+            SocketAdapter.setVarintsLength(buffer, offset + 1, 1);
+
+        } else {
+            KernelByte.setLength(buffer, 5, 1);
+        }
+
         if (!InputSocket.writeBuffer(socketChannel, buffer)) {
             masterAdapter.receiveCallback(0, null, (byte) 0, callbackIndex);
         }
     }
 
-    public void sendDataBytes(final SocketChannel socketChannel, byte[] dataBytes, boolean head, boolean debug,
+    public void sendDataBytes(final SocketChannel socketChannel, byte[] dataBytes, boolean head, boolean human,
                               final InputStream inputStream, final int timeout, CallbackAdapter callbackAdapter) {
         boolean sended = false;
         final ObjectTemplate<Integer> nextIndex = masterAdapter.getActivePool().addObject();
@@ -145,7 +153,8 @@ public class MasterServerResolver extends SocketServerResolver {
                 callbackTimeout = masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
             }
 
-            byte[] buffer = masterAdapter.sendDataBytes(9, dataBytes, head, debug, SocketAdapter.STREAM_FLAG,
+            boolean varints = masterAdapter.isVarints();
+            byte[] buffer = masterAdapter.sendDataBytes(9, dataBytes, head, human, SocketAdapter.STREAM_FLAG,
                     callbackIndex, null);
             System.arraycopy(buffer, 9, buffer, 5, buffer.length - 9);
             buffer[4] = SocketAdapter.CALLBACK_FLAG;

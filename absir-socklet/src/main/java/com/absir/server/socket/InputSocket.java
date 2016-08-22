@@ -189,8 +189,8 @@ public abstract class InputSocket extends Input {
     }
 
     @Override
-    public boolean paramDebug() {
-        return (flag & SocketAdapter.DEBUG_FLAG) != 0;
+    public boolean paramHuman() {
+        return (flag & SocketAdapter.HUMAN_FLAG) != 0;
     }
 
     @Override

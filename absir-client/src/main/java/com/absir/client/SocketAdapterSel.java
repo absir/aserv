@@ -300,13 +300,13 @@ public class SocketAdapterSel extends SocketAdapter {
     }
 
     /**
-     * @return make varints mode right set postBuffLen 128(127 VARINTS_1_LENGTH) ~ 10240(16383 VARINTS_2_LENGTH)
+     * @return make varints mode right set postBuffLen 128(127 VARINTS_1_LENGTH) ~ 10240(16383 VARINTS_2_LENGTH) - 32
      */
     protected int getPostBuffLen() {
         return 1024;
     }
 
-    protected RegisteredRunnable sendStream(byte[] dataBytes, boolean head, boolean debug, final int callbackIndex,
+    protected RegisteredRunnable sendStream(byte[] dataBytes, boolean head, boolean human, final int callbackIndex,
                                             final InputStream inputStream, final CallbackTimeout callbackTimeout, final long timeout) {
         connect();
         boolean sended = false;
@@ -318,8 +318,9 @@ public class SocketAdapterSel extends SocketAdapter {
         }
 
         try {
-            final byte[] buffer = sendDataBytes(4, dataBytes, head, debug, STREAM_FLAG, callbackIndex, null);
-            System.arraycopy(buffer, 8, buffer, 4, buffer.length - 8);
+            final byte[] buffer = sendDataBytes(4, dataBytes, head, human, STREAM_FLAG, callbackIndex, null);
+            int lenLen = varints ? getVarintsLength(getVarints(buffer, 0, 4)) : 4;
+            System.arraycopy(buffer, lenLen + 4, buffer, lenLen, buffer.length - 8);
             KernelByte.setLength(buffer, buffer.length - 4, nextIndex.object);
             final Runnable postRunnable = new Runnable() {
 
@@ -331,8 +332,9 @@ public class SocketAdapterSel extends SocketAdapter {
                         int postBuffLen = getPostBuffLen();
                         byte[] sendBufer = sendDataBytes(4 + postBuffLen, null, true, false, STREAM_FLAG | POST_FLAG, 0,
                                 null);
-                        sendBufer[4] = sendBufer[4 + postBuffLen];
-                        KernelByte.setLength(sendBufer, 5, streamIndex);
+                        int lenLen = varints ? getVarintsLength(getVarints(sendBufer, 0, 4)) : 4;
+                        sendBufer[4] = sendBufer[lenLen + postBuffLen];
+                        KernelByte.setLength(sendBufer, lenLen + 1, streamIndex);
                         int len;
                         try {
                             while ((len = inputStream.read(sendBufer, 9, sendBufer.length)) > 0) {
@@ -425,15 +427,15 @@ public class SocketAdapterSel extends SocketAdapter {
      * @param callbackIndex
      * @param dataBytes
      * @param head
-     * @param debug
+     * @param human
      * @param inputStream
      * @param timeout
      * @param callbackAdapter
      */
-    public void sendStreamIndex(int callbackIndex, byte[] dataBytes, boolean head, boolean debug,
+    public void sendStreamIndex(int callbackIndex, byte[] dataBytes, boolean head, boolean human,
                                 InputStream inputStream, int timeout, CallbackAdapter callbackAdapter) {
         if (callbackIndex == 0 || inputStream == null) {
-            sendDataIndex(callbackIndex, dataBytes, head, debug, null, timeout, callbackAdapter);
+            sendDataIndex(callbackIndex, dataBytes, head, human, null, timeout, callbackAdapter);
 
         } else {
             CallbackTimeout callbackTimeout = null;
@@ -441,7 +443,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 callbackTimeout = putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
             }
 
-            RegisteredRunnable registeredRunnable = sendStream(dataBytes, head, debug, callbackIndex, inputStream,
+            RegisteredRunnable registeredRunnable = sendStream(dataBytes, head, human, callbackIndex, inputStream,
                     callbackTimeout, timeout);
             if (callbackTimeout != null) {
                 callbackTimeout.registeredRunnable = registeredRunnable;
