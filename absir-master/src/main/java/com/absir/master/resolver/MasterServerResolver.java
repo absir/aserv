@@ -130,13 +130,7 @@ public class MasterServerResolver extends SocketServerResolver {
         byte[] buffer = masterAdapter.sendDataBytes(varints ? 2 : 5, dataBytes, head, human, callbackIndex, postData);
         int offset = varints ? SocketAdapter.getVarintsLength(SocketAdapter.getVarints(buffer, 0, 4)) : 4;
         buffer[offset] = SocketAdapter.CALLBACK_FLAG;
-        if (varints) {
-            SocketAdapter.setVarintsLength(buffer, offset + 1, 1);
-
-        } else {
-            KernelByte.setLength(buffer, 5, 1);
-        }
-
+        KernelByte.setLength(buffer, offset + 1, 1);
         if (!InputSocket.writeBuffer(socketChannel, buffer)) {
             masterAdapter.receiveCallback(0, null, (byte) 0, callbackIndex);
         }
@@ -214,4 +208,22 @@ public class MasterServerResolver extends SocketServerResolver {
         }
     }
 
+    /*
+     * not ready send
+     * masterAdapter many slave url dict ~~ err
+     */
+    protected void sendDataBytesVarints(SocketChannel socketChannel, String url, int callbackIndex,
+                                        byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
+        if (callbackAdapter != null) {
+            masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
+        }
+
+        byte[] buffer = masterAdapter.sendDataBytesVarints(url, callbackIndex, postData, 0, postData == null ? 0 : postData.length);
+        int offset = SocketAdapter.getVarintsLength(SocketAdapter.getVarints(buffer, 0, 4));
+        buffer[offset] = SocketAdapter.CALLBACK_FLAG;
+        KernelByte.setLength(buffer, offset + 1, 1);
+        if (!InputSocket.writeBuffer(socketChannel, buffer)) {
+            masterAdapter.receiveCallback(0, null, (byte) 0, callbackIndex);
+        }
+    }
 }

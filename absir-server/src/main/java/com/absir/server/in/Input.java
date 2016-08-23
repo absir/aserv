@@ -287,4 +287,7 @@ public abstract class Input extends Bean<Serializable> implements IAttributes, I
             getModel().put("errors", result.getPropertyErrors());
         }
     }
+
+    public void close() {
+    }
 }

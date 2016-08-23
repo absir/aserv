@@ -8,6 +8,7 @@
 package com.absir.client;
 
 import com.absir.core.base.Environment;
+import com.absir.core.kernel.KernelCharset;
 import com.absir.core.kernel.KernelLang.ObjectEntry;
 import com.absir.core.kernel.KernelString;
 import org.slf4j.Logger;
@@ -1082,32 +1083,42 @@ public class SocketAdapter {
 
         Integer varints = getUriVarints(uri);
         byte[] uriBytes = null;
-        int uriVarints;
+        int uriDict;
+        int uriVarints = 0;
         if (varints == null) {
             flag += POST_FLAG;
-            uriVarints = uri.length();
-            dataLength += uri.length();
+            uriBytes = uri.getBytes(KernelCharset.getDefault());
+            uriDict = uriBytes.length;
+            uriVarints = addVarintsUri(uri);
+            dataLength += uriBytes.length + getVarintsLength(uriVarints);
 
         } else {
-            uriVarints = varints;
+            uriDict = varints;
         }
 
-        dataLength += getVarintsLength(uriVarints);
+        dataLength += getVarintsLength(uriDict);
         if (postLen > postOff) {
             postLen = postBytes == null ? 0 : (postLen - postOff);
         }
 
-        int bytesLenght = dataLength + getVarintsLength(dataLength);
-        byte[] buffer = new byte[bytesLenght];
+        int bytesLength = dataLength + getVarintsLength(dataLength);
+        byte[] buffer = new byte[bytesLength];
         int offset = 0;
-        setVarintsLength(buffer, 0, bytesLenght);
-        offset += getVarintsLength(bytesLenght);
+        setVarintsLength(buffer, 0, dataLength);
+        offset += getVarintsLength(dataLength);
         buffer[offset++] = (byte) flag;
-        setVarintsLength(buffer, offset, uriVarints);
-        offset += getVarintsLength(uriVarints);
+        if ((flag & CALLBACK_FLAG) != 0) {
+            setVarintsLength(buffer, offset, callbackIndex);
+            offset += getVarintsLength(callbackIndex);
+        }
+
+        setVarintsLength(buffer, offset, uriDict);
+        offset += getVarintsLength(uriDict);
         if (varints == null) {
-            System.arraycopy(uri.getBytes(), 0, buffer, offset, uri.length());
+            System.arraycopy(uriBytes, 0, buffer, offset, uriBytes.length);
             offset += uri.length();
+            setVarintsLength(uriBytes, offset, uriVarints);
+            offset += getVarintsLength(uriVarints);
         }
 
         if (postBytes != null && postLen > 0) {

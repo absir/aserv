@@ -19,14 +19,53 @@ import com.absir.server.in.InModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Base
 @Bean
 public class RouteAdapter implements IBeanFactoryStarted {
+
+    public static final long ADAPTER_TIME = System.currentTimeMillis();
+
+    private static int varintsMapUriIndex;
+
+    private static Map<Integer, String> varintsMapUri;
+
+    private static Map<String, Integer> uriMapVarints;
+
+    // URI 字典压缩
+    public static int addVarintsMapUri(String uri) {
+        if (varintsMapUri == null) {
+            synchronized (RouteAdapter.class) {
+                if (varintsMapUri == null) {
+                    varintsMapUri = new HashMap<Integer, String>();
+                    uriMapVarints = new HashMap<String, Integer>();
+                }
+            }
+        }
+
+        Integer varints = uriMapVarints.get(uri);
+        if (varints != null) {
+            return varints;
+        }
+
+        synchronized (varintsMapUri) {
+            varints = uriMapVarints.get(uri);
+            if (varints != null) {
+                return varints;
+            }
+
+            int index = varintsMapUriIndex;
+            varintsMapUri.put(index, uri);
+            uriMapVarints.put(uri, index);
+            varintsMapUriIndex++;
+            return index;
+        }
+    }
+
+    public static String UriForVarints(Integer varints) {
+        return varintsMapUri == null ? null : varintsMapUri.get(varints);
+    }
 
     public static final Comparator<InMatcher> IN_MATCHER_COMPARATOR = new Comparator<InMatcher>() {
 

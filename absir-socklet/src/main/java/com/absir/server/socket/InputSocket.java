@@ -24,6 +24,7 @@ import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.InMethod;
 import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
+import com.absir.server.route.RouteAdapter;
 import com.absir.server.socket.resolver.SocketBufferResolver;
 
 import java.io.*;
@@ -77,6 +78,9 @@ public abstract class InputSocket extends Input {
         }
 
         inputStream = inputSocketAtt.inputStream;
+
+        // 写入字典
+        inputSocketAtt.writeUrlDict(this);
     }
 
     public static boolean writeBuffer(SocketChannel socketChannel, byte[] buffer) {
@@ -318,6 +322,10 @@ public abstract class InputSocket extends Input {
                 len);
     }
 
+    public static byte VARINTS_POST_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.POST_FLAG;
+
+    public static byte VARINTS_HUMAN_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.HUMAN_FLAG;
+
     public static class InputSocketAtt {
 
         protected Serializable id;
@@ -331,6 +339,8 @@ public abstract class InputSocket extends Input {
         protected int callbackIndex;
 
         protected String url;
+
+        protected int urlVarints;
 
         protected int postDataLength;
 
@@ -356,23 +366,46 @@ public abstract class InputSocket extends Input {
             this.flag = buffer[off];
             this.selSession = selSession;
             int headerLength = off + 1;
-            if ((flag & SocketAdapter.STREAM_FLAG) != 0) {
-                headerLength += 4;
-            }
+            if ((flag & SocketAdapter.VARINTS_FLAG) != 0) {
+                // 解析字典压缩
+                if ((flag & SocketAdapter.CALLBACK_FLAG) != 0) {
+                    callbackIndex = KernelByte.getVarintsLength(buffer, headerLength);
+                    headerLength += KernelByte.getVarintsLength(callbackIndex);
+                }
 
-            if ((flag & SocketAdapter.CALLBACK_FLAG) != 0) {
-                callbackIndex = KernelByte.getLength(buffer, headerLength);
-                headerLength += 4;
-            }
+                int varints = KernelByte.getVarintsLength(buffer, headerLength);
+                headerLength += KernelByte.getVarintsLength(varints);
+                if ((flag & SocketAdapter.POST_FLAG) != 0) {
+                    url = new String(buffer, headerLength, varints, ContextUtils.getCharset());
+                    headerLength += varints;
+                    urlVarints = KernelByte.getVarintsLength(buffer, headerLength);
+                    headerLength += KernelByte.getVarintsLength(urlVarints);
 
-            if ((flag & SocketAdapter.POST_FLAG) != 0) {
-                postDataLength = KernelByte.getLength(buffer, headerLength);
-                headerLength += 4;
-            }
+                } else {
+                    url = RouteAdapter.UriForVarints(varints);
+                }
 
-            url = new String(buffer, headerLength, buffer.length - headerLength - postDataLength,
-                    ContextUtils.getCharset());
-            this.inputStream = inputStream;
+                postDataLength = buffer.length - headerLength;
+
+            } else {
+                if ((flag & SocketAdapter.STREAM_FLAG) != 0) {
+                    headerLength += 4;
+                }
+
+                if ((flag & SocketAdapter.CALLBACK_FLAG) != 0) {
+                    callbackIndex = KernelByte.getLength(buffer, headerLength);
+                    headerLength += 4;
+                }
+
+                if ((flag & SocketAdapter.POST_FLAG) != 0) {
+                    postDataLength = KernelByte.getLength(buffer, headerLength);
+                    headerLength += 4;
+                }
+
+                url = new String(buffer, headerLength, buffer.length - headerLength - postDataLength,
+                        ContextUtils.getCharset());
+                this.inputStream = inputStream;
+            }
         }
 
         public Serializable getId() {
@@ -381,6 +414,10 @@ public abstract class InputSocket extends Input {
 
         public String getUrl() {
             return url;
+        }
+
+        public int getUrlVarints() {
+            return urlVarints;
         }
 
         public byte getFlag() {
@@ -405,6 +442,19 @@ public abstract class InputSocket extends Input {
 
         public int getPostDataLength() {
             return postDataLength;
+        }
+
+        public void writeUrlDict(InputSocket input) {
+            if (urlVarints != 0 && input.getRouteMatcher().getParameterLength() == 0 && (flag & VARINTS_POST_FLAG) != 0) {
+                // 字典通知
+                int varints = RouteAdapter.addVarintsMapUri(url);
+                int dataLength = KernelByte.getVarintsLength(urlVarints) + KernelByte.getVarintsLength(varints);
+                byte[] dataBytes = new byte[dataLength];
+                KernelByte.setLength(dataBytes, 0, urlVarints);
+                KernelByte.setLength(dataBytes, KernelByte.getVarintsLength(urlVarints), varints);
+                writeByteBuffer(input.getSocketBufferResolver(), selSession, input.getSocketChannel(), VARINTS_HUMAN_FLAG, 0, dataBytes, 0,
+                        dataLength);
+            }
         }
     }
 }
