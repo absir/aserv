@@ -79,6 +79,11 @@ public class ScriptNode extends TextNode {
         element.appendChild(node);
     }
 
+    public static void appendNode(Element element, Node node, int index) {
+        Validate.notNull(node);
+        element.addChildren(index, new Node[]{node});
+    }
+
     public static ScriptNode node(String html) {
         return new ScriptNode("\r\n" + html);
     }

@@ -404,4 +404,13 @@ public class Pag {
 
         return KernelString.hiddenString(mobile.length() - 8, 2, mobile);
     }
+
+    public static UploadCrudFactory.MultipartUploader getUploader(Object[] params) {
+        return UploadCrudFactory.getMultipartUploader(params);
+    }
+
+    public static String getUploaderExtensions(Object[] params) {
+        UploadCrudFactory.MultipartUploader uploader = getUploader(params);
+        return uploader == null || uploader.getExtensions() == null || uploader.getExtensions().length == 0 ? null : KernelString.implode(uploader.getExtensions(), ',');
+    }
 }

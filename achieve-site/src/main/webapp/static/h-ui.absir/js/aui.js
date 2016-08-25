@@ -140,7 +140,7 @@ $(function () {
         };
 
         abToggles['check'] = function ($this) {
-            $input = $('[type=hidden]', $this.parent());
+            var $input = $('[type=hidden]', $this.parent());
             if ($input && $input.length) {
                 $this.change(function () {
                     $input.attr('value', $this.prop('checked') ? 1 : 0);
@@ -292,7 +292,7 @@ $(function () {
                 opt.submitHandler = submitHandler;
             }
 
-            $inputs = $('[ab_validate],[error]', $this);
+            var $inputs = $('[ab_validate],[error]', $this);
             if ($inputs && $inputs.length) {
                 var rules = {};
                 var messages = {};

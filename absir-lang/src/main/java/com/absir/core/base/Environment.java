@@ -15,7 +15,7 @@ public enum Environment {
 
     TEST,
 
-    PRODUCT;
+    PRODUCT, Environment;
 
     private static Environment environment = DEVELOP;
 
@@ -51,5 +51,9 @@ public enum Environment {
         if (Environment.getEnvironment() == Environment.DEVELOP) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean isDevelop() {
+        return environment == DEVELOP;
     }
 }

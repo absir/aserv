@@ -8,9 +8,9 @@ import = "org.jsoup.nodes.*"
 
 ${input.attr('type', 'checkbox')}
 ${input.removeClass('input-text')}
-${input.attr('value', '1')}
+##${input.attr('value', '1')}
 ${input.addClass('ab_check')}
-${ScriptNode::attr(input, "${" + inputval+ " ? 'checked' : 'u'}", '1')}
+${ScriptNode::attr(input, "${" + inputval+ " ? 'checked' : ''}")}
 
 ${input.removeAttr('name')}
 ${input.parent().appendChild(ScriptNode::node(shtml)).voidValue()}

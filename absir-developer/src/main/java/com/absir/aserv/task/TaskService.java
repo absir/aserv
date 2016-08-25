@@ -18,6 +18,7 @@ import com.absir.bean.lang.LangCodeUtils;
 import com.absir.context.core.ContextAtom;
 import com.absir.context.core.ContextService;
 import com.absir.context.core.ContextUtils;
+import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAtom;
 import com.absir.data.helper.HelperDatabind;
 import com.absir.orm.hibernate.boost.IEntityMerge;
@@ -233,7 +234,7 @@ public class TaskService extends ContextService {
     @Transaction
     public void addPanel(String id, String name, long beginTime, long passTime, int retryCount, Object... params) throws IOException {
         JPlan plan = new JPlan();
-        plan.setId(id);
+        plan.setId(KernelString.isEmpty(id) ? name : id);
         plan.setName(name);
         plan.setTaskData(HelperDatabind.PACK.writeAsBytesArray(params));
         plan.setBeginTime(beginTime);

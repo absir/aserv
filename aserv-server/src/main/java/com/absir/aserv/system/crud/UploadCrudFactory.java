@@ -29,6 +29,7 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.*;
+import com.absir.bean.lang.LangCodeUtils;
 import com.absir.client.helper.HelperClient;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.helper.HelperFile;
@@ -72,17 +73,28 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     public static final UploadCrudFactory ME = BeanFactoryUtils.get(UploadCrudFactory.class);
 
+    public static final String MAX_FILE_SIZE = LangCodeUtils.get("文件太大", UploadCrudFactory.class);
+
+    public static final String MIN_FILE_SIZE = LangCodeUtils.get("文件太小", UploadCrudFactory.class);
+
+    public static final String ERROR_FILE_TYPE = LangCodeUtils.get("文件格式错误", UploadCrudFactory.class);
+
     public static final String RECORD = "UPLOAD@";
 
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(UploadCrudFactory.class);
+
     private static String uploadUrl;
+
     private static String uploadPath;
+
     @Value(value = "upload.passTime")
     private static long uploadPassTime = 3600000;
+
     @Domain
     private DSequence nameSequence;
+
     @Value("upload.image.extension")
     private String imageExtension = "gif|jpg|jpeg|png|bmp";
 
@@ -105,18 +117,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         return uploadPassTime;
     }
 
-    public static FileItem getUploadFile(InputRequest input, String name) {
-        List<FileItem> fileItems = input.parseParameterMap().get(name);
-        return fileItems == null || fileItems.isEmpty() ? null : fileItems.get(0);
-    }
-
-    public static void verifyMultipartFile(String field, FileItem file, Object[] parameters, PropertyErrors errors) {
-        String extension = HelperFileName.getExtension(file.getName()).toLowerCase();
-        if (KernelString.isEmpty(extension)) {
-            errors.rejectValue(field, "error file type", null);
-            return;
-        }
-
+    public static MultipartUploader getMultipartUploader(Object[] parameters) {
         if (parameters.length > 0) {
             Object uploadVerify = parameters[0];
             if (!(uploadVerify instanceof MultipartUploader)) {
@@ -127,18 +128,38 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                 }
             }
 
-            ((MultipartUploader) uploadVerify).verify(extension, field, file, errors);
+            return (MultipartUploader) uploadVerify;
+        }
 
-        } else {
+        return null;
+    }
+
+    public static FileItem getUploadFile(InputRequest input, String name) {
+        List<FileItem> fileItems = input.parseParameterMap().get(name);
+        return fileItems == null || fileItems.isEmpty() ? null : fileItems.get(0);
+    }
+
+    public static void verifyMultipartFile(String field, FileItem file, Object[] parameters, PropertyErrors errors, Input input) {
+        String extension = HelperFileName.getExtension(file.getName()).toLowerCase();
+        if (KernelString.isEmpty(extension)) {
+            errors.rejectValue(field, input.getLangMessage(ERROR_FILE_TYPE), null);
+            return;
+        }
+
+        MultipartUploader uploader = getMultipartUploader(parameters);
+        if (uploader == null) {
             if (!Pag.CONFIGURE.getUploadExtension().contains(extension)) {
-                errors.rejectValue(field, "error file type", null);
+                errors.rejectValue(field, input.getLangMessage(ERROR_FILE_TYPE), null);
                 return;
             }
 
             if (Pag.CONFIGURE.getUploadSize() < file.getSize()) {
-                errors.rejectValue(field, "max file size", null);
+                errors.rejectValue(field, input.getLangMessage(MAX_FILE_SIZE), null);
                 return;
             }
+
+        } else {
+            uploader.verify(extension, field, file, errors, input);
         }
     }
 
@@ -179,7 +200,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     public String randUploadFile(int hashCode) {
         Date date = new Date();
-        return DATE_FORMAT.format(date) + '/' + nameSequence.getNextId();
+        return DATE_FORMAT.format(date) + '/' + nameSequence.getNextHexId();
     }
 
     public void upload(String uploadFile, InputStream inputStream) throws IOException {
@@ -289,7 +310,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
      * @param userId
      * @param createTime
      */
-    protected void createDirpath(String dirPath, long userId, long createTime) {
+    protected void createDirPath(String dirPath, long userId, long createTime) {
         dirPath = HelperFileName.getFullPathNoEndSeparator(dirPath);
         String dir = HelperFileName.getPath(dirPath);
         if (KernelString.isEmpty(dir)) {
@@ -307,7 +328,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
             upload.setCreateTime(createTime);
             BeanService.ME.persist(upload);
             if (dir != "") {
-                createDirpath(dir, userId, createTime);
+                createDirPath(dir, userId, createTime);
             }
         }
     }
@@ -332,7 +353,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                 upload.setDirPath("");
 
             } else {
-                createDirpath(dirPath, SecurityServiceUtils.getUserId(), System.currentTimeMillis());
+                createDirPath(dirPath, SecurityServiceUtils.getUserId(), System.currentTimeMillis());
                 upload.setDirPath(dirPath);
                 upload.setFilename(filename.substring(dirPath.length()));
             }
@@ -448,7 +469,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
             if (input instanceof InputRequest) {
                 FileItem file = getUploadFile((InputRequest) input, field + "_file");
                 if (file != null && !KernelString.isEmpty(file.getName())) {
-                    verifyMultipartFile(field, file, crudProperty.getjCrud().getParameters(), errors);
+                    verifyMultipartFile(field, file, crudProperty.getjCrud().getParameters(), errors, input);
                     return file;
                 }
             }
@@ -479,6 +500,8 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                 if (handler.getCrudRecord() == null || !handler.getCrudRecord().containsKey(RECORD + uploadFile)) {
                     delete(uploadFile);
                 }
+
+                uploadFile = null;
             }
 
             InputStream uploadStream = null;
@@ -574,6 +597,26 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
         private boolean ided;
 
+        public long getMinSize() {
+            return minSize;
+        }
+
+        public long getMaxSize() {
+            return maxSize;
+        }
+
+        public String[] getExtensions() {
+            return extensions;
+        }
+
+        public String getRuleName() {
+            return ruleName;
+        }
+
+        public boolean isIded() {
+            return ided;
+        }
+
         public MultipartUploader(Object[] parameters) {
             int last = parameters.length - 1;
             if (last > 2) {
@@ -587,6 +630,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                         if (extension instanceof String && !"".equals(extension)) {
                             extensions = ((String) extension).toLowerCase().split(",");
                         }
+
                         break;
 
                     case 1:
@@ -603,35 +647,35 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
             }
         }
 
-        public void verify(String extension, String field, FileItem file, PropertyErrors errors) {
+        public void verify(String extension, String field, FileItem file, PropertyErrors errors, Input input) {
             if (extensions != null) {
                 if (!KernelArray.contain(extensions, extension)) {
-                    errors.rejectValue(field, "error file type", null);
+                    errors.rejectValue(field, input.getLangMessage(ERROR_FILE_TYPE), null);
                     return;
                 }
 
             } else {
                 if (!Pag.CONFIGURE.getUploadExtension().contains(extension)) {
-                    errors.rejectValue(field, "error file type", null);
+                    errors.rejectValue(field, input.getLangMessage(ERROR_FILE_TYPE), null);
                     return;
                 }
             }
 
             if (maxSize > 0) {
                 if (file.getSize() > maxSize) {
-                    errors.rejectValue(field, "max file size", null);
+                    errors.rejectValue(field, input.getLangMessage(MAX_FILE_SIZE), null);
                     return;
                 }
 
-            } else {
+            } else if (maxSize == 0) {
                 if (Pag.CONFIGURE.getUploadSize() < file.getSize()) {
-                    errors.rejectValue(field, "max file size", null);
+                    errors.rejectValue(field, input.getLangMessage(MAX_FILE_SIZE), null);
                     return;
                 }
             }
 
             if (minSize > 0 && file.getSize() < minSize) {
-                errors.rejectValue(field, "min file size", null);
+                errors.rejectValue(field, input.getLangMessage(MIN_FILE_SIZE), null);
                 return;
             }
         }

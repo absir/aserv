@@ -4,14 +4,19 @@ import = "com.absir.aserv.system.bean.value.JeEditable"
 )
 
 #if(Scenario::get(request) != "search")
-    #set(readonly = input.tagName() == 'input' || input.tagName() == 'textarea')
-    #if(field.getEditable() == JeEditable::LOCKED || field.getEditable() == JeEditable::LOCKABLE )
-        #if(readonly)
-            ${ScriptNode::attr(input, "${readonly ? 'readonly' : '' }")}
-        #else
-            ${ScriptNode::attr(input, "${readonly ? 'disable' : '' }")}
-        #end
+    #set(readonlyDisabled = 'disabled')
+    #if(input.tagName() == 'textarea')
+        #set(readonlyDisabled = 'readonly')
 
+    #elseif(input.tagName() == 'input')
+        #set(inputType = input.attr('type'))
+        #if(input.tagName() == 'text' || input.tagName() == 'password')
+            #set(readonlyDisabled = 'readonly')
+        #end
+    #end
+
+    #if(field.getEditable() == JeEditable::LOCKED || field.getEditable() == JeEditable::LOCKABLE )
+        ${ScriptNode::attr(input, readonlyDisabled)}
         ${input.addClass("ab_locked")}
 
     #else
@@ -20,13 +25,7 @@ import = "com.absir.aserv.system.bean.value.JeEditable"
     \#set(readonly = filter && !filter.isMatch('${inputname}'))
     #end
     ${input.before(ScriptNode::node(shtml)).voidValue()}
-
-    #if(readonly)
-        ${ScriptNode::attr(input, "${readonly ? 'readonly' : '' }")}
-    #else
-        ${ScriptNode::attr(input, "${readonly ? 'disable' : '' }")}
-    #end
-
+    ${ScriptNode::attr(input, "${readonly ? '" + readonlyDisabled + "' : '' }")}
     ${input.addClass("${readonly ? 'ab_locked' : '' }")}
 #end
 #end

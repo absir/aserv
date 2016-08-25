@@ -20,3 +20,6 @@
 .ab_locked{background: #f6f6f6 !important}
 input.required{background: url("../images/required.png") right center no-repeat}
 .ab_requiredDiv label.error{right: 25px}
+.btn-upload{overflow: visible}
+.btn-upload .input-file{bottom: 0; width: 96px}
+.btn-upload label.error{right: -80px}

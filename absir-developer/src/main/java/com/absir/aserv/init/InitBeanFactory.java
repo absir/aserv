@@ -61,24 +61,24 @@ public class InitBeanFactory {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(InitBeanFactory.class);
 
-    @Value(value = "appName")
+    @Value(value = "app.name")
     protected String appName;
 
-    @Value(value = "appRoute")
+    @Value(value = "app.route")
     protected String appRoute;
 
     protected String oldVersion;
 
-    @Value("appCode")
+    @Value("app.code")
     protected String appCode = "";
 
     @Value("version")
     protected String version = "0.0.1";
 
-    @Value("versionName")
+    @Value("version.name")
     protected String versionName = "developer";
 
-    @Value("initCheck")
+    @Value("init.check")
     protected boolean initCheck = true;
 
     private int versionSqlCount = 0;
@@ -128,7 +128,11 @@ public class InitBeanFactory {
     }
 
     public boolean isVersionChange() {
-        return initCheck && (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP || !KernelObject.equals(oldVersion, version));
+        return initCheck && !KernelObject.equals(oldVersion, version);
+    }
+
+    public static boolean isDevelopOrVersionChange() {
+        return BeanFactoryUtils.getEnvironment() == Environment.DEVELOP || ME.isVersionChange();
     }
 
     public String getAppName() {
@@ -195,7 +199,7 @@ public class InitBeanFactory {
         embedSS.setMid("version");
         JConfigure configure = BeanService.ME.get(JConfigure.class, embedSS);
         oldVersion = configure == null ? "0" : configure.getValue();
-        if (isVersionChange()) {
+        if (isDevelopOrVersionChange()) {
             // 数据升级
             upgradeData(embedSS, configure);
             initData(BeanFactoryUtils.getBeanConfig().getClassPath() + "data/");
