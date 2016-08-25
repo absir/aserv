@@ -191,7 +191,7 @@ public class Admin_entity extends AdminServer {
         }
 
         binderData.mapBind(dataMap, entity);
-        CrudContextUtils.crud(Crud.CREATE, false, null, joEntity, entity, user, filter);
+        CrudContextUtils.crud(id == null ? Crud.CREATE : Crud.UPDATE, false, null, joEntity, entity, user, filter);
         model.put("entity", entity);
     }
 

@@ -1,0 +1,26 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+##datatype="*"
+#tag layout_block("shtml")
+<span class="btn-upload form-group">
+	<a href="javascript:void();" class="btn btn-primary upload-btn">
+        <i class="Hui-iconfont">&#xe642;</i>${Pag::getLang('浏览文件')}
+    </a>
+    <input type="file" multiple name="${input.attr('name')}_file" class="input-file">
+</span>
+#end
+
+${input.addClass('upload-url')}
+${input.attr('nullmsg', Pag::getLang('请添加附件！'))}
+${ScriptNode::attr(input, 'readonly')}
+#set(extensions = Pag::getUploaderExtensions(field.crudField.jCrud.parameters))
+#if(extensions)
+    ${input.attr('datatype', extensions)}
+#end
+##${input.removeAttr('name')}
+##${input.attr('style', 'width:200px')}
+#set(span = ScriptNode::append(input.parent(), shtml)[0])
+${input.remove()}
+${ScriptNode::appendNode(span, input, 0)}
