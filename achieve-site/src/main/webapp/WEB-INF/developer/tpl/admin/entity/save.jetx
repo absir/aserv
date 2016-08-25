@@ -1,5 +1,5 @@
 {
-\${create ? ('"url": "' + admin_route + 'entity/edit/' + entityName + '/' + id + '",'): ''}
+"url": "${admin_route}entity/edit/${entityName}${id ? ('/' + id) : ''}",
 "message": "\${message ?! ${Pag::getLang("操作成功", false)}}",
 "icon": \${icon ?! 1}
 }
