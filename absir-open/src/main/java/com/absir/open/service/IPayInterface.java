@@ -13,6 +13,8 @@ public interface IPayInterface<T> {
 
     public static final TypeVariable<?> TYPE_VARIABLE = IPayInterface.class.getTypeParameters()[0];
 
-    public boolean validator(T configure, String tradeNo, String tradeReceipt, String platformData, String[] moreDatas) throws Exception;
+    public T getConfigure();
+
+    public boolean validator(T configure, String tradeNo, String tradeReceipt, String platformData, float amount, String[] moreDatas) throws Exception;
 
 }

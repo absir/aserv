@@ -269,6 +269,8 @@ public class HelperFile extends FileUtils {
         }
     }
 
+    public static final long PRESERVE_FILE_MODIFIED_TIME = 4231;
+
     public static void copyDirectoryOverWrite(ZipInputStream inputStream, File destDir, boolean overWrite,
                                               FileFilter filter, boolean preserveFileDate) throws IOException {
         String destPath = destDir.getPath() + "/";
@@ -277,11 +279,14 @@ public class HelperFile extends FileUtils {
             while ((zipEntry = inputStream.getNextEntry()) != null) {
                 if (!zipEntry.isDirectory()) {
                     File destFile = new File(destPath + zipEntry.getName());
-                    if ((overWrite || !destFile.exists()) && (filter == null || filter.accept(destFile))) {
+                    if ((overWrite || !destFile.exists() || (preserveFileDate && destFile.lastModified() == PRESERVE_FILE_MODIFIED_TIME)) && (filter == null || filter.accept(destFile))) {
                         try {
                             FileOutputStream output = HelperFile.openOutputStream(destFile);
                             try {
                                 IOUtils.copy(inputStream, output);
+                                if (preserveFileDate) {
+                                    destFile.setLastModified(PRESERVE_FILE_MODIFIED_TIME);
+                                }
 
                             } finally {
                                 IOUtils.closeQuietly(output);

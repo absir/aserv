@@ -46,8 +46,11 @@ public class JConfigureSupply extends CrudSupply<JConfigureBase> {
     @Override
     public void deleteEntity(String entityName, Object entity) {
         Session session = BeanDao.getSession();
-        for (JConfigure configure : ((JConfigureBase) entity).fieldMapConfigure.values()) {
-            session.delete(session.merge(configure));
+        JConfigureBase configureBase = (JConfigureBase) entity;
+        if (configureBase.isDeleteClear()) {
+            for (JConfigure configure : configureBase.fieldMapConfigure.values()) {
+                session.delete(session.merge(configure));
+            }
         }
 
         JConfigureUtils.clearConfigure(getEntityClass(entityName));

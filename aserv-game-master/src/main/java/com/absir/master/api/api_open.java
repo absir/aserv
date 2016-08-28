@@ -16,7 +16,8 @@ import com.absir.master.bean.dto.DServer;
 import com.absir.master.service.MasterChannelService;
 import com.absir.master.service.MasterTradeService;
 import com.absir.open.bean.JPayTrade;
-import com.absir.open.service.utils.PayUtils;
+import com.absir.open.bean.value.JePayStatus;
+import com.absir.open.service.PayUtils;
 import com.absir.platform.bean.JPlatformSession;
 import com.absir.platform.service.PlatformService;
 import com.absir.server.in.Input;
@@ -33,12 +34,12 @@ import java.util.UUID;
 public class api_open extends ApiServer {
 
     @JaLang("公告列表")
-    public List<DAnnouncement> announcements(String channel, String channelCode, String version) {
-        return MasterChannelService.ME.getAnnouncements(channel, channelCode, version);
+    public List<DAnnouncement> announcements(String platform, String channel, String version) {
+        return MasterChannelService.ME.getAnnouncements(platform, channel, version);
     }
 
     @JaLang("服务列表")
-    public List<DServer> servers(String channel, String version) {
+    public List<DServer> servers(String platform, String channel, String version) {
         return MasterChannelService.ME.getServers(channel, version);
     }
 
@@ -51,13 +52,13 @@ public class api_open extends ApiServer {
     public Object order(String platform, String channel, long serverId, long playerId, int index, float amount,
                         Input input) throws Exception {
         JPayTrade payTrade = MasterTradeService.ME.buyDollar(platform, channel, serverId, playerId, index, amount);
-        return PayUtils.order(platform, channel, payTrade, input.getParamMap());
+        return PayUtils.order(platform, payTrade, input.getParamMap());
     }
 
     @JaLang("验证订单")
     public boolean validate(String platform, JPayTrade payTrade, String tradeNo) throws Exception {
         payTrade.setTradeNo(tradeNo);
-        return PayUtils.process(platform, payTrade) == null;
+        return PayUtils.notify(payTrade, platform, tradeNo, null, -1, null, JePayStatus.PAYING, null) != null;
     }
 
     @JaLang("购买验证")

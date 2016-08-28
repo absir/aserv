@@ -13,8 +13,11 @@ import com.absir.aserv.system.bean.base.JbBase;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.open.bean.value.JePayStatus;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @MaEntity(parent = {@MaMenu("支付管理")}, name = "订单")
 @Entity
@@ -26,7 +29,7 @@ public class JPayTrade extends JbBase {
 
     @JaLang("创建时间")
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
-    @Temporal(TemporalType.TIMESTAMP)
+    //@Temporal(TemporalType.TIMESTAMP)
     private long createTime;
 
     @JaLang(value = "平台名称", tag = "platformName")
@@ -62,6 +65,10 @@ public class JPayTrade extends JbBase {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private long serverId;
 
+    @JaLang("角色编号")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private long playerId;
+
     @JaLang(value = "商品名", tag = "goodsName")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String name;
@@ -86,6 +93,7 @@ public class JPayTrade extends JbBase {
     private int configureId;
 
     @JaLang(value = "更多数据")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     private String[] moreDatas;
 
     public String getId() {
@@ -174,6 +182,14 @@ public class JPayTrade extends JbBase {
 
     public void setServerId(long serverId) {
         this.serverId = serverId;
+    }
+
+    public long getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(long playerId) {
+        this.playerId = playerId;
     }
 
     public String getName() {

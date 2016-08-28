@@ -95,19 +95,28 @@ public class VerifierService extends ContextService {
         return verifier;
     }
 
-    /**
-     * 查找验证
-     */
-    @Transaction(readOnly = true)
-    public JVerifier findVerifier(String id, String tag) {
+    protected Iterator<JVerifier> iteratorVerifier(String id, String tag) {
         Query query = BeanDao.getSession()
                 .createQuery("SELECT o FROM JVerifier o WHERE o.id = ? AND o.passTime > ? AND o.tag = ?");
         query.setMaxResults(1);
         query.setParameter(0, id);
         query.setParameter(1, ContextUtils.getContextTime());
         query.setParameter(2, tag);
-        Iterator<JVerifier> iterator = query.iterate();
+        return query.iterate();
+    }
+
+    /**
+     * 查找验证
+     */
+    @Transaction(readOnly = true)
+    public JVerifier findVerifier(String id, String tag) {
+        Iterator<JVerifier> iterator = iteratorVerifier(id, tag);
         return iterator.hasNext() ? iterator.next() : null;
+    }
+
+    @Transaction(readOnly = true)
+    public boolean hasVerifier(String id, String tag) {
+        return iteratorVerifier(id, tag).hasNext();
     }
 
     protected void setNameMapCrudEntity(Map<String, CrudEntity> nameMapCrudEntity) {

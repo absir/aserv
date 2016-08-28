@@ -9,17 +9,17 @@ package com.absir.open.service;
 
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
-import com.absir.aserv.system.helper.HelperRandom;
+import com.absir.aserv.system.domain.DSequence;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.inject.value.Domain;
+import com.absir.context.core.ContextUtils;
 import com.absir.open.bean.JPayHistory;
 import com.absir.open.bean.JPayTrade;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.Session;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.hibernate.exception.ConstraintViolationException;
 
 @Base
 @Bean
@@ -27,10 +27,11 @@ public class TradeService {
 
     public static final TradeService ME = BeanFactoryUtils.get(TradeService.class);
 
-    protected Map<String, Object> tokenMap = new HashMap<String, Object>();
+    @Domain
+    private DSequence sessionSequence;
 
-    public String newTradeId(int hashCode) {
-        return HelperRandom.randSecondId(hashCode);
+    public String nextTradeId(int hashCode) {
+        return sessionSequence.getNextId();
     }
 
     @Transaction
@@ -47,7 +48,14 @@ public class TradeService {
         payHistory.setId(payTrade.getId());
         payHistory.setPlatform(platform);
         payHistory.setTradeNo(tradeNo);
-        session.persist(payHistory);
+        payHistory.setCreateTime(ContextUtils.getContextTime());
+        try {
+            session.persist(payHistory);
+
+        } catch (ConstraintViolationException e) {
+            return false;
+        }
+
         return true;
     }
 

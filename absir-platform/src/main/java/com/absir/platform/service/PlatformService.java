@@ -34,8 +34,10 @@ import java.util.Iterator;
 public class PlatformService {
 
     public static final PlatformService ME = BeanFactoryUtils.get(PlatformService.class);
+
     @Value("platform.lifeTime")
     private long lifeTime = 3600000 * 24;
+
     @Domain
     private DSequence sessionSequence;
 

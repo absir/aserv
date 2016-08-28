@@ -90,7 +90,7 @@ public class SocketAdapter {
 
     private int disconnectNumber;
 
-    protected int maxDisconnectCount = 1;
+    protected int maxDisconnectCount = 2;
 
     protected boolean varints = true;
 
@@ -400,11 +400,14 @@ public class SocketAdapter {
         this.maxDisconnectCount = maxDisconnectCount;
     }
 
-    public void close() {
+    public final void addDisconnectNumber() {
         if (++disconnectNumber >= Integer.MAX_VALUE) {
             disconnectNumber = 1;
         }
+    }
 
+    public void close() {
+        addDisconnectNumber();
         if (socket != null) {
             try {
                 socket.close();
@@ -465,6 +468,9 @@ public class SocketAdapter {
             lastedBeat();
             afterRegisterRunnable();
             return true;
+
+        } else {
+            addDisconnectNumber();
         }
 
         return false;
@@ -638,7 +644,10 @@ public class SocketAdapter {
 
         // 注册请求
         if (!registered) {
-            registerCallback.doWith(this, 0, buffer);
+            if (registerCallback != null) {
+                registerCallback.doWith(this, 0, buffer);
+            }
+
             lastedRegister();
             return;
         }

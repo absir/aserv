@@ -22,4 +22,8 @@ public abstract class SecurityServiceUtils {
         JiUserBase user = getUserBase();
         return user == null ? 0 : user.getUserId();
     }
+
+    public static String getVerifierId(String platform, Object userId) {
+        return "LOGIN@" + platform + '@' + userId;
+    }
 }

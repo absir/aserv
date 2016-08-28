@@ -8,7 +8,6 @@
 package com.absir.aserv.configure;
 
 import com.absir.aserv.dyna.DynaBinderUtils;
-import com.absir.aserv.init.InitBeanFactory;
 import com.absir.aserv.system.bean.JConfigure;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.core.base.IBase;
@@ -25,6 +24,8 @@ import java.util.Map.Entry;
 
 public class JConfigureBase implements IBase<Serializable> {
 
+    private transient boolean deleteClear;
+
     protected transient Map<Field, JConfigure> fieldMapConfigure = new HashMap<Field, JConfigure>();
 
     @Override
@@ -32,8 +33,18 @@ public class JConfigureBase implements IBase<Serializable> {
         return 0;
     }
 
+    //@JaLang("删除清理")
+    //@JaEdit(editable = JeEditable.ENABLE)
+    public final boolean isDeleteClear() {
+        return deleteClear;
+    }
+
+    public void setDeleteClear(boolean deleteClear) {
+        this.deleteClear = deleteClear;
+    }
+
     protected String getIdentifier() {
-        return InitBeanFactory.ME.getAppCode() + getClass().getName() + "@" + getId();
+        return getClass().getName() + "@" + getId();
     }
 
     protected Object set(String value, Field field) {

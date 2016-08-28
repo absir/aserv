@@ -18,6 +18,7 @@ import com.absir.aserv.system.service.BeanService;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelObject;
+import com.absir.core.kernel.KernelReflect;
 import com.absir.core.kernel.KernelString;
 
 import java.io.Serializable;
@@ -114,7 +115,6 @@ public abstract class JConfigureUtils {
         synchronized (cls) {
             JConfigureBase configure = Configure_Class_Map_Instance.get(cls);
             if (configure != null) {
-                configure.merge();
                 Configure_Class_Map_Instance.remove(cls);
             }
         }
@@ -125,10 +125,10 @@ public abstract class JConfigureUtils {
         }
     }
 
-    public static <T extends JConfigureBase> void cloneConfigureBase(T configureTo, T configureFrom) {
+    public static <T extends JConfigureBase> void cloneConfigureBase(T configureFrom, T configureTo) {
         for (Map.Entry<Field, JConfigure> entry : configureFrom.fieldMapConfigure.entrySet()) {
             configureTo.fieldMapConfigure.put(entry.getKey(), entry.getValue());
-            configureTo.set(entry.getValue().getValue(), entry.getKey());
+            KernelReflect.set(configureTo, entry.getKey(), configureTo.set(entry.getValue().getValue(), entry.getKey()));
         }
     }
 
@@ -142,7 +142,7 @@ public abstract class JConfigureUtils {
         T configure = KernelClass.newInstance(cls);
         configure = LangBundleImpl.ME == null ? configure : LangBundleImpl.ME.getLangProxy(cls.getSimpleName(),
                 configure);
-        cloneConfigureBase(configure, getConfigure(configureClass));
+        cloneConfigureBase(getConfigure(configureClass), configure);
         return configure;
     }
 
@@ -182,7 +182,6 @@ public abstract class JConfigureUtils {
         synchronized (JConfigureUtils.class) {
             JConfigureBase configure = Configure_Class_Map_Instance.get(configureKey);
             if (configure != null) {
-                configure.merge();
                 Configure_Class_Map_Instance.remove(configureKey);
             }
         }

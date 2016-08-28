@@ -17,6 +17,7 @@ import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
+import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.util.UtilAbsir;
@@ -24,8 +25,8 @@ import com.absir.core.util.UtilContext;
 import com.absir.open.bean.JPayTrade;
 import com.absir.open.bean.value.JePayStatus;
 import com.absir.open.service.IPayProcessor;
+import com.absir.open.service.PayUtils;
 import com.absir.open.service.TradeService;
-import com.absir.open.service.utils.PayUtils;
 import com.absir.orm.transaction.value.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +50,12 @@ public class MasterTradeService implements IPayProcessor {
         }
 
         JPayTrade payTrade = new JPayTrade();
-        payTrade.setId(TradeService.ME.newTradeId((int) playerId));
-        payTrade.setCreateTime(UtilContext.getCurrentTime());
+        payTrade.setId(TradeService.ME.nextTradeId((int) playerId));
+        payTrade.setCreateTime(ContextUtils.getContextTime());
         payTrade.setPlatform(platform);
+        payTrade.setChannel(channel);
         payTrade.setPlatformData(EntityService.ME.getDictCache().getCacheValue(platform + '@' + index));
+        payTrade.setPlayerId(playerId);
         payTrade.setChannel(channel);
         payTrade.setAmount(amount);
         payTrade.setServerId(serverId);
@@ -95,7 +98,7 @@ public class MasterTradeService implements IPayProcessor {
             payTrade = buyDollar(platform, channel, serverId, playerId, index, amount);
         }
 
-        return PayUtils.process(platform, payTrade);
+        return PayUtils.notify(payTrade, platform, tradeNo, null, amount, null, JePayStatus.PAYING, null);
     }
 
     /**
