@@ -60,6 +60,10 @@ public abstract class JConfigureUtils {
         Configure_Class_Map_Class.put(cls, configureClass);
     }
 
+    public static <T extends JConfigureBase> T findConfigure(Class<T> cls) {
+        return (T) Configure_Class_Map_Instance.get(cls);
+    }
+
     public static <T extends JConfigureBase> T getConfigure(Class<T> cls) {
         JConfigureBase configure = Configure_Class_Map_Instance.get(cls);
         if (configure == null) {

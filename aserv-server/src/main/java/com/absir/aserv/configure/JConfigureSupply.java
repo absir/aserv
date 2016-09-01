@@ -39,6 +39,12 @@ public class JConfigureSupply extends CrudSupply<JConfigureBase> {
     public void mergeEntity(String entityName, Object entity, boolean create) {
         JConfigureBase configure = (JConfigureBase) entity;
         configure.merge();
+        Class<? extends JConfigureBase> configureClass = getEntityClass(entityName);
+        JConfigureBase configureEntity = JConfigureUtils.findConfigure(configureClass);
+        if (configureEntity != null) {
+            JConfigureUtils.cloneConfigureBase((JConfigureBase) entity, configureEntity);
+        }
+
         JConfigureUtils.clearConfigure(getEntityClass(entityName));
     }
 

@@ -1138,6 +1138,10 @@ public class SocketAdapter {
     }
 
     // 支持字典压缩
+    public void sendDataIndexVarints(String uri, byte[] postBytes, int timeout, CallbackAdapter callbackAdapter) {
+        sendDataCallback(generateCallbackIndex(), sendDataBytesVarints(uri, callbackIndex, postBytes, 0, postBytes.length), timeout, callbackAdapter);
+    }
+
     public void sendDataIndexVarints(int callbackIndex, String uri, byte[] postBytes, int timeout, CallbackAdapter callbackAdapter) {
         sendDataCallback(callbackIndex, sendDataBytesVarints(uri, callbackIndex, postBytes, 0, postBytes.length), timeout, callbackAdapter);
     }

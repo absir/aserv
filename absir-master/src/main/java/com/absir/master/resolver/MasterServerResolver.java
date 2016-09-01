@@ -208,6 +208,7 @@ public class MasterServerResolver extends SocketServerResolver {
         }
     }
 
+    //todo
     /*
      * not ready send
      * masterAdapter many slave url dict ~~ err
