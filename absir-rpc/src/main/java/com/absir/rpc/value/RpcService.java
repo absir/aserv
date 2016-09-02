@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JaService {
+public @interface RpcService {
 
     // 代理对象
     Class<?> interfaceClass() default void.class;
@@ -18,6 +18,4 @@ public @interface JaService {
     // 版本
     int version() default 1;
 
-    // 超时
-    long timeout() default 30;
 }

@@ -1,6 +1,9 @@
 package com.absir.client.rpc;
 
 import com.absir.client.value.Rpc;
+import com.absir.client.value.RpcName;
+import com.absir.core.kernel.KernelLang;
+import com.absir.core.kernel.KernelString;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -11,7 +14,7 @@ import java.util.Map;
  */
 public class RpcInterface {
 
-    //protected Class<?> interfaceClass;
+    //protected Class<?> interfaceType;
 
     protected Map<String, RpcMethod> rpcMethodMap;
 
@@ -36,12 +39,21 @@ public class RpcInterface {
     }
 
     protected RpcInterface() {
+    }
 
+    public Map<String, RpcMethod> getRpcMethodMap() {
+        return rpcMethodMap;
     }
 
     private static Map<Class<?>, RpcInterface> clsMapRpcInterface;
 
-    public static RpcInterface ReadInterface(Class<?> interfaceClass) {
+    protected static void remove(Class<?> type) {
+        if (clsMapRpcInterface != null) {
+            clsMapRpcInterface.remove(type);
+        }
+    }
+
+    public static RpcInterface get(Class<?> interfaceType) {
         if (clsMapRpcInterface == null) {
             synchronized (RpcInterface.class) {
                 if (clsMapRpcInterface == null) {
@@ -50,21 +62,22 @@ public class RpcInterface {
             }
         }
 
-        RpcInterface rpcInterface = clsMapRpcInterface.get(interfaceClass);
+        RpcInterface rpcInterface = clsMapRpcInterface.get(interfaceType);
         if (rpcInterface == null) {
             synchronized (clsMapRpcInterface) {
-                rpcInterface = clsMapRpcInterface.get(interfaceClass);
+                rpcInterface = clsMapRpcInterface.get(interfaceType);
                 if (rpcInterface == null) {
-                    if (!interfaceClass.isInterface()) {
-                        throw new RuntimeException("RpcInterface[" + interfaceClass + "] must be interface");
+                    if (!interfaceType.isInterface()) {
+                        throw new RuntimeException("RpcInterface[" + interfaceType + "] must be interface");
                     }
 
-                    RpcAttribute attribute = getRpcAttributeClass(interfaceClass);
+                    String rpcName = getRpcName(interfaceType);
+                    RpcAttribute attribute = getRpcAttributeClass(interfaceType);
                     Map<String, RpcMethod> rpcMethodMap = new HashMap<String, RpcMethod>();
-                    for (Method method : interfaceClass.getMethods()) {
+                    for (Method method : interfaceType.getMethods()) {
                         String name = method.getName();
                         if (rpcMethodMap.containsKey(name)) {
-                            throw new RuntimeException("RpcInterface[" + interfaceClass + "] has conflict method name = " + name);
+                            throw new RuntimeException("RpcInterface[" + interfaceType + "] has conflict method name = " + name);
                         }
 
                         RpcMethod rpcMethod = new RpcMethod();
@@ -75,19 +88,15 @@ public class RpcInterface {
 //                            rpcMethod.parameterTypes = null;
 //                        }
 
-                        rpcMethod.exceptionTypes = method.getExceptionTypes();
-                        if (rpcMethod.exceptionTypes.length == 0) {
-                            rpcMethod.exceptionTypes = null;
-                        }
-
-                        rpcMethod.uri = "Rpc:" + interfaceClass.getName() + ":" + name;
+                        rpcMethod.exceptionTypes = KernelLang.getOptimizeClasses(method.getExceptionTypes());
+                        rpcMethod.uri = "_rpc/" + rpcName + '/' + name;
                         rpcMethodMap.put(name, rpcMethod);
                     }
 
                     rpcInterface = new RpcInterface();
-                    //rpcInterface.interfaceClass = interfaceClass;
+                    //rpcInterface.interfaceType = interfaceType;
                     rpcInterface.rpcMethodMap = rpcMethodMap;
-                    clsMapRpcInterface.put(interfaceClass, rpcInterface);
+                    clsMapRpcInterface.put(interfaceType, rpcInterface);
                 }
             }
         }
@@ -95,8 +104,14 @@ public class RpcInterface {
         return rpcInterface;
     }
 
-    public static RpcAttribute getRpcAttributeClass(Class<?> interfaceClass) {
-        Rpc rpc = interfaceClass.getAnnotation(Rpc.class);
+    public static String getRpcName(Class<?> interfaceType) {
+        RpcName rpcName = interfaceType.getAnnotation(RpcName.class);
+        String name = rpcName.value();
+        return KernelString.isEmpty(name) ? interfaceType.getName().replace('$', '.') : name;
+    }
+
+    public static RpcAttribute getRpcAttributeClass(Class<?> interfaceType) {
+        Rpc rpc = interfaceType.getAnnotation(Rpc.class);
         if (rpc != null) {
             RpcAttribute attribute = new RpcAttribute();
             attribute.timeout = rpc.timeout();

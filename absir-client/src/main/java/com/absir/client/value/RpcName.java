@@ -12,14 +12,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Rpc {
+public @interface RpcName {
 
-    // 名称
-    String name() default "";
-
-    // 超时
-    long timeout() default 10000;
+    String value() default "";
 
 }

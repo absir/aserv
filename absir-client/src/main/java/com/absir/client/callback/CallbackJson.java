@@ -7,7 +7,7 @@
  */
 package com.absir.client.callback;
 
-import com.absir.data.helper.HelperDatabind;
+import com.absir.data.helper.HelperDataFormat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,13 +17,13 @@ public abstract class CallbackJson<T> extends CallbackMsg<T> {
 
     @Override
     protected Object read(byte[] bytes, int off, int len, Type toType) throws IOException {
-        return HelperDatabind.JSON_MAPPER.readValue(bytes, off, len,
-                HelperDatabind.JSON_MAPPER.constructType(toType));
+        return HelperDataFormat.JSON_MAPPER.readValue(bytes, off, len,
+                HelperDataFormat.JSON_MAPPER.constructType(toType));
     }
 
     @Override
     protected Object read(InputStream inputStream, Type toType) throws IOException {
-        return HelperDatabind.JSON_MAPPER.readValue(inputStream, HelperDatabind.JSON_MAPPER.constructType(toType));
+        return HelperDataFormat.JSON_MAPPER.readValue(inputStream, HelperDataFormat.JSON_MAPPER.constructType(toType));
     }
 
 }

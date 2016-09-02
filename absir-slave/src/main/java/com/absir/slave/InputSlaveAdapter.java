@@ -12,7 +12,7 @@ import com.absir.client.SocketAdapterSel;
 import com.absir.client.callback.CallbackMsg;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelLang.ObjectEntry;
-import com.absir.data.helper.HelperDatabind;
+import com.absir.data.helper.HelperDataFormat;
 import com.absir.slave.resolver.ISlaveCallback;
 
 import java.io.IOException;
@@ -186,7 +186,7 @@ public class InputSlaveAdapter extends SocketAdapterSel {
 
     public void sendData(String uri, Object postData, int timeout, CallbackMsg<?> callbackMsg) throws IOException {
         sendData(uri.getBytes(ContextUtils.getCharset()), true, false,
-                postData == null ? null : HelperDatabind.PACK.writeAsBytes(postData), timeout, callbackMsg);
+                postData == null ? null : HelperDataFormat.PACK.writeAsBytes(postData), timeout, callbackMsg);
     }
 
 }

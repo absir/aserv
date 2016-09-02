@@ -20,7 +20,7 @@ import com.absir.context.core.ContextService;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAtom;
-import com.absir.data.helper.HelperDatabind;
+import com.absir.data.helper.HelperDataFormat;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.hibernate.boost.L2EntityMergeService;
 import com.absir.orm.transaction.value.Transaction;
@@ -176,7 +176,7 @@ public class TaskService extends ContextService {
                 task.setStartTag("0");
                 if (taskMethod != null) {
                     try {
-                        taskMethod.method.invoke(taskMethod.beanObject, HelperDatabind.PACK.readArray(task.getTaskData(), taskMethod.paramTypes));
+                        taskMethod.method.invoke(taskMethod.beanObject, HelperDataFormat.PACK.readArray(task.getTaskData(), taskMethod.paramTypes));
                         task.setPassTime(ContextUtils.getContextTime());
                         session.merge(task);
 
@@ -221,7 +221,7 @@ public class TaskService extends ContextService {
     public void addTask(String name, long beginTime, long passTime, int retryCount, Object... params) throws IOException {
         JTask task = new JTask();
         task.setName(name);
-        task.setTaskData(HelperDatabind.PACK.writeAsBytesArray(params));
+        task.setTaskData(HelperDataFormat.PACK.writeAsBytesArray(params));
         task.setBeginTime(beginTime);
         task.setPassTime(passTime);
         task.setRetryCount(retryCount);
@@ -236,7 +236,7 @@ public class TaskService extends ContextService {
         JPlan plan = new JPlan();
         plan.setId(KernelString.isEmpty(id) ? name : id);
         plan.setName(name);
-        plan.setTaskData(HelperDatabind.PACK.writeAsBytesArray(params));
+        plan.setTaskData(HelperDataFormat.PACK.writeAsBytesArray(params));
         plan.setBeginTime(beginTime);
         plan.setPassTime(passTime);
         plan.setRetryCount(retryCount);

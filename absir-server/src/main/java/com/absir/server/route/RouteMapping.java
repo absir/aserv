@@ -36,8 +36,10 @@ public class RouteMapping implements IRoute {
     protected static final Logger LOGGER = LoggerFactory.getLogger(RouteMapping.class);
 
     public static Pattern PATH_PATTERN = Pattern.compile("\\*|\\{((.*?))\\}");
+
     @Inject
     private RouteAdapter routeAdapter;
+
     @Value("server.route.suffix")
     private String routeSuffix;
 

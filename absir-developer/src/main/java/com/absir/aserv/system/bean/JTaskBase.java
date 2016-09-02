@@ -8,7 +8,7 @@ import com.absir.aserv.task.TaskService;
 import com.absir.bean.lang.ILangMessage;
 import com.absir.binder.BinderResult;
 import com.absir.core.base.Environment;
-import com.absir.data.helper.HelperDatabind;
+import com.absir.data.helper.HelperDataFormat;
 import com.absir.validator.IValidator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -80,7 +80,7 @@ public abstract class JTaskBase implements JiActive, IValidator {
 
             } else {
                 try {
-                    taskJson = HelperDatabind.JSON.writeAsStringArray(HelperDatabind.JSON.readArray(taskData, paramTypes));
+                    taskJson = HelperDataFormat.JSON.writeAsStringArray(HelperDataFormat.JSON.readArray(taskData, paramTypes));
 
                 } catch (IOException e) {
                     Environment.throwable(e);
@@ -146,8 +146,8 @@ public abstract class JTaskBase implements JiActive, IValidator {
 
         if (paramTypes.length > 0) {
             try {
-                Object[] params = HelperDatabind.JSON.readArray(taskJson, paramTypes);
-                taskData = HelperDatabind.PACK.writeAsBytesArray(params);
+                Object[] params = HelperDataFormat.JSON.readArray(taskJson, paramTypes);
+                taskData = HelperDataFormat.PACK.writeAsBytesArray(params);
 
             } catch (Exception e) {
                 result.addPropertyError(propertyPath == "" ? "taskJson" : (propertyPath + ".taskJson"), langMessage == null ? TaskService.TASK_PARAM_ERROR : langMessage.getLangMessage(TaskService.TASK_PARAM_ERROR), null);

@@ -290,4 +290,7 @@ public abstract class Input extends Bean<Serializable> implements IAttributes, I
 
     public void close() {
     }
+
+    public void setUriDictOpen(boolean open) {
+    }
 }

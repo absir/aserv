@@ -15,7 +15,7 @@ import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.CrudService;
 import com.absir.bean.basis.Base;
-import com.absir.data.helper.HelperDatabind;
+import com.absir.data.helper.HelperDataFormat;
 import com.absir.server.value.Body;
 import com.absir.server.value.Server;
 
@@ -44,7 +44,7 @@ public class api_slave extends ApiSlave {
     public void option(String entityName, int option, @Body byte[] postData) throws IOException {
         ICrudSupply crudSupply = CrudService.ME.getCrudSupply(entityName);
         Class<?> entityClass = crudSupply.getEntityClass(entityName);
-        Object entity = HelperDatabind.PACK.read(postData, 0, postData.length, entityClass);
+        Object entity = HelperDataFormat.PACK.read(postData, 0, postData.length, entityClass);
         if (option == 0) {
             crudSupply.mergeEntity(entityName, entity, false);
 

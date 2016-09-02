@@ -63,6 +63,8 @@ public abstract class InputSocket extends Input {
 
     private OutputStream outputStream;
 
+    private int urlVarints;
+
     public InputSocket(InModel model, InputSocketAtt inputSocketAtt, SocketChannel socketChannel) {
         super(model);
         this.selSession = inputSocketAtt.selSession;
@@ -80,7 +82,8 @@ public abstract class InputSocket extends Input {
         inputStream = inputSocketAtt.inputStream;
 
         // 写入字典
-        inputSocketAtt.writeUrlDict(this);
+        urlVarints = inputSocketAtt.urlVarints;
+        //writeUriDict();
     }
 
     public static boolean writeBuffer(SocketChannel socketChannel, byte[] buffer) {
@@ -322,9 +325,41 @@ public abstract class InputSocket extends Input {
                 len);
     }
 
+    @Override
+    public void close() {
+        writeUriDict();
+    }
+
+    public void setUriDictOpen(boolean open) {
+        if (open) {
+            if (urlVarints > 0) {
+                urlVarints = -urlVarints;
+            }
+
+        } else {
+            if (urlVarints < 0) {
+                urlVarints = -urlVarints;
+            }
+        }
+    }
+
     public static byte VARINTS_POST_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.POST_FLAG;
 
     public static byte VARINTS_HUMAN_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.HUMAN_FLAG;
+
+    public void writeUriDict() {
+        if (urlVarints < 0 && (flag & VARINTS_POST_FLAG) != 0) {
+            urlVarints = -urlVarints;
+            // 字典通知
+            int varints = RouteAdapter.addVarintsMapUri(uri);
+            int dataLength = KernelByte.getVarintsLength(urlVarints) + KernelByte.getVarintsLength(varints);
+            byte[] dataBytes = new byte[dataLength];
+            KernelByte.setLength(dataBytes, 0, urlVarints);
+            KernelByte.setLength(dataBytes, KernelByte.getVarintsLength(urlVarints), varints);
+            writeByteBuffer(getSocketBufferResolver(), selSession, getSocketChannel(), VARINTS_HUMAN_FLAG, 0, dataBytes, 0,
+                    dataLength);
+        }
+    }
 
     public static class InputSocketAtt {
 
@@ -442,19 +477,6 @@ public abstract class InputSocket extends Input {
 
         public int getPostDataLength() {
             return postDataLength;
-        }
-
-        public void writeUrlDict(InputSocket input) {
-            if (urlVarints != 0 && input.getRouteMatcher().getParameterLength() == 0 && (flag & VARINTS_POST_FLAG) != 0) {
-                // 字典通知
-                int varints = RouteAdapter.addVarintsMapUri(url);
-                int dataLength = KernelByte.getVarintsLength(urlVarints) + KernelByte.getVarintsLength(varints);
-                byte[] dataBytes = new byte[dataLength];
-                KernelByte.setLength(dataBytes, 0, urlVarints);
-                KernelByte.setLength(dataBytes, KernelByte.getVarintsLength(urlVarints), varints);
-                writeByteBuffer(input.getSocketBufferResolver(), selSession, input.getSocketChannel(), VARINTS_HUMAN_FLAG, 0, dataBytes, 0,
-                        dataLength);
-            }
         }
     }
 }

@@ -14,7 +14,7 @@ import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelCharset;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.util.UtilFuture;
-import com.absir.data.helper.HelperDatabind;
+import com.absir.data.helper.HelperDataFormat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -110,11 +110,11 @@ public abstract class CallbackMsg<T> implements CallbackAdapterStream {
     }
 
     protected Object read(byte[] bytes, int off, int len, Type toType) throws IOException {
-        return HelperDatabind.PACK.read(bytes, off, len, toType);
+        return HelperDataFormat.PACK.read(bytes, off, len, toType);
     }
 
     protected Object read(InputStream inputStream, Type toType) throws IOException {
-        return HelperDatabind.PACK.read(inputStream, toType);
+        return HelperDataFormat.PACK.read(inputStream, toType);
     }
 
     public abstract void doWithBean(T bean, boolean ok, byte[] buffer, SocketAdapter adapter);

@@ -10,7 +10,7 @@ package com.absir.server.socket.resolver;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
-import com.absir.data.helper.HelperDatabind;
+import com.absir.data.helper.HelperDataFormat;
 import com.absir.server.on.OnPut;
 import com.absir.server.route.body.IBodyConverter;
 
@@ -37,22 +37,22 @@ public class BodyMsgResolver implements IBodyConverter {
     public Object readBodyParameterValue(OnPut onPut, int group, String input, Class<?> parameterType)
             throws Exception {
         byte[] buffer = input.getBytes();
-        return HelperDatabind.PACK.read(buffer, 0, buffer.length, parameterType);
+        return HelperDataFormat.PACK.read(buffer, 0, buffer.length, parameterType);
     }
 
     @Override
     public Object readBodyParameterValue(OnPut onPut, int group, InputStream inputStream, Class<?> parameterType)
             throws Exception {
-        return HelperDatabind.PACK.read(inputStream, parameterType);
+        return HelperDataFormat.PACK.read(inputStream, parameterType);
     }
 
     @Override
     public byte[] writeAsBytes(OnPut onPut, Object returnValue) throws Exception {
-        return HelperDatabind.PACK.writeAsBytes(returnValue);
+        return HelperDataFormat.PACK.writeAsBytes(returnValue);
     }
 
     @Override
     public void writeValue(OnPut onPut, Object returnValue, OutputStream outputStream) throws Exception {
-        HelperDatabind.PACK.write(outputStream, returnValue);
+        HelperDataFormat.PACK.write(outputStream, returnValue);
     }
 }

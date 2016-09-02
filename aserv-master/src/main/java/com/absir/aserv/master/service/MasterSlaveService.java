@@ -28,7 +28,7 @@ import com.absir.context.schedule.value.Schedule;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAbsir;
 import com.absir.core.util.UtilAtom;
-import com.absir.data.helper.HelperDatabind;
+import com.absir.data.helper.HelperDataFormat;
 import com.absir.master.InputMasterContext;
 import com.absir.master.resolver.MasterServerResolver;
 import com.absir.orm.hibernate.boost.IEntityMerge;
@@ -135,7 +135,7 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
         slaveSynch.setSlaveAutoSynch(autoSynch);
         try {
             slaveSynch.setPostData(postData == null ? null
-                    : postData.getClass() == byte[].class ? (byte[]) postData : HelperDatabind.PACK.writeAsBytes(postData));
+                    : postData.getClass() == byte[].class ? (byte[]) postData : HelperDataFormat.PACK.writeAsBytes(postData));
             BeanDao.getSession().merge(slaveSynch);
             if (slaveSynch.isSynched()) {
                 ME.addSlaveSynch(slaveSynch);

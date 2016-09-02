@@ -14,5 +14,10 @@
             <artifactId>absir-context</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.absir</groupId>
+            <artifactId>absir-client</artifactId>
+            <version>${com.absir.version}</version>
+        </dependency>
     </dependencies>
 </project>

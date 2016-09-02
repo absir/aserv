@@ -28,11 +28,6 @@
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.absir</groupId>
-            <artifactId>absir-client</artifactId>
-            <version>${com.absir.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.9</version>

@@ -20,7 +20,7 @@ import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.util.UtilAbsir;
 import com.absir.core.util.UtilAtom;
-import com.absir.data.helper.HelperDatabind;
+import com.absir.data.helper.HelperDataFormat;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.slave.InputSlaveContext;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class SlaverMasterService {
         masterSynch.setUpdateTime(System.currentTimeMillis());
         try {
             masterSynch.setPostData(postData == null ? null
-                    : postData.getClass() == byte[].class ? (byte[]) postData : HelperDatabind.PACK.writeAsBytes(postData));
+                    : postData.getClass() == byte[].class ? (byte[]) postData : HelperDataFormat.PACK.writeAsBytes(postData));
             BeanDao.getSession().merge(masterSynch);
             ME.checkSyncs();
             return true;

@@ -22,7 +22,7 @@ import com.absir.core.kernel.KernelByte;
 import com.absir.core.kernel.KernelLang.ObjectTemplate;
 import com.absir.core.util.UtilContext;
 import com.absir.core.util.UtilPipedStream;
-import com.absir.data.helper.HelperDatabind;
+import com.absir.data.helper.HelperDataFormat;
 import com.absir.master.InputMaster;
 import com.absir.master.InputMasterContext;
 import com.absir.server.in.InMethod;
@@ -110,7 +110,7 @@ public class MasterServerResolver extends SocketServerResolver {
 
     public void sendData(SocketChannel socketChannel, String uri, Object postData, CallbackMsg<?> callbackMsg)
             throws IOException {
-        sendDataBytes(socketChannel, uri, postData == null ? null : HelperDatabind.PACK.writeAsBytes(postData), callbackMsg);
+        sendDataBytes(socketChannel, uri, postData == null ? null : HelperDataFormat.PACK.writeAsBytes(postData), callbackMsg);
     }
 
     public void sendDataBytes(SocketChannel socketChannel, String uri, byte[] postData, CallbackMsg<?> callbackMsg)

@@ -12,7 +12,7 @@ import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelCharset;
 import com.absir.core.kernel.KernelString;
-import com.absir.data.helper.HelperDatabind;
+import com.absir.data.helper.HelperDataFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -34,7 +34,7 @@ import java.util.Map.Entry;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class HelperJson {
 
-    public static final ObjectMapper OBJECT_MAPPER = HelperDatabind.JSON_MAPPER;
+    public static final ObjectMapper OBJECT_MAPPER = HelperDataFormat.JSON_MAPPER;
 
     public static String encode(Object obj) throws IOException {
         if (obj == null) {

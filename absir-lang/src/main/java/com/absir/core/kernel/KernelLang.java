@@ -27,6 +27,18 @@ public class KernelLang {
 
     public static final Class[] NULL_CLASSES = new Class[]{};
 
+    public static Object[] getOptimizeObjects(Object[] ary) {
+        return ary.length == 0 ? NULL_OBJECTS : ary;
+    }
+
+    public static String[] getOptimizeStrings(String[] ary) {
+        return ary.length == 0 ? NULL_STRINGS : ary;
+    }
+
+    public static Class[] getOptimizeClasses(Class[] ary) {
+        return ary.length == 0 ? NULL_CLASSES : ary;
+    }
+
     public static final NullListSet NULL_LIST_SET = new NullListSet();
 
     public static final Map<Object, Object> NULL_MAP = new Map() {
