@@ -63,11 +63,11 @@ public class BeanFactoryUtils {
         return BeanFactoryImpl.getInstance();
     }
 
-    public static void processBeanObjec(Object beanObject) {
-        processBeanObjec(null, beanObject);
+    public static void processBeanObject(Object beanObject) {
+        processBeanObject(null, beanObject);
     }
 
-    public static void processBeanObjec(BeanScope beaScope, Object beanObject) {
+    public static void processBeanObject(BeanScope beaScope, Object beanObject) {
         getBeanFactoryImpl().processBeanObject(beaScope, null, beanObject);
     }
 
@@ -82,7 +82,7 @@ public class BeanFactoryUtils {
 
     public static void onCreate(Object contextBean) {
         getBeanFactoryImpl().registerStackBeanObject(contextBean);
-        processBeanObjec(contextBean);
+        processBeanObject(contextBean);
     }
 
     public static void onDestroy(Object contextBean) {

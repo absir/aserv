@@ -561,6 +561,30 @@ public abstract class KernelClass {
         return null;
     }
 
+    public static Annotation fetchAnnotations(Class<?> cls, Class<? extends Annotation>... annotationTypes) {
+        while (cls != null) {
+            for (Class<? extends Annotation> annotationType : annotationTypes) {
+                Annotation annotation = cls.getAnnotation(annotationType);
+                if (annotation != null) {
+                    return annotation;
+                }
+            }
+
+            for (Class c : cls.getInterfaces()) {
+                for (Class<? extends Annotation> annotationType : annotationTypes) {
+                    Annotation annotation = fetchAnnotation(c, annotationType);
+                    if (annotation != null) {
+                        return annotation;
+                    }
+                }
+            }
+
+            cls = cls.getSuperclass();
+        }
+
+        return null;
+    }
+
     public static <T extends Annotation> T getAnnotation(AnnotatedElement cls, Class<T> annotationType) {
         T annotation = cls.getAnnotation(annotationType);
         if (annotation == null && (!(cls instanceof Class) || !Annotation.class.isAssignableFrom((Class) cls))) {

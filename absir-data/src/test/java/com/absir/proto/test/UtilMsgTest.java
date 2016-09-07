@@ -39,7 +39,14 @@ public class UtilMsgTest {
         } else {
             byte[] bytes = HelperDataFormat.PACK.writeAsBytesArray(args);
             System.out.println(bytes.length + " : " + new String(bytes, KernelCharset.UTF8));
-            Object[] reads = HelperDataFormat.PACK.readArray(bytes, KernelClass.parameterTypes(args));
+            Class[] types = KernelClass.parameterTypes(args);
+            for(int i = 0; i < types.length; i++) {
+                if(types[i] == null) {
+                    types[i] = String.class;
+                }
+            }
+
+            Object[] reads = HelperDataFormat.PACK.readArray(bytes, types);
             System.out.println("write : " + HelperDataFormat.JSON_MAPPER.writeValueAsString(args));
             System.out.println("read : " + HelperDataFormat.JSON_MAPPER.writeValueAsString(reads));
         }
@@ -52,7 +59,7 @@ public class UtilMsgTest {
         testMsg(true, "abcd");
         testMsg(false, "abcd");
 
-        testMsg(true, "123", "123");
+        testMsg(true, null, "123");
         testMsg(true, "abcd", 1, "ddd");
 
         if (true) {

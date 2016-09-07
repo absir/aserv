@@ -5,13 +5,6 @@ package com.absir.client.rpc;
  */
 public interface IRpcAdapter {
 
-    public static class RpcReturn {
-
-        public int code;
-
-        public Object value;
-    }
-
     /*
             SocketAdapter.CallbackAdapter example
             byte[] postBytes = length == 0 ? null : HelperDataFormat.PACK.writeAsBytesArray(args);
@@ -43,6 +36,6 @@ public interface IRpcAdapter {
             atom.await();
      */
 
-    public RpcReturn sendDataIndexVarints(RpcInterface.RpcAttribute attribute, String uri, Object[] args);
+    public Object sendDataIndexVarints(RpcInterface.RpcAttribute attribute, String uri, Object[] args);
 
 }

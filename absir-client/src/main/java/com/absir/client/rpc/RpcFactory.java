@@ -17,22 +17,79 @@ public class RpcFactory {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(RpcFactory.class);
 
-    public static int RPC_RUN_ERROR = 0;
+    public enum RPC_CODE implements IRpcCode {
 
-    public static int RPC_RUN_SUCCESS = 1;
+        RUN_ERROR,
 
-    public static int RPC_SEND_ERROR = 2;
+        RUN_SUCCESS,
 
-    public static int RPC_NO_NAME = 3;
+        SEND_ERROR,
 
-    public static int RPC_NO_PERMISSION = 4;
+        NO_NAME,
 
-    public static int RPC_NO_METHOD = 5;
+        NO_PERMISSION,
 
-    public static int RPC_PARAM_ERROR = 6;
+        NO_METHOD,
 
-    // 执行未定义异常
-    public static int RPC_RUN_EXCEPTION = 7;
+        PARAM_ERROR,
+
+        RUN_EXCEPTION,;
+
+        static Map<Integer, IRpcCode> eiMapRpcCode;
+
+        public static final int codeForException(int ei) {
+            return ei + RUN_EXCEPTION.ordinal() + 1;
+        }
+
+        public static final IRpcCode rpcCodeForException(int ei) {
+            if (eiMapRpcCode == null) {
+                synchronized (RPC_CODE.class) {
+                    if (eiMapRpcCode == null) {
+                        eiMapRpcCode = new HashMap<Integer, IRpcCode>();
+                    }
+                }
+            }
+
+            Integer key = ei;
+            IRpcCode rpcCode = eiMapRpcCode.get(key);
+            if (rpcCode == null) {
+                synchronized (eiMapRpcCode) {
+                    rpcCode = eiMapRpcCode.get(key);
+                    if (rpcCode == null) {
+                        if (ei < 0) {
+                            ei = 0;
+                            key = ei;
+                        }
+
+                        rpcCode = new RpcCode(codeForException(ei));
+                        eiMapRpcCode.put(key, rpcCode);
+                    }
+                }
+            }
+
+            return rpcCode;
+        }
+    }
+
+    public static interface IRpcCode {
+
+        public int ordinal();
+
+    }
+
+    protected static class RpcCode implements IRpcCode {
+
+        protected int code;
+
+        public RpcCode(int code) {
+            this.code = code;
+        }
+
+        @Override
+        public int ordinal() {
+            return code;
+        }
+    }
 
     public static interface IRpcInvoker {
 
@@ -119,23 +176,24 @@ public class RpcFactory {
                 throw new Exception("rpc[" + rpcType + "] not found method = " + method);
             }
 
-            IRpcAdapter.RpcReturn rpcReturn = rpcAdapter.sendDataIndexVarints(rpcMethod.attribute, rpcMethod.uri, args);
-            int code = rpcReturn.code;
-            if (code == 1) {
-                return rpcReturn.value;
+            Object value = rpcAdapter.sendDataIndexVarints(rpcMethod.attribute, rpcMethod.uri, args);
+            Class<?> cls = value == null ? null : value.getClass();
+            if (cls != RPC_CODE.class && cls != RpcCode.class) {
+                return value;
             }
 
-            if (code <= RPC_RUN_EXCEPTION) {
-                throw new RpcException(code);
+            IRpcCode rpcCode = (IRpcCode) value;
+            if (cls == RPC_CODE.class) {
+                throw new RpcException(rpcCode.ordinal());
             }
 
-            code -= RPC_RUN_EXCEPTION;
+            int code = rpcCode.ordinal() - RPC_CODE.RUN_EXCEPTION.ordinal() - 1;
             Class<?>[] exceptionTypes = rpcMethod.exceptionTypes;
-            if (exceptionTypes != null && code < exceptionTypes.length) {
+            if (exceptionTypes != null && code >= 0 && code < exceptionTypes.length) {
                 throw (Throwable) KernelClass.newInstance(exceptionTypes[code]);
             }
 
-            throw new RpcException(RPC_RUN_EXCEPTION + 1);
+            throw new RpcException(RPC_CODE.RUN_EXCEPTION.ordinal() + 1);
         }
     }
 

@@ -2,6 +2,7 @@ package com.absir.client.rpc;
 
 import com.absir.client.value.Rpc;
 import com.absir.client.value.RpcName;
+import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
 
@@ -105,9 +106,23 @@ public class RpcInterface {
     }
 
     public static String getRpcName(Class<?> interfaceType) {
-        RpcName rpcName = interfaceType.getAnnotation(RpcName.class);
-        String name = rpcName.value();
-        return KernelString.isEmpty(name) ? interfaceType.getName().replace('$', '.') : name;
+        RpcName rpcName = KernelClass.fetchAnnotation(interfaceType, RpcName.class);
+        if (rpcName == null) {
+            return interfaceType.getName().replace('$', '.');
+        }
+
+        String name = interfaceType.getSimpleName();
+        int pos = name.indexOf('_');
+        if (pos > 0) {
+            name = name.substring(pos);
+        }
+
+        String value = rpcName.value();
+        if (!KernelString.isEmpty(value)) {
+            name = value.charAt(value.length() - 1) == '/' ? (value + name) : (value + '/' + name);
+        }
+
+        return name;
     }
 
     public static RpcAttribute getRpcAttributeClass(Class<?> interfaceType) {

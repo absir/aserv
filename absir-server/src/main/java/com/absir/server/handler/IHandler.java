@@ -8,8 +8,8 @@ import org.omg.CORBA.Object;
  */
 public interface IHandler {
 
-    public boolean _before(OnPut onPut);
+    public boolean _permission(OnPut onPut);
 
-    public Object _after(OnPut onPut, HandlerType.HandlerMethod method, boolean invoked, Object returnValue, Exception exception);
+    public Object _finally(OnPut onPut, HandlerType.HandlerMethod method);
 
 }

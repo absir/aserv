@@ -39,6 +39,18 @@ public class KernelLang {
         return ary.length == 0 ? NULL_CLASSES : ary;
     }
 
+    public static List getOptimizeList(List list) {
+        return list.isEmpty() ? NULL_LIST_SET : list;
+    }
+
+    public static Set getOptimizeSet(Set set) {
+        return set.isEmpty() ? NULL_LIST_SET : set;
+    }
+
+    public static Map getOptimizeMap(Map map) {
+        return map.isEmpty() ? NULL_MAP : map;
+    }
+
     public static final NullListSet NULL_LIST_SET = new NullListSet();
 
     public static final Map<Object, Object> NULL_MAP = new Map() {

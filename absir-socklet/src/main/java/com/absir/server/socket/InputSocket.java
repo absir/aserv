@@ -212,6 +212,10 @@ public abstract class InputSocket extends Input {
 
     @Override
     public InputStream getInputStream() throws IOException {
+        if (inputStream != null) {
+            return inputStream;
+        }
+
         return inputBuffer == null ? null : new ByteArrayInputStream(inputBuffer, inputPos, inputCount);
     }
 

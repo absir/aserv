@@ -18,6 +18,7 @@ import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanDefineType;
 import com.absir.bean.core.BeanFactoryImpl;
 import com.absir.bean.core.BeanFactoryUtils;
+import com.absir.bean.inject.IBeanProxy;
 import com.absir.bean.inject.InjectBeanFactory;
 import com.absir.bean.inject.value.Bean;
 import com.absir.core.kernel.KernelArray;
@@ -32,7 +33,7 @@ import java.util.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Basis
-public class AopDefineProcessor implements IBeanDefineSupply, IBeanDefineProcessor, IBeanFactoryAware {
+public class AopDefineProcessor implements IBeanDefineSupply, IBeanDefineProcessor, IBeanFactoryAware, IBeanProxy {
 
     private static AopMethodDefine[] aopMethodDefines = KernelCollection.toArray(BeanFactoryUtils.getOrderBeanObjects(AopMethodDefine.class), AopMethodDefine.class);
 
@@ -188,6 +189,11 @@ public class AopDefineProcessor implements IBeanDefineSupply, IBeanDefineProcess
 
     @Override
     public void afterRegister(BeanFactoryImpl beanFactory) {
+    }
+
+    @Override
+    public Object getBeanObject(Object proxy) {
+        return AopProxyUtils.getBean(proxy);
     }
 
     private static class AopInterceptorHolder {

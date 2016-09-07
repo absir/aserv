@@ -90,7 +90,7 @@ public class HandlerType<T> {
 
         HandlerType handlerType = new HandlerType();
         handlerType.type = type;
-        handlerType.handlerMethodMap = handlerMethodMap;
+        handlerType.handlerMethodMap = KernelLang.getOptimizeMap(handlerMethodMap);
         return handlerType;
     }
 
