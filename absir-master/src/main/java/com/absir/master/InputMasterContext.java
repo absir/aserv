@@ -10,6 +10,7 @@ package com.absir.master;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.*;
+import com.absir.client.SocketAdapter;
 import com.absir.master.resolver.MasterBufferResolver;
 import com.absir.master.resolver.MasterSessionResolver;
 import com.absir.server.socket.SocketServer;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.nio.channels.SocketChannel;
+import java.util.HashMap;
+import java.util.Map;
 
 @Base
 @Bean
@@ -106,12 +109,12 @@ public class InputMasterContext {
 
     public void registerSlaveKey(String id, byte[] secrets, String validate, String[] params,
                                  SocketChannel socketChannel, long currentTime) {
-        MasterChannelContext channelContext = new MasterChannelContext(socketChannel);
+        MasterChannelContext channelContext = new MasterChannelContext(id, socketChannel);
         channelContext.slaveKey = validate;
         serverContext.loginSocketChannel(id, channelContext);
     }
 
-    public MasterChannelContext unregisterSlaveKey(String id, SocketChannel socketChannel, long currentTime) {
+    public MasterChannelContext unRegisterSlaveKey(String id, SocketChannel socketChannel, long currentTime) {
         return serverContext.logoutSocketChannel(id, socketChannel);
     }
 
@@ -125,16 +128,50 @@ public class InputMasterContext {
         return channelContext == null ? null : channelContext.getChannel();
     }
 
+    public static Map<Serializable, SocketAdapter> slaveMapSocketAdapter;
+
     public static class MasterChannelContext extends ChannelContext {
+
+        protected Serializable id;
 
         protected String slaveKey;
 
-        public MasterChannelContext(SocketChannel channel) {
+        protected SocketAdapter socketAdapter;
+
+        public MasterChannelContext(Serializable id, SocketChannel channel) {
             super(channel);
+            this.id = id;
         }
 
         public String getSlaveKey() {
             return slaveKey;
+        }
+
+        public SocketAdapter getSocketAdapter() {
+            if (socketAdapter == null) {
+                if (slaveMapSocketAdapter == null) {
+                    synchronized (MasterChannelContext.class) {
+                        if (slaveMapSocketAdapter == null) {
+                            slaveMapSocketAdapter = new HashMap<Serializable, SocketAdapter>();
+                        }
+                    }
+                }
+
+                socketAdapter = slaveMapSocketAdapter.get(id);
+                if (socketAdapter == null) {
+                    synchronized (slaveMapSocketAdapter) {
+                        socketAdapter = slaveMapSocketAdapter.get(id);
+                        if (socketAdapter == null) {
+                            SocketAdapter adapter = new SocketAdapter();
+                            adapter.setRegistered(true, 0);
+                            socketAdapter = adapter;
+                            slaveMapSocketAdapter.put(id, socketAdapter);
+                        }
+                    }
+                }
+            }
+
+            return socketAdapter;
         }
     }
 

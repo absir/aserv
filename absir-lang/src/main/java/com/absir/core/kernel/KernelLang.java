@@ -21,6 +21,8 @@ public class KernelLang {
 
     public static final Object[] NULL_OBJECTS = new Object[]{};
 
+    public static final byte[] NULL_BYTES = new byte[]{};
+
     public static final String NULL_STRING = "";
 
     public static final String[] NULL_STRINGS = new String[]{};

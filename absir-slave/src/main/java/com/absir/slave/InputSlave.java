@@ -35,18 +35,18 @@ public class InputSlave extends InputSocket {
             return true;
         }
 
-        String slvky = input.getParam("slvky");
-        if (slvky != null) {
+        String slaveKey = input.getParam("_sly");
+        if (slaveKey != null) {
             InputSlaveAdapter adapter = InputSlaveContext.ME.getSlaveAdapter();
             Socket socket = adapter.getSocket();
-            if (socket != null && KernelObject.equals(adapter.getSlaveKey(), slvky)) {
+            if (socket != null && KernelObject.equals(adapter.getSlaveKey(), slaveKey)) {
                 if (input.getAddress().equals(socket.getInetAddress().getHostAddress())) {
                     return true;
 
                 } else {
-                    String slvhash = input.getParam("slvhash");
-                    if (slvhash != null
-                            && slvhash.equals(HelperEncrypt.encryptionMD5(slvky, adapter.getKey().getBytes()))) {
+                    String slaveHash = input.getParam("_slh");
+                    if (slaveHash != null
+                            && slaveHash.equals(HelperEncrypt.encryptionMD5(slaveKey, adapter.getKey().getBytes()))) {
                         return true;
                     }
                 }

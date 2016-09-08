@@ -59,6 +59,12 @@ public class KernelByte {
         return 4;
     }
 
+    public static byte[] getVarintsLengthBytes(int varints) {
+        byte[] bytes = new byte[getVarintsLength(varints)];
+        setVarintsLength(bytes, 0, varints);
+        return bytes;
+    }
+
     public static int getVarintsLength(byte[] destination, int destionationIndex) {
         byte b = destination[destionationIndex];
         int length = b & 0x7F;

@@ -36,6 +36,7 @@ public interface IRpcAdapter {
             atom.await();
      */
 
+    // Return RPC_CODE || returnValue
     public Object sendDataIndexVarints(RpcInterface.RpcAttribute attribute, String uri, Object[] args);
 
 }

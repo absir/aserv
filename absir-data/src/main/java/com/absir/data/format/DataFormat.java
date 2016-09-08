@@ -38,7 +38,7 @@ public abstract class DataFormat implements IFormat {
 
     public byte[] writeAsBytes(Object object) throws IOException {
         if (object == null) {
-            return null;
+            return KernelLang.NULL_BYTES;
         }
 
         if (object.getClass() == byte[].class) {
@@ -67,6 +67,10 @@ public abstract class DataFormat implements IFormat {
     }
 
     public Object read(InputStream inputStream, Type toType) throws IOException {
+        if (toType == null || toType == Void.class || inputStream.available() == 0) {
+            return null;
+        }
+
         if (toType == byte[].class) {
             return HelperIO.toByteArray(inputStream);
 
@@ -94,6 +98,10 @@ public abstract class DataFormat implements IFormat {
     }
 
     public Object read(byte[] bytes, int off, int len, Type toType) throws IOException {
+        if (toType == null || toType == Void.class || off >= len) {
+            return null;
+        }
+
         if (toType == byte[].class) {
             return bytes;
 

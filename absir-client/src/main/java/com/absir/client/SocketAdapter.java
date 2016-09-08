@@ -94,9 +94,13 @@ public class SocketAdapter {
 
     protected boolean varints = true;
 
-    protected Map<Integer, String> varintsUri;
+    protected long varintsServerTime;
 
-    protected int varintsUriIndex;
+    protected static Map<Integer, String> VARINTS_URI;
+
+    protected static Map<String, Integer> URI_VARINTS;
+
+    protected static int VARINTS_URI_INDEX;
 
     protected Map<String, Integer> uriVarints;
 
@@ -112,29 +116,35 @@ public class SocketAdapter {
         printException(e);
     }
 
-    public int addVarintsUri(String uri) {
-        if (varintsUri == null) {
-            synchronized (this) {
-                if (varintsUri == null) {
-                    varintsUri = new HashMap<Integer, String>();
+    public static int addVarintsUri(String uri) {
+        if (VARINTS_URI == null) {
+            synchronized (SocketAdapter.class) {
+                if (VARINTS_URI == null) {
+                    VARINTS_URI = new HashMap<Integer, String>();
+                    URI_VARINTS = new HashMap<String, Integer>();
                 }
             }
         }
 
-        synchronized (varintsUri) {
-            for (Map.Entry<Integer, String> entry : varintsUri.entrySet()) {
-                if (entry.getValue().contains(uri)) {
-                    return entry.getKey();
-                }
+        Integer index = URI_VARINTS.get(uri);
+        if (index != null) {
+            return index;
+        }
+
+        synchronized (VARINTS_URI) {
+            index = URI_VARINTS.get(uri);
+            if (index != null) {
+                return index;
             }
 
-            varintsUri.put(++varintsUriIndex, uri);
-            return varintsUriIndex;
+            VARINTS_URI.put(++VARINTS_URI_INDEX, uri);
+            URI_VARINTS.put(uri, VARINTS_URI_INDEX);
+            return VARINTS_URI_INDEX;
         }
     }
 
-    public String getVarintsUri(Integer index) {
-        return varintsUri == null ? null : varintsUri.get(index);
+    public static String getVarintsUri(Integer index) {
+        return VARINTS_URI == null ? null : VARINTS_URI.get(index);
     }
 
     public void clearUriVarints() {
@@ -268,7 +278,21 @@ public class SocketAdapter {
     }
 
     public void setRegistered(boolean registered) {
-        this.registered = registered;
+        setRegistered(registered, 0);
+    }
+
+    public void setRegistered(boolean registered, long serverTime) {
+        if (this.registered != registered) {
+            this.registered = registered;
+            if (serverTime == 0 || varintsServerTime != serverTime) {
+                varintsServerTime = serverTime;
+                clearUriVarints();
+            }
+
+        } else if (varintsServerTime != serverTime) {
+            varintsServerTime = serverTime;
+            clearUriVarints();
+        }
     }
 
     public LinkedList<RegisteredRunnable> getRegisteredRunnables() {
@@ -1139,7 +1163,7 @@ public class SocketAdapter {
 
     // 支持字典压缩
     public void sendDataIndexVarints(String uri, byte[] postBytes, int timeout, CallbackAdapter callbackAdapter) {
-        sendDataCallback(generateCallbackIndex(), sendDataBytesVarints(uri, callbackIndex, postBytes, 0, postBytes.length), timeout, callbackAdapter);
+        sendDataIndexVarints(generateCallbackIndex(), uri, postBytes, timeout, callbackAdapter);
     }
 
     public void sendDataIndexVarints(int callbackIndex, String uri, byte[] postBytes, int timeout, CallbackAdapter callbackAdapter) {

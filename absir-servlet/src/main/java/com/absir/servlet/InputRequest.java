@@ -211,6 +211,12 @@ public class InputRequest extends Input {
     }
 
     @Override
+    public boolean setCode(int code) {
+        ((HttpServletResponse) response).setStatus(code == 1 ? 200 : (501 + code));
+        return true;
+    }
+
+    @Override
     public void setCharacterEncoding(String charset) {
         response.setCharacterEncoding(charset);
     }

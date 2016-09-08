@@ -30,7 +30,7 @@ public class HandlerInvoker {
     }
 
     public IFormat getFormat(OnPut onPut, IHandler handler, HandlerType.HandlerMethod handlerMethod) {
-        return HelperDataFormat.PACK;
+        return onPut.getInput().isDebug() ? HelperDataFormat.JSON : HelperDataFormat.PACK;
     }
 
     protected int throwable(OnPut onPut, HandlerType handlerType, HandlerType.HandlerMethod handlerMethod, Object[] args, Throwable e) {

@@ -190,7 +190,10 @@ public class RpcFactory {
             int code = rpcCode.ordinal() - RPC_CODE.RUN_EXCEPTION.ordinal() - 1;
             Class<?>[] exceptionTypes = rpcMethod.exceptionTypes;
             if (exceptionTypes != null && code >= 0 && code < exceptionTypes.length) {
-                throw (Throwable) KernelClass.newInstance(exceptionTypes[code]);
+                Throwable throwable = (Throwable) KernelClass.newInstance(exceptionTypes[code]);
+                if (throwable != null) {
+                    throw throwable;
+                }
             }
 
             throw new RpcException(RPC_CODE.RUN_EXCEPTION.ordinal() + 1);

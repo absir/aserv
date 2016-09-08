@@ -27,21 +27,21 @@ public class InputMaster extends InputSocketImpl {
             return true;
         }
 
-        String slvky = input.getParam("slvky");
-        if (slvky != null) {
-            String[] slvkys = slvky.split("_");
-            if (slvkys.length == 2) {
-                String id = slvkys[0];
+        String slaveKey = input.getParam("_sly");
+        if (slaveKey != null) {
+            String[] slaveKeys = slaveKey.split("_");
+            if (slaveKeys.length == 2) {
+                String id = slaveKeys[0];
                 ChannelContext channelContext = InputMasterContext.ME.getServerContext().getChannelContexts().get(id);
-                if (channelContext != null && KernelObject.equals(InputMasterContext.ME.getSlaveKey(id), slvky)) {
+                if (channelContext != null && KernelObject.equals(InputMasterContext.ME.getSlaveKey(id), slaveKey)) {
                     if (input.getAddress()
                             .equals(channelContext.getChannel().socket().getInetAddress().getHostAddress())) {
                         return true;
 
                     } else {
-                        String slvhash = input.getParam("slvhash");
-                        if (slvhash != null && slvhash.equals(
-                                HelperEncrypt.encryptionMD5(slvky, InputMasterContext.ME.getKey().getBytes()))) {
+                        String slaveHash = input.getParam("_slh");
+                        if (slaveHash != null && slaveHash.equals(
+                                HelperEncrypt.encryptionMD5(slaveKey, InputMasterContext.ME.getKey().getBytes()))) {
                             return true;
                         }
                     }

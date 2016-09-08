@@ -62,8 +62,8 @@ public class InputMasterService extends InputMasterContext {
     }
 
     @Override
-    public MasterChannelContext unregisterSlaveKey(String id, SocketChannel socketChannel, long currentTime) {
-        MasterChannelContext context = super.unregisterSlaveKey(id, socketChannel, currentTime);
+    public MasterChannelContext unRegisterSlaveKey(String id, SocketChannel socketChannel, long currentTime) {
+        MasterChannelContext context = super.unRegisterSlaveKey(id, socketChannel, currentTime);
         if (context != null) {
             if (Environment.isStarted()) {
                 BeanService.ME.executeUpdate("UPDATE JSlave o SET o.connecting = ? AND o.lastConnectTime = ? WHERE o.id = ? AND o.lastConnectTime < ?",

@@ -85,7 +85,7 @@ public class MasterServerResolver extends SocketServerResolver {
 
     @Override
     public void unRegister(Serializable id, SocketChannel socketChannel, SelSession selSession, long currentTime) {
-        InputMasterContext.ME.unregisterSlaveKey((String) id, socketChannel, currentTime);
+        InputMasterContext.ME.unRegisterSlaveKey((String) id, socketChannel, currentTime);
     }
 
     @Override
@@ -101,7 +101,9 @@ public class MasterServerResolver extends SocketServerResolver {
     }
 
     protected SocketAdapterSel createMasterAdapter() {
-        return new SocketAdapterSel();
+        SocketAdapterSel socketAdapterSel = new SocketAdapterSel();
+        socketAdapterSel.setRegistered(true, 0);
+        return socketAdapterSel;
     }
 
     public SocketAdapterSel getMasterAdapter() {
@@ -208,13 +210,14 @@ public class MasterServerResolver extends SocketServerResolver {
         }
     }
 
-    //todo
-    /*
-     * not ready send
-     * masterAdapter many slave url dict ~~ err
-     */
-    protected void sendDataBytesVarints(SocketChannel socketChannel, String url, int callbackIndex,
-                                        byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
+    public void sendDataBytesVarints(InputMasterContext.MasterChannelContext channelContext, String url,
+                                     byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
+        sendDataBytesVarints(channelContext, url, channelContext.getSocketAdapter().generateCallbackIndex(), postData, timeout, callbackAdapter);
+    }
+
+    public void sendDataBytesVarints(InputMasterContext.MasterChannelContext channelContext, String url, int callbackIndex,
+                                     byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
+        SocketAdapter masterAdapter = channelContext.getSocketAdapter();
         if (callbackAdapter != null) {
             masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
         }
@@ -223,7 +226,7 @@ public class MasterServerResolver extends SocketServerResolver {
         int offset = SocketAdapter.getVarintsLength(SocketAdapter.getVarints(buffer, 0, 4));
         buffer[offset] = SocketAdapter.CALLBACK_FLAG;
         KernelByte.setLength(buffer, offset + 1, 1);
-        if (!InputSocket.writeBuffer(socketChannel, buffer)) {
+        if (!InputSocket.writeBuffer(channelContext.getChannel(), buffer)) {
             masterAdapter.receiveCallback(0, null, (byte) 0, callbackIndex);
         }
     }

@@ -244,6 +244,11 @@ public abstract class Input extends Bean<Serializable> implements IAttributes, I
 
     public abstract String getInput();
 
+    /**
+     * @param code 1 success 501+ error
+     */
+    public abstract boolean setCode(int code);
+
     public abstract void setCharacterEncoding(String charset);
 
     public void setContentTypeCharset(String contentType, String charset) {
@@ -291,6 +296,6 @@ public abstract class Input extends Bean<Serializable> implements IAttributes, I
     public void close() {
     }
 
-    public void setUriDictOpen(boolean open) {
+    public void writeUriDict() {
     }
 }

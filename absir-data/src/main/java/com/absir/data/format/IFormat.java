@@ -14,6 +14,8 @@ public interface IFormat {
 
     public void writeArray(OutputStream outputStream, Object... objects) throws IOException;
 
+    public byte[] writeAsBytes(Object object) throws IOException;
+
     public Object read(InputStream inputStream, Type toType) throws IOException;
 
     public Object[] readArray(InputStream inputStream, Type... toTypes) throws IOException;

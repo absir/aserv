@@ -242,6 +242,11 @@ public abstract class InputSocket extends Input {
     }
 
     @Override
+    public boolean setCode(int code) {
+        return false;
+    }
+
+    @Override
     public void setContentTypeCharset(String contentTypeCharset) {
     }
 
@@ -331,20 +336,6 @@ public abstract class InputSocket extends Input {
 
     @Override
     public void close() {
-        writeUriDict();
-    }
-
-    public void setUriDictOpen(boolean open) {
-        if (open) {
-            if (urlVarints > 0) {
-                urlVarints = -urlVarints;
-            }
-
-        } else {
-            if (urlVarints < 0) {
-                urlVarints = -urlVarints;
-            }
-        }
     }
 
     public static byte VARINTS_POST_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.POST_FLAG;
@@ -352,8 +343,7 @@ public abstract class InputSocket extends Input {
     public static byte VARINTS_HUMAN_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.HUMAN_FLAG;
 
     public void writeUriDict() {
-        if (urlVarints < 0 && (flag & VARINTS_POST_FLAG) != 0) {
-            urlVarints = -urlVarints;
+        if (urlVarints > 0 && (flag & VARINTS_POST_FLAG) != 0) {
             // 字典通知
             int varints = RouteAdapter.addVarintsMapUri(uri);
             int dataLength = KernelByte.getVarintsLength(urlVarints) + KernelByte.getVarintsLength(varints);
@@ -362,6 +352,7 @@ public abstract class InputSocket extends Input {
             KernelByte.setLength(dataBytes, KernelByte.getVarintsLength(urlVarints), varints);
             writeByteBuffer(getSocketBufferResolver(), selSession, getSocketChannel(), VARINTS_HUMAN_FLAG, 0, dataBytes, 0,
                     dataLength);
+            urlVarints = 0;
         }
     }
 

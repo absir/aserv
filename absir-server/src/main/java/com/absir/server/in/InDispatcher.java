@@ -9,7 +9,9 @@ package com.absir.server.in;
 
 import com.absir.bean.basis.Configure;
 import com.absir.bean.inject.value.Inject;
+import com.absir.core.kernel.KernelByte;
 import com.absir.core.util.UtilAbsir;
+import com.absir.data.format.IFormat;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.handler.HandlerAdapter;
@@ -21,7 +23,10 @@ import com.absir.server.route.RouteException;
 import com.absir.server.route.RouteMatcher;
 import com.absir.server.route.returned.ReturnedResolver;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -130,18 +135,19 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
         returnedResolver.resolveReturnedValue(onPut.getReturnValue(), onPut.getReturned(), onPut);
     }
 
-    public boolean onHandler(String uri, T req, R res) {
+    // Handler处理入口
+    public boolean onHandler(String uri, T req, R res) throws IOException {
         if (uri.length() > 1 && uri.startsWith("_")) {
             HandlerAdapter.HandlerAction handlerAction = handlerAdapter.on(uri);
             if (handlerAction != null) {
                 Input input = input(uri, getInMethod(req), new InModel(), req, res);
+                input.writeUriDict();
                 OnPut onPut = onPut(input, handlerAction.handler);
                 try {
                     onPut.open();
                     InputStream inputStream = input.getInputStream();
-                    handlerInvoker.invoker(onPut, handlerAction.handler, handlerAction.handlerType, handlerAction.handlerMethod, inputStream);
-
-                } catch (Throwable e) {
+                    int code = handlerInvoker.invoker(onPut, handlerAction.handler, handlerAction.handlerType, handlerAction.handlerMethod, inputStream);
+                    resolverHandler(onPut, input, code);
 
                 } finally {
                     OnPut.close();
@@ -152,5 +158,36 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
         }
 
         return false;
+    }
+
+    // Handler返回处理
+    public void resolverHandler(OnPut onPut, Input input, int code) throws IOException {
+        Object returned = onPut.getReturned();
+        if (returned != null && returned instanceof IFormat) {
+            IFormat format = (IFormat) returned;
+            if (input.setCode(code)) {
+                OutputStream outputStream = input.getOutputStream();
+                if (outputStream == null) {
+                    input.write(format.writeAsBytes(onPut.getReturnValue()));
+
+                } else {
+                    format.write(outputStream, onPut.getReturnValue());
+                }
+
+            } else {
+                OutputStream outputStream = input.getOutputStream();
+                ByteArrayOutputStream byteArrayOutputStream = null;
+                if (outputStream == null) {
+                    byteArrayOutputStream = new ByteArrayOutputStream();
+                    outputStream = byteArrayOutputStream;
+                }
+
+                outputStream.write(KernelByte.getVarintsLengthBytes(code));
+                format.write(outputStream, onPut.getReturnValue());
+                if (byteArrayOutputStream != null) {
+                    input.write(byteArrayOutputStream.toByteArray());
+                }
+            }
+        }
     }
 }
