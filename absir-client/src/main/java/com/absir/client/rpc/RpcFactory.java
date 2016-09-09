@@ -176,7 +176,15 @@ public class RpcFactory {
                 throw new Exception("rpc[" + rpcType + "] not found method = " + method);
             }
 
-            Object value = rpcAdapter.sendDataIndexVarints(rpcMethod.attribute, rpcMethod.uri, args, method);
+            byte[] paramData = rpcAdapter.paramData(rpcMethod.attribute, args);
+            if (rpcMethod.returnType == RpcData.class) {
+                RpcData rpcData = new RpcData();
+                rpcData.paramData = paramData;
+                rpcData.uri = rpcMethod.uri;
+                return rpcData;
+            }
+
+            Object value = rpcAdapter.sendDataIndexVarints(rpcMethod.attribute, rpcMethod.uri, paramData);
             Class<?> cls = value == null ? null : value.getClass();
             if (cls != RPC_CODE.class && cls != RpcCode.class) {
                 return value;

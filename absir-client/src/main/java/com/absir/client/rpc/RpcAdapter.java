@@ -10,6 +10,10 @@ public abstract class RpcAdapter implements IRpcAdapter {
 
     protected Map<Class, Object> clsMapRpcInvoker = new HashMap<Class, Object>();
 
+    public <T> T getRpcInvoker(Class<T> interfaceClass) {
+        return getRpcInvoker(interfaceClass, true);
+    }
+
     public <T> T getRpcInvoker(Class<T> interfaceClass, boolean cacheProxyClass) {
         Object invoker = clsMapRpcInvoker.get(interfaceClass);
         if (invoker == null) {
@@ -23,6 +27,10 @@ public abstract class RpcAdapter implements IRpcAdapter {
         }
 
         return (T) invoker;
+    }
+
+    public void clearRpcInvoker(Class<?> interfaceClass) {
+        clsMapRpcInvoker.remove(interfaceClass);
     }
 
 }
