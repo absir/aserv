@@ -14,6 +14,7 @@ import com.absir.client.SocketAdapter;
 import com.absir.client.helper.HelperEncrypt;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
+import com.absir.server.route.RouteAdapter;
 import com.absir.slave.resolver.ISlaveCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,7 +107,7 @@ public class InputSlaveContext {
      * @return
      */
     public byte[] registerData(InputSlaveAdapter adapter, byte[] buffer) {
-        String registerKey = HelperEncrypt.encryptionMD5(key, buffer) + ',' + group;
+        String registerKey = HelperEncrypt.encryptionMD5(key, buffer) + ',' + group + ',' + RouteAdapter.ADAPTER_TIME;
         return adapter.sendDataBytes(registerKey.getBytes(), false, false, 0, null);
     }
 

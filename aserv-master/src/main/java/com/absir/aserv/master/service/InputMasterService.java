@@ -40,12 +40,12 @@ public class InputMasterService extends InputMasterContext {
             slave.setGroupId(params[1]);
         }
 
-        if (params.length > 2) {
-            slave.setVersion(params[2]);
+        if (params.length > 3) {
+            slave.setVersion(params[3]);
         }
 
-        if (params.length > 3) {
-            slave.setPath(params[3]);
+        if (params.length > 4) {
+            slave.setPath(params[4]);
         }
 
         slave.setIp(socketChannel.socket().getInetAddress().getHostAddress());

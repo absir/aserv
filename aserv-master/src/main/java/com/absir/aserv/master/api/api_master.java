@@ -36,28 +36,28 @@ public class api_master extends ApiMaster {
     }
 
     @JaLang("获取升级文件")
-    public void upgrade(String filepath, HttpServletResponse response) throws IOException {
-        File file = new File(UpgradeService.ME.getUpgradeResource() + filepath);
+    public void upgrade(String filePath, HttpServletResponse response) throws IOException {
+        File file = new File(UpgradeService.ME.getUpgradeResource() + filePath);
         if (file.exists() && file.isFile()) {
-            response.addHeader("Content-Disposition", "attachment;filename=" + HelperFileName.getName(filepath));
+            response.addHeader("Content-Disposition", "attachment;filename=" + HelperFileName.getName(filePath));
             HelperIO.copy(HelperFile.openInputStream(file), response.getOutputStream());
         }
     }
 
     @JaLang("获取资源文件")
-    public void resource(String filepath, HttpServletResponse response) throws IOException {
-        File file = new File(BeanFactoryUtils.getBeanConfig().getResourcePath() + filepath);
+    public void resource(String filePath, HttpServletResponse response) throws IOException {
+        File file = new File(BeanFactoryUtils.getBeanConfig().getResourcePath() + filePath);
         if (file.exists() && file.isFile()) {
-            response.addHeader("Content-Disposition", "attachment;filename=" + HelperFileName.getName(filepath));
+            response.addHeader("Content-Disposition", "attachment;filename=" + HelperFileName.getName(filePath));
             HelperIO.copy(HelperFile.openInputStream(file), response.getOutputStream());
         }
     }
 
     @JaLang("获取上传文件")
-    public void download(String filepath, HttpServletResponse response) throws IOException {
-        File file = new File(UploadCrudFactory.getUploadPath() + filepath);
+    public void download(String filePath, HttpServletResponse response) throws IOException {
+        File file = new File(UploadCrudFactory.getUploadPath() + filePath);
         if (file.exists() && file.isFile()) {
-            response.addHeader("Content-Disposition", "attachment;filename=" + HelperFileName.getName(filepath));
+            response.addHeader("Content-Disposition", "attachment;filename=" + HelperFileName.getName(filePath));
             HelperIO.copy(HelperFile.openInputStream(file), response.getOutputStream());
         }
     }
@@ -65,6 +65,7 @@ public class api_master extends ApiMaster {
     @JaLang("升级状态")
     public void upgradeStatus(@Body JSlaveUpgrading slaveUpgrading, InputMaster inputMaster) throws IOException {
         slaveUpgrading.setId((String) inputMaster.getId());
+        slaveUpgrading.setUpdateTime(ContextUtils.getContextTime());
         BeanService.ME.merge(slaveUpgrading);
     }
 }

@@ -12,6 +12,7 @@ import com.absir.aserv.init.InitBeanFactory;
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
 import com.absir.client.helper.HelperEncrypt;
+import com.absir.server.route.RouteAdapter;
 import com.absir.slave.InputSlaveAdapter;
 import com.absir.slave.InputSlaveContext;
 
@@ -25,8 +26,8 @@ public class InputSlaveService extends InputSlaveContext {
 
     @Override
     public byte[] registerData(InputSlaveAdapter adapter, byte[] buffer) {
-        String registerKey = HelperEncrypt.encryptionMD5(key, buffer) + ',' + group + ','
-                + InitBeanFactory.ME.getVersion() + ',' + InitBeanFactory.ME.getAppRoute() + ','
+        String registerKey = HelperEncrypt.encryptionMD5(key, buffer) + ',' + group + ',' + RouteAdapter.ADAPTER_TIME + ',' +
+                InitBeanFactory.ME.getVersion() + ',' + InitBeanFactory.ME.getAppRoute() + ','
                 + (slaveId == null ? "" : slaveId);
         return adapter.sendDataBytes(registerKey.getBytes(), false, false, 0, null);
     }

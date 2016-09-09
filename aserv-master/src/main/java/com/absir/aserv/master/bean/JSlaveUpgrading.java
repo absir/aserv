@@ -12,6 +12,7 @@ import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.base.JbBase;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -27,6 +28,11 @@ public class JSlaveUpgrading extends JbBase {
     @JaLang("升级状态")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private EUpgradeStatus upgradeStatus;
+
+    @JaLang("变更时间")
+    @JaEdit(groups = JaEdit.GROUP_LIST, types = "dataTime")
+    @JsonIgnore
+    private long updateTime;
 
     @JaLang("失败")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -46,6 +52,14 @@ public class JSlaveUpgrading extends JbBase {
 
     public void setUpgradeStatus(EUpgradeStatus upgradeStatus) {
         this.upgradeStatus = upgradeStatus;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
     }
 
     public boolean isFailed() {

@@ -11,6 +11,7 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.*;
 import com.absir.client.SocketAdapter;
+import com.absir.core.kernel.KernelDyna;
 import com.absir.master.resolver.MasterBufferResolver;
 import com.absir.master.resolver.MasterSessionResolver;
 import com.absir.server.socket.SocketServer;
@@ -112,6 +113,10 @@ public class InputMasterContext {
         MasterChannelContext channelContext = new MasterChannelContext(id, socketChannel);
         channelContext.slaveKey = validate;
         serverContext.loginSocketChannel(id, channelContext);
+        if (params.length > 2) {
+            long serverTime = KernelDyna.to(params[2], long.class);
+            channelContext.getSocketAdapter().setRegistered(true, serverTime);
+        }
     }
 
     public MasterChannelContext unRegisterSlaveKey(String id, SocketChannel socketChannel, long currentTime) {

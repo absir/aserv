@@ -176,7 +176,7 @@ public class RpcFactory {
                 throw new Exception("rpc[" + rpcType + "] not found method = " + method);
             }
 
-            Object value = rpcAdapter.sendDataIndexVarints(rpcMethod.attribute, rpcMethod.uri, args);
+            Object value = rpcAdapter.sendDataIndexVarints(rpcMethod.attribute, rpcMethod.uri, args, method);
             Class<?> cls = value == null ? null : value.getClass();
             if (cls != RPC_CODE.class && cls != RpcCode.class) {
                 return value;
@@ -200,9 +200,9 @@ public class RpcFactory {
         }
     }
 
-    protected Map<Class<?>, Class<?>> rpcClsMapProxyClass;
+    protected static Map<Class<?>, Class<?>> rpcClsMapProxyClass;
 
-    public <T> T createRpcInvoker(IRpcAdapter rpcAdapter, Class<T> interfaceClass, boolean cacheProxyClass) {
+    public static <T> T createRpcInvoker(IRpcAdapter rpcAdapter, Class<T> interfaceClass, boolean cacheProxyClass) {
         RpcInterface rpcInterface = RpcInterface.get(interfaceClass);
         RpcInvoker rpcInvoker = new RpcInvoker();
         rpcInvoker.rpcType = interfaceClass;

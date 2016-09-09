@@ -1,5 +1,7 @@
 package com.absir.client.rpc;
 
+import java.lang.reflect.Method;
+
 /**
  * Created by absir on 16/9/1.
  */
@@ -36,7 +38,8 @@ public interface IRpcAdapter {
             atom.await();
      */
 
-    // Return RPC_CODE || returnValue
-    public Object sendDataIndexVarints(RpcInterface.RpcAttribute attribute, String uri, Object[] args);
+    //todo format return url|postData ObjCls
+    // Return RPC_CODE || returnValue && null consume define resolver
+    public Object sendDataIndexVarints(RpcInterface.RpcAttribute attribute, String uri, Object[] args, Method method);
 
 }

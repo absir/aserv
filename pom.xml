@@ -42,7 +42,6 @@
         <module>absir-scene</module>
         <module>absir-game</module>
         <module>absir-card</module>
-        <module>absir-plugin</module>
         <module>absir-spring</module>
         <module>absir-dubbo</module>
         <module>aserv-server</module>
@@ -52,10 +51,6 @@
         <module>aserv-game-slave</module>
         <module>aserv-game-master</module>
         <module>aserv-admin</module>
-        <module>aserv-dubbo-master</module>
-        <module>aserv-dubbo-slave</module>
-        <module>absir-redis</module>
-        <module>absir-rpc</module>
     </modules>
     <dependencies>
         <dependency>
