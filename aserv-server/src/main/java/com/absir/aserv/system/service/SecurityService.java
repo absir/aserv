@@ -69,6 +69,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
 
     @Value("security.context.session")
     private int securityContextSession;
+
     @Domain
     private DSequence sessionSequence;
 
@@ -177,6 +178,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
         }
 
         session.setUsername(userBase.getUsername());
+        session.setRoleLevel(userBase.getUserRoleLevel());
         if (address != null) {
             session.setAddress(address);
             session.setIp(HelperLong.longIPV4(address));
@@ -312,7 +314,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
     @Override
     public SecurityContext login(String username, String password, long remember, int roleLevel, String name,
                                  Input input) {
-        JiUserBase userBase = ME.getUserBase(username);
+        JiUserBase userBase = ME.getUserBase(username, roleLevel);
         if (userBase == null || userBase.isDisabled()) {
             throw new ServerException(ServerStatus.NO_USER);
         }
@@ -393,7 +395,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
 
         } else {
             securityContext.getSession().setMetaMap(name, DynaBinderUtils.to(value, String.class));
-            securityContext.setChannged(true);
+            securityContext.setChanged(true);
         }
     }
 

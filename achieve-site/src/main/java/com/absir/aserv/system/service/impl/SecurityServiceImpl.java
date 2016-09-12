@@ -42,7 +42,7 @@ public class SecurityServiceImpl extends SecurityService {
 
     @Transaction(readOnly = true)
     @Override
-    public JiUserBase getUserBase(String username) {
+    public JiUserBase getUserBase(String username, int roleLevel) {
         return loadUser(JUserDao.ME.findByRefUsername(username));
     }
 

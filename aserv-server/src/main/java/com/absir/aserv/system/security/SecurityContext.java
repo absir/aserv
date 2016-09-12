@@ -33,7 +33,7 @@ public class SecurityContext extends ContextBean<String> {
     private JbSession session;
 
     @JaLang("变化")
-    private boolean channged;
+    private boolean changed;
 
     @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKED, listColType = 1)
     @JaLang("用户")
@@ -64,12 +64,12 @@ public class SecurityContext extends ContextBean<String> {
         this.session = session;
     }
 
-    public boolean isChannged() {
-        return channged;
+    public boolean isChanged() {
+        return changed;
     }
 
-    public void setChannged(boolean channged) {
-        this.channged = channged;
+    public void setChanged(boolean changed) {
+        this.changed = changed;
     }
 
     public JiUserBase getUser() {
@@ -129,7 +129,7 @@ public class SecurityContext extends ContextBean<String> {
     }
 
     public boolean uninitializeDone() {
-        return session == null || !channged || maxExpirationTime <= ContextUtils.getContextTime();
+        return session == null || !changed || maxExpirationTime <= ContextUtils.getContextTime();
     }
 
     @Override

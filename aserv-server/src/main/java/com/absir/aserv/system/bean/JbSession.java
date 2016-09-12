@@ -30,6 +30,10 @@ public abstract class JbSession extends JbVerifier {
     private String username;
 
     @JaEdit(groups = JaEdit.GROUP_LIST)
+    @JaLang("角色等级")
+    private int roleLevel;
+
+    @JaEdit(groups = JaEdit.GROUP_LIST)
     @JaLang(value = "地址")
     private String address;
 
@@ -65,6 +69,14 @@ public abstract class JbSession extends JbVerifier {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public int getRoleLevel() {
+        return roleLevel;
+    }
+
+    public void setRoleLevel(int roleLevel) {
+        this.roleLevel = roleLevel;
     }
 
     public String getAddress() {

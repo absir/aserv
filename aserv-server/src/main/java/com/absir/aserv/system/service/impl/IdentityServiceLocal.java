@@ -8,6 +8,7 @@
 package com.absir.aserv.system.service.impl;
 
 import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.aserv.system.bean.value.JeRoleLevel;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.IdentityService;
 import com.absir.aserv.system.service.SecurityService;
@@ -25,8 +26,10 @@ public class IdentityServiceLocal implements IdentityService {
 
     @Inject(value = "IdentityService")
     private static Map<String, IdentityService> identityServiceMap;
+
     @Value("security.identity.error")
     private int error = 99;
+
     @Value("security.identity.errorTime")
     private int errorTime = 60000;
 
@@ -52,7 +55,7 @@ public class IdentityServiceLocal implements IdentityService {
     @Override
     public JiUserBase getUserBase(String[] parameters, String address) {
         if (parameters.length == 3) {
-            JiUserBase userBase = SecurityService.ME.getUserBase(parameters[1]);
+            JiUserBase userBase = SecurityService.ME.getUserBase(parameters[1], JeRoleLevel.ROLE_USER.ordinal());
             if (userBase != null) {
                 if (SecurityService.ME.validator(userBase, parameters[2], error, errorTime, address)) {
                     return userBase;

@@ -14,7 +14,7 @@ public interface ISecurityService {
 
     public JiUserBase getUserBase(Long userId);
 
-    public JiUserBase getUserBase(String username);
+    public JiUserBase getUserBase(String username, int roleLevel);
 
     public boolean validator(JiUserBase userBase, String password, int error, long errorTime, String address);
 
