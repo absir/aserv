@@ -44,8 +44,6 @@ public class JConfigureSupply extends CrudSupply<JConfigureBase> {
         if (configureEntity != null) {
             JConfigureUtils.cloneConfigureBase((JConfigureBase) entity, configureEntity);
         }
-
-        JConfigureUtils.clearConfigure(getEntityClass(entityName));
     }
 
     @Transaction
@@ -58,7 +56,5 @@ public class JConfigureSupply extends CrudSupply<JConfigureBase> {
                 session.delete(session.merge(configure));
             }
         }
-
-        JConfigureUtils.clearConfigure(getEntityClass(entityName));
     }
 }

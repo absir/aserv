@@ -306,7 +306,7 @@ public class VerifierService extends ContextService {
 
             if (!nameMapCrudEntity.isEmpty()) {
                 setNameMapCrudEntity(nameMapCrudEntity);
-                ContextUtils.getScheduleFactory().addRunnables(new CronFixDelayRunnable(new Runnable() {
+                ContextUtils.getScheduleFactory().addRunnable(new CronFixDelayRunnable(new Runnable() {
 
                     @Override
                     public void run() {

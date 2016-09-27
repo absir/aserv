@@ -92,7 +92,7 @@ public class UtilContext {
         };
 
         runnable.run();
-        thread.setName("UtilSchelduer.computeCalendar");
+        thread.setName("UtilScheduler.computeCalendar");
         thread.setDaemon(true);
         thread.start();
         startYear = currentCalendar.get(Calendar.YEAR);
@@ -176,7 +176,7 @@ public class UtilContext {
                 ;
             };
 
-            idleThread.setName("UtilSchelduer.idleThread");
+            idleThread.setName("UtilScheduler.idleThread");
             idleThread.setDaemon(true);
             idleThread.start();
         }

@@ -7,7 +7,7 @@
  */
 package com.absir.context.schedule;
 
-import com.absir.core.util.UtilSchelduer.NextRunnableDelay;
+import com.absir.core.util.UtilScheduler.NextRunnableDelay;
 
 import java.util.Date;
 

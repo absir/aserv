@@ -22,14 +22,14 @@ import com.absir.context.schedule.cron.CronExpressionRunnable;
 import com.absir.context.schedule.cron.CronFixDelayRunnable;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
-import com.absir.core.util.UtilSchelduer;
+import com.absir.core.util.UtilScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
 @Bean
-public class ScheduleFactory extends UtilSchelduer<ScheduleRunnable> implements IMethodInject<Schedule> {
+public class ScheduleFactory extends UtilScheduler<ScheduleRunnable> implements IMethodInject<Schedule> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleFactory.class);
 

@@ -182,7 +182,7 @@ public abstract class JConfigureUtils {
         return (T) configure;
     }
 
-    public static <T extends JConfigureBase> void clearConfigure(String configureKey) {
+    protected static <T extends JConfigureBase> void clearConfigure(String configureKey) {
         synchronized (JConfigureUtils.class) {
             JConfigureBase configure = Configure_Class_Map_Instance.get(configureKey);
             if (configure != null) {
@@ -191,7 +191,7 @@ public abstract class JConfigureUtils {
         }
     }
 
-    public static <T extends JConfigureBase> void clearConfigure(Class<T> cls, Object... initargs) {
+    protected static <T extends JConfigureBase> void clearConfigure(Class<T> cls, Object... initargs) {
         clearConfigure(getConfigureId(cls, initargs));
     }
 }

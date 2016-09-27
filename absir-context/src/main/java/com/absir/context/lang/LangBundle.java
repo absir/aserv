@@ -168,7 +168,7 @@ public class LangBundle {
                     }
 
                 }, reloadTime) : reloadRunnable.transformCronFixDelayRunnable(reloadTime);
-                ContextUtils.getScheduleFactory().addRunnables(reloadRunnable);
+                ContextUtils.getScheduleFactory().addRunnable(reloadRunnable);
             }
         }
     }

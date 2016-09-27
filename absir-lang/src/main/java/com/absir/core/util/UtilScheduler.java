@@ -9,39 +9,39 @@ package com.absir.core.util;
 
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelList.Orderable;
-import com.absir.core.util.UtilSchelduer.NextRunnable;
+import com.absir.core.util.UtilScheduler.NextRunnable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class UtilSchelduer<T extends NextRunnable> extends Thread {
+public class UtilScheduler<T extends NextRunnable> extends Thread {
 
     protected List<T> addRunnables;
 
-    protected UtilNode<T> runableHeader = new UtilNode<T>();
+    protected UtilNode<T> runnableHeader = new UtilNode<T>();
 
-    protected UtilNode<T> runableFooter = runableHeader;
+    protected UtilNode<T> runnableFooter = runnableHeader;
 
     protected boolean starting;
 
     protected long nextRunnableTime;
 
-    public synchronized void addRunnables(T runable) {
+    public synchronized void addRunnable(T runnable) {
         if (addRunnables == null) {
             addRunnables = new ArrayList<T>();
         }
 
-        addRunnables.add(runable);
-        runable.start(UtilContext.getCurrentDate());
-        if (runable.getNextTime() < nextRunnableTime) {
+        addRunnables.add(runnable);
+        runnable.start(UtilContext.getCurrentDate());
+        if (runnable.getNextTime() < nextRunnableTime) {
             interrupt();
         }
     }
 
-    public synchronized void removeRunnables(T runable) {
+    public synchronized void removeRunnable(T runnable) {
         if (addRunnables != null) {
-            addRunnables.remove(runable);
+            addRunnables.remove(runnable);
         }
     }
 
@@ -65,7 +65,7 @@ public class UtilSchelduer<T extends NextRunnable> extends Thread {
         while (Environment.isActive() && starting) {
             long time = UtilContext.getCurrentTime();
             Date date = UtilContext.getCurrentDate();
-            UtilNode<T> node = runableHeader.getNext();
+            UtilNode<T> node = runnableHeader.getNext();
             UtilNode<T> nodeNext = null;
             T runable;
             while (node != null) {
@@ -118,7 +118,7 @@ public class UtilSchelduer<T extends NextRunnable> extends Thread {
                 }
             }
 
-            node = runableHeader.getNext();
+            node = runnableHeader.getNext();
             if (node == null) {
                 nextRunnableTime = time + getMaxSleepTime();
 
@@ -147,29 +147,29 @@ public class UtilSchelduer<T extends NextRunnable> extends Thread {
     }
 
     protected void computeFooter() {
-        UtilNode<T> node = runableFooter.previous == null ? runableHeader : runableFooter;
+        UtilNode<T> node = runnableFooter.previous == null ? runnableHeader : runnableFooter;
         while (node.next != null) {
             node = node.next;
         }
 
-        runableFooter = node;
+        runnableFooter = node;
     }
 
     protected void sortAllRunnables() {
-        UtilNode.sortOrderableNodeAll(runableHeader);
+        UtilNode.sortOrderableNodeAll(runnableHeader);
         computeFooter();
     }
 
     protected void computeAddFooter() {
-        UtilNode<T> node = runableFooter.next;
+        UtilNode<T> node = runnableFooter.next;
         if (node != null) {
-            runableFooter = node;
+            runnableFooter = node;
         }
     }
 
     protected void removeRunnableNode(UtilNode<T> runableNode) {
-        if (runableNode == runableFooter) {
-            runableFooter = runableFooter.previous;
+        if (runableNode == runnableFooter) {
+            runnableFooter = runnableFooter.previous;
         }
 
         runableNode.remove();
@@ -181,7 +181,7 @@ public class UtilSchelduer<T extends NextRunnable> extends Thread {
     }
 
     protected void addNextRunnableNode(T runableNode) {
-        UtilNode.insertOrderableNodeFooter(runableFooter, runableNode);
+        UtilNode.insertOrderableNodeFooter(runnableFooter, runableNode);
         computeAddFooter();
     }
 
