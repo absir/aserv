@@ -25,7 +25,9 @@ public abstract class KernelClass {
     public static final TypeVariable CollectionTypeVariable = Collection.class.getTypeParameters()[0];
 
     public static final TypeVariable[] MapTypeVariable = Map.class.getTypeParameters();
+
     protected static final Map<Class, String> classMapSimpleName = new HashMap<Class, String>();
+
     static final Map<Class, Object> Class_Map_Instance = new HashMap<Class, Object>();
 
     public static boolean isBasicClass(Class cls) {

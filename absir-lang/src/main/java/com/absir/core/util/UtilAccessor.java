@@ -112,8 +112,31 @@ public class UtilAccessor {
         return accessorName + ":" + propertyPath;
     }
 
+    public static Accessor getAccessorCls(Class cls, String propertyPath) {
+        return getAccessorClass(cls, null, propertyPath.split("\\."), 0);
+    }
+
+    public static Accessor getAccessorCls(Class cls, String propertyPath, boolean cacheable) {
+        String accessorName = cls.getName();
+        accessorName = getAccessorKey(accessorName, propertyPath);
+        Accessor accessor = Accessor_Name_Map_Accessor.get(accessorName);
+        if (accessor == null) {
+            synchronized (cls) {
+                accessor = Accessor_Name_Map_Accessor.get(accessorName);
+                if (accessor == null) {
+                    accessor = getAccessorCls(cls, propertyPath);
+                    if (accessor != null) {
+                        Accessor_Name_Map_Accessor.put(accessorName, accessor);
+                    }
+                }
+            }
+        }
+
+        return accessor;
+    }
+
     public static Accessor getAccessorObj(Object obj, String propertyPath) {
-        return getAccessor(obj, null, propertyPath.split("\\."), 0);
+        return getAccessorObject(obj, null, propertyPath.split("\\."), 0);
     }
 
     public static Accessor getAccessorObj(Object obj, String propertyPath, String accessorName) {
@@ -149,7 +172,90 @@ public class UtilAccessor {
         Accessor_Name_Map_Accessor.clear();
     }
 
-    private static Accessor getAccessor(Object obj, AccessorWrapper accessorWrapper, final String[] properties, int i) {
+    private static Accessor getAccessorClass(Class cls, AccessorWrapper accessorWrapper, final String[] properties, int i) {
+        for (; i < properties.length; i++) {
+            if (cls == null) {
+                return null;
+            }
+
+            final String property = properties[i];
+            if (Map.class.isAssignableFrom(cls)) {
+                Field field = accessorWrapper == null ? null : accessorWrapper.getField();
+                accessorWrapper = new AccessorWrapper(accessorWrapper) {
+
+                    @Override
+                    public Object evalGet(Object obj) {
+                        return ((Map) obj).get(property);
+                    }
+
+                    @Override
+                    public boolean evalSet(Object obj, Object value) {
+                        ((Map) obj).put(property, value);
+                        return true;
+                    }
+
+                    @Override
+                    public Field getField() {
+                        return null;
+                    }
+
+                    @Override
+                    public Method getGetter() {
+                        return null;
+                    }
+
+                    @Override
+                    public Method getSetter() {
+                        return null;
+                    }
+
+                };
+
+                cls = field == null ? null : KernelClass.rawClass(KernelClass.type(field.getGenericType(), KernelClass.MapTypeVariable[1]));
+
+            } else {
+                Field field = KernelReflect.declaredField(cls, property);
+                final Accessor evalAccessor = getAccessor(cls, property, field);
+                if (evalAccessor == null) {
+                    return null;
+                }
+
+                accessorWrapper = new AccessorWrapper(accessorWrapper) {
+
+                    @Override
+                    public Object evalGet(Object obj) {
+                        return evalAccessor.get(obj);
+                    }
+
+                    @Override
+                    public boolean evalSet(Object obj, Object value) {
+                        return evalAccessor.set(obj, value);
+                    }
+
+                    @Override
+                    public Field getField() {
+                        return evalAccessor.getField();
+                    }
+
+                    @Override
+                    public Method getGetter() {
+                        return evalAccessor.getGetter();
+                    }
+
+                    @Override
+                    public Method getSetter() {
+                        return evalAccessor.getSetter();
+                    }
+                };
+
+                cls = accessorWrapper.getType();
+            }
+        }
+
+        return accessorWrapper;
+    }
+
+    private static Accessor getAccessorObject(Object obj, AccessorWrapper accessorWrapper, final String[] properties, int i) {
         for (; i < properties.length; i++) {
             if (obj == null) {
                 final int index = i;
@@ -159,7 +265,7 @@ public class UtilAccessor {
 
                     private Accessor getEvalAccessor(Object obj) {
                         if (evalAccessor == null) {
-                            evalAccessor = getAccessor(obj, null, properties, index);
+                            evalAccessor = getAccessorObject(obj, null, properties, index);
                         }
 
                         return evalAccessor;
@@ -274,6 +380,10 @@ public class UtilAccessor {
         public abstract Method getGetter();
 
         public abstract Method getSetter();
+
+        public Class<?> getType() {
+            return getField() == null ? getGetter() == null ? getSetter().getParameterTypes()[0] : getGetter().getReturnType() : getField().getType();
+        }
 
         public Class<?> getDeclaringClass() {
             return getField() == null ? getGetter() == null ? getSetter().getDeclaringClass() : getGetter().getDeclaringClass() : getField().getDeclaringClass();
