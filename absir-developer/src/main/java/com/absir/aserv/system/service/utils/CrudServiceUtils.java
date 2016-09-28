@@ -37,6 +37,8 @@ public abstract class CrudServiceUtils {
                 //crudSupply.flush();
                 return crudSupply.getIdentifier(entityName, entity);
             }
+
+            return identifier;
         }
 
         return null;
