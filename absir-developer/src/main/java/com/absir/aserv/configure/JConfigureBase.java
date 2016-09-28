@@ -47,6 +47,10 @@ public class JConfigureBase implements IBase<Serializable> {
         return getClass().getName() + "@" + getId();
     }
 
+    protected String get(Field field) {
+        return DynaBinderUtils.to(KernelReflect.get(this, field), String.class);
+    }
+
     protected Object set(String value, Field field) {
         Class<? extends Serializable> identifierType = SessionFactoryUtils.getIdentifierType(null, field.getType(), SessionFactoryUtils.get().getSessionFactory());
         if (identifierType == null) {
@@ -64,7 +68,7 @@ public class JConfigureBase implements IBase<Serializable> {
     public final void merge() {
         for (Entry<Field, JConfigure> entry : fieldMapConfigure.entrySet()) {
             JConfigure configure = entry.getValue();
-            configure.setValue(DynaBinderUtils.to(KernelReflect.get(this, entry.getKey()), String.class));
+            configure.setValue(get(entry.getKey()));
         }
 
         mergeConfigures(fieldMapConfigure.values());

@@ -417,6 +417,9 @@ public class BeanServiceBase implements BeanService, ICrudSupply {
 
     @Override
     public void flush() {
-        //getSession().flush();
+        Session session = getSession();
+        if (session != null) {
+            session.flush();
+        }
     }
 }

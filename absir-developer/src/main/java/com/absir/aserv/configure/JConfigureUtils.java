@@ -106,6 +106,7 @@ public abstract class JConfigureUtils {
             if (configure == null) {
                 configure = new JConfigure();
                 configure.setId(new JEmbedSS(identifier, field.getName()));
+                configure.setValue(configureBase.get(field));
 
             } else {
                 KernelObject.declaredSetter(configureBase, field, configureBase.set(configure.getValue(), field));
