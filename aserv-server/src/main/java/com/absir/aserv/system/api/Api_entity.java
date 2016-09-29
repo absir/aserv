@@ -28,6 +28,7 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Value;
 import com.absir.client.helper.HelperJson;
+import com.absir.context.config.BeanFactoryStopping;
 import com.absir.core.base.IBase;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
 import com.absir.orm.hibernate.SessionFactoryUtils;
@@ -47,8 +48,34 @@ import java.util.Map.Entry;
 @Server
 public class Api_entity extends ApiServer {
 
+    /**
+     * 关闭服务了
+     */
+    public String stop(Input input) {
+        JiUserBase user = SecurityService.ME.getUserBase(input);
+        if (user != null && user.isDeveloper()) {
+            BeanFactoryStopping.stoppingAll();
+            return "stopped";
+        }
+
+        return "denied";
+    }
+
     @Inject
     protected Version version;
+
+    @Base
+    @Bean
+    protected static class Version {
+
+        @Value("api.version.min")
+        public String min = "0.0.0";
+
+        @Value("api.version.version")
+        public String max = "0.0.1";
+
+        public int timeZone = Calendar.getInstance().getTimeZone().getRawOffset();
+    }
 
     /**
      * 返回版本信息
@@ -94,11 +121,6 @@ public class Api_entity extends ApiServer {
 
     /**
      * 获取数据列表
-     *
-     * @param entityName
-     * @param pageIndex
-     * @param input
-     * @return
      */
     public List<Object> list(String entityName, Integer pageIndex, Input input) {
         return list(entityName, JdbcPage.PAGE_SIZE, pageIndex, input);
@@ -458,18 +480,6 @@ public class Api_entity extends ApiServer {
         }
 
         return modelMap;
-    }
-
-    @Bean
-    protected static class Version {
-
-        @Value("api.version.min")
-        public String min = "0.0.0";
-
-        @Value("api.version.version")
-        public String max = "1.0.0";
-
-        public int timeZone = Calendar.getInstance().getTimeZone().getRawOffset();
     }
 
     public static class Condition {

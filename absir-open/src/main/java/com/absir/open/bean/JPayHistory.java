@@ -35,7 +35,7 @@ public class JPayHistory extends JbBase {
     private String tradeNo;
 
     @JaLang("创建时间")
-    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
+    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST, listColType = 1)
     private long createTime = ContextUtils.getContextTime();
 
     public String getId() {

@@ -7,12 +7,14 @@ import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.validator.value.NotEmpty;
 
+import javax.persistence.Entity;
 import javax.persistence.Id;
 
 /**
  * Created by absir on 16/8/17.
  */
 @MaEntity(parent = {@MaMenu("任务配置")}, name = "任务")
+@Entity
 public class JTask extends JTaskBase implements IPassClear {
 
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})

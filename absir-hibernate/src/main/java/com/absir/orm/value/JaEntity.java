@@ -18,22 +18,16 @@ public @interface JaEntity {
 
     /**
      * 实体本身授权
-     *
-     * @return
      */
     JePermission[] permissions() default {};
 
     /**
      * 实体关联扩展
-     *
-     * @return
      */
     JaAssoc[] jaAssoces() default {};
 
     /**
      * 扩展授权设置
-     *
-     * @return
      */
     JaPermission[] jaPermissions() default {};
 }

@@ -18,8 +18,6 @@ public @interface JaConfig {
 
     /**
      * 所在Configure
-     *
-     * @return
      */
     String[] value();
 }

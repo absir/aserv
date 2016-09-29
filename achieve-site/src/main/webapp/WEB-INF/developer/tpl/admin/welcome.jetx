@@ -20,6 +20,10 @@
             <td>\${ip}</td>
         </tr>
         <tr>
+            <td>${Pag::lang('启动时间')}</td>
+            <td>\${Pag::dateValue(startTime)}</td>
+        </tr>
+        <tr>
             <td>${Pag::lang('系统时间')}</td>
             <td>\${Pag::dateValue(osTime)}</td>
         </tr>

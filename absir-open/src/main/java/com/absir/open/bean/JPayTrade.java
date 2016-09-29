@@ -28,7 +28,7 @@ public class JPayTrade extends JbBase {
     private String id;
 
     @JaLang("创建时间")
-    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
+    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST, listColType = 1)
     //@Temporal(TemporalType.TIMESTAMP)
     private long createTime;
 

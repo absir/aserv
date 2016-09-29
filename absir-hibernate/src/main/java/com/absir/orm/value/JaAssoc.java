@@ -16,50 +16,36 @@ public @interface JaAssoc {
 
     /**
      * 生成实体类
-     *
-     * @return
      */
     Class<?> entityClass();
 
     /**
      * 生成实体类授权
-     *
-     * @return
      */
     JePermission[] permissions() default {};
 
     /**
      * 生成实体类后缀名 默认为simpleName
-     *
-     * @return
      */
     String entityName() default "";
 
     /**
      * 生成实体类表后缀名 默认为simpleName
-     *
-     * @return
      */
     String tableName() default "";
 
     /**
      * 支持关联授权类型
-     *
-     * @return
      */
     Class<?>[] assocClasses() default {};
 
     /**
      * 通过类关联实体
-     *
-     * @return
      */
     Class referenceEntityClass() default Void.class;
 
     /**
      * 通过实体名关联实体
-     *
-     * @return
      */
     String referenceEntityName() default "";
 }

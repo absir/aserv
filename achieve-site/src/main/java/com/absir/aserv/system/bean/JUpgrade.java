@@ -8,22 +8,36 @@
 package com.absir.aserv.system.bean;
 
 
+import com.absir.aserv.crud.CrudHandler;
+import com.absir.aserv.crud.value.ICrudBean;
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.base.JbBean;
 import com.absir.aserv.system.bean.value.*;
 import com.absir.aserv.system.crud.DateCrudFactory;
 import com.absir.aserv.system.crud.UploadCrudFactory;
+import com.absir.aserv.task.JaTask;
+import com.absir.aserv.upgrade.UpgradeService;
+import com.absir.bean.basis.Configure;
+import com.absir.context.core.ContextUtils;
+import com.absir.core.kernel.KernelString;
+import com.absir.server.in.Input;
+import com.absir.server.route.RouteAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Entity;
+import java.io.File;
+import java.util.Map;
 
 /**
  * @author absir
  */
+@Configure
 @MaEntity(parent = {@MaMenu("功能管理"), @MaMenu("版本管理")}, name = "升级")
 @JaModel(desc = true)
 @Entity
-public class JUpgrade extends JbBean {
+public class JUpgrade extends JbBean implements ICrudBean {
 
     @JaLang("升级文件")
     @JaEdit(types = "file", groups = JaEdit.GROUP_LIST)
@@ -31,41 +45,39 @@ public class JUpgrade extends JbBean {
     private String upgradeFile;
 
     @JaLang("版本")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
+    @JaEdit(groups = JaEdit.GROUP_LIST, listColType = 1)
     private String version;
 
     @JaLang("描述")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String descriptor;
 
-    @JaLang("结束")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
-    private boolean done;
+    @JaLang(value = "验证")
+    @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKED, listColType = 1)
+    private boolean validation;
 
-    @JaLang("开始时间")
+    @JaLang("修改时间")
     @JaEdit(editable = JeEditable.LOCKED, types = "dateTime", groups = JaEdit.GROUP_LIST)
-    @JaCrud(value = "dateCrudFactory", cruds = {JaCrud.Crud.CREATE, JaCrud.Crud.UPDATE}, factory = DateCrudFactory.class)
-    private long beginTime;
-
-    @JaLang(value = "成功")
-    @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKED)
-    private boolean success;
+    @JaCrud(value = "dateCrudFactory", cruds = {JaCrud.Crud.CREATE}, factory = DateCrudFactory.class)
+    private long createTime;
 
     @JaLang("修改时间")
     @JaEdit(editable = JeEditable.LOCKED, types = "dateTime", groups = JaEdit.GROUP_LIST)
     @JaCrud(value = "dateCrudFactory", cruds = {JaCrud.Crud.CREATE, JaCrud.Crud.UPDATE}, factory = DateCrudFactory.class)
     private long updateTime;
 
-    /**
-     * @return the upgradeFile
-     */
+    @JaLang("升级")
+    private boolean upgrade;
+
+    @JaLang("开始时间")
+    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
+    @JaCrud(value = "dateCrudFactory", cruds = {JaCrud.Crud.CREATE, JaCrud.Crud.UPDATE}, factory = DateCrudFactory.class)
+    private long beginTime;
+
     public String getUpgradeFile() {
         return upgradeFile;
     }
 
-    /**
-     * @param upgradeFile the upgradeFile to set
-     */
     public void setUpgradeFile(String upgradeFile) {
         this.upgradeFile = upgradeFile;
     }
@@ -78,26 +90,44 @@ public class JUpgrade extends JbBean {
         this.version = version;
     }
 
-    /**
-     * @return the descriptor
-     */
     public String getDescriptor() {
         return descriptor;
     }
 
-    /**
-     * @param descriptor the descriptor to set
-     */
     public void setDescriptor(String descriptor) {
         this.descriptor = descriptor;
     }
 
-    public boolean isDone() {
-        return done;
+    public boolean isValidation() {
+        return validation;
     }
 
-    public void setDone(boolean done) {
-        this.done = done;
+    public void setValidation(boolean validation) {
+        this.validation = validation;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public boolean isUpgrade() {
+        return upgrade;
+    }
+
+    public void setUpgrade(boolean upgrade) {
+        this.upgrade = upgrade;
     }
 
     public long getBeginTime() {
@@ -108,25 +138,51 @@ public class JUpgrade extends JbBean {
         this.beginTime = beginTime;
     }
 
-    /**
-     * @return the success
-     */
-    public boolean isSuccess() {
-        return success;
+    @Override
+    public void processCrud(JaCrud.Crud crud, CrudHandler handler, Input input) {
+        if (handler.isPersist()) {
+            Map<String, Object> versionMap = null;
+            String filePath = null;
+            if (!KernelString.isEmpty(upgradeFile)) {
+                filePath = UploadCrudFactory.getUploadPath() + upgradeFile;
+                File file = new File(filePath);
+                versionMap = UpgradeService.ME.getVersionMap(file);
+            }
+
+            if (versionMap == null) {
+                validation = false;
+
+            } else {
+                validation = true;
+                String version = UpgradeService.ME.getVersion(versionMap);
+                if (!KernelString.isEmpty(version)) {
+                    this.version = version;
+                }
+
+                if (upgrade) {
+                    if (beginTime <= ContextUtils.getContextTime()) {
+                        upgradeFile(RouteAdapter.ADAPTER_TIME, filePath);
+
+                    } else {
+                        upgradeFile(RouteAdapter.ADAPTER_TIME, filePath);
+                    }
+                }
+            }
+        }
     }
 
-    /**
-     * @param success the success to set
-     */
-    public void setSuccess(boolean success) {
-        this.success = success;
+    protected static final Logger LOGGER = LoggerFactory.getLogger(JUpgrade.class);
+
+    @JaTask("upgradeFile")
+    public static void upgradeFile(long adapterTime, String filePath) {
+        if (RouteAdapter.ADAPTER_TIME == adapterTime) {
+            try {
+                UpgradeService.ME.restartUpgrade(filePath, true);
+
+            } catch (Exception e) {
+                LOGGER.error("upgradeFile error " + filePath, e);
+            }
+        }
     }
 
-    public long getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
-    }
 }

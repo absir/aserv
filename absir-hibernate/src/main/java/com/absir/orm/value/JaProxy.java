@@ -14,8 +14,6 @@ import java.lang.annotation.Target;
 
 /**
  * 包类@Entity,@MappedSuperclass为代理实现
- *
- * @author absir
  */
 @Target({ElementType.PACKAGE})
 @Retention(RetentionPolicy.RUNTIME)

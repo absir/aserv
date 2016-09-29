@@ -14,16 +14,12 @@ public interface JiAssoc {
 
     /**
      * 主键ID
-     *
-     * @return
      */
     @Id
     public Long getId();
 
     /**
      * 获取关联实体主键
-     *
-     * @return
      */
     public Serializable getAssocId();
 }

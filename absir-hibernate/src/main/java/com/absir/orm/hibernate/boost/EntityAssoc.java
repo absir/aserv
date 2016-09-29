@@ -31,9 +31,6 @@ public class EntityAssoc {
 
     /**
      * 获取属性关联实体名
-     *
-     * @param value
-     * @return
      */
     public static String getReferencedEntityName(Value value) {
         if (value instanceof ToOne) {
@@ -51,11 +48,6 @@ public class EntityAssoc {
 
     /**
      * 添加分析实体关联入口
-     *
-     * @param entityName
-     * @param assocName
-     * @param assocJpaName
-     * @param jaAssoc
      */
     protected static void addPersistentClass(String entityName, String assocName, String assocJpaName, JaAssoc jaAssoc) {
         if (JiAssoc.class.isAssignableFrom(jaAssoc.entityClass())) {
@@ -82,12 +74,6 @@ public class EntityAssoc {
 
     /**
      * 添加分析实体自身
-     *
-     * @param entityName
-     * @param jpaEntityName
-     * @param jaEntity
-     * @param classes
-     * @param sessionFactoryBoost
      */
     protected static void addPersistentClasses(String entityName, String jpaEntityName, JaEntity jaEntity, Map<String, PersistentClass> classes, SessionFactoryBoost sessionFactoryBoost) {
         if (SessionFactoryUtils.get().getEntityNameMapJpaEntityName().containsKey(entityName)) {
@@ -148,10 +134,10 @@ public class EntityAssoc {
                 }
 
                 if (field.getType().isArray() || java.util.Collection.class.isAssignableFrom(field.getType())) {
-                    addEntityAssocField(Referenced.Referenes, entityName, referencedEntityName, referencedEntityClass, field, jaField);
+                    addEntityAssocField(Referenced.References, entityName, referencedEntityName, referencedEntityClass, field, jaField);
 
                 } else {
-                    addEntityAssocField(Referenced.Referene, entityName, referencedEntityName, referencedEntityClass, field, jaField);
+                    addEntityAssocField(Referenced.Reference, entityName, referencedEntityName, referencedEntityClass, field, jaField);
                 }
 
             } else {
@@ -177,12 +163,6 @@ public class EntityAssoc {
 
     /**
      * 添加分析实体属性
-     *
-     * @param referenced
-     * @param entityName
-     * @param referencedEntityName
-     * @param field
-     * @param jaField
      */
     protected static void addEntityAssocField(Referenced referenced, String entityName, String referencedEntityName, Field field, JaField jaField) {
         addEntityAssocField(referenced, entityName, referencedEntityName, null, field, jaField);
@@ -261,30 +241,33 @@ public class EntityAssoc {
 
     /**
      * 关联属性类型
-     *
-     * @author absir
      */
     public static enum Referenced {
         /**
          * 对单关联
          */
         ToOne,
+
         /**
          * 对多关联
          */
         ToMany,
+
         /**
          * 集合关联
          */
         Collection,
+
         /**
          * 关联字段
          */
-        Referene,
+        Reference,
+
         /**
          * 集合字段集合
          */
-        Referenes,
+        References,
+
         /**
          * 工厂模式
          */
@@ -333,8 +316,6 @@ public class EntityAssoc {
 
         /**
          * 关联实体本身名称
-         *
-         * @return the entityName
          */
         public String getEntityName() {
             return entityName;
@@ -342,8 +323,6 @@ public class EntityAssoc {
 
         /**
          * 关联实体本身类型
-         *
-         * @return the entityClass
          */
         public Class<? extends JiAssoc> getEntityClass() {
             return entityClass;
@@ -351,8 +330,6 @@ public class EntityAssoc {
 
         /**
          * 关联实体支持关联类型
-         *
-         * @return the assocClasses
          */
         public Class<?>[] getAssocClasses() {
             return assocClasses;
@@ -360,8 +337,6 @@ public class EntityAssoc {
 
         /**
          * 关联实体关联至实体名称
-         *
-         * @return the referenceEntityName
          */
         public String getReferenceEntityName() {
             if (KernelString.isEmpty(referenceEntityName)) {
@@ -373,8 +348,6 @@ public class EntityAssoc {
 
         /**
          * 关联实体关联至实体名称
-         *
-         * @return the referenceEntityClass
          */
         public Class<?> getReferenceEntityClass() {
             return referenceEntityClass;
@@ -389,22 +362,22 @@ public class EntityAssoc {
     public static class AssocField {
 
         /**
-         * 关联属性名称 feildName
+         * 关联属性名称
          */
         private String feildName;
 
         /**
-         * 关联属性支持关联类型 assocClasses
+         * 关联属性支持关联类型
          */
         private Class<?>[] assocClasses;
 
         /**
-         * 关联属性类型 referenced
+         * 关联属性类型
          */
         private Referenced referenced;
 
         /**
-         * 关联实体名称 referenceEntityName
+         * 关联实体名称
          */
         private String referenceEntityName;
 
@@ -417,8 +390,6 @@ public class EntityAssoc {
 
         /**
          * 关联属性名称
-         *
-         * @return
          */
         public String getFieldName() {
             return feildName;
@@ -426,8 +397,6 @@ public class EntityAssoc {
 
         /**
          * 关联属性名称
-         *
-         * @return
          */
         public Class<?>[] getAssocClasses() {
             return assocClasses;
@@ -435,8 +404,6 @@ public class EntityAssoc {
 
         /**
          * 关联属性类型
-         *
-         * @return
          */
         public Referenced getReferenced() {
             return referenced;
@@ -444,8 +411,6 @@ public class EntityAssoc {
 
         /**
          * 关联实体名称
-         *
-         * @return
          */
         public String getReferenceEntityName() {
             return referenceEntityName;
@@ -495,18 +460,16 @@ public class EntityAssoc {
 
     /**
      * 对映关联结构
-     *
-     * @author absir
      */
     public static class EntityAssocEntity {
 
         /**
-         * 对映关联实体名 assocName
+         * 对映关联实体名
          */
         private String assocName;
 
         /**
-         * 对映关联实体结构 assocEntity
+         * 对映关联实体结构
          */
         private AssocEntity assocEntity;
 
@@ -517,8 +480,6 @@ public class EntityAssoc {
 
         /**
          * 对映关联实体名
-         *
-         * @return the assocName
          */
         public String getAssocName() {
             return assocName;
@@ -526,8 +487,6 @@ public class EntityAssoc {
 
         /**
          * 对映关联实体结构
-         *
-         * @return the assocEntity
          */
         public AssocEntity getAssocEntity() {
             return assocEntity;

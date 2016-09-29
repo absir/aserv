@@ -16,6 +16,7 @@ import com.absir.context.core.ContextUtils;
 import com.absir.core.base.Environment;
 import com.absir.server.in.InModel;
 import com.absir.server.on.OnPut;
+import com.absir.server.route.RouteAdapter;
 import com.absir.server.value.Server;
 
 import java.net.InetAddress;
@@ -61,6 +62,7 @@ public class Admin_route extends AdminServer {
             Environment.throwable(e);
         }
 
+        model.put("startTime", RouteAdapter.ADAPTER_TIME);
         model.put("osTime", System.currentTimeMillis());
         model.put("contextTime", ContextUtils.getContextTime());
 

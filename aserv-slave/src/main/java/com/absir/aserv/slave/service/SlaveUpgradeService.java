@@ -171,7 +171,7 @@ public class SlaveUpgradeService {
                                         SockserService.ME.closeAllContext();
                                         saveAll();
                                         commitUpgradeStatus(EUpgradeStatus.BEGIN_RESTART_UPRADE, false);
-                                        UpgradeService.ME.restartUpgrade(new FileInputStream(upgradeFile));
+                                        UpgradeService.ME.restartUpgrade(new FileInputStream(upgradeFile), true);
                                         return;
                                     }
 

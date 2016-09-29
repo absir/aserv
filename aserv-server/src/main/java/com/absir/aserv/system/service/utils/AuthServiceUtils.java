@@ -31,7 +31,7 @@ public abstract class AuthServiceUtils {
      * 更新权限
      */
     public static boolean updatePermission(String entityName, JiUserBase user) {
-        return AuthService.ME.permission(entityName, user, JeVotePermission.UPDATABLE);
+        return AuthService.ME.permission(entityName, user, JeVotePermission.UPDATEABLE);
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract class AuthServiceUtils {
      * 更新数据过滤
      */
     public static PropertyFilter updatePropertyFilter(JoEntity joEntity, JiUserBase user) {
-        return AuthService.ME.permissionFilter(joEntity, user, JeVotePermission.UPDATABLE);
+        return AuthService.ME.permissionFilter(joEntity, user, JeVotePermission.UPDATEABLE);
     }
 
     public static PropertyFilter updatePropertyFilter(String entityName, ICrudSupply crudSupply, JiUserBase user) {

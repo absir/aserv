@@ -7,6 +7,7 @@
  */
 package com.absir.core.helper;
 
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelLang.CallbackBreak;
 import com.absir.core.kernel.KernelString;
 import org.apache.commons.io.Charsets;
@@ -301,6 +302,24 @@ public class HelperFile extends FileUtils {
 
         } finally {
             IOUtils.closeQuietly(inputStream);
+        }
+    }
+
+    public static void deleteFileNoBreak(File file, KernelLang.GetTemplate<File, Boolean> deleteFilter) throws IOException {
+        if (deleteFilter != null && deleteFilter.getWith(file) == Boolean.TRUE) {
+            return;
+        }
+
+        if (file.isDirectory()) {
+            for (File f : file.listFiles()) {
+                deleteFileNoBreak(f, deleteFilter);
+            }
+        }
+
+        try {
+            file.delete();
+
+        } catch (Exception e) {
         }
     }
 }

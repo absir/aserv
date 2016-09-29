@@ -53,6 +53,7 @@ public class UpgradeServiceImpl extends UpgradeService {
 
     @Override
     public void start(Object stopDone) throws IOException {
+        super.start(stopDone);
         boolean noCommand = KernelString.isEmpty(getRestartCommand());
         while (true) {
             if (stopDone != null) {
@@ -86,7 +87,5 @@ public class UpgradeServiceImpl extends UpgradeService {
 
             break;
         }
-
-        super.start(stopDone);
     }
 }

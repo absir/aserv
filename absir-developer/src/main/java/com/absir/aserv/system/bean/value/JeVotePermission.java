@@ -20,7 +20,7 @@ public enum JeVotePermission {
 
     },
 
-    UPDATABLE {
+    UPDATEABLE {
         @Override
         protected JeVote voteFor(JPermission permission) {
             return permission.getUpdatable();
@@ -45,7 +45,7 @@ public enum JeVotePermission {
 
     public static JeVotePermission forPermission(JePermission permission) {
         if (permission == JePermission.UPDATE) {
-            return JeVotePermission.UPDATABLE;
+            return JeVotePermission.UPDATEABLE;
         }
 
         if (permission == JePermission.INSERT) {

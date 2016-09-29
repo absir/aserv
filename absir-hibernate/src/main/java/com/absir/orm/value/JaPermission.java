@@ -15,15 +15,11 @@ public @interface JaPermission {
 
     /**
      * 实体名称
-     *
-     * @return
      */
     String entityName() default "";
 
     /**
      * 实体支持授权
-     *
-     * @return
      */
     JePermission[] permissions() default {};
 }

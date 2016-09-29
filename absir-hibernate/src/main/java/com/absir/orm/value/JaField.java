@@ -18,22 +18,16 @@ public @interface JaField {
 
     /**
      * 字段支持关联授权
-     *
-     * @return
      */
     Class<?>[] assocClasses() default {};
 
     /**
      * 字段支持实体类
-     *
-     * @return
      */
     String referenceEntityName() default "";
 
     /**
      * 字段支持实体名
-     *
-     * @return
      */
     Class<?> referencEntityClass() default void.class;
 }

@@ -67,6 +67,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * 注意设置UploadPath变量被设置后,可能影响期望的上传|修改|删除逻辑
+ */
 @Base
 @Bean
 public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<FileItem> {

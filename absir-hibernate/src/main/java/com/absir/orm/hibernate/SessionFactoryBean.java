@@ -24,6 +24,8 @@ import com.absir.orm.hibernate.boost.EntityAssoc.EntityAssocEntity;
 import com.absir.orm.value.JePermission;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
+import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
+import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,26 +41,39 @@ import java.util.Map.Entry;
 public class SessionFactoryBean implements IBeanFactoryStopping {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryBean.class);
+
     @Value("driver.shared")
     private boolean driverShared;
+
     @Value("driver.stopping.command")
     private Set<String> driverStoppingCommand;
+
     private SessionFactoryImpl sessionFactory;
+
     private Map<String, SessionFactoryImpl> nameMapSessionFactory = new HashMap<String, SessionFactoryImpl>();
+
     private Map<SessionFactoryImpl, String> sessionFactoryMapName = new HashMap<SessionFactoryImpl, String>();
+
     @Value(value = "entity.assoc.depth")
     private int assocDepth = 8;
+
     private Map<String, JePermission[]> nameMapPermissions = new HashMap<String, JePermission[]>();
+
     private Map<String, List<AssocEntity>> nameMapAssocEntities = new HashMap<String, List<AssocEntity>>();
+
     private Map<String, List<AssocField>> nameMapAssocFields = new HashMap<String, List<AssocField>>();
+
     private Map<String, EntityAssocEntity> nameMapEntityAssocEntity = new HashMap<String, EntityAssocEntity>();
+
     private Map<String, String> entityNameMapJpaEntityName = new HashMap<String, String>();
+
     private Map<String, Entry<Class<?>, SessionFactory>> jpaEntityNameMapEntityClassFactory = new HashMap<String, Entry<Class<?>, SessionFactory>>();
 
     public static ConnectionProvider getConnectionProvider(SessionFactoryImpl sessionFactory) {
         try {
-            Object connectionProvider = KernelObject.declaredGet(
-                    sessionFactory.getJdbcServices().getBootstrapJdbcConnectionAccess(), "connectionProvider");
+            JdbcServices jdbcServices = sessionFactory.getJdbcServices();
+            JdbcConnectionAccess jdbcConnectionAccess = jdbcServices.getBootstrapJdbcConnectionAccess();
+            Object connectionProvider = KernelObject.declaredGet(jdbcConnectionAccess, "connectionProvider");
             return connectionProvider == null || !(connectionProvider instanceof ConnectionProvider) ? null
                     : (ConnectionProvider) connectionProvider;
 
@@ -75,41 +90,44 @@ public class SessionFactoryBean implements IBeanFactoryStopping {
         }
 
         try {
-            sessionFactory.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        ConnectionProvider connectionProvider = getConnectionProvider(sessionFactory);
-        if (connectionProvider == null) {
-            return;
-        }
-
-        Method method = KernelReflect.declaredMethod(connectionProvider.getClass(), "close");
-        if (method == null) {
-            method = KernelReflect.declaredMethod(connectionProvider.getClass(), "stop");
-            if (method == null) {
-                method = KernelReflect.declaredMethod(connectionProvider.getClass(), "destory");
+            ConnectionProvider connectionProvider = getConnectionProvider(sessionFactory);
+            if (connectionProvider == null) {
+                return;
             }
-        }
 
-        if (method == null) {
-            LOGGER.info("stop " + connectionProvider + " failed");
+            Method method = KernelReflect.declaredMethod(connectionProvider.getClass(), "close");
+            if (method == null) {
+                method = KernelReflect.declaredMethod(connectionProvider.getClass(), "stop");
+                if (method == null) {
+                    method = KernelReflect.declaredMethod(connectionProvider.getClass(), "destory");
+                }
+            }
 
-        } else {
+            if (method == null) {
+                LOGGER.info("stop " + connectionProvider + " failed");
+
+            } else {
+                try {
+                    LOGGER.info("stop " + connectionProvider + " at " + method.getName());
+                    method.invoke(connectionProvider);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Object ds = KernelObject.declaredGet(connectionProvider, "ds");
+            if (ds != null) {
+                KernelObject.declaredSend(ds, "close", true);
+            }
+
+        } finally {
             try {
-                LOGGER.info("stop " + connectionProvider + " at " + method.getName());
-                method.invoke(connectionProvider);
+                sessionFactory.close();
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-
-        Object ds = KernelObject.declaredGet(connectionProvider, "ds");
-        if (ds != null) {
-            KernelObject.declaredSend(ds, "close", true);
         }
     }
 
@@ -194,7 +212,7 @@ public class SessionFactoryBean implements IBeanFactoryStopping {
                     DriverManager.deregisterDriver(driver);
 
                 } catch (Exception e) {
-                    LOGGER.error("deregisterDriver " + driver, e);
+                    LOGGER.error("deRegisterDriver " + driver, e);
                 }
             }
         }
