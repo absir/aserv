@@ -12,7 +12,6 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
-import com.absir.bean.inject.value.Started;
 import com.absir.bean.inject.value.Value;
 import com.absir.bean.lang.LangCodeUtils;
 import com.absir.context.core.ContextAtom;
@@ -68,8 +67,8 @@ public class TaskService extends ContextService {
 
     protected DActiver<JPlan> planDActiver;
 
-    @Started
-    protected void started() {
+    @Inject
+    protected void initService() {
         taskDActiver = new DActiver<JTask>("JTask");
         L2EntityMergeService.ME.addEntityMerges(JTask.class, new IEntityMerge<JTask>() {
             @Override
@@ -139,7 +138,7 @@ public class TaskService extends ContextService {
     }
 
     @Async(notifier = true)
-    @Transaction(readOnly = true)
+    @Transaction
     public void reloadPlan(long contextTime) {
         final Session session = BeanDao.getSession();
         List<JPlan> plans = planDActiver.reloadActives(contextTime);
@@ -169,16 +168,13 @@ public class TaskService extends ContextService {
 
                 task.setStartTag(verifier.getTag());
                 task.setStartTime(ContextUtils.getContextTime());
-                session.merge(task);
-                session.flush();
                 Map<String, TaskFactory.TaskMethod> taskMethodMap = factory.getTaskMethodMap();
                 TaskFactory.TaskMethod taskMethod = taskMethodMap == null ? null : taskMethodMap.get(task.getName());
-                task.setStartTag("0");
                 if (taskMethod != null) {
                     try {
                         taskMethod.method.invoke(taskMethod.beanObject, HelperDataFormat.PACK.readArray(task.getTaskData(), taskMethod.paramTypes));
-                        task.setPassTime(ContextUtils.getContextTime());
-                        session.merge(task);
+                        task.setPassTime(ContextUtils.getContextTime() - 1);
+                        task.setStartTag("@success");
 
                     } catch (Throwable e) {
                         LOGGER.error("do taskId[" + task.getId() + "] " + task.getName() + " error", e);
@@ -192,11 +188,14 @@ public class TaskService extends ContextService {
                             } else {
                                 task.setRetryCount(--retryCount);
                             }
-
-                            session.merge(task);
                         }
 
+                        task.setStartTag("@error." + e.getMessage());
                         return doContinue;
+
+                    } finally {
+                        session.merge(task);
+                        session.flush();
                     }
                 }
 
