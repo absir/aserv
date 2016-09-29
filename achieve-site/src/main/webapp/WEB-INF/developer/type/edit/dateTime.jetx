@@ -3,8 +3,8 @@ import = "org.jsoup.nodes.*"
 )
 
 
-#set(dateFmt = field.getMetas().get("dateFmt") ?! 'yyyy-MM-dd hh:mm:ss')
-${input.attr('onfocus', "WdatePicker({dateFmt:'" + dateFmt.replace("hh", "HH") + "'})")}
+#set(dateFmt = field.getMetas().get("dateFmt") ?! 'yyyy-MM-dd HH:mm:ss')
+${input.attr('onfocus', "WdatePicker({dateFmt:'" + dateFmt + "'})")}
 ${input.addClass('Wdate')}
 ${input.attr('value', "${Pag::dateFormat(" + inputval + ", '" + dateFmt + "')}")}
 

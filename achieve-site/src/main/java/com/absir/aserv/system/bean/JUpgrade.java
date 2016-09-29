@@ -76,7 +76,6 @@ public class JUpgrade extends JbBean implements ICrudBean {
 
     @JaLang("开始时间")
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
-    @JaCrud(value = "dateCrudFactory", cruds = {JaCrud.Crud.CREATE, JaCrud.Crud.UPDATE}, factory = DateCrudFactory.class)
     private long beginTime;
 
     public String getUpgradeFile() {
