@@ -18,6 +18,7 @@ import com.absir.bean.lang.LangCodeUtils;
 import com.absir.context.core.ContextAtom;
 import com.absir.context.core.ContextService;
 import com.absir.context.core.ContextUtils;
+import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAtom;
 import com.absir.data.helper.HelperDataFormat;
@@ -28,7 +29,6 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -218,28 +218,48 @@ public class TaskService extends ContextService {
      * 添加任务
      */
     @Transaction
-    public void addTask(String name, long beginTime, long passTime, int retryCount, Object... params) throws IOException {
+    public boolean addTask(String name, long beginTime, long passTime, int retryCount, Object... params) {
+        byte[] data;
+        try {
+            data = HelperDataFormat.PACK.writeAsBytesArray(params);
+
+        } catch (Exception e) {
+            Environment.throwable(e);
+            return false;
+        }
+
         JTask task = new JTask();
         task.setName(name);
-        task.setTaskData(HelperDataFormat.PACK.writeAsBytesArray(params));
+        task.setTaskData(data);
         task.setBeginTime(beginTime);
         task.setPassTime(passTime);
         task.setRetryCount(retryCount);
         BeanDao.getSession().persist(task);
+        return true;
     }
 
     /*
      * 添加计划
      */
     @Transaction
-    public void addPanel(String id, String name, long beginTime, long passTime, int retryCount, Object... params) throws IOException {
+    public boolean addPanel(String id, String name, long beginTime, long passTime, int retryCount, Object... params) {
+        byte[] data;
+        try {
+            data = HelperDataFormat.PACK.writeAsBytesArray(params);
+
+        } catch (Exception e) {
+            Environment.throwable(e);
+            return false;
+        }
+
         JPlan plan = new JPlan();
         plan.setId(KernelString.isEmpty(id) ? name : id);
         plan.setName(name);
-        plan.setTaskData(HelperDataFormat.PACK.writeAsBytesArray(params));
+        plan.setTaskData(data);
         plan.setBeginTime(beginTime);
         plan.setPassTime(passTime);
         plan.setRetryCount(retryCount);
         BeanDao.getSession().merge(plan);
+        return true;
     }
 }

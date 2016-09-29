@@ -24,6 +24,7 @@ import java.lang.reflect.Type;
 @RunWith(value = JUnit4.class)
 public class UtilMsgTest {
 
+
     public void testMsg(boolean single, Object... args) throws IOException {
         if (single && args.length == 1) {
             Object arg = args[0];
@@ -40,8 +41,8 @@ public class UtilMsgTest {
             byte[] bytes = HelperDataFormat.PACK.writeAsBytesArray(args);
             System.out.println(bytes.length + " : " + new String(bytes, KernelCharset.UTF8));
             Class[] types = KernelClass.parameterTypes(args);
-            for(int i = 0; i < types.length; i++) {
-                if(types[i] == null) {
+            for (int i = 0; i < types.length; i++) {
+                if (types[i] == null) {
                     types[i] = String.class;
                 }
             }
@@ -54,6 +55,10 @@ public class UtilMsgTest {
 
     @Test
     public void test() throws IOException {
+        byte[] bytes2 = HelperDataFormat.PACK.writeAsBytesArray(1, "123");
+        Object[] res = HelperDataFormat.PACK.readArray(bytes2, new Class<?>[]{long.class, String.class});
+        System.out.println(HelperDataFormat.JSON.writeAsStringArray(res));
+
         testMsg(true, 127);
         testMsg(false, 127);
         testMsg(true, "abcd");

@@ -17,6 +17,7 @@ import com.absir.aserv.system.bean.value.*;
 import com.absir.aserv.system.crud.DateCrudFactory;
 import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.task.JaTask;
+import com.absir.aserv.task.TaskService;
 import com.absir.aserv.upgrade.UpgradeService;
 import com.absir.bean.basis.Configure;
 import com.absir.bean.core.BeanConfigImpl;
@@ -172,7 +173,7 @@ public class JUpgrade extends JbBean implements ICrudBean {
                         upgradeFile(RouteAdapter.ADAPTER_TIME, filePath);
 
                     } else {
-                        upgradeFile(RouteAdapter.ADAPTER_TIME, filePath);
+                        TaskService.ME.addPanel(null, "upgradeFile", beginTime, beginTime + 600000, 0, RouteAdapter.ADAPTER_TIME, filePath);
                     }
 
                     upgrade = false;

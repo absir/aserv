@@ -37,7 +37,10 @@ ${Scenario::set("edit", request)}
 </div>
 #end
 #set(nodes = ScriptNode::append(element, node))
-${nodes.get(0).getElementsByTag("input").get(0).attr(readonly, "1").voidValue()}
+#if(readonly)
+    ${ScriptNode::attr(nodes.get(0).getElementsByTag("input").get(0), "readonly")}
+    ${nodes.get(0).getElementsByTag("input").get(0).addClass("ab_locked")}
+#end
 ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
 #end
 #end

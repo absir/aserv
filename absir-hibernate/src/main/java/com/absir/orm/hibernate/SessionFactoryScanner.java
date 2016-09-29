@@ -131,7 +131,7 @@ public class SessionFactoryScanner implements IBeanDefineSupply, IBeanDefineScan
     public List<BeanDefine> getBeanDefines(BeanFactoryImpl beanFactory, Class<?> beanType) {
         if (BeanConfigImpl.getTypeAnnotation(beanType, Entity.class) != null) {
             entityClasses.add(beanType);
-            return KernelLang.NULL_LIST_SET;
+            //return KernelLang.NULL_LIST_SET;
         }
 
         return null;

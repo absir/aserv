@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Column;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import java.io.IOException;
 
 /**
@@ -32,8 +33,9 @@ public abstract class JTaskBase implements JiActive, IValidator {
     private byte[] taskData;
 
     @JaLang("任务数据")
-    @JaEdit(types = "text")
-    private transient String taskJson;
+    @JaEdit(editable = JeEditable.ENABLE, types = "text")
+    @Transient
+    private String taskJson;
 
     @JaLang("开始时间")
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
@@ -80,7 +82,7 @@ public abstract class JTaskBase implements JiActive, IValidator {
 
             } else {
                 try {
-                    taskJson = HelperDataFormat.JSON.writeAsStringArray(HelperDataFormat.JSON.readArray(taskData, paramTypes));
+                    taskJson = HelperDataFormat.JSON.writeAsStringArray(HelperDataFormat.PACK.readArray(taskData, paramTypes));
 
                 } catch (IOException e) {
                     Environment.throwable(e);
