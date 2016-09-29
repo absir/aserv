@@ -19,6 +19,7 @@ import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.task.JaTask;
 import com.absir.aserv.upgrade.UpgradeService;
 import com.absir.bean.basis.Configure;
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelString;
 import com.absir.server.in.Input;
@@ -27,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import java.io.File;
 import java.util.Map;
 
@@ -67,6 +69,8 @@ public class JUpgrade extends JbBean implements ICrudBean {
     private long updateTime;
 
     @JaLang("升级")
+    @JaEdit(editable = JeEditable.ENABLE)
+    @Transient
     private boolean upgrade;
 
     @JaLang("开始时间")
@@ -140,7 +144,7 @@ public class JUpgrade extends JbBean implements ICrudBean {
 
     @Override
     public void processCrud(JaCrud.Crud crud, CrudHandler handler, Input input) {
-        if (handler.isPersist()) {
+        if (handler.isPersist() && crud != JaCrud.Crud.DELETE) {
             Map<String, Object> versionMap = null;
             String filePath = null;
             if (!KernelString.isEmpty(upgradeFile)) {
@@ -159,6 +163,10 @@ public class JUpgrade extends JbBean implements ICrudBean {
                     this.version = version;
                 }
 
+                if (KernelString.isEmpty(descriptor)) {
+                    descriptor = BeanConfigImpl.getMapValue(versionMap, "version.name", null, String.class);
+                }
+
                 if (upgrade) {
                     if (beginTime <= ContextUtils.getContextTime()) {
                         upgradeFile(RouteAdapter.ADAPTER_TIME, filePath);
@@ -166,6 +174,8 @@ public class JUpgrade extends JbBean implements ICrudBean {
                     } else {
                         upgradeFile(RouteAdapter.ADAPTER_TIME, filePath);
                     }
+
+                    upgrade = false;
                 }
             }
         }

@@ -32,6 +32,7 @@ import com.absir.bean.lang.LangCodeUtils;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.boost.IEntityMerge;
+import com.absir.orm.transaction.value.Transaction;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.IAfterInvoker;
@@ -439,6 +440,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
         return false;
     }
 
+    @Transaction
     @Override
     public void merge(String entityName, JiUserBase entity, MergeType mergeType, Object mergeEvent) {
         if (getFactorySecurityContextClass() != null) {

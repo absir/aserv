@@ -42,7 +42,7 @@ public @interface JaCrud {
      *
      * @return
      */
-    JaCrud.Crud[] cruds() default {JaCrud.Crud.CREATE, JaCrud.Crud.UPDATE};
+    JaCrud.Crud[] cruds() default {JaCrud.Crud.CREATE, JaCrud.Crud.UPDATE, JaCrud.Crud.DELETE};
 
     public static enum Crud {
 

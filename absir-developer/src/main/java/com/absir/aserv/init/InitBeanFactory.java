@@ -61,6 +61,9 @@ public class InitBeanFactory {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(InitBeanFactory.class);
 
+    @Value("app")
+    protected String appCode = "";
+
     @Value(value = "app.name")
     protected String appName;
 
@@ -68,9 +71,6 @@ public class InitBeanFactory {
     protected String appRoute;
 
     protected String oldVersion;
-
-    @Value("app.code")
-    protected String appCode = "";
 
     @Value("version")
     protected String version = "0.0.1";

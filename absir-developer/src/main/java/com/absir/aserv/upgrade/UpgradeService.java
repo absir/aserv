@@ -14,6 +14,7 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Value;
 import com.absir.context.config.BeanFactoryStopping;
 import com.absir.core.helper.HelperFile;
@@ -51,6 +52,12 @@ public class UpgradeService {
 
     @Value(value = "upgrade.restart")
     private String restartCommand;
+
+    @Inject
+    protected void initService() {
+        upgradeResource = HelperFileName.normalize(upgradeResource);
+        upgradeDestination = HelperFileName.normalize(upgradeDestination);
+    }
 
     public String getUpgradeResource() {
         return upgradeResource;
@@ -104,7 +111,7 @@ public class UpgradeService {
             if (zipEntry != null) {
                 Map<String, Object> versionMap = new HashMap<String, Object>();
                 BeanConfigImpl.readProperties(null, versionMap, zipFile.getInputStream(zipEntry), null);
-                Object appCode = versionMap.get("appCode");
+                Object appCode = versionMap.get("app");
                 if (appCode != null && appCode.equals(InitBeanFactory.ME.getAppCode())) {
                     return versionMap;
                 }

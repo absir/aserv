@@ -18,15 +18,15 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 
 @SuppressWarnings("rawtypes")
-public class AysncRunnable {
+public class AsyncRunnable {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AysncRunnable.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AsyncRunnable.class);
 
     protected long timeout;
 
     protected boolean thread;
 
-    public AysncRunnable(long timeout, boolean thread) {
+    public AsyncRunnable(long timeout, boolean thread) {
         this.timeout = timeout;
         this.thread = thread;
     }
@@ -41,7 +41,7 @@ public class AysncRunnable {
                     proxyHandler.invoke(proxy, iterator, method, args, methodProxy);
 
                 } catch (Throwable e) {
-                    LOGGER.error("aysnc run", e);
+                    LOGGER.error("async run", e);
                 }
             }
         });
@@ -50,7 +50,7 @@ public class AysncRunnable {
     public void aysncRun(Runnable runnable) {
         if (timeout > 0 || thread) {
             final Thread doThread = new Thread(runnable);
-            doThread.setName("aysncRun");
+            doThread.setName("asyncRun");
             doThread.setDaemon(true);
             doThread.start();
             if (timeout > 0) {
@@ -69,7 +69,7 @@ public class AysncRunnable {
 
                 if (thread) {
                     Thread thread = new Thread(timeoutRunnable);
-                    thread.setName("aysncRun.timeout");
+                    thread.setName("asyncRun.timeout");
                     thread.setDaemon(true);
                     thread.start();
 

@@ -9,6 +9,7 @@ package com.absir.orm.hibernate.boost;
 
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
+import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelString;
 import org.hibernate.Session;
 import org.hibernate.annotations.Cache;
@@ -100,25 +101,29 @@ public class L2CacheCollectionService extends L2EntityMergeService {
     @Override
     public void onPostDelete(PostDeleteEvent event) {
         super.onPostDelete(event);
-        if (event.getPersister().hasCache()) {
-            changeds(event.getSession(), event.getEntity(), collectionMappedByCaches.get(event.getPersister().getEntityName()));
+        if (Environment.isStarted()) {
+            if (event.getPersister().hasCache()) {
+                changeds(event.getSession(), event.getEntity(), collectionMappedByCaches.get(event.getPersister().getEntityName()));
+            }
         }
     }
 
     @Override
     public void onPostUpdate(PostUpdateEvent event) {
         super.onPostUpdate(event);
-        if (event.getPersister().hasCache()) {
-            List<MappedByCache> mappedByCaches = collectionMappedByCaches.get(event.getPersister().getEntityName());
-            if (mappedByCaches == null) {
-                return;
-            }
+        if (Environment.isStarted()) {
+            if (event.getPersister().hasCache()) {
+                List<MappedByCache> mappedByCaches = collectionMappedByCaches.get(event.getPersister().getEntityName());
+                if (mappedByCaches == null) {
+                    return;
+                }
 
-            for (int mappedBy : event.getDirtyProperties()) {
-                for (MappedByCache mappedByCache : mappedByCaches) {
-                    if (mappedByCache.mappedBy == mappedBy) {
-                        changed(event.getSession(), event.getOldState()[mappedBy], mappedByCache);
-                        changed(event.getSession(), event.getState()[mappedBy], mappedByCache);
+                for (int mappedBy : event.getDirtyProperties()) {
+                    for (MappedByCache mappedByCache : mappedByCaches) {
+                        if (mappedByCache.mappedBy == mappedBy) {
+                            changed(event.getSession(), event.getOldState()[mappedBy], mappedByCache);
+                            changed(event.getSession(), event.getState()[mappedBy], mappedByCache);
+                        }
                     }
                 }
             }
@@ -128,8 +133,10 @@ public class L2CacheCollectionService extends L2EntityMergeService {
     @Override
     public void onPostInsert(PostInsertEvent event) {
         super.onPostInsert(event);
-        if (event.getPersister().hasCache()) {
-            changeds(event.getSession(), event.getEntity(), collectionMappedByCaches.get(event.getPersister().getEntityName()));
+        if (Environment.isStarted()) {
+            if (event.getPersister().hasCache()) {
+                changeds(event.getSession(), event.getEntity(), collectionMappedByCaches.get(event.getPersister().getEntityName()));
+            }
         }
     }
 

@@ -15,13 +15,13 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 
 @SuppressWarnings("rawtypes")
-public class AysncRunnableNotifier extends AysncRunnable {
+public class AsyncRunnableNotifier extends AsyncRunnable {
 
     private boolean notifying;
 
     private NotifierIterator notifierIterator;
 
-    public AysncRunnableNotifier(long timeout, boolean thread) {
+    public AsyncRunnableNotifier(long timeout, boolean thread) {
         super(timeout, thread);
     }
 
@@ -35,7 +35,7 @@ public class AysncRunnableNotifier extends AysncRunnable {
                     proxyHandler.invoke(proxy, iterator, method, args, methodProxy);
 
                 } catch (Throwable e) {
-                    LOGGER.error("aysnc notifier run", e);
+                    LOGGER.error("async notifier run", e);
 
                 } finally {
                     checkNotifierIterator();
@@ -63,7 +63,7 @@ public class AysncRunnableNotifier extends AysncRunnable {
 
         } catch (Throwable e) {
             checkNotifierIterator();
-            LOGGER.error("aysnc notifier run", e);
+            LOGGER.error("async notifier run", e);
         }
     }
 
@@ -93,7 +93,7 @@ public class AysncRunnableNotifier extends AysncRunnable {
 
         } catch (Throwable e) {
             checkNotifierIterator();
-            LOGGER.error("aysnc notifier run", e);
+            LOGGER.error("async notifier run", e);
         }
     }
 
