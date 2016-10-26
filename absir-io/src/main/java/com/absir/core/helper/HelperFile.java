@@ -30,6 +30,8 @@ import java.util.zip.ZipInputStream;
 
 public class HelperFile extends FileUtils {
 
+    public static final long PRESERVE_FILE_MODIFIED_TIME = 4231;
+
     public static long lastModified(File file) {
         if (file == null || !file.exists()) {
             return 0;
@@ -269,8 +271,6 @@ public class HelperFile extends FileUtils {
             }
         }
     }
-
-    public static final long PRESERVE_FILE_MODIFIED_TIME = 4231;
 
     public static void copyDirectoryOverWrite(ZipInputStream inputStream, File destDir, boolean overWrite,
                                               FileFilter filter, boolean preserveFileDate) throws IOException {

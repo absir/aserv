@@ -32,20 +32,6 @@ public class EmailService implements IEmailService {
 
     private Session session;
 
-    public static class SimpleAuthenticator extends Authenticator {
-
-        private PasswordAuthentication passwordAuthentication;
-
-        public SimpleAuthenticator(String username, String password) {
-            passwordAuthentication = new PasswordAuthentication(username, password);
-        }
-
-        @Override
-        protected PasswordAuthentication getPasswordAuthentication() {
-            return passwordAuthentication;
-        }
-    }
-
     protected Session createSession() {
         Properties props = new Properties();
         props.put("mail.smtp.host", emailConfigure.getSmtp());
@@ -140,5 +126,19 @@ public class EmailService implements IEmailService {
         }
 
         return false;
+    }
+
+    public static class SimpleAuthenticator extends Authenticator {
+
+        private PasswordAuthentication passwordAuthentication;
+
+        public SimpleAuthenticator(String username, String password) {
+            passwordAuthentication = new PasswordAuthentication(username, password);
+        }
+
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return passwordAuthentication;
+        }
     }
 }

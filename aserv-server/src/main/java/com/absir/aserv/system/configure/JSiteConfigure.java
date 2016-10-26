@@ -85,21 +85,6 @@ public class JSiteConfigure extends JConfigureBase {
     @JaLang("邮件密码修改")
     private boolean allowEmailPasswordModify;
 
-    public static class OperationVerify {
-
-        @JaLang("别名")
-        public String alias;
-
-        @JaLang("空闲时间")
-        public long idleTime;
-
-        @JaLang("最大次数")
-        public int maxCount;
-
-        @JaEdit(editable = JeEditable.DISABLE)
-        public String tag;
-    }
-
     @Langs
     public String getSiteName() {
         return siteName;
@@ -305,5 +290,20 @@ public class JSiteConfigure extends JConfigureBase {
         }
 
         return null;
+    }
+
+    public static class OperationVerify {
+
+        @JaLang("别名")
+        public String alias;
+
+        @JaLang("空闲时间")
+        public long idleTime;
+
+        @JaLang("最大次数")
+        public int maxCount;
+
+        @JaEdit(editable = JeEditable.DISABLE)
+        public String tag;
     }
 }

@@ -23,15 +23,6 @@ public class HandlerAdapter {
 
     protected Map<String, HandlerAction> handlerActionMap;
 
-    public static class HandlerAction {
-
-        public IHandler handler;
-
-        public HandlerType handlerType;
-
-        public HandlerType.HandlerMethod handlerMethod;
-    }
-
     public HandlerAction on(String uri) {
         return handlerActionMap == null ? null : handlerActionMap.get(uri);
     }
@@ -78,6 +69,15 @@ public class HandlerAdapter {
         }
 
         handlerActionMap = map.isEmpty() ? null : map;
+    }
+
+    public static class HandlerAction {
+
+        public IHandler handler;
+
+        public HandlerType handlerType;
+
+        public HandlerType.HandlerMethod handlerMethod;
     }
 
 }

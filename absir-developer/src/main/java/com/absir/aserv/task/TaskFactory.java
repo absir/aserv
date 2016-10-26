@@ -24,15 +24,6 @@ public class TaskFactory implements IMethodInject<String> {
 
     private Map<String, TaskMethod> taskMethodMap;
 
-    public static class TaskMethod {
-
-        public Object beanObject;
-
-        public Method method;
-
-        public Class<?>[] paramTypes;
-    }
-
     public Map<String, TaskMethod> getTaskMethodMap() {
         return taskMethodMap;
     }
@@ -106,5 +97,14 @@ public class TaskFactory implements IMethodInject<String> {
         }
 
         return false;
+    }
+
+    public static class TaskMethod {
+
+        public Object beanObject;
+
+        public Method method;
+
+        public Class<?>[] paramTypes;
     }
 }

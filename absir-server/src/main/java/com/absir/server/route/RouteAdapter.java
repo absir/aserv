@@ -26,12 +26,46 @@ import java.util.*;
 public class RouteAdapter implements IBeanFactoryStarted {
 
     public static final long ADAPTER_TIME = System.currentTimeMillis();
+    public static final Comparator<InMatcher> IN_MATCHER_COMPARATOR = new Comparator<InMatcher>() {
 
+        @Override
+        public int compare(InMatcher o1, InMatcher o2) {
+            int compare = KernelUtil.compareNo(o1.getMapping(), o2.getMapping());
+            if (compare == 0) {
+                compare = KernelUtil.compareEndNoNull(o1.getSuffix(), o2.getSuffix());
+                if (compare == 0) {
+                    compare = o1.getMapping().length + o1.getSuffixLength() - o2.getMapping().length
+                            - o2.getSuffixLength();
+                    if (compare == 0) {
+                        compare = o1.getParameterLength() - o2.getParameterLength();
+                    }
+                }
+            }
+
+            return compare;
+        }
+    };
+    public static final Comparator<RouteMatcher> ROUTE_MATCHER_COMPARATOR = new Comparator<RouteMatcher>() {
+
+        @Override
+        public int compare(RouteMatcher o1, RouteMatcher o2) {
+            int compare = IN_MATCHER_COMPARATOR.compare(o1, o2);
+            if (compare == 0) {
+                int len1 = o1.getInMethodLength();
+                int len2 = o2.getInMethodLength();
+                compare = len1 == 0 || len2 == 0 ? len1 - len2 : len2 - len1;
+            }
+
+            return compare;
+        }
+
+    };
+    protected static final Logger LOGGER = LoggerFactory.getLogger(RouteAdapter.class);
     private static int varintsMapUriIndex;
-
     private static Map<Integer, String> varintsMapUri;
-
     private static Map<String, Integer> uriMapVarints;
+    private boolean started;
+    private List<RouteMatcher> routeMatchers = new ArrayList<RouteMatcher>();
 
     // URI 字典压缩
     public static int addVarintsMapUri(String uri) {
@@ -66,48 +100,6 @@ public class RouteAdapter implements IBeanFactoryStarted {
     public static String UriForVarints(Integer varints) {
         return varintsMapUri == null ? null : varintsMapUri.get(varints);
     }
-
-    public static final Comparator<InMatcher> IN_MATCHER_COMPARATOR = new Comparator<InMatcher>() {
-
-        @Override
-        public int compare(InMatcher o1, InMatcher o2) {
-            int compare = KernelUtil.compareNo(o1.getMapping(), o2.getMapping());
-            if (compare == 0) {
-                compare = KernelUtil.compareEndNoNull(o1.getSuffix(), o2.getSuffix());
-                if (compare == 0) {
-                    compare = o1.getMapping().length + o1.getSuffixLength() - o2.getMapping().length
-                            - o2.getSuffixLength();
-                    if (compare == 0) {
-                        compare = o1.getParameterLength() - o2.getParameterLength();
-                    }
-                }
-            }
-
-            return compare;
-        }
-    };
-
-    public static final Comparator<RouteMatcher> ROUTE_MATCHER_COMPARATOR = new Comparator<RouteMatcher>() {
-
-        @Override
-        public int compare(RouteMatcher o1, RouteMatcher o2) {
-            int compare = IN_MATCHER_COMPARATOR.compare(o1, o2);
-            if (compare == 0) {
-                int len1 = o1.getInMethodLength();
-                int len2 = o2.getInMethodLength();
-                compare = len1 == 0 || len2 == 0 ? len1 - len2 : len2 - len1;
-            }
-
-            return compare;
-        }
-
-    };
-
-    protected static final Logger LOGGER = LoggerFactory.getLogger(RouteAdapter.class);
-
-    private boolean started;
-
-    private List<RouteMatcher> routeMatchers = new ArrayList<RouteMatcher>();
 
     /**
      * 路由匹配比较

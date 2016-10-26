@@ -11,6 +11,11 @@
     <dependencies>
         <dependency>
             <groupId>com.absir</groupId>
+            <artifactId>aserv-master-slave</artifactId>
+            <version>${com.absir.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.absir</groupId>
             <artifactId>aserv-server</artifactId>
             <version>${com.absir.version}</version>
         </dependency>

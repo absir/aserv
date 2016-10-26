@@ -21,6 +21,7 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
+import com.absir.bean.inject.value.Value;
 import com.absir.client.SocketAdapter;
 import com.absir.client.callback.CallbackMsg;
 import com.absir.context.core.ContextUtils;
@@ -62,6 +63,9 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
 
         });
     }
+
+    @Value("master.sync.timeout")
+    private int syncTimeout = 60000;
 
     @DataQuery("SELECT o.host.id FROM JSlaveServer o WHERE o.id IN (:p0)")
     public abstract String[] getTargetIds(long[] eids);
@@ -218,14 +222,14 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
         final UtilAtom atom = new UtilAtom();
         while (iterator.hasNext()) {
             final JSlaveSynch slaveSynch = iterator.next();
-            ChannelContext context = InputMasterContext.ME.getServerContext().getChannelContexts()
+            InputMasterContext.MasterChannelContext context = InputMasterContext.ME.getServerContext().getChannelContexts()
                     .get(slaveSynch.getId().getEid());
             if (context != null) {
                 try {
                     atom.increment();
                     final long updateTime = slaveSynch.getUpdateTime();
-                    MasterServerResolver.ME.sendDataBytes(context.getChannel(), slaveSynch.getUri(),
-                            slaveSynch.getPostData(), new CallbackMsg<String>() {
+                    MasterServerResolver.ME.sendDataBytesVarints(context, slaveSynch.getUri(),
+                            slaveSynch.getPostData(), syncTimeout, new CallbackMsg<String>() {
 
                                 @Override
                                 public void doWithBean(String bean, boolean ok, byte[] buffer, SocketAdapter adapter) {

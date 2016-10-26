@@ -34,13 +34,11 @@ import java.util.List;
 public abstract class InDispatcher<T, R> implements IDispatcher<T> {
 
     @Inject
+    static HandlerInvoker handlerInvoker;
+    @Inject
     private static RouteAdapter routeAdapter;
-
     @Inject
     private static HandlerAdapter handlerAdapter;
-
-    @Inject
-    static HandlerInvoker handlerInvoker;
 
     public static RouteAdapter getRouteAdapter() {
         return routeAdapter;

@@ -30,23 +30,6 @@ public class ScriptNode extends TextNode {
         KernelObject.declaredSet(ScriptNode.NONE, "map", new HashMap<Object, Object>());
     }
 
-    public static class ScriptAttribute extends Attribute {
-
-        public ScriptAttribute(String key, String value) {
-            super(key, "");
-        }
-
-        @Override
-        public String html() {
-            return getKey();
-        }
-
-        @Override
-        protected void html(StringBuilder accum, Document.OutputSettings out) {
-            accum.append(getKey());
-        }
-    }
-
     public ScriptNode(String text) {
         this(text, "");
     }
@@ -124,5 +107,22 @@ public class ScriptNode extends TextNode {
         if (out.prettyPrint() && siblingIndex() == 0 && parentNode instanceof Element && ((Element) parentNode).tag().formatAsBlock() && !isBlank())
             indent(accum, depth, out);
         accum.append(html);
+    }
+
+    public static class ScriptAttribute extends Attribute {
+
+        public ScriptAttribute(String key, String value) {
+            super(key, "");
+        }
+
+        @Override
+        public String html() {
+            return getKey();
+        }
+
+        @Override
+        protected void html(StringBuilder accum, Document.OutputSettings out) {
+            accum.append(getKey());
+        }
     }
 }

@@ -23,6 +23,7 @@ import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.aserv.system.service.utils.EntityServiceUtils;
 import com.absir.aserv.system.service.utils.SearchServiceUtils;
 import com.absir.aserv.transaction.TransactionIntercepter;
+import com.absir.aserv.upgrade.UpgradeService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
@@ -39,6 +40,7 @@ import com.absir.server.in.InMethod;
 import com.absir.server.in.Input;
 import com.absir.server.value.*;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -47,6 +49,9 @@ import java.util.Map.Entry;
 @Base
 @Server
 public class Api_entity extends ApiServer {
+
+    @Inject
+    protected Version version;
 
     /**
      * 关闭服务了
@@ -61,20 +66,17 @@ public class Api_entity extends ApiServer {
         return "denied";
     }
 
-    @Inject
-    protected Version version;
+    /**
+     * 重启命令
+     */
+    public String restart(Input input) throws IOException {
+        JiUserBase user = SecurityService.ME.getUserBase(input);
+        if (user != null && user.isDeveloper()) {
+            UpgradeService.ME.restartCommand();
+            return "restarting";
+        }
 
-    @Base
-    @Bean
-    protected static class Version {
-
-        @Value("api.version.min")
-        public String min = "0.0.0";
-
-        @Value("api.version.version")
-        public String max = "0.0.1";
-
-        public int timeZone = Calendar.getInstance().getTimeZone().getRawOffset();
+        return "denied";
     }
 
     /**
@@ -480,6 +482,19 @@ public class Api_entity extends ApiServer {
         }
 
         return modelMap;
+    }
+
+    @Base
+    @Bean
+    protected static class Version {
+
+        @Value("api.version.min")
+        public String min = "0.0.0";
+
+        @Value("api.version.version")
+        public String max = "0.0.1";
+
+        public int timeZone = Calendar.getInstance().getTimeZone().getRawOffset();
     }
 
     public static class Condition {

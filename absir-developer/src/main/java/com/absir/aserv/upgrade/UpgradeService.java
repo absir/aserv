@@ -19,6 +19,7 @@ import com.absir.bean.inject.value.Value;
 import com.absir.context.config.BeanFactoryStopping;
 import com.absir.core.helper.HelperFile;
 import com.absir.core.helper.HelperFileName;
+import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,23 +68,32 @@ public class UpgradeService {
         return upgradeDestination;
     }
 
-    public interface IUpgradeReStart {
-
-        public void start() throws Throwable;
-
-        public void stop() throws Throwable;
-
-    }
-
     public String getRestartCommand() {
         return restartCommand;
     }
 
+    public void restartCommand() throws IOException {
+        if (!KernelString.isEmpty(restartCommand)) {
+            Process process = Runtime.getRuntime().exec(restartCommand);
+            try {
+                InputStream inputStream = process.getInputStream();
+                if (inputStream != null) {
+                    HelperIO.copy(inputStream, System.out);
+                }
+
+            } catch (IOException e) {
+            }
+
+            InputStream inputStream = process.getErrorStream();
+            if (inputStream != null) {
+                HelperIO.copy(inputStream, System.out);
+            }
+        }
+    }
+
     public void start(Object stopDone) throws IOException {
         BeanFactoryStopping.stoppingAll();
-        if (!KernelString.isEmpty(restartCommand)) {
-            Runtime.getRuntime().exec(restartCommand);
-        }
+        restartCommand();
     }
 
     public Object stop() throws IOException {
@@ -184,6 +194,14 @@ public class UpgradeService {
         }
 
         start(stopDone);
+    }
+
+    public interface IUpgradeReStart {
+
+        public void start() throws Throwable;
+
+        public void stop() throws Throwable;
+
     }
 
 }

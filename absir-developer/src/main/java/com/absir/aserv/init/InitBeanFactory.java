@@ -123,16 +123,16 @@ public class InitBeanFactory {
         }
     }
 
+    public static boolean isDevelopOrVersionChange() {
+        return BeanFactoryUtils.getEnvironment() == Environment.DEVELOP || ME.isVersionChange();
+    }
+
     public boolean isRequireInit() {
         return initCheck && KernelObject.equals(oldVersion, "0");
     }
 
     public boolean isVersionChange() {
         return initCheck && !KernelObject.equals(oldVersion, version);
-    }
-
-    public static boolean isDevelopOrVersionChange() {
-        return BeanFactoryUtils.getEnvironment() == Environment.DEVELOP || ME.isVersionChange();
     }
 
     public String getAppName() {

@@ -14,27 +14,12 @@ import java.util.Map;
  */
 public class HandlerType<T> {
 
+    private static Map<Class<?>, HandlerType> clsMapHandlerType;
     protected Class<T> type;
-
     protected Map<String, HandlerMethod> handlerMethodMap;
-
-    public static class HandlerMethod {
-
-        protected Method method;
-
-        protected Class<?>[] parameterTypes;
-
-        protected Class<?>[] exceptionTypes;
-    }
 
     protected HandlerType() {
     }
-
-    public Map<String, HandlerMethod> getHandlerMethodMap() {
-        return handlerMethodMap;
-    }
-
-    private static Map<Class<?>, HandlerType> clsMapHandlerType;
 
     protected static void remove(Class<? extends IHandler> type) {
         if (clsMapHandlerType != null) {
@@ -92,6 +77,19 @@ public class HandlerType<T> {
         handlerType.type = type;
         handlerType.handlerMethodMap = KernelLang.getOptimizeMap(handlerMethodMap);
         return handlerType;
+    }
+
+    public Map<String, HandlerMethod> getHandlerMethodMap() {
+        return handlerMethodMap;
+    }
+
+    public static class HandlerMethod {
+
+        protected Method method;
+
+        protected Class<?>[] parameterTypes;
+
+        protected Class<?>[] exceptionTypes;
     }
 
 }

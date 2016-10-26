@@ -38,31 +38,20 @@ public abstract class InputSocket extends Input {
     public static final String NONE_RESPONSE = "";
 
     public static final byte[] NONE_RESPONSE_BYTES = NONE_RESPONSE.getBytes();
-
+    public static byte VARINTS_POST_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.POST_FLAG;
+    public static byte VARINTS_HUMAN_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.HUMAN_FLAG;
     protected SelSession selSession;
-
     private SocketChannel socketChannel;
-
     private String uri;
-
     private int status = ServerStatus.ON_SUCCESS.getCode();
-
     private byte flag;
-
     private int callbackIndex;
-
     private byte[] inputBuffer;
-
     private int inputPos;
-
     private int inputCount;
-
     private InputStream inputStream;
-
     private String input;
-
     private OutputStream outputStream;
-
     private int urlVarints;
 
     public InputSocket(InModel model, InputSocketAtt inputSocketAtt, SocketChannel socketChannel) {
@@ -337,10 +326,6 @@ public abstract class InputSocket extends Input {
     @Override
     public void close() {
     }
-
-    public static byte VARINTS_POST_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.POST_FLAG;
-
-    public static byte VARINTS_HUMAN_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.HUMAN_FLAG;
 
     public void writeUriDict() {
         if (urlVarints > 0 && (flag & VARINTS_POST_FLAG) != 0) {

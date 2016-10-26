@@ -9,6 +9,11 @@ package com.absir.core.kernel;
 
 public class KernelByte {
 
+    public static final int VARINTS_1_LENGTH = 0x7F;
+    public static final int VARINTS_2_LENGTH = VARINTS_1_LENGTH + (0x7F << 7);
+    public static final int VARINTS_3_LENGTH = VARINTS_2_LENGTH + (0x7F << 14);
+    public static final int VARINTS_4_LENGTH = VARINTS_3_LENGTH + (0x7F << 22);
+
     public static int getLength(byte[] destination, int destionationIndex) {
         int length = destination[destionationIndex] & 0xFF;
         length += (destination[++destionationIndex] & 0xFF) << 8;
@@ -34,14 +39,6 @@ public class KernelByte {
                                   int length) {
         System.arraycopy(source, sourceIndex, destination, destionationIndex, length);
     }
-
-    public static final int VARINTS_1_LENGTH = 0x7F;
-
-    public static final int VARINTS_2_LENGTH = VARINTS_1_LENGTH + (0x7F << 7);
-
-    public static final int VARINTS_3_LENGTH = VARINTS_2_LENGTH + (0x7F << 14);
-
-    public static final int VARINTS_4_LENGTH = VARINTS_3_LENGTH + (0x7F << 22);
 
     public static int getVarintsLength(int varints) {
         if (varints <= VARINTS_1_LENGTH) {

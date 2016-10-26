@@ -28,8 +28,6 @@
         <module>absir-developer</module>
         <module>absir-developerImpl</module>
         <module>absir-developerWeb</module>
-        <module>absir-jsp</module>
-        <module>absir-jetbrick</module>
         <module>absir-open</module>
         <module>absir-source</module>
         <module>absir-email</module>
@@ -37,20 +35,23 @@
         <module>absir-socket</module>
         <module>absir-socklet</module>
         <module>absir-sockser</module>
-        <module>absir-slave</module>
-        <module>absir-master</module>
-        <module>absir-scene</module>
-        <module>absir-game</module>
-        <module>absir-card</module>
+        <module>aserv-server</module>
+        <module>aserv-admin</module>
+        <module>absir-jsp</module>
+        <module>absir-jetbrick</module>
         <module>absir-spring</module>
         <module>absir-dubbo</module>
-        <module>aserv-server</module>
-        <module>aserv-game</module>
+        <module>absir-master</module>
+        <module>absir-slave</module>
         <module>aserv-master</module>
         <module>aserv-slave</module>
-        <module>aserv-game-slave</module>
+        <module>aserv-master-slave</module>
+        <module>absir-game</module>
+        <module>absir-card</module>
+        <module>absir-scene</module>
+        <module>aserv-game</module>
         <module>aserv-game-master</module>
-        <module>aserv-admin</module>
+        <module>aserv-game-slave</module>
     </modules>
     <dependencies>
         <dependency>

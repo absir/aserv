@@ -23,26 +23,6 @@ public class InvokerResolverErrors implements InvokerResolver<Boolean> {
     @Value("server.errors.view")
     protected static String errorView = "errors";
 
-    @Override
-    public Boolean getInvoker(Method method) {
-        return method.getAnnotation(Errors.class) == null ? null : Boolean.TRUE;
-    }
-
-    @Override
-    public Boolean getInvoker(Class<?> beanClass) {
-        return beanClass.getAnnotation(Errors.class) == null ? null : Boolean.TRUE;
-    }
-
-    @Override
-    public void resolveBefore(Boolean invoker, OnPut onPut) throws Exception {
-        checkError(null, onPut);
-    }
-
-    @Override
-    public void resolveAfter(Object returnValue, Boolean invoker, OnPut onPut) throws Exception {
-
-    }
-
     public static void checkError(BinderResult binderResult, OnPut onPut) {
         if (binderResult != null && !binderResult.hashErrors()) {
             return;
@@ -97,6 +77,26 @@ public class InvokerResolverErrors implements InvokerResolver<Boolean> {
         input.getModel().put("errors", binderResult.getPropertyErrors());
         onPut.setReturnedResolver(ReturnedResolverView.ME, errorView);
         throw new ServerException(ServerStatus.ON_SUCCESS);
+    }
+
+    @Override
+    public Boolean getInvoker(Method method) {
+        return method.getAnnotation(Errors.class) == null ? null : Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean getInvoker(Class<?> beanClass) {
+        return beanClass.getAnnotation(Errors.class) == null ? null : Boolean.TRUE;
+    }
+
+    @Override
+    public void resolveBefore(Boolean invoker, OnPut onPut) throws Exception {
+        checkError(null, onPut);
+    }
+
+    @Override
+    public void resolveAfter(Object returnValue, Boolean invoker, OnPut onPut) throws Exception {
+
     }
 
 }

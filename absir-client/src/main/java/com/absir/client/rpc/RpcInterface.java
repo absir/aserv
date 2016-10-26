@@ -17,36 +17,11 @@ public class RpcInterface {
 
     //protected Class<?> interfaceType;
 
+    private static Map<Class<?>, RpcInterface> clsMapRpcInterface;
     protected Map<String, RpcMethod> rpcMethodMap;
-
-    public static class RpcAttribute {
-
-        protected long timeout;
-
-    }
-
-    public static class RpcMethod {
-
-        protected RpcAttribute attribute;
-
-        protected Class<?> returnType;
-
-        //protected Class<?>[] parameterTypes;
-
-        protected Class<?>[] exceptionTypes;
-
-        protected String uri;
-
-    }
 
     protected RpcInterface() {
     }
-
-    public Map<String, RpcMethod> getRpcMethodMap() {
-        return rpcMethodMap;
-    }
-
-    private static Map<Class<?>, RpcInterface> clsMapRpcInterface;
 
     protected static void remove(Class<?> type) {
         if (clsMapRpcInterface != null) {
@@ -144,5 +119,29 @@ public class RpcInterface {
         }
 
         return rpcAttribute;
+    }
+
+    public Map<String, RpcMethod> getRpcMethodMap() {
+        return rpcMethodMap;
+    }
+
+    public static class RpcAttribute {
+
+        protected long timeout;
+
+    }
+
+    public static class RpcMethod {
+
+        protected RpcAttribute attribute;
+
+        protected Class<?> returnType;
+
+        //protected Class<?>[] parameterTypes;
+
+        protected Class<?>[] exceptionTypes;
+
+        protected String uri;
+
     }
 }

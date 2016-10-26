@@ -77,11 +77,6 @@ public class Asset_verify extends AssetServer {
         return false;
     }
 
-    @Body
-    public void route(@Param @Nullable Integer width, @Param @Nullable Integer height, @Nullable @Param String tag, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        verifyCode(width == null ? 64 : width, height == null ? 18 : height, 0, tag, request, response);
-    }
-
     public static void verifyCode(int width, int height, int type, String tag, HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (height < minHeight) {
             height = minHeight;
@@ -140,6 +135,11 @@ public class Asset_verify extends AssetServer {
         ImageIO.write(image, "JPEG", out);
         out.flush();
         out.close();
+    }
+
+    @Body
+    public void route(@Param @Nullable Integer width, @Param @Nullable Integer height, @Nullable @Param String tag, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        verifyCode(width == null ? 64 : width, height == null ? 18 : height, 0, tag, request, response);
     }
 
     public String show(String attrs, int width, int height, Input input) {

@@ -86,6 +86,77 @@ public class PortalService {
         return input == null ? tag : input.getLangMessage(tag);
     }
 
+    public static void resolverIdleTime(long idleTime, long sendTime, Input input) {
+        InModel model = input.getModel();
+        if (sendTime == 0) {
+            model.put("message", input.getLang(Site.SEND_SUCCESS));
+            model.put("idleTime", idleTime / 1000);
+
+        } else {
+            model.put("icon", 2);
+            model.put("message", input.getLang(sendTime == -2 ? Site.CLOUD_NOT_SEND : sendTime == -1 ? Site.SEND_FAIL : Site.SEND_IDLE));
+            if (sendTime > 0) {
+                model.put("idleTime", sendTime / 1000);
+            }
+        }
+
+        model.put("idleButton", "[ab_toggle='subForm']");
+    }
+
+    public static int getRegisterType(int type) {
+        if (!Pag.CONFIGURE.hasAllowUserRegister()) {
+            throw new ServerException(ServerStatus.ON_DENIED);
+        }
+
+        //默认注册类型
+        if (type == 0) {
+            type = Pag.CONFIGURE.getDefaultRegisterType();
+        }
+
+        if (type == 1) {
+            if (!Pag.CONFIGURE.isAllowUsernameRegister()) {
+                type = 2;
+            }
+
+        } else if (type == 3) {
+            if (!Pag.CONFIGURE.hasAllowMessageRegister()) {
+                type = 2;
+            }
+
+        } else {
+            type = 2;
+        }
+
+        if (type == 2 && !Pag.CONFIGURE.hasAllowEmailRegister()) {
+            if (Pag.CONFIGURE.hasAllowMessageRegister()) {
+                type = 3;
+
+            } else if (Pag.CONFIGURE.isAllowUsernameRegister()) {
+                type = 1;
+
+            } else {
+                throw new ServerException(ServerStatus.ON_DENIED);
+            }
+        }
+
+        return type;
+    }
+
+    /*
+    * 获取验证等级
+    */
+    public static int getVerifyLevel(int level, JUser user) {
+        if (level == 3 && KernelString.isEmpty(user.getMobile())) {
+            level = 2;
+        }
+
+        if (level == 2 && KernelString.isEmpty(user.getEmail())) {
+            level = 1;
+        }
+
+        return level;
+    }
+
     public void throwExceptionMessage(String message, boolean langCode, Input input) {
         if (message != null) {
             input.getModel().put("message", langCode ? input.getLangMessage(message) : message);
@@ -234,62 +305,6 @@ public class PortalService {
         return VerifierService.doneOperationCount(address, tag, idleTime, maxCount);
     }
 
-    public static void resolverIdleTime(long idleTime, long sendTime, Input input) {
-        InModel model = input.getModel();
-        if (sendTime == 0) {
-            model.put("message", input.getLang(Site.SEND_SUCCESS));
-            model.put("idleTime", idleTime / 1000);
-
-        } else {
-            model.put("icon", 2);
-            model.put("message", input.getLang(sendTime == -2 ? Site.CLOUD_NOT_SEND : sendTime == -1 ? Site.SEND_FAIL : Site.SEND_IDLE));
-            if (sendTime > 0) {
-                model.put("idleTime", sendTime / 1000);
-            }
-        }
-
-        model.put("idleButton", "[ab_toggle='subForm']");
-    }
-
-    public static int getRegisterType(int type) {
-        if (!Pag.CONFIGURE.hasAllowUserRegister()) {
-            throw new ServerException(ServerStatus.ON_DENIED);
-        }
-
-        //默认注册类型
-        if (type == 0) {
-            type = Pag.CONFIGURE.getDefaultRegisterType();
-        }
-
-        if (type == 1) {
-            if (!Pag.CONFIGURE.isAllowUsernameRegister()) {
-                type = 2;
-            }
-
-        } else if (type == 3) {
-            if (!Pag.CONFIGURE.hasAllowMessageRegister()) {
-                type = 2;
-            }
-
-        } else {
-            type = 2;
-        }
-
-        if (type == 2 && !Pag.CONFIGURE.hasAllowEmailRegister()) {
-            if (Pag.CONFIGURE.hasAllowMessageRegister()) {
-                type = 3;
-
-            } else if (Pag.CONFIGURE.isAllowUsernameRegister()) {
-                type = 1;
-
-            } else {
-                throw new ServerException(ServerStatus.ON_DENIED);
-            }
-        }
-
-        return type;
-    }
-
     public void sendRegisterCode(int type, Input input) {
         type = getRegisterType(type);
         if (!(type == 2 || type == 3)) {
@@ -309,29 +324,6 @@ public class PortalService {
         }
 
         ME.sendEmailOrMobileCode(type, emailOrMobile, REGISTER_TAG, Site.REGISTER_OPERATION, input);
-    }
-
-    public static class FUsername {
-
-        @JaLang("用户名")
-        @NotEmpty
-        @Regex(value = "^[^\\d@][^@]{4,16}$", lang = "请输入首位不是数字,不含有@的4-16位字符")
-        public String username;
-    }
-
-    public static class FRegister {
-
-        @JaLang("密码")
-        @JaEdit(types = "passwordType")
-        @NotEmpty
-        @Length(min = 6, max = 16)
-        public String password;
-
-        @JaLang("确认密码")
-        @JaEdit(types = "passwordType")
-        @NotEmpty
-        @Confirm("newPassword")
-        public String confirmPassword;
     }
 
     public void register(int type, String securityName, Input input) {
@@ -447,21 +439,6 @@ public class PortalService {
         resolverIdleTime(idleTime, sendTime, input);
     }
 
-    /*
-    * 获取验证等级
-    */
-    public static int getVerifyLevel(int level, JUser user) {
-        if (level == 3 && KernelString.isEmpty(user.getMobile())) {
-            level = 2;
-        }
-
-        if (level == 2 && KernelString.isEmpty(user.getEmail())) {
-            level = 1;
-        }
-
-        return level;
-    }
-
     /**
      * 需要用户登录
      */
@@ -564,6 +541,29 @@ public class PortalService {
         String emailOrMobile = ME.getEmailOrMobile(type, input);
         verifyUser(level, tag, input);
         ME.sendEmailOrMobileCode(type, emailOrMobile, REGISTER_TAG, Site.REGISTER_OPERATION, input);
+    }
+
+    public static class FUsername {
+
+        @JaLang("用户名")
+        @NotEmpty
+        @Regex(value = "^[^\\d@][^@]{4,16}$", lang = "请输入首位不是数字,不含有@的4-16位字符")
+        public String username;
+    }
+
+    public static class FRegister {
+
+        @JaLang("密码")
+        @JaEdit(types = "passwordType")
+        @NotEmpty
+        @Length(min = 6, max = 16)
+        public String password;
+
+        @JaLang("确认密码")
+        @JaEdit(types = "passwordType")
+        @NotEmpty
+        @Confirm("newPassword")
+        public String confirmPassword;
     }
 
 }

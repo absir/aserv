@@ -20,10 +20,6 @@ import java.lang.reflect.Proxy;
 @RunWith(value = JUnit4.class)
 public class MapTest {
 
-    public interface IMap {
-
-    }
-
     @Test
     public void test() throws InterruptedException {
 //        final Map<Object, Object> map = new HashMap<Object, Object>();
@@ -62,12 +58,15 @@ public class MapTest {
         System.out.println(constructor);
 
 
-
         Object proxy1 = KernelClass.declaredNew(proxy.getClass());
 
 
         System.out.println(proxy);
         System.out.println(proxy1);
+    }
+
+    public interface IMap {
+
     }
 
 }

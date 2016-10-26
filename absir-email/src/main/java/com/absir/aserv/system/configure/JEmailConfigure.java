@@ -27,40 +27,25 @@ import javax.mail.MessagingException;
 @MaEntity(parent = {@MaMenu("接口配置")}, name = "邮件")
 public class JEmailConfigure extends JConfigureBase implements ICrudBean, ICrudSubmit<JEmailConfigure.MailSubmit> {
 
-    public static enum MailSubmit {
-
-        @JaLang("发送测试")
-        MAIL_TEST,
-    }
-
     @JaLang("发送服务器")
     private String smtp = "smtp.qq.com";
-
     @JaLang("端口")
     private int port = 25;
-
     @JaLang("安全连接")
     private boolean starttls;
-
     @JaLang(value = "发送名", tag = "fromName")
     private String from;
-
     @JaLang("匿名")
     private boolean anyone;
-
     @JaLang("用户名")
     private String username;
-
     @JaLang("密码")
     @JaEdit(types = "passwordType")
     private String password;
-
     @JaLang("测试邮箱")
     private String testMail;
-
     @JaLang("测试主题")
     private String testSubject;
-
     @Length(max = 1024)
     @JaLang("测试内容")
     @JaEdit(types = "text")
@@ -156,7 +141,6 @@ public class JEmailConfigure extends JConfigureBase implements ICrudBean, ICrudS
         return MailSubmit.class;
     }
 
-
     @Override
     public String submitOption(MailSubmit option, InModel model) {
         if (option == MailSubmit.MAIL_TEST) {
@@ -171,5 +155,12 @@ public class JEmailConfigure extends JConfigureBase implements ICrudBean, ICrudS
         }
 
         return null;
+    }
+
+
+    public static enum MailSubmit {
+
+        @JaLang("发送测试")
+        MAIL_TEST,
     }
 }

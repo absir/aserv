@@ -30,45 +30,32 @@ import java.util.Map;
 public class InputMasterContext {
 
     public static final InputMasterContext ME = BeanFactoryUtils.get(InputMasterContext.class);
-
+    public static Map<Serializable, SocketAdapter> slaveMapSocketAdapter;
     @Value("master.accept.timeout")
     protected static long acceptTimeout = 120000;
-
     @Value("master.idle.timeout")
     protected static long idleTimeout = 30000;
-
     @Value("server.master.ip")
     protected String ip;
-
     @Value("server.master.port")
     protected int port = 28890;
-
     @Value("server.master.backlog")
     protected int backlog = 50;
-
     @Value("server.master.bufferSize")
     protected int bufferSize = 1024;
-
     @Value("server.master.receiveBufferSize")
     protected int receiveBufferSize = 2048;
-
     @Value("server.master.sendBufferSize")
     protected int sendBufferSize = 2048;
-
     @Value("server.master.host")
     protected String[] hosts = null;
-
     @Value("server.master.host.exclude")
     protected String[] excludes = null;
-
     @Value("server.master.key")
     protected String key = "absir@qq.com";
-
     protected SocketServer socketServer;
-
     @Inject
     protected MasterSessionResolver sessionResolver;
-
     private SocketServerContext<MasterChannelContext> serverContext = new SocketServerContext<MasterChannelContext>();
 
     public SocketServerContext<MasterChannelContext> getServerContext() {
@@ -132,8 +119,6 @@ public class InputMasterContext {
         MasterChannelContext channelContext = serverContext.getChannelContexts().get(id);
         return channelContext == null ? null : channelContext.getChannel();
     }
-
-    public static Map<Serializable, SocketAdapter> slaveMapSocketAdapter;
 
     public static class MasterChannelContext extends ChannelContext {
 

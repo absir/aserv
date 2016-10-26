@@ -600,26 +600,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
         private boolean ided;
 
-        public long getMinSize() {
-            return minSize;
-        }
-
-        public long getMaxSize() {
-            return maxSize;
-        }
-
-        public String[] getExtensions() {
-            return extensions;
-        }
-
-        public String getRuleName() {
-            return ruleName;
-        }
-
-        public boolean isIded() {
-            return ided;
-        }
-
         public MultipartUploader(Object[] parameters) {
             int last = parameters.length - 1;
             if (last > 2) {
@@ -648,6 +628,26 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                         break;
                 }
             }
+        }
+
+        public long getMinSize() {
+            return minSize;
+        }
+
+        public long getMaxSize() {
+            return maxSize;
+        }
+
+        public String[] getExtensions() {
+            return extensions;
+        }
+
+        public String getRuleName() {
+            return ruleName;
+        }
+
+        public boolean isIded() {
+            return ided;
         }
 
         public void verify(String extension, String field, FileItem file, PropertyErrors errors, Input input) {

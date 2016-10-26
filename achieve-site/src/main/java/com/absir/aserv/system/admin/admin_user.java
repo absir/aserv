@@ -29,25 +29,6 @@ public class admin_user extends AdminServer {
         input.getModel().put("userId", SecurityService.ME.getUserBase(input).getUserId());
     }
 
-    public static class FPassword {
-
-        @JaLang("原密码")
-        @JaEdit(types = "passwordType")
-        @NotEmpty
-        public String oldPassword;
-
-        @JaLang("新密码")
-        @JaEdit(types = "passwordType")
-        @NotEmpty
-        public String newPassword;
-
-        @JaLang("确认密码")
-        @JaEdit(types = "passwordType")
-        @NotEmpty
-        @Confirm("newPassword")
-        public String confirmPassword;
-    }
-
     /**
      * 修改密码
      */
@@ -68,5 +49,24 @@ public class admin_user extends AdminServer {
         user.setPasswordBase(password.newPassword);
         CrudServiceUtils.merge("JUser", null, user, false, user, null);
         return "admin/success";
+    }
+
+    public static class FPassword {
+
+        @JaLang("原密码")
+        @JaEdit(types = "passwordType")
+        @NotEmpty
+        public String oldPassword;
+
+        @JaLang("新密码")
+        @JaEdit(types = "passwordType")
+        @NotEmpty
+        public String newPassword;
+
+        @JaLang("确认密码")
+        @JaEdit(types = "passwordType")
+        @NotEmpty
+        @Confirm("newPassword")
+        public String confirmPassword;
     }
 }

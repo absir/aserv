@@ -48,6 +48,11 @@ public class TaskService extends ContextService {
 
     @Inject
     protected TaskFactory factory;
+    protected DActiver<JTask> taskDActiver;
+    protected UtilAtom taskAtom;
+    @Value("task.thread.count")
+    protected int taskThreadCount = 10;
+    protected DActiver<JPlan> planDActiver;
 
     public TaskFactory getFactory() {
         return factory;
@@ -57,15 +62,6 @@ public class TaskService extends ContextService {
         TaskFactory.TaskMethod taskMethod = factory.getTaskMethodMap() == null ? null : factory.getTaskMethodMap().get(name);
         return taskMethod == null ? null : taskMethod.paramTypes;
     }
-
-    protected DActiver<JTask> taskDActiver;
-
-    protected UtilAtom taskAtom;
-
-    @Value("task.thread.count")
-    protected int taskThreadCount = 10;
-
-    protected DActiver<JPlan> planDActiver;
 
     @Inject
     protected void initService() {

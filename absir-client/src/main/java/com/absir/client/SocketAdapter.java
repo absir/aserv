@@ -41,76 +41,41 @@ public class SocketAdapter {
     public static final byte HUMAN_FLAG = 0x01 << 6;
 
     public static final byte VARINTS_FLAG = (byte) (0x01 << 7);
-
+    public static final int VARINTS_1_LENGTH = 0x7F;
+    public static final int VARINTS_2_LENGTH = VARINTS_1_LENGTH + (0x7F << 7);
+    public static final int VARINTS_3_LENGTH = VARINTS_2_LENGTH + (0x7F << 14);
+    public static final int VARINTS_4_LENGTH = VARINTS_3_LENGTH + (0x7F << 22);
     protected static final Logger LOGGER = LoggerFactory.getLogger(SocketAdapter.class);
-
-    private static TimeoutThread timeoutThread;
-
-    protected boolean registered;
-
-    private LinkedList<RegisteredRunnable> registeredRunnables = new LinkedList<RegisteredRunnable>();
-
-    private CallbackAdapter receiveCallback;
-
-    private Map<Integer, ObjectEntry<CallbackAdapter, CallbackTimeout>> receiveCallbacks = new HashMap<Integer, ObjectEntry<CallbackAdapter, CallbackTimeout>>();
-
-    protected boolean receiveStarted;
-
-    protected int lengthIndex;
-
-    protected int buffLength;
-
-    protected byte[] buff;
-
-    protected int buffLengthIndex;
-
-    protected Socket receiveSocket;
-
-    private int retryConnect;
-
-    private Socket socket;
-
-    private byte[] beats = bit;
-
-    private long beatLifeTime;
-
-    private CallbackAdapter callbackConnect;
-
-    private CallbackAdapter callbackDisconnect;
-
-    private CallbackAdapter acceptCallback;
-
-    private CallbackAdapter registerCallback;
-
-    private int callbackIndex;
-
-    private Socket acceptSocket;
-
-    private boolean tryConnecting;
-
-    private int disconnectNumber;
-
-    protected int maxDisconnectCount = 2;
-
-    protected boolean varints = true;
-
-    protected long varintsServerTime;
-
     protected static Map<Integer, String> VARINTS_URI;
-
     protected static Map<String, Integer> URI_VARINTS;
-
     protected static int VARINTS_URI_INDEX;
-
+    private static TimeoutThread timeoutThread;
+    protected boolean registered;
+    protected boolean receiveStarted;
+    protected int lengthIndex;
+    protected int buffLength;
+    protected byte[] buff;
+    protected int buffLengthIndex;
+    protected Socket receiveSocket;
+    protected int maxDisconnectCount = 2;
+    protected boolean varints = true;
+    protected long varintsServerTime;
     protected Map<String, Integer> uriVarints;
-
-    public boolean isVarints() {
-        return varints;
-    }
-
-    public void setVarints(boolean varints) {
-        this.varints = varints;
-    }
+    private LinkedList<RegisteredRunnable> registeredRunnables = new LinkedList<RegisteredRunnable>();
+    private CallbackAdapter receiveCallback;
+    private Map<Integer, ObjectEntry<CallbackAdapter, CallbackTimeout>> receiveCallbacks = new HashMap<Integer, ObjectEntry<CallbackAdapter, CallbackTimeout>>();
+    private int retryConnect;
+    private Socket socket;
+    private byte[] beats = bit;
+    private long beatLifeTime;
+    private CallbackAdapter callbackConnect;
+    private CallbackAdapter callbackDisconnect;
+    private CallbackAdapter acceptCallback;
+    private CallbackAdapter registerCallback;
+    private int callbackIndex;
+    private Socket acceptSocket;
+    private boolean tryConnecting;
+    private int disconnectNumber;
 
     public static void printException(Throwable e) {
         printException(e);
@@ -145,28 +110,6 @@ public class SocketAdapter {
 
     public static String getVarintsUri(Integer index) {
         return VARINTS_URI == null ? null : VARINTS_URI.get(index);
-    }
-
-    public void clearUriVarints() {
-        if (uriVarints != null) {
-            uriVarints.clear();
-        }
-    }
-
-    public void addUriVarints(String uri, Integer varints) {
-        if (uriVarints == null) {
-            synchronized (this) {
-                if (uriVarints == null) {
-                    uriVarints = new HashMap<String, Integer>();
-                }
-            }
-        }
-
-        uriVarints.put(uri, varints);
-    }
-
-    public Integer getUriVarints(String uri) {
-        return uriVarints == null ? null : uriVarints.get(uri);
     }
 
     /**
@@ -204,10 +147,6 @@ public class SocketAdapter {
         }
     }
 
-    public boolean isConnecting() {
-        return receiveStarted || tryConnecting;
-    }
-
     /**
      * 添加超时回调
      *
@@ -215,6 +154,98 @@ public class SocketAdapter {
      */
     public static void addCallbackTimeout(CallbackTimeout callbackTimeout) {
         startTimeout().add(callbackTimeout);
+    }
+
+    public static int getVarints(byte[] buffer, int offset, int length) {
+        length -= offset;
+        int b = buffer[offset];
+        int varints = b & 0x7F;
+        if (length > 1 && (b & 0x80) != 0) {
+            b = buffer[++offset];
+            varints += (b & 0x7F) << 7;
+            if (length > 2 && (b & 0x80) != 0) {
+                b = buffer[++offset];
+                varints += (b & 0x7F) << 14;
+                if (length > 3 && (b & 0x80) != 0) {
+                    b = buffer[++offset];
+                    varints += (b & 0x7F) << 22;
+                }
+            }
+        }
+
+        return varints;
+    }
+
+    public static int getVarintsLength(int varints) {
+        if (varints <= VARINTS_1_LENGTH) {
+            return 1;
+        }
+
+        if (varints <= VARINTS_2_LENGTH) {
+            return 2;
+        }
+
+        if (varints <= VARINTS_3_LENGTH) {
+            return 3;
+        }
+
+        return 4;
+    }
+
+    public static void setVarintsLength(byte[] destination, int destionationIndex, int length) {
+        if (length > VARINTS_1_LENGTH) {
+            destination[destionationIndex] = (byte) ((length & 0x7F) | 0x80);
+            if (length > VARINTS_2_LENGTH) {
+                destination[++destionationIndex] = (byte) (((length >> 7) & 0x7F) | 0x80);
+                if (length > VARINTS_3_LENGTH) {
+                    destination[++destionationIndex] = (byte) (((length >> 14) & 0x7F) | 0x80);
+                    destination[++destionationIndex] = (byte) ((length >> 22) & 0x7F);
+
+                } else {
+                    destination[++destionationIndex] = (byte) ((length >> 14) & 0x7F);
+                }
+
+            } else {
+                destination[++destionationIndex] = (byte) ((length >> 7) & 0x7F);
+            }
+
+        } else {
+            destination[destionationIndex] = (byte) (length & 0x7F);
+        }
+    }
+
+    public boolean isVarints() {
+        return varints;
+    }
+
+    public void setVarints(boolean varints) {
+        this.varints = varints;
+    }
+
+    public void clearUriVarints() {
+        if (uriVarints != null) {
+            uriVarints.clear();
+        }
+    }
+
+    public void addUriVarints(String uri, Integer varints) {
+        if (uriVarints == null) {
+            synchronized (this) {
+                if (uriVarints == null) {
+                    uriVarints = new HashMap<String, Integer>();
+                }
+            }
+        }
+
+        uriVarints.put(uri, varints);
+    }
+
+    public Integer getUriVarints(String uri) {
+        return uriVarints == null ? null : uriVarints.get(uri);
+    }
+
+    public boolean isConnecting() {
+        return receiveStarted || tryConnecting;
     }
 
     public Socket getSocket() {
@@ -690,64 +721,6 @@ public class SocketAdapter {
         receiveCallback(offset, buffer, flag);
     }
 
-    public static int getVarints(byte[] buffer, int offset, int length) {
-        length -= offset;
-        int b = buffer[offset];
-        int varints = b & 0x7F;
-        if (length > 1 && (b & 0x80) != 0) {
-            b = buffer[++offset];
-            varints += (b & 0x7F) << 7;
-            if (length > 2 && (b & 0x80) != 0) {
-                b = buffer[++offset];
-                varints += (b & 0x7F) << 14;
-                if (length > 3 && (b & 0x80) != 0) {
-                    b = buffer[++offset];
-                    varints += (b & 0x7F) << 22;
-                }
-            }
-        }
-
-        return varints;
-    }
-
-    public static int getVarintsLength(int varints) {
-        if (varints <= VARINTS_1_LENGTH) {
-            return 1;
-        }
-
-        if (varints <= VARINTS_2_LENGTH) {
-            return 2;
-        }
-
-        if (varints <= VARINTS_3_LENGTH) {
-            return 3;
-        }
-
-        return 4;
-    }
-
-    public static void setVarintsLength(byte[] destination, int destionationIndex, int length) {
-        if (length > VARINTS_1_LENGTH) {
-            destination[destionationIndex] = (byte) ((length & 0x7F) | 0x80);
-            if (length > VARINTS_2_LENGTH) {
-                destination[++destionationIndex] = (byte) (((length >> 7) & 0x7F) | 0x80);
-                if (length > VARINTS_3_LENGTH) {
-                    destination[++destionationIndex] = (byte) (((length >> 14) & 0x7F) | 0x80);
-                    destination[++destionationIndex] = (byte) ((length >> 22) & 0x7F);
-
-                } else {
-                    destination[++destionationIndex] = (byte) ((length >> 14) & 0x7F);
-                }
-
-            } else {
-                destination[++destionationIndex] = (byte) ((length >> 7) & 0x7F);
-            }
-
-        } else {
-            destination[destionationIndex] = (byte) (length & 0x7F);
-        }
-    }
-
     public void receiveCallback(int offset, byte[] buffer, byte flag) {
         // 转发请求
         int length = buffer.length;
@@ -879,14 +852,6 @@ public class SocketAdapter {
         return sendDataBytes(off, dataBytes, 0, dataBytes == null ? 0 : dataBytes.length, head, human, flag,
                 callbackIndex, postData, 0, postData == null ? 0 : postData.length);
     }
-
-    public static final int VARINTS_1_LENGTH = 0x7F;
-
-    public static final int VARINTS_2_LENGTH = VARINTS_1_LENGTH + (0x7F << 7);
-
-    public static final int VARINTS_3_LENGTH = VARINTS_2_LENGTH + (0x7F << 14);
-
-    public static final int VARINTS_4_LENGTH = VARINTS_3_LENGTH + (0x7F << 22);
 
     public byte[] sendDataBytes(int off, byte[] dataBytes, int dataOff, int dataLen, boolean head, boolean human,
                                 int flag, int callbackIndex, byte[] postData, int postOff, int postLen) {
@@ -1250,14 +1215,12 @@ public class SocketAdapter {
 
     protected static class TimeoutThread extends Thread {
 
-        private boolean stopped;
-
         private final List<CallbackTimeout> addTimeouts = new ArrayList<CallbackTimeout>();
-
         /**
          * 超时执行队列
          */
         private final List<CallbackTimeout> callbackTimeouts = new LinkedList<CallbackTimeout>();
+        private boolean stopped;
 
         public final boolean isStopped() {
             return stopped;

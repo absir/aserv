@@ -19,6 +19,7 @@ import java.nio.channels.SocketChannel;
 public class SocketBufferResolver implements IBufferResolver {
 
     protected static long bufferMax = 10240;
+    protected boolean varints = true;
 
     public static long getBufferMax() {
         return bufferMax;
@@ -158,8 +159,6 @@ public class SocketBufferResolver implements IBufferResolver {
     public ByteBuffer createByteBuffer(SocketChannel socketChannel, int headerLength, byte[] bytes, int offset, int length) {
         return ByteBuffer.wrap(bytes, offset, length);
     }
-
-    protected boolean varints = true;
 
     public boolean isVarints() {
         return varints;

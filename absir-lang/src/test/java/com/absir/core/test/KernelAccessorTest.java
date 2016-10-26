@@ -14,14 +14,7 @@ import java.util.Map;
 @RunWith(value = JUnit4.class)
 public class KernelAccessorTest {
 
-    public static class Dto {
-
-        public String name;
-
-    }
-
     public Map<String, Dto> map;
-
 
     @Test
     public void test() {
@@ -45,6 +38,12 @@ public class KernelAccessorTest {
 
         System.out.println("KernelAccessorTest " + accessor1.get(this));
         System.out.println("KernelAccessorTest " + accessor2.get(this));
+
+    }
+
+    public static class Dto {
+
+        public String name;
 
     }
 }

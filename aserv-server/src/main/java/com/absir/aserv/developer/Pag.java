@@ -376,11 +376,6 @@ public class Pag {
         return UploadCrudFactory.ME.isEmpty(path);
     }
 
-    public static interface IPagLang {
-
-        public String getPagLang(String transferredName);
-    }
-
     public static void forEntity(HttpServletRequest request) {
         request.setAttribute("entity", forEntity);
     }
@@ -412,5 +407,10 @@ public class Pag {
     public static String getUploaderExtensions(Object[] params) {
         UploadCrudFactory.MultipartUploader uploader = getUploader(params);
         return uploader == null || uploader.getExtensions() == null || uploader.getExtensions().length == 0 ? null : KernelString.implode(uploader.getExtensions(), ',');
+    }
+
+    public static interface IPagLang {
+
+        public String getPagLang(String transferredName);
     }
 }

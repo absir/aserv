@@ -23,4 +23,11 @@ rm -rf src/main/resources/archetype-resources/src/main/webapp/admin
 rm -rf src/main/resources/archetype-resources/src/main/webapp/WEB-INF/developer
 rm -rf src/main/resources/archetype-resources/src/main/webapp/WEB-INF/tpl
 
+rm -rf target/classes/archetype-resources/*.iml
+rm -rf target/classes/archetype-resources/*.sh
+rm -rf target/classes/archetype-resources/read.ME
+rm -rf target/classes/archetype-resources/.idea
+
+#rm -rf **/.idea
+
 mvn install

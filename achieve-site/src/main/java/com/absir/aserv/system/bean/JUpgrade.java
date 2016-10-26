@@ -42,41 +42,47 @@ import java.util.Map;
 @Entity
 public class JUpgrade extends JbBean implements ICrudBean {
 
+    protected static final Logger LOGGER = LoggerFactory.getLogger(JUpgrade.class);
     @JaLang("升级文件")
     @JaEdit(types = "file", groups = JaEdit.GROUP_LIST)
     @JaCrud(factory = UploadCrudFactory.class, parameters = {"-1", "zip,war"})
     private String upgradeFile;
-
     @JaLang("版本")
     @JaEdit(groups = JaEdit.GROUP_LIST, listColType = 1)
     private String version;
-
     @JaLang("描述")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String descriptor;
-
     @JaLang(value = "验证")
     @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKED, listColType = 1)
     private boolean validation;
-
     @JaLang("修改时间")
     @JaEdit(editable = JeEditable.LOCKED, types = "dateTime", groups = JaEdit.GROUP_LIST)
     @JaCrud(value = "dateCrudFactory", cruds = {JaCrud.Crud.CREATE}, factory = DateCrudFactory.class)
     private long createTime;
-
     @JaLang("修改时间")
     @JaEdit(editable = JeEditable.LOCKED, types = "dateTime", groups = JaEdit.GROUP_LIST)
     @JaCrud(value = "dateCrudFactory", cruds = {JaCrud.Crud.CREATE, JaCrud.Crud.UPDATE}, factory = DateCrudFactory.class)
     private long updateTime;
-
     @JaLang("升级")
     @JaEdit(editable = JeEditable.ENABLE)
     @Transient
     private boolean upgrade;
-
     @JaLang("开始时间")
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
     private long beginTime;
+
+    @JaTask("upgradeFile")
+    public static void upgradeFile(long adapterTime, String filePath) {
+        if (RouteAdapter.ADAPTER_TIME == adapterTime) {
+            try {
+                UpgradeService.ME.restartUpgrade(filePath, true);
+
+            } catch (Exception e) {
+                LOGGER.error("upgradeFile error " + filePath, e);
+            }
+        }
+    }
 
     public String getUpgradeFile() {
         return upgradeFile;
@@ -177,20 +183,6 @@ public class JUpgrade extends JbBean implements ICrudBean {
 
                     upgrade = false;
                 }
-            }
-        }
-    }
-
-    protected static final Logger LOGGER = LoggerFactory.getLogger(JUpgrade.class);
-
-    @JaTask("upgradeFile")
-    public static void upgradeFile(long adapterTime, String filePath) {
-        if (RouteAdapter.ADAPTER_TIME == adapterTime) {
-            try {
-                UpgradeService.ME.restartUpgrade(filePath, true);
-
-            } catch (Exception e) {
-                LOGGER.error("upgradeFile error " + filePath, e);
             }
         }
     }

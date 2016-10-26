@@ -155,10 +155,6 @@ public abstract class JConfigureUtils {
         return cls.getName() + KernelString.implode(args, ',');
     }
 
-    public <T extends JConfigureBase> T getConfigure(Class<T> cls, Object... initargs) {
-        return initargs.length == 0 ? getConfigure(cls) : getConfigure(cls, getConfigureId(cls, initargs), initargs);
-    }
-
     public static <T extends JConfigureBase> T getConfigure(Class<T> cls, String configureKey, Object... initargs) {
         JConfigureBase configure = Configure_Class_Map_Instance.get(configureKey);
         if (configure == null) {
@@ -194,5 +190,9 @@ public abstract class JConfigureUtils {
 
     protected static <T extends JConfigureBase> void clearConfigure(Class<T> cls, Object... initargs) {
         clearConfigure(getConfigureId(cls, initargs));
+    }
+
+    public <T extends JConfigureBase> T getConfigure(Class<T> cls, Object... initargs) {
+        return initargs.length == 0 ? getConfigure(cls) : getConfigure(cls, getConfigureId(cls, initargs), initargs);
     }
 }

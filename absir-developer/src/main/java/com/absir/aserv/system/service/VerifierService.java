@@ -60,10 +60,7 @@ public class VerifierService extends ContextService {
     private long clearBeforeDelay = UtilAbsir.DAY_TIME;
 
     private Map<String, CrudEntity> nameMapCrudEntity;
-
-    public String randVerifierId(Object dist) {
-        return HelperRandom.randHashId(dist);
-    }
+    private UtilLinked<PassVerifier> passVerifierUtilLinked;
 
     public static JVerifier createVerifier(String id, String tag, String value, int intValue, long lifeTime) {
         JVerifier verifier = new JVerifier();
@@ -76,51 +73,6 @@ public class VerifierService extends ContextService {
         }
 
         return verifier;
-    }
-
-    /**
-     * 添加验证
-     */
-    @Transaction
-    public JVerifier persistVerifier(Object dist, String tag, String value, long lifeTime) {
-        JVerifier verifier = createVerifier(randVerifierId(dist), tag, value, 0, lifeTime);
-        BeanDao.getSession().persist(verifier);
-        return verifier;
-    }
-
-    @Transaction
-    public JVerifier mergeVerifier(String id, String tag, String value, long lifeTime) {
-        JVerifier verifier = createVerifier(id, tag, value, 0, lifeTime);
-        BeanDao.getSession().merge(verifier);
-        return verifier;
-    }
-
-    protected Iterator<JVerifier> iteratorVerifier(String id, String tag) {
-        Query query = BeanDao.getSession()
-                .createQuery("SELECT o FROM JVerifier o WHERE o.id = ? AND o.passTime > ? AND o.tag = ?");
-        query.setMaxResults(1);
-        query.setParameter(0, id);
-        query.setParameter(1, ContextUtils.getContextTime());
-        query.setParameter(2, tag);
-        return query.iterate();
-    }
-
-    /**
-     * 查找验证
-     */
-    @Transaction(readOnly = true)
-    public JVerifier findVerifier(String id, String tag) {
-        Iterator<JVerifier> iterator = iteratorVerifier(id, tag);
-        return iterator.hasNext() ? iterator.next() : null;
-    }
-
-    @Transaction(readOnly = true)
-    public boolean hasVerifier(String id, String tag) {
-        return iteratorVerifier(id, tag).hasNext();
-    }
-
-    protected void setNameMapCrudEntity(Map<String, CrudEntity> nameMapCrudEntity) {
-        this.nameMapCrudEntity = nameMapCrudEntity;
     }
 
     public static JVerifier getOperationVerifier(Session session, String id, long idleTime, boolean unique) {
@@ -191,15 +143,6 @@ public class VerifierService extends ContextService {
         return isOperationCount(KernelString.isEmpty(address) ? null : (address + '@' + tag), maxCount);
     }
 
-    @Transaction
-    public JVerifier doneOperationCount(String id, long idleTime) {
-        Session session = BeanDao.getSession();
-        JVerifier verifier = getOperationVerifier(session, id, idleTime, false);
-        verifier.setIntValue(verifier.getIntValue() + 1);
-        session.merge(verifier);
-        return verifier;
-    }
-
     public static boolean doneOperationCount(String id, long idleTime, int maxCount) {
         if (maxCount <= -1) {
             return false;
@@ -216,14 +159,62 @@ public class VerifierService extends ContextService {
         return doneOperationCount(KernelString.isEmpty(address) ? null : (address + '@' + tag), idleTime, maxCount);
     }
 
-    private UtilLinked<PassVerifier> passVerifierUtilLinked;
+    public String randVerifierId(Object dist) {
+        return HelperRandom.randHashId(dist);
+    }
 
-    protected static class PassVerifier {
+    /**
+     * 添加验证
+     */
+    @Transaction
+    public JVerifier persistVerifier(Object dist, String tag, String value, long lifeTime) {
+        JVerifier verifier = createVerifier(randVerifierId(dist), tag, value, 0, lifeTime);
+        BeanDao.getSession().persist(verifier);
+        return verifier;
+    }
 
-        protected long passTime;
+    @Transaction
+    public JVerifier mergeVerifier(String id, String tag, String value, long lifeTime) {
+        JVerifier verifier = createVerifier(id, tag, value, 0, lifeTime);
+        BeanDao.getSession().merge(verifier);
+        return verifier;
+    }
 
-        protected JVerifier verifier;
+    protected Iterator<JVerifier> iteratorVerifier(String id, String tag) {
+        Query query = BeanDao.getSession()
+                .createQuery("SELECT o FROM JVerifier o WHERE o.id = ? AND o.passTime > ? AND o.tag = ?");
+        query.setMaxResults(1);
+        query.setParameter(0, id);
+        query.setParameter(1, ContextUtils.getContextTime());
+        query.setParameter(2, tag);
+        return query.iterate();
+    }
 
+    /**
+     * 查找验证
+     */
+    @Transaction(readOnly = true)
+    public JVerifier findVerifier(String id, String tag) {
+        Iterator<JVerifier> iterator = iteratorVerifier(id, tag);
+        return iterator.hasNext() ? iterator.next() : null;
+    }
+
+    @Transaction(readOnly = true)
+    public boolean hasVerifier(String id, String tag) {
+        return iteratorVerifier(id, tag).hasNext();
+    }
+
+    protected void setNameMapCrudEntity(Map<String, CrudEntity> nameMapCrudEntity) {
+        this.nameMapCrudEntity = nameMapCrudEntity;
+    }
+
+    @Transaction
+    public JVerifier doneOperationCount(String id, long idleTime) {
+        Session session = BeanDao.getSession();
+        JVerifier verifier = getOperationVerifier(session, id, idleTime, false);
+        verifier.setIntValue(verifier.getIntValue() + 1);
+        session.merge(verifier);
+        return verifier;
     }
 
     @Transaction
@@ -359,6 +350,14 @@ public class VerifierService extends ContextService {
                 LOGGER.error("clear expired verifier " + entry.getKey() + " error", e);
             }
         }
+    }
+
+    protected static class PassVerifier {
+
+        protected long passTime;
+
+        protected JVerifier verifier;
+
     }
 
 

@@ -24,9 +24,8 @@ import java.util.Map.Entry;
 
 public class JConfigureBase implements IBase<Serializable> {
 
-    private transient boolean deleteClear;
-
     protected transient Map<Field, JConfigure> fieldMapConfigure = new HashMap<Field, JConfigure>();
+    private transient boolean deleteClear;
 
     @Override
     public Serializable getId() {

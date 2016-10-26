@@ -16,6 +16,54 @@ import java.util.Map;
 public class RpcFactory {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(RpcFactory.class);
+    private static final Map<String, Integer> PROXY_METHOD_ZERO = new HashMap<String, Integer>();
+    private static final Map<String, Integer> PROXY_METHOD_ONE = new HashMap<String, Integer>();
+    protected static Map<Class<?>, Class<?>> rpcClsMapProxyClass;
+
+    static {
+        PROXY_METHOD_ZERO.put("getRpcType", 0);
+        PROXY_METHOD_ZERO.put("getRpcAdapter", 1);
+        PROXY_METHOD_ZERO.put("getRpcInterface", 2);
+        PROXY_METHOD_ZERO.put("hashCode", 3);
+        PROXY_METHOD_ZERO.put("toString", 4);
+        // AOP_PROXY_METHOD_ONE
+        PROXY_METHOD_ONE.put("equals", 0);
+        PROXY_METHOD_ONE.put("setRpcAdapter", 1);
+    }
+
+    public static <T> T createRpcInvoker(IRpcAdapter rpcAdapter, Class<T> interfaceClass, boolean cacheProxyClass) {
+        RpcInterface rpcInterface = RpcInterface.get(interfaceClass);
+        RpcInvoker rpcInvoker = new RpcInvoker();
+        rpcInvoker.rpcType = interfaceClass;
+        rpcInvoker.rpcAdapter = rpcAdapter;
+        rpcInvoker.rpcInterface = rpcInterface;
+        if (!cacheProxyClass) {
+            return (T) Proxy.newProxyInstance(RpcFactory.class.getClassLoader(), new Class<?>[]{interfaceClass, IRpcInvoker.class}, rpcInvoker);
+        }
+
+        if (rpcClsMapProxyClass == null) {
+            synchronized (RpcFactory.class) {
+                if (rpcClsMapProxyClass == null) {
+                    rpcClsMapProxyClass = new HashMap<Class<?>, Class<?>>();
+                }
+            }
+        }
+
+        Class<?> proxyClass = rpcClsMapProxyClass.get(interfaceClass);
+        if (proxyClass == null) {
+            synchronized (rpcClsMapProxyClass) {
+                proxyClass = rpcClsMapProxyClass.get(interfaceClass);
+                if (proxyClass == null) {
+                    Object proxy = Proxy.newProxyInstance(RpcFactory.class.getClassLoader(), new Class<?>[]{interfaceClass, IRpcInvoker.class}, rpcInvoker);
+                    rpcClsMapProxyClass.put(interfaceClass, proxy.getClass());
+                    return (T) proxy;
+                }
+            }
+        }
+
+        Object proxy = KernelClass.declaredNew(proxyClass, rpcInvoker);
+        return (T) (proxy == null ? Proxy.newProxyInstance(RpcFactory.class.getClassLoader(), new Class<?>[]{interfaceClass, IRpcInvoker.class}, rpcInvoker) : proxy);
+    }
 
     public enum RPC_CODE implements IRpcCode {
 
@@ -77,6 +125,17 @@ public class RpcFactory {
 
     }
 
+    public static interface IRpcInvoker {
+
+        public Class<?> getRpcType();
+
+        public IRpcAdapter getRpcAdapter();
+
+        public void setRpcAdapter(IRpcAdapter adapter);
+
+        public RpcInterface getRpcInterface();
+    }
+
     protected static class RpcCode implements IRpcCode {
 
         protected int code;
@@ -89,32 +148,6 @@ public class RpcFactory {
         public int ordinal() {
             return code;
         }
-    }
-
-    public static interface IRpcInvoker {
-
-        public Class<?> getRpcType();
-
-        public IRpcAdapter getRpcAdapter();
-
-        public void setRpcAdapter(IRpcAdapter adapter);
-
-        public RpcInterface getRpcInterface();
-    }
-
-    private static final Map<String, Integer> PROXY_METHOD_ZERO = new HashMap<String, Integer>();
-
-    private static final Map<String, Integer> PROXY_METHOD_ONE = new HashMap<String, Integer>();
-
-    static {
-        PROXY_METHOD_ZERO.put("getRpcType", 0);
-        PROXY_METHOD_ZERO.put("getRpcAdapter", 1);
-        PROXY_METHOD_ZERO.put("getRpcInterface", 2);
-        PROXY_METHOD_ZERO.put("hashCode", 3);
-        PROXY_METHOD_ZERO.put("toString", 4);
-        // AOP_PROXY_METHOD_ONE
-        PROXY_METHOD_ONE.put("equals", 0);
-        PROXY_METHOD_ONE.put("setRpcAdapter", 1);
     }
 
     public static class RpcException extends RuntimeException {
@@ -206,42 +239,6 @@ public class RpcFactory {
 
             throw new RpcException(RPC_CODE.RUN_EXCEPTION.ordinal() + 1);
         }
-    }
-
-    protected static Map<Class<?>, Class<?>> rpcClsMapProxyClass;
-
-    public static <T> T createRpcInvoker(IRpcAdapter rpcAdapter, Class<T> interfaceClass, boolean cacheProxyClass) {
-        RpcInterface rpcInterface = RpcInterface.get(interfaceClass);
-        RpcInvoker rpcInvoker = new RpcInvoker();
-        rpcInvoker.rpcType = interfaceClass;
-        rpcInvoker.rpcAdapter = rpcAdapter;
-        rpcInvoker.rpcInterface = rpcInterface;
-        if (!cacheProxyClass) {
-            return (T) Proxy.newProxyInstance(RpcFactory.class.getClassLoader(), new Class<?>[]{interfaceClass, IRpcInvoker.class}, rpcInvoker);
-        }
-
-        if (rpcClsMapProxyClass == null) {
-            synchronized (RpcFactory.class) {
-                if (rpcClsMapProxyClass == null) {
-                    rpcClsMapProxyClass = new HashMap<Class<?>, Class<?>>();
-                }
-            }
-        }
-
-        Class<?> proxyClass = rpcClsMapProxyClass.get(interfaceClass);
-        if (proxyClass == null) {
-            synchronized (rpcClsMapProxyClass) {
-                proxyClass = rpcClsMapProxyClass.get(interfaceClass);
-                if (proxyClass == null) {
-                    Object proxy = Proxy.newProxyInstance(RpcFactory.class.getClassLoader(), new Class<?>[]{interfaceClass, IRpcInvoker.class}, rpcInvoker);
-                    rpcClsMapProxyClass.put(interfaceClass, proxy.getClass());
-                    return (T) proxy;
-                }
-            }
-        }
-
-        Object proxy = KernelClass.declaredNew(proxyClass, rpcInvoker);
-        return (T) (proxy == null ? Proxy.newProxyInstance(RpcFactory.class.getClassLoader(), new Class<?>[]{interfaceClass, IRpcInvoker.class}, rpcInvoker) : proxy);
     }
 
 }
