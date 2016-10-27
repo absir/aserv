@@ -32,7 +32,7 @@ public class InputSlaveContext {
     protected static final Logger LOGGER = LoggerFactory.getLogger(InputSlaveContext.class);
 
     @Value("server.slave.ip")
-    protected String ip;
+    protected String ip = "127.0.0.1";
 
     @Value("server.slave.port")
     protected int port = 28890;

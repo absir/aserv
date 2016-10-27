@@ -115,8 +115,18 @@ public class HandlerInvoker {
         return RpcFactory.RPC_CODE.NO_PERMISSION.ordinal();
     }
 
-    public <T extends IHandler> int invoker(OnPut onPut, T handler, HandlerType<T> handlerType, HandlerType.HandlerMethod handlerMethod, InputStream inputStream) {
+    public <T extends IHandler> int invoker(OnPut onPut, T handler, IHandlerProxy handlerProxy, HandlerType<T> handlerType, HandlerType.HandlerMethod handlerMethod, InputStream inputStream) {
         if (handler._permission(onPut)) {
+            if (handlerProxy != null) {
+                T h = (T) handlerProxy.getHandler(onPut);
+                if (h == null) {
+                    return RpcFactory.RPC_CODE.NO_PERMISSION.ordinal();
+
+                } else {
+                    return invoker(onPut, h, null, handlerType, handlerMethod, inputStream);
+                }
+            }
+
             IFormat format = getFormat(onPut, handler, handlerMethod);
             onPut.setReturned(format);
             Object[] args = null;

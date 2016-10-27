@@ -144,7 +144,7 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
                 try {
                     onPut.open();
                     InputStream inputStream = input.getInputStream();
-                    int code = handlerInvoker.invoker(onPut, handlerAction.handler, handlerAction.handlerType, handlerAction.handlerMethod, inputStream);
+                    int code = handlerInvoker.invoker(onPut, handlerAction.handler, handlerAction.handlerProxy, handlerAction.handlerType, handlerAction.handlerMethod, inputStream);
                     resolverHandler(onPut, input, code);
 
                 } finally {

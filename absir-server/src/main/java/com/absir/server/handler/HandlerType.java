@@ -15,7 +15,9 @@ import java.util.Map;
 public class HandlerType<T> {
 
     private static Map<Class<?>, HandlerType> clsMapHandlerType;
+
     protected Class<T> type;
+
     protected Map<String, HandlerMethod> handlerMethodMap;
 
     protected HandlerType() {

@@ -33,19 +33,19 @@ public class JSlave extends JbBase {
     private String name;
 
     @JaLang("IP")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
+    @JaEdit(groups = {JaEdit.GROUP_SUG})
     private String ip;
 
     @JaLang("组号")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
+    @JaEdit(groups = {JaEdit.GROUP_SUG})
     private String groupId;
 
     @JaLang("版本")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
+    @JaEdit(groups = {JaEdit.GROUP_SUG})
     private String version;
 
     @JaLang("路径")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
+    @JaEdit(groups = {JaEdit.GROUP_SUG})
     private String path;
 
     @JaLang("连接中")

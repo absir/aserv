@@ -28,6 +28,15 @@ rm -rf target/classes/archetype-resources/*.sh
 rm -rf target/classes/archetype-resources/read.ME
 rm -rf target/classes/archetype-resources/.idea
 
-#rm -rf **/.idea
+rm -rf target/classes/archetype-resources/src/main/webapp/static
+rm -rf target/classes/archetype-resources/src/main/webapp/lib
+
+rm -rf target/classes/archetype-resources/src/main/webapp/admin
+rm -rf target/classes/archetype-resources/src/main/webapp/WEB-INF/developer
+rm -rf target/classes/archetype-resources/src/main/webapp/WEB-INF/tpl
+
+rm -rf **/.idea
 
 mvn install
+
+#./clear.sh

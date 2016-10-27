@@ -8,7 +8,6 @@
 package com.absir.client;
 
 import com.absir.core.base.Environment;
-import com.absir.core.kernel.KernelCharset;
 import com.absir.core.kernel.KernelLang.ObjectEntry;
 import com.absir.core.kernel.KernelString;
 import org.slf4j.Logger;
@@ -41,14 +40,20 @@ public class SocketAdapter {
     public static final byte HUMAN_FLAG = 0x01 << 6;
 
     public static final byte VARINTS_FLAG = (byte) (0x01 << 7);
+
     public static final int VARINTS_1_LENGTH = 0x7F;
+
     public static final int VARINTS_2_LENGTH = VARINTS_1_LENGTH + (0x7F << 7);
+
     public static final int VARINTS_3_LENGTH = VARINTS_2_LENGTH + (0x7F << 14);
+
     public static final int VARINTS_4_LENGTH = VARINTS_3_LENGTH + (0x7F << 22);
+    // 定义编译框架默认通讯数据状态
+    public static final boolean SOCKET_VARINTS = true;
     protected static final Logger LOGGER = LoggerFactory.getLogger(SocketAdapter.class);
-    protected static Map<Integer, String> VARINTS_URI;
-    protected static Map<String, Integer> URI_VARINTS;
-    protected static int VARINTS_URI_INDEX;
+    protected static Map<Integer, String> varints_Uri;
+    protected static Map<String, Integer> uri_Varints;
+    protected static int varints_uri_Index;
     private static TimeoutThread timeoutThread;
     protected boolean registered;
     protected boolean receiveStarted;
@@ -58,23 +63,40 @@ public class SocketAdapter {
     protected int buffLengthIndex;
     protected Socket receiveSocket;
     protected int maxDisconnectCount = 2;
-    protected boolean varints = true;
+    protected boolean varints = SOCKET_VARINTS;
+
     protected long varintsServerTime;
+
     protected Map<String, Integer> uriVarints;
+
     private LinkedList<RegisteredRunnable> registeredRunnables = new LinkedList<RegisteredRunnable>();
+
     private CallbackAdapter receiveCallback;
+
     private Map<Integer, ObjectEntry<CallbackAdapter, CallbackTimeout>> receiveCallbacks = new HashMap<Integer, ObjectEntry<CallbackAdapter, CallbackTimeout>>();
+
     private int retryConnect;
+
     private Socket socket;
+
     private byte[] beats = bit;
+
     private long beatLifeTime;
+
     private CallbackAdapter callbackConnect;
+
     private CallbackAdapter callbackDisconnect;
+
     private CallbackAdapter acceptCallback;
+
     private CallbackAdapter registerCallback;
+
     private int callbackIndex;
+
     private Socket acceptSocket;
+
     private boolean tryConnecting;
+
     private int disconnectNumber;
 
     public static void printException(Throwable e) {
@@ -82,34 +104,34 @@ public class SocketAdapter {
     }
 
     public static int addVarintsUri(String uri) {
-        if (VARINTS_URI == null) {
+        if (varints_Uri == null) {
             synchronized (SocketAdapter.class) {
-                if (VARINTS_URI == null) {
-                    VARINTS_URI = new HashMap<Integer, String>();
-                    URI_VARINTS = new HashMap<String, Integer>();
+                if (varints_Uri == null) {
+                    varints_Uri = new HashMap<Integer, String>();
+                    uri_Varints = new HashMap<String, Integer>();
                 }
             }
         }
 
-        Integer index = URI_VARINTS.get(uri);
+        Integer index = uri_Varints.get(uri);
         if (index != null) {
             return index;
         }
 
-        synchronized (VARINTS_URI) {
-            index = URI_VARINTS.get(uri);
+        synchronized (varints_Uri) {
+            index = uri_Varints.get(uri);
             if (index != null) {
                 return index;
             }
 
-            VARINTS_URI.put(++VARINTS_URI_INDEX, uri);
-            URI_VARINTS.put(uri, VARINTS_URI_INDEX);
-            return VARINTS_URI_INDEX;
+            varints_Uri.put(++varints_uri_Index, uri);
+            uri_Varints.put(uri, varints_uri_Index);
+            return varints_uri_Index;
         }
     }
 
     public static String getVarintsUri(Integer index) {
-        return VARINTS_URI == null ? null : VARINTS_URI.get(index);
+        return varints_Uri == null ? null : varints_Uri.get(index);
     }
 
     /**
@@ -149,8 +171,6 @@ public class SocketAdapter {
 
     /**
      * 添加超时回调
-     *
-     * @param callbackTimeout
      */
     public static void addCallbackTimeout(CallbackTimeout callbackTimeout) {
         startTimeout().add(callbackTimeout);
@@ -163,9 +183,11 @@ public class SocketAdapter {
         if (length > 1 && (b & 0x80) != 0) {
             b = buffer[++offset];
             varints += (b & 0x7F) << 7;
+
             if (length > 2 && (b & 0x80) != 0) {
                 b = buffer[++offset];
                 varints += (b & 0x7F) << 14;
+
                 if (length > 3 && (b & 0x80) != 0) {
                     b = buffer[++offset];
                     varints += (b & 0x7F) << 22;
@@ -192,7 +214,26 @@ public class SocketAdapter {
         return 4;
     }
 
-    public static void setVarintsLength(byte[] destination, int destionationIndex, int length) {
+    public static final byte[] getLengthBytes(int length) {
+        byte[] destination = new byte[4];
+        setLength(destination, 0, length);
+        return destination;
+    }
+
+    public static final void setLength(byte[] destination, int destionationIndex, int length) {
+        destination[destionationIndex++] = (byte) length;
+        destination[destionationIndex++] = (byte) (length >> 8);
+        destination[destionationIndex++] = (byte) (length >> 16);
+        destination[destionationIndex] = (byte) (length >> 24);
+    }
+
+    public static final byte[] getVarintsLengthBytes(int varints) {
+        byte[] bytes = new byte[getVarintsLength(varints)];
+        setVarintsLength(bytes, 0, varints);
+        return bytes;
+    }
+
+    public static final void setVarintsLength(byte[] destination, int destionationIndex, int length) {
         if (length > VARINTS_1_LENGTH) {
             destination[destionationIndex] = (byte) ((length & 0x7F) | 0x80);
             if (length > VARINTS_2_LENGTH) {
@@ -211,6 +252,24 @@ public class SocketAdapter {
 
         } else {
             destination[destionationIndex] = (byte) (length & 0x7F);
+        }
+    }
+
+    public final void setLengthFlag(byte[] destination, int destionationIndex, int length) {
+        if (varints) {
+            setVarintsLength(destination, destionationIndex, length);
+
+        } else {
+            setLength(destination, destionationIndex, length);
+        }
+    }
+
+    public final byte[] getLengthBytesFlag(int length) {
+        if (varints) {
+            return getVarintsLengthBytes(length);
+
+        } else {
+            return getLengthBytes(length);
         }
     }
 
@@ -726,33 +785,57 @@ public class SocketAdapter {
         int length = buffer.length;
         Integer callbackIndex = null;
         if (length > 1) {
-            if ((flag & VARINTS_FLAG) != 0) {
-                if ((flag & CALLBACK_FLAG) != 0) {
+            if ((flag & CALLBACK_FLAG) != 0) {
+                if (varints) {
+                    //压缩模式
                     int varints = getVarints(buffer, offset, length);
                     offset += getVarintsLength(varints);
                     callbackIndex = varints;
-                }
 
-                if (offset < length && (flag & HUMAN_FLAG) != 0) {
-                    // 解析返回信息中包含uri字典压缩信息
-                    int varints = getVarints(buffer, offset, length);
-                    String uri = getVarintsUri(varints);
-                    if (!KernelString.isEmpty(uri)) {
-                        offset += getVarintsLength(varints);
-                        if ((offset < length)) {
-                            varints = getVarints(buffer, offset, length);
-                            offset += getVarintsLength(varints);
-                            addUriVarints(uri, varints);
+                } else {
+                    //普通模式
+                    int index = buffer[offset++] & 0xFF;
+                    index += (buffer[offset++] & 0xFF) << 8;
+                    index += (buffer[offset++] & 0xFF) << 16;
+                    index += (buffer[offset++] & 0xFF) << 24;
+                    callbackIndex = index;
+                }
+            }
+
+            if (offset < length && (flag & VARINTS_FLAG) != 0) {
+                //返回数据中包含url压缩字典
+                if (varints) {
+                    int varints1 = getVarints(buffer, offset, length);
+                    offset += getVarintsLength(varints1);
+
+                    if (offset < length) {
+                        int varints2 = getVarints(buffer, offset, length);
+                        offset += getVarintsLength(varints2);
+
+                        if (varints2 > 0) {
+                            String uri = getVarintsUri(varints1);
+                            if (!KernelString.isEmpty(uri)) {
+                                addUriVarints(uri, varints2);
+                            }
                         }
                     }
-                }
 
-            } else if (length > 4 && (flag & CALLBACK_FLAG) != 0) {
-                int index = buffer[offset++] & 0xFF;
-                index += (buffer[offset++] & 0xFF) << 8;
-                index += (buffer[offset++] & 0xFF) << 16;
-                index += (buffer[offset++] & 0xFF) << 24;
-                callbackIndex = index;
+                } else {
+                    int varints1 = buffer[offset++] & 0xFF;
+                    varints1 += (buffer[offset++] & 0xFF) << 8;
+                    varints1 += (buffer[offset++] & 0xFF) << 16;
+                    varints1 += (buffer[offset++] & 0xFF) << 24;
+
+                    int varints2 = buffer[offset++] & 0xFF;
+                    varints2 += (buffer[offset++] & 0xFF) << 8;
+                    varints2 += (buffer[offset++] & 0xFF) << 16;
+                    varints2 += (buffer[offset++] & 0xFF) << 24;
+
+                    String uri = getVarintsUri(varints1);
+                    if (!KernelString.isEmpty(uri)) {
+                        addUriVarints(uri, varints2);
+                    }
+                }
             }
         }
 
@@ -849,96 +932,75 @@ public class SocketAdapter {
      */
     public byte[] sendDataBytes(int off, byte[] dataBytes, boolean head, boolean human, int flag, int callbackIndex,
                                 byte[] postData) {
-        return sendDataBytes(off, dataBytes, 0, dataBytes == null ? 0 : dataBytes.length, head, human, flag,
+        return sendDataBytes(off, dataBytes, 0, dataBytes == null ? 0 : dataBytes.length, head, human, (byte) flag,
                 callbackIndex, postData, 0, postData == null ? 0 : postData.length);
     }
 
     public byte[] sendDataBytes(int off, byte[] dataBytes, int dataOff, int dataLen, boolean head, boolean human,
-                                int flag, int callbackIndex, byte[] postData, int postOff, int postLen) {
-        byte headFlag = 0x00;
-        int headLength = off + (callbackIndex == 0 ? 0 : 4);
-        if (head) {
-            headLength++;
-        } else if (callbackIndex != 0) {
+                                byte flag, int callbackIndex, byte[] postData, int postOff, int postLen) {
+        return sendDataBytes(off, dataBytes, dataOff, dataLen, head, human, flag, callbackIndex, postData, postOff, postLen, false);
+    }
+
+    public byte[] sendDataBytes(int off, byte[] dataBytes, int dataOff, int dataLen, boolean head, boolean human,
+                                byte flag, int callbackIndex, byte[] postData, int postOff, int postLen, boolean noPLen) {
+        dataLen -= dataOff;
+
+        int cLen = callbackIndex == 0 ? 0 : varints ? getVarintsLength(callbackIndex) : 4;
+
+        postLen = postData == null ? 0 : (postLen - postOff);
+        int pLen = noPLen || postLen <= 0 ? 0 : varints ? getVarintsLength(postLen) : 4;
+
+        byte headFlag = flag;
+        if (headFlag != 0) {
             head = true;
-            headLength++;
         }
 
-        int dataLength = dataLen - dataOff;
-        int length;
-        byte[] sendDataBytes;
-        if (postData == null) {
-            // no post
-            length = dataLength += headLength;
-            if (varints) {
-                dataLength += getVarintsLength(dataLength);
+        int length = off + dataLen;
+        if (cLen > 0) {
+            head = true;
+            headFlag |= CALLBACK_FLAG;
+            length += cLen;
+        }
 
-            } else {
-                dataLength += 4;
-            }
-
-            sendDataBytes = new byte[dataLength];
-            if (dataBytes != null) {
-                System.arraycopy(dataBytes, dataOff, sendDataBytes, headLength, dataLength - headLength);
-            }
-
-        } else {
-            // post head
-            if (!head) {
-                head = true;
-                headLength++;
-            }
-
+        if (pLen > 0) {
+            head = true;
             headFlag |= POST_FLAG;
-            headLength += 4;
-            int postLength = postLen - postOff;
-            length = dataLength += headLength + postLength;
-            if (varints) {
-                dataLength += getVarintsLength(dataLength);
-
-            } else {
-                dataLength += 4;
-            }
-
-            sendDataBytes = new byte[dataLength];
-            if (dataBytes != null) {
-                System.arraycopy(dataBytes, dataOff, sendDataBytes, headLength, dataLength - headLength - postLength);
-            }
-
-            System.arraycopy(postData, postOff, sendDataBytes, dataLength - postLength, postLength);
-            sendDataBytes[headLength - 4] = (byte) postLength;
-            sendDataBytes[headLength - 3] = (byte) (postLength >> 8);
-            sendDataBytes[headLength - 2] = (byte) (postLength >> 16);
-            sendDataBytes[headLength - 1] = (byte) (postLength >> 24);
+            length += pLen;
         }
 
-        // headFlag
+        if (postLen > 0) {
+            length += postLen;
+        }
+
+        if (head) {
+            length++;
+        }
+
+        int offLen = (varints ? getVarintsLength(length) : 4) + off;
+        byte[] sendDataBytes = new byte[offLen + length];
+        setLengthFlag(sendDataBytes, 0, length);
+
         if (head) {
             if (human) {
                 headFlag |= HUMAN_FLAG;
             }
 
-            if (callbackIndex != 0) {
-                headFlag |= CALLBACK_FLAG;
-                sendDataBytes[off + 5] = (byte) callbackIndex;
-                sendDataBytes[off + 6] = (byte) (callbackIndex >> 8);
-                sendDataBytes[off + 7] = (byte) (callbackIndex >> 16);
-                sendDataBytes[off + 8] = (byte) (callbackIndex >> 24);
+            sendDataBytes[offLen] = headFlag;
+            if (cLen > 0) {
+                setLengthFlag(sendDataBytes, offLen, cLen);
+                offLen += cLen;
             }
 
-            headFlag |= flag;
-            sendDataBytes[off + 4] = headFlag;
+            if (pLen > 0) {
+                setLengthFlag(sendDataBytes, offLen, pLen);
+                offLen += pLen;
+            }
         }
 
-        // send data bytes length
-        if (varints) {
-            setVarintsLength(sendDataBytes, 0, length);
-
-        } else {
-            sendDataBytes[0] = (byte) length;
-            sendDataBytes[1] = (byte) (length >> 8);
-            sendDataBytes[2] = (byte) (length >> 16);
-            sendDataBytes[3] = (byte) (length >> 24);
+        System.arraycopy(dataBytes, dataOff, sendDataBytes, offLen, dataLen);
+        offLen += dataLen;
+        if (postLen > 0) {
+            System.arraycopy(postData, postOff, sendDataBytes, offLen, postLen);
         }
 
         return sendDataBytes;
@@ -1072,58 +1134,28 @@ public class SocketAdapter {
     }
 
     public byte[] sendDataBytesVarints(String uri, int callback, byte[] postBytes, int postOff, int postLen) {
-        int flag = VARINTS_FLAG;
-        int dataLength = 1;
-        if (callback > 0 && callback <= getMaxCallbackIndex()) {
-            flag |= CALLBACK_FLAG;
-            dataLength += getVarintsLength(callback);
-        }
+        return sendDataBytesVarints(0, uri, false, callback, postBytes, postOff, postLen);
+    }
 
-        Integer varints = getUriVarints(uri);
-        byte[] uriBytes = null;
-        int uriDict;
-        int uriVarints = 0;
-        if (varints == null) {
-            flag += POST_FLAG;
-            uriBytes = uri.getBytes(KernelCharset.getDefault());
-            uriDict = uriBytes.length;
-            uriVarints = addVarintsUri(uri);
-            dataLength += uriBytes.length + getVarintsLength(uriVarints);
+    public byte[] sendDataBytesVarints(int off, String uri, boolean human, int callback, byte[] postBytes, int postOff, int postLen) {
+        byte flag = VARINTS_FLAG;
+        byte[] dataBytes;
+        Integer index = getUriVarints(uri);
+        if (index == null) {
+            //没找到压缩字典，添加压缩回调参数
+            flag |= POST_FLAG;
+            int uriVarints = addVarintsUri(uri);
+            int uriLength = varints ? getVarintsLength(uriVarints) : 4;
+            dataBytes = uri.getBytes();
+            byte[] bytes = sendDataBytes(off + uriLength, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, false);
+            setLengthFlag(bytes, off + 1, uriVarints);
+            return bytes;
 
         } else {
-            uriDict = varints;
+            //找到压缩字典
+            dataBytes = getLengthBytesFlag(index);
+            return sendDataBytes(off, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, true);
         }
-
-        dataLength += getVarintsLength(uriDict);
-        if (postLen > postOff) {
-            postLen = postBytes == null ? 0 : (postLen - postOff);
-        }
-
-        int bytesLength = dataLength + getVarintsLength(dataLength);
-        byte[] buffer = new byte[bytesLength];
-        int offset = 0;
-        setVarintsLength(buffer, 0, dataLength);
-        offset += getVarintsLength(dataLength);
-        buffer[offset++] = (byte) flag;
-        if ((flag & CALLBACK_FLAG) != 0) {
-            setVarintsLength(buffer, offset, callbackIndex);
-            offset += getVarintsLength(callbackIndex);
-        }
-
-        setVarintsLength(buffer, offset, uriDict);
-        offset += getVarintsLength(uriDict);
-        if (varints == null) {
-            System.arraycopy(uriBytes, 0, buffer, offset, uriBytes.length);
-            offset += uri.length();
-            setVarintsLength(uriBytes, offset, uriVarints);
-            offset += getVarintsLength(uriVarints);
-        }
-
-        if (postBytes != null && postLen > 0) {
-            System.arraycopy(postBytes, 0, buffer, offset, postLen);
-        }
-
-        return buffer;
     }
 
     // 支持字典压缩
@@ -1132,7 +1164,7 @@ public class SocketAdapter {
     }
 
     public void sendDataIndexVarints(int callbackIndex, String uri, byte[] postBytes, int timeout, CallbackAdapter callbackAdapter) {
-        sendDataCallback(callbackIndex, sendDataBytesVarints(uri, callbackIndex, postBytes, 0, postBytes.length), timeout, callbackAdapter);
+        sendDataCallback(callbackIndex, sendDataBytesVarints(0, uri, false, callbackIndex, postBytes, 0, postBytes.length), timeout, callbackAdapter);
     }
 
     public static interface CallbackAdapter {

@@ -104,7 +104,6 @@ public class SlaverMasterService {
 
                             @Override
                             public void doWithBean(String bean, boolean ok, byte[] buffer, SocketAdapter adapter) {
-
                                 try {
                                     if (ok) {
                                         ME.syncComplete(masterSynch, updateTime);

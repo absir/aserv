@@ -38,6 +38,7 @@ import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAccessor.Accessor;
+import com.absir.core.util.UtilContext;
 import com.absir.orm.value.JoEntity;
 import com.absir.property.PropertyErrors;
 import com.absir.server.exception.ServerException;
@@ -63,7 +64,6 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -202,8 +202,12 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     }
 
     public String randUploadFile(int hashCode) {
-        Date date = new Date();
-        return DATE_FORMAT.format(date) + '/' + nameSequence.getNextHexId();
+        return randUploadFile(hashCode, true);
+    }
+
+    public String randUploadFile(int hashCode, boolean uploadDir) {
+        String name = nameSequence.getNextHexId();
+        return uploadDir ? (DATE_FORMAT.format(UtilContext.getCurrentDate()) + '/' + name) : name;
     }
 
     public void upload(String uploadFile, InputStream inputStream) throws IOException {
@@ -481,6 +485,8 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         return null;
     }
 
+    protected static final String[] UPLOAD_ROLE_REPLACES = new String[]{":name", ":id", ":ext", ":rand"};
+
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, FileItem requestBody) {
         if (requestBody == null) {
@@ -521,9 +527,11 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                             if (uploadRule != null) {
                                 ruleName = uploadRule.value();
                                 multipartUploader.ided = ruleName.contains(":id");
-                                if (KernelString.isEmpty(HelperFileName.getPath(ruleName))) {
+                                if (multipartUploader.ided && KernelString.isEmpty(HelperFileName.getPath(ruleName))) {
                                     ruleName = "entity/" + ruleName;
                                 }
+
+                                multipartUploader.rand = ruleName.contains(":rand");
                             }
                         }
 
@@ -542,7 +550,12 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                             }
                         }
 
-                        uploadFile = HelperString.replaceEach(multipartUploader.ruleName, new String[]{":name", ":id", ":ext"}, new String[]{crudProperty.getName(), identity, extensionName});
+                        String rand = "";
+                        if (multipartUploader.rand) {
+                            rand = randUploadFile(requestBody.hashCode(), false);
+                        }
+
+                        uploadFile = HelperString.replaceEach(multipartUploader.ruleName, UPLOAD_ROLE_REPLACES, new String[]{crudProperty.getName(), identity, extensionName, rand});
                     }
                 }
 
@@ -599,6 +612,8 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         private String ruleName;
 
         private boolean ided;
+
+        private boolean rand;
 
         public MultipartUploader(Object[] parameters) {
             int last = parameters.length - 1;

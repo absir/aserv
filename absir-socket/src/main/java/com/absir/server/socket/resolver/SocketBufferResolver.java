@@ -7,6 +7,7 @@
  */
 package com.absir.server.socket.resolver;
 
+import com.absir.client.SocketAdapter;
 import com.absir.client.SocketNIO;
 import com.absir.core.kernel.KernelByte;
 import com.absir.server.socket.SelSession;
@@ -115,15 +116,25 @@ public class SocketBufferResolver implements IBufferResolver {
         for (; position < length; position++) {
             if (socketBuffer.getBuff() == null) {
                 int lengthIndex = socketBuffer.getLengthIndex();
-                if (lengthIndex < 4) {
-                    int buffLength = buffer[position] & 0xFF;
-                    if (lengthIndex > 0) {
-                        buffLength = socketBuffer.getLength() + (buffLength << (8 * lengthIndex));
+                if (SocketAdapter.SOCKET_VARINTS) {
+                    int b = buffer[position];
+                    int buffLength = socketBuffer.getLength();
+                    if (lengthIndex == 0) {
+                        buffLength += (b & 0x7F);
+
+                    } else if (lengthIndex == 1) {
+                        buffLength += (b & 0x7F) << 7;
+
+                    } else if (lengthIndex == 2) {
+                        buffLength += (b & 0x7F) << 14;
+
+                    } else {
+                        buffLength += (b & 0x7F) << 22;
                     }
 
                     socketBuffer.setLength(buffLength);
                     socketBuffer.setLengthIndex(++lengthIndex);
-                    if (lengthIndex == 4) {
+                    if (lengthIndex == 4 || (b & 0x80) == 0) {
                         if (buffLength > 0 && buffLength < bufferMax) {
                             socketBuffer.setBuffLengthIndex(0);
                             socketBuffer.setBuff(new byte[buffLength]);
@@ -131,6 +142,27 @@ public class SocketBufferResolver implements IBufferResolver {
                         } else {
                             socketBuffer.setLength(0);
                             socketBuffer.setLengthIndex(0);
+                        }
+                    }
+
+                } else {
+                    if (lengthIndex < 4) {
+                        int buffLength = buffer[position] & 0xFF;
+                        if (lengthIndex > 0) {
+                            buffLength = socketBuffer.getLength() + (buffLength << (8 * lengthIndex));
+                        }
+
+                        socketBuffer.setLength(buffLength);
+                        socketBuffer.setLengthIndex(++lengthIndex);
+                        if (lengthIndex == 4) {
+                            if (buffLength > 0 && buffLength < bufferMax) {
+                                socketBuffer.setBuffLengthIndex(0);
+                                socketBuffer.setBuff(new byte[buffLength]);
+
+                            } else {
+                                socketBuffer.setLength(0);
+                                socketBuffer.setLengthIndex(0);
+                            }
                         }
                     }
                 }

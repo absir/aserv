@@ -7,8 +7,11 @@
  */
 package com.absir.aserv.master.service;
 
+import com.absir.aserv.master.bean.JSlaveRegister;
+import com.absir.aserv.system.service.BeanService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
+import com.absir.core.kernel.KernelString;
 import com.absir.master.resolver.MasterServerResolver;
 import com.absir.server.socket.SelSession;
 
@@ -20,6 +23,19 @@ public class MasterResolverService extends MasterServerResolver {
 
     @Override
     public String idForMaster(String[] params, SocketChannel socketChannel, SelSession selSession) {
-        return super.idForMaster(params, socketChannel, selSession);
+        String id = super.idForMaster(params, socketChannel, selSession);
+        JSlaveRegister register = BeanService.ME.get(JSlaveRegister.class, id);
+        if (register == null) {
+            register = new JSlaveRegister();
+            register.setId(id);
+            BeanService.ME.merge(register);
+        }
+
+        if (register.isAllow()) {
+            id = register.getId();
+            return KernelString.isEmpty(id) ? null : id;
+        }
+
+        return null;
     }
 }

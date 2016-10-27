@@ -48,6 +48,12 @@ public class HandlerAdapter {
                 }
             }
 
+            IHandlerProxy handlerProxy = null;
+            if (handler instanceof IHandlerProxy) {
+                handlerProxy = (IHandlerProxy) handler;
+                beanType = handlerProxy.getInterface();
+            }
+
             HandlerType<?> handlerType = HandlerType.create(beanType, handler != null && handler.value());
             if (handlerType.handlerMethodMap == null || handlerType.handlerMethodMap.isEmpty()) {
                 continue;
@@ -62,6 +68,7 @@ public class HandlerAdapter {
 
                 HandlerAction action = new HandlerAction();
                 action.handler = handlerBean;
+                action.handlerProxy = handlerProxy;
                 action.handlerType = handlerType;
                 action.handlerMethod = entry.getValue();
                 map.put(handlerName, action);
@@ -74,6 +81,8 @@ public class HandlerAdapter {
     public static class HandlerAction {
 
         public IHandler handler;
+
+        public IHandlerProxy handlerProxy;
 
         public HandlerType handlerType;
 
