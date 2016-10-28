@@ -9,8 +9,6 @@ import com.absir.server.handler.IHandler;
 import com.absir.server.on.OnPut;
 import com.absir.server.value.Handler;
 
-import java.io.InputStream;
-
 /**
  * Created by absir on 2016/10/27.
  */
@@ -31,11 +29,6 @@ public class MasterHandler implements IHandler, IMaster {
     @Override
     public long time() {
         return System.currentTimeMillis();
-    }
-
-    @Override
-    public InputStream print(InputStream inputStream) {
-        return null;
     }
 
 }

@@ -127,7 +127,7 @@ public class RpcInterface {
 
     public static class RpcAttribute {
 
-        protected long timeout;
+        protected int timeout;
 
     }
 

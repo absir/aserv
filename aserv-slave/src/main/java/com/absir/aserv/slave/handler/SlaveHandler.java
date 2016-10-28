@@ -11,7 +11,6 @@ import com.absir.slave.ISlave;
 import com.absir.slave.InputSlave;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by absir on 2016/10/27.
@@ -32,12 +31,7 @@ public class SlaveHandler implements IHandler, ISlave {
 
     @Override
     public long time() {
-        return 0;
-    }
-
-    @Override
-    public InputStream print(InputStream inputStream) {
-        return null;
+        return System.currentTimeMillis();
     }
 
     @Override

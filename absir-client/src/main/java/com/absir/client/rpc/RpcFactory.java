@@ -81,6 +81,8 @@ public class RpcFactory {
 
         PARAM_ERROR,
 
+        RETRUN_ERROR,
+
         RUN_EXCEPTION,;
 
         static Map<Integer, IRpcCode> eiMapRpcCode;
@@ -217,7 +219,7 @@ public class RpcFactory {
                 return rpcData;
             }
 
-            Object value = rpcAdapter.sendDataIndexVarints(rpcMethod.attribute, rpcMethod.uri, paramData);
+            Object value = rpcAdapter.sendDataIndexVarints(rpcMethod.attribute, rpcMethod.uri, paramData, rpcMethod.returnType);
             Class<?> cls = value == null ? null : value.getClass();
             if (cls != RPC_CODE.class && cls != RpcCode.class) {
                 return value;

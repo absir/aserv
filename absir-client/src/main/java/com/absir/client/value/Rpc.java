@@ -20,6 +20,6 @@ public @interface Rpc {
     String name() default "";
 
     // 超时
-    long timeout() default 10000;
+    int timeout() default 10000;
 
 }
