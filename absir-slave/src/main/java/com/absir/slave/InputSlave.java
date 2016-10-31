@@ -37,7 +37,7 @@ public class InputSlave extends InputSocket {
 
         String slaveKey = input.getParam("_sly");
         if (slaveKey != null) {
-            InputSlaveAdapter adapter = InputSlaveContext.ME.getSlaveAdapter();
+            InputSlaveAdapter adapter = InputSlaveContext.ME.getSlaveAdapter().getSocketAdapter();
             Socket socket = adapter.getSocket();
             if (socket != null && KernelObject.equals(adapter.getSlaveKey(), slaveKey)) {
                 if (input.getAddress().equals(socket.getInetAddress().getHostAddress())) {

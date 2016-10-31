@@ -33,7 +33,9 @@ public abstract class DataFormat implements IFormat {
     }
 
     public void writeArray(OutputStream outputStream, Object... objects) throws IOException {
-        formatWriteArray(outputStream, objects);
+        if (objects != null) {
+            formatWriteArray(outputStream, objects);
+        }
     }
 
     public byte[] writeAsBytes(Object object) throws IOException {

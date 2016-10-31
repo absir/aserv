@@ -1,14 +1,16 @@
 package com.absir.client.rpc;
 
 import com.absir.client.value.Rpc;
-import com.absir.client.value.RpcName;
+import com.absir.client.value.RpcRoute;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by absir on 16/9/1.
@@ -18,7 +20,7 @@ public class RpcInterface {
     //protected Class<?> interfaceType;
 
     private static Map<Class<?>, RpcInterface> clsMapRpcInterface;
-    protected Map<String, RpcMethod> rpcMethodMap;
+    protected Map<Method, RpcMethod> rpcMethodMap;
 
     protected RpcInterface() {
     }
@@ -26,6 +28,17 @@ public class RpcInterface {
     protected static void remove(Class<?> type) {
         if (clsMapRpcInterface != null) {
             clsMapRpcInterface.remove(type);
+        }
+    }
+
+    public static String getRpcUri(String rpcName, Method method) {
+        String name = method.getName();
+        int count = method.getParameterCount();
+        if (count == 0) {
+            return "_r/" + rpcName + '/' + name;
+
+        } else {
+            return "_r/" + rpcName + '/' + name + ':' + count;
         }
     }
 
@@ -47,26 +60,32 @@ public class RpcInterface {
                         throw new RuntimeException("RpcInterface[" + interfaceType + "] must be interface");
                     }
 
-                    String rpcName = getRpcName(interfaceType);
-                    RpcAttribute attribute = getRpcAttributeClass(interfaceType);
-                    Map<String, RpcMethod> rpcMethodMap = new HashMap<String, RpcMethod>();
+                    Rpc rpc = interfaceType.getAnnotation(Rpc.class);
+                    if (rpc == null) {
+                        throw new RuntimeException("RpcInterface[" + interfaceType + "] must has rpc annotation");
+                    }
+
+                    String rpcName = getRpcName(rpc, interfaceType);
+                    RpcAttribute attribute = getRpcAttributeClass(rpc, interfaceType);
+                    Set<String> uris = new HashSet<String>();
+                    Map<Method, RpcMethod> rpcMethodMap = new HashMap<Method, RpcMethod>();
                     for (Method method : interfaceType.getMethods()) {
-                        String name = method.getName();
-                        if (rpcMethodMap.containsKey(name)) {
-                            throw new RuntimeException("RpcInterface[" + interfaceType + "] has conflict method name = " + name);
+                        String uri = getRpcUri(rpcName, method);
+                        if (!uris.add(uri)) {
+                            throw new RuntimeException("RpcInterface[" + interfaceType + "] has conflict method uri = " + uri);
                         }
 
                         RpcMethod rpcMethod = new RpcMethod();
+                        rpcMethod.uri = uri;
                         rpcMethod.attribute = getRpcAttributeMethod(attribute, method);
                         rpcMethod.returnType = method.getReturnType();
+                        rpcMethod.exceptionTypes = KernelLang.getOptimizeClasses(method.getExceptionTypes());
 //                        rpcMethod.parameterTypes = method.getParameterTypes();
 //                        if(rpcMethod.parameterTypes.length == 0) {
 //                            rpcMethod.parameterTypes = null;
 //                        }
 
-                        rpcMethod.exceptionTypes = KernelLang.getOptimizeClasses(method.getExceptionTypes());
-                        rpcMethod.uri = "_rpc/" + rpcName + '/' + name;
-                        rpcMethodMap.put(name, rpcMethod);
+                        rpcMethodMap.put(method, rpcMethod);
                     }
 
                     rpcInterface = new RpcInterface();
@@ -80,19 +99,31 @@ public class RpcInterface {
         return rpcInterface;
     }
 
-    public static String getRpcName(Class<?> interfaceType) {
-        RpcName rpcName = KernelClass.fetchAnnotation(interfaceType, RpcName.class);
-        if (rpcName == null) {
+    public static String getRpcName(Rpc rpc, Class<?> interfaceType) {
+        if (rpc == null) {
+            rpc = interfaceType.getAnnotation(Rpc.class);
+            if (rpc == null) {
+                return null;
+            }
+        }
+
+        String name = rpc.name();
+        if (!KernelString.isEmpty(name)) {
+            return name;
+        }
+
+        RpcRoute rpcRoute = KernelClass.fetchAnnotation(interfaceType, RpcRoute.class);
+        if (rpcRoute == null) {
             return interfaceType.getName().replace('$', '.');
         }
 
-        String name = interfaceType.getSimpleName();
+        name = interfaceType.getSimpleName();
         int pos = name.indexOf('_');
         if (pos > 0) {
             name = name.substring(pos);
         }
 
-        String value = rpcName.value();
+        String value = rpcRoute.value();
         if (!KernelString.isEmpty(value)) {
             name = value.charAt(value.length() - 1) == '/' ? (value + name) : (value + '/' + name);
         }
@@ -100,8 +131,7 @@ public class RpcInterface {
         return name;
     }
 
-    public static RpcAttribute getRpcAttributeClass(Class<?> interfaceType) {
-        Rpc rpc = interfaceType.getAnnotation(Rpc.class);
+    public static RpcAttribute getRpcAttributeClass(Rpc rpc, Class<?> interfaceType) {
         if (rpc != null) {
             RpcAttribute attribute = new RpcAttribute();
             attribute.timeout = rpc.timeout();
@@ -121,7 +151,7 @@ public class RpcInterface {
         return rpcAttribute;
     }
 
-    public Map<String, RpcMethod> getRpcMethodMap() {
+    public Map<Method, RpcMethod> getRpcMethodMap() {
         return rpcMethodMap;
     }
 
@@ -133,15 +163,15 @@ public class RpcInterface {
 
     public static class RpcMethod {
 
+        protected String uri;
+
         protected RpcAttribute attribute;
 
         protected Class<?> returnType;
 
-        //protected Class<?>[] parameterTypes;
-
         protected Class<?>[] exceptionTypes;
 
-        protected String uri;
+        //protected Class<?>[] parameterTypes;
 
     }
 }

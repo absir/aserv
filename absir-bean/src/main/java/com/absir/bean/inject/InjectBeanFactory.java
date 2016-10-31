@@ -234,8 +234,7 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
                 synchronized (beanMethods) {
                     method = beanMethods.get(beanMethod);
                     if (method == null) {
-                        method = KernelReflect.declaredMethod(beanMethod.getBeanType(),
-                                beanMethod.getMethod().getName(), beanMethod.getMethod().getParameterTypes());
+                        method = KernelReflect.realMethod(beanMethod.getBeanType(), beanMethod.getMethod());
                         if (method == null) {
                             return null;
                         }
@@ -246,7 +245,7 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
             }
 
         } else {
-            method = KernelReflect.declaredMethod(beanType, method.getName(), method.getParameterTypes());
+            method = KernelReflect.realMethod(beanType, method);
         }
 
         return method;

@@ -299,6 +299,9 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
                 } else {
                     return null;
                 }
+
+            } else {
+                return null;
             }
         }
 

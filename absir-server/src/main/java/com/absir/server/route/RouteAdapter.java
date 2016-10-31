@@ -89,11 +89,9 @@ public class RouteAdapter implements IBeanFactoryStarted {
                 return varints;
             }
 
-            int index = varintsMapUriIndex;
-            varintsMapUri.put(index, uri);
-            uriMapVarints.put(uri, index);
-            varintsMapUriIndex++;
-            return index;
+            varintsMapUri.put(++varintsMapUriIndex, uri);
+            uriMapVarints.put(uri, varintsMapUriIndex);
+            return varintsMapUriIndex;
         }
     }
 

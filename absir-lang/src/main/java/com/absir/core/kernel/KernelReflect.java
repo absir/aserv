@@ -262,6 +262,15 @@ public abstract class KernelReflect {
         return declaredMethod(cls, name, ancest, false, parameterTypes);
     }
 
+    public static Method realMethod(Class cls, Method method) {
+        if (cls == method.getDeclaringClass()) {
+            method.setAccessible(true);
+            return method;
+        }
+
+        return declaredMethod(cls, method.getName(), method.getParameterTypes());
+    }
+
     public static Method declaredMethod(Class cls, String name, Class... parameterTypes) {
         return declaredMethod(cls, name, 0, parameterTypes);
     }

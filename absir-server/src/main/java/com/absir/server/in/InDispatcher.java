@@ -135,7 +135,7 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
 
     // Handler处理入口
     public boolean onHandler(String uri, T req, R res) throws IOException {
-        if (uri.length() > 1 && uri.startsWith("_")) {
+        if (uri != null && uri.length() > 1 && uri.startsWith("_")) {
             HandlerAdapter.HandlerAction handlerAction = handlerAdapter.on(uri);
             if (handlerAction != null) {
                 Input input = input(uri, getInMethod(req), new InModel(), req, res);

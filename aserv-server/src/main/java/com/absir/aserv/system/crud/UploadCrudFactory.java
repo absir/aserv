@@ -87,23 +87,17 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(UploadCrudFactory.class);
-
+    protected static final String[] UPLOAD_ROLE_REPLACES = new String[]{":name", ":id", ":ext", ":rand"};
     private static String uploadUrl;
-
     private static String uploadPath;
-
     @Value(value = "upload.passTime")
     private static long uploadPassTime = 3600000;
-
     @Domain
     private DSequence nameSequence;
-
     @Value("upload.image.extension")
     private String imageExtension = "gif|jpg|jpeg|png|bmp";
-
     @Value("upload.manager.dir")
     private String managerDir = "";
-
     @Orders
     @Inject(type = InjectType.Selectable)
     private IUploadProcessor[] uploadProcessors;
@@ -484,8 +478,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
         return null;
     }
-
-    protected static final String[] UPLOAD_ROLE_REPLACES = new String[]{":name", ":id", ":ext", ":rand"};
 
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, FileItem requestBody) {

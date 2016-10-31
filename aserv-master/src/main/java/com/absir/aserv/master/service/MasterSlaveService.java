@@ -50,6 +50,8 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
     public static final MasterSlaveService ME = BeanFactoryUtils.get(MasterSlaveService.class);
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(MasterSlaveService.class);
+    @Value("master.sync.timeout")
+    private int syncTimeout = 60000;
 
     public static <T extends JbBeanTargets> void addEntityMerge(Class<T> entityClass) {
         L2CacheCollectionService.ME.addEntityMerges(entityClass, new IEntityMerge<T>() {
@@ -63,9 +65,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
 
         });
     }
-
-    @Value("master.sync.timeout")
-    private int syncTimeout = 60000;
 
     @DataQuery("SELECT o.host.id FROM JSlaveServer o WHERE o.id IN (:p0)")
     public abstract String[] getTargetIds(long[] eids);

@@ -12,21 +12,21 @@ import java.io.IOException;
 /**
  * Created by absir on 2016/10/28.
  */
-public class RpcSocketAdapter extends RpcAdapter {
+public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(RpcSocketAdapter.class);
 
-    protected SocketAdapter socketAdapter;
+    protected T socketAdapter;
 
-    public RpcSocketAdapter(SocketAdapter adapter) {
+    public RpcSocketAdapter(T adapter) {
         socketAdapter = adapter;
     }
 
-    public SocketAdapter getSocketAdapter() {
+    public T getSocketAdapter() {
         return socketAdapter;
     }
 
-    protected void setSocketAdapter(SocketAdapter socketAdapter) {
+    protected void setSocketAdapter(T socketAdapter) {
         this.socketAdapter = socketAdapter;
     }
 
@@ -35,17 +35,26 @@ public class RpcSocketAdapter extends RpcAdapter {
         return HelperDataFormat.PACK.writeAsBytesArray(args);
     }
 
+    public int getDefaultTimeout() {
+        return 30000;
+    }
+
     @Override
     public Object sendDataIndexVarints(RpcInterface.RpcAttribute attribute, final String uri, byte[] paramData, final Class<?> returnType) {
         final UtilAtom atom = new UtilAtom();
         atom.increment();
         final Object[] returns = new Object[1];
-        socketAdapter.sendDataIndexVarints(uri, paramData, attribute.timeout, new SocketAdapter.CallbackAdapter() {
+        int timeout = attribute == null ? 0 : attribute.timeout;
+        if (timeout == 0) {
+            timeout = getDefaultTimeout();
+        }
+
+        socketAdapter.sendDataIndexVarints(uri, paramData, timeout, new SocketAdapter.CallbackAdapter() {
 
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
                 try {
-                    int code = KernelByte.getVarintsLength(buffer, offset);
+                    int code = buffer == null ? RpcFactory.RPC_CODE.RUN_ERROR.ordinal() : SocketAdapter.getVarints(buffer, offset, buffer.length);
                     if (code == RpcFactory.RPC_CODE.RUN_SUCCESS.ordinal()) {
                         offset += KernelByte.getVarintsLength(code);
                         try {

@@ -43,7 +43,7 @@ public class HandlerType<T> {
             synchronized (clsMapHandlerType) {
                 handlerType = clsMapHandlerType.get(type);
                 if (handlerType == null) {
-                    handlerType = create(type, server);
+                    handlerType = create(type, server, null);
                     clsMapHandlerType.put(type, handlerType);
                 }
             }
@@ -52,11 +52,23 @@ public class HandlerType<T> {
         return handlerType;
     }
 
-    public static <T extends IHandler> HandlerType<T> create(Class<T> type, boolean server) {
+    public static HandlerMethod createHandlerMethod(Method method) {
+        HandlerMethod handlerMethod = new HandlerMethod();
+        handlerMethod.method = method;
+        handlerMethod.parameterTypes = KernelLang.getOptimizeClasses(method.getParameterTypes());
+        handlerMethod.exceptionTypes = KernelLang.getOptimizeClasses(method.getExceptionTypes());
+        return handlerMethod;
+    }
+
+    public static <T extends IHandler> HandlerType<T> create(Class<T> type, boolean server, Map<Method, ?> methodMapAction) {
         Map<String, HandlerMethod> handlerMethodMap = new HashMap<String, HandlerMethod>();
-        for (Method method : type.getMethods()) {
+        for (Method method : type.getDeclaredMethods()) {
             String name = method.getName();
-            if (name.charAt(0) == '_' || Modifier.isStatic(method.getModifiers()) || method.getAnnotation(Close.class) != null) {
+            if (name.charAt(0) == '_' || !Modifier.isPublic(method.getModifiers()) || Modifier.isStatic(method.getModifiers()) || method.getAnnotation(Close.class) != null) {
+                continue;
+            }
+
+            if (methodMapAction != null && methodMapAction.containsKey(method)) {
                 continue;
             }
 
@@ -64,14 +76,16 @@ public class HandlerType<T> {
                 continue;
             }
 
+            int count = method.getParameterCount();
+            if (count > 0) {
+                name += ':' + count;
+            }
+
             if (handlerMethodMap.containsKey(name)) {
                 throw new RuntimeException("HandlerType[" + type + "] has conflict method name = " + name);
             }
 
-            HandlerMethod handlerMethod = new HandlerMethod();
-            handlerMethod.method = method;
-            handlerMethod.parameterTypes = KernelLang.getOptimizeClasses(method.getParameterTypes());
-            handlerMethod.exceptionTypes = KernelLang.getOptimizeClasses(method.getExceptionTypes());
+            HandlerMethod handlerMethod = createHandlerMethod(method);
             handlerMethodMap.put(name, handlerMethod);
         }
 

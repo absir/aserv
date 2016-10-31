@@ -547,8 +547,7 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
                                 BeanDefine beanDefineMethod = beanFactory.getBeanDefine(beanName);
                                 if (beanDefineMethod == null) {
                                     if (!Modifier.isPrivate(template.getModifiers())) {
-                                        template = KernelReflect.declaredMethod(beanType, template.getName(),
-                                                template.getParameterTypes());
+                                        template = KernelReflect.realMethod(beanType, template);
                                         if (template == null) {
                                             return;
                                         }

@@ -42,31 +42,19 @@ public abstract class InputSocket extends Input {
     public static byte VARINTS_POST_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.POST_FLAG;
 
     public static byte VARINTS_HUMAN_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.HUMAN_FLAG;
-
+    protected static byte INPUT_FLAG = SocketAdapter.HUMAN_FLAG;
     protected SelSession selSession;
-
     private SocketChannel socketChannel;
-
     private String uri;
-
     private int status = ServerStatus.ON_SUCCESS.getCode();
-
     private byte flag;
-
     private int callbackIndex;
-
     private byte[] inputBuffer;
-
     private int inputPos;
-
     private int inputCount;
-
     private InputStream inputStream;
-
     private String input;
-
     private OutputStream outputStream;
-
     private int urlVarints;
 
     public InputSocket(InModel model, InputSocketAtt inputSocketAtt, SocketChannel socketChannel) {
@@ -75,7 +63,7 @@ public abstract class InputSocket extends Input {
         this.socketChannel = socketChannel;
         setId(inputSocketAtt.getId());
         uri = inputSocketAtt.getUrl();
-        flag = inputSocketAtt.getFlag();
+        flag = (byte) (inputSocketAtt.getFlag() & INPUT_FLAG);
         callbackIndex = inputSocketAtt.getCallbackIndex();
         inputBuffer = inputSocketAtt.getBuffer();
         if (inputBuffer != null) {
@@ -87,7 +75,6 @@ public abstract class InputSocket extends Input {
 
         // 写入字典
         urlVarints = inputSocketAtt.urlVarints;
-        //writeUriDict();
     }
 
     public static boolean writeBuffer(SocketChannel socketChannel, byte[] buffer) {
@@ -119,7 +106,14 @@ public abstract class InputSocket extends Input {
 
     public static boolean writeByteBuffer(SocketBufferResolver bufferResolver, SelSession selSession,
                                           SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes, int offset, int length) {
-        int headerLength = callbackIndex == 0 ? flag == 0 ? 0 : 1 : 5;
+        int headerLength;
+        if (SocketAdapter.SOCKET_VARINTS) {
+            headerLength = callbackIndex == 0 ? flag == 0 ? 0 : 1 : (1 + SocketAdapter.getVarintsLength(callbackIndex));
+
+        } else {
+            headerLength = callbackIndex == 0 ? flag == 0 ? 0 : 1 : 5;
+        }
+
         ByteBuffer byteBuffer = bufferResolver.createByteBuffer(socketChannel, headerLength, bytes, offset,
                 length);
         byte[] headerBytes = bufferResolver.createByteHeader(headerLength, byteBuffer);
@@ -130,12 +124,18 @@ public abstract class InputSocket extends Input {
         int headerOffset = headerBytes.length - headerLength;
         if (callbackIndex != 0) {
             flag |= SocketAdapter.CALLBACK_FLAG;
-            KernelByte.setLength(headerBytes, headerOffset + 1, callbackIndex);
+            if (SocketAdapter.SOCKET_VARINTS) {
+                KernelByte.setVarintsLength(headerBytes, headerOffset + 1, callbackIndex);
+
+            } else {
+                KernelByte.setLength(headerBytes, headerOffset + 1, callbackIndex);
+            }
         }
 
         if (headerLength > 0) {
             headerBytes[headerOffset] = flag;
         }
+
         synchronized (socketChannel) {
             try {
                 SocketNIO.writeTimeout(socketChannel, ByteBuffer.wrap(headerBytes));
@@ -343,13 +343,25 @@ public abstract class InputSocket extends Input {
     }
 
     public void writeUriDict() {
-        if (urlVarints > 0 && (flag & VARINTS_POST_FLAG) != 0) {
+        if (urlVarints > 0) {
             // 字典通知
+            int dataLength;
+            byte[] dataBytes;
             int varints = RouteAdapter.addVarintsMapUri(uri);
-            int dataLength = KernelByte.getVarintsLength(urlVarints) + KernelByte.getVarintsLength(varints);
-            byte[] dataBytes = new byte[dataLength];
-            KernelByte.setLength(dataBytes, 0, urlVarints);
-            KernelByte.setLength(dataBytes, KernelByte.getVarintsLength(urlVarints), varints);
+            if (SocketAdapter.SOCKET_VARINTS) {
+                int urlLength = KernelByte.getVarintsLength(urlVarints);
+                dataLength = urlLength + KernelByte.getVarintsLength(varints);
+                dataBytes = new byte[dataLength];
+                KernelByte.setVarintsLength(dataBytes, 0, urlVarints);
+                KernelByte.setVarintsLength(dataBytes, urlLength, varints);
+
+            } else {
+                dataLength = 8;
+                dataBytes = new byte[dataLength];
+                KernelByte.setLength(dataBytes, 0, urlVarints);
+                KernelByte.setLength(dataBytes, 4, varints);
+            }
+
             writeByteBuffer(getSocketBufferResolver(), selSession, getSocketChannel(), VARINTS_HUMAN_FLAG, 0, dataBytes, 0,
                     dataLength);
             urlVarints = 0;
@@ -397,13 +409,17 @@ public abstract class InputSocket extends Input {
             this.selSession = selSession;
             int headerLength = off + 1;
             int bufferLength = buffer.length;
+            boolean inVarints = false;
             if ((flag & SocketAdapter.VARINTS_FLAG) == 0) {
                 if ((flag & SocketAdapter.STREAM_FLAG) != 0) {
                     headerLength += 4;
                 }
 
             } else {
-                if ((flag & SocketAdapter.ERROR_FLAG) != 0) {
+                if ((flag & SocketAdapter.ERROR_FLAG) == 0) {
+                    inVarints = true;
+
+                } else {
                     if (SocketAdapter.SOCKET_VARINTS) {
                         urlVarints = SocketAdapter.getVarints(buffer, headerLength, bufferLength);
                         headerLength += SocketAdapter.getVarintsLength(urlVarints);
@@ -426,7 +442,21 @@ public abstract class InputSocket extends Input {
                 }
             }
 
-            if (urlVarints == 0) {
+            if (inVarints) {
+                int varints;
+                if (SocketAdapter.SOCKET_VARINTS) {
+                    varints = SocketAdapter.getVarints(buffer, headerLength, bufferLength);
+                    headerLength += SocketAdapter.getVarintsLength(varints);
+
+                } else {
+                    varints = KernelByte.getLength(buffer, headerLength);
+                    headerLength += 4;
+                }
+
+                url = RouteAdapter.UriForVarints(varints);
+                postDataLength = bufferLength - headerLength;
+
+            } else {
                 if ((flag & SocketAdapter.POST_FLAG) != 0) {
                     if (SocketAdapter.SOCKET_VARINTS) {
                         postDataLength = SocketAdapter.getVarints(buffer, headerLength, bufferLength);
@@ -440,20 +470,6 @@ public abstract class InputSocket extends Input {
 
                 url = new String(buffer, headerLength, buffer.length - headerLength - postDataLength,
                         ContextUtils.getCharset());
-
-            } else {
-                int varints;
-                if (SocketAdapter.SOCKET_VARINTS) {
-                    varints = SocketAdapter.getVarints(buffer, headerLength, bufferLength);
-                    headerLength += SocketAdapter.getVarintsLength(varints);
-
-                } else {
-                    varints = KernelByte.getLength(buffer, headerLength);
-                    headerLength += 4;
-                }
-
-                url = RouteAdapter.UriForVarints(varints);
-                postDataLength = bufferLength - headerLength;
             }
 
             this.inputStream = inputStream;

@@ -120,7 +120,7 @@ public class HandlerInvoker {
             if (handlerProxy != null) {
                 T h = (T) handlerProxy.getHandler(onPut);
                 if (h == null) {
-                    return RpcFactory.RPC_CODE.NO_PERMISSION.ordinal();
+                    RpcFactory.RPC_CODE.NO_PERMISSION.ordinal();
 
                 } else {
                     return invoker(onPut, h, null, handlerType, handlerMethod, inputStream);

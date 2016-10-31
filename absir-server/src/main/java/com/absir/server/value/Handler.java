@@ -18,4 +18,5 @@ public @interface Handler {
 
     boolean value() default true;
 
+    public Class[] closeInterfaces() default {};
 }

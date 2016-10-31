@@ -206,7 +206,7 @@ public class RpcFactory {
                 }
             }
 
-            final RpcInterface.RpcMethod rpcMethod = rpcInterface.rpcMethodMap.get(method.getName());
+            final RpcInterface.RpcMethod rpcMethod = rpcInterface.rpcMethodMap.get(method);
             if (rpcMethod == null) {
                 throw new Exception("rpc[" + rpcType + "] not found method = " + method);
             }

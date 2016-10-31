@@ -178,6 +178,10 @@ public class SocketAdapter {
 
     public static int getVarints(byte[] buffer, int offset, int length) {
         length -= offset;
+        if (length <= 0) {
+            return 0;
+        }
+
         int b = buffer[offset];
         int varints = b & 0x7F;
         if (length > 1 && (b & 0x80) != 0) {
@@ -196,6 +200,29 @@ public class SocketAdapter {
         }
 
         return varints;
+    }
+
+    public static int getVarintsLength(byte[] buffer, int offset, int length) {
+        length -= offset;
+        if (length <= 0) {
+            return 0;
+        }
+
+        int len = 1;
+        int b = buffer[offset];
+        if (length > 1 && (b & 0x80) != 0) {
+            len++;
+            b = buffer[++offset];
+            if (length > 2 && (b & 0x80) != 0) {
+                len++;
+                b = buffer[++offset];
+                if (length > 3 && (b & 0x80) != 0) {
+                    len++;
+                }
+            }
+        }
+
+        return len;
     }
 
     public static int getVarintsLength(int varints) {
@@ -836,6 +863,10 @@ public class SocketAdapter {
                         addUriVarints(uri, varints2);
                     }
                 }
+
+                if (offset >= length) {
+                    return;
+                }
             }
         }
 
@@ -985,14 +1016,14 @@ public class SocketAdapter {
                 headFlag |= HUMAN_FLAG;
             }
 
-            sendDataBytes[offLen] = headFlag;
+            sendDataBytes[offLen++ - off] = headFlag;
             if (cLen > 0) {
-                setLengthFlag(sendDataBytes, offLen, cLen);
+                setLengthFlag(sendDataBytes, offLen, callbackIndex);
                 offLen += cLen;
             }
 
             if (pLen > 0) {
-                setLengthFlag(sendDataBytes, offLen, pLen);
+                setLengthFlag(sendDataBytes, offLen, postLen);
                 offLen += pLen;
             }
         }
@@ -1143,18 +1174,18 @@ public class SocketAdapter {
         Integer index = getUriVarints(uri);
         if (index == null) {
             //没找到压缩字典，添加压缩回调参数
-            flag |= POST_FLAG;
+            flag |= ERROR_FLAG;
             int uriVarints = addVarintsUri(uri);
             int uriLength = varints ? getVarintsLength(uriVarints) : 4;
             dataBytes = uri.getBytes();
-            byte[] bytes = sendDataBytes(off + uriLength, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, false);
-            setLengthFlag(bytes, off + 1, uriVarints);
+            byte[] bytes = sendDataBytes(off + uriLength, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, true);
+            setLengthFlag(bytes, (varints ? getVarintsLength(bytes, 0, bytes.length) : 4) + 1 + off, uriVarints);
             return bytes;
 
         } else {
             //找到压缩字典
             dataBytes = getLengthBytesFlag(index);
-            return sendDataBytes(off, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, true);
+            return sendDataBytes(off, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, false);
         }
     }
 

@@ -28,6 +28,7 @@ public class MasterHandler implements IHandler, IMaster {
 
     @Override
     public long time() {
+        System.out.println("MasterHandler.time");
         return System.currentTimeMillis();
     }
 

@@ -99,7 +99,7 @@ public class SlaverMasterService {
             try {
                 atom.increment();
                 final long updateTime = masterSynch.getUpdateTime();
-                InputSlaveContext.ME.getSlaveAdapter(masterSynch.getMasterIndex()).sendData(masterSynch.getUri(),
+                InputSlaveContext.ME.getSlaveAdapter(masterSynch.getMasterIndex()).getSocketAdapter().sendData(masterSynch.getUri(),
                         masterSynch.getPostData(), new CallbackMsg<String>() {
 
                             @Override

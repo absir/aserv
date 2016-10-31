@@ -145,6 +145,7 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
                     }
 
                 } catch (Throwable e) {
+                    Environment.throwable(e);
                 }
 
                 UtilPipedStream.closeCloseable(inputStream);

@@ -12,6 +12,7 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.*;
 import com.absir.client.SocketAdapter;
 import com.absir.client.helper.HelperEncrypt;
+import com.absir.client.rpc.RpcSocketAdapter;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
 import com.absir.server.route.RouteAdapter;
@@ -52,11 +53,11 @@ public class InputSlaveContext {
     @Orders
     protected ISlaveCallback[] slaveCallbacks;
 
-    protected InputSlaveAdapter slaveAdapter;
+    protected RpcSocketAdapter<InputSlaveAdapter> slaveAdapter;
 
-    protected List<InputSlaveAdapter> slaveAdapters = new ArrayList<InputSlaveAdapter>();
+    protected List<RpcSocketAdapter<InputSlaveAdapter>> slaveAdapters = new ArrayList<RpcSocketAdapter<InputSlaveAdapter>>();
 
-    protected List<InputSlaveAdapter> slaveAdapterAdds;
+    protected List<RpcSocketAdapter<InputSlaveAdapter>> slaveAdapterAdds;
 
     public String getKey() {
         return key;
@@ -70,11 +71,11 @@ public class InputSlaveContext {
         return slaveKey;
     }
 
-    public InputSlaveAdapter getSlaveAdapter() {
+    public RpcSocketAdapter<InputSlaveAdapter> getSlaveAdapter() {
         return slaveAdapter;
     }
 
-    public InputSlaveAdapter getSlaveAdapter(int index) {
+    public RpcSocketAdapter<InputSlaveAdapter> getSlaveAdapter(int index) {
         if (index == 0) {
             return slaveAdapter;
         }
@@ -84,16 +85,14 @@ public class InputSlaveContext {
 
     /**
      * 创建
-     *
-     * @return
      */
-    protected InputSlaveAdapter createSlaveAdapter() {
-        return new InputSlaveAdapter(ip, port, group, key, url, slaveCallbacks);
+    protected RpcSocketAdapter<InputSlaveAdapter> createSlaveAdapter() {
+        return new RpcSocketAdapter<InputSlaveAdapter>(new InputSlaveAdapter(ip, port, group, key, url, slaveCallbacks));
     }
 
-    public synchronized void addSlaveAdapter(InputSlaveAdapter adapter) {
+    public synchronized void addSlaveAdapter(RpcSocketAdapter<InputSlaveAdapter> adapter) {
         if (slaveAdapterAdds == null) {
-            slaveAdapterAdds = new ArrayList<InputSlaveAdapter>();
+            slaveAdapterAdds = new ArrayList<RpcSocketAdapter<InputSlaveAdapter>>();
         }
 
         slaveAdapterAdds.add(adapter);
@@ -101,10 +100,6 @@ public class InputSlaveContext {
 
     /**
      * 返回注册字符
-     *
-     * @param adapter
-     * @param buffer
-     * @return
      */
     public byte[] registerData(InputSlaveAdapter adapter, byte[] buffer) {
         String registerKey = HelperEncrypt.encryptionMD5(key, buffer) + ',' + group + ',' + RouteAdapter.ADAPTER_TIME;
@@ -128,7 +123,7 @@ public class InputSlaveContext {
         if (slaveAdapterAdds != null) {
             synchronized (this) {
                 if (slaveAdapterAdds != null) {
-                    List<InputSlaveAdapter> adapters = new ArrayList<InputSlaveAdapter>(slaveAdapters);
+                    List<RpcSocketAdapter<InputSlaveAdapter>> adapters = new ArrayList<RpcSocketAdapter<InputSlaveAdapter>>(slaveAdapters);
                     adapters.addAll(slaveAdapterAdds);
                     slaveAdapterAdds = null;
                     slaveAdapters = adapters;
@@ -144,7 +139,8 @@ public class InputSlaveContext {
     public void connectAdapters() {
         if (Environment.isActive()) {
             syncAdapters();
-            for (InputSlaveAdapter adapter : slaveAdapters) {
+            for (RpcSocketAdapter<InputSlaveAdapter> slaveAdapter : slaveAdapters) {
+                SocketAdapter adapter = slaveAdapter.getSocketAdapter();
                 adapter.clearRetryConnect();
                 adapter.connect();
             }
@@ -157,7 +153,8 @@ public class InputSlaveContext {
     @Stopping
     public void closeAdapters() {
         syncAdapters();
-        for (InputSlaveAdapter adapter : slaveAdapters) {
+        for (RpcSocketAdapter<InputSlaveAdapter> slaveAdapter : slaveAdapters) {
+            SocketAdapter adapter = slaveAdapter.getSocketAdapter();
             adapter.disconnect(null);
         }
     }

@@ -6,11 +6,11 @@ import com.absir.bean.inject.InjectBeanUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.client.rpc.RpcInterface;
-import com.absir.core.kernel.KernelClass;
+import com.absir.core.kernel.KernelReflect;
 import com.absir.server.value.Close;
 import com.absir.server.value.Handler;
 
-import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,44 +38,65 @@ public class HandlerAdapter {
 
             Handler handler = BeanConfigImpl.getTypeAnnotation(beanType, Handler.class);
             if (handler == null) {
-                Annotation annotation = KernelClass.fetchAnnotations(beanType, Close.class, Handler.class);
-                if (annotation != null) {
-                    if (annotation instanceof Close) {
-                        continue;
-                    }
-
-                    handler = (Handler) annotation;
-                }
-            }
-
-            IHandlerProxy handlerProxy = null;
-            if (handler instanceof IHandlerProxy) {
-                handlerProxy = (IHandlerProxy) handler;
-                beanType = handlerProxy.getInterface();
-            }
-
-            HandlerType<?> handlerType = HandlerType.create(beanType, handler != null && handler.value());
-            if (handlerType.handlerMethodMap == null || handlerType.handlerMethodMap.isEmpty()) {
                 continue;
             }
 
-            String name = RpcInterface.getRpcName(beanType);
-            for (Map.Entry<String, HandlerType.HandlerMethod> entry : handlerType.handlerMethodMap.entrySet()) {
-                String handlerName = '_' + name + entry.getKey();
-                if (map.containsKey(handlerName)) {
-                    throw new RuntimeException("HandlerAdapter[" + beanType + "] has conflict method name = " + handlerName);
+            addHandlerBeanType(map, handlerBean, handler, beanType);
+        }
+
+        handlerActionMap = map.isEmpty() ? null : map;
+    }
+
+    protected void addHandlerBeanType(Map<String, HandlerAction> map, IHandler handlerBean, Handler handler, Class<? extends IHandler> beanType) {
+        IHandlerProxy handlerProxy = null;
+        if (handler instanceof IHandlerProxy) {
+            handlerProxy = (IHandlerProxy) handler;
+            beanType = handlerProxy.getInterface();
+        }
+
+        Map<Method, HandlerAction> methodMapAction = new HashMap<Method, HandlerAction>();
+        for (Class<?> rpcType : beanType.getInterfaces()) {
+            String rpcName = RpcInterface.getRpcName(null, rpcType);
+            if (rpcName != null) {
+                for (Method method : rpcType.getMethods()) {
+                    method = KernelReflect.realMethod(beanType, method);
+                    String uri = RpcInterface.getRpcUri(rpcName, method);
+                    if (map.containsKey(uri)) {
+                        throw new RuntimeException("HandlerAdapter[" + beanType + "] has conflict method uri = " + uri);
+                    }
+
+                    HandlerAction action = new HandlerAction();
+                    action.handler = handlerBean;
+                    action.handlerProxy = handlerProxy;
+                    action.handlerMethod = HandlerType.createHandlerMethod(method);
+                    map.put(uri, action);
+                    methodMapAction.put(method, action);
+                }
+            }
+        }
+
+        HandlerType<?> handlerType = HandlerType.create(beanType, handler != null && handler.value(), methodMapAction);
+        for (HandlerAction action : methodMapAction.values()) {
+            action.handlerType = handlerType;
+        }
+
+        if (handlerType.handlerMethodMap != null && !handlerType.handlerMethodMap.isEmpty()) {
+            IHandlerRoute route = handler instanceof IHandlerRoute ? (IHandlerRoute) handler : null;
+            String rpcName = RpcInterface.getRpcName(null, beanType);
+            for (HandlerType.HandlerMethod handlerMethod : handlerType.handlerMethodMap.values()) {
+                String uri = route == null ? RpcInterface.getRpcUri(rpcName, handlerMethod.method) : route.getHandlerUri(rpcName, handlerMethod.method);
+                if (map.containsKey(uri)) {
+                    throw new RuntimeException("HandlerAdapter[" + beanType + "] has conflict method uri = " + uri);
                 }
 
                 HandlerAction action = new HandlerAction();
                 action.handler = handlerBean;
                 action.handlerProxy = handlerProxy;
                 action.handlerType = handlerType;
-                action.handlerMethod = entry.getValue();
-                map.put(handlerName, action);
+                action.handlerMethod = handlerMethod;
+                map.put(uri, action);
             }
         }
-
-        handlerActionMap = map.isEmpty() ? null : map;
     }
 
     public static class HandlerAction {
