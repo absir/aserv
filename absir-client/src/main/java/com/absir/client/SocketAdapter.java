@@ -48,8 +48,7 @@ public class SocketAdapter {
     public static final int VARINTS_3_LENGTH = VARINTS_2_LENGTH + (0x7F << 14);
 
     public static final int VARINTS_4_LENGTH = VARINTS_3_LENGTH + (0x7F << 22);
-    // 定义编译框架默认通讯数据状态
-    public static final boolean SOCKET_VARINTS = true;
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(SocketAdapter.class);
     protected static Map<Integer, String> varints_Uri;
     protected static Map<String, Integer> uri_Varints;
@@ -63,7 +62,6 @@ public class SocketAdapter {
     protected int buffLengthIndex;
     protected Socket receiveSocket;
     protected int maxDisconnectCount = 2;
-    protected boolean varints = SOCKET_VARINTS;
 
     protected long varintsServerTime;
 
@@ -241,19 +239,6 @@ public class SocketAdapter {
         return 4;
     }
 
-    public static final byte[] getLengthBytes(int length) {
-        byte[] destination = new byte[4];
-        setLength(destination, 0, length);
-        return destination;
-    }
-
-    public static final void setLength(byte[] destination, int destionationIndex, int length) {
-        destination[destionationIndex++] = (byte) length;
-        destination[destionationIndex++] = (byte) (length >> 8);
-        destination[destionationIndex++] = (byte) (length >> 16);
-        destination[destionationIndex] = (byte) (length >> 24);
-    }
-
     public static final byte[] getVarintsLengthBytes(int varints) {
         byte[] bytes = new byte[getVarintsLength(varints)];
         setVarintsLength(bytes, 0, varints);
@@ -280,32 +265,6 @@ public class SocketAdapter {
         } else {
             destination[destionationIndex] = (byte) (length & 0x7F);
         }
-    }
-
-    public final void setLengthFlag(byte[] destination, int destionationIndex, int length) {
-        if (varints) {
-            setVarintsLength(destination, destionationIndex, length);
-
-        } else {
-            setLength(destination, destionationIndex, length);
-        }
-    }
-
-    public final byte[] getLengthBytesFlag(int length) {
-        if (varints) {
-            return getVarintsLengthBytes(length);
-
-        } else {
-            return getLengthBytes(length);
-        }
-    }
-
-    public boolean isVarints() {
-        return varints;
-    }
-
-    public void setVarints(boolean varints) {
-        this.varints = varints;
     }
 
     public void clearUriVarints() {
@@ -454,11 +413,11 @@ public class SocketAdapter {
     }
 
     public int getMinCallbackIndex() {
-        return 2048;
+        return 1024;
     }
 
     public int getMaxCallbackIndex() {
-        return varints ? VARINTS_4_LENGTH : Integer.MAX_VALUE;
+        return VARINTS_4_LENGTH;
     }
 
     public int getMaxBufferLength() {
@@ -678,35 +637,26 @@ public class SocketAdapter {
         for (; off < len; off++) {
             if (buff == null) {
                 if (lengthIndex < 4) {
-                    if (varints) {
-                        byte b = buffer[off];
-                        switch (lengthIndex) {
-                            case 0:
-                                buffLength = b & 0x7F;
-                                break;
-                            case 1:
-                                buffLength = (b & 0x7F) << 7;
-                                break;
-                            case 2:
-                                buffLength = (b & 0x7F) << 14;
-                                break;
-                            case 3:
-                                buffLength = (b & 0x7F) << 22;
-                                break;
-                        }
-
-                        if (lengthIndex < 3 && (b & 0x80) == 0) {
-                            lengthIndex = 3;
-                        }
-
-                    } else {
-                        int length = buffer[off] & 0xFF;
-                        if (lengthIndex > 0) {
-                            length = buffLength + (length << (8 * lengthIndex));
-                        }
-
-                        buffLength = length;
+                    byte b = buffer[off];
+                    switch (lengthIndex) {
+                        case 0:
+                            buffLength = b & 0x7F;
+                            break;
+                        case 1:
+                            buffLength = (b & 0x7F) << 7;
+                            break;
+                        case 2:
+                            buffLength = (b & 0x7F) << 14;
+                            break;
+                        case 3:
+                            buffLength = (b & 0x7F) << 22;
+                            break;
                     }
+
+                    if (lengthIndex < 3 && (b & 0x80) == 0) {
+                        lengthIndex = 3;
+                    }
+
 
                     if (++lengthIndex == 4) {
                         if (buffLength >= 0 && buffLength < getMaxBufferLength()) {
@@ -813,54 +763,26 @@ public class SocketAdapter {
         Integer callbackIndex = null;
         if (length > 1) {
             if ((flag & CALLBACK_FLAG) != 0) {
-                if (varints) {
-                    //压缩模式
-                    int varints = getVarints(buffer, offset, length);
-                    offset += getVarintsLength(varints);
-                    callbackIndex = varints;
-
-                } else {
-                    //普通模式
-                    int index = buffer[offset++] & 0xFF;
-                    index += (buffer[offset++] & 0xFF) << 8;
-                    index += (buffer[offset++] & 0xFF) << 16;
-                    index += (buffer[offset++] & 0xFF) << 24;
-                    callbackIndex = index;
-                }
+                //压缩模式
+                int varints = getVarints(buffer, offset, length);
+                offset += getVarintsLength(varints);
+                callbackIndex = varints;
             }
 
             if (offset < length && (flag & VARINTS_FLAG) != 0) {
                 //返回数据中包含url压缩字典
-                if (varints) {
-                    int varints1 = getVarints(buffer, offset, length);
-                    offset += getVarintsLength(varints1);
+                int varints1 = getVarints(buffer, offset, length);
+                offset += getVarintsLength(varints1);
 
-                    if (offset < length) {
-                        int varints2 = getVarints(buffer, offset, length);
-                        offset += getVarintsLength(varints2);
+                if (offset < length) {
+                    int varints2 = getVarints(buffer, offset, length);
+                    offset += getVarintsLength(varints2);
 
-                        if (varints2 > 0) {
-                            String uri = getVarintsUri(varints1);
-                            if (!KernelString.isEmpty(uri)) {
-                                addUriVarints(uri, varints2);
-                            }
+                    if (varints2 > 0) {
+                        String uri = getVarintsUri(varints1);
+                        if (!KernelString.isEmpty(uri)) {
+                            addUriVarints(uri, varints2);
                         }
-                    }
-
-                } else {
-                    int varints1 = buffer[offset++] & 0xFF;
-                    varints1 += (buffer[offset++] & 0xFF) << 8;
-                    varints1 += (buffer[offset++] & 0xFF) << 16;
-                    varints1 += (buffer[offset++] & 0xFF) << 24;
-
-                    int varints2 = buffer[offset++] & 0xFF;
-                    varints2 += (buffer[offset++] & 0xFF) << 8;
-                    varints2 += (buffer[offset++] & 0xFF) << 16;
-                    varints2 += (buffer[offset++] & 0xFF) << 24;
-
-                    String uri = getVarintsUri(varints1);
-                    if (!KernelString.isEmpty(uri)) {
-                        addUriVarints(uri, varints2);
                     }
                 }
 
@@ -976,10 +898,10 @@ public class SocketAdapter {
                                 byte flag, int callbackIndex, byte[] postData, int postOff, int postLen, boolean noPLen) {
         dataLen -= dataOff;
 
-        int cLen = callbackIndex == 0 ? 0 : varints ? getVarintsLength(callbackIndex) : 4;
+        int cLen = callbackIndex == 0 ? 0 : getVarintsLength(callbackIndex);
 
         postLen = postData == null ? 0 : (postLen - postOff);
-        int pLen = noPLen || postLen <= 0 ? 0 : varints ? getVarintsLength(postLen) : 4;
+        int pLen = noPLen || postLen <= 0 ? 0 : getVarintsLength(postLen);
 
         byte headFlag = flag;
         if (headFlag != 0) {
@@ -1007,9 +929,9 @@ public class SocketAdapter {
             length++;
         }
 
-        int offLen = (varints ? getVarintsLength(length) : 4) + off;
+        int offLen = getVarintsLength(length) + off;
         byte[] sendDataBytes = new byte[offLen + length];
-        setLengthFlag(sendDataBytes, 0, length);
+        setVarintsLength(sendDataBytes, 0, length);
 
         if (head) {
             if (human) {
@@ -1018,12 +940,12 @@ public class SocketAdapter {
 
             sendDataBytes[offLen++ - off] = headFlag;
             if (cLen > 0) {
-                setLengthFlag(sendDataBytes, offLen, callbackIndex);
+                setVarintsLength(sendDataBytes, offLen, callbackIndex);
                 offLen += cLen;
             }
 
             if (pLen > 0) {
-                setLengthFlag(sendDataBytes, offLen, postLen);
+                setVarintsLength(sendDataBytes, offLen, postLen);
                 offLen += pLen;
             }
         }
@@ -1176,15 +1098,15 @@ public class SocketAdapter {
             //没找到压缩字典，添加压缩回调参数
             flag |= ERROR_FLAG;
             int uriVarints = addVarintsUri(uri);
-            int uriLength = varints ? getVarintsLength(uriVarints) : 4;
+            int uriLength = getVarintsLength(uriVarints);
             dataBytes = uri.getBytes();
             byte[] bytes = sendDataBytes(off + uriLength, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, true);
-            setLengthFlag(bytes, (varints ? getVarintsLength(bytes, 0, bytes.length) : 4) + 1 + off, uriVarints);
+            setVarintsLength(bytes, getVarintsLength(bytes, 0, bytes.length) + 1 + off, uriVarints);
             return bytes;
 
         } else {
             //找到压缩字典
-            dataBytes = getLengthBytesFlag(index);
+            dataBytes = getVarintsLengthBytes(index);
             return sendDataBytes(off, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, false);
         }
     }

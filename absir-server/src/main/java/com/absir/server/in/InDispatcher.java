@@ -53,6 +53,10 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
     }
 
     public boolean on(String uri, T req, R res) throws Throwable {
+        if (uri == null) {
+            return false;
+        }
+
         if (onHandler(uri, req, res)) {
             return true;
         }
@@ -135,7 +139,7 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
 
     // Handler处理入口
     public boolean onHandler(String uri, T req, R res) throws IOException {
-        if (uri != null && uri.length() > 1 && uri.startsWith("_")) {
+        if (uri.length() > 1) {
             HandlerAdapter.HandlerAction handlerAction = handlerAdapter.on(uri);
             if (handlerAction != null) {
                 Input input = input(uri, getInMethod(req), new InModel(), req, res);

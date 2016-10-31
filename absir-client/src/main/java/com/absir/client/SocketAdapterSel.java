@@ -319,7 +319,7 @@ public class SocketAdapterSel extends SocketAdapter {
 
         try {
             final byte[] buffer = sendDataBytes(4, dataBytes, head, human, STREAM_FLAG, callbackIndex, null);
-            int lenLen = varints ? getVarintsLength(getVarints(buffer, 0, 4)) : 4;
+            int lenLen = getVarintsLength(getVarints(buffer, 0, 4));
             System.arraycopy(buffer, lenLen + 4, buffer, lenLen, buffer.length - 8);
             KernelByte.setLength(buffer, buffer.length - 4, nextIndex.object);
             final Runnable postRunnable = new Runnable() {
@@ -332,20 +332,15 @@ public class SocketAdapterSel extends SocketAdapter {
                         int postBuffLen = getPostBuffLen();
                         byte[] sendBufer = sendDataBytes(4 + postBuffLen, null, true, false, STREAM_FLAG | POST_FLAG, 0,
                                 null);
-                        int lenLen = varints ? getVarintsLength(getVarints(sendBufer, 0, 4)) : 4;
+                        int lenLen = getVarintsLength(getVarints(sendBufer, 0, 4));
                         sendBufer[4] = sendBufer[lenLen + postBuffLen];
                         KernelByte.setLength(sendBufer, lenLen + 1, streamIndex);
                         int len;
                         try {
                             while ((len = inputStream.read(sendBufer, 9, sendBufer.length)) > 0) {
                                 len += 5;
-                                if (varints) {
-                                    sendBufer[0] = (byte) ((len & 0x7F) | 0x80);
-                                    sendBufer[1] = (byte) ((len >> 7) & 0x7F);
-
-                                } else {
-                                    KernelByte.setLength(sendBufer, 0, len);
-                                }
+                                sendBufer[0] = (byte) ((len & 0x7F) | 0x80);
+                                sendBufer[1] = (byte) ((len >> 7) & 0x7F);
 
                                 if (nextIndex.object == null || !sendData(sendBufer, 0, len + 9)) {
                                     return;
