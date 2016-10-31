@@ -98,7 +98,7 @@ public class RpcFactory {
                 ei = 0;
             }
 
-            if (ei < RUN_EXCEPTION.ordinal()) {
+            if (ei <= RUN_EXCEPTION.ordinal()) {
                 return codes[ei];
             }
 
@@ -163,6 +163,11 @@ public class RpcFactory {
 
         public RpcException(int code) {
             this.code = code;
+        }
+
+        @Override
+        public String getMessage() {
+            return (code >= 0 && code <= RPC_CODE.RUN_EXCEPTION.ordinal() ? RPC_CODE.codes[code].name() : ("unCatch Exception[" + code + ']'));
         }
     }
 

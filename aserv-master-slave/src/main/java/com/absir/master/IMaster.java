@@ -12,6 +12,6 @@ import java.io.IOException;
 public interface IMaster {
 
     @JaLang("时间")
-    public long time() throws RuntimeException, IOException;
+    public long time() throws IOException;
 
 }

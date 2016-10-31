@@ -31,7 +31,7 @@ public class MasterHandler implements IHandler, IMaster {
     }
 
     @Override
-    public long time() throws RuntimeException, IOException {
+    public long time() throws IOException {
         int i = s++ % 3;
         if (i == 1) {
             throw new RuntimeException();
