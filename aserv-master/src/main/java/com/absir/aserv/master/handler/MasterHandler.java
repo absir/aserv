@@ -9,6 +9,8 @@ import com.absir.server.handler.IHandler;
 import com.absir.server.on.OnPut;
 import com.absir.server.value.Handler;
 
+import java.io.IOException;
+
 /**
  * Created by absir on 2016/10/27.
  */
@@ -16,6 +18,8 @@ import com.absir.server.value.Handler;
 @Bean
 @Handler
 public class MasterHandler implements IHandler, IMaster {
+
+    static int s = 0;
 
     @Override
     public boolean _permission(OnPut onPut) {
@@ -27,7 +31,16 @@ public class MasterHandler implements IHandler, IMaster {
     }
 
     @Override
-    public long time() {
+    public long time() throws RuntimeException, IOException {
+        int i = s++ % 3;
+        if (i == 1) {
+            throw new RuntimeException();
+        }
+
+        if (i == 2) {
+            throw new IOException();
+        }
+
         System.out.println("MasterHandler.time");
         return System.currentTimeMillis();
     }

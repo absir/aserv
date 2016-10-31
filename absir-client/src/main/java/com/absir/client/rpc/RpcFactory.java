@@ -85,13 +85,23 @@ public class RpcFactory {
 
         RUN_EXCEPTION,;
 
+        static RPC_CODE[] codes = RPC_CODE.values();
+
         static Map<Integer, IRpcCode> eiMapRpcCode;
 
         public static final int codeForException(int ei) {
-            return ei + RUN_EXCEPTION.ordinal() + 1;
+            return RUN_EXCEPTION.ordinal() + 1 + ei;
         }
 
         public static final IRpcCode rpcCodeForException(int ei) {
+            if (ei < 0) {
+                ei = 0;
+            }
+
+            if (ei < RUN_EXCEPTION.ordinal()) {
+                return codes[ei];
+            }
+
             if (eiMapRpcCode == null) {
                 synchronized (RPC_CODE.class) {
                     if (eiMapRpcCode == null) {
@@ -106,12 +116,7 @@ public class RpcFactory {
                 synchronized (eiMapRpcCode) {
                     rpcCode = eiMapRpcCode.get(key);
                     if (rpcCode == null) {
-                        if (ei < 0) {
-                            ei = 0;
-                            key = ei;
-                        }
-
-                        rpcCode = new RpcCode(codeForException(ei));
+                        rpcCode = new RpcCode(ei);
                         eiMapRpcCode.put(key, rpcCode);
                     }
                 }

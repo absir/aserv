@@ -4,6 +4,7 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.inject.InjectBeanUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.client.rpc.RpcFactory;
+import com.absir.core.util.UtilAbsir;
 import com.absir.data.format.IFormat;
 import com.absir.data.helper.HelperDataFormat;
 import com.absir.server.on.OnPut;
@@ -44,7 +45,7 @@ public class HandlerInvoker {
             onPut.setReturnThrowable(e);
             Class<?>[] exceptionTypes = handlerMethod.exceptionTypes;
             if (exceptionTypes.length > 0) {
-                Class<?> eType = exceptionTypes.getClass();
+                Class<?> eType = UtilAbsir.forCauseThrowable(e).getClass();
                 int len = exceptionTypes.length;
                 for (int i = 0; i < len; i++) {
                     if (eType.isAssignableFrom(exceptionTypes[i])) {
