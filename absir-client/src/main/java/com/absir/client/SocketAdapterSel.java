@@ -184,26 +184,29 @@ public class SocketAdapterSel extends SocketAdapter {
 
     @Override
     public void receiveCallback(int offset, byte[] buffer, byte flag, Integer callbackIndex) {
-        if ((flag & STREAM_CLOSE_FLAG) != 0 && buffer.length == offset + 4) {
-            int hashIndex = KernelByte.getLength(buffer, offset);
-            if ((flag & POST_FLAG) != 0) {
-                if (activePool != null) {
-                    getActivePool().remove(hashIndex);
-                }
+        if ((flag & STREAM_CLOSE_FLAG) != 0) {
+            int length = buffer.length;
+            int streamIndex = getVarints(buffer, offset, length);
+            if (length == offset + getVarintsLength(streamIndex)) {
+                if ((flag & POST_FLAG) != 0) {
+                    if (activePool != null) {
+                        getActivePool().remove(streamIndex);
+                    }
 
-            } else {
-                NextOutputStream outputStream = getPipedStream().getOutputStream(hashIndex);
-                if (outputStream != null) {
-                    try {
-                        outputStream.close();
+                } else {
+                    NextOutputStream outputStream = getPipedStream().getOutputStream(streamIndex);
+                    if (outputStream != null) {
+                        try {
+                            outputStream.close();
 
-                    } catch (IOException e) {
-                        Environment.throwable(e);
+                        } catch (IOException e) {
+                            Environment.throwable(e);
+                        }
                     }
                 }
-            }
 
-            return;
+                return;
+            }
         }
 
         super.receiveCallback(offset, buffer, flag, callbackIndex);
@@ -214,11 +217,12 @@ public class SocketAdapterSel extends SocketAdapter {
                                 Integer callbackIndex) {
         if ((flag & STREAM_FLAG) != 0) {
             int length = buffer.length;
-            int offsetIndex = offset + 4;
+            int streamIndex = getVarints(buffer, offset, length);
+            int indexLength = getVarintsLength(streamIndex);
+            int offsetIndex = offset + indexLength;
             if (length > offsetIndex) {
                 // 写入流信息
-                int hashIndex = KernelByte.getLength(buffer, offset);
-                NextOutputStream outputStream = getPipedStream().getOutputStream(hashIndex);
+                NextOutputStream outputStream = getPipedStream().getOutputStream(streamIndex);
                 if (outputStream != null) {
                     try {
                         outputStream.write(buffer, offsetIndex, length);
@@ -229,18 +233,17 @@ public class SocketAdapterSel extends SocketAdapter {
                     }
                 }
 
-                sendData(sendDataBytes(0, KernelByte.getLengthBytes(hashIndex), true, false, STREAM_CLOSE_FLAG, 0,
-                        null));
+                sendData(sendDataBytes(0, buffer, offset, indexLength, true, false, STREAM_CLOSE_FLAG, 0,
+                        null, 0, 0));
                 return;
 
             } else if (length == offsetIndex) {
                 if (callbackAdapter instanceof CallbackAdapterStream) {
                     try {
-                        int hashIndex = KernelByte.getLength(buffer, offset);
-                        NextOutputStream outputStream = createNextOutputStream(hashIndex);
+                        NextOutputStream outputStream = createNextOutputStream(streamIndex);
                         if (outputStream == null) {
-                            sendData(sendDataBytes(0, KernelByte.getLengthBytes(hashIndex), true, false,
-                                    STREAM_CLOSE_FLAG | POST_FLAG, 0, null));
+                            sendData(sendDataBytes(0, buffer, offset, indexLength, true, false,
+                                    (byte) (STREAM_CLOSE_FLAG | POST_FLAG), 0, null, 0, 0));
 
                         } else {
                             PipedInputStream inputStream = new PipedInputStream();
@@ -303,46 +306,45 @@ public class SocketAdapterSel extends SocketAdapter {
      * @return make varints mode right set postBuffLen 128(127 VARINTS_1_LENGTH) ~ 10240(16383 VARINTS_2_LENGTH) - 32
      */
     protected int getPostBuffLen() {
-        return 1024;
+        return POST_BUFF_LEN;
     }
 
-    protected RegisteredRunnable sendStream(byte[] dataBytes, boolean head, boolean human, final int callbackIndex,
+    protected RegisteredRunnable sendStream(byte[] dataBytes, boolean human, final int callbackIndex,
                                             final InputStream inputStream, final CallbackTimeout callbackTimeout, final long timeout) {
         connect();
         boolean sended = false;
-        ObjectTemplate<Integer> nextIndex = getActivePool().addObject();
+        ObjectTemplate<Integer> template = getActivePool().addObject();
         final ObjectTemplate<ObjectTemplate<Integer>> nextTemplate = new ObjectTemplate<ObjectTemplate<Integer>>(
-                nextIndex);
-        if (nextIndex == null) {
+                template);
+        if (template == null) {
             return null;
         }
 
+        final int streamIndex = template.object;
+        final int indexLength = getVarintsLength(streamIndex);
         try {
-            final byte[] buffer = sendDataBytes(4, dataBytes, head, human, STREAM_FLAG, callbackIndex, null);
-            int lenLen = getVarintsLength(getVarints(buffer, 0, 4));
-            System.arraycopy(buffer, lenLen + 4, buffer, lenLen, buffer.length - 8);
-            KernelByte.setLength(buffer, buffer.length - 4, nextIndex.object);
+            final byte[] buffer = sendDataBytes(indexLength, dataBytes, true, human, STREAM_FLAG, callbackIndex, null);
+            int offLen = getVarintsLength(buffer, 0, 4) + 1;
+            setVarintsLength(buffer, offLen, streamIndex);
             final Runnable postRunnable = new Runnable() {
 
                 @Override
                 public void run() {
                     ObjectTemplate<Integer> nextIndex = nextTemplate.object;
-                    int streamIndex = nextIndex.object;
                     try {
-                        int postBuffLen = getPostBuffLen();
-                        byte[] sendBufer = sendDataBytes(4 + postBuffLen, null, true, false, STREAM_FLAG | POST_FLAG, 0,
-                                null);
-                        int lenLen = getVarintsLength(getVarints(sendBufer, 0, 4));
-                        sendBufer[4] = sendBufer[lenLen + postBuffLen];
-                        KernelByte.setLength(sendBufer, lenLen + 1, streamIndex);
+                        byte[] sendBuffer = sendDataBytes(indexLength, null, 0, 0, true, false, (byte) (STREAM_FLAG | POST_FLAG), 0,
+                                null, 0, getPostBuffLen(), true);
+                        setVarintsLength(sendBuffer, 3, streamIndex);
+                        int length = buffer.length;
+                        int postOff = 3 + indexLength;
                         int len;
                         try {
-                            while ((len = inputStream.read(sendBufer, 9, sendBufer.length)) > 0) {
-                                len += 5;
-                                sendBufer[0] = (byte) ((len & 0x7F) | 0x80);
-                                sendBufer[1] = (byte) ((len >> 7) & 0x7F);
+                            while ((len = inputStream.read(sendBuffer, postOff, length)) > 0) {
+                                len += postOff - 2;
+                                sendBuffer[0] = (byte) ((len & 0x7F) | 0x80);
+                                sendBuffer[1] = (byte) ((len >> 7) & 0x7F);
 
-                                if (nextIndex.object == null || !sendData(sendBufer, 0, len + 9)) {
+                                if (nextIndex.object == null || !sendData(sendBuffer, 0, len + 2)) {
                                     return;
                                 }
 
@@ -410,7 +412,7 @@ public class SocketAdapterSel extends SocketAdapter {
 
         } finally {
             if (!sended) {
-                activePool.remove(nextIndex.object);
+                activePool.remove(streamIndex);
                 UtilPipedStream.closeCloseable(inputStream);
             }
         }
@@ -418,14 +420,6 @@ public class SocketAdapterSel extends SocketAdapter {
 
     /**
      * 发送目标数据
-     *
-     * @param callbackIndex
-     * @param dataBytes
-     * @param head
-     * @param human
-     * @param inputStream
-     * @param timeout
-     * @param callbackAdapter
      */
     public void sendStreamIndex(int callbackIndex, byte[] dataBytes, boolean head, boolean human,
                                 InputStream inputStream, int timeout, CallbackAdapter callbackAdapter) {
@@ -438,7 +432,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 callbackTimeout = putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
             }
 
-            RegisteredRunnable registeredRunnable = sendStream(dataBytes, head, human, callbackIndex, inputStream,
+            RegisteredRunnable registeredRunnable = sendStream(dataBytes, human, callbackIndex, inputStream,
                     callbackTimeout, timeout);
             if (callbackTimeout != null) {
                 callbackTimeout.registeredRunnable = registeredRunnable;

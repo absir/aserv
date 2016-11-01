@@ -7,12 +7,20 @@
  */
 package com.absir.server.socket.resolver;
 
+import com.absir.client.SocketAdapter;
+import com.absir.client.SocketAdapterSel;
 import com.absir.client.SocketNIO;
+import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelByte;
+import com.absir.core.kernel.KernelLang;
+import com.absir.core.util.UtilContext;
+import com.absir.core.util.UtilPipedStream;
 import com.absir.server.socket.SelSession;
 import com.absir.server.socket.SocketBuffer;
 import com.absir.server.socket.SocketServer;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
@@ -193,5 +201,65 @@ public class SocketBufferResolver implements IBufferResolver {
             KernelByte.setLength(header, 0, length);
             return header;
         }
+    }
+
+    @Override
+    public int getPostBufferLen() {
+        return SocketAdapterSel.POST_BUFF_LEN;
+    }
+
+    @Override
+    public void writeInputStream(final SelSession selSession, final KernelLang.ObjectTemplate<Integer> template, final int streamIndex, final InputStream inputStream) {
+
+        UtilContext.getThreadPoolExecutor().execute(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    int indexLength = SocketAdapter.getVarintsLength(streamIndex);
+
+                    SocketChannel socketChannel = selSession.getSocketChannel();
+                    int postBuffLen = getPostBufferLen();
+
+                    byte[] sendBuffer = createByteBufferFull(SocketBufferResolver.this,
+                            socketChannel, 1 + indexLength + postBuffLen, null, 0, 0);
+
+                    sendBuffer[2] = SocketAdapter.STREAM_FLAG | SocketAdapter.POST_FLAG;
+
+                    SocketAdapter.setVarintsLength(sendBuffer, 3, streamIndex);
+
+                    int length = sendBuffer.length;
+                    int offLen = 3 + indexLength;
+                    int len;
+                    try {
+                        while ((len = inputStream.read(sendBuffer, offLen, length)) > 0) {
+                            len += offLen - 2;
+                            sendBuffer[0] = (byte) ((len & 0x7F) | 0x80);
+                            sendBuffer[1] = (byte) ((len >> 7) & 0x7F);
+
+                            if (template.object == null) {
+                                try {
+                                    SocketNIO.writeTimeout(socketChannel, ByteBuffer.wrap(sendBuffer, 0, len + 2));
+                                    continue;
+
+                                } catch (IOException e) {
+                                    SocketServer.close(socketChannel);
+                                }
+                            }
+
+                            break;
+                        }
+
+                    } catch (Exception e) {
+                        Environment.throwable(e);
+                        return;
+                    }
+
+                } finally {
+                    selSession.getSocketBuffer().getActivePool().remove(streamIndex);
+                    UtilPipedStream.closeCloseable(inputStream);
+                }
+            }
+        });
     }
 }

@@ -5,9 +5,15 @@ package com.absir.client.rpc;
  */
 public class RpcData {
 
+    protected Object[] args;
+
     protected String uri;
 
     protected byte[] paramData;
+
+    public Object[] getArgs() {
+        return args;
+    }
 
     public String getUri() {
         return uri;

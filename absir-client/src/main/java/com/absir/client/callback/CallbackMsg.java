@@ -40,7 +40,7 @@ public abstract class CallbackMsg<T> implements CallbackAdapterStream {
             return;
         }
 
-        boolean ok = offset < 1 ? false : (buffer[0] & SocketAdapter.ERROR_FLAG) == 0;
+        boolean ok = offset < 1 ? false : (buffer[0] & SocketAdapter.ERROR_OR_SPECIAL_FLAG) == 0;
         if (beanType == null) {
             beanType = KernelClass.type(getClass(), TYPE_VARIABLE);
             if (beanType == null) {
@@ -74,7 +74,7 @@ public abstract class CallbackMsg<T> implements CallbackAdapterStream {
 
     @Override
     public void doWith(SocketAdapter adapter, int offset, byte[] buffer, InputStream inputStream) {
-        boolean ok = offset < 1 ? false : (buffer[0] & SocketAdapter.ERROR_FLAG) == 0;
+        boolean ok = offset < 1 ? false : (buffer[0] & SocketAdapter.ERROR_OR_SPECIAL_FLAG) == 0;
         if (beanType == null) {
             beanType = KernelClass.type(getClass(), TYPE_VARIABLE);
             if (beanType == null) {

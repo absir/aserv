@@ -79,7 +79,7 @@ public class InputSlave extends InputSocket {
         protected SocketAdapter socketAdapter;
 
         public InputSlaveAtt(Serializable id, byte[] buffer, InputStream inputStream, SocketAdapter socketAdapter) {
-            super(id, buffer, 5, null, inputStream);
+            super(id, buffer, buffer[1], 5, null, inputStream);
             this.socketAdapter = socketAdapter;
         }
     }

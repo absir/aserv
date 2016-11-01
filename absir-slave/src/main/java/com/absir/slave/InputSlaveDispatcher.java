@@ -44,7 +44,7 @@ public class InputSlaveDispatcher extends InDispatcher<InputSlaveAtt, SocketChan
             }
 
             InputSocket.writeByteBuffer(SlaveBufferResolver.ME, null, adapter.getSocket().getChannel(),
-                    (byte) (SocketAdapter.ERROR_FLAG | SocketAdapter.RESPONSE_FLAG), inputSocketAtt.getCallbackIndex(),
+                    (byte) (SocketAdapter.ERROR_OR_SPECIAL_FLAG | SocketAdapter.RESPONSE_FLAG), inputSocketAtt.getCallbackIndex(),
                     InputSocket.NONE_RESPONSE_BYTES);
         }
     }

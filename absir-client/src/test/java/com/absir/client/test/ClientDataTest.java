@@ -18,7 +18,7 @@ public class ClientDataTest {
     @Test
     public void test() {
         System.out.println(SocketAdapter.HUMAN_FLAG);
-        System.out.println(SocketAdapter.VARINTS_FLAG);
+        System.out.println(SocketAdapter.URI_DICT_FLAG);
     }
 
 }

@@ -81,7 +81,7 @@ public class HandlerInvoker {
             }
 
             handler._finally(onPut, handlerMethod);
-            return RpcFactory.RPC_CODE.RUN_SUCCESS.ordinal();
+            return RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal();
         }
 
         return RpcFactory.RPC_CODE.NO_PERMISSION.ordinal();
@@ -110,7 +110,7 @@ public class HandlerInvoker {
             }
 
             handler._finally(onPut, handlerMethod);
-            return RpcFactory.RPC_CODE.RUN_SUCCESS.ordinal();
+            return RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal();
         }
 
         return RpcFactory.RPC_CODE.NO_PERMISSION.ordinal();
@@ -139,7 +139,7 @@ public class HandlerInvoker {
                 return throwable(onPut, handlerType, handlerMethod, args, e);
             }
 
-            return RpcFactory.RPC_CODE.RUN_SUCCESS.ordinal();
+            return RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal();
         }
 
         handler._finally(onPut, handlerMethod);
@@ -160,7 +160,7 @@ public class HandlerInvoker {
             }
 
             handler._finally(onPut, handlerMethod);
-            return RpcFactory.RPC_CODE.RUN_SUCCESS.ordinal();
+            return RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal();
         }
 
         return RpcFactory.RPC_CODE.NO_PERMISSION.ordinal();

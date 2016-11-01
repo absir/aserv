@@ -7,6 +7,7 @@
  */
 package com.absir.core.util;
 
+import com.absir.core.kernel.KernelByte;
 import com.absir.core.kernel.KernelLang.ObjectTemplate;
 
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class UtilActivePool {
     public synchronized ObjectTemplate<Integer> addObject() {
         boolean maxed = false;
         while (activeMap.containsKey(index)) {
-            if (index >= Integer.MAX_VALUE) {
+            if (index >= KernelByte.VARINTS_4_LENGTH) {
                 if (maxed) {
                     return null;
                 }

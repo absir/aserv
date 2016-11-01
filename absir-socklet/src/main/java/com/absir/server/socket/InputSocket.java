@@ -9,7 +9,6 @@ package com.absir.server.socket;
 
 import com.absir.bean.basis.Configure;
 import com.absir.client.SocketAdapter;
-import com.absir.client.SocketAdapterSel;
 import com.absir.client.SocketNIO;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.base.Environment;
@@ -39,10 +38,8 @@ public abstract class InputSocket extends Input {
 
     public static final byte[] NONE_RESPONSE_BYTES = NONE_RESPONSE.getBytes();
 
-    public static byte VARINTS_POST_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.POST_FLAG;
-
-    public static byte VARINTS_HUMAN_FLAG = SocketAdapter.VARINTS_FLAG | SocketAdapter.HUMAN_FLAG;
     protected static byte INPUT_FLAG = SocketAdapter.HUMAN_FLAG;
+
     protected SelSession selSession;
     private SocketChannel socketChannel;
     private String uri;
@@ -256,46 +253,15 @@ public abstract class InputSocket extends Input {
         if (outputStream == null && selSession != null) {
             boolean sended = false;
             final UtilActivePool activePool = selSession.getSocketBuffer().getActivePool();
-            final ObjectTemplate<Integer> nextIndex = activePool.addObject();
+            final ObjectTemplate<Integer> template = activePool.addObject();
             final PipedInputStream inputStream = new PipedInputStream();
             try {
                 outputStream = new PipedOutputStream(inputStream);
-                final int streamIndex = nextIndex.object;
+                int streamIndex = template.object;
                 writeByteBuffer(getSocketBufferResolver(), selSession, socketChannel,
-                        (byte) (writeFlag(flag) | SocketAdapter.STREAM_FLAG), callbackIndex,
-                        KernelByte.getLengthBytes(streamIndex));
-                ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
+                        (byte) (writeFlag(flag) | SocketAdapter.STREAM_FLAG), callbackIndex, SocketAdapter.getVarintsLengthBytes(streamIndex));
 
-                    @Override
-                    public void run() {
-                        try {
-                            int postBuffLen = SocketAdapterSel.POST_BUFF_LEN;
-                            byte[] sendBufer = SocketBufferResolver.createByteBufferFull(getSocketBufferResolver(),
-                                    socketChannel, 4 + postBuffLen, null, 0, 0);
-                            sendBufer[4] = SocketAdapter.STREAM_FLAG | SocketAdapter.POST_FLAG;
-                            KernelByte.setLength(sendBufer, 5, streamIndex);
-                            int len;
-                            try {
-                                while ((len = inputStream.read(sendBufer, 9, sendBufer.length)) > 0) {
-                                    len += 5;
-                                    KernelByte.setLength(sendBufer, 0, len);
-                                    if (nextIndex.object == null
-                                            || !InputSocket.writeBuffer(socketChannel, sendBufer, 0, len)) {
-                                        return;
-                                    }
-                                }
-
-                            } catch (Exception e) {
-                                Environment.throwable(e);
-                                return;
-                            }
-
-                        } finally {
-                            activePool.remove(streamIndex);
-                            UtilPipedStream.closeCloseable(inputStream);
-                        }
-                    }
-                });
+                getSocketBufferResolver().writeInputStream(selSession, template, streamIndex, inputStream);
 
                 sended = true;
 
@@ -304,7 +270,7 @@ public abstract class InputSocket extends Input {
 
             } finally {
                 if (!sended) {
-                    activePool.remove(nextIndex.object);
+                    activePool.remove(template.object);
                     UtilPipedStream.closeCloseable(inputStream);
                 }
             }
@@ -315,7 +281,7 @@ public abstract class InputSocket extends Input {
 
     protected byte writeFlag(byte flag) {
         if (status != ServerStatus.ON_SUCCESS.getCode()) {
-            flag |= SocketAdapter.ERROR_FLAG;
+            flag |= SocketAdapter.ERROR_OR_SPECIAL_FLAG;
         }
 
         return flag;
@@ -341,7 +307,7 @@ public abstract class InputSocket extends Input {
             KernelByte.setVarintsLength(dataBytes, 0, urlVarints);
             KernelByte.setVarintsLength(dataBytes, urlLength, varints);
 
-            writeByteBuffer(getSocketBufferResolver(), selSession, getSocketChannel(), VARINTS_HUMAN_FLAG, 0, dataBytes, 0,
+            writeByteBuffer(getSocketBufferResolver(), selSession, getSocketChannel(), SocketAdapter.URI_DICT_FLAG, 0, dataBytes, 0,
                     dataLength);
             urlVarints = 0;
         }
@@ -374,28 +340,23 @@ public abstract class InputSocket extends Input {
         }
 
         public InputSocketAtt(Serializable id, byte[] buffer, SelSession selSession) {
-            this(id, buffer, 0, selSession, null);
+            this(id, buffer, selSession, null);
         }
 
         public InputSocketAtt(Serializable id, byte[] buffer, SelSession selSession, InputStream inputStream) {
-            this(id, buffer, 0, selSession, inputStream);
+            this(id, buffer, buffer[0], 1, selSession, inputStream);
         }
 
-        public InputSocketAtt(Serializable id, byte[] buffer, int off, SelSession selSession, InputStream inputStream) {
+        public InputSocketAtt(Serializable id, byte[] buffer, byte flag, int off, SelSession selSession, InputStream inputStream) {
             this.id = id;
+            this.flag = flag;
             this.buffer = buffer;
-            this.flag = buffer[off];
             this.selSession = selSession;
-            int headerLength = off + 1;
+            int headerLength = off;
             int bufferLength = buffer.length;
             boolean inVarints = false;
-            if ((flag & SocketAdapter.VARINTS_FLAG) == 0) {
-                if ((flag & SocketAdapter.STREAM_FLAG) != 0) {
-                    headerLength += 4;
-                }
-
-            } else {
-                if ((flag & SocketAdapter.ERROR_FLAG) == 0) {
+            if ((flag & SocketAdapter.URI_DICT_FLAG) != 0) {
+                if ((flag & SocketAdapter.ERROR_OR_SPECIAL_FLAG) == 0) {
                     inVarints = true;
 
                 } else {

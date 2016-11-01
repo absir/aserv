@@ -54,8 +54,8 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
                 try {
-                    int code = buffer == null ? RpcFactory.RPC_CODE.RUN_ERROR.ordinal() : SocketAdapter.getVarints(buffer, offset, buffer.length);
-                    if (code == RpcFactory.RPC_CODE.RUN_SUCCESS.ordinal()) {
+                    int code = buffer == null ? RpcFactory.RPC_CODE.RPC_ERROR.ordinal() : SocketAdapter.getVarints(buffer, offset, buffer.length);
+                    if (code == RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal()) {
                         offset += KernelByte.getVarintsLength(code);
                         try {
                             if (returnType != null || returnType != void.class) {

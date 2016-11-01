@@ -60,26 +60,30 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
     @Override
     public boolean receiveBufferNIO(final SocketChannel socketChannel, final SelSession selSession,
                                     final SocketBuffer socketBuffer, final byte[] buffer, final long currentTime) {
-        byte flag = buffer[0];
-        if ((flag & SocketAdapter.STREAM_FLAG) != 0 && (flag & SocketAdapter.POST_FLAG) == 0 && buffer.length > 5) {
+        final byte flag = buffer[0];
+        if ((flag & SocketAdapter.STREAM_FLAG) != 0 && (flag & SocketAdapter.POST_FLAG) == 0) {
             UtilPipedStream pipedStream = socketBuffer.getPipedStream();
             if (pipedStream.getSize() < getStreamMax()) {
-                int hashIndex = KernelByte.getLength(buffer, 1);
-                NextOutputStream outputStream = pipedStream.createNextOutputStream(hashIndex);
-                final PipedInputStream inputStream = new PipedInputStream();
-                try {
-                    outputStream.connect(inputStream);
+                int length = buffer.length;
+                int streamIndex = SocketAdapter.getVarints(buffer, 1, length);
+                if (streamIndex > 0) {
+                    NextOutputStream outputStream = pipedStream.createNextOutputStream(streamIndex);
+                    final PipedInputStream inputStream = new PipedInputStream();
+                    try {
+                        outputStream.connect(inputStream);
+                        final int off = 1 + SocketAdapter.getVarintsLength(streamIndex);
+                        UtilContext.getThreadPoolExecutor().execute(new Runnable() {
 
-                } catch (IOException e) {
-                }
+                            @Override
+                            public void run() {
+                                doDispatch(selSession, socketChannel, socketBuffer.getId(), buffer, flag, off, socketBuffer, inputStream, currentTime);
+                            }
+                        });
 
-                UtilContext.getThreadPoolExecutor().execute(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        doDispatch(selSession, socketChannel, socketBuffer.getId(), buffer, socketBuffer, inputStream, currentTime);
+                    } catch (IOException e) {
+                        Environment.throwable(e);
                     }
-                });
+                }
             }
 
             return true;
@@ -110,51 +114,53 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
     @Override
     public void receiveByteBuffer(SocketChannel socketChannel, SelSession selSession, SocketBuffer socketBuffer,
                                   byte[] buffer, long currentTime) {
-        doDispatch(selSession, socketChannel, socketBuffer.getId(), buffer, socketBuffer, null, currentTime);
+        if (buffer.length > 0) {
+            byte flag = buffer[0];
+            doDispatch(selSession, socketChannel, socketBuffer.getId(), buffer, flag, 1, socketBuffer, null, currentTime);
+        }
     }
 
     @Override
     public void unRegister(Serializable id, SocketChannel socketChannel, SelSession selSession, long currentTime) {
     }
 
-    protected void doDispatch(SelSession selSession, SocketChannel socketChannel, Serializable id, byte[] buffer,
+    protected void doDispatch(SelSession selSession, SocketChannel socketChannel, Serializable id, byte[] buffer, byte flag, int off,
                               SocketBuffer socketBuffer, InputStream inputStream, long currentTime) {
-        if (buffer.length > 0) {
-            byte flag = buffer[0];
-            if ((flag & SocketAdapter.STREAM_FLAG) != 0 && buffer.length > 5) {
-                int hashIndex = KernelByte.getLength(buffer, 1);
-                socketBuffer.getPipedStream().getOutputStream(hashIndex);
-                NextOutputStream stream = socketBuffer.getPipedStream().getOutputStream(hashIndex);
-                try {
-                    if (stream != null) {
-                        stream.write(buffer, 5, buffer.length);
-                        return;
-                    }
-
-                } catch (Exception e) {
-                    InputSocketImpl.writeByteBuffer(InputSocketContext.ME.getBufferResolver(), selSession,
-                            socketChannel, (byte) (SocketAdapter.STREAM_FLAG | SocketAdapter.POST_FLAG), 0, buffer, 1,
-                            4);
+        if ((flag & SocketAdapter.STREAM_FLAG) != 0) {
+            int length = buffer.length;
+            int streamIndex = SocketAdapter.getVarints(buffer, 1, length);
+            int offsetIndex = 1 + SocketAdapter.getVarintsLength(streamIndex);
+            socketBuffer.getPipedStream().getOutputStream(streamIndex);
+            NextOutputStream stream = socketBuffer.getPipedStream().getOutputStream(streamIndex);
+            try {
+                if (stream != null) {
+                    stream.write(buffer, offsetIndex, buffer.length);
+                    return;
                 }
 
-            } else if ((flag & SocketAdapter.RESPONSE_FLAG) == 0) {
-                InputSocketAtt inputSocketAtt = new InputSocketAtt(id, buffer, selSession, inputStream);
-                try {
-                    if (on(inputSocketAtt.getUrl(), inputSocketAtt, socketChannel)) {
-                        return;
-                    }
-
-                } catch (Throwable e) {
-                    Environment.throwable(e);
-                }
-
-                UtilPipedStream.closeCloseable(inputStream);
-                InputSocketImpl.writeByteBufferSuccess(selSession, socketChannel, false,
-                        inputSocketAtt.getCallbackIndex(), InputSocket.NONE_RESPONSE_BYTES);
-
-            } else {
-                doResponse(socketChannel, id, flag, buffer);
+            } catch (Exception e) {
+                InputSocketImpl.writeByteBuffer(InputSocketContext.ME.getBufferResolver(), selSession,
+                        socketChannel, (byte) (SocketAdapter.STREAM_FLAG | SocketAdapter.POST_FLAG), 0, buffer, 1,
+                        4);
             }
+
+        } else if ((flag & SocketAdapter.RESPONSE_FLAG) == 0) {
+            InputSocketAtt inputSocketAtt = new InputSocketAtt(id, buffer, flag, off, selSession, inputStream);
+            try {
+                if (on(inputSocketAtt.getUrl(), inputSocketAtt, socketChannel)) {
+                    return;
+                }
+
+            } catch (Throwable e) {
+                Environment.throwable(e);
+            }
+
+            UtilPipedStream.closeCloseable(inputStream);
+            InputSocketImpl.writeByteBufferSuccess(selSession, socketChannel, false,
+                    inputSocketAtt.getCallbackIndex(), InputSocket.NONE_RESPONSE_BYTES);
+
+        } else {
+            doResponse(socketChannel, id, flag, buffer);
         }
     }
 

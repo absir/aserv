@@ -31,7 +31,7 @@ public class SocketAdapter {
 
     public static final byte RESPONSE_FLAG = 0x01 << 2;
 
-    public static final byte ERROR_FLAG = 0x01 << 3;
+    public static final byte ERROR_OR_SPECIAL_FLAG = 0x01 << 3;
 
     public static final byte POST_FLAG = 0x01 << 4;
 
@@ -39,7 +39,7 @@ public class SocketAdapter {
 
     public static final byte HUMAN_FLAG = 0x01 << 6;
 
-    public static final byte VARINTS_FLAG = (byte) (0x01 << 7);
+    public static final byte URI_DICT_FLAG = (byte) (0x01 << 7);
 
     public static final int VARINTS_1_LENGTH = 0x7F;
 
@@ -769,7 +769,7 @@ public class SocketAdapter {
                 callbackIndex = varints;
             }
 
-            if (offset < length && (flag & VARINTS_FLAG) != 0) {
+            if (offset < length && (flag & URI_DICT_FLAG) != 0) {
                 //返回数据中包含url压缩字典
                 int varints1 = getVarints(buffer, offset, length);
                 offset += getVarintsLength(varints1);
@@ -952,7 +952,7 @@ public class SocketAdapter {
 
         System.arraycopy(dataBytes, dataOff, sendDataBytes, offLen, dataLen);
         offLen += dataLen;
-        if (postLen > 0) {
+        if (postLen > 0 && postData != null) {
             System.arraycopy(postData, postOff, sendDataBytes, offLen, postLen);
         }
 
@@ -1091,12 +1091,12 @@ public class SocketAdapter {
     }
 
     public byte[] sendDataBytesVarints(int off, String uri, boolean human, int callback, byte[] postBytes, int postOff, int postLen) {
-        byte flag = VARINTS_FLAG;
+        byte flag = URI_DICT_FLAG;
         byte[] dataBytes;
         Integer index = getUriVarints(uri);
         if (index == null) {
             //没找到压缩字典，添加压缩回调参数
-            flag |= ERROR_FLAG;
+            flag |= ERROR_OR_SPECIAL_FLAG;
             int uriVarints = addVarintsUri(uri);
             int uriLength = getVarintsLength(uriVarints);
             dataBytes = uri.getBytes();

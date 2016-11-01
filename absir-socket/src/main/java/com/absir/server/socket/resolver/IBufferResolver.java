@@ -7,8 +7,11 @@
  */
 package com.absir.server.socket.resolver;
 
+import com.absir.core.kernel.KernelLang;
+import com.absir.server.socket.SelSession;
 import com.absir.server.socket.SocketBuffer;
 
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
@@ -24,4 +27,8 @@ public interface IBufferResolver {
                                        int offset, int length);
 
     public byte[] createByteHeader(int headerLength, ByteBuffer byteBuffer);
+
+    public int getPostBufferLen();
+
+    public void writeInputStream(final SelSession selSession, final KernelLang.ObjectTemplate<Integer> template, final int streamIndex, final InputStream inputStream);
 }

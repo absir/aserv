@@ -67,9 +67,9 @@ public class RpcFactory {
 
     public enum RPC_CODE implements IRpcCode {
 
-        RUN_ERROR,
+        RPC_ERROR,
 
-        RUN_SUCCESS,
+        RPC_SUCCESS,
 
         SEND_ERROR,
 
@@ -224,8 +224,9 @@ public class RpcFactory {
             byte[] paramData = rpcAdapter.paramData(rpcMethod.attribute, args);
             if (rpcMethod.returnType == RpcData.class) {
                 RpcData rpcData = new RpcData();
-                rpcData.paramData = paramData;
+                rpcData.args = args;
                 rpcData.uri = rpcMethod.uri;
+                rpcData.paramData = paramData;
                 return rpcData;
             }
 
