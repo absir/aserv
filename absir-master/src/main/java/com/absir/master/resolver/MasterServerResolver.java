@@ -123,7 +123,7 @@ public class MasterServerResolver extends SocketServerResolver {
 
     public void sendDataBytes(SocketChannel socketChannel, byte[] dataBytes, boolean head, boolean human,
                               byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
-        int callbackIndex = masterAdapter.generateCallbackIndex();
+        int callbackIndex = masterAdapter.getNextCallbackIndex(callbackAdapter);
         if (callbackAdapter != null) {
             masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
         }
@@ -143,7 +143,7 @@ public class MasterServerResolver extends SocketServerResolver {
         final ObjectTemplate<Integer> nextIndex = masterAdapter.getActivePool().addObject();
         try {
             CallbackTimeout callbackTimeout = null;
-            int callbackIndex = masterAdapter.generateCallbackIndex();
+            int callbackIndex = masterAdapter.getNextCallbackIndex(callbackAdapter);
             if (callbackAdapter != null) {
                 callbackTimeout = masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
             }
@@ -210,7 +210,7 @@ public class MasterServerResolver extends SocketServerResolver {
 
     public void sendDataBytesVarints(InputMasterContext.MasterChannelContext channelContext, String url,
                                      byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
-        sendDataBytesVarints(channelContext, url, channelContext.getSocketAdapter().generateCallbackIndex(), postData, timeout, callbackAdapter);
+        sendDataBytesVarints(channelContext, url, channelContext.getSocketAdapter().getNextCallbackIndex(callbackAdapter), postData, timeout, callbackAdapter);
     }
 
     public void sendDataBytesVarints(InputMasterContext.MasterChannelContext channelContext, String url, int callbackIndex,

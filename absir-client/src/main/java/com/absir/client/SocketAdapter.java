@@ -424,20 +424,26 @@ public class SocketAdapter {
         return 204800;
     }
 
-    public synchronized int generateCallbackIndex() {
-        int minCallbackIndex = getMinCallbackIndex();
-        int maxCallbackIndex = getMaxCallbackIndex();
-        while (true) {
-            if (++callbackIndex < minCallbackIndex || callbackIndex >= maxCallbackIndex) {
-                callbackIndex = minCallbackIndex + 1;
-            }
-
-            if (!receiveCallbacks.containsKey(callbackIndex)) {
-                break;
-            }
+    public int getNextCallbackIndex(CallbackAdapter callbackAdapter) {
+        if (callbackAdapter == null) {
+            return 0;
         }
 
-        return callbackIndex;
+        synchronized (this) {
+            int minCallbackIndex = getMinCallbackIndex();
+            int maxCallbackIndex = getMaxCallbackIndex();
+            while (true) {
+                if (++callbackIndex < minCallbackIndex || callbackIndex >= maxCallbackIndex) {
+                    callbackIndex = minCallbackIndex + 1;
+                }
+
+                if (!receiveCallbacks.containsKey(callbackIndex)) {
+                    break;
+                }
+            }
+
+            return callbackIndex;
+        }
     }
 
     public void clearRetryConnect() {
@@ -1041,17 +1047,10 @@ public class SocketAdapter {
 
     /**
      * 发送回调方法
-     *
-     * @param dataBytes
-     * @param head
-     * @param human
-     * @param postData
-     * @param timeout
-     * @param callbackAdapter
      */
     public void sendData(byte[] dataBytes, boolean head, boolean human, byte[] postData, int timeout,
                          CallbackAdapter callbackAdapter) {
-        sendDataIndex(generateCallbackIndex(), dataBytes, head, human, postData, timeout, callbackAdapter);
+        sendDataIndex(getNextCallbackIndex(callbackAdapter), dataBytes, head, human, postData, timeout, callbackAdapter);
     }
 
     /**
@@ -1113,11 +1112,23 @@ public class SocketAdapter {
 
     // 支持字典压缩
     public void sendDataIndexVarints(String uri, byte[] postBytes, int timeout, CallbackAdapter callbackAdapter) {
-        sendDataIndexVarints(generateCallbackIndex(), uri, postBytes, timeout, callbackAdapter);
+        sendDataIndexVarints(getNextCallbackIndex(callbackAdapter), uri, postBytes, timeout, callbackAdapter);
     }
 
     public void sendDataIndexVarints(int callbackIndex, String uri, byte[] postBytes, int timeout, CallbackAdapter callbackAdapter) {
         sendDataCallback(callbackIndex, sendDataBytesVarints(0, uri, false, callbackIndex, postBytes, 0, postBytes.length), timeout, callbackAdapter);
+    }
+
+    public void sendStream(byte[] dataBytes, boolean head, boolean human,
+                           InputStream inputStream, int timeout, CallbackAdapter callbackAdapter) {
+        sendStreamIndex(getNextCallbackIndex(callbackAdapter), dataBytes, head, human, inputStream, timeout, callbackAdapter);
+    }
+
+    // 发送流数据
+    public void sendStreamIndex(int callbackIndex, byte[] dataBytes, boolean head, boolean human,
+                                InputStream inputStream, int timeout, CallbackAdapter callbackAdapter) {
+        // 默认不支持
+        callbackAdapter.doWith(this, 0, null);
     }
 
     public static interface CallbackAdapter {

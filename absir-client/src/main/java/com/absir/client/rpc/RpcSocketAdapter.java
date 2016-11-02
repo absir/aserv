@@ -1,13 +1,20 @@
 package com.absir.client.rpc;
 
 import com.absir.client.SocketAdapter;
+import com.absir.client.SocketAdapterSel;
+import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelByte;
 import com.absir.core.util.UtilAtom;
+import com.absir.core.util.UtilContext;
+import com.absir.core.util.UtilPipedStream;
 import com.absir.data.helper.HelperDataFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 
 /**
  * Created by absir on 2016/10/28.
@@ -32,7 +39,7 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
 
     @Override
     public byte[] paramData(RpcInterface.RpcAttribute attribute, Object[] args) throws IOException {
-        return HelperDataFormat.PACK.writeAsBytesArray(args);
+        return attribute == null || !attribute.sendStream ? HelperDataFormat.PACK.writeAsBytesArray(args) : null;
     }
 
     public int getDefaultTimeout() {
@@ -40,16 +47,16 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
     }
 
     @Override
-    public Object sendDataIndexVarints(RpcInterface.RpcAttribute attribute, final String uri, byte[] paramData, final Class<?> returnType) {
-        final UtilAtom atom = new UtilAtom();
-        atom.increment();
+    public Object sendDataIndexVarints(final RpcInterface.RpcAttribute attribute, final String uri, byte[] paramData, final Object[] args, final Class<?>[] parameterTypes, final Class<?> returnType) throws IOException {
         final Object[] returns = new Object[1];
         int timeout = attribute == null ? 0 : attribute.timeout;
         if (timeout == 0) {
             timeout = getDefaultTimeout();
         }
 
-        socketAdapter.sendDataIndexVarints(uri, paramData, timeout, new SocketAdapter.CallbackAdapter() {
+        final UtilAtom atom = new UtilAtom();
+        atom.increment();
+        SocketAdapter.CallbackAdapter callbackAdapter = new SocketAdapterSel.CallbackAdapterStream() {
 
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
@@ -75,7 +82,60 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
                     atom.decrement();
                 }
             }
-        });
+
+            @Override
+            public void doWith(SocketAdapter adapter, int offset, byte[] buffer, InputStream inputStream) {
+                if (inputStream == null) {
+                    doWith(adapter, offset, buffer);
+
+                } else {
+                    try {
+                        if (returnType == InputStream.class) {
+                            // 直接返回流
+                            returns[0] = inputStream;
+
+                        } else {
+                            try {
+                                if (returnType != null || returnType != void.class) {
+                                    // 流转换成对象返回
+                                    returns[0] = HelperDataFormat.PACK.read(inputStream, returnType);
+                                }
+
+                            } catch (Throwable e) {
+                                LOGGER.error("rpc error uri = " + uri, e);
+                                returns[0] = RpcFactory.RPC_CODE.RETRUN_ERROR;
+                            }
+                        }
+
+                    } finally {
+                        atom.decrement();
+                    }
+                }
+            }
+        };
+
+        if (attribute == null || !attribute.sendStream) {
+            socketAdapter.sendDataIndexVarints(uri, paramData, timeout, callbackAdapter);
+
+        } else {
+            final PipedInputStream inputStream = new PipedInputStream();
+            final PipedOutputStream outputStream = new PipedOutputStream();
+            outputStream.connect(inputStream);
+            UtilContext.getThreadPoolExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        HelperDataFormat.PACK.writeArrayInputStream(outputStream, parameterTypes, args);
+
+                    } catch (Exception e) {
+                        Environment.throwable(e);
+                        UtilPipedStream.closeCloseable(outputStream);
+                    }
+                }
+            });
+
+            socketAdapter.sendStream(uri.getBytes(), true, false, inputStream, timeout, callbackAdapter);
+        }
 
         atom.await();
         return returns[0];

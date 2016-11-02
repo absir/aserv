@@ -9,6 +9,6 @@ public interface IRpcAdapter {
 
     public byte[] paramData(RpcInterface.RpcAttribute attribute, Object[] args) throws IOException;
 
-    public Object sendDataIndexVarints(RpcInterface.RpcAttribute attribute, String uri, byte[] paramData, Class<?> returnType);
+    public Object sendDataIndexVarints(RpcInterface.RpcAttribute attribute, String uri, byte[] paramData, Object[] args, Class<?>[] parameterTypes, Class<?> returnType) throws IOException;
 
 }

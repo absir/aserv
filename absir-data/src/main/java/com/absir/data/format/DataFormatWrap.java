@@ -22,8 +22,8 @@ public class DataFormatWrap extends DataFormat {
     }
 
     @Override
-    protected void formatWriteArray(OutputStream outputStream, Object... objects) throws IOException {
-        format.writeArray(outputStream, objects);
+    protected void formatWriteArray(OutputStream outputStream, Class<?>[] types, Object... objects) throws IOException {
+        format.writeArray(outputStream, types, objects);
     }
 
     @Override

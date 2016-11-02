@@ -34,7 +34,13 @@ public abstract class DataFormat implements IFormat {
 
     public void writeArray(OutputStream outputStream, Object... objects) throws IOException {
         if (objects != null) {
-            formatWriteArray(outputStream, objects);
+            formatWriteArray(outputStream, null, objects);
+        }
+    }
+
+    public void writeArrayInputStream(OutputStream outputStream, Class<?>[] types, Object... objects) throws IOException {
+        if (objects != null) {
+            formatWriteArray(outputStream, types, objects);
         }
     }
 
@@ -140,7 +146,7 @@ public abstract class DataFormat implements IFormat {
 
     protected abstract void formatWrite(OutputStream outputStream, Object object) throws IOException;
 
-    protected abstract void formatWriteArray(OutputStream outputStream, Object... objects) throws IOException;
+    protected abstract void formatWriteArray(OutputStream outputStream, Class<?>[] types, Object... objects) throws IOException;
 
     protected abstract Object formatRead(InputStream inputStream, Type toType) throws IOException;
 

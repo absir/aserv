@@ -2,10 +2,12 @@ package com.absir.client.rpc;
 
 import com.absir.client.value.Rpc;
 import com.absir.client.value.RpcRoute;
+import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,8 +18,6 @@ import java.util.Set;
  * Created by absir on 16/9/1.
  */
 public class RpcInterface {
-
-    //protected Class<?> interfaceType;
 
     private static Map<Class<?>, RpcInterface> clsMapRpcInterface;
     protected Map<Method, RpcMethod> rpcMethodMap;
@@ -77,19 +77,19 @@ public class RpcInterface {
 
                         RpcMethod rpcMethod = new RpcMethod();
                         rpcMethod.uri = uri;
-                        rpcMethod.attribute = getRpcAttributeMethod(attribute, method);
+                        RpcAttribute mAttribute = getRpcAttributeMethod(attribute, method);
+                        rpcMethod.attribute = mAttribute;
                         rpcMethod.returnType = method.getReturnType();
-                        rpcMethod.exceptionTypes = KernelLang.getOptimizeClasses(method.getExceptionTypes());
-//                        rpcMethod.parameterTypes = method.getParameterTypes();
-//                        if(rpcMethod.parameterTypes.length == 0) {
-//                            rpcMethod.parameterTypes = null;
-//                        }
+                        if (mAttribute != null && mAttribute.sendStream) {
+                            // 发送流的时候才需要
+                            rpcMethod.parameterTypes = method.getParameterTypes();
+                        }
 
+                        rpcMethod.exceptionTypes = KernelLang.getOptimizeClasses(method.getExceptionTypes());
                         rpcMethodMap.put(method, rpcMethod);
                     }
 
                     rpcInterface = new RpcInterface();
-                    //rpcInterface.interfaceType = interfaceType;
                     rpcInterface.rpcMethodMap = rpcMethodMap;
                     clsMapRpcInterface.put(interfaceType, rpcInterface);
                 }
@@ -131,10 +131,19 @@ public class RpcInterface {
         return name;
     }
 
+    public static boolean isCustomRpc(Rpc rpc) {
+        return rpc.timeout() > 0 || rpc.sendStream() || rpc.returnStream();
+    }
+
     public static RpcAttribute getRpcAttributeClass(Rpc rpc, Class<?> interfaceType) {
         if (rpc != null) {
-            RpcAttribute attribute = new RpcAttribute();
-            attribute.timeout = rpc.timeout();
+            if (isCustomRpc(rpc)) {
+                RpcAttribute attribute = new RpcAttribute();
+                attribute.timeout = rpc.timeout();
+                attribute.sendStream = rpc.sendStream();
+                attribute.returnStream = rpc.returnStream();
+                return attribute;
+            }
         }
 
         return null;
@@ -143,9 +152,15 @@ public class RpcInterface {
     public static RpcAttribute getRpcAttributeMethod(RpcAttribute rpcAttribute, Method method) {
         Rpc rpc = method.getAnnotation(Rpc.class);
         if (rpc != null) {
-            RpcAttribute attribute = new RpcAttribute();
-            attribute.timeout = rpc.timeout();
-            rpcAttribute = attribute;
+            int streamIndex = KernelArray.index(method.getParameterTypes(), InputStream.class);
+            boolean returnStream = method.getReturnType() == InputStream.class;
+            if (isCustomRpc(rpc) || streamIndex >= 0 || returnStream) {
+                RpcAttribute attribute = new RpcAttribute();
+                attribute.timeout = rpc == null ? 0 : rpc.timeout();
+                attribute.sendStream = streamIndex >= 0 ? true : rpc == null ? false : rpc.sendStream();
+                attribute.returnStream = returnStream ? true : rpc == null ? false : rpc.returnStream();
+                rpcAttribute = attribute;
+            }
         }
 
         return rpcAttribute;
@@ -159,6 +174,10 @@ public class RpcInterface {
 
         protected int timeout;
 
+        protected boolean sendStream;
+
+        protected boolean returnStream;
+
     }
 
     public static class RpcMethod {
@@ -169,9 +188,9 @@ public class RpcInterface {
 
         protected Class<?> returnType;
 
-        protected Class<?>[] exceptionTypes;
+        protected Class<?>[] parameterTypes;
 
-        //protected Class<?>[] parameterTypes;
+        protected Class<?>[] exceptionTypes;
 
     }
 }

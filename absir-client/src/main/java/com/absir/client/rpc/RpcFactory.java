@@ -165,6 +165,11 @@ public class RpcFactory {
             this.code = code;
         }
 
+        public RpcException(int code, Throwable cause) {
+            super(cause);
+            this.code = code;
+        }
+
         @Override
         public String getMessage() {
             return (code >= 0 && code <= RPC_CODE.RUN_EXCEPTION.ordinal() ? RPC_CODE.codes[code].name() : ("unCatch Exception[" + code + ']'));
@@ -230,7 +235,7 @@ public class RpcFactory {
                 return rpcData;
             }
 
-            Object value = rpcAdapter.sendDataIndexVarints(rpcMethod.attribute, rpcMethod.uri, paramData, rpcMethod.returnType);
+            Object value = rpcAdapter.sendDataIndexVarints(rpcMethod.attribute, rpcMethod.uri, paramData, args, rpcMethod.parameterTypes, rpcMethod.returnType);
             Class<?> cls = value == null ? null : value.getClass();
             if (cls != RPC_CODE.class && cls != RpcCode.class) {
                 return value;

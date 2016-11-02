@@ -7,6 +7,7 @@
  */
 package com.absir.data.helper;
 
+import com.absir.core.helper.HelperIO;
 import com.absir.data.format.DataFormat;
 import com.absir.data.json.DataDeserializationContext;
 import com.absir.data.json.DataDeserializationContext.JsonDeserializerResolver;
@@ -104,7 +105,7 @@ public class HelperDataFormat {
             return mapper.readValue(parser, mapper.constructType(toType));
         }
 
-        public Object[] readArray(JsonParser parser, Type... toTypes) throws IOException {
+        public Object[] readArray(JsonParser parser, InputStream inputStream, Type... toTypes) throws IOException {
             parser.nextToken();
             parser.nextToken();
             int length = toTypes.length;
@@ -112,7 +113,12 @@ public class HelperDataFormat {
             Type type;
             for (int i = 0; i < length; i++) {
                 type = toTypes[i];
-                objects[i] = type == null ? mapper.reader().readValue(parser) : mapper.readValue(parser, mapper.constructType(type));
+                if (type == InputStream.class) {
+                    objects[i] = inputStream;
+
+                } else {
+                    objects[i] = type == null ? mapper.reader().readValue(parser) : mapper.readValue(parser, mapper.constructType(type));
+                }
             }
 
             return objects;
@@ -128,15 +134,26 @@ public class HelperDataFormat {
         }
 
         @Override
-        protected void formatWriteArray(OutputStream outputStream, Object... objects) throws IOException {
+        protected void formatWriteArray(OutputStream outputStream, Class<?>[] types, Object... objects) throws IOException {
             JsonGenerator generator = factory.createGenerator(outputStream);
             generator.writeStartArray();
+            int i = 0;
+            InputStream inputStream = null;
             for (Object object : objects) {
-                mapper.writeValue(generator, object);
+                if (types == null || types[i++] != InputStream.class) {
+                    mapper.writeValue(generator, object);
+
+                } else {
+                    inputStream = (InputStream) object;
+                }
             }
 
             generator.writeEndArray();
             generator.flush();
+
+            if (inputStream != null) {
+                HelperIO.copy(inputStream, outputStream);
+            }
         }
 
         @Override
@@ -146,7 +163,7 @@ public class HelperDataFormat {
 
         @Override
         protected Object[] formatReadArray(InputStream inputStream, Type... toTypes) throws IOException {
-            return readArray(factory.createParser(inputStream), toTypes);
+            return readArray(factory.createParser(inputStream), inputStream, toTypes);
         }
 
         @Override
@@ -156,7 +173,7 @@ public class HelperDataFormat {
 
         @Override
         protected Object[] formatReadArray(byte[] bytes, int off, int len, Type... toTypes) throws IOException {
-            return readArray(factory.createParser(bytes, off, len), toTypes);
+            return readArray(factory.createParser(bytes, off, len), null, toTypes);
         }
     }
 

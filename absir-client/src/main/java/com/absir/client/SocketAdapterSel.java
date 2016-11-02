@@ -238,32 +238,31 @@ public class SocketAdapterSel extends SocketAdapter {
                 return;
 
             } else if (length == offsetIndex) {
-                if (callbackAdapter instanceof CallbackAdapterStream) {
-                    try {
-                        NextOutputStream outputStream = createNextOutputStream(streamIndex);
-                        if (outputStream == null) {
-                            sendData(sendDataBytes(0, buffer, offset, indexLength, true, false,
-                                    (byte) (STREAM_CLOSE_FLAG | POST_FLAG), 0, null, 0, 0));
+                try {
+                    // 不是CallbackAdapterStream 不能接受流数据返回
+                    NextOutputStream outputStream = callbackAdapter instanceof CallbackAdapterStream ? createNextOutputStream(streamIndex) : null;
+                    if (outputStream == null) {
+                        sendData(sendDataBytes(0, buffer, offset, indexLength, true, false,
+                                (byte) (STREAM_CLOSE_FLAG | POST_FLAG), 0, null, 0, 0));
 
-                        } else {
-                            PipedInputStream inputStream = new PipedInputStream();
-                            outputStream.connect(inputStream);
-                            CallbackAdapterStream callbackAdapteStream = (CallbackAdapterStream) callbackAdapter;
-                            callbackAdapter = null;
-                            callbackAdapteStream.doWith(this, offset, buffer, inputStream);
-                            return;
-                        }
-
-                    } catch (Exception e) {
-                        LOGGER.error("receiveCallbackStream", e);
+                    } else {
+                        PipedInputStream inputStream = new PipedInputStream();
+                        outputStream.connect(inputStream);
+                        CallbackAdapterStream callbackAdapteStream = (CallbackAdapterStream) callbackAdapter;
+                        callbackAdapter = null;
+                        callbackAdapteStream.doWith(this, offset, buffer, inputStream);
+                        return;
                     }
 
-                    if (callbackAdapter != null) {
-                        callbackAdapter.doWith(this, offset, null);
-                    }
-
-                    return;
+                } catch (Exception e) {
+                    LOGGER.error("receiveCallbackStream", e);
                 }
+
+                if (callbackAdapter != null) {
+                    callbackAdapter.doWith(this, offset, null);
+                }
+
+                return;
             }
         }
 
@@ -421,9 +420,10 @@ public class SocketAdapterSel extends SocketAdapter {
     /**
      * 发送目标数据
      */
+    @Override
     public void sendStreamIndex(int callbackIndex, byte[] dataBytes, boolean head, boolean human,
                                 InputStream inputStream, int timeout, CallbackAdapter callbackAdapter) {
-        if (callbackIndex == 0 || inputStream == null) {
+        if (inputStream == null) {
             sendDataIndex(callbackIndex, dataBytes, head, human, null, timeout, callbackAdapter);
 
         } else {

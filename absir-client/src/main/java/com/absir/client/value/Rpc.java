@@ -22,4 +22,8 @@ public @interface Rpc {
     // 超时
     int timeout() default 10000;
 
+    boolean sendStream() default false;
+
+    boolean returnStream() default false;
+
 }
