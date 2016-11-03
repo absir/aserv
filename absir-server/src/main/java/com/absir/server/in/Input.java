@@ -298,4 +298,8 @@ public abstract class Input extends Bean<Serializable> implements IAttributes, I
 
     public void writeUriDict() {
     }
+
+    public boolean readyOutputStream() throws IOException {
+        return true;
+    }
 }

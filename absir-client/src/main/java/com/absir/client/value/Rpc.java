@@ -24,6 +24,7 @@ public @interface Rpc {
 
     boolean sendStream() default false;
 
-    boolean returnStream() default false;
+    // 调用不考虑返回（不保证成功）
+    boolean async() default false;
 
 }

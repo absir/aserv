@@ -42,6 +42,26 @@ public class UtilPipedStream implements IStep {
         STREAM_STEP.addStep(this);
     }
 
+    public static final void closeCloseable(Closeable closeable) {
+        if (closeable == null) {
+            return;
+        }
+
+        try {
+            closeable.close();
+
+        } catch (IOException e) {
+            Environment.throwable(e);
+        }
+    }
+
+    public static final long getHashIndex(int hashKey, int index) {
+        long hashIndex = hashKey;
+        hashIndex <<= 32;
+        hashIndex += index;
+        return hashIndex;
+    }
+
     @Override
     public boolean stepDone(long currentTime) {
         if (idleTime > 0) {
@@ -89,26 +109,6 @@ public class UtilPipedStream implements IStep {
 
             return true;
         }
-    }
-
-    public static final void closeCloseable(Closeable closeable) {
-        if (closeable == null) {
-            return;
-        }
-
-        try {
-            closeable.close();
-
-        } catch (IOException e) {
-            Environment.throwable(e);
-        }
-    }
-
-    public static final long getHashIndex(int hashKey, int index) {
-        long hashIndex = hashKey;
-        hashIndex <<= 32;
-        hashIndex += index;
-        return hashIndex;
     }
 
     public int getSize() {
@@ -209,7 +209,7 @@ public class UtilPipedStream implements IStep {
         }
 
         public final void retainAt() {
-            passTime += UtilContext.getCurrentTime() + idleTime;
+            passTime = UtilContext.getCurrentTime() + idleTime;
         }
 
         @Override

@@ -184,16 +184,35 @@ public class SocketAdapterSel extends SocketAdapter {
 
     @Override
     public void receiveCallback(int offset, byte[] buffer, byte flag, Integer callbackIndex) {
-        if ((flag & STREAM_CLOSE_FLAG) != 0) {
+        if ((flag & STREAM_FLAG) != 0) {
+            //没有POST_FLAG只管写入，有POST_FLAG才需要创建
+            if ((flag & POST_FLAG) == 0) {
+                int length = buffer.length;
+                int streamIndex = getVarints(buffer, offset, length);
+                int streamIndexLen = getVarintsLength(streamIndex);
+                int offLen = offset + streamIndexLen;
+                // 写入流信息
+                NextOutputStream outputStream = getPipedStream().getOutputStream(streamIndex);
+                if (outputStream != null) {
+                    try {
+                        outputStream.write(buffer, offLen, length);
+                        return;
+
+                    } catch (IOException e) {
+                        Environment.throwable(e);
+                    }
+                }
+
+                sendData(sendDataBytes(0, buffer, offset, offset + streamIndexLen, true, false, STREAM_CLOSE_FLAG, 0, null, 0, 0, true));
+                return;
+            }
+
+        } else if ((flag & STREAM_CLOSE_FLAG) != 0) {
             int length = buffer.length;
             int streamIndex = getVarints(buffer, offset, length);
             if (length == offset + getVarintsLength(streamIndex)) {
-                if ((flag & POST_FLAG) != 0) {
-                    if (activePool != null) {
-                        getActivePool().remove(streamIndex);
-                    }
-
-                } else {
+                if ((flag & POST_FLAG) == 0) {
+                    //接收关闭
                     NextOutputStream outputStream = getPipedStream().getOutputStream(streamIndex);
                     if (outputStream != null) {
                         try {
@@ -202,6 +221,12 @@ public class SocketAdapterSel extends SocketAdapter {
                         } catch (IOException e) {
                             Environment.throwable(e);
                         }
+                    }
+
+                } else {
+                    //发送关闭
+                    if (activePool != null) {
+                        getActivePool().remove(streamIndex);
                     }
                 }
 
@@ -218,52 +243,32 @@ public class SocketAdapterSel extends SocketAdapter {
         if ((flag & STREAM_FLAG) != 0) {
             int length = buffer.length;
             int streamIndex = getVarints(buffer, offset, length);
-            int indexLength = getVarintsLength(streamIndex);
-            int offsetIndex = offset + indexLength;
-            if (length > offsetIndex) {
-                // 写入流信息
-                NextOutputStream outputStream = getPipedStream().getOutputStream(streamIndex);
-                if (outputStream != null) {
-                    try {
-                        outputStream.write(buffer, offsetIndex, length);
-                        return;
-
-                    } catch (IOException e) {
-                        Environment.throwable(e);
-                    }
-                }
-
-                sendData(sendDataBytes(0, buffer, offset, indexLength, true, false, STREAM_CLOSE_FLAG, 0,
-                        null, 0, 0));
-                return;
-
-            } else if (length == offsetIndex) {
-                try {
+            int streamIndexLen = getVarintsLength(streamIndex);
+            try {
+                NextOutputStream outputStream = callbackAdapter instanceof CallbackAdapterStream ? createNextOutputStream(streamIndex) : null;
+                if (outputStream == null) {
                     // 不是CallbackAdapterStream 不能接受流数据返回
-                    NextOutputStream outputStream = callbackAdapter instanceof CallbackAdapterStream ? createNextOutputStream(streamIndex) : null;
-                    if (outputStream == null) {
-                        sendData(sendDataBytes(0, buffer, offset, indexLength, true, false,
-                                (byte) (STREAM_CLOSE_FLAG | POST_FLAG), 0, null, 0, 0));
+                    sendData(sendDataBytes(0, buffer, offset, offset + streamIndexLen, true, false, STREAM_CLOSE_FLAG, 0, null, 0, 0, true));
 
-                    } else {
-                        PipedInputStream inputStream = new PipedInputStream();
-                        outputStream.connect(inputStream);
-                        CallbackAdapterStream callbackAdapteStream = (CallbackAdapterStream) callbackAdapter;
-                        callbackAdapter = null;
-                        callbackAdapteStream.doWith(this, offset, buffer, inputStream);
-                        return;
-                    }
-
-                } catch (Exception e) {
-                    LOGGER.error("receiveCallbackStream", e);
+                } else {
+                    // 生成PipedInputStream执行回调
+                    PipedInputStream inputStream = new PipedInputStream();
+                    inputStream.connect(outputStream);
+                    CallbackAdapterStream callbackAdapterStream = (CallbackAdapterStream) callbackAdapter;
+                    callbackAdapter = null;
+                    callbackAdapterStream.doWith(this, offset + streamIndexLen, buffer, inputStream);
+                    return;
                 }
 
-                if (callbackAdapter != null) {
-                    callbackAdapter.doWith(this, offset, null);
-                }
-
-                return;
+            } catch (Exception e) {
+                LOGGER.error("receiveCallbackStream", e);
             }
+
+            if (callbackAdapter != null) {
+                callbackAdapter.doWith(this, offset, null);
+            }
+
+            return;
         }
 
         super.receiveCallback(callbackAdapter, offset, buffer, flag, callbackIndex);
@@ -311,31 +316,28 @@ public class SocketAdapterSel extends SocketAdapter {
     protected RegisteredRunnable sendStream(byte[] dataBytes, boolean human, final int callbackIndex,
                                             final InputStream inputStream, final CallbackTimeout callbackTimeout, final long timeout) {
         connect();
-        boolean sended = false;
-        ObjectTemplate<Integer> template = getActivePool().addObject();
-        final ObjectTemplate<ObjectTemplate<Integer>> nextTemplate = new ObjectTemplate<ObjectTemplate<Integer>>(
-                template);
+        int sended = 0;
+        final ObjectTemplate<Integer> template = getActivePool().addObject();
         if (template == null) {
             return null;
         }
 
         final int streamIndex = template.object;
-        final int indexLength = getVarintsLength(streamIndex);
+        final int streamIndexLen = getVarintsLength(streamIndex);
         try {
-            final byte[] buffer = sendDataBytes(indexLength, dataBytes, true, human, STREAM_FLAG, callbackIndex, null);
+            final byte[] buffer = sendDataBytes(streamIndexLen, dataBytes, true, human, (byte) (STREAM_FLAG | POST_FLAG), callbackIndex, null);
             int offLen = getVarintsLength(buffer, 0, 4) + 1;
             setVarintsLength(buffer, offLen, streamIndex);
             final Runnable postRunnable = new Runnable() {
 
                 @Override
                 public void run() {
-                    ObjectTemplate<Integer> nextIndex = nextTemplate.object;
                     try {
-                        byte[] sendBuffer = sendDataBytes(indexLength, null, 0, 0, true, false, (byte) (STREAM_FLAG | POST_FLAG), 0,
+                        byte[] sendBuffer = sendDataBytes(streamIndexLen, null, 0, 0, true, false, STREAM_FLAG, 0,
                                 null, 0, getPostBuffLen(), true);
                         setVarintsLength(sendBuffer, 3, streamIndex);
-                        int length = buffer.length;
-                        int postOff = 3 + indexLength;
+                        int postOff = 3 + streamIndexLen;
+                        int length = sendBuffer.length - postOff;
                         int len;
                         try {
                             while ((len = inputStream.read(sendBuffer, postOff, length)) > 0) {
@@ -343,7 +345,7 @@ public class SocketAdapterSel extends SocketAdapter {
                                 sendBuffer[0] = (byte) ((len & 0x7F) | 0x80);
                                 sendBuffer[1] = (byte) ((len >> 7) & 0x7F);
 
-                                if (nextIndex.object == null || !sendData(sendBuffer, 0, len + 2)) {
+                                if (template.object == null || !sendData(sendBuffer, 0, len + 2)) {
                                     return;
                                 }
 
@@ -366,53 +368,74 @@ public class SocketAdapterSel extends SocketAdapter {
                         UtilPipedStream.closeCloseable(inputStream);
                     }
 
-                    sendData(sendDataBytes(0, KernelByte.getLengthBytes(streamIndex), true, false,
-                            STREAM_CLOSE_FLAG | POST_FLAG, 0, null));
+                    sendData(sendDataBytes(0, KernelByte.getLengthBytes(streamIndex), true, false, STREAM_CLOSE_FLAG | POST_FLAG, 0, null));
                 }
             };
 
             if (registered && sendData(buffer)) {
+                sended = 1;
                 UtilContext.getThreadPoolExecutor().execute(postRunnable);
-                sended = false;
+                sended = 2;
                 return null;
             }
 
-            RegisteredRunnable runnable = new RegisteredRunnable() {
+            if (callbackTimeout != null) {
+                //有callbackTimeout 可以延迟发送流
+                RegisteredRunnable runnable = new RegisteredRunnable() {
 
-                @Override
-                public void doRun() {
-                    ObjectTemplate<Integer> nextIndex = getActivePool().addObject();
-                    if (nextIndex == null) {
-                        failed = true;
-                        return;
-                    }
+                    int sended = 0;
 
-                    boolean sended = false;
-                    try {
-                        KernelByte.setLength(buffer, buffer.length - 4, nextIndex.object);
-                        failed = !sendData(buffer);
-                        if (!failed) {
-                            nextTemplate.object = nextIndex;
-                            UtilContext.getThreadPoolExecutor().execute(postRunnable);
-                            sended = true;
-                        }
-
-                    } finally {
-                        if (!sended) {
-                            activePool.remove(nextIndex.object);
-                            UtilPipedStream.closeCloseable(inputStream);
+                    @Override
+                    public void timeout() {
+                        super.timeout();
+                        activePool.remove(streamIndex);
+                        UtilPipedStream.closeCloseable(inputStream);
+                        if (sended == 1) {
+                            // 通知流关闭
+                            sendData(sendDataBytes(0, KernelByte.getLengthBytes(streamIndex), true, false,
+                                    STREAM_CLOSE_FLAG | POST_FLAG, 0, null));
                         }
                     }
-                }
-            };
 
-            addRegisterRunnable(runnable);
-            return runnable;
+                    @Override
+                    protected void doRun() {
+                        try {
+                            failed = !sendData(buffer);
+                            if (!failed) {
+                                sended = 1;
+                                UtilContext.getThreadPoolExecutor().execute(postRunnable);
+                                sended = 2;
+                            }
+
+                        } finally {
+                            if (sended < 2) {
+                                activePool.remove(streamIndex);
+                                UtilPipedStream.closeCloseable(inputStream);
+                                if (sended == 1) {
+                                    // 通知流关闭
+                                    sendData(sendDataBytes(0, KernelByte.getLengthBytes(streamIndex), true, false,
+                                            STREAM_CLOSE_FLAG | POST_FLAG, 0, null));
+                                }
+                            }
+                        }
+                    }
+                };
+
+                sended = 2;
+                return runnable;
+            }
+
+            return null;
 
         } finally {
-            if (!sended) {
+            if (sended < 2) {
                 activePool.remove(streamIndex);
                 UtilPipedStream.closeCloseable(inputStream);
+                if (sended == 1) {
+                    // 通知流关闭
+                    sendData(sendDataBytes(0, KernelByte.getLengthBytes(streamIndex), true, false,
+                            STREAM_CLOSE_FLAG | POST_FLAG, 0, null));
+                }
             }
         }
     }

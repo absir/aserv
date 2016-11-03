@@ -132,18 +132,16 @@ public class RpcInterface {
     }
 
     public static boolean isCustomRpc(Rpc rpc) {
-        return rpc.timeout() > 0 || rpc.sendStream() || rpc.returnStream();
+        return rpc != null;
     }
 
     public static RpcAttribute getRpcAttributeClass(Rpc rpc, Class<?> interfaceType) {
-        if (rpc != null) {
-            if (isCustomRpc(rpc)) {
-                RpcAttribute attribute = new RpcAttribute();
-                attribute.timeout = rpc.timeout();
-                attribute.sendStream = rpc.sendStream();
-                attribute.returnStream = rpc.returnStream();
-                return attribute;
-            }
+        if (isCustomRpc(rpc)) {
+            RpcAttribute attribute = new RpcAttribute();
+            attribute.timeout = rpc.timeout();
+            attribute.sendStream = rpc.sendStream();
+            attribute.async = rpc == null ? false : rpc.async();
+            return attribute;
         }
 
         return null;
@@ -151,16 +149,20 @@ public class RpcInterface {
 
     public static RpcAttribute getRpcAttributeMethod(RpcAttribute rpcAttribute, Method method) {
         Rpc rpc = method.getAnnotation(Rpc.class);
-        if (rpc != null) {
-            int streamIndex = KernelArray.index(method.getParameterTypes(), InputStream.class);
-            boolean returnStream = method.getReturnType() == InputStream.class;
-            if (isCustomRpc(rpc) || streamIndex >= 0 || returnStream) {
-                RpcAttribute attribute = new RpcAttribute();
-                attribute.timeout = rpc == null ? 0 : rpc.timeout();
-                attribute.sendStream = streamIndex >= 0 ? true : rpc == null ? false : rpc.sendStream();
-                attribute.returnStream = returnStream ? true : rpc == null ? false : rpc.returnStream();
-                rpcAttribute = attribute;
-            }
+        int streamIndex = KernelArray.index(method.getParameterTypes(), InputStream.class);
+        if (isCustomRpc(rpc)) {
+            RpcAttribute attribute = new RpcAttribute();
+            attribute.timeout = rpc.timeout();
+            attribute.sendStream = streamIndex >= 0 ? true : rpc.sendStream();
+            attribute.async = rpc.async();
+            rpcAttribute = attribute;
+
+        } else if (streamIndex >= 0 && (rpcAttribute == null || !rpcAttribute.sendStream)) {
+            RpcAttribute attribute = new RpcAttribute();
+            attribute.timeout = rpcAttribute == null ? 0 : rpcAttribute.timeout;
+            attribute.sendStream = true;
+            attribute.async = rpcAttribute == null ? false : rpcAttribute.async;
+            rpcAttribute = attribute;
         }
 
         return rpcAttribute;
@@ -176,7 +178,10 @@ public class RpcInterface {
 
         protected boolean sendStream;
 
-        protected boolean returnStream;
+        // 应该由实现层控制
+        //protected boolean returnStream;
+
+        protected boolean async;
 
     }
 

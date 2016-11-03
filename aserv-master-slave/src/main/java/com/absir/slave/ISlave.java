@@ -5,6 +5,7 @@ import com.absir.client.value.Rpc;
 import com.absir.server.value.Body;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by absir on 2016/10/27.
@@ -20,5 +21,11 @@ public interface ISlave {
 
     @JaLang("同步服务实体")
     public void option(String entityName, int option, @Body byte[] postData);
+
+    public InputStream test(InputStream inputStream);
+
+    public InputStream test1(String name, InputStream inputStream);
+
+    public void test2(String name, InputStream inputStream);
 
 }

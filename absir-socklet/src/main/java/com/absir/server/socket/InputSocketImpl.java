@@ -7,7 +7,6 @@
  */
 package com.absir.server.socket;
 
-import com.absir.client.SocketAdapter;
 import com.absir.server.in.InModel;
 import com.absir.server.socket.resolver.InputBufferResolver;
 import com.absir.server.socket.resolver.SocketBufferResolver;
@@ -18,12 +17,6 @@ public class InputSocketImpl extends InputSocket {
 
     public InputSocketImpl(InModel model, InputSocketAtt inputSocketAtt, SocketChannel socketChannel) {
         super(model, inputSocketAtt, socketChannel);
-    }
-
-    public static boolean writeByteBufferSuccess(SelSession selSession, SocketChannel socketChannel, boolean success,
-                                                 int callbackIndex, byte[] bytes) {
-        return writeByteBuffer(InputBufferResolver.ME, selSession, socketChannel,
-                success == true ? 0 : SocketAdapter.ERROR_OR_SPECIAL_FLAG, callbackIndex, bytes);
     }
 
     @Override

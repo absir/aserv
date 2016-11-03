@@ -392,10 +392,6 @@ public class SocketAdapter {
     }
 
     public CallbackTimeout putReceiveCallbacks(int callbackIndex, int timeout, CallbackAdapter callbackAdapter) {
-//        if (callbackAdapter == null) {
-//            return null;
-//        }
-
         ObjectEntry<CallbackAdapter, CallbackTimeout> entry = new ObjectEntry<CallbackAdapter, CallbackTimeout>(
                 callbackAdapter, null);
         CallbackTimeout callbackTimeout = null;
@@ -529,8 +525,6 @@ public class SocketAdapter {
 
     /**
      * 断开连接
-     *
-     * @param st
      */
     public void disconnect(Socket st) {
         if (st == null || st == socket) {
@@ -629,11 +623,6 @@ public class SocketAdapter {
 
     /**
      * 接收数据
-     *
-     * @param st
-     * @param buffer
-     * @param off
-     * @param len
      */
     public void receiveByteBuffer(Socket st, byte[] buffer, int off, int len) {
         if (st != socket) {
@@ -709,8 +698,6 @@ public class SocketAdapter {
 
     /**
      * 接收完成数据
-     *
-     * @param buffer
      */
     public void receiveBuffDone(byte[] buffer) {
         int length = buffer.length;
@@ -803,11 +790,6 @@ public class SocketAdapter {
 
     /**
      * 接收数据回调
-     *
-     * @param offset
-     * @param buffer
-     * @param flag
-     * @param callbackIndex
      */
     public void receiveCallback(int offset, byte[] buffer, byte flag, Integer callbackIndex) {
         if (callbackIndex != null) {
@@ -849,13 +831,6 @@ public class SocketAdapter {
 
     /**
      * 生成发送数据包
-     *
-     * @param dataBytes
-     * @param head
-     * @param human
-     * @param callbackIndex
-     * @param postData
-     * @return
      */
     public byte[] sendDataBytes(byte[] dataBytes, boolean head, boolean human, int callbackIndex, byte[] postData) {
         return sendDataBytes(0, dataBytes, head, human, callbackIndex, postData);
@@ -863,14 +838,6 @@ public class SocketAdapter {
 
     /**
      * 生成发送数据包
-     *
-     * @param off
-     * @param dataBytes
-     * @param head
-     * @param human
-     * @param callbackIndex
-     * @param postData
-     * @return
      */
     public byte[] sendDataBytes(int off, byte[] dataBytes, boolean head, boolean human, int callbackIndex,
                                 byte[] postData) {
@@ -879,15 +846,6 @@ public class SocketAdapter {
 
     /**
      * 生成发送数据包
-     *
-     * @param off
-     * @param dataBytes
-     * @param head
-     * @param human
-     * @param flag
-     * @param callbackIndex
-     * @param postData
-     * @return
      */
     public byte[] sendDataBytes(int off, byte[] dataBytes, boolean head, boolean human, int flag, int callbackIndex,
                                 byte[] postData) {
@@ -906,7 +864,10 @@ public class SocketAdapter {
 
         int cLen = callbackIndex == 0 ? 0 : getVarintsLength(callbackIndex);
 
-        postLen = postData == null ? 0 : (postLen - postOff);
+        if (postData != null) {
+            postLen -= postOff;
+        }
+
         int pLen = noPLen || postLen <= 0 ? 0 : getVarintsLength(postLen);
 
         byte headFlag = flag;
@@ -935,10 +896,10 @@ public class SocketAdapter {
             length++;
         }
 
-        int offLen = getVarintsLength(length) + off;
+        int offLen = getVarintsLength(length);
         byte[] sendDataBytes = new byte[offLen + length];
         setVarintsLength(sendDataBytes, 0, length);
-
+        offLen += off;
         if (head) {
             if (human) {
                 headFlag |= HUMAN_FLAG;
@@ -956,8 +917,11 @@ public class SocketAdapter {
             }
         }
 
-        System.arraycopy(dataBytes, dataOff, sendDataBytes, offLen, dataLen);
-        offLen += dataLen;
+        if (dataLen > 0) {
+            System.arraycopy(dataBytes, dataOff, sendDataBytes, offLen, dataLen);
+            offLen += dataLen;
+        }
+
         if (postLen > 0 && postData != null) {
             System.arraycopy(postData, postOff, sendDataBytes, offLen, postLen);
         }
@@ -1055,14 +1019,6 @@ public class SocketAdapter {
 
     /**
      * 发送目标数据
-     *
-     * @param callbackIndex
-     * @param dataBytes
-     * @param head
-     * @param human
-     * @param postData
-     * @param timeout
-     * @param callbackAdapter
      */
     public void sendDataIndex(int callbackIndex, byte[] dataBytes, boolean head, boolean human, byte[] postData,
                               int timeout, CallbackAdapter callbackAdapter) {
@@ -1142,6 +1098,10 @@ public class SocketAdapter {
 
         protected boolean removed;
 
+        public void timeout() {
+            removed = true;
+        }
+
         public void run() {
             if (!removed) {
                 doRun();
@@ -1192,7 +1152,7 @@ public class SocketAdapter {
         public void run() {
             RegisteredRunnable runnable = registeredRunnable;
             if (runnable != null) {
-                runnable.removed = true;
+                runnable.timeout();
             }
 
             SocketAdapter adapter = socketAdapter;
@@ -1212,6 +1172,7 @@ public class SocketAdapter {
     protected static class TimeoutThread extends Thread {
 
         private final List<CallbackTimeout> addTimeouts = new ArrayList<CallbackTimeout>();
+
         /**
          * 超时执行队列
          */

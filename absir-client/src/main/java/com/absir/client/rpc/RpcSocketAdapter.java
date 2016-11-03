@@ -48,15 +48,25 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
 
     @Override
     public Object sendDataIndexVarints(final RpcInterface.RpcAttribute attribute, final String uri, byte[] paramData, final Object[] args, final Class<?>[] parameterTypes, final Class<?> returnType) throws IOException {
-        final Object[] returns = new Object[1];
         int timeout = attribute == null ? 0 : attribute.timeout;
         if (timeout == 0) {
             timeout = getDefaultTimeout();
         }
 
-        final UtilAtom atom = new UtilAtom();
-        atom.increment();
-        SocketAdapter.CallbackAdapter callbackAdapter = new SocketAdapterSel.CallbackAdapterStream() {
+        boolean async = attribute != null && attribute.async;
+        final Object[] returns;
+        final UtilAtom atom;
+        if (async) {
+            returns = null;
+            atom = null;
+
+        } else {
+            returns = new Object[1];
+            atom = new UtilAtom();
+            atom.increment();
+        }
+
+        SocketAdapter.CallbackAdapter callbackAdapter = async ? null : new SocketAdapterSel.CallbackAdapterStream() {
 
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
@@ -118,9 +128,7 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
             socketAdapter.sendDataIndexVarints(uri, paramData, timeout, callbackAdapter);
 
         } else {
-            final PipedInputStream inputStream = new PipedInputStream();
             final PipedOutputStream outputStream = new PipedOutputStream();
-            outputStream.connect(inputStream);
             UtilContext.getThreadPoolExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -129,12 +137,20 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
 
                     } catch (Exception e) {
                         Environment.throwable(e);
+
+                    } finally {
                         UtilPipedStream.closeCloseable(outputStream);
                     }
                 }
             });
 
+            PipedInputStream inputStream = new PipedInputStream();
+            inputStream.connect(outputStream);
             socketAdapter.sendStream(uri.getBytes(), true, false, inputStream, timeout, callbackAdapter);
+        }
+
+        if (async) {
+            return null;
         }
 
         atom.await();

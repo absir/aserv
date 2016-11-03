@@ -10,6 +10,7 @@ package com.absir.master.resolver;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.inject.value.Value;
 import com.absir.client.SocketAdapter;
 import com.absir.client.SocketAdapter.CallbackAdapter;
 import com.absir.client.SocketAdapter.CallbackTimeout;
@@ -46,8 +47,14 @@ import java.nio.channels.SocketChannel;
 public class MasterServerResolver extends SocketServerResolver {
 
     public static final MasterServerResolver ME = BeanFactoryUtils.get(MasterServerResolver.class);
-
+    @Value("server.socket.stream.max.master")
+    private static int streamMaxMaster = 4;
     protected SocketAdapterSel masterAdapter = createMasterAdapter();
+
+    @Override
+    public int getStreamMax() {
+        return streamMaxMaster;
+    }
 
     @Override
     public long acceptTimeoutNIO(final SocketChannel socketChannel) throws Throwable {
@@ -55,8 +62,7 @@ public class MasterServerResolver extends SocketServerResolver {
 
             @Override
             public void run() {
-                InputSocket.writeByteBuffer(MasterBufferResolver.ME, null, socketChannel, 0,
-                        KernelByte.getLengthBytes(socketChannel.hashCode()));
+                InputSocket.writeByteBuffer(null, socketChannel, (byte) 0, 0, KernelByte.getLengthBytes(socketChannel.hashCode()));
             }
         });
 
@@ -96,7 +102,7 @@ public class MasterServerResolver extends SocketServerResolver {
     }
 
     @Override
-    protected void doResponse(SocketChannel socketChannel, Serializable id, byte flag, byte[] buffer) {
+    protected void doResponse(SocketChannel socketChannel, Serializable id, byte flag, int offset, byte[] buffer, InputStream inputStream) {
         masterAdapter.receiveCallback(0, buffer, (byte) flag);
     }
 

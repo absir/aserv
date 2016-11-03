@@ -133,6 +133,11 @@ public class HandlerInvoker {
             Object[] args = null;
             try {
                 args = format.readArray(inputStream, handlerMethod.parameterTypes);
+                if (handlerMethod.isSendStream() && handlerMethod.method.getReturnType() == InputStream.class) {
+                    // 双方向流，先写出防止阻塞
+                    onPut.getInput().readyOutputStream();
+                }
+
                 onPut.setReturnValue(handlerMethod.method.invoke(handler, args));
 
             } catch (Throwable e) {

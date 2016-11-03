@@ -7,11 +7,11 @@
  */
 package com.absir.server.socket.resolver;
 
-import com.absir.core.kernel.KernelLang;
 import com.absir.server.socket.SelSession;
 import com.absir.server.socket.SocketBuffer;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
@@ -28,7 +28,15 @@ public interface IBufferResolver {
 
     public byte[] createByteHeader(int headerLength, ByteBuffer byteBuffer);
 
-    public int getPostBufferLen();
+    public boolean receiveStreamNIO(final SocketChannel socketChannel, final SelSession selSession, final SocketBuffer socketBuffer, final byte flag, final byte[] buffer, final long currentTime, final int streamMax, final IServerDispatch serverDispatch);
 
-    public void writeInputStream(final SelSession selSession, final KernelLang.ObjectTemplate<Integer> template, final int streamIndex, final InputStream inputStream);
+    public boolean writeByteBuffer(final SelSession selSession, final SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes, int offset, int length, final InputStream inputStream);
+
+    public interface IServerDispatch {
+
+        public void doDispatch(SelSession selSession, SocketChannel socketChannel, Serializable id, byte[] buffer, byte flag, int off,
+                               SocketBuffer socketBuffer, InputStream inputStream, long currentTime);
+
+    }
+
 }

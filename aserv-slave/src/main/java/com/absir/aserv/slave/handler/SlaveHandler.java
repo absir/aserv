@@ -11,6 +11,7 @@ import com.absir.slave.ISlave;
 import com.absir.slave.InputSlave;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by absir on 2016/10/27.
@@ -41,6 +42,26 @@ public class SlaveHandler implements IHandler, ISlave {
 
     @Override
     public void option(String entityName, int option, @Body byte[] postData) {
+
+    }
+
+    @Override
+    public InputStream test(InputStream inputStream) {
+        OnPut put = OnPut.get();
+        if (put != null) {
+            //put.getInput
+        }
+
+        return null;
+    }
+
+    @Override
+    public InputStream test1(String name, InputStream inputStream) {
+        return null;
+    }
+
+    @Override
+    public void test2(String name, InputStream inputStream) {
 
     }
 }

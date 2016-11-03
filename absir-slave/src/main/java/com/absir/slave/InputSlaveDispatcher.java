@@ -22,7 +22,6 @@ import com.absir.server.socket.InputSocket;
 import com.absir.server.socket.resolver.BodyMsgResolver;
 import com.absir.slave.InputSlave.InputSlaveAtt;
 import com.absir.slave.resolver.ISlaveCallback;
-import com.absir.slave.resolver.SlaveBufferResolver;
 
 import java.nio.channels.SocketChannel;
 
@@ -43,7 +42,7 @@ public class InputSlaveDispatcher extends InDispatcher<InputSlaveAtt, SocketChan
                 Environment.throwable(e);
             }
 
-            InputSocket.writeByteBuffer(SlaveBufferResolver.ME, null, adapter.getSocket().getChannel(),
+            InputSocket.writeByteBuffer(null, adapter.getSocket().getChannel(),
                     (byte) (SocketAdapter.ERROR_OR_SPECIAL_FLAG | SocketAdapter.RESPONSE_FLAG), inputSocketAtt.getCallbackIndex(),
                     InputSocket.NONE_RESPONSE_BYTES);
         }

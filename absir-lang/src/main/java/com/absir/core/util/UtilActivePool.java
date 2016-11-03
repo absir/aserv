@@ -21,17 +21,19 @@ public class UtilActivePool {
 
     public synchronized ObjectTemplate<Integer> addObject() {
         boolean maxed = false;
-        while (activeMap.containsKey(index)) {
+        while (true) {
+            index++;
             if (index >= KernelByte.VARINTS_4_LENGTH) {
                 if (maxed) {
                     return null;
                 }
 
                 maxed = true;
-                index = 0;
+                index = 1;
+            }
 
-            } else {
-                index++;
+            if (!activeMap.containsKey(index)) {
+                break;
             }
         }
 

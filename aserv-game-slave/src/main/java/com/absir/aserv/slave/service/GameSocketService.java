@@ -19,7 +19,6 @@ import com.absir.server.in.Input;
 import com.absir.server.route.RouteMatcher;
 import com.absir.server.route.returned.ReturnedResolverBody;
 import com.absir.server.socket.InputSocket;
-import com.absir.server.socket.InputSocketContext;
 import com.absir.server.socket.SelSession;
 import com.absir.server.socket.resolver.SocketServerResolver;
 import com.baidu.bjf.remoting.protobuf.Codec;
@@ -49,7 +48,7 @@ public class GameSocketService extends SocketServerResolver {
 
     public void writeGoogleProto(SocketChannel socketChannel, SelSession selSession, int callbackIndex, IProto proto) throws IOException {
         Codec<IProto> codec = (Codec<IProto>) ProtobufProxy.create(proto.getClass());
-        InputSocket.writeByteBuffer(InputSocketContext.ME.getBufferResolver(), selSession, socketChannel, callbackIndex, codec.encode(proto));
+        InputSocket.writeByteBuffer(selSession, socketChannel, callbackIndex, codec.encode(proto));
     }
 
     @Override

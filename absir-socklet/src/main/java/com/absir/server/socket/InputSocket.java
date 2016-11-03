@@ -9,15 +9,11 @@ package com.absir.server.socket;
 
 import com.absir.bean.basis.Configure;
 import com.absir.client.SocketAdapter;
-import com.absir.client.SocketNIO;
 import com.absir.context.core.ContextUtils;
-import com.absir.core.base.Environment;
 import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelByte;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelLang;
-import com.absir.core.kernel.KernelLang.ObjectTemplate;
-import com.absir.core.util.UtilActivePool;
 import com.absir.core.util.UtilPipedStream;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.InMethod;
@@ -27,7 +23,6 @@ import com.absir.server.route.RouteAdapter;
 import com.absir.server.socket.resolver.SocketBufferResolver;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Map;
 
@@ -40,114 +35,51 @@ public abstract class InputSocket extends Input {
 
     protected static byte INPUT_FLAG = SocketAdapter.HUMAN_FLAG;
 
-    protected SelSession selSession;
-    private SocketChannel socketChannel;
-    private String uri;
+    protected InputSocketAtt socketAtt;
     private int status = ServerStatus.ON_SUCCESS.getCode();
     private byte flag;
-    private int callbackIndex;
-    private byte[] inputBuffer;
-    private int inputPos;
-    private int inputCount;
+    private int urlVarints;
     private InputStream inputStream;
+    private SocketChannel socketChannel;
     private String input;
     private OutputStream outputStream;
-    private int urlVarints;
 
-    public InputSocket(InModel model, InputSocketAtt inputSocketAtt, SocketChannel socketChannel) {
+    public InputSocket(InModel model, InputSocketAtt socketAtt, SocketChannel socketChannel) {
         super(model);
-        this.selSession = inputSocketAtt.selSession;
-        this.socketChannel = socketChannel;
-        setId(inputSocketAtt.getId());
-        uri = inputSocketAtt.getUrl();
-        flag = (byte) (inputSocketAtt.getFlag() & INPUT_FLAG);
-        callbackIndex = inputSocketAtt.getCallbackIndex();
-        inputBuffer = inputSocketAtt.getBuffer();
-        if (inputBuffer != null) {
-            inputCount = inputSocketAtt.getPostDataLength();
-            inputPos = inputBuffer.length - inputCount;
-        }
-
-        inputStream = inputSocketAtt.inputStream;
-
-        // 写入字典
-        urlVarints = inputSocketAtt.urlVarints;
+        this.socketAtt = socketAtt;
+        setId(socketAtt.getId());
+        flag = (byte) (socketAtt.getFlag() & INPUT_FLAG);
+        urlVarints = socketAtt.urlVarints;
+        this.inputStream = socketAtt.inputStream;
+        this.socketChannel = socketChannel == null ? socketAtt.getSelSession().getSocketChannel() : socketChannel;
     }
 
-    public static boolean writeBuffer(SocketChannel socketChannel, byte[] buffer) {
-        return writeBuffer(socketChannel, buffer, 0, buffer.length);
+    public static boolean writeBuffer(SocketChannel socketChannel, byte[] bytes) {
+        return writeByteBuffer(null, socketChannel, (byte) 0, 0, bytes);
     }
 
-    public static boolean writeBuffer(SocketChannel socketChannel, byte[] buffer, int offset, int length) {
-        try {
-            SocketNIO.writeTimeout(socketChannel, ByteBuffer.wrap(buffer, offset, length));
-            return true;
-
-        } catch (IOException e) {
-            SocketServer.close(socketChannel);
-        }
-
-        return false;
+    public static boolean writeBuffer(SocketChannel socketChannel, byte[] bytes, int off, int len) {
+        return writeByteBuffer(null, socketChannel, (byte) 0, 0, bytes, off, len);
     }
 
-    public static boolean writeByteBuffer(SocketBufferResolver bufferResolver, SelSession selSession,
-                                          SocketChannel socketChannel, int callbackIndex, byte[] bytes) {
-        return writeByteBuffer(bufferResolver, selSession, socketChannel, (byte) 0, callbackIndex, bytes, 0,
-                bytes.length);
+    public static boolean writeByteBufferSuccess(SelSession selSession, SocketChannel socketChannel, boolean success, int callbackIndex, byte[] bytes) {
+        return writeByteBuffer(selSession, socketChannel, success == true ? 0 : SocketAdapter.ERROR_OR_SPECIAL_FLAG, callbackIndex, bytes);
     }
 
-    public static boolean writeByteBuffer(SocketBufferResolver bufferResolver, SelSession selSession,
-                                          SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes) {
-        return writeByteBuffer(bufferResolver, selSession, socketChannel, flag, callbackIndex, bytes, 0, bytes.length);
+    public static boolean writeByteBuffer(SelSession selSession, SocketChannel socketChannel, int callbackIndex, byte[] bytes) {
+        return InputSocketContext.ME.getBufferResolver().writeByteBuffer(selSession, socketChannel, (byte) 0, callbackIndex, bytes, 0, bytes.length, null);
     }
 
-    public static boolean writeByteBuffer(SocketBufferResolver bufferResolver, SelSession selSession,
-                                          SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes, int offset, int length) {
-        int headerLength = callbackIndex == 0 ? flag == 0 ? 0 : 1 : (1 + SocketAdapter.getVarintsLength(callbackIndex));
-
-        ByteBuffer byteBuffer = bufferResolver.createByteBuffer(socketChannel, headerLength, bytes, offset,
-                length);
-        byte[] headerBytes = bufferResolver.createByteHeader(headerLength, byteBuffer);
-        if (headerBytes == null) {
-            return false;
-        }
-
-        int headerOffset = headerBytes.length - headerLength;
-        if (callbackIndex != 0) {
-            flag |= SocketAdapter.CALLBACK_FLAG;
-            KernelByte.setVarintsLength(headerBytes, headerOffset + 1, callbackIndex);
-        }
-
-        if (headerLength > 0) {
-            headerBytes[headerOffset] = flag;
-        }
-
-        synchronized (socketChannel) {
-            try {
-                SocketNIO.writeTimeout(socketChannel, ByteBuffer.wrap(headerBytes));
-                SocketNIO.writeTimeout(socketChannel, byteBuffer);
-                return true;
-
-            } catch (Throwable e) {
-                SocketServer.close(selSession, socketChannel);
-            }
-        }
-
-        return false;
+    public static boolean writeByteBuffer(SelSession selSession, SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes) {
+        return writeByteBuffer(selSession, socketChannel, flag, callbackIndex, bytes, 0, bytes.length);
     }
 
-    public SocketChannel getSocketChannel() {
-        return socketChannel;
+    public static boolean writeByteBuffer(SelSession selSession, SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes, int off, int len) {
+        return InputSocketContext.ME.getBufferResolver().writeByteBuffer(selSession, socketChannel, flag, callbackIndex, bytes, off, len, null);
     }
 
-    public Object getMeta(String name) {
-        return selSession == null ? null : selSession.getMeta(name);
-    }
-
-    public void setMeta(String name, Object value) {
-        if (selSession != null) {
-            selSession.setMeta(name, value);
-        }
+    public InputSocketAtt getSocketAtt() {
+        return socketAtt;
     }
 
     @Override
@@ -162,7 +94,7 @@ public abstract class InputSocket extends Input {
 
     @Override
     public String getUri() {
-        return uri;
+        return socketAtt.getUrl();
     }
 
     @Override
@@ -177,7 +109,7 @@ public abstract class InputSocket extends Input {
 
     @Override
     public InMethod getMethod() {
-        return inputBuffer == null && inputStream == null ? InMethod.GET : InMethod.POST;
+        return socketAtt.getMethod();
     }
 
     @Override
@@ -202,28 +134,18 @@ public abstract class InputSocket extends Input {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        if (inputStream != null) {
-            return inputStream;
+        if (inputStream == null) {
+            inputStream = socketAtt.getPostInputStream();
         }
 
-        return inputBuffer == null ? null : new ByteArrayInputStream(inputBuffer, inputPos, inputCount);
+        return inputStream;
     }
 
     @Override
     public String getInput() {
         if (input == null) {
-            if (inputBuffer != null) {
-                input = new String(inputBuffer, inputPos, inputCount, ContextUtils.getCharset());
-
-            } else if (inputStream != null) {
-                try {
-                    input = HelperIO.toString(inputStream, ContextUtils.getCharset());
-
-                } catch (IOException e) {
-                    input = KernelLang.NULL_STRING;
-                }
-
-            } else {
+            input = socketAtt.getPostInput();
+            if (input == null) {
                 input = KernelLang.NULL_STRING;
             }
         }
@@ -249,34 +171,6 @@ public abstract class InputSocket extends Input {
         return outputStream;
     }
 
-    public void readyOutputStream() {
-        if (outputStream == null && selSession != null) {
-            boolean sended = false;
-            final UtilActivePool activePool = selSession.getSocketBuffer().getActivePool();
-            final ObjectTemplate<Integer> template = activePool.addObject();
-            final PipedInputStream inputStream = new PipedInputStream();
-            try {
-                outputStream = new PipedOutputStream(inputStream);
-                int streamIndex = template.object;
-                writeByteBuffer(getSocketBufferResolver(), selSession, socketChannel,
-                        (byte) (writeFlag(flag) | SocketAdapter.STREAM_FLAG), callbackIndex, SocketAdapter.getVarintsLengthBytes(streamIndex));
-
-                getSocketBufferResolver().writeInputStream(selSession, template, streamIndex, inputStream);
-
-                sended = true;
-
-            } catch (Exception e) {
-                Environment.throwable(e);
-
-            } finally {
-                if (!sended) {
-                    activePool.remove(template.object);
-                    UtilPipedStream.closeCloseable(inputStream);
-                }
-            }
-        }
-    }
-
     public abstract SocketBufferResolver getSocketBufferResolver();
 
     protected byte writeFlag(byte flag) {
@@ -289,28 +183,54 @@ public abstract class InputSocket extends Input {
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        writeByteBuffer(getSocketBufferResolver(), selSession, socketChannel, writeFlag(flag), callbackIndex, b, off,
-                len);
+        if (outputStream == null) {
+            getSocketBufferResolver().writeByteBuffer(socketAtt.getSelSession(), socketChannel, writeFlag(flag), socketAtt.getCallbackIndex(), b, 0, len, null);
+
+        } else {
+            outputStream.write(b, off, len);
+        }
     }
 
     @Override
     public void close() {
+        if (outputStream != null) {
+            UtilPipedStream.closeCloseable(outputStream);
+        }
     }
 
     public void writeUriDict() {
         if (urlVarints > 0) {
             // 字典通知
-            int varints = RouteAdapter.addVarintsMapUri(uri);
+            int varints = RouteAdapter.addVarintsMapUri(getUri());
             int urlLength = KernelByte.getVarintsLength(urlVarints);
             int dataLength = urlLength + KernelByte.getVarintsLength(varints);
             byte[] dataBytes = new byte[dataLength];
             KernelByte.setVarintsLength(dataBytes, 0, urlVarints);
             KernelByte.setVarintsLength(dataBytes, urlLength, varints);
-
-            writeByteBuffer(getSocketBufferResolver(), selSession, getSocketChannel(), SocketAdapter.URI_DICT_FLAG, 0, dataBytes, 0,
-                    dataLength);
+            getSocketBufferResolver().writeByteBuffer(socketAtt.getSelSession(), socketChannel, SocketAdapter.URI_DICT_FLAG, 0, dataBytes, 0, dataLength, null);
             urlVarints = 0;
         }
+    }
+
+    @Override
+    public boolean readyOutputStream() throws IOException {
+        if (outputStream == null) {
+            SelSession selSession = socketAtt.getSelSession();
+            if (selSession != null) {
+                PipedOutputStream output = new PipedOutputStream();
+                outputStream = output;
+                PipedInputStream inputStream = new PipedInputStream();
+                inputStream.connect(output);
+                if (!getSocketBufferResolver().writeByteBuffer(selSession, socketChannel, writeFlag(flag), socketAtt.getCallbackIndex(), KernelLang.NULL_BYTES, 0, 0, inputStream)) {
+                    UtilPipedStream.closeCloseable(outputStream);
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        return true;
     }
 
     public static class InputSocketAtt {
@@ -332,20 +252,6 @@ public abstract class InputSocket extends Input {
         protected int postDataLength;
 
         protected InputStream inputStream;
-
-        /**
-         * 空初始化
-         */
-        protected InputSocketAtt() {
-        }
-
-        public InputSocketAtt(Serializable id, byte[] buffer, SelSession selSession) {
-            this(id, buffer, selSession, null);
-        }
-
-        public InputSocketAtt(Serializable id, byte[] buffer, SelSession selSession, InputStream inputStream) {
-            this(id, buffer, buffer[0], 1, selSession, inputStream);
-        }
 
         public InputSocketAtt(Serializable id, byte[] buffer, byte flag, int off, SelSession selSession, InputStream inputStream) {
             this.id = id;
@@ -371,15 +277,14 @@ public abstract class InputSocket extends Input {
             }
 
             if (inVarints) {
-                int varints;
-                varints = SocketAdapter.getVarints(buffer, headerLength, bufferLength);
+                int varints = SocketAdapter.getVarints(buffer, headerLength, bufferLength);
                 headerLength += SocketAdapter.getVarintsLength(varints);
 
                 url = RouteAdapter.UriForVarints(varints);
                 postDataLength = bufferLength - headerLength;
 
             } else {
-                if ((flag & SocketAdapter.POST_FLAG) != 0) {
+                if (inputStream == null && (flag & SocketAdapter.POST_FLAG) != 0) {
                     postDataLength = SocketAdapter.getVarints(buffer, headerLength, bufferLength);
                     headerLength += SocketAdapter.getVarintsLength(postDataLength);
                 }
@@ -419,12 +324,38 @@ public abstract class InputSocket extends Input {
             return callbackIndex;
         }
 
-        public byte[] getBuffer() {
-            return buffer;
-        }
-
         public int getPostDataLength() {
             return postDataLength;
+        }
+
+        protected InputStream getPostInputStream() {
+            return buffer == null ? null : new ByteArrayInputStream(buffer, buffer.length - postDataLength, postDataLength);
+        }
+
+        protected String getPostInput() {
+            if (buffer != null) {
+                return new String(buffer, buffer.length - postDataLength, postDataLength, ContextUtils.getCharset());
+
+            } else if (inputStream != null) {
+                try {
+                    return HelperIO.toString(inputStream, ContextUtils.getCharset());
+
+                } catch (IOException e) {
+                    return KernelLang.NULL_STRING;
+                }
+            }
+
+            return null;
+        }
+
+        public Object getMeta(String name) {
+            return selSession == null ? null : selSession.getMeta(name);
+        }
+
+        public void setMeta(String name, Object value) {
+            if (selSession != null) {
+                selSession.setMeta(name, value);
+            }
         }
     }
 }

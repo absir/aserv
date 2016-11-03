@@ -10,10 +10,7 @@ package com.absir.server.socket.resolver;
 import com.absir.bean.inject.value.Value;
 import com.absir.client.SocketAdapter;
 import com.absir.core.base.Environment;
-import com.absir.core.kernel.KernelByte;
-import com.absir.core.util.UtilContext;
 import com.absir.core.util.UtilPipedStream;
-import com.absir.core.util.UtilPipedStream.NextOutputStream;
 import com.absir.server.in.InDispatcher;
 import com.absir.server.in.InMethod;
 import com.absir.server.in.InModel;
@@ -24,16 +21,14 @@ import com.absir.server.route.returned.ReturnedResolverBody;
 import com.absir.server.socket.*;
 import com.absir.server.socket.InputSocket.InputSocketAtt;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
 import java.io.Serializable;
 import java.nio.channels.SocketChannel;
 
-public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketChannel> implements IServerResolver {
+public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketChannel> implements IServerResolver, IBufferResolver.IServerDispatch {
 
     @Value("server.socket.stream.max")
-    private static int streamMax = 4;
+    private static int streamMax = Integer.MAX_VALUE;
 
     public int getStreamMax() {
         return streamMax;
@@ -61,50 +56,7 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
     public boolean receiveBufferNIO(final SocketChannel socketChannel, final SelSession selSession,
                                     final SocketBuffer socketBuffer, final byte[] buffer, final long currentTime) {
         final byte flag = buffer[0];
-        if ((flag & SocketAdapter.STREAM_FLAG) != 0 && (flag & SocketAdapter.POST_FLAG) == 0) {
-            UtilPipedStream pipedStream = socketBuffer.getPipedStream();
-            if (pipedStream.getSize() < getStreamMax()) {
-                int length = buffer.length;
-                int streamIndex = SocketAdapter.getVarints(buffer, 1, length);
-                if (streamIndex > 0) {
-                    NextOutputStream outputStream = pipedStream.createNextOutputStream(streamIndex);
-                    final PipedInputStream inputStream = new PipedInputStream();
-                    try {
-                        outputStream.connect(inputStream);
-                        final int off = 1 + SocketAdapter.getVarintsLength(streamIndex);
-                        UtilContext.getThreadPoolExecutor().execute(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                doDispatch(selSession, socketChannel, socketBuffer.getId(), buffer, flag, off, socketBuffer, inputStream, currentTime);
-                            }
-                        });
-
-                    } catch (IOException e) {
-                        Environment.throwable(e);
-                    }
-                }
-            }
-
-            return true;
-
-        } else if ((flag & SocketAdapter.STREAM_CLOSE_FLAG) != 0 && buffer.length == 5) {
-            int hashIndex = KernelByte.getLength(buffer, 1);
-            if ((flag & SocketAdapter.POST_FLAG) != 0) {
-                socketBuffer.getActivePool().remove(hashIndex);
-
-            } else {
-                NextOutputStream outputStream = socketBuffer.getPipedStream().getOutputStream(hashIndex);
-                if (outputStream != null) {
-                    try {
-                        outputStream.close();
-
-                    } catch (IOException e) {
-                        Environment.throwable(e);
-                    }
-                }
-            }
-
+        if (InputSocketContext.ME.getBufferResolver().receiveStreamNIO(socketChannel, selSession, socketBuffer, flag, buffer, currentTime, getStreamMax(), this)) {
             return true;
         }
 
@@ -124,30 +76,18 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
     public void unRegister(Serializable id, SocketChannel socketChannel, SelSession selSession, long currentTime) {
     }
 
-    protected void doDispatch(SelSession selSession, SocketChannel socketChannel, Serializable id, byte[] buffer, byte flag, int off,
-                              SocketBuffer socketBuffer, InputStream inputStream, long currentTime) {
-        if ((flag & SocketAdapter.STREAM_FLAG) != 0) {
-            int length = buffer.length;
-            int streamIndex = SocketAdapter.getVarints(buffer, 1, length);
-            int offsetIndex = 1 + SocketAdapter.getVarintsLength(streamIndex);
-            socketBuffer.getPipedStream().getOutputStream(streamIndex);
-            NextOutputStream stream = socketBuffer.getPipedStream().getOutputStream(streamIndex);
-            try {
-                if (stream != null) {
-                    stream.write(buffer, offsetIndex, buffer.length);
-                    return;
-                }
+    protected InputSocketAtt createSocketAtt(SelSession selSession, Serializable id, byte[] buffer, byte flag, int off,
+                                             SocketBuffer socketBuffer, InputStream inputStream) {
+        return new InputSocketAtt(id, buffer, flag, off, selSession, inputStream);
+    }
 
-            } catch (Exception e) {
-                InputSocketImpl.writeByteBuffer(InputSocketContext.ME.getBufferResolver(), selSession,
-                        socketChannel, (byte) (SocketAdapter.STREAM_FLAG | SocketAdapter.POST_FLAG), 0, buffer, 1,
-                        4);
-            }
-
-        } else if ((flag & SocketAdapter.RESPONSE_FLAG) == 0) {
-            InputSocketAtt inputSocketAtt = new InputSocketAtt(id, buffer, flag, off, selSession, inputStream);
+    @Override
+    public void doDispatch(SelSession selSession, SocketChannel socketChannel, Serializable id, byte[] buffer, byte flag, int off,
+                           SocketBuffer socketBuffer, InputStream inputStream, long currentTime) {
+        if ((flag & SocketAdapter.RESPONSE_FLAG) == 0) {
+            InputSocketAtt socketAtt = createSocketAtt(selSession, id, buffer, flag, off, socketBuffer, inputStream);
             try {
-                if (on(inputSocketAtt.getUrl(), inputSocketAtt, socketChannel)) {
+                if (socketAtt != null && on(socketAtt.getUrl(), socketAtt, socketChannel)) {
                     return;
                 }
 
@@ -156,15 +96,17 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
             }
 
             UtilPipedStream.closeCloseable(inputStream);
-            InputSocketImpl.writeByteBufferSuccess(selSession, socketChannel, false,
-                    inputSocketAtt.getCallbackIndex(), InputSocket.NONE_RESPONSE_BYTES);
+            int callbackIndex = socketAtt.getCallbackIndex();
+            if (callbackIndex != 0) {
+                InputSocket.writeByteBufferSuccess(selSession, socketChannel, false, callbackIndex, InputSocket.NONE_RESPONSE_BYTES);
+            }
 
         } else {
-            doResponse(socketChannel, id, flag, buffer);
+            doResponse(socketChannel, id, flag, off, buffer, inputStream);
         }
     }
 
-    protected void doResponse(SocketChannel socketChannel, Serializable id, byte flag, byte[] buffer) {
+    protected void doResponse(SocketChannel socketChannel, Serializable id, byte flag, int off, byte[] buffer, InputStream inputStream) {
     }
 
     @Override
@@ -194,4 +136,5 @@ public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketCha
 
         super.resolveReturnedValue(routeBean, onPut);
     }
+
 }

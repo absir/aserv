@@ -153,6 +153,7 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
 
                 } finally {
                     OnPut.close();
+                    input.close();
                 }
 
                 return true;

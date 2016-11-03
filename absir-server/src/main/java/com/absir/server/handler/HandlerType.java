@@ -1,9 +1,11 @@
 package com.absir.server.handler;
 
+import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelLang;
 import com.absir.server.value.Close;
 import com.absir.server.value.Server;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -55,8 +57,10 @@ public class HandlerType<T> {
     public static HandlerMethod createHandlerMethod(Method method) {
         HandlerMethod handlerMethod = new HandlerMethod();
         handlerMethod.method = method;
-        handlerMethod.parameterTypes = KernelLang.getOptimizeClasses(method.getParameterTypes());
+        Class[] parameterTypes = KernelLang.getOptimizeClasses(method.getParameterTypes());
+        handlerMethod.parameterTypes = parameterTypes;
         handlerMethod.exceptionTypes = KernelLang.getOptimizeClasses(method.getExceptionTypes());
+        handlerMethod.sendStream = KernelArray.index(parameterTypes, InputStream.class) >= 0;
         return handlerMethod;
     }
 
@@ -106,6 +110,12 @@ public class HandlerType<T> {
         protected Class<?>[] parameterTypes;
 
         protected Class<?>[] exceptionTypes;
+
+        protected boolean sendStream;
+
+        public boolean isSendStream() {
+            return sendStream;
+        }
     }
 
 }
