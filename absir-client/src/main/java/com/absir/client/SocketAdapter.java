@@ -13,6 +13,7 @@ import com.absir.core.kernel.KernelString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.*;
@@ -638,20 +639,19 @@ public class SocketAdapter {
                             buffLength = b & 0x7F;
                             break;
                         case 1:
-                            buffLength = (b & 0x7F) << 7;
+                            buffLength += (b & 0x7F) << 7;
                             break;
                         case 2:
-                            buffLength = (b & 0x7F) << 14;
+                            buffLength += (b & 0x7F) << 14;
                             break;
                         case 3:
-                            buffLength = (b & 0x7F) << 22;
+                            buffLength += (b & 0x7F) << 22;
                             break;
                     }
 
                     if (lengthIndex < 3 && (b & 0x80) == 0) {
                         lengthIndex = 3;
                     }
-
 
                     if (++lengthIndex == 4) {
                         if (buffLength >= 0 && buffLength < getMaxBufferLength()) {
@@ -798,7 +798,7 @@ public class SocketAdapter {
                     : receiveCallbacks.remove(callbackIndex);
             if (entry != null) {
                 if (minCallback) {
-                    entry.getKey().doWith(this, offset, buffer);
+                    receiveCallback(entry.getKey(), offset, buffer, flag, callbackIndex);
 
                 } else {
                     synchronized (entry) {
@@ -810,7 +810,7 @@ public class SocketAdapter {
                                 callbackTimeout.socketAdapter = null;
                             }
 
-                            callbackAdapter.doWith(this, offset, buffer);
+                            receiveCallback(callbackAdapter, offset, buffer, flag, callbackIndex);
                         }
                     }
                 }
@@ -1055,14 +1055,14 @@ public class SocketAdapter {
             int uriVarints = addVarintsUri(uri);
             int uriLength = getVarintsLength(uriVarints);
             dataBytes = uri.getBytes();
-            byte[] bytes = sendDataBytes(off + uriLength, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, true);
+            byte[] bytes = sendDataBytes(off + uriLength, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, false);
             setVarintsLength(bytes, getVarintsLength(bytes, 0, bytes.length) + 1 + off, uriVarints);
             return bytes;
 
         } else {
             //找到压缩字典
             dataBytes = getVarintsLengthBytes(index);
-            return sendDataBytes(off, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, false);
+            return sendDataBytes(off, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, true);
         }
     }
 
@@ -1076,13 +1076,13 @@ public class SocketAdapter {
     }
 
     public void sendStream(byte[] dataBytes, boolean head, boolean human,
-                           InputStream inputStream, int timeout, CallbackAdapter callbackAdapter) {
-        sendStreamIndex(getNextCallbackIndex(callbackAdapter), dataBytes, head, human, inputStream, timeout, callbackAdapter);
+                           InputStream inputStream, Closeable pipeOutput, int timeout, CallbackAdapter callbackAdapter) {
+        sendStreamIndex(getNextCallbackIndex(callbackAdapter), dataBytes, head, human, inputStream, pipeOutput, timeout, callbackAdapter);
     }
 
     // 发送流数据
     public void sendStreamIndex(int callbackIndex, byte[] dataBytes, boolean head, boolean human,
-                                InputStream inputStream, int timeout, CallbackAdapter callbackAdapter) {
+                                InputStream inputStream, Closeable pipeOutput, int timeout, CallbackAdapter callbackAdapter) {
         // 默认不支持
         callbackAdapter.doWith(this, 0, null);
     }

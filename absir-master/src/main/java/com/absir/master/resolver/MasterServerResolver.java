@@ -20,7 +20,7 @@ import com.absir.client.helper.HelperEncrypt;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelByte;
-import com.absir.core.kernel.KernelLang.ObjectTemplate;
+import com.absir.core.util.UtilActivePool;
 import com.absir.core.util.UtilContext;
 import com.absir.core.util.UtilPipedStream;
 import com.absir.data.helper.HelperDataFormat;
@@ -48,7 +48,7 @@ public class MasterServerResolver extends SocketServerResolver {
 
     public static final MasterServerResolver ME = BeanFactoryUtils.get(MasterServerResolver.class);
     @Value("server.socket.stream.max.master")
-    private static int streamMaxMaster = 4;
+    private static int streamMaxMaster = Integer.MAX_VALUE;
     protected SocketAdapterSel masterAdapter = createMasterAdapter();
 
     @Override
@@ -146,7 +146,7 @@ public class MasterServerResolver extends SocketServerResolver {
     public void sendDataBytes(final SocketChannel socketChannel, byte[] dataBytes, boolean head, boolean human,
                               final InputStream inputStream, final int timeout, CallbackAdapter callbackAdapter) {
         boolean sended = false;
-        final ObjectTemplate<Integer> nextIndex = masterAdapter.getActivePool().addObject();
+        final UtilActivePool.ActiveTemplate template = masterAdapter.getActivePool().addObject(inputStream);
         try {
             CallbackTimeout callbackTimeout = null;
             int callbackIndex = masterAdapter.getNextCallbackIndex(callbackAdapter);
@@ -159,7 +159,7 @@ public class MasterServerResolver extends SocketServerResolver {
             System.arraycopy(buffer, 9, buffer, 5, buffer.length - 9);
             buffer[4] = SocketAdapter.CALLBACK_FLAG;
             KernelByte.setLength(buffer, 5, 1);
-            final int streamIndex = nextIndex.object;
+            final int streamIndex = template.object;
             KernelByte.setLength(buffer, buffer.length - 4, streamIndex);
             final CallbackTimeout CallbackTimeout = callbackTimeout;
             if (InputSocket.writeBuffer(socketChannel, buffer)) {
@@ -180,7 +180,7 @@ public class MasterServerResolver extends SocketServerResolver {
                                 while ((len = inputStream.read(sendBufer, 14, sendBufer.length)) > 0) {
                                     len += 10;
                                     KernelByte.setLength(sendBufer, 0, len);
-                                    if (nextIndex.object == null
+                                    if (template.object == null
                                             || !InputSocket.writeBuffer(socketChannel, sendBufer, 0, len)) {
                                         return;
                                     }
@@ -208,7 +208,7 @@ public class MasterServerResolver extends SocketServerResolver {
 
         } finally {
             if (!sended) {
-                masterAdapter.getActivePool().remove(nextIndex.object);
+                masterAdapter.getActivePool().remove(template.object);
                 UtilPipedStream.closeCloseable(inputStream);
             }
         }

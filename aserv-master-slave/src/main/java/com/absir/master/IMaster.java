@@ -15,10 +15,22 @@ public interface IMaster {
     @JaLang("时间")
     public long time() throws IOException;
 
+    public long time2();
+
     public InputStream test(InputStream inputStream);
 
     public InputStream test1(String name, InputStream inputStream);
 
     public void test2(String name, InputStream inputStream);
+
+    public String[] param(String[] name);
+
+    public String[] paramRS(String[] name) throws IOException;
+
+    @Rpc(sendStream = true)
+    public String[] paramSS(String[] name);
+
+    @Rpc(sendStream = true)
+    public String[] paramSRS(String[] name) throws IOException;
 
 }

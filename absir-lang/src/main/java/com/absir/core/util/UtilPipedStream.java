@@ -227,6 +227,7 @@ public class UtilPipedStream implements IStep {
         @Override
         public void close() throws IOException {
             if (passTime > 0) {
+                size--;
                 passTime = 0;
                 super.close();
             }

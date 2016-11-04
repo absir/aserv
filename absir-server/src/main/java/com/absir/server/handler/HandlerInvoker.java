@@ -4,9 +4,12 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.inject.InjectBeanUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.client.rpc.RpcFactory;
+import com.absir.core.helper.HelperIO;
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.util.UtilAbsir;
 import com.absir.data.format.IFormat;
 import com.absir.data.helper.HelperDataFormat;
+import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,13 +135,23 @@ public class HandlerInvoker {
             onPut.setReturned(format);
             Object[] args = null;
             try {
+                Input input = onPut.getInput();
                 args = format.readArray(inputStream, handlerMethod.parameterTypes);
-                if (handlerMethod.isSendStream() && handlerMethod.method.getReturnType() == InputStream.class) {
+                if (handlerMethod.isReadyStream()) {
                     // 双方向流，先写出防止阻塞
-                    onPut.getInput().readyOutputStream();
+                    input.readyOutputStream();
                 }
 
-                onPut.setReturnValue(handlerMethod.method.invoke(handler, args));
+                Object returnValue = handlerMethod.method.invoke(handler, args);
+                if (returnValue != null && handlerMethod.method.getReturnType() == InputStream.class) {
+                    // 返回流处理
+                    input.readyOutputStream();
+                    HelperIO.copy((InputStream) returnValue, input.getOutputStream());
+                    onPut.setReturnValue(KernelLang.NULL_BYTES);
+
+                } else {
+                    onPut.setReturnValue(returnValue);
+                }
 
             } catch (Throwable e) {
                 return throwable(onPut, handlerType, handlerMethod, args, e);

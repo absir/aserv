@@ -67,7 +67,7 @@ public abstract class InputSocket extends Input {
     }
 
     public static boolean writeByteBuffer(SelSession selSession, SocketChannel socketChannel, int callbackIndex, byte[] bytes) {
-        return InputSocketContext.ME.getBufferResolver().writeByteBuffer(selSession, socketChannel, (byte) 0, callbackIndex, bytes, 0, bytes.length, null);
+        return InputSocketContext.ME.getBufferResolver().writeByteBuffer(selSession, socketChannel, (byte) 0, callbackIndex, bytes, 0, bytes.length, null, null);
     }
 
     public static boolean writeByteBuffer(SelSession selSession, SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes) {
@@ -75,7 +75,7 @@ public abstract class InputSocket extends Input {
     }
 
     public static boolean writeByteBuffer(SelSession selSession, SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes, int off, int len) {
-        return InputSocketContext.ME.getBufferResolver().writeByteBuffer(selSession, socketChannel, flag, callbackIndex, bytes, off, len, null);
+        return InputSocketContext.ME.getBufferResolver().writeByteBuffer(selSession, socketChannel, flag, callbackIndex, bytes, off, len, null, null);
     }
 
     public InputSocketAtt getSocketAtt() {
@@ -184,7 +184,7 @@ public abstract class InputSocket extends Input {
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
         if (outputStream == null) {
-            getSocketBufferResolver().writeByteBuffer(socketAtt.getSelSession(), socketChannel, writeFlag(flag), socketAtt.getCallbackIndex(), b, 0, len, null);
+            getSocketBufferResolver().writeByteBuffer(socketAtt.getSelSession(), socketChannel, writeFlag(flag), socketAtt.getCallbackIndex(), b, 0, len, null, null);
 
         } else {
             outputStream.write(b, off, len);
@@ -207,7 +207,7 @@ public abstract class InputSocket extends Input {
             byte[] dataBytes = new byte[dataLength];
             KernelByte.setVarintsLength(dataBytes, 0, urlVarints);
             KernelByte.setVarintsLength(dataBytes, urlLength, varints);
-            getSocketBufferResolver().writeByteBuffer(socketAtt.getSelSession(), socketChannel, SocketAdapter.URI_DICT_FLAG, 0, dataBytes, 0, dataLength, null);
+            getSocketBufferResolver().writeByteBuffer(socketAtt.getSelSession(), socketChannel, SocketAdapter.URI_DICT_FLAG, 0, dataBytes, 0, dataLength, null, null);
             urlVarints = 0;
         }
     }
@@ -221,7 +221,7 @@ public abstract class InputSocket extends Input {
                 outputStream = output;
                 PipedInputStream inputStream = new PipedInputStream();
                 inputStream.connect(output);
-                if (!getSocketBufferResolver().writeByteBuffer(selSession, socketChannel, writeFlag(flag), socketAtt.getCallbackIndex(), KernelLang.NULL_BYTES, 0, 0, inputStream)) {
+                if (!getSocketBufferResolver().writeByteBuffer(selSession, socketChannel, writeFlag(flag), socketAtt.getCallbackIndex(), KernelLang.NULL_BYTES, 0, 0, inputStream, outputStream)) {
                     UtilPipedStream.closeCloseable(outputStream);
                     return false;
                 }

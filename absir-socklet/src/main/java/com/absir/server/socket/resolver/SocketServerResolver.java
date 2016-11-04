@@ -28,7 +28,7 @@ import java.nio.channels.SocketChannel;
 public class SocketServerResolver extends InDispatcher<InputSocketAtt, SocketChannel> implements IServerResolver, IBufferResolver.IServerDispatch {
 
     @Value("server.socket.stream.max")
-    private static int streamMax = Integer.MAX_VALUE;
+    private static int streamMax = 4;
 
     public int getStreamMax() {
         return streamMax;

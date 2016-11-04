@@ -8,8 +8,8 @@
 package com.absir.core.util;
 
 import com.absir.core.kernel.KernelByte;
-import com.absir.core.kernel.KernelLang.ObjectTemplate;
 
+import java.io.Closeable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,9 +17,17 @@ public class UtilActivePool {
 
     private int index;
 
-    private Map<Integer, ObjectTemplate<Integer>> activeMap = new HashMap<Integer, ObjectTemplate<Integer>>();
+    public static class ActiveTemplate {
 
-    public synchronized ObjectTemplate<Integer> addObject() {
+        public Integer object;
+
+        protected Closeable closeable;
+
+    }
+
+    private Map<Integer, ActiveTemplate> activeMap = new HashMap<Integer, ActiveTemplate>();
+
+    public synchronized ActiveTemplate addObject(Closeable closeable) {
         boolean maxed = false;
         while (true) {
             index++;
@@ -37,7 +45,9 @@ public class UtilActivePool {
             }
         }
 
-        ObjectTemplate<Integer> template = new ObjectTemplate<Integer>(index);
+        ActiveTemplate template = new ActiveTemplate();
+        template.object = index;
+        template.closeable = closeable;
         activeMap.put(index, template);
         return template;
     }
@@ -47,15 +57,17 @@ public class UtilActivePool {
             return;
         }
 
-        ObjectTemplate<Integer> value = activeMap.remove(index);
+        ActiveTemplate value = activeMap.remove(index);
         if (value != null) {
             value.object = null;
+            UtilPipedStream.closeCloseable(value.closeable);
         }
     }
 
     public synchronized void clear() {
-        for (ObjectTemplate<Integer> value : activeMap.values()) {
+        for (ActiveTemplate value : activeMap.values()) {
             value.object = null;
+            UtilPipedStream.closeCloseable(value.closeable);
         }
 
         activeMap.clear();

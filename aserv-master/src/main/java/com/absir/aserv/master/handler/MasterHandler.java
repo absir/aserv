@@ -49,9 +49,14 @@ public class MasterHandler implements IHandler, IMaster {
     }
 
     @Override
+    public long time2() {
+        return System.currentTimeMillis();
+    }
+
+    @Override
     public InputStream test(InputStream inputStream) {
 
-        System.out.println("test inputStream ");
+        System.out.println("test inputStream " + inputStream);
 
         try {
             System.out.println("test = " + HelperIO.toString(inputStream));
@@ -70,12 +75,12 @@ public class MasterHandler implements IHandler, IMaster {
 
     @Override
     public InputStream test1(String name, InputStream inputStream) {
+        System.out.println("test inputStream " + inputStream);
+
         try {
-            System.out.println("test =  name = " + name + " :: " + HelperIO.toString(inputStream));
+            System.out.println("test = " + name);
 
             Input input = OnPut.input();
-            input.readyOutputStream();
-
             HelperIO.write("test", input.getOutputStream());
 
         } catch (Exception e) {
@@ -88,7 +93,7 @@ public class MasterHandler implements IHandler, IMaster {
     @Override
     public void test2(String name, InputStream inputStream) {
         try {
-            System.out.println("test2 =  name = " + name + " :: " + HelperIO.toString(inputStream));
+            System.out.println("test2 = name = " + name + " :: " + HelperIO.toString(inputStream));
 
             Input input = OnPut.input();
             input.readyOutputStream();
@@ -98,6 +103,30 @@ public class MasterHandler implements IHandler, IMaster {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String[] param(String[] name) {
+        return name;
+    }
+
+    @Override
+    public String[] paramRS(String[] name) throws IOException {
+        Input input = OnPut.input();
+        input.readyOutputStream();
+        return name;
+    }
+
+    @Override
+    public String[] paramSS(String[] name) {
+        return name;
+    }
+
+    @Override
+    public String[] paramSRS(String[] name) throws IOException {
+        Input input = OnPut.input();
+        input.readyOutputStream();
+        return name;
     }
 
 }

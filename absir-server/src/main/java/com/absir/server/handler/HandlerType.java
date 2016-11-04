@@ -57,10 +57,9 @@ public class HandlerType<T> {
     public static HandlerMethod createHandlerMethod(Method method) {
         HandlerMethod handlerMethod = new HandlerMethod();
         handlerMethod.method = method;
-        Class[] parameterTypes = KernelLang.getOptimizeClasses(method.getParameterTypes());
-        handlerMethod.parameterTypes = parameterTypes;
+        handlerMethod.parameterTypes = KernelLang.getOptimizeClasses(method.getParameterTypes());
         handlerMethod.exceptionTypes = KernelLang.getOptimizeClasses(method.getExceptionTypes());
-        handlerMethod.sendStream = KernelArray.index(parameterTypes, InputStream.class) >= 0;
+        handlerMethod.readyStream = method.getReturnType() == InputStream.class && KernelArray.index(handlerMethod.parameterTypes, InputStream.class) >= 0;
         return handlerMethod;
     }
 
@@ -111,10 +110,10 @@ public class HandlerType<T> {
 
         protected Class<?>[] exceptionTypes;
 
-        protected boolean sendStream;
+        protected boolean readyStream;
 
-        public boolean isSendStream() {
-            return sendStream;
+        public boolean isReadyStream() {
+            return readyStream;
         }
     }
 

@@ -10,6 +10,7 @@ package com.absir.server.socket.resolver;
 import com.absir.server.socket.SelSession;
 import com.absir.server.socket.SocketBuffer;
 
+import java.io.Closeable;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -30,7 +31,7 @@ public interface IBufferResolver {
 
     public boolean receiveStreamNIO(final SocketChannel socketChannel, final SelSession selSession, final SocketBuffer socketBuffer, final byte flag, final byte[] buffer, final long currentTime, final int streamMax, final IServerDispatch serverDispatch);
 
-    public boolean writeByteBuffer(final SelSession selSession, final SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes, int offset, int length, final InputStream inputStream);
+    public boolean writeByteBuffer(final SelSession selSession, final SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes, int offset, int length, final InputStream inputStream, Closeable pipeOutput);
 
     public interface IServerDispatch {
 

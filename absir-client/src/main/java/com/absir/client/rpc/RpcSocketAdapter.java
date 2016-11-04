@@ -146,7 +146,7 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
 
             PipedInputStream inputStream = new PipedInputStream();
             inputStream.connect(outputStream);
-            socketAdapter.sendStream(uri.getBytes(), true, false, inputStream, timeout, callbackAdapter);
+            socketAdapter.sendStream(uri.getBytes(), true, false, inputStream, outputStream, timeout, callbackAdapter);
         }
 
         if (async) {
