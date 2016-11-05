@@ -1033,7 +1033,7 @@ public class SocketAdapter {
 
         RegisteredRunnable registeredRunnable = registerSendData(data);
         if (callbackTimeout != null) {
-            callbackTimeout.registeredRunnable = registeredRunnable;
+            callbackTimeout.setRegisteredRunnable(registeredRunnable);
         }
 
         if (registeredRunnable != null) {
@@ -1126,6 +1126,13 @@ public class SocketAdapter {
         public SocketAdapter socketAdapter;
 
         public int callbackIndex;
+
+        public void setRegisteredRunnable(RegisteredRunnable runnable) {
+            registeredRunnable = runnable;
+            if (socketAdapter == null) {
+                runnable.timeout();
+            }
+        }
 
         public boolean isAdapterDisconnect() {
             SocketAdapter adapter = socketAdapter;

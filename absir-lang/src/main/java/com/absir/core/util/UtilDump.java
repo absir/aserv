@@ -22,13 +22,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class UtilDump {
 
-    public static final String NULL_STRING = "NULL";
-
     private static final int DUMP_MAX_LEVEL = 4;
 
     public static boolean dumpNull(Object object) {
         if (object == null) {
-            System.out.println(NULL_STRING);
+            System.out.println(KernelLang.NULL_STRING);
             return true;
         }
 
@@ -83,7 +81,7 @@ public class UtilDump {
 
     public static void dumpEnumeration(Enumeration enumeration) {
         if (enumeration == null) {
-            System.out.println(NULL_STRING);
+            System.out.println(KernelLang.NULL_STRING);
             return;
         }
 
@@ -214,6 +212,93 @@ public class UtilDump {
             Object thread = KernelObject.declaredGet(worker, "thread");
             if (thread != null && thread instanceof Thread) {
                 UtilDump.dumpThreadError((Thread) thread);
+            }
+        }
+    }
+
+    public static class TimeoutException {
+
+        protected long timeout;
+
+        protected Exception exception;
+
+        public void complete() {
+            timeout = 0;
+        }
+
+        public void fail() {
+            complete();
+            exception.printStackTrace();
+        }
+    }
+
+    static UtilStep dumpStep;
+
+    static List<TimeoutException> addExceptions;
+
+    static List<TimeoutException> timeoutExceptions;
+
+    public static synchronized TimeoutException addTimeoutException(long timeout) {
+        stepDumpThreadExecutorError();
+        if (addExceptions == null) {
+            addExceptions = new ArrayList<TimeoutException>();
+        }
+
+        TimeoutException exception = new TimeoutException();
+        exception.timeout = UtilContext.getCurrentTime() + timeout;
+        exception.exception = new Exception();
+        exception.exception.fillInStackTrace();
+        addExceptions.add(exception);
+        return exception;
+    }
+
+    public static boolean dumpThread;
+
+    public static void stepDumpThreadExecutorError() {
+        if (dumpStep == null) {
+            synchronized (UtilDump.class) {
+                if (dumpStep == null) {
+                    dumpStep = UtilStep.openUtilStep(true, "UtilDump.STEP", 5000);
+                    dumpStep.addStep(new UtilStep.IStep() {
+                        @Override
+                        public boolean stepDone(long contextTime) {
+                            try {
+                                if (dumpThread) {
+                                    dumpThreadPoolExecutorError(UtilContext.getThreadPoolExecutor());
+                                }
+
+                                if (addExceptions != null) {
+                                    if (timeoutExceptions == null) {
+                                        timeoutExceptions = new ArrayList<TimeoutException>();
+                                    }
+
+                                    synchronized (UtilDump.class) {
+                                        timeoutExceptions.addAll(addExceptions);
+                                        addExceptions = null;
+                                    }
+                                }
+
+                                if (timeoutExceptions != null) {
+                                    Iterator<TimeoutException> iterator = timeoutExceptions.iterator();
+                                    while (iterator.hasNext()) {
+                                        TimeoutException exception = iterator.next();
+                                        if (exception.timeout <= 0) {
+                                            iterator.remove();
+
+                                        } else if (exception.timeout < UtilContext.getCurrentTime()) {
+                                            exception.exception.printStackTrace();
+                                        }
+                                    }
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            return false;
+                        }
+                    });
+                }
             }
         }
     }

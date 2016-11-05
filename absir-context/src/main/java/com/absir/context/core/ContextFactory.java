@@ -218,6 +218,37 @@ public class ContextFactory {
         // 请求处理线程池
         threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<Runnable>(corePoolSize));
+
+        threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<Runnable>(corePoolSize)) {
+            @Override
+            public void execute(final Runnable command) {
+                final UtilDump.TimeoutException exception = UtilDump.addTimeoutException(30000);
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            command.run();
+
+                        } finally {
+                            exception.complete();
+                        }
+                    }
+                };
+
+                boolean start = false;
+                try {
+                    super.execute(runnable);
+                    start = true;
+
+                } finally {
+                    if (!start) {
+                        exception.fail();
+                    }
+                }
+            }
+        };
+
         UtilContext.setThreadPoolExecutor(threadPoolExecutor);
     }
 

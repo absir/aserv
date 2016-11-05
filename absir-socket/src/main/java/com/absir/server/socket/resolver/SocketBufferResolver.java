@@ -263,7 +263,14 @@ public class SocketBufferResolver implements IBufferResolver {
 
         } else if ((flag & SocketAdapter.STREAM_CLOSE_FLAG) != 0) {
             int streamIndex = SocketAdapter.getVarints(buffer, 1, buffer.length);
-            System.out.println("SocketBufferResolver outputStream close " + streamIndex + " : " + ((flag & SocketAdapter.POST_FLAG) == 0));
+
+            StringBuilder stringBuilder = new StringBuilder();
+            for (byte d : buffer) {
+                stringBuilder.append(',');
+                stringBuilder.append(d);
+            }
+
+            System.out.println("SocketBufferResolver outputStream close " + streamIndex + " : " + ((flag & SocketAdapter.POST_FLAG) == 0) + " : " + stringBuilder.toString());
             if ((flag & SocketAdapter.POST_FLAG) == 0) {
                 socketBuffer.getActivePool().remove(streamIndex);
 
@@ -296,7 +303,7 @@ public class SocketBufferResolver implements IBufferResolver {
      * 写入返回信息
      */
     @Override
-    public boolean writeByteBuffer(final SelSession selSession, final SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes, int offset, int length, final InputStream inputStream, final Closeable pipeOutput) {
+    public boolean writeByteBuffer(final SelSession selSession, final SocketChannel socketChannel, byte flag, int callbackIndex, final byte[] bytes, int offset, int length, final InputStream inputStream, final Closeable pipeOutput) {
         final UtilActivePool.ActiveTemplate template;
         final UtilActivePool activePool;
         final int streamIndex;
@@ -401,6 +408,7 @@ public class SocketBufferResolver implements IBufferResolver {
                             UtilPipedStream.closeCloseable(inputStream);
                             UtilPipedStream.closeCloseable(pipeOutput);
 
+                            System.out.println("close outputStream " + SocketAdapter.getVarints(sendBuffer, 3, offLen));
                             writeByteBuffer(selSession, socketChannel, (byte) (SocketAdapter.STREAM_CLOSE_FLAG | SocketAdapter.POST_FLAG), 0, sendBuffer, 3, offLen, null, null);
                         }
                     }

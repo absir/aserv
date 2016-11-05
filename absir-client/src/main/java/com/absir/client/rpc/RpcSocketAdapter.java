@@ -129,20 +129,29 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
 
         } else {
             final PipedOutputStream outputStream = new PipedOutputStream();
-            UtilContext.getThreadPoolExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        HelperDataFormat.PACK.writeArrayInputStream(outputStream, parameterTypes, args);
+            boolean start = false;
+            try {
+                UtilContext.getThreadPoolExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            HelperDataFormat.PACK.writeArrayInputStream(outputStream, parameterTypes, args);
 
-                    } catch (Exception e) {
-                        Environment.throwable(e);
+                        } catch (Exception e) {
+                            Environment.throwable(e);
 
-                    } finally {
-                        UtilPipedStream.closeCloseable(outputStream);
+                        } finally {
+                            UtilPipedStream.closeCloseable(outputStream);
+                        }
                     }
+                });
+                start = true;
+
+            } finally {
+                if (!start) {
+                    UtilPipedStream.closeCloseable(outputStream);
                 }
-            });
+            }
 
             PipedInputStream inputStream = new PipedInputStream();
             inputStream.connect(outputStream);

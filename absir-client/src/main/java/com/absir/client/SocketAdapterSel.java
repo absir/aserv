@@ -8,7 +8,6 @@
 package com.absir.client;
 
 import com.absir.core.base.Environment;
-import com.absir.core.kernel.KernelByte;
 import com.absir.core.util.UtilActivePool;
 import com.absir.core.util.UtilAtom;
 import com.absir.core.util.UtilContext;
@@ -143,6 +142,7 @@ public class SocketAdapterSel extends SocketAdapter {
     @Override
     public void close() {
         super.close();
+        System.out.println("SocketAdapterSel close");
         if (pipedStream != null) {
             pipedStream.close();
             pipedStream = null;
@@ -204,7 +204,7 @@ public class SocketAdapterSel extends SocketAdapter {
                     }
                 }
 
-                sendData(sendDataBytes(0, buffer, offset, offset + streamIndexLen, true, false, STREAM_CLOSE_FLAG, 0, null, 0, 0, true));
+                sendData(sendDataBytes(0, buffer, offset, offLen, true, false, STREAM_CLOSE_FLAG, 0, null, 0, 0, true));
                 return;
             }
 
@@ -244,12 +244,13 @@ public class SocketAdapterSel extends SocketAdapter {
             int length = buffer.length;
             int streamIndex = getVarints(buffer, offset, length);
             int streamIndexLen = getVarintsLength(streamIndex);
+            int offLen = offset + streamIndexLen;
             try {
                 NextOutputStream outputStream = callbackAdapter instanceof CallbackAdapterStream ? createNextOutputStream(streamIndex) : null;
                 System.out.println("SocketAdapterSel outputStream open " + streamIndex + " : " + outputStream);
                 if (outputStream == null) {
                     // 不是CallbackAdapterStream 不能接受流数据返回
-                    sendData(sendDataBytes(0, buffer, offset, offset + streamIndexLen, true, false, STREAM_CLOSE_FLAG, 0, null, 0, 0, true));
+                    sendData(sendDataBytes(0, buffer, offset, offLen, true, false, STREAM_CLOSE_FLAG, 0, null, 0, 0, true));
 
                 } else {
                     // 生成PipedInputStream执行回调
@@ -257,7 +258,7 @@ public class SocketAdapterSel extends SocketAdapter {
                     inputStream.connect(outputStream);
                     CallbackAdapterStream callbackAdapterStream = (CallbackAdapterStream) callbackAdapter;
                     callbackAdapter = null;
-                    callbackAdapterStream.doWith(this, offset + streamIndexLen, buffer, inputStream);
+                    callbackAdapterStream.doWith(this, offLen, buffer, inputStream);
                     return;
                 }
 
@@ -367,7 +368,16 @@ public class SocketAdapterSel extends SocketAdapter {
                         UtilPipedStream.closeCloseable(inputStream);
                         UtilPipedStream.closeCloseable(pipeOutput);
 
-                        System.out.println("sendData close outputStream " + streamIndex);
+
+                        byte[] data = SocketAdapter.getVarintsLengthBytes(streamIndex);
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (byte d : data) {
+                            stringBuilder.append(',');
+                            stringBuilder.append(d);
+                        }
+                        System.out.println("sendData close outputStream " + streamIndex + " : " + stringBuilder.toString());
+
+
                         sendData(sendDataBytes(0, SocketAdapter.getVarintsLengthBytes(streamIndex), true, false, STREAM_CLOSE_FLAG | POST_FLAG, 0, null));
                     }
                 }
@@ -438,7 +448,7 @@ public class SocketAdapterSel extends SocketAdapter {
 
                 if (sended == 1) {
                     // 通知流关闭
-                    sendData(sendDataBytes(0, KernelByte.getLengthBytes(streamIndex), true, false, STREAM_CLOSE_FLAG | POST_FLAG, 0, null));
+                    sendData(sendDataBytes(0, SocketAdapter.getVarintsLengthBytes(streamIndex), true, false, STREAM_CLOSE_FLAG | POST_FLAG, 0, null));
                 }
             }
         }
@@ -461,7 +471,7 @@ public class SocketAdapterSel extends SocketAdapter {
 
             RegisteredRunnable registeredRunnable = sendStream(dataBytes, human, callbackIndex, inputStream, pipeOutput, callbackTimeout, timeout);
             if (callbackTimeout != null) {
-                callbackTimeout.registeredRunnable = registeredRunnable;
+                callbackTimeout.setRegisteredRunnable(registeredRunnable);
             }
         }
     }
