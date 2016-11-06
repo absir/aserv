@@ -219,6 +219,7 @@ public class SocketBufferResolver implements IBufferResolver {
                 if (stream != null) {
                     try {
                         stream.write(buffer, offLen, buffer.length - offLen);
+                        stream.flush();
                         return true;
 
                     } catch (Throwable e) {
@@ -278,6 +279,7 @@ public class SocketBufferResolver implements IBufferResolver {
                 UtilPipedStream.NextOutputStream outputStream = socketBuffer.getPipedStream().getOutputStream(streamIndex);
                 if (outputStream != null) {
                     try {
+                        outputStream.flush();
                         outputStream.close();
 
                     } catch (IOException e) {

@@ -7,6 +7,9 @@
  */
 package com.absir.core.kernel;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public class KernelByte {
 
     public static final int VARINTS_1_LENGTH = 0x7F;
@@ -101,6 +104,65 @@ public class KernelByte {
         } else {
             destination[destionationIndex] = (byte) (length & 0x7F);
         }
+    }
+
+    public static int getVarintsLength(InputStream inputStream) throws IOException {
+        byte[] buffer = new byte[1];
+        int length = 0;
+        int idx = 0;
+        while (inputStream.read(buffer, 0, 1) > 0) {
+            byte b = buffer[0];
+            switch (idx) {
+                case 0:
+                    length += b & 0x7F;
+                    break;
+                case 1:
+                    length += b & 0x7F << 7;
+                    break;
+                case 2:
+                    length += b & 0x7F << 14;
+                    break;
+                default:
+                    length += b & 0x7F << 22;
+                    break;
+            }
+
+            if ((b & 0x80) == 0) {
+                break;
+            }
+
+            idx++;
+        }
+
+        return length;
+    }
+
+    public static int getHashCode(byte[] bytes, int off, int len) {
+        int idx = 0;
+        int code = 0;
+        for (; off < len; off++) {
+            byte b = bytes[off];
+            switch (idx) {
+                case 0:
+                    code ^= b & 0xFF;
+                    break;
+                case 1:
+                    code ^= (b & 0xFF) << 8;
+                    break;
+                case 2:
+                    code ^= (b & 0xFF) << 16;
+                    break;
+                default:
+                    code ^= (b & 0xFF) << 24;
+                    break;
+            }
+
+            if (++idx >= 4) {
+                idx = 0;
+            }
+        }
+
+        return code;
     }
 
 }

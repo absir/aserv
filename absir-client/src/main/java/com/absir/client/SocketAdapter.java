@@ -1076,13 +1076,13 @@ public class SocketAdapter {
     }
 
     public void sendStream(byte[] dataBytes, boolean head, boolean human,
-                           InputStream inputStream, Closeable pipeOutput, int timeout, CallbackAdapter callbackAdapter) {
-        sendStreamIndex(getNextCallbackIndex(callbackAdapter), dataBytes, head, human, inputStream, pipeOutput, timeout, callbackAdapter);
+                           InputStream inputStream, Closeable pipeOutput, int timeout, CallbackAdapter callbackAdapter, Runnable inputRunnable) {
+        sendStreamIndex(getNextCallbackIndex(callbackAdapter), dataBytes, head, human, inputStream, pipeOutput, timeout, callbackAdapter, inputRunnable);
     }
 
     // 发送流数据
     public void sendStreamIndex(int callbackIndex, byte[] dataBytes, boolean head, boolean human,
-                                InputStream inputStream, Closeable pipeOutput, int timeout, CallbackAdapter callbackAdapter) {
+                                InputStream inputStream, Closeable pipeOutput, int timeout, CallbackAdapter callbackAdapter, Runnable inputRunnable) {
         // 默认不支持
         callbackAdapter.doWith(this, 0, null);
     }

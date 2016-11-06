@@ -94,31 +94,51 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
             }
 
             @Override
-            public void doWith(SocketAdapter adapter, int offset, byte[] buffer, InputStream inputStream) {
+            public void doWith(SocketAdapter adapter, int offset, byte[] buffer, final InputStream inputStream) {
                 if (inputStream == null) {
                     doWith(adapter, offset, buffer);
 
                 } else {
+                    boolean returnThread = false;
                     try {
                         if (returnType == InputStream.class) {
                             // 直接返回流
                             returns[0] = inputStream;
 
                         } else {
-                            try {
-                                if (returnType != null || returnType != void.class) {
-                                    // 流转换成对象返回
-                                    returns[0] = HelperDataFormat.PACK.read(inputStream, returnType);
-                                }
 
-                            } catch (Throwable e) {
-                                LOGGER.error("rpc error uri = " + uri, e);
-                                returns[0] = RpcFactory.RPC_CODE.RETRUN_ERROR;
+                            if (returnType != null || returnType != void.class) {
+                                // 流转换成对象返回
+                                UtilContext.getThreadPoolExecutor().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            int code = KernelByte.getVarintsLength(inputStream);
+                                            if (code == RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal()) {
+                                                returns[0] = HelperDataFormat.PACK.read(inputStream, returnType);
+
+                                            } else {
+                                                returns[0] = RpcFactory.RPC_CODE.rpcCodeForException(code);
+                                            }
+
+                                        } catch (Throwable e) {
+                                            LOGGER.error("rpc error uri = " + uri, e);
+                                            returns[0] = RpcFactory.RPC_CODE.RETRUN_ERROR;
+
+                                        } finally {
+                                            atom.decrement();
+                                        }
+                                    }
+                                });
+
+                                returnThread = true;
                             }
                         }
 
                     } finally {
-                        atom.decrement();
+                        if (!returnThread) {
+                            atom.decrement();
+                        }
                     }
                 }
             }
@@ -129,33 +149,24 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
 
         } else {
             final PipedOutputStream outputStream = new PipedOutputStream();
-            boolean start = false;
-            try {
-                UtilContext.getThreadPoolExecutor().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            HelperDataFormat.PACK.writeArrayInputStream(outputStream, parameterTypes, args);
+            Runnable inputRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        HelperDataFormat.PACK.writeArrayInputStream(outputStream, parameterTypes, args);
 
-                        } catch (Exception e) {
-                            Environment.throwable(e);
+                    } catch (Exception e) {
+                        Environment.throwable(e);
 
-                        } finally {
-                            UtilPipedStream.closeCloseable(outputStream);
-                        }
+                    } finally {
+                        UtilPipedStream.closeCloseable(outputStream);
                     }
-                });
-                start = true;
-
-            } finally {
-                if (!start) {
-                    UtilPipedStream.closeCloseable(outputStream);
                 }
-            }
+            };
 
             PipedInputStream inputStream = new PipedInputStream();
             inputStream.connect(outputStream);
-            socketAdapter.sendStream(uri.getBytes(), true, false, inputStream, outputStream, timeout, callbackAdapter);
+            socketAdapter.sendStream(uri.getBytes(), true, false, inputStream, outputStream, timeout, callbackAdapter, inputRunnable);
         }
 
         if (async) {

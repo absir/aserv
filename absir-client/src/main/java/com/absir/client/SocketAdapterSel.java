@@ -23,6 +23,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class SocketAdapterSel extends SocketAdapter {
@@ -76,8 +77,7 @@ public class SocketAdapterSel extends SocketAdapter {
                                                 buffer.clear();
                                                 int length = socketChannel.read(buffer);
                                                 if (length > 0) {
-                                                    socketAdapter.receiveByteBuffer(socketChannel.socket(), array, 0,
-                                                            length);
+                                                    socketAdapter.receiveByteBuffer(socketChannel.socket(), array, 0, length);
                                                     continue;
                                                 }
 
@@ -195,6 +195,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 NextOutputStream outputStream = getPipedStream().getOutputStream(streamIndex);
                 if (outputStream != null) {
                     try {
+                        System.out.println("receive " + buffer.length + " : " + offLen + " @ " + Arrays.toString(ByteBuffer.wrap(buffer, offset, length - offset).array()).toString());
                         outputStream.write(buffer, offLen, length - offLen);
                         return;
 
@@ -316,7 +317,7 @@ public class SocketAdapterSel extends SocketAdapter {
     }
 
     protected RegisteredRunnable sendStream(byte[] dataBytes, boolean human, final int callbackIndex,
-                                            final InputStream inputStream, final Closeable pipeOutput, final CallbackTimeout callbackTimeout, final long timeout) {
+                                            final InputStream inputStream, final Closeable pipeOutput, final CallbackTimeout callbackTimeout, final long timeout, final Runnable inputRunnable) {
         connect();
         int sended = 0;
         final UtilActivePool.ActiveTemplate template = getActivePool().addObject(pipeOutput == null ? inputStream : pipeOutput);
@@ -337,6 +338,20 @@ public class SocketAdapterSel extends SocketAdapter {
                 @Override
                 public void run() {
                     try {
+                        if (inputRunnable != null) {
+                            boolean inputed = false;
+                            try {
+                                UtilContext.getThreadPoolExecutor().execute(inputRunnable);
+                                inputed = true;
+
+                            } finally {
+                                if (!inputed) {
+                                    UtilPipedStream.closeCloseable(inputStream);
+                                    UtilPipedStream.closeCloseable(pipeOutput);
+                                }
+                            }
+                        }
+
                         byte[] sendBuffer = sendDataBytes(streamIndexLen, null, 0, 0, true, false, STREAM_FLAG, 0, null, 0, getPostBuffLen(), true);
                         setVarintsLength(sendBuffer, 3, streamIndex);
                         int postOff = 3 + streamIndexLen;
@@ -459,7 +474,7 @@ public class SocketAdapterSel extends SocketAdapter {
      */
     @Override
     public void sendStreamIndex(int callbackIndex, byte[] dataBytes, boolean head, boolean human,
-                                InputStream inputStream, Closeable pipeOutput, int timeout, CallbackAdapter callbackAdapter) {
+                                InputStream inputStream, Closeable pipeOutput, int timeout, CallbackAdapter callbackAdapter, Runnable inputRunnable) {
         if (inputStream == null) {
             sendDataIndex(callbackIndex, dataBytes, head, human, null, timeout, callbackAdapter);
 
@@ -469,7 +484,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 callbackTimeout = putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
             }
 
-            RegisteredRunnable registeredRunnable = sendStream(dataBytes, human, callbackIndex, inputStream, pipeOutput, callbackTimeout, timeout);
+            RegisteredRunnable registeredRunnable = sendStream(dataBytes, human, callbackIndex, inputStream, pipeOutput, callbackTimeout, timeout, inputRunnable);
             if (callbackTimeout != null) {
                 callbackTimeout.setRegisteredRunnable(registeredRunnable);
             }
