@@ -13,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 
 public class SocketNIO {
 
@@ -36,10 +37,15 @@ public class SocketNIO {
 
     public static void writeTimeout(SocketChannel socketChannel, ByteBuffer byteBuffer, long writeTimeout)
             throws IOException {
+        if (byteBuffer.limit() - byteBuffer.position() <= 0) {
+            return;
+        }
+
         int attempts = 0;
         SelectionKey key = null;
         Selector writeSelector = null;
         try {
+            SocketAdapter._debugInfo("SocketNIO send  => " + Arrays.toString(byteBuffer.array()));
             while (byteBuffer.hasRemaining()) {
                 int len = socketChannel.write(byteBuffer);
                 attempts++;

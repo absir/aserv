@@ -7,6 +7,7 @@
  */
 package com.absir.server.socket;
 
+import com.absir.client.SocketAdapter;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelReflect;
 import com.absir.core.util.UtilContext;
@@ -25,6 +26,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -429,10 +431,9 @@ public class SocketServer {
                                         byte[] array = buffer.array();
                                         int position = 0;
                                         while (position < length) {
-                                            position = socketBufferResolver.readByteBuffer(socketBuffer, array,
-                                                    position, length);
-                                            if (socketBuffer.getBuff() != null
-                                                    && socketBuffer.getLength() <= socketBuffer.getBuffLengthIndex()) {
+                                            position = socketBufferResolver.readByteBuffer(socketBuffer, array, position, length);
+                                            if (socketBuffer.getBuff() != null && socketBuffer.getLength() <= socketBuffer.getBuffLengthIndex()) {
+                                                SocketAdapter._debugInfo("SocketServer readByteBuffer  <= " + Arrays.toString(socketBuffer.getBuff()));
                                                 if (socketBuffer.getId() == null) {
                                                     socketSessionResolver.register(socketChannel, selSession);
                                                     Serializable id = socketBuffer.getId();

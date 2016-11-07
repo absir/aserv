@@ -696,10 +696,15 @@ public class SocketAdapter {
         receiveBuffDone(buffer);
     }
 
+    public static void _debugInfo(String info) {
+        System.out.println("[DEBUG.INFO]  " + info);
+    }
+
     /**
      * 接收完成数据
      */
     public void receiveBuffDone(byte[] buffer) {
+        _debugInfo("SocketAdapter receiveBuffDone <= " + Arrays.toString(buffer));
         int length = buffer.length;
         // 检测心跳
         if (beats != null && beats.length == buffer.length) {
@@ -937,6 +942,7 @@ public class SocketAdapter {
         Socket sendSocket = socket;
         if (sendSocket != null) {
             try {
+                _debugInfo("SocketAdapter sendData  => " + Arrays.toString(buffer));
                 sendSocket.getOutputStream().write(buffer);
                 return true;
 
