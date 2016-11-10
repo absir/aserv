@@ -154,6 +154,7 @@ public class RpcInterface {
             RpcAttribute attribute = new RpcAttribute();
             attribute.timeout = rpc.timeout();
             attribute.sendStream = streamIndex >= 0 ? true : rpc.sendStream();
+            attribute.sendInputStream = streamIndex >= 0;
             attribute.async = rpc.async();
             rpcAttribute = attribute;
 
@@ -161,6 +162,7 @@ public class RpcInterface {
             RpcAttribute attribute = new RpcAttribute();
             attribute.timeout = rpcAttribute == null ? 0 : rpcAttribute.timeout;
             attribute.sendStream = true;
+            attribute.sendInputStream = streamIndex >= 0;
             attribute.async = rpcAttribute == null ? false : rpcAttribute.async;
             rpcAttribute = attribute;
         }
@@ -178,8 +180,7 @@ public class RpcInterface {
 
         protected boolean sendStream;
 
-        // 应该由实现层控制
-        //protected boolean returnStream;
+        protected boolean sendInputStream;
 
         protected boolean async;
 

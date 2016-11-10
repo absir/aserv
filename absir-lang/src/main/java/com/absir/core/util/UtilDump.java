@@ -23,6 +23,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class UtilDump {
 
     private static final int DUMP_MAX_LEVEL = 4;
+    public static boolean dumpThread;
+    static UtilStep dumpStep;
+    static List<TimeoutException> addExceptions;
+    static List<TimeoutException> timeoutExceptions;
 
     public static boolean dumpNull(Object object) {
         if (object == null) {
@@ -216,28 +220,6 @@ public class UtilDump {
         }
     }
 
-    public static class TimeoutException {
-
-        protected long timeout;
-
-        protected Exception exception;
-
-        public void complete() {
-            timeout = 0;
-        }
-
-        public void fail() {
-            complete();
-            exception.printStackTrace();
-        }
-    }
-
-    static UtilStep dumpStep;
-
-    static List<TimeoutException> addExceptions;
-
-    static List<TimeoutException> timeoutExceptions;
-
     public static synchronized TimeoutException addTimeoutException(long timeout) {
         stepDumpThreadExecutorError();
         if (addExceptions == null) {
@@ -251,8 +233,6 @@ public class UtilDump {
         addExceptions.add(exception);
         return exception;
     }
-
-    public static boolean dumpThread;
 
     public static void stepDumpThreadExecutorError() {
         if (dumpStep == null) {
@@ -300,6 +280,22 @@ public class UtilDump {
                     });
                 }
             }
+        }
+    }
+
+    public static class TimeoutException {
+
+        protected long timeout;
+
+        protected Exception exception;
+
+        public void complete() {
+            timeout = 0;
+        }
+
+        public void fail() {
+            complete();
+            exception.printStackTrace();
         }
     }
 }

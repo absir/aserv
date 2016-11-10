@@ -73,6 +73,8 @@ public class RpcFactory {
 
         SEND_ERROR,
 
+        NO_THREAD,
+
         NO_NAME,
 
         NO_PERMISSION,

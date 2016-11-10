@@ -23,7 +23,7 @@ public class UtilInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         try {
-            return dataInput.readByte() & 0xff;
+            return dataInput.readByte();
 
         } catch (EOFException e) {
             return -1;

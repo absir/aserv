@@ -17,7 +17,6 @@ import com.absir.core.util.UtilPipedStream.NextOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -34,9 +33,9 @@ public class SocketAdapterSel extends SocketAdapter {
 
     private static int buffSize = 1024;
 
-    private static Selector selector;
-
     private static UtilAtom atom;
+
+    private static Selector selector;
 
     private UtilPipedStream pipedStream;
 
@@ -55,8 +54,8 @@ public class SocketAdapterSel extends SocketAdapter {
             try {
                 synchronized (SocketAdapterSel.class) {
                     if (selector == null) {
-                        selector = Selector.open();
                         atom = new UtilAtom();
+                        selector = Selector.open();
                         Thread thread = new Thread() {
 
                             public void run() {
@@ -81,7 +80,7 @@ public class SocketAdapterSel extends SocketAdapter {
                                                     continue;
                                                 }
 
-                                            } catch (Exception e) {
+                                            } catch (Throwable e) {
                                                 Environment.throwable(e);
                                             }
 
@@ -99,14 +98,11 @@ public class SocketAdapterSel extends SocketAdapter {
                                             }
                                         }
 
-                                    } catch (Exception e) {
+                                    } catch (Throwable e) {
                                         Environment.throwable(e);
-                                        break;
                                     }
                                 }
                             }
-
-                            ;
                         };
 
                         thread.setDaemon(true);
@@ -162,11 +158,15 @@ public class SocketAdapterSel extends SocketAdapter {
                 ByteBuffer byteBuffer = ByteBuffer.wrap(buffer, offset, length);
                 synchronized (socketChannel) {
                     try {
-                        _debugInfo("SocketAdapterSel sendData => " + Arrays.toString(buffer));
-                        SocketNIO.writeTimeout(socketChannel, byteBuffer);
+                        _debugInfo("SocketAdapterSel sendData => " + Arrays.toString(Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit())));
+                        SocketNIO._debugInfo = true;
+                        synchronized (socketChannel) {
+                            SocketNIO.writeTimeout(socketChannel, byteBuffer);
+                        }
+
                         return true;
 
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         Environment.throwable(e);
                     }
                 }
@@ -199,7 +199,7 @@ public class SocketAdapterSel extends SocketAdapter {
                         outputStream.write(buffer, offLen, length - offLen);
                         return;
 
-                    } catch (IOException e) {
+                    } catch (Throwable e) {
                         Environment.throwable(e);
                         UtilPipedStream.closeCloseable(outputStream);
                     }
@@ -226,7 +226,7 @@ public class SocketAdapterSel extends SocketAdapter {
                     try {
                         outputStream.close();
 
-                    } catch (IOException e) {
+                    } catch (Throwable e) {
                         Environment.throwable(e);
                     }
                 }
@@ -255,11 +255,9 @@ public class SocketAdapterSel extends SocketAdapter {
 
                 } else {
                     // 生成PipedInputStream执行回调
-                    PipedInputStream inputStream = new PipedInputStream();
-                    inputStream.connect(outputStream);
                     CallbackAdapterStream callbackAdapterStream = (CallbackAdapterStream) callbackAdapter;
                     callbackAdapter = null;
-                    callbackAdapterStream.doWith(this, offLen, buffer, inputStream);
+                    callbackAdapterStream.doWith(this, offLen, buffer, outputStream);
                     return;
                 }
 
@@ -290,7 +288,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 clearReceiveBuff();
                 registerSelector(socketChannel);
 
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 Environment.throwable(e);
             }
         }
@@ -375,7 +373,7 @@ public class SocketAdapterSel extends SocketAdapter {
                             }
                         }
 
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         Environment.throwable(e);
 
                     } finally {
@@ -405,13 +403,18 @@ public class SocketAdapterSel extends SocketAdapter {
                     @Override
                     public void timeout() {
                         super.timeout();
-                        activePool.remove(streamIndex);
-                        UtilPipedStream.closeCloseable(inputStream);
-                        UtilPipedStream.closeCloseable(pipeOutput);
+                        try {
+                            activePool.remove(streamIndex);
+                            UtilPipedStream.closeCloseable(inputStream);
+                            UtilPipedStream.closeCloseable(pipeOutput);
 
-                        if (sended == 1) {
-                            // 通知流关闭
-                            sendData(sendDataBytes(0, SocketAdapter.getVarintsLengthBytes(streamIndex), true, false, STREAM_CLOSE_FLAG | POST_FLAG, 0, null));
+                            if (sended == 1) {
+                                // 通知流关闭
+                                sendData(sendDataBytes(0, SocketAdapter.getVarintsLengthBytes(streamIndex), true, false, STREAM_CLOSE_FLAG | POST_FLAG, 0, null));
+                            }
+
+                        } catch (Throwable e) {
+                            Environment.throwable(e);
                         }
                     }
 

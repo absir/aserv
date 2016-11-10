@@ -23,7 +23,6 @@ import com.absir.server.socket.SocketServer;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
@@ -179,31 +178,16 @@ public class SocketBufferResolver implements IBufferResolver {
         return ByteBuffer.wrap(bytes, offset, length - offset);
     }
 
-    public boolean isVarints() {
-        return varints;
-    }
-
-    public void setVarints(boolean varints) {
-        this.varints = varints;
-    }
-
     @Override
     public byte[] createByteHeader(int headerLength, ByteBuffer byteBuffer) {
         int length = headerLength + byteBuffer.limit() - byteBuffer.position();
-        if (varints) {
-            if (length > KernelByte.VARINTS_4_LENGTH) {
-                throw new RuntimeException("varints buffer size to max = " + length);
-            }
-
-            byte[] header = new byte[KernelByte.getVarintsLength(length) + headerLength];
-            KernelByte.setVarintsLength(header, 0, length);
-            return header;
-
-        } else {
-            byte[] header = new byte[4 + headerLength];
-            KernelByte.setLength(header, 0, length);
-            return header;
+        if (length > KernelByte.VARINTS_4_LENGTH) {
+            throw new RuntimeException("varints buffer size to max = " + length);
         }
+
+        byte[] header = new byte[KernelByte.getVarintsLength(length) + headerLength];
+        KernelByte.setVarintsLength(header, 0, length);
+        return header;
     }
 
     public boolean receiveStreamNIO(final SocketChannel socketChannel, final SelSession selSession, final SocketBuffer socketBuffer, final byte flag, final byte[] buffer, final long currentTime, final int streamMax, final IServerDispatch serverDispatch) {
@@ -219,7 +203,6 @@ public class SocketBufferResolver implements IBufferResolver {
                 if (stream != null) {
                     try {
                         stream.write(buffer, offLen, buffer.length - offLen);
-                        stream.flush();
                         return true;
 
                     } catch (Throwable e) {
@@ -231,16 +214,14 @@ public class SocketBufferResolver implements IBufferResolver {
             } else {
                 UtilPipedStream pipedStream = socketBuffer.getPipedStream();
                 if (streamIndex > 0 && pipedStream.getSize() < streamMax) {
-                    UtilPipedStream.NextOutputStream outputStream = pipedStream.createNextOutputStream(streamIndex);
-                    final PipedInputStream inputStream = new PipedInputStream();
+                    final UtilPipedStream.NextOutputStream outputStream = pipedStream.createNextOutputStream(streamIndex);
                     try {
-                        inputStream.connect(outputStream);
                         SocketAdapter._debugInfo("SocketBufferResolver STREAM_FLAG open " + streamIndex);
                         UtilContext.getThreadPoolExecutor().execute(new Runnable() {
 
                             @Override
                             public void run() {
-                                serverDispatch.doDispatch(selSession, socketChannel, socketBuffer.getId(), buffer, flag, offLen, socketBuffer, inputStream, currentTime);
+                                serverDispatch.doDispatch(selSession, socketChannel, socketBuffer.getId(), buffer, flag, offLen, socketBuffer, outputStream, currentTime);
                             }
                         });
 
@@ -272,7 +253,6 @@ public class SocketBufferResolver implements IBufferResolver {
                 UtilPipedStream.NextOutputStream outputStream = socketBuffer.getPipedStream().getOutputStream(streamIndex);
                 if (outputStream != null) {
                     try {
-                        outputStream.flush();
                         outputStream.close();
 
                     } catch (IOException e) {
@@ -362,6 +342,7 @@ public class SocketBufferResolver implements IBufferResolver {
             }
 
             synchronized (socketChannel) {
+                //保证数据顺序
                 SocketNIO.writeTimeout(socketChannel, ByteBuffer.wrap(headerBytes));
                 SocketNIO.writeTimeout(socketChannel, byteBuffer);
             }
@@ -384,7 +365,11 @@ public class SocketBufferResolver implements IBufferResolver {
 
                                 if (template.object != null) {
                                     try {
-                                        SocketNIO.writeTimeout(socketChannel, ByteBuffer.wrap(sendBuffer, 0, len + 2));
+                                        synchronized (socketChannel) {
+                                            //保证数据顺序
+                                            SocketNIO.writeTimeout(socketChannel, ByteBuffer.wrap(sendBuffer, 0, len + 2));
+                                        }
+
                                         continue;
 
                                     } catch (IOException e) {
@@ -413,6 +398,7 @@ public class SocketBufferResolver implements IBufferResolver {
             return true;
 
         } catch (Throwable e) {
+            Environment.throwable(e);
             if (streamIndex != 0) {
                 activePool.remove(streamIndex);
             }

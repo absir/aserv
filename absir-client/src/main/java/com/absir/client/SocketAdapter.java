@@ -268,6 +268,10 @@ public class SocketAdapter {
         }
     }
 
+    public static void _debugInfo(String info) {
+        System.out.println("[DEBUG.INFO]  " + info);
+    }
+
     public void clearUriVarints() {
         if (uriVarints != null) {
             uriVarints.clear();
@@ -694,10 +698,6 @@ public class SocketAdapter {
         byte[] buffer = buff;
         clearReceiveBuff();
         receiveBuffDone(buffer);
-    }
-
-    public static void _debugInfo(String info) {
-        System.out.println("[DEBUG.INFO]  " + info);
     }
 
     /**

@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 
 /**
  * Created by absir on 2016/10/28.
@@ -61,7 +59,7 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
             atom = null;
 
         } else {
-            returns = new Object[1];
+            returns = new Object[2];
             atom = new UtilAtom();
             atom.increment();
         }
@@ -71,22 +69,8 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
                 try {
-                    int code = buffer == null ? RpcFactory.RPC_CODE.RPC_ERROR.ordinal() : SocketAdapter.getVarints(buffer, offset, buffer.length);
-                    if (code == RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal()) {
-                        offset += KernelByte.getVarintsLength(code);
-                        try {
-                            if (returnType != null || returnType != void.class) {
-                                returns[0] = HelperDataFormat.PACK.read(buffer, offset, buffer.length, returnType);
-                            }
-
-                        } catch (Throwable e) {
-                            LOGGER.error("rpc error uri = " + uri, e);
-                            returns[0] = RpcFactory.RPC_CODE.RETRUN_ERROR;
-                        }
-
-                    } else {
-                        returns[0] = RpcFactory.RPC_CODE.rpcCodeForException(code);
-                    }
+                    returns[0] = buffer;
+                    returns[1] = offset;
 
                 } finally {
                     atom.decrement();
@@ -99,46 +83,12 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
                     doWith(adapter, offset, buffer);
 
                 } else {
-                    boolean returnThread = false;
                     try {
-                        if (returnType == InputStream.class) {
-                            // 直接返回流
-                            returns[0] = inputStream;
-
-                        } else {
-
-                            if (returnType != null || returnType != void.class) {
-                                // 流转换成对象返回
-                                UtilContext.getThreadPoolExecutor().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            int code = KernelByte.getVarintsLength(inputStream);
-                                            if (code == RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal()) {
-                                                returns[0] = HelperDataFormat.PACK.read(inputStream, returnType);
-
-                                            } else {
-                                                returns[0] = RpcFactory.RPC_CODE.rpcCodeForException(code);
-                                            }
-
-                                        } catch (Throwable e) {
-                                            LOGGER.error("rpc error uri = " + uri, e);
-                                            returns[0] = RpcFactory.RPC_CODE.RETRUN_ERROR;
-
-                                        } finally {
-                                            atom.decrement();
-                                        }
-                                    }
-                                });
-
-                                returnThread = true;
-                            }
-                        }
+                        returns[0] = inputStream;
+                        returns[1] = InputStream.class;
 
                     } finally {
-                        if (!returnThread) {
-                            atom.decrement();
-                        }
+                        atom.decrement();
                     }
                 }
             }
@@ -148,7 +98,12 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
             socketAdapter.sendDataIndexVarints(uri, paramData, timeout, callbackAdapter);
 
         } else {
-            final PipedOutputStream outputStream = new PipedOutputStream();
+            if (UtilContext.isWarnIdlePool()) {
+                return RpcFactory.RPC_CODE.NO_THREAD;
+            }
+
+            UtilPipedStream.OutInputStream inputStream = new UtilPipedStream.OutInputStream();
+            final UtilPipedStream.WrapOutStream outputStream = new UtilPipedStream.WrapOutStream(inputStream);
             Runnable inputRunnable = new Runnable() {
                 @Override
                 public void run() {
@@ -164,16 +119,56 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
                 }
             };
 
-            PipedInputStream inputStream = new PipedInputStream();
-            inputStream.connect(outputStream);
-            socketAdapter.sendStream(uri.getBytes(), true, false, inputStream, outputStream, timeout, callbackAdapter, inputRunnable);
+            socketAdapter.sendStream(uri.getBytes(), true, false, inputStream, outputStream, timeout, callbackAdapter, attribute.sendInputStream ? inputRunnable : null);
+            if (!attribute.sendInputStream) {
+                inputRunnable.run();
+            }
         }
 
-        if (async) {
+        if (atom == null) {
             return null;
         }
 
         atom.await();
+        if (returns[1] == InputStream.class) {
+            if (returnType != InputStream.class && returnType != null && returnType != void.class) {
+                InputStream inputStream = (InputStream) returns[0];
+                try {
+                    int code = KernelByte.getVarintsLength(inputStream);
+                    if (code == RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal()) {
+                        returns[0] = HelperDataFormat.PACK.read(inputStream, returnType);
+
+                    } else {
+                        returns[0] = RpcFactory.RPC_CODE.rpcCodeForException(code);
+                    }
+
+                } finally {
+                    System.out.println(HelperDataFormat.JSON.writeAsStringArray(returns));
+                    UtilPipedStream.closeCloseable(inputStream);
+                }
+            }
+
+        } else {
+            byte[] buffer = (byte[]) returns[0];
+            int offset = (Integer) returns[1];
+            int code = buffer == null ? RpcFactory.RPC_CODE.RPC_ERROR.ordinal() : SocketAdapter.getVarints(buffer, offset, buffer.length);
+            if (code == RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal()) {
+                offset += KernelByte.getVarintsLength(code);
+                try {
+                    if (returnType != null || returnType != void.class) {
+                        returns[0] = HelperDataFormat.PACK.read(buffer, offset, buffer.length, returnType);
+                    }
+
+                } catch (Throwable e) {
+                    LOGGER.error("rpc error uri = " + uri, e);
+                    returns[0] = RpcFactory.RPC_CODE.RETRUN_ERROR;
+                }
+
+            } else {
+                returns[0] = RpcFactory.RPC_CODE.rpcCodeForException(code);
+            }
+        }
+
         return returns[0];
     }
 }

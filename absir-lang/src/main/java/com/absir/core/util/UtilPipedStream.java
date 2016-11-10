@@ -13,7 +13,8 @@ import com.absir.core.util.UtilStep.IStep;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.PipedOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -200,7 +201,218 @@ public class UtilPipedStream implements IStep {
         addNextOutputStream(hashIndex, value);
     }
 
-    public class NextOutputStream extends PipedOutputStream {
+    public static class WrapOutStream extends OutputStream {
+
+        OutInputStream outInputStream;
+
+        public WrapOutStream(OutInputStream inputStream) {
+            outInputStream = inputStream;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            outInputStream.write(b);
+        }
+
+        @Override
+        public void close() throws IOException {
+            outInputStream.close();
+        }
+    }
+
+    public static class OutInputStream extends InputStream {
+
+        public static final int DEFAULT_PIPE_SIZE = 1056;
+
+        protected boolean closed;
+
+        protected byte buffer[];
+
+        protected int in = 0;
+
+        protected int out = 0;
+
+        public OutInputStream() {
+            initPipe(DEFAULT_PIPE_SIZE);
+        }
+
+        public OutInputStream(int pipeSize) {
+            initPipe(pipeSize);
+        }
+
+        private void initPipe(int pipeSize) {
+            if (pipeSize <= 0) {
+                throw new IllegalArgumentException("Pipe Size <= 0");
+            }
+
+            buffer = new byte[pipeSize];
+        }
+
+        private final void checkWrite(int len) throws IOException {
+            if (closed) {
+                throw new IOException("Block stream closed");
+            }
+
+            if (availableNIO() + len >= buffer.length) {
+                flush();
+                try {
+                    wait(1000);
+
+                } catch (InterruptedException e) {
+                }
+
+                if (availableNIO() + len >= buffer.length) {
+                    throw new IOException("Block not enough buffer write");
+                }
+            }
+        }
+
+        public synchronized void write(int b) throws IOException {
+            checkWrite(1);
+            synchronized (buffer) {
+                buffer[in] = (byte) (b & 0xFF);
+                if (++in >= buffer.length) {
+                    in = 0;
+                }
+            }
+        }
+
+        public synchronized void write(byte[] b, int off, int len) throws IOException {
+            checkWrite(len);
+            synchronized (buffer) {
+                int last = in + len;
+                if (last <= buffer.length) {
+                    System.arraycopy(b, off, buffer, in, len);
+                    in += len;
+                    if (in >= buffer.length) {
+                        in = 0;
+                    }
+
+                } else {
+                    int l = buffer.length - in;
+                    System.arraycopy(b, off, buffer, in, l);
+                    in = len - l;
+                    System.arraycopy(b, off + l, buffer, 0, in);
+                }
+            }
+
+            flush();
+        }
+
+        public final void flush() {
+            synchronized (buffer) {
+                buffer.notifyAll();
+            }
+        }
+
+        public int available() {
+            if (readSpace()) {
+                return 0;
+            }
+
+            return availableNIO();
+        }
+
+        protected final int availableNIO() {
+            int av = in - out;
+            if (av < 0) {
+                av += buffer.length;
+            }
+
+            return av;
+        }
+
+        private final boolean readSpace() {
+            try {
+                while (in == out) {
+                    if (closed) {
+                        return true;
+                    }
+
+                    synchronized (buffer) {
+                        buffer.wait(1000);
+                    }
+                }
+
+            } catch (InterruptedException e) {
+            }
+
+            return false;
+        }
+
+        @Override
+        public int read() throws IOException {
+            if (readSpace()) {
+                return -1;
+            }
+
+            synchronized (buffer) {
+                if (in == out) {
+                    return -1;
+                }
+
+                int b = buffer[out];
+                if (++out >= buffer.length) {
+                    out = 0;
+                }
+
+                return b;
+            }
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            if (readSpace()) {
+                return -1;
+            }
+
+            synchronized (buffer) {
+                int av = in - out;
+                if (av == 0) {
+                    return -1;
+                }
+
+                if (av > 0) {
+                    if (av > len) {
+                        av = len;
+                    }
+
+                    System.arraycopy(buffer, out, b, off, av);
+                    out += av;
+                    if (out >= buffer.length) {
+                        in = 0;
+                        out = 0;
+                    }
+
+                } else {
+                    av = buffer.length - out;
+                    if (av > len) {
+                        av = len;
+                    }
+
+                    System.arraycopy(buffer, out, b, off, av);
+                    out += av;
+                    if (out >= buffer.length) {
+                        out = 0;
+                    }
+                }
+
+                return av;
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (!closed) {
+                synchronized (this) {
+                    closed = true;
+                    flush();
+                }
+            }
+        }
+    }
+
+    public class NextOutputStream extends OutInputStream {
 
         protected long passTime;
 
@@ -212,13 +424,11 @@ public class UtilPipedStream implements IStep {
             passTime = UtilContext.getCurrentTime() + idleTime;
         }
 
-        @Override
         public void write(int b) throws IOException {
             super.write(b);
             retainAt();
         }
 
-        @Override
         public void write(byte[] b, int off, int len) throws IOException {
             super.write(b, off, len);
             retainAt();

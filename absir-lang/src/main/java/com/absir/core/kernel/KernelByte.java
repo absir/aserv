@@ -107,11 +107,10 @@ public class KernelByte {
     }
 
     public static int getVarintsLength(InputStream inputStream) throws IOException {
-        byte[] buffer = new byte[1];
         int length = 0;
         int idx = 0;
-        while (inputStream.read(buffer, 0, 1) > 0) {
-            byte b = buffer[0];
+        int b;
+        while ((b = inputStream.read()) != -1) {
             switch (idx) {
                 case 0:
                     length += b & 0x7F;

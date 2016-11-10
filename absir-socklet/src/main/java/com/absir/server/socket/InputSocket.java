@@ -14,6 +14,7 @@ import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelByte;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelLang;
+import com.absir.core.util.UtilContext;
 import com.absir.core.util.UtilPipedStream;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.InMethod;
@@ -196,6 +197,10 @@ public abstract class InputSocket extends Input {
         if (outputStream != null) {
             UtilPipedStream.closeCloseable(outputStream);
         }
+
+        if (inputStream != null) {
+            UtilPipedStream.closeCloseable(inputStream);
+        }
     }
 
     public void writeUriDict() {
@@ -214,13 +219,11 @@ public abstract class InputSocket extends Input {
 
     @Override
     public boolean readyOutputStream() throws IOException {
-        if (outputStream == null) {
+        if (outputStream == null && !UtilContext.isWarnIdlePool()) {
             SelSession selSession = socketAtt.getSelSession();
             if (selSession != null) {
-                PipedOutputStream output = new PipedOutputStream();
-                outputStream = output;
-                PipedInputStream inputStream = new PipedInputStream();
-                inputStream.connect(output);
+                UtilPipedStream.OutInputStream inputStream = new UtilPipedStream.OutInputStream();
+                outputStream = new UtilPipedStream.WrapOutStream(inputStream);
                 if (!getSocketBufferResolver().writeByteBuffer(selSession, socketChannel, writeFlag(flag), socketAtt.getCallbackIndex(), KernelLang.NULL_BYTES, 0, 0, inputStream, outputStream)) {
                     UtilPipedStream.closeCloseable(outputStream);
                     return false;

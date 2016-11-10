@@ -16,15 +16,6 @@ import java.util.Map;
 public class UtilActivePool {
 
     private int index;
-
-    public static class ActiveTemplate {
-
-        public Integer object;
-
-        protected Closeable closeable;
-
-    }
-
     private Map<Integer, ActiveTemplate> activeMap = new HashMap<Integer, ActiveTemplate>();
 
     public synchronized ActiveTemplate addObject(Closeable closeable) {
@@ -71,6 +62,14 @@ public class UtilActivePool {
         }
 
         activeMap.clear();
+    }
+
+    public static class ActiveTemplate {
+
+        public Integer object;
+
+        protected Closeable closeable;
+
     }
 
 }

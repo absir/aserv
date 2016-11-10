@@ -9,16 +9,16 @@ package com.absir.bean.inject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class InjectAdapter {
 
     private static InjectAdapter Instance;
 
-    Set<Field> fields = new HashSet<Field>();
+    Set<Field> fields = new LinkedHashSet<Field>();
 
-    Set<Method> methods = new HashSet<Method>();
+    Set<Method> methods = new LinkedHashSet<Method>();
 
     public static InjectAdapter getInstance() {
         return Instance;

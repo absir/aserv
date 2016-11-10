@@ -44,14 +44,20 @@ public class UtilAtom {
     public void await() {
         if (atomic > 0) {
             lock.lock();
+            //UtilDump.TimeoutException exception = null;
             try {
                 if (atomic > 0) {
+                    //exception = UtilDump.addTimeoutException(3000);
                     condition.await();
                 }
 
             } catch (Exception e) {
                 Environment.throwable(e);
             }
+
+//            if (exception != null) {
+//                exception.complete();
+//            }
 
             lock.unlock();
         }

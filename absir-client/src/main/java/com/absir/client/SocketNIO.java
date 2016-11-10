@@ -17,6 +17,7 @@ import java.util.Arrays;
 
 public class SocketNIO {
 
+    public static boolean _debugInfo;
     private static long writeTimeout = 20000;
 
     public static long getWriteTimeout() {
@@ -31,11 +32,11 @@ public class SocketNIO {
         writeTimeout = timeout;
     }
 
-    public static void writeTimeout(SocketChannel socketChannel, ByteBuffer byteBuffer) throws IOException {
+    public static final void writeTimeout(SocketChannel socketChannel, ByteBuffer byteBuffer) throws IOException {
         writeTimeout(socketChannel, byteBuffer, writeTimeout);
     }
 
-    public static void writeTimeout(SocketChannel socketChannel, ByteBuffer byteBuffer, long writeTimeout)
+    public static final void writeTimeout(SocketChannel socketChannel, ByteBuffer byteBuffer, long writeTimeout)
             throws IOException {
         if (byteBuffer.limit() - byteBuffer.position() <= 0) {
             return;
@@ -45,7 +46,13 @@ public class SocketNIO {
         SelectionKey key = null;
         Selector writeSelector = null;
         try {
-            SocketAdapter._debugInfo("SocketNIO send  => " + Arrays.toString(byteBuffer.array()));
+            if (_debugInfo) {
+                _debugInfo = false;
+
+            } else {
+                SocketAdapter._debugInfo("SocketNIO send  => " + Arrays.toString(Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit())));
+            }
+
             while (byteBuffer.hasRemaining()) {
                 int len = socketChannel.write(byteBuffer);
                 attempts++;
