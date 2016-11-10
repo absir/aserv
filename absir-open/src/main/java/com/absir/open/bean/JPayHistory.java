@@ -13,11 +13,10 @@ import com.absir.aserv.system.bean.base.JbBase;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.context.core.ContextUtils;
-import com.absir.orm.value.JaColum;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Index;
 
 @MaEntity(parent = {@MaMenu("支付管理")}, name = "支付")
 @Entity
@@ -27,11 +26,8 @@ public class JPayHistory extends JbBase {
     @Id
     private String id;
 
-    @JaLang("平台")
-    @JaColum(indexs = @Index(columnList = "platform,tradeNo", unique = true))
-    private String platform;
-
     @JaLang("交易号")
+    @Column(unique = true)
     private String tradeNo;
 
     @JaLang("创建时间")
@@ -44,14 +40,6 @@ public class JPayHistory extends JbBase {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(String platform) {
-        this.platform = platform;
     }
 
     public String getTradeNo() {

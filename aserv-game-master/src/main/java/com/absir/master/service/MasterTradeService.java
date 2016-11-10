@@ -7,8 +7,6 @@
  */
 package com.absir.master.service;
 
-import com.absir.aserv.master.bean.JSlaveServer;
-import com.absir.aserv.master.service.MasterSlaveService;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.service.BeanService;
@@ -60,8 +58,8 @@ public class MasterTradeService implements IPayProcessor {
         payTrade.setAmount(amount);
         payTrade.setServerId(serverId);
         payTrade.setUserId(playerId);
-        payTrade.setName("JDollar");
-        payTrade.setNameId(index);
+        //payTrade.setName("JDollar");
+        //payTrade.setNameId(index);
         BeanDao.getSession().persist(payTrade);
         return payTrade;
     }
@@ -72,19 +70,19 @@ public class MasterTradeService implements IPayProcessor {
      */
     @Override
     public Object process(JPayTrade payTrade) throws Exception {
-        if ("JDollar".equals(payTrade.getName())) {
-            long serverId = payTrade.getServerId();
-            JSlaveServer slaveServer = BeanService.ME.get(JSlaveServer.class, serverId);
-            if (slaveServer != null) {
-                long playerId = payTrade.getUserId();
-                int index = payTrade.getNameId();
-                MasterSlaveService.ME.addSlaveSynch(slaveServer.getHost().getId(), "notifyPay" + payTrade.getId(),
-                        "api/command/topup/" + playerId + "/" + index + "/" + payTrade.getAmount() + "/"
-                                + payTrade.getPlatform(),
-                        null);
-                return playerId;
-            }
-        }
+//        if ("JDollar".equals(payTrade.getName())) {
+//            long serverId = payTrade.getServerId();
+//            JSlaveServer slaveServer = BeanService.ME.get(JSlaveServer.class, serverId);
+//            if (slaveServer != null) {
+//                long playerId = payTrade.getUserId();
+//                int index = payTrade.getNameId();
+//                MasterSlaveService.ME.addSlaveSynch(slaveServer.getHost().getId(), "notifyPay" + payTrade.getId(),
+//                        "api/command/topup/" + playerId + "/" + index + "/" + payTrade.getAmount() + "/"
+//                                + payTrade.getPlatform(),
+//                        null);
+//                return playerId;
+//            }
+//        }
 
         return null;
     }

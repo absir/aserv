@@ -58,27 +58,27 @@ public abstract class PayUtils {
         return null;
     }
 
-    public static boolean validator(int configureId, String platform, String tradeNo, String tradeReceipt, String platformData, float amount, boolean sandbox, String... moreDatas) throws Exception {
+    public static String validator(int configureId, String platform, String tradeNo, String tradeReceipt, String platformData, String goodsId, int goodsNumber, float amount, boolean sandbox, String... moreDatas) throws Exception {
         if (payInterfaceMap != null && !KernelString.isEmpty(platform)) {
             IPayInterface<Object> payInterface = payInterfaceMap.get(platform);
             if (payInterface != null) {
                 Object configure = getPayInterfaceConfigure(payInterface, platform, configureId);
                 if (configure != null) {
-                    return payInterface.validator(configure, tradeNo, tradeReceipt, platformData, amount, sandbox, moreDatas);
+                    return payInterface.validator(configure, tradeNo, tradeReceipt, platformData, goodsId, goodsNumber, amount, sandbox, moreDatas);
                 }
             }
         }
 
-        return false;
+        return null;
     }
 
-    public static boolean validator(JPayTrade payTrade) throws Exception {
+    public static String validator(JPayTrade payTrade) throws Exception {
         JePayStatus status = payTrade.getStatus();
         if (status == null || status.compareTo(JePayStatus.ERROR) <= 0) {
-            return validator(payTrade.getConfigureId(), payTrade.getPlatform(), payTrade.getTradeNo(), payTrade.getTradeReceipt(), payTrade.getPlatformData(), payTrade.getAmount(), payTrade.isSandbox(), payTrade.getMoreDatas());
+            return validator(payTrade.getConfigureId(), payTrade.getPlatform(), payTrade.getTradeNo(), payTrade.getTradeReceipt(), payTrade.getPlatformData(), payTrade.getGoodsId(), payTrade.getGoodsNumber(), payTrade.getAmount(), payTrade.isSandbox(), payTrade.getMoreDatas());
         }
 
-        return false;
+        return null;
     }
 
     public static Object notify(JPayTrade payTrade, String platform, String tradeNo, String tradeReceipt, float amount, String[] moreDatas, JePayStatus payStatus,
@@ -97,7 +97,18 @@ public abstract class PayUtils {
             if (payStatus == JePayStatus.PAYING || payStatus == JePayStatus.PAYED) {
                 if ((amount < 0 || amount >= payTrade.getAmount())) {
                     try {
-                        if (payStatus == JePayStatus.PAYED || validator(payTrade)) {
+                        if (payStatus != JePayStatus.PAYED) {
+                            String receipt = validator(payTrade);
+                            if (receipt != null) {
+                                if (receipt.length() > 0) {
+                                    payTrade.setTradeNo(receipt);
+                                }
+
+                                payStatus = JePayStatus.PAYED;
+                            }
+                        }
+
+                        if (payStatus == JePayStatus.PAYED) {
                             return processDone(platform, payTrade);
                         }
 
@@ -122,22 +133,17 @@ public abstract class PayUtils {
     public static Object processDone(String platform, JPayTrade payTrade) {
         if (payService != null) {
             try {
-                String tradeNo = payTrade.getTradeNo();
-                if (KernelString.isEmpty(tradeNo)) {
-                    tradeNo = payTrade.getId();
+                if (platform != null) {
+                    payTrade.setPlatform(platform);
                 }
 
-                if (TradeService.ME.addPayHistory(payTrade, tradeNo)) {
+                if (TradeService.ME.addPayHistory(payTrade)) {
                     Object result = payService.process(payTrade);
                     if (payTrade.getStatus() != JePayStatus.COMPLETE) {
                         payTrade.setStatus(JePayStatus.COMPLETE);
                     }
 
                     return result;
-                }
-
-                if (platform != null) {
-                    payTrade.setPlatform(platform);
                 }
 
                 payTrade.setStatus(JePayStatus.COMPLETE);

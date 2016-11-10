@@ -40,9 +40,11 @@ public class JPayTrade extends JbBase {
     private String platformData;
 
     @JaLang("渠道")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
     private String channel;
 
     @JaLang("交易号")
+    @JaEdit(groups = JaEdit.GROUP_SEARCH)
     private String tradeNo;
 
     @JaLang("交易票据")
@@ -57,8 +59,26 @@ public class JPayTrade extends JbBase {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String statusData;
 
-    @JaLang("用户编号")
+    @JaLang(value = "商品编号")
     @JaEdit(groups = JaEdit.GROUP_LIST)
+    private String goodsId;
+
+    @JaLang(value = "商品数量")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private int goodsNumber;
+
+    @JaLang(value = "商品参数")
+    private String goodsData;
+
+    @JaLang(value = "订单参数")
+    private int tradeData;
+
+    @JaLang("金额")
+    @JaEdit(groups = JaEdit.GROUP_LIST, listColType = 1)
+    private float amount;
+
+    @JaLang("用户编号")
+    @JaEdit(groups = JaEdit.GROUP_LIST, listColType = 1)
     private long userId;
 
     @JaLang("服务编号")
@@ -69,30 +89,15 @@ public class JPayTrade extends JbBase {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private long playerId;
 
-    @JaLang(value = "商品名", tag = "goodsName")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
-    private String name;
-
-    @JaLang(value = "商品编号", tag = "goodsId")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
-    private int nameId;
-
-    @JaLang(value = "商品参数", tag = "goodsData")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
-    private String nameData;
-
-    @JaLang("金额")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
-    private float amount;
-
     @JaLang(value = "资源")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
     private String source;
 
     @JaLang("配置编号")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
     private int configureId;
 
     @JaLang("沙盒")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean sandbox;
 
     @JaLang(value = "更多数据")
@@ -171,6 +176,50 @@ public class JPayTrade extends JbBase {
         this.statusData = statusData;
     }
 
+    public String getGoodsId() {
+        return goodsId;
+    }
+
+    public void setGoodsId(String goodsId) {
+        this.goodsId = goodsId;
+    }
+
+    public int getGoodsNumber() {
+        return goodsNumber;
+    }
+
+    public void setGoodsNumber(int goodsNumber) {
+        this.goodsNumber = goodsNumber;
+    }
+
+    public String getGoodsData() {
+        return goodsData;
+    }
+
+    public void setGoodsData(String goodsData) {
+        this.goodsData = goodsData;
+    }
+
+    public int getTradeData() {
+        return tradeData;
+    }
+
+    public void setTradeData(int tradeData) {
+        this.tradeData = tradeData;
+    }
+
+    public float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(float amount) {
+        this.amount = amount;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
     public long getUserId() {
         return userId;
     }
@@ -193,42 +242,6 @@ public class JPayTrade extends JbBase {
 
     public void setPlayerId(long playerId) {
         this.playerId = playerId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getNameId() {
-        return nameId;
-    }
-
-    public void setNameId(int nameId) {
-        this.nameId = nameId;
-    }
-
-    public String getNameData() {
-        return nameData;
-    }
-
-    public void setNameData(String nameData) {
-        this.nameData = nameData;
-    }
-
-    public float getAmount() {
-        return amount;
-    }
-
-    public void setAmount(float amount) {
-        this.amount = amount;
-    }
-
-    public String getSource() {
-        return source;
     }
 
     public void setSource(String source) {
