@@ -92,6 +92,9 @@ public class JPayTrade extends JbBase {
     @JaLang("配置编号")
     private int configureId;
 
+    @JaLang("沙盒")
+    private boolean sandbox;
+
     @JaLang(value = "更多数据")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     private String[] moreDatas;
@@ -238,6 +241,14 @@ public class JPayTrade extends JbBase {
 
     public void setConfigureId(int configureId) {
         this.configureId = configureId;
+    }
+
+    public boolean isSandbox() {
+        return sandbox;
+    }
+
+    public void setSandbox(boolean sandbox) {
+        this.sandbox = sandbox;
     }
 
     public String[] getMoreDatas() {

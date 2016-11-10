@@ -26,6 +26,7 @@ import com.absir.core.util.UtilPipedStream;
 import com.absir.data.helper.HelperDataFormat;
 import com.absir.master.InputMaster;
 import com.absir.master.InputMasterContext;
+import com.absir.master.MasterChannelContext;
 import com.absir.server.in.InMethod;
 import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
@@ -214,14 +215,14 @@ public class MasterServerResolver extends SocketServerResolver {
         }
     }
 
-    public void sendDataBytesVarints(InputMasterContext.MasterChannelContext channelContext, String url,
+    public void sendDataBytesVarints(MasterChannelContext channelContext, String url,
                                      byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
-        sendDataBytesVarints(channelContext, url, channelContext.getSocketAdapter().getNextCallbackIndex(callbackAdapter), postData, timeout, callbackAdapter);
+        sendDataBytesVarints(channelContext, url, channelContext.getMasterChannelAdapter().getNextCallbackIndex(callbackAdapter), postData, timeout, callbackAdapter);
     }
 
-    public void sendDataBytesVarints(InputMasterContext.MasterChannelContext channelContext, String url, int callbackIndex,
+    public void sendDataBytesVarints(MasterChannelContext channelContext, String url, int callbackIndex,
                                      byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
-        SocketAdapter masterAdapter = channelContext.getSocketAdapter();
+        SocketAdapter masterAdapter = channelContext.getMasterChannelAdapter();
         if (callbackAdapter != null) {
             masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
         }

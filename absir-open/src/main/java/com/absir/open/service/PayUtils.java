@@ -58,13 +58,13 @@ public abstract class PayUtils {
         return null;
     }
 
-    public static boolean validator(String platform, String tradeNo, String tradeReceipt, String platformData, float amount, String[] moreDatas, int configureId) throws Exception {
+    public static boolean validator(int configureId, String platform, String tradeNo, String tradeReceipt, String platformData, float amount, boolean sandbox, String... moreDatas) throws Exception {
         if (payInterfaceMap != null && !KernelString.isEmpty(platform)) {
             IPayInterface<Object> payInterface = payInterfaceMap.get(platform);
             if (payInterface != null) {
                 Object configure = getPayInterfaceConfigure(payInterface, platform, configureId);
                 if (configure != null) {
-                    return payInterface.validator(configure, tradeNo, tradeReceipt, platformData, amount, moreDatas);
+                    return payInterface.validator(configure, tradeNo, tradeReceipt, platformData, amount, sandbox, moreDatas);
                 }
             }
         }
@@ -75,7 +75,7 @@ public abstract class PayUtils {
     public static boolean validator(JPayTrade payTrade) throws Exception {
         JePayStatus status = payTrade.getStatus();
         if (status == null || status.compareTo(JePayStatus.ERROR) <= 0) {
-            return validator(payTrade.getPlatform(), payTrade.getTradeNo(), payTrade.getTradeReceipt(), payTrade.getPlatformData(), payTrade.getAmount(), payTrade.getMoreDatas(), payTrade.getConfigureId());
+            return validator(payTrade.getConfigureId(), payTrade.getPlatform(), payTrade.getTradeNo(), payTrade.getTradeReceipt(), payTrade.getPlatformData(), payTrade.getAmount(), payTrade.isSandbox(), payTrade.getMoreDatas());
         }
 
         return false;

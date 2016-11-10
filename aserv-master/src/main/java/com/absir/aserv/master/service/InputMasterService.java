@@ -14,6 +14,7 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
 import com.absir.core.base.Environment;
 import com.absir.master.InputMasterContext;
+import com.absir.master.MasterChannelContext;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.Session;
 

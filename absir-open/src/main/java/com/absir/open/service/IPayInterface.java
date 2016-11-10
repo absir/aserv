@@ -15,6 +15,6 @@ public interface IPayInterface<T> {
 
     public T getConfigure();
 
-    public boolean validator(T configure, String tradeNo, String tradeReceipt, String platformData, float amount, String[] moreDatas) throws Exception;
+    public boolean validator(T configure, String tradeNo, String tradeReceipt, String platformData, float amount, boolean sandbox, String[] moreDatas) throws Exception;
 
 }

@@ -39,10 +39,6 @@ public class SlaverMasterService {
 
     /**
      * 添加同步
-     *
-     * @param id
-     * @param uri
-     * @param postData
      */
     @Transaction
     public boolean addMasterSynch(String id, String uri, Object postData) {
@@ -72,9 +68,6 @@ public class SlaverMasterService {
 
     /**
      * 服务区同步完成
-     *
-     * @param masterSynch
-     * @param updateTime
      */
     @Transaction
     public void syncComplete(JMasterSynch masterSynch, long updateTime) {

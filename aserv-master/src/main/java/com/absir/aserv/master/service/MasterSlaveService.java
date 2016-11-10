@@ -31,6 +31,7 @@ import com.absir.core.util.UtilAbsir;
 import com.absir.core.util.UtilAtom;
 import com.absir.data.helper.HelperDataFormat;
 import com.absir.master.InputMasterContext;
+import com.absir.master.MasterChannelContext;
 import com.absir.master.resolver.MasterServerResolver;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.hibernate.boost.L2CacheCollectionService;
@@ -78,11 +79,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
 
     /**
      * 添加同步
-     *
-     * @param eids
-     * @param mid
-     * @param uri
-     * @param postData
      */
     @Transaction
     public void addSlaveSynch(long[] eids, String mid, String uri, Object postData) {
@@ -98,12 +94,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
 
     /**
      * 添加同步
-     *
-     * @param eid
-     * @param mid
-     * @param uri
-     * @param postData
-     * @return
      */
     @Transaction
     public boolean addSlaveSynch(String eid, String mid, String uri, Object postData) {
@@ -113,13 +103,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
 
     /**
      * 添加同步
-     *
-     * @param eid
-     * @param mid
-     * @param uri
-     * @param postData
-     * @param autoSynch
-     * @return
      */
     @Transaction
     public boolean addSlaveSynch(String eid, String mid, String uri, Object postData, boolean autoSynch) {
@@ -158,8 +141,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
 
     /**
      * 添加通用同步
-     *
-     * @param slaveSynch
      */
     @Async
     @Transaction
@@ -174,8 +155,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
 
     /**
      * 检查通用同步
-     *
-     * @param slave
      */
     @Async
     @Transaction
@@ -191,9 +170,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
 
     /**
      * 服务区同步完成
-     *
-     * @param slaveSynch
-     * @param updateTime
      */
     @Transaction
     public void syncComplete(JSlaveSynch slaveSynch, long updateTime) {
@@ -221,7 +197,7 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
         final UtilAtom atom = new UtilAtom();
         while (iterator.hasNext()) {
             final JSlaveSynch slaveSynch = iterator.next();
-            InputMasterContext.MasterChannelContext context = InputMasterContext.ME.getServerContext().getChannelContexts()
+            MasterChannelContext context = InputMasterContext.ME.getServerContext().getChannelContexts()
                     .get(slaveSynch.getId().getEid());
             if (context != null) {
                 try {
@@ -286,8 +262,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
 
     /**
      * 服务区同步变化
-     *
-     * @param slaveServer
      */
     @Transaction
     public void syncChange(JSlaveServer slaveServer) {
@@ -298,9 +272,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
 
     /**
      * 服务区同步完成
-     *
-     * @param slaveServer
-     * @param updateTime
      */
     @Transaction
     public void syncComplete(JSlaveServer slaveServer, long updateTime) {
@@ -311,8 +282,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
 
     /**
      * 同步服务区数据
-     *
-     * @throws InterruptedException
      */
     @Async(notifier = true)
     @Transaction(readOnly = true)

@@ -10,13 +10,11 @@ package com.absir.master;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.*;
-import com.absir.client.SocketAdapter;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.master.resolver.MasterBufferResolver;
 import com.absir.master.resolver.MasterSessionResolver;
 import com.absir.server.socket.SocketServer;
 import com.absir.server.socket.SocketServerContext;
-import com.absir.server.socket.SocketServerContext.ChannelContext;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -31,7 +29,7 @@ public class InputMasterContext {
 
     public static final InputMasterContext ME = BeanFactoryUtils.get(InputMasterContext.class);
 
-    public static Map<Serializable, SocketAdapter> slaveMapSocketAdapter;
+    public static Map<Serializable, MasterChannelAdapter> masterChannelMapAdapter;
 
     @Value("master.accept.timeout")
     protected static long acceptTimeout = 120000;
@@ -116,7 +114,7 @@ public class InputMasterContext {
         serverContext.loginSocketChannel(id, channelContext);
         if (params.length > 2) {
             long serverTime = KernelDyna.to(params[2], long.class);
-            channelContext.getSocketAdapter().setRegistered(true, serverTime);
+            channelContext.getMasterChannelAdapter().setRegistered(true, serverTime);
         }
     }
 
@@ -134,49 +132,31 @@ public class InputMasterContext {
         return channelContext == null ? null : channelContext.getChannel();
     }
 
-    public static class MasterChannelContext extends ChannelContext {
+    protected MasterChannelAdapter createMasterChannelAdapter(Serializable id) {
+        return new MasterChannelAdapter();
+    }
 
-        protected Serializable id;
-
-        protected String slaveKey;
-
-        protected SocketAdapter socketAdapter;
-
-        public MasterChannelContext(Serializable id, SocketChannel channel) {
-            super(channel);
-            this.id = id;
-        }
-
-        public String getSlaveKey() {
-            return slaveKey;
-        }
-
-        public SocketAdapter getSocketAdapter() {
-            if (socketAdapter == null) {
-                if (slaveMapSocketAdapter == null) {
-                    synchronized (MasterChannelContext.class) {
-                        if (slaveMapSocketAdapter == null) {
-                            slaveMapSocketAdapter = new HashMap<Serializable, SocketAdapter>();
-                        }
-                    }
-                }
-
-                socketAdapter = slaveMapSocketAdapter.get(id);
-                if (socketAdapter == null) {
-                    synchronized (slaveMapSocketAdapter) {
-                        socketAdapter = slaveMapSocketAdapter.get(id);
-                        if (socketAdapter == null) {
-                            SocketAdapter adapter = new SocketAdapter();
-                            adapter.setRegistered(true, 0);
-                            socketAdapter = adapter;
-                            slaveMapSocketAdapter.put(id, socketAdapter);
-                        }
-                    }
+    public MasterChannelAdapter getMasterChannelAdapter(Serializable id) {
+        if (InputMasterContext.masterChannelMapAdapter == null) {
+            synchronized (this) {
+                if (masterChannelMapAdapter == null) {
+                    masterChannelMapAdapter = new HashMap<Serializable, MasterChannelAdapter>();
                 }
             }
-
-            return socketAdapter;
         }
+
+        MasterChannelAdapter adapter = InputMasterContext.masterChannelMapAdapter.get(id);
+        if (adapter == null) {
+            synchronized (this) {
+                adapter = InputMasterContext.masterChannelMapAdapter.get(id);
+                if (adapter == null) {
+                    createMasterChannelAdapter(id);
+                    masterChannelMapAdapter.put(id, adapter);
+                }
+            }
+        }
+
+        return adapter;
     }
 
 }
