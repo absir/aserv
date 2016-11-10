@@ -206,8 +206,8 @@ public class ContextFactory {
 
     @Inject
     @InjectOrder(-255)
-    protected void injectExecutor(@Value(value = "context.corePoolSize", defaultValue = "1024") int corePoolSize,
-                                  @Value(value = "context.maximumPoolSize", defaultValue = "2048") int maximumPoolSize,
+    protected void injectExecutor(@Value(value = "context.corePoolSize", defaultValue = "256") int corePoolSize,
+                                  @Value(value = "context.maximumPoolSize", defaultValue = "1024") int maximumPoolSize,
                                   @Value(value = "context.keepAliveTime", defaultValue = "90000") int keepAliveTime,
                                   @Value(value = "context.minIdlePool", defaultValue = "32") int minIdlePool) {
         setThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime);
