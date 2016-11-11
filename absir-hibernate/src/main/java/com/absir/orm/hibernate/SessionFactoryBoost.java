@@ -35,6 +35,7 @@ import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.type.BasicType;
 
 import java.lang.reflect.Field;
@@ -215,6 +216,16 @@ public class SessionFactoryBoost {
 
         classMetadata = Collections.unmodifiableMap(classMetadata);
         KernelObject.declaredSet(sessionFactory, "classMetadata", classMetadata);
+
+        Map<String, EntityPersister> entityPersisters = new HashMap<String, EntityPersister>();
+        for (Entry<String, EntityPersister> entry : sessionFactory.getEntityPersisters().entrySet()) {
+            EntityPersister entityPersister = entry.getValue();
+            entityPersisters.put(entry.getKey(), entityPersister);
+            entityPersisters.put(SessionFactoryUtils.getJpaEntityName(entry.getKey()), entityPersister);
+        }
+
+        entityPersisters = Collections.unmodifiableMap(entityPersisters);
+        KernelObject.declaredSet(sessionFactory, "entityPersisters", entityPersisters);
     }
 
     public static class MetadataBuilderProxy extends MetadataBuilderImpl {
