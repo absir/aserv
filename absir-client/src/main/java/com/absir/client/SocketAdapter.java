@@ -32,11 +32,15 @@ public class SocketAdapter {
 
     public static final byte RESPONSE_FLAG = 0x01 << 2;
 
+    public static final byte RESPONSE_FLAG_REMOVE = ~RESPONSE_FLAG;
+
     public static final byte ERROR_OR_SPECIAL_FLAG = 0x01 << 3;
 
     public static final byte POST_FLAG = 0x01 << 4;
 
     public static final byte CALLBACK_FLAG = 0x01 << 5;
+
+    public static final byte CALLBACK_FLAG_REMOVE = ~CALLBACK_FLAG;
 
     public static final byte HUMAN_FLAG = 0x01 << 6;
 
@@ -49,6 +53,8 @@ public class SocketAdapter {
     public static final int VARINTS_3_LENGTH = VARINTS_2_LENGTH + (0x7F << 14);
 
     public static final int VARINTS_4_LENGTH = VARINTS_3_LENGTH + (0x7F << 22);
+
+    public static final int MS_CALLBACK_INDEX = 1;
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(SocketAdapter.class);
     protected static Map<Integer, String> varints_Uri;
@@ -526,6 +532,7 @@ public class SocketAdapter {
         socket = null;
         registered = false;
         receiveStarted = false;
+        clearReceiveBuff();
     }
 
     /**
@@ -767,7 +774,7 @@ public class SocketAdapter {
                 callbackIndex = varints;
             }
 
-            if (offset < length && (flag & URI_DICT_FLAG) != 0) {
+            if (offset < length && (flag & URI_DICT_FLAG) != 0 && (flag & RESPONSE_FLAG) == 0) {
                 //返回数据中包含url压缩字典
                 int varints1 = getVarints(buffer, offset, length);
                 offset += getVarintsLength(varints1);
@@ -860,11 +867,11 @@ public class SocketAdapter {
 
     public byte[] sendDataBytes(int off, byte[] dataBytes, int dataOff, int dataLen, boolean head, boolean human,
                                 byte flag, int callbackIndex, byte[] postData, int postOff, int postLen) {
-        return sendDataBytes(off, dataBytes, dataOff, dataLen, head, human, flag, callbackIndex, postData, postOff, postLen, false);
+        return sendDataBytesReal(off, dataBytes, dataOff, dataLen, head, human, flag, callbackIndex, postData, postOff, postLen, false);
     }
 
-    public byte[] sendDataBytes(int off, byte[] dataBytes, int dataOff, int dataLen, boolean head, boolean human,
-                                byte flag, int callbackIndex, byte[] postData, int postOff, int postLen, boolean noPLen) {
+    public byte[] sendDataBytesReal(int off, byte[] dataBytes, int dataOff, int dataLen, boolean head, boolean human,
+                                    byte flag, int callbackIndex, byte[] postData, int postOff, int postLen, boolean noPLen) {
         dataLen -= dataOff;
 
         int cLen = callbackIndex == 0 ? 0 : getVarintsLength(callbackIndex);
@@ -935,14 +942,14 @@ public class SocketAdapter {
     }
 
     public boolean sendData(byte[] buffer) {
-        return sendData(buffer, 0, buffer.length);
+        return sendDataReal(buffer, 0, buffer.length);
     }
 
-    public boolean sendData(byte[] buffer, int offset, int length) {
+    public boolean sendDataReal(byte[] buffer, int offset, int length) {
         Socket sendSocket = socket;
         if (sendSocket != null) {
             try {
-                _debugInfo("SocketAdapter sendData  => " + Arrays.toString(buffer));
+                _debugInfo("SocketAdapter sendDataReal  => " + Arrays.toString(buffer));
                 sendSocket.getOutputStream().write(buffer);
                 return true;
 
@@ -1047,12 +1054,12 @@ public class SocketAdapter {
         }
     }
 
-    public byte[] sendDataBytesVarints(String uri, int callback, byte[] postBytes, int postOff, int postLen) {
-        return sendDataBytesVarints(0, uri, false, callback, postBytes, postOff, postLen);
+    public byte[] sendDataBytesVarints(String uri, int callbackIndex, byte[] postBytes, int postOff, int postLen) {
+        return sendDataBytesVarintsReal(0, uri, false, (byte) 0, callbackIndex, postBytes, postOff, postLen);
     }
 
-    public byte[] sendDataBytesVarints(int off, String uri, boolean human, int callback, byte[] postBytes, int postOff, int postLen) {
-        byte flag = URI_DICT_FLAG;
+    public byte[] sendDataBytesVarintsReal(int off, String uri, boolean human, byte flag, int callbackIndex, byte[] postBytes, int postOff, int postLen) {
+        flag |= URI_DICT_FLAG;
         byte[] dataBytes;
         Integer index = getUriVarints(uri);
         if (index == null) {
@@ -1061,14 +1068,14 @@ public class SocketAdapter {
             int uriVarints = addVarintsUri(uri);
             int uriLength = getVarintsLength(uriVarints);
             dataBytes = uri.getBytes();
-            byte[] bytes = sendDataBytes(off + uriLength, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, false);
+            byte[] bytes = sendDataBytesReal(off + uriLength, dataBytes, 0, dataBytes.length, true, human, flag, callbackIndex, postBytes, postOff, postLen, false);
             setVarintsLength(bytes, getVarintsLength(bytes, 0, bytes.length) + 1 + off, uriVarints);
             return bytes;
 
         } else {
             //找到压缩字典
             dataBytes = getVarintsLengthBytes(index);
-            return sendDataBytes(off, dataBytes, 0, dataBytes.length, true, human, flag, callback, postBytes, postOff, postLen, true);
+            return sendDataBytesReal(off, dataBytes, 0, dataBytes.length, true, human, flag, callbackIndex, postBytes, postOff, postLen, true);
         }
     }
 
@@ -1078,7 +1085,7 @@ public class SocketAdapter {
     }
 
     public void sendDataIndexVarints(int callbackIndex, String uri, byte[] postBytes, int timeout, CallbackAdapter callbackAdapter) {
-        sendDataCallback(callbackIndex, sendDataBytesVarints(0, uri, false, callbackIndex, postBytes, 0, postBytes.length), timeout, callbackAdapter);
+        sendDataCallback(callbackIndex, sendDataBytesVarintsReal(0, uri, false, (byte) 0, callbackIndex, postBytes, 0, postBytes.length), timeout, callbackAdapter);
     }
 
     public void sendStream(byte[] dataBytes, boolean head, boolean human,
@@ -1089,8 +1096,13 @@ public class SocketAdapter {
     // 发送流数据
     public void sendStreamIndex(int callbackIndex, byte[] dataBytes, boolean head, boolean human,
                                 InputStream inputStream, Closeable pipeOutput, int timeout, CallbackAdapter callbackAdapter, Runnable inputRunnable) {
-        // 默认不支持
-        callbackAdapter.doWith(this, 0, null);
+        if (inputStream == null) {
+            sendDataIndex(callbackIndex, dataBytes, head, human, null, timeout, callbackAdapter);
+
+        } else {
+            // 默认不支持
+            callbackAdapter.doWith(this, 0, null);
+        }
     }
 
     public static interface CallbackAdapter {

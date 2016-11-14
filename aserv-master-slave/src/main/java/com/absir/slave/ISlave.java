@@ -28,4 +28,15 @@ public interface ISlave {
 
     public void test2(String name, InputStream inputStream);
 
+
+    public String[] param(String[] name);
+
+    public String[] paramRS(String[] name) throws IOException;
+
+    @Rpc(sendStream = true)
+    public String[] paramSS(String[] name);
+
+    @Rpc(sendStream = true)
+    public String[] paramSRS(String[] name) throws IOException;
+
 }

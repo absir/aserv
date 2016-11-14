@@ -14,7 +14,7 @@ public class MasterChannelContext extends SocketServerContext.ChannelContext {
 
     protected String slaveKey;
 
-    protected MasterChannelAdapter masterChannelAdapter;
+    protected MasterRpcAdapter masterRpcAdapter;
 
     public MasterChannelContext(Serializable id, SocketChannel channel) {
         super(channel);
@@ -25,11 +25,16 @@ public class MasterChannelContext extends SocketServerContext.ChannelContext {
         return slaveKey;
     }
 
-    public MasterChannelAdapter getMasterChannelAdapter() {
-        if (masterChannelAdapter == null) {
-            masterChannelAdapter = InputMasterContext.ME.getMasterChannelAdapter(id);
+    public MasterRpcAdapter getMasterRpcAdapter() {
+        if (masterRpcAdapter == null) {
+            masterRpcAdapter = InputMasterContext.ME.getMasterRpcAdapter(id);
         }
 
-        return masterChannelAdapter;
+        masterRpcAdapter.getSocketAdapter().channel = channel;
+        return masterRpcAdapter;
+    }
+
+    public MasterChannelAdapter getMasterChannelAdapter() {
+        return getMasterRpcAdapter().getSocketAdapter();
     }
 }

@@ -97,4 +97,28 @@ public class SlaveHandler implements IHandler, ISlave {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public String[] param(String[] name) {
+        return name;
+    }
+
+    @Override
+    public String[] paramRS(String[] name) throws IOException {
+        Input input = OnPut.input();
+        input.readyOutputStream();
+        return name;
+    }
+
+    @Override
+    public String[] paramSS(String[] name) {
+        return name;
+    }
+
+    @Override
+    public String[] paramSRS(String[] name) throws IOException {
+        Input input = OnPut.input();
+        input.readyOutputStream();
+        return name;
+    }
 }

@@ -10,6 +10,7 @@ package com.absir.slave;
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
 import com.absir.client.SocketAdapter;
+import com.absir.client.SocketAdapterSel;
 import com.absir.core.base.Environment;
 import com.absir.server.in.InDispatcher;
 import com.absir.server.in.InMethod;
@@ -23,16 +24,28 @@ import com.absir.server.socket.resolver.BodyMsgResolver;
 import com.absir.slave.InputSlave.InputSlaveAtt;
 import com.absir.slave.resolver.ISlaveCallback;
 
+import java.io.InputStream;
 import java.nio.channels.SocketChannel;
 
 @Base
 @Bean
-public class InputSlaveDispatcher extends InDispatcher<InputSlaveAtt, SocketChannel> implements ISlaveCallback {
+public class InputSlaveDispatcher extends InDispatcher<InputSlaveAtt, SocketChannel> implements ISlaveCallback, SocketAdapterSel.CallbackAdapterStream {
 
     @Override
     public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
+        doWith(adapter, offset, buffer, null);
+    }
+
+    @Override
+    public void doWith(SocketAdapter adapter, int offset, byte[] buffer, InputStream inputStream) {
         if (buffer.length > 1) {
-            InputSlaveAtt inputSocketAtt = new InputSlaveAtt(null, buffer, null, adapter);
+            byte flag = buffer[0];
+            if ((flag & SocketAdapter.RESPONSE_FLAG) == 0) {
+                flag &= SocketAdapter.CALLBACK_FLAG_REMOVE;
+            }
+
+            // MS_CALLBACK_INDEX
+            InputSlaveAtt inputSocketAtt = new InputSlaveAtt(buffer, flag, offset, inputStream, adapter);
             try {
                 if (on(inputSocketAtt.getUrl(), inputSocketAtt, adapter.getSocket().getChannel())) {
                     return;
@@ -55,7 +68,7 @@ public class InputSlaveDispatcher extends InDispatcher<InputSlaveAtt, SocketChan
 
     @Override
     public int getCallbackIndex() {
-        return 1;
+        return SocketAdapter.MS_CALLBACK_INDEX;
     }
 
     @Override

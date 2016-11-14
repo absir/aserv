@@ -22,8 +22,6 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Value;
-import com.absir.client.SocketAdapter;
-import com.absir.client.callback.CallbackMsg;
 import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.kernel.KernelString;
@@ -32,7 +30,6 @@ import com.absir.core.util.UtilAtom;
 import com.absir.data.helper.HelperDataFormat;
 import com.absir.master.InputMasterContext;
 import com.absir.master.MasterChannelContext;
-import com.absir.master.resolver.MasterServerResolver;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.hibernate.boost.L2CacheCollectionService;
 import com.absir.orm.transaction.value.Transaction;
@@ -203,22 +200,22 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
                 try {
                     atom.increment();
                     final long updateTime = slaveSynch.getUpdateTime();
-                    MasterServerResolver.ME.sendDataBytesVarints(context, slaveSynch.getUri(),
-                            slaveSynch.getPostData(), syncTimeout, new CallbackMsg<String>() {
-
-                                @Override
-                                public void doWithBean(String bean, boolean ok, byte[] buffer, SocketAdapter adapter) {
-                                    try {
-                                        if (ok) {
-                                            ME.syncComplete(slaveSynch, updateTime);
-                                        }
-
-                                    } finally {
-                                        atom.decrement();
-                                    }
-                                }
-
-                            });
+//                    MasterServerResolver.ME.sendDataBytesVarints(context, slaveSynch.getUri(),
+//                            slaveSynch.getPostData(), syncTimeout, new CallbackMsg<String>() {
+//
+//                                @Override
+//                                public void doWithBean(String bean, boolean ok, byte[] buffer, SocketAdapter adapter) {
+//                                    try {
+//                                        if (ok) {
+//                                            ME.syncComplete(slaveSynch, updateTime);
+//                                        }
+//
+//                                    } finally {
+//                                        atom.decrement();
+//                                    }
+//                                }
+//
+//                            });
 
                 } catch (Exception e) {
                     atom.decrement();
@@ -304,23 +301,23 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
                     try {
                         atom.increment();
                         final long updateTime = slaveServer.getUpdateTime();
-                        MasterServerResolver.ME.sendData(context.getChannel(), "api/slave/sync", slaveServer,
-                                new CallbackMsg<String>() {
-
-                                    @Override
-                                    public void doWithBean(String bean, boolean ok, byte[] buffer,
-                                                           SocketAdapter adapter) {
-                                        try {
-                                            if (ok) {
-                                                syncComplete(slaveServer, updateTime);
-                                            }
-
-                                        } finally {
-                                            atom.decrement();
-                                        }
-                                    }
-
-                                });
+//                        MasterServerResolver.ME.sendData(context.getChannel(), "api/slave/sync", slaveServer,
+//                                new CallbackMsg<String>() {
+//
+//                                    @Override
+//                                    public void doWithBean(String bean, boolean ok, byte[] buffer,
+//                                                           SocketAdapter adapter) {
+//                                        try {
+//                                            if (ok) {
+//                                                syncComplete(slaveServer, updateTime);
+//                                            }
+//
+//                                        } finally {
+//                                            atom.decrement();
+//                                        }
+//                                    }
+//
+//                                });
 
                     } catch (Exception e) {
                         atom.decrement();

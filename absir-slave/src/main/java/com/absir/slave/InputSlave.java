@@ -17,7 +17,6 @@ import com.absir.server.socket.resolver.SocketBufferResolver;
 import com.absir.slave.resolver.SlaveBufferResolver;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.net.Socket;
 import java.nio.channels.SocketChannel;
 
@@ -26,7 +25,7 @@ public class InputSlave extends InputSocket {
     protected SocketAdapter socketAdapter;
 
     public InputSlave(InModel model, InputSlaveAtt inputSocketAtt, SocketChannel socketChannel) {
-        super(model, inputSocketAtt, inputSocketAtt.socketAdapter.getSocket().getChannel());
+        super(model, inputSocketAtt, socketChannel);
         this.socketAdapter = inputSocketAtt.socketAdapter;
     }
 
@@ -78,8 +77,8 @@ public class InputSlave extends InputSocket {
 
         protected SocketAdapter socketAdapter;
 
-        public InputSlaveAtt(Serializable id, byte[] buffer, InputStream inputStream, SocketAdapter socketAdapter) {
-            super(id, buffer, buffer[1], 5, null, inputStream);
+        public InputSlaveAtt(byte[] buffer, byte flag, int off, InputStream inputStream, SocketAdapter socketAdapter) {
+            super(null, buffer, flag, off, null, inputStream);
             this.socketAdapter = socketAdapter;
         }
     }

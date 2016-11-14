@@ -12,18 +12,9 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Value;
 import com.absir.client.SocketAdapter;
-import com.absir.client.SocketAdapter.CallbackAdapter;
-import com.absir.client.SocketAdapter.CallbackTimeout;
-import com.absir.client.SocketAdapterSel;
-import com.absir.client.callback.CallbackMsg;
 import com.absir.client.helper.HelperEncrypt;
 import com.absir.context.core.ContextUtils;
-import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelByte;
-import com.absir.core.util.UtilActivePool;
-import com.absir.core.util.UtilContext;
-import com.absir.core.util.UtilPipedStream;
-import com.absir.data.helper.HelperDataFormat;
 import com.absir.master.InputMaster;
 import com.absir.master.InputMasterContext;
 import com.absir.master.MasterChannelContext;
@@ -38,7 +29,6 @@ import com.absir.server.socket.SelSession;
 import com.absir.server.socket.resolver.BodyMsgResolver;
 import com.absir.server.socket.resolver.SocketServerResolver;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.channels.SocketChannel;
@@ -50,7 +40,6 @@ public class MasterServerResolver extends SocketServerResolver {
     public static final MasterServerResolver ME = BeanFactoryUtils.get(MasterServerResolver.class);
     @Value("server.socket.stream.max.master")
     private static int streamMaxMaster = Integer.MAX_VALUE;
-    protected SocketAdapterSel masterAdapter = createMasterAdapter();
 
     @Override
     public int getStreamMax() {
@@ -104,135 +93,11 @@ public class MasterServerResolver extends SocketServerResolver {
 
     @Override
     protected void doResponse(SocketChannel socketChannel, Serializable id, byte flag, int offset, byte[] buffer, InputStream inputStream) {
-        masterAdapter.receiveCallback(0, buffer, (byte) flag);
-    }
-
-    protected SocketAdapterSel createMasterAdapter() {
-        SocketAdapterSel socketAdapterSel = new SocketAdapterSel();
-        socketAdapterSel.setRegistered(true, 0);
-        return socketAdapterSel;
-    }
-
-    public SocketAdapterSel getMasterAdapter() {
-        return masterAdapter;
-    }
-
-    public void sendData(SocketChannel socketChannel, String uri, Object postData, CallbackMsg<?> callbackMsg)
-            throws IOException {
-        sendDataBytes(socketChannel, uri, postData == null ? null : HelperDataFormat.PACK.writeAsBytes(postData), callbackMsg);
-    }
-
-    public void sendDataBytes(SocketChannel socketChannel, String uri, byte[] postData, CallbackMsg<?> callbackMsg)
-            throws IOException {
-        sendDataBytes(socketChannel, uri.getBytes(ContextUtils.getCharset()), true, false, postData, 60000,
-                callbackMsg);
-    }
-
-    public void sendDataBytes(SocketChannel socketChannel, byte[] dataBytes, boolean head, boolean human,
-                              byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
-        int callbackIndex = masterAdapter.getNextCallbackIndex(callbackAdapter);
-        if (callbackAdapter != null) {
-            masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
-        }
-
-        byte[] buffer = masterAdapter.sendDataBytes(2, dataBytes, head, human, callbackIndex, postData);
-        int offset = SocketAdapter.getVarintsLength(SocketAdapter.getVarints(buffer, 0, 4));
-        buffer[offset] = SocketAdapter.CALLBACK_FLAG;
-        KernelByte.setLength(buffer, offset + 1, 1);
-        if (!InputSocket.writeBuffer(socketChannel, buffer)) {
-            masterAdapter.receiveCallback(0, null, (byte) 0, callbackIndex);
+        MasterChannelContext channelContext = InputMasterContext.ME.getServerContext().getChannelContexts().get(id);
+        if (channelContext != null) {
+            flag &= SocketAdapter.RESPONSE_FLAG_REMOVE;
+            channelContext.getMasterChannelAdapter().receiveCallback(1, buffer, flag);
         }
     }
 
-    public void sendDataBytes(final SocketChannel socketChannel, byte[] dataBytes, boolean head, boolean human,
-                              final InputStream inputStream, final int timeout, CallbackAdapter callbackAdapter) {
-        boolean sended = false;
-        final UtilActivePool.ActiveTemplate template = masterAdapter.getActivePool().addObject(inputStream);
-        try {
-            CallbackTimeout callbackTimeout = null;
-            int callbackIndex = masterAdapter.getNextCallbackIndex(callbackAdapter);
-            if (callbackAdapter != null) {
-                callbackTimeout = masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
-            }
-
-            byte[] buffer = masterAdapter.sendDataBytes(9, dataBytes, head, human, SocketAdapter.STREAM_FLAG,
-                    callbackIndex, null);
-            System.arraycopy(buffer, 9, buffer, 5, buffer.length - 9);
-            buffer[4] = SocketAdapter.CALLBACK_FLAG;
-            KernelByte.setLength(buffer, 5, 1);
-            final int streamIndex = template.object;
-            KernelByte.setLength(buffer, buffer.length - 4, streamIndex);
-            final CallbackTimeout CallbackTimeout = callbackTimeout;
-            if (InputSocket.writeBuffer(socketChannel, buffer)) {
-                ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        try {
-                            int postBuffLen = SocketAdapterSel.POST_BUFF_LEN;
-                            byte[] sendBufer = masterAdapter.sendDataBytes(9 + postBuffLen, null, true, false,
-                                    SocketAdapter.STREAM_FLAG | SocketAdapter.POST_FLAG, 0, null);
-                            sendBufer[4] = SocketAdapter.CALLBACK_FLAG;
-                            KernelByte.setLength(sendBufer, 5, 1);
-                            sendBufer[9] = sendBufer[9 + postBuffLen];
-                            KernelByte.setLength(sendBufer, 10, streamIndex);
-                            int len;
-                            try {
-                                while ((len = inputStream.read(sendBufer, 14, sendBufer.length)) > 0) {
-                                    len += 10;
-                                    KernelByte.setLength(sendBufer, 0, len);
-                                    if (template.object == null
-                                            || !InputSocket.writeBuffer(socketChannel, sendBufer, 0, len)) {
-                                        return;
-                                    }
-
-                                    if (CallbackTimeout != null) {
-                                        CallbackTimeout.timeout = UtilContext.getCurrentTime() + timeout;
-                                    }
-                                }
-
-                            } catch (Exception e) {
-                                Environment.throwable(e);
-
-                                return;
-                            }
-
-                        } finally {
-                            masterAdapter.getActivePool().remove(streamIndex);
-                            UtilPipedStream.closeCloseable(inputStream);
-                        }
-                    }
-                });
-
-                sended = true;
-            }
-
-        } finally {
-            if (!sended) {
-                masterAdapter.getActivePool().remove(template.object);
-                UtilPipedStream.closeCloseable(inputStream);
-            }
-        }
-    }
-
-    public void sendDataBytesVarints(MasterChannelContext channelContext, String url,
-                                     byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
-        sendDataBytesVarints(channelContext, url, channelContext.getMasterChannelAdapter().getNextCallbackIndex(callbackAdapter), postData, timeout, callbackAdapter);
-    }
-
-    public void sendDataBytesVarints(MasterChannelContext channelContext, String url, int callbackIndex,
-                                     byte[] postData, int timeout, CallbackAdapter callbackAdapter) {
-        SocketAdapter masterAdapter = channelContext.getMasterChannelAdapter();
-        if (callbackAdapter != null) {
-            masterAdapter.putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
-        }
-
-        byte[] buffer = masterAdapter.sendDataBytesVarints(url, callbackIndex, postData, 0, postData == null ? 0 : postData.length);
-        int offset = SocketAdapter.getVarintsLength(SocketAdapter.getVarints(buffer, 0, 4));
-        buffer[offset] = SocketAdapter.CALLBACK_FLAG;
-        KernelByte.setLength(buffer, offset + 1, 1);
-        if (!InputSocket.writeBuffer(channelContext.getChannel(), buffer)) {
-            masterAdapter.receiveCallback(0, null, (byte) 0, callbackIndex);
-        }
-    }
 }

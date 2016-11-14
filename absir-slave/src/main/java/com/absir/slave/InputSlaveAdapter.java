@@ -100,7 +100,7 @@ public class InputSlaveAdapter extends SocketAdapterSel {
 
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
-                slaveKey = new String(buffer, 5, buffer.length - 5);
+                slaveKey = new String(buffer, offset, buffer.length - offset);
             }
         });
     }

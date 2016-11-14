@@ -29,7 +29,7 @@ public class InputMasterContext {
 
     public static final InputMasterContext ME = BeanFactoryUtils.get(InputMasterContext.class);
 
-    public static Map<Serializable, MasterChannelAdapter> masterChannelMapAdapter;
+    public static Map<Serializable, MasterRpcAdapter> masterChannelMapAdapter;
 
     @Value("master.accept.timeout")
     protected static long acceptTimeout = 120000;
@@ -132,25 +132,29 @@ public class InputMasterContext {
         return channelContext == null ? null : channelContext.getChannel();
     }
 
-    protected MasterChannelAdapter createMasterChannelAdapter(Serializable id) {
-        return new MasterChannelAdapter();
+    protected MasterRpcAdapter createMasterChannelAdapter(Serializable id) {
+        return new MasterRpcAdapter(new MasterChannelAdapter());
     }
 
-    public MasterChannelAdapter getMasterChannelAdapter(Serializable id) {
+    public MasterRpcAdapter getMasterRpcAdapter(Serializable id) {
+//        if (!getServerContext().getChannelContexts().containsKey(id)) {
+//            return null;
+//        }
+
         if (InputMasterContext.masterChannelMapAdapter == null) {
             synchronized (this) {
                 if (masterChannelMapAdapter == null) {
-                    masterChannelMapAdapter = new HashMap<Serializable, MasterChannelAdapter>();
+                    masterChannelMapAdapter = new HashMap<Serializable, MasterRpcAdapter>();
                 }
             }
         }
 
-        MasterChannelAdapter adapter = InputMasterContext.masterChannelMapAdapter.get(id);
+        MasterRpcAdapter adapter = InputMasterContext.masterChannelMapAdapter.get(id);
         if (adapter == null) {
             synchronized (this) {
                 adapter = InputMasterContext.masterChannelMapAdapter.get(id);
                 if (adapter == null) {
-                    createMasterChannelAdapter(id);
+                    adapter = createMasterChannelAdapter(id);
                     masterChannelMapAdapter.put(id, adapter);
                 }
             }

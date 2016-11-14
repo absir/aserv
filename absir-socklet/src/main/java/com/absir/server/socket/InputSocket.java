@@ -212,7 +212,7 @@ public abstract class InputSocket extends Input {
             byte[] dataBytes = new byte[dataLength];
             KernelByte.setVarintsLength(dataBytes, 0, urlVarints);
             KernelByte.setVarintsLength(dataBytes, urlLength, varints);
-            getSocketBufferResolver().writeByteBuffer(socketAtt.getSelSession(), socketChannel, SocketAdapter.URI_DICT_FLAG, 0, dataBytes, 0, dataLength, null, null);
+            getSocketBufferResolver().writeByteBuffer(socketAtt.getSelSession(), socketChannel, writeFlag(SocketAdapter.URI_DICT_FLAG), 0, dataBytes, 0, dataLength, null, null);
             urlVarints = 0;
         }
     }

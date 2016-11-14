@@ -150,7 +150,7 @@ public class SocketAdapterSel extends SocketAdapter {
     }
 
     @Override
-    public boolean sendData(byte[] buffer, int offset, int length) {
+    public boolean sendDataReal(byte[] buffer, int offset, int length) {
         Socket socket = getSocket();
         if (socket != null) {
             SocketChannel socketChannel = getSocket().getChannel();
@@ -176,7 +176,7 @@ public class SocketAdapterSel extends SocketAdapter {
             }
         }
 
-        return super.sendData(buffer, offset, length);
+        return super.sendDataReal(buffer, offset, length);
     }
 
     protected NextOutputStream createNextOutputStream(int hashIndex) {
@@ -191,6 +191,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 int length = buffer.length;
                 int streamIndex = getVarints(buffer, offset, length);
                 int streamIndexLen = getVarintsLength(streamIndex);
+                //if (streamIndexLen > 0) {
                 int offLen = offset + streamIndexLen;
                 // 写入流信息
                 NextOutputStream outputStream = getPipedStream().getOutputStream(streamIndex);
@@ -205,7 +206,9 @@ public class SocketAdapterSel extends SocketAdapter {
                     }
                 }
 
-                sendData(sendDataBytes(0, buffer, offset, offLen, true, false, STREAM_CLOSE_FLAG, 0, null, 0, 0, true));
+                sendData(sendDataBytesReal(0, buffer, offset, offLen, true, false, STREAM_CLOSE_FLAG, 0, null, 0, 0, true));
+                //}
+
                 return;
             }
 
@@ -251,7 +254,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 _debugInfo("SocketAdapterSel STREAM_FLAG open " + streamIndex + " : " + outputStream);
                 if (outputStream == null) {
                     // 不是CallbackAdapterStream 不能接受流数据返回
-                    sendData(sendDataBytes(0, buffer, offset, offLen, true, false, STREAM_CLOSE_FLAG, 0, null, 0, 0, true));
+                    sendData(sendDataBytesReal(0, buffer, offset, offLen, true, false, STREAM_CLOSE_FLAG, 0, null, 0, 0, true));
 
                 } else {
                     // 生成PipedInputStream执行回调
@@ -350,7 +353,7 @@ public class SocketAdapterSel extends SocketAdapter {
                             }
                         }
 
-                        byte[] sendBuffer = sendDataBytes(streamIndexLen, null, 0, 0, true, false, STREAM_FLAG, 0, null, 0, getPostBuffLen(), true);
+                        byte[] sendBuffer = sendDataBytesReal(streamIndexLen, null, 0, 0, true, false, STREAM_FLAG, 0, null, 0, getPostBuffLen(), true);
                         setVarintsLength(sendBuffer, 3, streamIndex);
                         int postOff = 3 + streamIndexLen;
                         int length = sendBuffer.length - postOff;
@@ -360,7 +363,7 @@ public class SocketAdapterSel extends SocketAdapter {
                             sendBuffer[0] = (byte) ((len & 0x7F) | 0x80);
                             sendBuffer[1] = (byte) ((len >> 7) & 0x7F);
 
-                            if (template.object == null || !sendData(sendBuffer, 0, len + 2)) {
+                            if (template.object == null || !sendDataReal(sendBuffer, 0, len + 2)) {
                                 break;
                             }
 
