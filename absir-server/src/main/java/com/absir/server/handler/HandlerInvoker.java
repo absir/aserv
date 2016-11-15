@@ -154,7 +154,6 @@ public class HandlerInvoker {
                 }
 
             } catch (Throwable e) {
-
                 return throwable(onPut, handlerType, handlerMethod, args, e);
             }
 

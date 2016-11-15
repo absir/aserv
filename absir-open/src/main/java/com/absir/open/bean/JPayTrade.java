@@ -220,6 +220,10 @@ public class JPayTrade extends JbBase {
         return source;
     }
 
+    public void setSource(String source) {
+        this.source = source;
+    }
+
     public long getUserId() {
         return userId;
     }
@@ -242,10 +246,6 @@ public class JPayTrade extends JbBase {
 
     public void setPlayerId(long playerId) {
         this.playerId = playerId;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
     }
 
     public int getConfigureId() {

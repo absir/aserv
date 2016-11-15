@@ -52,6 +52,10 @@ public class MasterChannelAdapter extends SocketAdapterSel {
 
     @Override
     public byte[] sendDataBytesReal(int off, byte[] dataBytes, int dataOff, int dataLen, boolean head, boolean human, byte flag, int callbackIndex, byte[] postData, int postOff, int postLen, boolean noPLen) {
+        if (flag == STREAM_FLAG || (flag & STREAM_CLOSE_FLAG) != 0) {
+            return super.sendDataBytesReal(off, dataBytes, dataOff, dataLen, head, human, flag, callbackIndex, postData, postOff, postLen, noPLen);
+        }
+
         if (callbackIndex > 0) {
             flag |= RESPONSE_FLAG;
 
@@ -65,24 +69,7 @@ public class MasterChannelAdapter extends SocketAdapterSel {
     }
 
     @Override
-    public byte[] sendDataBytesVarintsReal(int off, String uri, boolean human, byte flag, int callbackIndex, byte[] postBytes, int postOff, int postLen) {
-        flag |= URI_DICT_FLAG;
-        byte[] dataBytes;
-        Integer index = getUriVarints(uri);
-        if (index == null) {
-            //没找到压缩字典，添加压缩回调参数
-            flag |= ERROR_OR_SPECIAL_FLAG;
-            int uriVarints = addVarintsUri(uri);
-            int uriLength = getVarintsLength(uriVarints);
-            dataBytes = uri.getBytes();
-            byte[] bytes = sendDataBytesReal(off + uriLength, dataBytes, 0, dataBytes.length, true, human, flag, callbackIndex, postBytes, postOff, postLen, false);
-            setVarintsLength(bytes, getVarintsLength(bytes, 0, bytes.length) + 2 + off, uriVarints);
-            return bytes;
-
-        } else {
-            //找到压缩字典
-            dataBytes = getVarintsLengthBytes(index);
-            return sendDataBytesReal(off, dataBytes, 0, dataBytes.length, true, human, flag, callbackIndex, postBytes, postOff, postLen, true);
-        }
+    public int getSendDataBytesHeaderLength() {
+        return 1;
     }
 }

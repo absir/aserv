@@ -332,8 +332,8 @@ public class SocketAdapterSel extends SocketAdapter {
         try {
             final int streamIndexLen = getVarintsLength(streamIndex);
             final byte[] buffer = sendDataBytes(streamIndexLen, dataBytes, true, human, (byte) (STREAM_FLAG | POST_FLAG), callbackIndex, null);
-            int offLen = getVarintsLength(buffer, 0, 4) + 1;
-            setVarintsLength(buffer, offLen, streamIndex);
+            int offLen = getVarintsLength(buffer, 0, buffer.length) + 1;
+            setVarintsLength(buffer, offLen + getSendDataBytesHeaderLength(), streamIndex);
             final Runnable postRunnable = new Runnable() {
 
                 @Override

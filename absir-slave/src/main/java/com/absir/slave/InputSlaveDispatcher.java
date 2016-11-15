@@ -11,7 +11,9 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
 import com.absir.client.SocketAdapter;
 import com.absir.client.SocketAdapterSel;
+import com.absir.context.core.ContextUtils;
 import com.absir.core.base.Environment;
+import com.absir.core.util.UtilContext;
 import com.absir.server.in.InDispatcher;
 import com.absir.server.in.InMethod;
 import com.absir.server.in.InModel;
@@ -37,27 +39,33 @@ public class InputSlaveDispatcher extends InDispatcher<InputSlaveAtt, SocketChan
     }
 
     @Override
-    public void doWith(SocketAdapter adapter, int offset, byte[] buffer, InputStream inputStream) {
-        if (buffer.length > 1) {
-            byte flag = buffer[0];
-            if ((flag & SocketAdapter.RESPONSE_FLAG) == 0) {
-                flag &= SocketAdapter.CALLBACK_FLAG_REMOVE;
-            }
+    public void doWith(final SocketAdapter adapter, final int offset, final byte[] buffer, final InputStream inputStream) {
+        if (buffer.length > 1 && !UtilContext.isWarnIdlePool()) {
+            ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
 
-            // MS_CALLBACK_INDEX
-            InputSlaveAtt inputSocketAtt = new InputSlaveAtt(buffer, flag, offset, inputStream, adapter);
-            try {
-                if (on(inputSocketAtt.getUrl(), inputSocketAtt, adapter.getSocket().getChannel())) {
-                    return;
+                @Override
+                public void run() {
+                    byte flag = buffer[0];
+                    if ((flag & SocketAdapter.RESPONSE_FLAG) == 0) {
+                        flag &= SocketAdapter.CALLBACK_FLAG_REMOVE;
+                    }
+
+                    // MS_CALLBACK_INDEX
+                    InputSlaveAtt inputSocketAtt = new InputSlaveAtt(buffer, flag, offset, inputStream, adapter);
+                    try {
+                        if (on(inputSocketAtt.getUrl(), inputSocketAtt, adapter.getSocket().getChannel())) {
+                            return;
+                        }
+
+                    } catch (Throwable e) {
+                        Environment.throwable(e);
+                    }
+
+                    InputSocket.writeByteBuffer(null, adapter.getSocket().getChannel(),
+                            (byte) (SocketAdapter.ERROR_OR_SPECIAL_FLAG | SocketAdapter.RESPONSE_FLAG), inputSocketAtt.getCallbackIndex(),
+                            InputSocket.NONE_RESPONSE_BYTES);
                 }
-
-            } catch (Throwable e) {
-                Environment.throwable(e);
-            }
-
-            InputSocket.writeByteBuffer(null, adapter.getSocket().getChannel(),
-                    (byte) (SocketAdapter.ERROR_OR_SPECIAL_FLAG | SocketAdapter.RESPONSE_FLAG), inputSocketAtt.getCallbackIndex(),
-                    InputSocket.NONE_RESPONSE_BYTES);
+            });
         }
     }
 

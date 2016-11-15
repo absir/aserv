@@ -1058,6 +1058,10 @@ public class SocketAdapter {
         return sendDataBytesVarintsReal(0, uri, false, (byte) 0, callbackIndex, postBytes, postOff, postLen);
     }
 
+    public int getSendDataBytesHeaderLength() {
+        return 0;
+    }
+
     public byte[] sendDataBytesVarintsReal(int off, String uri, boolean human, byte flag, int callbackIndex, byte[] postBytes, int postOff, int postLen) {
         flag |= URI_DICT_FLAG;
         byte[] dataBytes;
@@ -1069,7 +1073,7 @@ public class SocketAdapter {
             int uriLength = getVarintsLength(uriVarints);
             dataBytes = uri.getBytes();
             byte[] bytes = sendDataBytesReal(off + uriLength, dataBytes, 0, dataBytes.length, true, human, flag, callbackIndex, postBytes, postOff, postLen, false);
-            setVarintsLength(bytes, getVarintsLength(bytes, 0, bytes.length) + 1 + off, uriVarints);
+            setVarintsLength(bytes, getVarintsLength(bytes, 0, bytes.length) + 1 + getSendDataBytesHeaderLength() + off, uriVarints);
             return bytes;
 
         } else {

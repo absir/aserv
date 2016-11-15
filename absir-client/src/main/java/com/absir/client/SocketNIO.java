@@ -50,10 +50,9 @@ public class SocketNIO {
                 _debugInfo = false;
 
             } else {
-                if (byteBuffer.limit() == 1 && byteBuffer.array()[byteBuffer.position()] == 7) {
-                    new Exception().printStackTrace();
-                }
-
+//                if (byteBuffer.limit() == 1 && byteBuffer.array()[byteBuffer.position()] == 7) {
+//                    new Exception().printStackTrace();
+//                }
                 SocketAdapter._debugInfo("SocketNIO send  => " + Arrays.toString(Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit())));
             }
 
