@@ -11,6 +11,7 @@ import com.absir.aserv.system.bean.base.JbBean;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JaName;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -22,7 +23,13 @@ public class JbBeanTargets extends JbBean {
     @JaName("JSlaveServer")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     @Column(length = 10240)
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     private long[] targets;
+
+    private transient long[] lastTargets;
+
+    @JaLang("全部目标")
+    private boolean allTarget;
 
     @JaLang("描述")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -33,7 +40,23 @@ public class JbBeanTargets extends JbBean {
     }
 
     public void setTargets(long[] targets) {
+        if (lastTargets == null) {
+            lastTargets = targets;
+        }
+
         this.targets = targets;
+    }
+
+    public long[] getLastTargets() {
+        return lastTargets;
+    }
+
+    public boolean isAllTarget() {
+        return allTarget;
+    }
+
+    public void setAllTarget(boolean allTarget) {
+        this.allTarget = allTarget;
     }
 
     public String getDescription() {

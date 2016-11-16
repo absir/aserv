@@ -22,6 +22,7 @@ import com.absir.core.base.Environment;
 import com.absir.core.helper.HelperFile;
 import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelArray;
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.core.kernel.KernelLang.CallbackBreak;
 import com.absir.core.kernel.KernelLang.ObjectTemplate;
@@ -292,7 +293,8 @@ public class DeveloperUtils {
         } catch (Exception e) {
             // 显示生成错误
             if (BeanFactoryUtils.getBeanConfig().getEnvironment() == Environment.DEVELOP && !(e instanceof DeveloperBreak)) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                throw new KernelLang.CauseRuntimeException(e);
             }
         }
     }

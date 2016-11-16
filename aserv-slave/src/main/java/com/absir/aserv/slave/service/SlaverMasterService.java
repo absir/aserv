@@ -14,15 +14,19 @@ import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.inject.value.Value;
 import com.absir.client.SocketAdapter;
 import com.absir.client.callback.CallbackMsg;
+import com.absir.client.rpc.RpcData;
 import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.util.UtilAbsir;
 import com.absir.core.util.UtilAtom;
 import com.absir.data.helper.HelperDataFormat;
 import com.absir.orm.transaction.value.Transaction;
+import com.absir.slave.InputSlaveAdapter;
 import com.absir.slave.InputSlaveContext;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,25 +41,47 @@ public class SlaverMasterService {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(SlaverMasterService.class);
 
+    @Value("slave.sync.timeout")
+    private int syncTimeout = 60000;
+
     /**
      * 添加同步
      */
     @Transaction
     public boolean addMasterSynch(String id, String uri, Object postData) {
-        return addMasterSynch(0, id, uri, postData);
+        return addMasterSynch(id, uri, postData, false);
     }
 
     @Transaction
-    public boolean addMasterSynch(int masterIndex, String id, String uri, Object postData) {
+    public boolean addMasterSynch(String id, String uri, Object postData, boolean varints) {
+        return addMasterSynch(0, id, uri, postData, varints);
+    }
+
+    @Transaction
+    public boolean addMasterSynch(int masterIndex, String id, String uri, Object postData, boolean varints) {
+        try {
+            return addMasterSynchData(masterIndex, id, uri, postData == null ? null
+                    : postData.getClass() == byte[].class ? (byte[]) postData : HelperDataFormat.PACK.writeAsBytes(postData), varints);
+
+        } catch (Exception e) {
+            LOGGER.error("addMasterSynch failed " + uri + " => " + postData, e);
+        }
+
+        return false;
+    }
+
+    @Transaction
+    public boolean addMasterSynchData(int masterIndex, String id, String uri, byte[] postData, boolean varints) {
         JMasterSynch masterSynch = new JMasterSynch();
         masterSynch.setId(id);
         masterSynch.setMasterIndex(masterIndex);
         masterSynch.setUri(uri);
         masterSynch.setUpdateTime(System.currentTimeMillis());
+        masterSynch.setPostData(postData);
         try {
-            masterSynch.setPostData(postData == null ? null
-                    : postData.getClass() == byte[].class ? (byte[]) postData : HelperDataFormat.PACK.writeAsBytes(postData));
-            BeanDao.getSession().merge(masterSynch);
+            Session session = BeanDao.getSession();
+            session.merge(masterSynch);
+            session.flush();
             ME.checkSyncs();
             return true;
 
@@ -64,6 +90,11 @@ public class SlaverMasterService {
         }
 
         return false;
+    }
+
+    // 添加RPC同步
+    public void addMasterSynchRpc(int masterIndex, String id, RpcData rpcData) {
+        addMasterSynchData(masterIndex, id, rpcData.getUri(), rpcData.getParamData(), true);
     }
 
     /**
@@ -90,24 +121,33 @@ public class SlaverMasterService {
         while (iterator.hasNext()) {
             final JMasterSynch masterSynch = iterator.next();
             try {
+                InputSlaveAdapter slaveAdapter = InputSlaveContext.ME.getSlaveAdapter(masterSynch.getMasterIndex()).getSocketAdapter();
                 atom.increment();
                 final long updateTime = masterSynch.getUpdateTime();
-                InputSlaveContext.ME.getSlaveAdapter(masterSynch.getMasterIndex()).getSocketAdapter().sendData(masterSynch.getUri(),
-                        masterSynch.getPostData(), new CallbackMsg<String>() {
+                CallbackMsg<String> callbackMsg = new CallbackMsg<String>() {
 
-                            @Override
-                            public void doWithBean(String bean, boolean ok, byte[] buffer, SocketAdapter adapter) {
-                                try {
-                                    if (ok) {
-                                        ME.syncComplete(masterSynch, updateTime);
-                                    }
-
-                                } finally {
-                                    atom.decrement();
-                                }
+                    @Override
+                    public void doWithBean(String bean, boolean ok, byte[] buffer, SocketAdapter adapter) {
+                        try {
+                            if (ok) {
+                                ME.syncComplete(masterSynch, updateTime);
                             }
 
-                        });
+                        } finally {
+                            atom.decrement();
+                        }
+                    }
+
+                };
+
+                if (masterSynch.isVarints()) {
+                    slaveAdapter.sendDataVarints(masterSynch.getUri(),
+                            masterSynch.getPostData(), syncTimeout, callbackMsg);
+
+                } else {
+                    slaveAdapter.sendData(masterSynch.getUri(),
+                            masterSynch.getPostData(), syncTimeout, callbackMsg);
+                }
 
             } catch (Exception e) {
                 LOGGER.error("checkSyncs " + masterSynch.getId() + " " + masterSynch.getUri() + " => "

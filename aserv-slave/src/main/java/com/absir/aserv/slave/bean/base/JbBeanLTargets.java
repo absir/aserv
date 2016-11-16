@@ -10,7 +10,9 @@ package com.absir.aserv.slave.bean.base;
 import com.absir.aserv.system.bean.base.JbBeanL;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
+import org.hibernate.annotations.Type;
 
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
@@ -18,6 +20,8 @@ public class JbBeanLTargets extends JbBeanL {
 
     @JaLang("目标")
     @JaEdit(groups = JaEdit.GROUP_LIST)
+    @Column(length = 10240)
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     private long[] targets;
 
     @JaLang("描述")

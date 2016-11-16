@@ -2,7 +2,6 @@ package com.absir.master;
 
 import com.absir.server.socket.SocketServerContext;
 
-import java.io.Serializable;
 import java.nio.channels.SocketChannel;
 
 /**
@@ -10,15 +9,19 @@ import java.nio.channels.SocketChannel;
  */
 public class MasterChannelContext extends SocketServerContext.ChannelContext {
 
-    protected Serializable id;
+    protected String id;
 
     protected String slaveKey;
 
     protected MasterRpcAdapter masterRpcAdapter;
 
-    public MasterChannelContext(Serializable id, SocketChannel channel) {
+    public MasterChannelContext(String id, SocketChannel channel) {
         super(channel);
         this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getSlaveKey() {

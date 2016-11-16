@@ -3,6 +3,9 @@ package com.absir.master;
 import com.absir.client.SocketAdapter;
 import com.absir.client.SocketAdapterSel;
 import com.absir.client.SocketNIO;
+import com.absir.client.callback.CallbackMsg;
+import com.absir.context.core.ContextUtils;
+import com.absir.data.helper.HelperDataFormat;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -71,5 +74,14 @@ public class MasterChannelAdapter extends SocketAdapterSel {
     @Override
     public int getSendDataBytesHeaderLength() {
         return 1;
+    }
+
+    public void sendData(String uri, Object postData, CallbackMsg<?> callbackMsg) throws IOException {
+        sendData(uri, postData, 30000, callbackMsg);
+    }
+
+    public void sendData(String uri, Object postData, int timeout, CallbackMsg<?> callbackMsg) throws IOException {
+        sendData(uri.getBytes(ContextUtils.getCharset()), true, false,
+                postData == null ? null : HelperDataFormat.PACK.writeAsBytes(postData), timeout, callbackMsg);
     }
 }

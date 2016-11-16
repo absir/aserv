@@ -35,6 +35,13 @@ public class JMasterSynch extends JbBase {
     @Column(length = 10240)
     private byte[] postData;
 
+    @JaLang("提交查看")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private String postView;
+
+    @JaLang("压缩")
+    private boolean varints;
+
     @JaLang("更新时间")
     @JaEdit(groups = JaEdit.GROUP_LIST, types = "dateTime", editable = JeEditable.LOCKED)
     private long updateTime;
@@ -76,6 +83,22 @@ public class JMasterSynch extends JbBase {
         this.postData = postData;
     }
 
+    public boolean isVarints() {
+        return varints;
+    }
+
+    public void setVarints(boolean varints) {
+        this.varints = varints;
+    }
+
+    public String getPostView() {
+        return postView;
+    }
+
+    public void setPostView(String postView) {
+        this.postView = postView;
+    }
+
     public long getUpdateTime() {
         return updateTime;
     }
@@ -91,4 +114,5 @@ public class JMasterSynch extends JbBase {
     public void setSynched(boolean synched) {
         this.synched = synched;
     }
+
 }

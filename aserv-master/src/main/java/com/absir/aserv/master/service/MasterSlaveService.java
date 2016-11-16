@@ -16,12 +16,16 @@ import com.absir.aserv.master.bean.base.JbBeanTargets;
 import com.absir.aserv.system.bean.JEmbedSS;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
+import com.absir.aserv.system.helper.HelperArray;
 import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Value;
+import com.absir.client.SocketAdapter;
+import com.absir.client.callback.CallbackMsg;
+import com.absir.client.rpc.RpcData;
 import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.kernel.KernelString;
@@ -33,10 +37,11 @@ import com.absir.master.MasterChannelContext;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.hibernate.boost.L2CacheCollectionService;
 import com.absir.orm.transaction.value.Transaction;
-import com.absir.server.socket.SocketServerContext.ChannelContext;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,6 +55,8 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
     protected static final Logger LOGGER = LoggerFactory.getLogger(MasterSlaveService.class);
     @Value("master.sync.timeout")
     private int syncTimeout = 60000;
+    @Value("master.sync.shared")
+    private static boolean syncShared;
 
     public static <T extends JbBeanTargets> void addEntityMerge(Class<T> entityClass) {
         L2CacheCollectionService.ME.addEntityMerges(entityClass, new IEntityMerge<T>() {
@@ -57,8 +64,40 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
             @Override
             public void merge(String entityName, T entity,
                               com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType, Object mergeEvent) {
-                MasterSlaveService.ME.addSlaveSynch(entity.getTargets(), entityName + "@" + entity.getId(),
-                        "api/slave/option/" + entityName + "/" + (mergeType == MergeType.DELETE ? 2 : 0), entity);
+                if (!syncShared && mergeType == MergeType.UPDATE && !entity.isAllTarget()) {
+                    // slave分库状态，更新目标，数据同步
+                    long[] lastEids = entity.getLastTargets();
+                    if (lastEids == null || lastEids.length == 0) {
+                        // 从全选选择状态更新不全部选择
+                        MasterSlaveService.ME.addSlaveSynch(lastEids, true, entityName + "@" + entity.getId(),
+                                "api/slave/option/" + entityName + "/2", entity, false);
+
+                    } else {
+                        // 比对选择状态变化
+                        long[] eids = entity.getTargets();
+                        if (eids != null && eids.length != 0) {
+                            List<Long> deleteIds = new ArrayList<Long>();
+                            for (long eid : lastEids) {
+                                if (!HelperArray.contains(eids, eid)) {
+                                    deleteIds.add(eid);
+                                }
+                            }
+
+                            int size = deleteIds.size();
+                            lastEids = new long[size];
+                            for (int i = 0; i < size; i++) {
+                                lastEids[i] = deleteIds.get(i);
+                            }
+                        }
+
+                        // 从全选选择状态更新不全部选择
+                        MasterSlaveService.ME.addSlaveSynch(lastEids, false, entityName + "@" + entity.getId(),
+                                "api/slave/option/" + entityName + "/2", entity, false);
+                    }
+                }
+
+                MasterSlaveService.ME.addSlaveSynch(entity.getTargets(), entity.isAllTarget(), entityName + "@" + entity.getId(),
+                        "api/slave/option/" + entityName + "/" + (mergeType == MergeType.DELETE ? 2 : 0), entity, false);
             }
 
         });
@@ -78,13 +117,15 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
      * 添加同步
      */
     @Transaction
-    public void addSlaveSynch(long[] eids, String mid, String uri, Object postData) {
-        if (eids == null || eids.length == 0) {
-            addSlaveSynch("*", mid, uri, postData);
+    public void addSlaveSynch(long[] eids, boolean all, String mid, String uri, Object postData, boolean varints) {
+        if (all || eids == null || eids.length == 0) {
+            if (all) {
+                addSlaveSynch("*", mid, uri, postData, varints);
+            }
 
         } else {
             for (String eid : ME.getTargetIds(eids)) {
-                addSlaveSynch(eid, mid, uri, postData);
+                addSlaveSynch(eid, mid, uri, postData, varints);
             }
         }
     }
@@ -93,8 +134,8 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
      * 添加同步
      */
     @Transaction
-    public boolean addSlaveSynch(String eid, String mid, String uri, Object postData) {
-        return addSlaveSynch(eid, mid, uri, postData,
+    public boolean addSlaveSynch(String eid, String mid, String uri, Object postData, boolean varints) {
+        return addSlaveSynch(eid, mid, uri, postData, varints,
                 postData == null || postData instanceof ISlaveAutoSynch ? true : false);
     }
 
@@ -102,7 +143,20 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
      * 添加同步
      */
     @Transaction
-    public boolean addSlaveSynch(String eid, String mid, String uri, Object postData, boolean autoSynch) {
+    public boolean addSlaveSynch(String eid, String mid, String uri, Object postData, boolean varints, boolean autoSynch) {
+        try {
+            return addSlaveSynchData(eid, mid, uri, postData == null ? null
+                    : postData.getClass() == byte[].class ? (byte[]) postData : HelperDataFormat.PACK.writeAsBytes(postData), varints, autoSynch);
+
+        } catch (Exception e) {
+            LOGGER.error("addSlaveSynch failed " + uri + " => " + postData, e);
+        }
+
+        return false;
+    }
+
+    @Transaction
+    public boolean addSlaveSynchData(String eid, String mid, String uri, byte[] postData, boolean varints, boolean autoSynch) {
         if (KernelString.isEmpty(eid)) {
             eid = "*";
         }
@@ -116,10 +170,11 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
         slaveSynch.setUpdateTime(System.currentTimeMillis());
         slaveSynch.setSynched("*".equals(eid));
         slaveSynch.setSlaveAutoSynch(autoSynch);
+        slaveSynch.setPostData(postData);
         try {
-            slaveSynch.setPostData(postData == null ? null
-                    : postData.getClass() == byte[].class ? (byte[]) postData : HelperDataFormat.PACK.writeAsBytes(postData));
-            BeanDao.getSession().merge(slaveSynch);
+            Session session = BeanDao.getSession();
+            session.merge(slaveSynch);
+            session.flush();
             if (slaveSynch.isSynched()) {
                 ME.addSlaveSynch(slaveSynch);
 
@@ -136,6 +191,11 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
         return false;
     }
 
+    // 添加RPC同步
+    public void addSlaveSynchRpc(String channelId, String mid, RpcData rpcData, boolean autoSynch) {
+        addSlaveSynchData(channelId, mid, rpcData.getUri(), rpcData.getParamData(), true, autoSynch);
+    }
+
     /**
      * 添加通用同步
      */
@@ -146,7 +206,7 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
                 .iterate();
         while (iterator.hasNext()) {
             JSlave slave = iterator.next();
-            addSlaveSynch(slave.getId(), slaveSynch.getId().getMid(), slaveSynch.getUri(), slaveSynch.getPostData());
+            addSlaveSynch(slave.getId(), slaveSynch.getId().getMid(), slaveSynch.getUri(), slaveSynch.getPostData(), slaveSynch.isVarints());
         }
     }
 
@@ -161,7 +221,7 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
         String id = slave.getId();
         while (iterator.hasNext()) {
             JSlaveSynch slaveSynch = iterator.next();
-            addSlaveSynch(id, slaveSynch.getId().getMid(), slaveSynch.getUri(), slaveSynch.getPostData());
+            addSlaveSynch(id, slaveSynch.getId().getMid(), slaveSynch.getUri(), slaveSynch.getPostData(), slaveSynch.isVarints());
         }
     }
 
@@ -171,7 +231,7 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
     @Transaction
     public void syncComplete(JSlaveSynch slaveSynch, long updateTime) {
         QueryDaoUtils.createQueryArray(BeanDao.getSession(),
-                "UPDATE JSlaveSynch o SET o.synched = ? WHERE o.id.eid = ? AND o.id.mid= ? AND o.updateTime = ?", true,
+                "UPDATE JSlaveSynch o SET o.synched = ? WHERE o.id.eid = ? AND o.id.mid = ? AND o.updateTime = ?", true,
                 slaveSynch.getId().getEid(), slaveSynch.getId().getMid(), updateTime).executeUpdate();
     }
 
@@ -200,22 +260,30 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
                 try {
                     atom.increment();
                     final long updateTime = slaveSynch.getUpdateTime();
-//                    MasterServerResolver.ME.sendDataBytesVarints(context, slaveSynch.getUri(),
-//                            slaveSynch.getPostData(), syncTimeout, new CallbackMsg<String>() {
-//
-//                                @Override
-//                                public void doWithBean(String bean, boolean ok, byte[] buffer, SocketAdapter adapter) {
-//                                    try {
-//                                        if (ok) {
-//                                            ME.syncComplete(slaveSynch, updateTime);
-//                                        }
-//
-//                                    } finally {
-//                                        atom.decrement();
-//                                    }
-//                                }
-//
-//                            });
+                    CallbackMsg<String> callbackMsg = new CallbackMsg<String>() {
+
+                        @Override
+                        public void doWithBean(String bean, boolean ok, byte[] buffer, SocketAdapter adapter) {
+                            try {
+                                if (ok) {
+                                    ME.syncComplete(slaveSynch, updateTime);
+                                }
+
+                            } finally {
+                                atom.decrement();
+                            }
+                        }
+
+                    };
+
+                    if (slaveSynch.isVarints()) {
+                        context.getMasterChannelAdapter().sendDataVarints(slaveSynch.getUri(),
+                                slaveSynch.getPostData(), syncTimeout, callbackMsg);
+
+                    } else {
+                        context.getMasterChannelAdapter().sendData(slaveSynch.getUri(),
+                                slaveSynch.getPostData(), syncTimeout, callbackMsg);
+                    }
 
                 } catch (Exception e) {
                     atom.decrement();
@@ -226,18 +294,6 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
         }
 
         atom.await();
-    }
-
-    /**
-     * 清除完成同步
-     */
-    @Async(notifier = true)
-    @Transaction
-    @Schedule(cron = "0 0 0 * * *")
-    protected void clearSyncheds() {
-        QueryDaoUtils.createQueryArray(BeanDao.getSession(),
-                "DELETE FROM JSlaveSynch o WHERE o.id.mid != ? AND o.synched = ? AND o.updateTime < ?", "*", true,
-                ContextUtils.getContextTime() - UtilAbsir.WEEK_TIME).executeUpdate();
     }
 
     @Transaction
@@ -295,29 +351,29 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
         for (final JSlaveServer slaveServer : slaveServers) {
             JSlave host = slaveServer.getHost();
             if (host != null) {
-                ChannelContext context = InputMasterContext.ME.getServerContext().getChannelContexts()
+                MasterChannelContext context = InputMasterContext.ME.getServerContext().getChannelContexts()
                         .get(host.getId());
                 if (context != null) {
                     try {
                         atom.increment();
                         final long updateTime = slaveServer.getUpdateTime();
-//                        MasterServerResolver.ME.sendData(context.getChannel(), "api/slave/sync", slaveServer,
-//                                new CallbackMsg<String>() {
-//
-//                                    @Override
-//                                    public void doWithBean(String bean, boolean ok, byte[] buffer,
-//                                                           SocketAdapter adapter) {
-//                                        try {
-//                                            if (ok) {
-//                                                syncComplete(slaveServer, updateTime);
-//                                            }
-//
-//                                        } finally {
-//                                            atom.decrement();
-//                                        }
-//                                    }
-//
-//                                });
+                        context.getMasterChannelAdapter().sendData("api/slave/sync", slaveServer, syncTimeout,
+                                new CallbackMsg<String>() {
+
+                                    @Override
+                                    public void doWithBean(String bean, boolean ok, byte[] buffer,
+                                                           SocketAdapter adapter) {
+                                        try {
+                                            if (ok) {
+                                                syncComplete(slaveServer, updateTime);
+                                            }
+
+                                        } finally {
+                                            atom.decrement();
+                                        }
+                                    }
+
+                                });
 
                     } catch (Exception e) {
                         atom.decrement();
@@ -328,6 +384,18 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
         }
 
         atom.await();
+    }
+
+    /**
+     * 清除完成同步
+     */
+    @Async(notifier = true)
+    @Transaction
+    @Schedule(cron = "0 0 0 * * *")
+    protected void clearSyncheds() {
+        QueryDaoUtils.createQueryArray(BeanDao.getSession(),
+                "DELETE FROM JSlaveSynch o WHERE o.id.mid != ? AND o.synched = ? AND o.updateTime < ?", "*", true,
+                ContextUtils.getContextTime() - UtilAbsir.WEEK_TIME).executeUpdate();
     }
 
 }

@@ -6,7 +6,7 @@ ${Scenario::set("edit", request)}
 #tag script()
 #set(element = document.appendElement("div"))
 ##<!--form body
-#set(readonly = "${create ? 'edit' : ' readonly'}")
+#set(readonly = !create)
 ##编辑实体主键
 #for(field : entityModel.getPrimaries())
 #if(!generator.allow(field))

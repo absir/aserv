@@ -95,7 +95,7 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
         };
 
         if (attribute == null || !attribute.sendStream) {
-            socketAdapter.sendDataIndexVarints(uri, paramData, timeout, callbackAdapter);
+            socketAdapter.sendDataVarints(uri, paramData, timeout, callbackAdapter);
 
         } else {
             if (UtilContext.isWarnIdlePool()) {

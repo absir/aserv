@@ -15,9 +15,15 @@ import = "org.jsoup.nodes.*"
 ${input.addClass('upload-url')}
 ${input.attr('nullmsg', Pag::getLang('请添加附件！'))}
 ${ScriptNode::attr(input, 'readonly')}
-#set(extensions = Pag::getUploaderExtensions(field.crudField.jCrud.parameters))
-#if(extensions)
-    ${input.attr('datatype', extensions)}
+#set(jCrud = field.crudField.jCrud)
+#if(jCrud)
+    #set(parameters = jCrud.parameters)
+    #if(parameters)
+        #set(extensions = Pag::getUploaderExtensions(parameters))
+        #if(extensions)
+            ${input.attr('datatype', extensions)}
+        #end
+    #end
 #end
 ##${input.removeAttr('name')}
 ##${input.attr('style', 'width:200px')}
