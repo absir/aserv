@@ -5,6 +5,7 @@ import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.base.JbBeanS;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
+import com.absir.aserv.system.bean.value.JaName;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -24,6 +25,7 @@ public class JSlaveRegister extends JbBeanS {
 
     @JaLang("节点编号")
     @JaEdit(groups = JaEdit.GROUP_LIST)
+    @JaName("JSlave")
     private String slaveId;
 
     @JaLang("备注")

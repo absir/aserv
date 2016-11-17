@@ -383,7 +383,7 @@ function ab_ajaxCallbackData(data) {
         var message = data.message;
         if (!message) {
             switch (icon) {
-                case 0:
+                case 1:
                     message = ab_lang_map.option_success;
                     break;
                 case 2:

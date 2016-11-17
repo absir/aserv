@@ -34,7 +34,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public class JSlaveServer extends JbBean implements ICrudBean {
 
-    @JaLang("服务器名称")
+    @JaLang(value = "服务名称", tag = "serverName")
     private String name;
 
     @JaLang("主机")
@@ -51,7 +51,7 @@ public class JSlaveServer extends JbBean implements ICrudBean {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean multiPort;
 
-    @JaLang("服务器IP")
+    @JaLang(value = "绑定IP", tag = "bindIP")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String ip;
 

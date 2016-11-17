@@ -30,7 +30,8 @@ import java.util.zip.ZipInputStream;
 
 public class HelperFile extends FileUtils {
 
-    public static final long PRESERVE_FILE_MODIFIED_TIME = 4231;
+    // 毫秒不记录
+    public static final long PRESERVE_FILE_MODIFIED_TIME = 4231000;
 
     public static long lastModified(File file) {
         if (file == null || !file.exists()) {

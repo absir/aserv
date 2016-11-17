@@ -53,10 +53,10 @@ public abstract class MasterSlaveService implements IEntityMerge<JSlaveServer> {
     public static final MasterSlaveService ME = BeanFactoryUtils.get(MasterSlaveService.class);
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(MasterSlaveService.class);
-    @Value("master.sync.timeout")
-    private int syncTimeout = 60000;
     @Value("master.sync.shared")
     private static boolean syncShared;
+    @Value("master.sync.timeout")
+    private int syncTimeout = 60000;
 
     public static <T extends JbBeanTargets> void addEntityMerge(Class<T> entityClass) {
         L2CacheCollectionService.ME.addEntityMerges(entityClass, new IEntityMerge<T>() {

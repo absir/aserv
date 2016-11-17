@@ -33,7 +33,7 @@ public class MasterResolverService extends MasterServerResolver {
 
         if (register.isAllow()) {
             id = register.getId();
-            return KernelString.isEmpty(id) ? null : id;
+            return KernelString.isEmpty(id) ? register.getId() : id;
         }
 
         return null;

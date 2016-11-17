@@ -318,7 +318,10 @@ public abstract class SessionFactoryUtils {
         }
 
         if (entityClass == null) {
-            return sessionFactory.getClassMetadata(jpaEntityName);
+            entityClass = getEntityClass(jpaEntityName);
+            if (entityClass == null) {
+                return null;
+            }
         }
 
         return sessionFactory.getClassMetadata(entityClass);

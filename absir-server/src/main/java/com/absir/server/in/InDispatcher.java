@@ -92,6 +92,10 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
     public boolean on(Input input, RouteMatcher routeMatcher) throws Throwable {
         input.setDispatcher(this);
         input.setRouteMatcher(routeMatcher);
+        if (routeMatcher.getParameterLength() == 0) {
+            input.writeUriDict();
+        }
+
         return RouteEntry.intercept(input, input.getRouteEntry()) != null;
     }
 
