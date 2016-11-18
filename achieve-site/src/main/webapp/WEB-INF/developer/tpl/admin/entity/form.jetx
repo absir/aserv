@@ -330,7 +330,7 @@ ${ScriptNode::html(element) + "\r\n"}
             <!--archetype
                                 ##编辑元素集合属性(完成)
                                 ${DeveloperUtils::includeExistName("edit", entityModel.getJoEntity().getEntityName(), request)}
-                                \#set(for_index = Pag::getForIndex())
+                                \#set(for_index = '')
                                 \#set(for_entity = entity)
                                 \#set(entity = Pag::getForEntityMap(${archetype_map}))
                                 ${ScriptNode::html(element) + "\r\n"}
@@ -340,10 +340,12 @@ ${ScriptNode::html(element) + "\r\n"}
                         </thead>
                         <tbody>
                             \#for(entity : entities)
+                                \#if(entity)
                                 ##\#set(for_index = for.index)
                             <tr>
                                 ${element_html}
                             </tr>
+                                \#end
                             \#end
                         </tbody>
                     </table>
