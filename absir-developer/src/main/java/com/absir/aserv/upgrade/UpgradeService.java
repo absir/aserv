@@ -49,9 +49,6 @@ public class UpgradeService {
     @Value(value = "upgrade.config")
     private String upgradeConfig = "WEB-INF/classes/config.properties";
 
-    @Value(value = "upgrade.resource", defaultValue = "${resourcePath}upgrade/")
-    private String upgradeResource;
-
     @Value(value = "upgrade.destination", defaultValue = "${classPath}../../")
     private String upgradeDestination;
 
@@ -60,12 +57,7 @@ public class UpgradeService {
 
     @Inject
     protected void initService() {
-        upgradeResource = HelperFileName.normalize(upgradeResource);
         upgradeDestination = HelperFileName.normalize(upgradeDestination);
-    }
-
-    public String getUpgradeResource() {
-        return upgradeResource;
     }
 
     public String getUpgradeDestination() {
@@ -166,7 +158,7 @@ public class UpgradeService {
         }
     }
 
-    public boolean upgrade(File upgradeFile, boolean full) throws IOException {
+    protected boolean upgrade(File upgradeFile, boolean full) throws IOException {
         Map<String, Object> configMap = getVersionMap(upgradeFile);
         if (configMap != null && validateAppCode(configMap, InitBeanFactory.ME.getAppCode())) {
             if (full) {
@@ -177,26 +169,28 @@ public class UpgradeService {
 
             HelperFile.copyDirectoryOverWrite(new ZipInputStream(new FileInputStream(upgradeFile)), new File(upgradeDestination), true, null, true);
             upgradeRM(configMap);
+            restartCommand = BeanConfigImpl.getMapValue(configMap, "upgrade.restart", null, String.class);
         }
 
-        LOGGER.warn("upgrade.fail=>" + upgradeFile);
+        LOGGER.warn("upgrade.fail => " + upgradeFile);
         return false;
     }
 
     @Async(notifier = true, thread = true)
-    public void restartUpgrade(String versionFile, boolean full) throws IOException {
+    public void restartUpgrade(File file, boolean full) throws IOException {
         Object stopDone = stop();
-        upgrade(new File(HelperFileName.concat(upgradeResource, versionFile)), full);
+        upgrade(file, full);
         start(stopDone);
     }
 
     @Async(notifier = true, thread = true)
     public void restartUpgrade(InputStream inputStream, boolean full) throws IOException {
-        Object stopDone = stop();
-        File upgradeFile = new File(BeanFactoryUtils.getBeanConfig().getClassPath() + "../upgrade/"
+        File upgradeFile = new File(BeanFactoryUtils.getBeanConfig().getClassPath() + "upgrade/"
                 + HelperRandom.randSecondId() + ".zip");
+        Object stopDone = null;
         try {
             HelperFile.write(upgradeFile, inputStream);
+            stopDone = stop();
             upgrade(upgradeFile, full);
 
         } finally {

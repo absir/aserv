@@ -47,16 +47,20 @@ public class BeanConfigImpl implements BeanConfig {
     private Map<String, Object> configMap = new HashMap<String, Object>();
 
     public BeanConfigImpl(IBeanConfigProvider beanConfigProvider) {
-        this(beanConfigProvider, null);
+        this(beanConfigProvider, null, null);
     }
 
-    public BeanConfigImpl(IBeanConfigProvider beanConfigProvider, String classPath) {
-        if (classPath == null) {
+    public BeanConfigImpl(IBeanConfigProvider beanConfigProvider, String classPath, String resourcePath) {
+        if (KernelString.isEmpty(classPath)) {
             classPath = HelperFileName.getClassPath(null);
         }
-        classPath = HelperFileName.normalizeNoEndSeparator(classPath) + HelperFileName.SYSTEM_SEPARATOR;
+
+        if (KernelString.isEmpty(resourcePath)) {
+            resourcePath = classPath;
+        }
+
         setClassPath(classPath);
-        setResourcePath(classPath);
+        setResourcePath(resourcePath);
         BeanFactory beanFactory = BeanFactoryUtils.get();
         this.beanConfig = beanFactory == null ? null : beanFactory.getBeanConfig();
         Set<String> propertyFilenames = new HashSet<String>();
@@ -618,16 +622,15 @@ public class BeanConfigImpl implements BeanConfig {
 
     public static <T extends Annotation> T getAccessorAnnotation(UtilAccessor.Accessor accessor, Class<T> annotationClass, boolean getter) {
         Method method = getter ? accessor.getGetter() : accessor.getSetter();
-        if (method == null) {
+        T annotation = method == null ? null : getMethodAnnotation(method, annotationClass);
+        if (annotation == null) {
             Field field = accessor.getField();
-            if (field == null) {
-                return getMethodAnnotation(getter ? accessor.getSetter() : accessor.getGetter(), annotationClass);
+            if (field != null) {
+                annotation = getFieldAnnotation(field, annotationClass);
             }
-
-            return getFieldAnnotation(field, annotationClass);
         }
 
-        return getMethodAnnotation(method, annotationClass);
+        return annotation;
     }
 
     public boolean isOutEnvironmentDenied() {
@@ -755,6 +758,7 @@ public class BeanConfigImpl implements BeanConfig {
     }
 
     public void setClassPath(String classPath) {
+        classPath = HelperFileName.normalizeNoEndSeparator(classPath) + HelperFileName.SYSTEM_SEPARATOR;
         this.classPath = classPath;
         configMap.put("classPath", classPath);
         System.setProperty("classPath", classPath);
@@ -765,6 +769,7 @@ public class BeanConfigImpl implements BeanConfig {
     }
 
     public void setResourcePath(String resourcePath) {
+        resourcePath = HelperFileName.normalizeNoEndSeparator(resourcePath) + HelperFileName.SYSTEM_SEPARATOR;
         this.resourcePath = resourcePath;
         configMap.put("resourcePath", resourcePath);
         System.setProperty("resourcePath", resourcePath);

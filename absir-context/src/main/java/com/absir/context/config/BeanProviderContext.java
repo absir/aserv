@@ -264,8 +264,8 @@ public class BeanProviderContext extends BeanFactoryProvider {
     }
 
     @Override
-    public synchronized void scan(BeanScanner beanScanner, Collection<Class<?>> beanTypes, Object... beanNameAndObjects) {
-        super.scan(beanScanner, beanTypes, beanNameAndObjects);
+    public synchronized void scan(String classPath, String resourcePath, BeanScanner beanScanner, Collection<Class<?>> beanTypes, Object... beanNameAndObjects) {
+        super.scan(classPath, resourcePath, beanScanner, beanTypes, beanNameAndObjects);
         BeanFactoryStopping.addStopping(getBeanFactory(), getBeanFactoryStoppings());
     }
 

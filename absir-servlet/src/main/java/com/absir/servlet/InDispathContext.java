@@ -11,6 +11,8 @@ import com.absir.bean.core.BeanDefineDiscover;
 import com.absir.bean.core.BeanFactoryProvider;
 import com.absir.context.config.BeanFactoryStopping;
 import com.absir.context.config.BeanProviderContext;
+import com.absir.core.helper.HelperFileName;
+import com.absir.core.kernel.KernelString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +31,12 @@ public class InDispathContext extends InDispathFilter {
                 BeanFactoryProvider.getParameterList(filterConfig.getInitParameter("include")),
                 BeanFactoryProvider.getParameterList(filterConfig.getInitParameter("exclude")),
                 BeanFactoryProvider.getParameterList(filterConfig.getInitParameter("filter")));
-        beanProviderContext.scan(null, null, filterConfig.getServletContext());
+        String contextName = HelperFileName.normalizeNoEndSeparator(getServletContext().getContextPath());
+        if (KernelString.isEmpty(contextName)) {
+            contextName = "root";
+        }
+
+        beanProviderContext.scan(HelperFileName.getClassPath(InDispathContext.class), getContextResourcePath() + "/../../webResources/" + contextName, null, null, filterConfig.getServletContext());
         logger = LoggerFactory.getLogger(InDispathContext.class);
         logger.info("start beanFactory from " + this);
         beanProviderContext.started();

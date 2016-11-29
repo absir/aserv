@@ -17,6 +17,7 @@ import com.absir.aserv.system.bean.base.JbBean;
 import com.absir.aserv.system.bean.value.*;
 import com.absir.aserv.system.crud.DateCrudFactory;
 import com.absir.aserv.system.crud.UploadCrudFactory;
+import com.absir.aserv.system.crud.value.UploadRule;
 import com.absir.aserv.task.JaTask;
 import com.absir.aserv.task.TaskService;
 import com.absir.aserv.upgrade.UpgradeService;
@@ -49,6 +50,7 @@ public class JUpgrade extends JbBean implements ICrudBean {
 
     @JaLang("升级文件")
     @JaEdit(types = "file", groups = JaEdit.GROUP_LIST)
+    @UploadRule("@:rand.:ext")
     @JaCrud(factory = UploadCrudFactory.class, parameters = {"-1", "zip,war"})
     private String upgradeFile;
 
@@ -83,7 +85,7 @@ public class JUpgrade extends JbBean implements ICrudBean {
     public static void upgradeFile(long adapterTime, String filePath) {
         if (RouteAdapter.ADAPTER_TIME == adapterTime) {
             try {
-                UpgradeService.ME.restartUpgrade(filePath, true);
+                UpgradeService.ME.restartUpgrade(UploadCrudFactory.ME.getUpgradeStream(filePath), true);
 
             } catch (Exception e) {
                 LOGGER.error("upgradeFile error " + filePath, e);

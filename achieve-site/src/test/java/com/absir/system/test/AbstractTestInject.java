@@ -18,7 +18,7 @@ public class AbstractTestInject extends AbstractTest {
     public AbstractTestInject() {
         beanFactoryProvider = new BeanFactoryProvider(null, null, null);
         BeanDefineDiscover.open();
-        beanFactoryProvider.scan(null, null, this);
+        beanFactoryProvider.scan(null, null, null, null, this);
         beanFactoryProvider.started();
     }
 

@@ -8,6 +8,7 @@
 package com.absir.servlet;
 
 import com.absir.bean.basis.BeanFactory;
+import com.absir.bean.basis.Configure;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Orders;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 
+@Configure
 public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServletResponse> implements Filter {
 
     public static final String REQUEST_INPUT = InDispathFilter.class.getName() + "@REQUEST_INPUT";
@@ -44,7 +46,7 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
 
     @Orders
     @Inject
-    private IFilter[] filters;
+    private static IFilter[] filters;
 
     public static ServletContext getServletContext() {
         return servletContext;
@@ -101,17 +103,15 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
             return;
         }
 
-        try {
-            if (!(request instanceof HttpServletRequest && response instanceof HttpServletResponse)) {
-                if (!on(getUri(request), (HttpServletRequest) request, (HttpServletResponse) response)) {
-                    chain.doFilter(request, response);
+        if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
+            try {
+                if (on(getUri(request), (HttpServletRequest) request, (HttpServletResponse) response)) {
+                    return;
                 }
 
-                return;
+            } catch (Throwable e) {
+                throw new ServletException(e);
             }
-
-        } catch (Throwable e) {
-            throw new ServletException(e);
         }
 
         chain.doFilter(request, response);

@@ -65,9 +65,9 @@ public class BeanFactoryImpl implements BeanFactory {
         this.beanSoftReferenceAwares = beanSoftReferenceAwares;
     }
 
-    public static BeanConfig forBeanConfig(String classPath) {
+    public static BeanConfig forBeanConfig(String classPath, String resourcePath) {
         if (Instance == null) {
-            new BeanFactoryImpl(new BeanConfigImpl(null, classPath), new ConcurrentHashMap<String, BeanDefine>(), new ArrayList<IBeanDefineAware>(), new ArrayList<IBeanDefineProcessor>(),
+            new BeanFactoryImpl(new BeanConfigImpl(null, classPath, resourcePath), new ConcurrentHashMap<String, BeanDefine>(), new ArrayList<IBeanDefineAware>(), new ArrayList<IBeanDefineProcessor>(),
                     new ArrayList<IBeanObjectProcessor>(), new ArrayList<IBeanSoftReferenceAware>());
         }
 

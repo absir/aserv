@@ -115,7 +115,7 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
         return beanFactoryStoppings;
     }
 
-    public synchronized void scan(BeanScanner beanScanner, Collection<Class<?>> beanTypes,
+    public synchronized void scan(String classPath, String resoucePath, BeanScanner beanScanner, Collection<Class<?>> beanTypes,
                                   Object... beanNameAndObjects) {
         long startTime = System.currentTimeMillis();
         Runtime runtime = Runtime.getRuntime();
@@ -126,7 +126,7 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
         List<IBeanDefineAware> beanDefineAwares = new ArrayList<IBeanDefineAware>();
         List<IBeanObjectProcessor> beanObjectProcessors = new ArrayList<IBeanObjectProcessor>();
         List<IBeanSoftReferenceAware> beanSoftReferenceAwares = new ArrayList<IBeanSoftReferenceAware>();
-        beanFactory = new BeanFactoryImpl(getBeanConfig(), beanNameDefineMap, beanDefineAwares, beanDefineProcessors,
+        beanFactory = new BeanFactoryImpl(getBeanConfig(classPath, resoucePath), beanNameDefineMap, beanDefineAwares, beanDefineProcessors,
                 beanObjectProcessors, beanSoftReferenceAwares);
         if (beanScanner == null) {
             beanScanner = new BeanScanner();
@@ -426,8 +426,8 @@ public class BeanFactoryProvider implements IBeanConfigProvider {
         beanFactoryStoppings.clear();
     }
 
-    protected BeanConfig getBeanConfig() {
-        return new BeanConfigImpl(this);
+    protected BeanConfig getBeanConfig(String classPath, String resourcePath) {
+        return new BeanConfigImpl(this, classPath, resourcePath);
     }
 
     @Override

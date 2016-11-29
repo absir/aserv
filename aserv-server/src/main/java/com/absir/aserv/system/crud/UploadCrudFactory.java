@@ -46,7 +46,6 @@ import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.Input;
 import com.absir.servlet.IFilter;
-import com.absir.servlet.InDispathFilter;
 import com.absir.servlet.InputRequest;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemIterator;
@@ -169,7 +168,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     public static String getConfigUrlPath(String expression, String route, String defaultUrlPath, boolean url) {
         String urlPath = BeanFactoryUtils.getBeanConfig().getExpressionValue(expression, null, String.class);
         if (KernelString.isEmpty(urlPath)) {
-            urlPath = route + urlPath;
+            urlPath = route + defaultUrlPath;
 
         } else {
             if (url) {
@@ -246,9 +245,9 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     @Started
     protected void started() {
         UploadCrudFactory.uploadUrl = getConfigUrlPath("resource.upload.url", MenuContextUtils.getSiteRoute(), "upload/", true);
-        UploadCrudFactory.uploadPath = getConfigUrlPath("resource.upload.path", InDispathFilter.getContextResourcePath(), "upload/", false);
+        UploadCrudFactory.uploadPath = getConfigUrlPath("resource.upload.path", BeanFactoryUtils.getBeanConfig().getResourcePath(), "upload/", false);
         UploadCrudFactory.upgradeUrl = getConfigUrlPath("resource.upgrade.url", MenuContextUtils.getSiteRoute(), "api/entity/upgrade/", true);
-        UploadCrudFactory.upgradePath = getConfigUrlPath("resource.upgrade.path", BeanFactoryUtils.getBeanConfig().getClassPath(), "upgrade/", false);
+        UploadCrudFactory.upgradePath = getConfigUrlPath("resource.upgrade.path", BeanFactoryUtils.getBeanConfig().getResourcePath(), "upgrade/", false);
     }
 
     public String randUploadFile(int hashCode) {
@@ -619,15 +618,31 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     public static final int UPLOAD_LENGTH = UPLOAD.length();
 
+    @Value("upload.cache.control")
+    private String cacheControl = "max-age=3600";
+
+    /**
+     * 上传文件静态文件服务(Cached)
+     */
     @Override
     public boolean doFilter(String uri, HttpServletRequest req, HttpServletResponse res) throws Throwable {
         if (uri.length() > UPLOAD_LENGTH && uri.startsWith(UPLOAD)) {
             uri = uri.substring(UPLOAD.length());
-            InputStream inputStream = getUploadStream(uri);
-            if (inputStream != null) {
-                res.addHeader("Content-Disposition", "attachment;filename=" + HelperFileName.getName(uri));
-                HelperIO.copy(inputStream, res.getOutputStream());
-                return true;
+            if (uri.charAt(0) != '@') {
+                File file = getUploadFile(uri);
+                if (file.exists()) {
+                    String modified = String.valueOf(file.lastModified());
+                    String ifModifiedSince = req.getHeader("If-Modified-Since");
+                    if (ifModifiedSince != null && modified.equals(ifModifiedSince)) {
+                        res.setStatus(304);
+                        return true;
+                    }
+
+                    res.addHeader("cache-control", cacheControl);
+                    res.addHeader("last-modified", modified);
+                    HelperIO.copy(new FileInputStream(file), res.getOutputStream());
+                    return true;
+                }
             }
         }
 
