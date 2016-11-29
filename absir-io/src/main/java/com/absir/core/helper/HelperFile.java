@@ -30,8 +30,8 @@ import java.util.zip.ZipInputStream;
 
 public class HelperFile extends FileUtils {
 
-    // 毫秒不记录
-    public static final long PRESERVE_FILE_MODIFIED_TIME = 4231000;
+    // 毫秒不记录 || 4231000 零参数适应性更强
+    public static final long PRESERVE_FILE_MODIFIED_TIME = 0;
 
     public static long lastModified(File file) {
         if (file == null || !file.exists()) {
@@ -106,8 +106,8 @@ public class HelperFile extends FileUtils {
         }
     }
 
-    public static void write(File file, InputStream input) throws IOException {
-        HelperIO.copy(input, openOutputStream(file));
+    public static int write(File file, InputStream input) throws IOException {
+        return HelperIO.copy(input, openOutputStream(file));
     }
 
     public static FileOutputStream openOutputStream(File file, Long lastModified) throws IOException {

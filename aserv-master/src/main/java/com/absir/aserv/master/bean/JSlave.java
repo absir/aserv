@@ -48,6 +48,12 @@ public class JSlave extends JbBase {
     @JaEdit(groups = {JaEdit.GROUP_SUG})
     private String path;
 
+    @JaLang("应用")
+    private String app;
+
+    @JaLang("启动时间")
+    private long startTime;
+
     @JaLang("连接中")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean connecting;
@@ -56,9 +62,9 @@ public class JSlave extends JbBase {
     @JaEdit(groups = JaEdit.GROUP_LIST, types = "dateTime")
     private long lastConnectTime;
 
-    @JaLang("服务IP")
+    @JaLang("服务地址")
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
-    private String serverIP;
+    private String serverAddress;
 
     @JaLang("强制开启")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -116,6 +122,22 @@ public class JSlave extends JbBase {
         this.path = path;
     }
 
+    public String getApp() {
+        return app;
+    }
+
+    public void setApp(String app) {
+        this.app = app;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
     public boolean isConnecting() {
         return connecting;
     }
@@ -132,12 +154,12 @@ public class JSlave extends JbBase {
         this.lastConnectTime = lastConnectTime;
     }
 
-    public String getServerIP() {
-        return serverIP;
+    public String getServerAddress() {
+        return serverAddress;
     }
 
-    public void setServerIP(String serverIP) {
-        this.serverIP = serverIP;
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
     }
 
     public boolean isForceOpen() {

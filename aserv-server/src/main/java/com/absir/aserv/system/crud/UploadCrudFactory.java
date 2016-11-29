@@ -34,6 +34,7 @@ import com.absir.client.helper.HelperClient;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.helper.HelperFile;
 import com.absir.core.helper.HelperFileName;
+import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
@@ -44,6 +45,7 @@ import com.absir.property.PropertyErrors;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.Input;
+import com.absir.servlet.IFilter;
 import com.absir.servlet.InDispathFilter;
 import com.absir.servlet.InputRequest;
 import org.apache.commons.fileupload.FileItem;
@@ -55,7 +57,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -72,7 +76,7 @@ import java.util.List;
  */
 @Base
 @Bean
-public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<FileItem> {
+public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<FileItem>, IFilter {
 
     public static final UploadCrudFactory ME = BeanFactoryUtils.get(UploadCrudFactory.class);
 
@@ -90,6 +94,8 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     protected static final String[] UPLOAD_ROLE_REPLACES = new String[]{":name", ":id", ":ext", ":rand"};
     private static String uploadUrl;
     private static String uploadPath;
+    private static String upgradeUrl;
+    private static String upgradePath;
     @Value(value = "upload.passTime")
     private static long uploadPassTime = 3600000;
     @Domain
@@ -101,14 +107,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     @Orders
     @Inject(type = InjectType.Selectable)
     private IUploadProcessor[] uploadProcessors;
-
-    public static String getUploadUrl() {
-        return uploadUrl;
-    }
-
-    public static String getUploadPath() {
-        return uploadPath;
-    }
 
     public static long getUploadPassTime() {
         return uploadPassTime;
@@ -168,31 +166,89 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         return managerDir;
     }
 
-    @Started
-    protected void setUploadUrl(@Value(value = "resource.upload.url", defaultValue = "@") String
-                                        uploadUrl, @Value(value = "resource.upload.path", defaultValue = "@") String uploadPath) {
-        if (KernelString.isEmpty(uploadPath)) {
-            return;
-        }
-
-        if (KernelString.isEmpty(uploadUrl) || uploadUrl.equals("@")) {
-            uploadUrl = MenuContextUtils.getSiteRoute() + "upload/";
+    public static String getConfigUrlPath(String expression, String route, String defaultUrlPath, boolean url) {
+        String urlPath = BeanFactoryUtils.getBeanConfig().getExpressionValue(expression, null, String.class);
+        if (KernelString.isEmpty(urlPath)) {
+            urlPath = route + urlPath;
 
         } else {
-            if (uploadUrl.indexOf(':') <= 0) {
-                uploadUrl = HelperFileName.concat(MenuContextUtils.getSiteRoute(), uploadUrl);
+            if (url) {
+                if (urlPath.indexOf(':') <= 0) {
+                    urlPath = HelperFileName.concat(route, urlPath);
+                }
+
+            } else {
+                urlPath = HelperFileName.concat(route, urlPath);
             }
         }
 
-        if (KernelString.isEmpty(uploadPath) || uploadPath.equals("@")) {
-            uploadPath = InDispathFilter.getContextResourcePath() + "upload/";
+        return urlPath;
+    }
 
-        } else {
-            uploadPath = HelperFileName.concat(InDispathFilter.getContextResourcePath(), uploadPath);
+    public boolean isUploadUrl(String url) {
+        return url.startsWith(uploadUrl);
+    }
+
+    public String forUploadUrl() {
+        return uploadUrl;
+    }
+
+    public String getUploadUrl(String filePath) {
+        if (KernelString.isEmpty(filePath)) {
+            return null;
         }
 
-        UploadCrudFactory.uploadUrl = uploadUrl;
-        UploadCrudFactory.uploadPath = uploadPath;
+        if (filePath.charAt(0) == '@') {
+            return getUpgradeUrl(filePath);
+        }
+
+        return uploadUrl + filePath;
+    }
+
+    public String getUpgradeUrl(String filePath) {
+        if (filePath.charAt(0) == '@') {
+            filePath = filePath.substring(1);
+        }
+
+        return upgradeUrl + filePath;
+    }
+
+    public File getUploadFile(String filePath) {
+        if (KernelString.isEmpty(filePath)) {
+            return null;
+        }
+
+        if (filePath.charAt(0) == '@') {
+            return getUpgradeFile(filePath);
+        }
+
+        return new File(uploadPath + filePath);
+    }
+
+    public File getUpgradeFile(String filePath) {
+        if (filePath.charAt(0) == '@') {
+            filePath = filePath.substring(1);
+        }
+
+        return new File(upgradePath + filePath);
+    }
+
+    public InputStream getUploadStream(String filePath) throws IOException {
+        File file = getUploadFile(filePath);
+        return file.exists() ? new FileInputStream(file) : null;
+    }
+
+    public InputStream getUpgradeStream(String filePath) throws IOException {
+        File file = getUpgradeFile(filePath);
+        return file.exists() ? new FileInputStream(file) : null;
+    }
+
+    @Started
+    protected void started() {
+        UploadCrudFactory.uploadUrl = getConfigUrlPath("resource.upload.url", MenuContextUtils.getSiteRoute(), "upload/", true);
+        UploadCrudFactory.uploadPath = getConfigUrlPath("resource.upload.path", InDispathFilter.getContextResourcePath(), "upload/", false);
+        UploadCrudFactory.upgradeUrl = getConfigUrlPath("resource.upgrade.url", MenuContextUtils.getSiteRoute(), "api/entity/upgrade/", true);
+        UploadCrudFactory.upgradePath = getConfigUrlPath("resource.upgrade.path", BeanFactoryUtils.getBeanConfig().getClassPath(), "upgrade/", false);
     }
 
     public String randUploadFile(int hashCode) {
@@ -205,20 +261,19 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     }
 
     public void upload(String uploadFile, InputStream inputStream) throws IOException {
-        HelperFile.write(new File(uploadPath + uploadFile), inputStream);
+        if (HelperFile.write(getUploadFile(uploadFile), inputStream) <= 0) {
+            throw new ServerException(ServerStatus.ON_ERROR, "Could not upload file = " + uploadFile);
+        }
     }
 
     public void delete(String uploadFile) {
-        HelperFile.deleteQuietly(new File(uploadPath + uploadFile));
+        if (uploadFile != null) {
+            HelperFile.deleteQuietly(new File(uploadPath + uploadFile));
+        }
     }
 
     /**
      * 远程下载
-     *
-     * @param url
-     * @param defaultExtension
-     * @param user
-     * @return
      */
     public String remoteDownload(String url, String defaultExtension, JiUserBase user) {
         String extension = HelperFileName.getExtension(url);
@@ -239,12 +294,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     /**
      * 上传扩展名内容
-     *
-     * @param extension
-     * @param inputStream
-     * @param user
-     * @return
-     * @throws IOException
      */
     public String uploadExtension(String extension, InputStream inputStream, JiUserBase user) throws IOException {
         if (KernelString.isEmpty(extension)) {
@@ -281,11 +330,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     /**
      * 上传文件处理(加水印,压缩,加密等)
-     *
-     * @param extension
-     * @param upload
-     * @param inputStream
-     * @return
      */
     protected InputStream uploadProcessor(String extension, JUpload upload, InputStream inputStream) {
         if (uploadProcessors != null) {
@@ -306,10 +350,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     /**
      * 创建数据库目录
-     *
-     * @param dirPath
-     * @param userId
-     * @param createTime
      */
     protected void createDirPath(String dirPath, long userId, long createTime) {
         dirPath = HelperFileName.getFullPathNoEndSeparator(dirPath);
@@ -336,10 +376,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     /**
      * JUpload实体处理
-     *
-     * @param upload
-     * @param crud
-     * @param handler
      */
     public void crud(JUpload upload, Crud crud, CrudHandler handler) {
         if (KernelString.isEmpty(upload.getFileType())) {
@@ -372,10 +408,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     /**
      * 上传文件
-     *
-     * @param user
-     * @param request
-     * @return
      */
     public List<String> uploads(JiUserBase user, HttpServletRequest request) throws IOException, FileUploadException {
         List<String> paths = new ArrayList<String>();
@@ -392,9 +424,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     /**
      * 获取管理文件路径
-     *
-     * @param path
-     * @return
      */
     public String getDirPath(String path) {
         if (KernelString.isEmpty(path) || path.equals("/")) {
@@ -419,10 +448,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     /**
      * 文件管理
-     *
-     * @param path
-     * @param order
-     * @return
      */
     public List<JUpload> list(String path, String order) {
         path = getDirPath(path);
@@ -449,9 +474,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     /**
      * 检测文件夹是否为空
-     *
-     * @param path
-     * @return
      */
     public boolean isEmpty(String path) {
         path = getDirPath(path);
@@ -591,6 +613,25 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     @Override
     public ICrudProcessor getProcessor(JoEntity joEntity, JCrudField crudField) {
         return ME;
+    }
+
+    public static final String UPLOAD = "upload";
+
+    public static final int UPLOAD_LENGTH = UPLOAD.length();
+
+    @Override
+    public boolean doFilter(String uri, HttpServletRequest req, HttpServletResponse res) throws Throwable {
+        if (uri.length() > UPLOAD_LENGTH && uri.startsWith(UPLOAD)) {
+            uri = uri.substring(UPLOAD.length());
+            InputStream inputStream = getUploadStream(uri);
+            if (inputStream != null) {
+                res.addHeader("Content-Disposition", "attachment;filename=" + HelperFileName.getName(uri));
+                HelperIO.copy(inputStream, res.getOutputStream());
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static class MultipartUploader {

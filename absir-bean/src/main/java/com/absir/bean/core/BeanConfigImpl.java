@@ -54,21 +54,20 @@ public class BeanConfigImpl implements BeanConfig {
         if (classPath == null) {
             classPath = HelperFileName.getClassPath(null);
         }
-
-        BeanFactory beanFactory = BeanFactoryUtils.get();
-        this.beanConfig = beanFactory == null ? null : beanFactory.getBeanConfig();
+        classPath = HelperFileName.normalizeNoEndSeparator(classPath) + HelperFileName.SYSTEM_SEPARATOR;
         setClassPath(classPath);
         setResourcePath(classPath);
+        BeanFactory beanFactory = BeanFactoryUtils.get();
+        this.beanConfig = beanFactory == null ? null : beanFactory.getBeanConfig();
         Set<String> propertyFilenames = new HashSet<String>();
         Set<String> loadedPropertyFilenames = new HashSet<String>();
         Map<String, CallbackTemplate<String>> beanConfigTemplates = new HashMap<String, CallbackTemplate<String>>();
         loadBeanConfig(beanConfigProvider, propertyFilenames, loadedPropertyFilenames, beanConfigTemplates);
-        resourcePath = HelperFileName.normalizeNoEndSeparator(resourcePath) + HelperFileName.SYSTEM_SEPARATOR;
-        readProperties(resourcePath + "config.properties", propertyFilenames, loadedPropertyFilenames,
+        readProperties(classPath + "config.properties", propertyFilenames, loadedPropertyFilenames,
                 beanConfigTemplates);
-        readProperties(resourcePath + getEnvironment().name().toLowerCase() + ".properties", propertyFilenames,
+        readProperties(classPath + getEnvironment().name().toLowerCase() + ".properties", propertyFilenames,
                 loadedPropertyFilenames, beanConfigTemplates);
-        readProperties(resourcePath + "properties", propertyFilenames, loadedPropertyFilenames, beanConfigTemplates);
+        readProperties(classPath + "properties", propertyFilenames, loadedPropertyFilenames, beanConfigTemplates);
         while (true) {
             Iterator<String> iterator = propertyFilenames.iterator();
             if (iterator.hasNext()) {

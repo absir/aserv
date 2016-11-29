@@ -15,7 +15,8 @@ import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.SessionFactoryUtils;
-import com.absir.orm.hibernate.boost.IEntityMerge.MergeType;
+import com.absir.orm.hibernate.boost.IEntityMerge;
+import com.absir.orm.hibernate.boost.L2EntityMergeService;
 import org.hibernate.Session;
 import org.hibernate.event.spi.PostUpdateEvent;
 
@@ -24,29 +25,25 @@ import java.util.Iterator;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
-public class DActiver<T extends JiActive> {
+public class DActiver<T extends JiActive> implements IEntityMerge<T> {
 
     protected static final TypeVariable T_VARIABLE = DActiver.class.getTypeParameters()[0];
 
-    /**
-     * 延时更新时间
-     */
+    //延时更新时间
     protected static final int DELAY_NEXT_TIME = 3000;
-    /**
-     * 最大更新时间
-     */
+
+    //最大更新时间
     protected static final int MAX_NEXT_TIME = 24 * 3600000;
-    /**
-     * 下次更新时间
-     */
+
+    protected String entityName;
+
+    //下次更新时间
     protected long nextTime;
-    /**
-     * 下次更新查询
-     */
+
+    //下次更新查询
     protected String nextQueryString;
-    /**
-     * 当前活动查询
-     */
+
+    //当前活动查询
     protected String onlineQueryString;
 
     public DActiver(String entityName) {
@@ -54,6 +51,7 @@ public class DActiver<T extends JiActive> {
             entityName = SessionFactoryUtils.getJpaEntityName(KernelClass.typeClass(getClass(), T_VARIABLE));
         }
 
+        this.entityName = entityName;
         if (!KernelString.isEmpty(entityName)) {
             nextQueryString = "SELECT o FROM " + entityName + " o WHERE o.beginTime > ? ORDER BY o.beginTime";
             onlineQueryString = "SELECT o FROM " + entityName + " o WHERE o.beginTime <= ? AND o.passTime >= ?";
@@ -63,6 +61,10 @@ public class DActiver<T extends JiActive> {
     public DActiver(String nextQueryString, String onlineQueryString) {
         this.nextQueryString = nextQueryString;
         this.onlineQueryString = onlineQueryString;
+    }
+
+    public String getEntityName() {
+        return entityName;
     }
 
     public long getNextTime() {
@@ -189,5 +191,14 @@ public class DActiver<T extends JiActive> {
         List<T> actives = QueryDaoUtils.createQueryArray(session, onlineQueryString, contextTime, contextTime).list();
         setOnlineActives(actives);
         return actives;
+    }
+
+    @Override
+    public void merge(String entityName, T entity, MergeType mergeType, Object mergeEvent) {
+        merge(entity, mergeType, mergeEvent);
+    }
+
+    public void addEntityMerges() {
+        L2EntityMergeService.ME.addEntityMerges(entityName, null, this);
     }
 }

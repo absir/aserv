@@ -71,12 +71,12 @@ public class MasterTradeService implements IPayProcessor {
     @Override
     public Object process(JPayTrade payTrade) throws Exception {
 //        if ("JDollar".equals(payTrade.getName())) {
-//            long serverId = payTrade.getServerId();
+//            long serverId = payTrade.getSlaveId();
 //            JSlaveServer slaveServer = BeanService.ME.get(JSlaveServer.class, serverId);
 //            if (slaveServer != null) {
 //                long playerId = payTrade.getUserId();
 //                int index = payTrade.getNameId();
-//                MasterSlaveService.ME.addSlaveSynch(slaveServer.getHost().getId(), "notifyPay" + payTrade.getId(),
+//                MasterSyncService.ME.addSlaveSynch(slaveServer.getHost().getId(), "notifyPay" + payTrade.getId(),
 //                        "api/command/topup/" + playerId + "/" + index + "/" + payTrade.getAmount() + "/"
 //                                + payTrade.getPlatform(),
 //                        null);

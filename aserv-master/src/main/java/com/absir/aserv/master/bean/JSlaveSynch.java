@@ -47,7 +47,7 @@ public class JSlaveSynch extends JbBeanSS {
     @JaColum(indexs = @Index(columnList = "synched"))
     private boolean synched;
 
-    @JaLang("节点自动同步")
+    @JaLang(value = "自动同步", tag = "autoSynch")
     @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKED)
     private boolean slaveAutoSynch;
 

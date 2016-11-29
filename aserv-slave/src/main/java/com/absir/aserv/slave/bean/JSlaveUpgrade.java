@@ -5,37 +5,23 @@
  * <p/>
  * Create on 2015年10月16日 上午10:39:12
  */
-package com.absir.aserv.master.bean;
+package com.absir.aserv.slave.bean;
 
-import com.absir.aserv.menu.value.MaEntity;
-import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.base.JbBase;
-import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@MaEntity(parent = {@MaMenu("节点管理")}, name = "升级状态")
-@Entity
-public class JSlaveUpgrading extends JbBase {
+public class JSlaveUpgrade extends JbBase {
 
     @JaLang("主机")
     @Id
     private String id;
 
     @JaLang("升级状态")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
     private EUpgradeStatus upgradeStatus;
 
-    @JaLang("变更时间")
-    @JaEdit(groups = JaEdit.GROUP_LIST, types = "dataTime")
-    @JsonIgnore
-    private long updateTime;
-
     @JaLang("失败")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean failed;
 
     public String getId() {
@@ -52,14 +38,6 @@ public class JSlaveUpgrading extends JbBase {
 
     public void setUpgradeStatus(EUpgradeStatus upgradeStatus) {
         this.upgradeStatus = upgradeStatus;
-    }
-
-    public long getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
     }
 
     public boolean isFailed() {

@@ -23,7 +23,7 @@ public class JSlaveRegister extends JbBeanS {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean allow;
 
-    @JaLang("节点编号")
+    @JaLang(value = "节点", tag = "slave")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     @JaName("JSlave")
     private String slaveId;

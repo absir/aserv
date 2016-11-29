@@ -88,7 +88,7 @@ public abstract class CrudContextUtils extends CrudUtils {
             final List<Object> entities = new ArrayList<Object>();
             final List<CrudProperty> crudProperties = new ArrayList<CrudProperty>();
             final List requestBodies = new ArrayList<Object>();
-            final CrudInvoker crudInvoker = new CrudInvoker(crud, crudRecord, filter, crudEntity, entity) {
+            final CrudInvoker crudInvoker = new CrudInvoker(crud, crudRecord, filter, crudEntity, entity, errors) {
 
                 @Override
                 public boolean isSupport(CrudProperty crudProperty) {
@@ -117,7 +117,7 @@ public abstract class CrudContextUtils extends CrudUtils {
         }
 
         crudFilter.setPropertyPath("");
-        CrudInvoker crudInvoker = new CrudInvoker(crud, crudRecord, crudFilter, crudEntity, entity) {
+        CrudInvoker crudInvoker = new CrudInvoker(crud, crudRecord, crudFilter, crudEntity, entity, errors) {
 
             @Override
             public boolean isSupport(CrudProperty crudProperty) {

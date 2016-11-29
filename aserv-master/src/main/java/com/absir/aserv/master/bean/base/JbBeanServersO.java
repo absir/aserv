@@ -16,17 +16,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public class JbBeanTargetsO extends JbBeanTargets implements JiActive {
+public class JbBeanServersO extends JbBeanServers implements JiActive {
 
-    @JaLang("服务区")
+    @JaLang("服务编号")
     @JsonIgnore
     @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKED)
     private long serverId;
 
-    @JaLang("开启编号")
+    @JaLang(value = "开启编号", tag = "openId")
     @JsonIgnore
     @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKED)
-    private long openId;
+    private long serversOpenId;
 
     @JaLang("开始时间")
     @JaEdit(groups = JaEdit.GROUP_LIST, types = "dateTime")
@@ -44,12 +44,12 @@ public class JbBeanTargetsO extends JbBeanTargets implements JiActive {
         this.serverId = serverId;
     }
 
-    public long getOpenId() {
-        return openId;
+    public long getServersOpenId() {
+        return serversOpenId;
     }
 
-    public void setOpenId(long openId) {
-        this.openId = openId;
+    public void setServersOpenId(long serversOpenId) {
+        this.serversOpenId = serversOpenId;
     }
 
     public long getBeginTime() {

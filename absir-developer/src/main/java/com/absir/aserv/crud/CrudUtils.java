@@ -129,7 +129,7 @@ public abstract class CrudUtils {
             filter = filter.newly();
         }
 
-        CrudInvoker crudInvoker = new CrudInvoker(crud, crudRecord, filter, crudEntity, entity) {
+        CrudInvoker crudInvoker = new CrudInvoker(crud, crudRecord, filter, crudEntity, entity, null) {
 
             @Override
             public boolean isSupport(CrudProperty crudProperty) {

@@ -13,6 +13,7 @@ import com.absir.aserv.system.dao.BeanDao;
 import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
 import com.absir.core.kernel.KernelObject;
+import com.absir.property.PropertyErrors;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,8 @@ public abstract class CrudHandler {
 
     protected Object root;
 
+    protected PropertyErrors errors;
+
     protected Object rootEntity;
 
     protected Map<String, Object> entityMap;
@@ -41,11 +44,12 @@ public abstract class CrudHandler {
 
     protected boolean created;
 
-    public CrudHandler(JaCrud.Crud crud, Map<String, Object> crudRecord, PropertyFilter filter, CrudEntity crudEntity, Object root) {
+    public CrudHandler(JaCrud.Crud crud, Map<String, Object> crudRecord, PropertyFilter filter, CrudEntity crudEntity, Object root, PropertyErrors errors) {
         this.crud = crud;
         this.filter = filter;
         this.crudEntity = crudEntity;
         this.root = root;
+        this.errors = errors;
     }
 
     public JaCrud.Crud getCrud() {
@@ -74,6 +78,10 @@ public abstract class CrudHandler {
 
     public Object getRoot() {
         return root;
+    }
+
+    public PropertyErrors getErrors() {
+        return errors;
     }
 
     public Object getRootEntity() {
@@ -129,8 +137,8 @@ public abstract class CrudHandler {
 
     protected static abstract class CrudInvoker extends CrudHandler {
 
-        public CrudInvoker(Crud crud, Map<String, Object> crudRecord, PropertyFilter filter, CrudEntity crudEntity, Object root) {
-            super(crud, crudRecord, filter, crudEntity, root);
+        public CrudInvoker(Crud crud, Map<String, Object> crudRecord, PropertyFilter filter, CrudEntity crudEntity, Object root, PropertyErrors errors) {
+            super(crud, crudRecord, filter, crudEntity, root, errors);
         }
 
         public boolean isSupport(Crud crud, CrudProperty crudProperty) {

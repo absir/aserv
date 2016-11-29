@@ -27,7 +27,7 @@ public class InputSlaveService extends InputSlaveContext {
     @Override
     public byte[] registerData(InputSlaveAdapter adapter, byte[] buffer) {
         String registerKey = HelperEncrypt.encryptionMD5(key, buffer) + ',' + group + ',' + RouteAdapter.ADAPTER_TIME + ',' +
-                InitBeanFactory.ME.getVersion() + ',' + InitBeanFactory.ME.getAppRoute() + ','
+                InitBeanFactory.ME.getVersion() + ',' + InitBeanFactory.ME.getAppRoute() + ',' + InitBeanFactory.ME.getAppCode()
                 + (slaveId == null ? "" : slaveId);
         return adapter.sendDataBytes(registerKey.getBytes(), false, false, 0, null);
     }

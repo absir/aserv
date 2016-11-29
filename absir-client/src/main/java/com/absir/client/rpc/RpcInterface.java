@@ -33,7 +33,7 @@ public class RpcInterface {
 
     public static String getRpcUri(String rpcName, Method method) {
         String name = method.getName();
-        int count = method.getParameterCount();
+        int count = method.getParameterTypes().length;
         if (count == 0) {
             return "_r/" + rpcName + '/' + name;
 

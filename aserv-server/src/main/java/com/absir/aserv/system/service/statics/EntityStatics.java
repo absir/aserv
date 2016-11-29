@@ -12,7 +12,6 @@ import com.absir.aserv.developer.Pag;
 import com.absir.aserv.dyna.DynaBinderUtils;
 import com.absir.aserv.jdbc.JdbcCondition;
 import com.absir.aserv.support.Developer;
-import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.system.service.CrudService;
 import com.absir.aserv.system.service.utils.AccessServiceUtils;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
@@ -216,7 +215,4 @@ public class EntityStatics {
         Developer.setRuntime(runtimeName, value);
     }
 
-    public static String getUploadUrl(String uploadPath) {
-        return UploadCrudFactory.getUploadUrl() + uploadPath;
-    }
 }

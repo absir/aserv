@@ -17,7 +17,7 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class JbServer extends JbBean implements JiActive, JiServer {
 
-    @JaLang("服务器名称")
+    @JaLang(value = "服务名称", tag = "serverName")
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     private String name;
 
@@ -29,7 +29,7 @@ public class JbServer extends JbBean implements JiActive, JiServer {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean multiPort;
 
-    @JaLang("服务器IP")
+    @JaLang("IP")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String ip;
 

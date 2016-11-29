@@ -9,6 +9,8 @@ package com.absir.servlet;
 
 import com.absir.bean.basis.BeanFactory;
 import com.absir.bean.core.BeanFactoryUtils;
+import com.absir.bean.inject.value.Inject;
+import com.absir.bean.inject.value.Orders;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.server.in.InDispatcher;
@@ -39,6 +41,10 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
     private int uriContextPathLength;
 
     private boolean urlDecode;
+
+    @Orders
+    @Inject
+    private IFilter[] filters;
 
     public static ServletContext getServletContext() {
         return servletContext;
@@ -96,28 +102,31 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
         }
 
         try {
-            if (!(request instanceof HttpServletRequest && response instanceof HttpServletResponse && on(getUri(request),
-                    (HttpServletRequest) request, (HttpServletResponse) response))) {
-                chain.doFilter(request, response);
+            if (!(request instanceof HttpServletRequest && response instanceof HttpServletResponse)) {
+                if (!on(getUri(request), (HttpServletRequest) request, (HttpServletResponse) response)) {
+                    chain.doFilter(request, response);
+                }
+
+                return;
             }
 
         } catch (Throwable e) {
             throw new ServletException(e);
         }
+
+        chain.doFilter(request, response);
     }
 
     private String getUri(ServletRequest request) {
-        if (request instanceof HttpServletRequest) {
-            String uri = ((HttpServletRequest) request).getRequestURI();
-            int length = uri.length();
-            if (length >= contextPathLength) {
-                if (length == uriContextPathLength && uri.endsWith(uriContextPath)) {
-                    String u = request.getParameter("uri");
-                    return u == null ? "u" : u;
-                }
-
-                return length == contextPathLength ? "" : uri.substring(contextPathLength + 1);
+        String uri = ((HttpServletRequest) request).getRequestURI();
+        int length = uri.length();
+        if (length >= contextPathLength) {
+            if (length == uriContextPathLength && uri.endsWith(uriContextPath)) {
+                String u = request.getParameter("uri");
+                return u == null ? "u" : u;
             }
+
+            return length == contextPathLength ? "" : uri.substring(contextPathLength + 1);
         }
 
         return request.getParameter("uri");
@@ -164,5 +173,18 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
 
     @Override
     public void destroy() {
+    }
+
+    @Override
+    public boolean on(String uri, HttpServletRequest req, HttpServletResponse res) throws Throwable {
+        if (filters != null) {
+            for (IFilter filter : filters) {
+                if (filter.doFilter(uri, req, res)) {
+                    return true;
+                }
+            }
+        }
+
+        return super.on(uri, req, res);
     }
 }

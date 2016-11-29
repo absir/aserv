@@ -1,6 +1,6 @@
 package com.absir.master.bean;
 
-import com.absir.aserv.master.bean.base.JbBeanTargetsO;
+import com.absir.aserv.master.bean.base.JbBeanServersO;
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.value.JaEdit;
@@ -16,7 +16,7 @@ import javax.persistence.Entity;
 @MaEntity(parent = {@MaMenu("节点管理")}, name = "白名单", value = @MaMenu(order = -127))
 @Entity
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class JWhitelist extends JbBeanTargetsO {
+public class JWhitelist extends JbBeanServersO {
 
     @JaLang("白名单")
     @JaEdit(types = "text")

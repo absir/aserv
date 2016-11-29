@@ -8,7 +8,7 @@
 package com.absir.aserv.master.service;
 
 import com.absir.aserv.master.bean.JSlaveServer;
-import com.absir.aserv.slave.domain.OTargetsActivityOpen;
+import com.absir.aserv.slave.domain.OServersActivityOpen;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.bean.basis.Base;
@@ -30,11 +30,11 @@ public class MasterActivityService implements IEntityMerge<JSlaveServer> {
 
     public static final MasterActivityService ME = BeanFactoryUtils.get(MasterActivityService.class);
 
-    private UtilLinked<OTargetsActivityOpen<?, ?>> targetsActivityOpens;
+    private UtilLinked<OServersActivityOpen<?, ?>> targetsActivityOpens;
 
-    public void addTargetActivityOpen(OTargetsActivityOpen<?, ?> targetsActivityOpen) {
+    public void addTargetActivityOpen(OServersActivityOpen<?, ?> targetsActivityOpen) {
         if (targetsActivityOpens == null) {
-            targetsActivityOpens = new UtilLinked<OTargetsActivityOpen<?, ?>>();
+            targetsActivityOpens = new UtilLinked<OServersActivityOpen<?, ?>>();
         }
 
         targetsActivityOpens.add(targetsActivityOpen);
@@ -47,7 +47,7 @@ public class MasterActivityService implements IEntityMerge<JSlaveServer> {
             if (entity.getBeginTime() > ContextUtils.getContextTime() - 7 * UtilAbsir.DAY_TIME) {
                 if (targetsActivityOpens != null) {
                     targetsActivityOpens.sync();
-                    for (OTargetsActivityOpen<?, ?> targetsActivityOpen : targetsActivityOpens.getList()) {
+                    for (OServersActivityOpen<?, ?> targetsActivityOpen : targetsActivityOpens.getList()) {
                         MasterActivityService.ME.reActivityServer(targetsActivityOpen, entity);
                     }
                 }
@@ -56,7 +56,7 @@ public class MasterActivityService implements IEntityMerge<JSlaveServer> {
     }
 
     @Transaction
-    public void reTargetsActivityOpen(OTargetsActivityOpen<?, ?> targetsActivityOpen) {
+    public void reTargetsActivityOpen(OServersActivityOpen<?, ?> targetsActivityOpen) {
         Session session = BeanDao.getSession();
         Iterator<JSlaveServer> iterator = QueryDaoUtils
                 .createQueryArray(session, "SELECT o FROM JSlaveServer o WHERE o.beginTime > ?",
@@ -68,7 +68,7 @@ public class MasterActivityService implements IEntityMerge<JSlaveServer> {
     }
 
     @Transaction
-    public void reActivityServer(OTargetsActivityOpen<?, ?> targetsActivityOpen, JSlaveServer server) {
+    public void reActivityServer(OServersActivityOpen<?, ?> targetsActivityOpen, JSlaveServer server) {
         targetsActivityOpen.reActivityServer(server);
     }
 }

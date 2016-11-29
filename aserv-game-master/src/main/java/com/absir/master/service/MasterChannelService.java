@@ -160,7 +160,7 @@ public abstract class MasterChannelService {
         while (iterator.hasNext()) {
             JChannelSlaveServer channelSlaveServer = iterator.next();
             JSlaveServer slaveServer = channelSlaveServer.getServer();
-            JSlave slave = slaveServer.getHost();
+            JSlave slave = slaveServer.getSlave();
             long beginTime = slaveServer.getBeginTime();
             int status = beginTime > currentTime ? 0 : slave.isConnecting() || slave.isForceOpen() ? 1 : 2;
             if (status == 0 && opened) {
@@ -170,9 +170,9 @@ public abstract class MasterChannelService {
             DServer server = new DServer();
             servers.add(server);
             server.id = slaveServer.getId();
-            String ip = slaveServer.getServerIP();
+            String ip = slaveServer.getServerAddress();
             if (KernelString.isEmpty(ip)) {
-                ip = slave.getServerIP();
+                ip = slave.getServerAddress();
                 if (KernelString.isEmpty(ip)) {
                     ip = slave.getIp();
                 }

@@ -26,6 +26,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 
@@ -37,11 +38,11 @@ public class JSlaveServer extends JbBean implements ICrudBean {
     @JaLang(value = "服务名称", tag = "serverName")
     private String name;
 
-    @JaLang("主机")
+    @JaLang("节点")
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    @ManyToOne
-    private JSlave host;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private JSlave slave;
 
     @JaLang("端口号")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -51,14 +52,9 @@ public class JSlaveServer extends JbBean implements ICrudBean {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean multiPort;
 
-    @JaLang(value = "绑定IP", tag = "bindIP")
+    @JaLang(value = "IP")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String ip;
-
-    @JaLang("服务IP")
-    @JsonIgnore
-    @JaEdit(groups = JaEdit.GROUP_LIST)
-    private String serverIP;
 
     @JaLang("开始时间")
     @JaEdit(groups = JaEdit.GROUP_LIST, types = "dateTime")
@@ -71,6 +67,11 @@ public class JSlaveServer extends JbBean implements ICrudBean {
     @JaLang("更新时间")
     @JaEdit(groups = JaEdit.GROUP_LIST, types = "dateTime", editable = JeEditable.LOCKED)
     private long updateTime;
+
+    @JaLang("服务地址")
+    @JsonIgnore
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private String serverAddress;
 
     @JaLang("关闭")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -90,12 +91,12 @@ public class JSlaveServer extends JbBean implements ICrudBean {
         this.name = name;
     }
 
-    public JSlave getHost() {
-        return host;
+    public JSlave getSlave() {
+        return slave;
     }
 
-    public void setHost(JSlave host) {
-        this.host = host;
+    public void setSlave(JSlave slave) {
+        this.slave = slave;
     }
 
     public int getPort() {
@@ -122,14 +123,6 @@ public class JSlaveServer extends JbBean implements ICrudBean {
         this.ip = ip;
     }
 
-    public String getServerIP() {
-        return serverIP;
-    }
-
-    public void setServerIP(String serverIP) {
-        this.serverIP = serverIP;
-    }
-
     public long getBeginTime() {
         return beginTime;
     }
@@ -154,6 +147,14 @@ public class JSlaveServer extends JbBean implements ICrudBean {
         this.updateTime = updateTime;
     }
 
+    public String getServerAddress() {
+        return serverAddress;
+    }
+
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
+
     public boolean isClosed() {
         return closed;
     }
@@ -172,20 +173,20 @@ public class JSlaveServer extends JbBean implements ICrudBean {
 
     @Override
     public void processCrud(Crud crud, CrudHandler handler, Input input) {
-        if (crud == Crud.CREATE && host != null) {
-            if (KernelString.isEmpty(serverIP)) {
-                serverIP = host.getServerIP();
-                if (KernelString.isEmpty(serverIP)) {
-                    serverIP = host.getIp();
+        if (crud == Crud.CREATE && slave != null) {
+            if (KernelString.isEmpty(serverAddress)) {
+                serverAddress = slave.getServerAddress();
+                if (KernelString.isEmpty(serverAddress)) {
+                    serverAddress = slave.getIp();
                 }
 
-            } else if ("*".equals(serverIP)) {
-                serverIP = null;
+            } else if ("*".equals(serverAddress)) {
+                serverAddress = null;
             }
 
             if (port == 0) {
                 Integer portInteger = (Integer) BeanService.ME
-                        .selectQuerySingle("SELECT MAX(o.port) FROM JSlaveServer o WHERE o.host.id = ?", host.getId());
+                        .selectQuerySingle("SELECT MAX(o.port) FROM JSlaveServer o WHERE o.host.id = ?", slave.getId());
                 port = portInteger == null ? 18891 : (portInteger + 1);
             }
         }

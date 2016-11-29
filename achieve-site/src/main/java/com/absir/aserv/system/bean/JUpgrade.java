@@ -10,6 +10,7 @@ package com.absir.aserv.system.bean;
 
 import com.absir.aserv.crud.CrudHandler;
 import com.absir.aserv.crud.value.ICrudBean;
+import com.absir.aserv.init.InitBeanFactory;
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.base.JbBean;
@@ -21,8 +22,10 @@ import com.absir.aserv.task.TaskService;
 import com.absir.aserv.upgrade.UpgradeService;
 import com.absir.bean.basis.Configure;
 import com.absir.bean.core.BeanConfigImpl;
+import com.absir.bean.lang.LangCodeUtils;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelString;
+import com.absir.property.PropertyErrors;
 import com.absir.server.in.Input;
 import com.absir.server.route.RouteAdapter;
 import org.slf4j.Logger;
@@ -49,6 +52,11 @@ public class JUpgrade extends JbBean implements ICrudBean {
     @JaCrud(factory = UploadCrudFactory.class, parameters = {"-1", "zip,war"})
     private String upgradeFile;
 
+    @JaLang("升级")
+    @JaEdit(editable = JeEditable.ENABLE)
+    @Transient
+    private boolean upgrade;
+
     @JaLang("版本")
     @JaEdit(groups = JaEdit.GROUP_LIST, listColType = 1)
     private String version;
@@ -56,10 +64,6 @@ public class JUpgrade extends JbBean implements ICrudBean {
     @JaLang("描述")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String descriptor;
-
-    @JaLang(value = "验证")
-    @JaEdit(groups = JaEdit.GROUP_LIST, editable = JeEditable.LOCKED, listColType = 1)
-    private boolean validation;
 
     @JaLang("修改时间")
     @JaEdit(editable = JeEditable.LOCKED, types = "dateTime", groups = JaEdit.GROUP_LIST)
@@ -70,11 +74,6 @@ public class JUpgrade extends JbBean implements ICrudBean {
     @JaEdit(editable = JeEditable.LOCKED, types = "dateTime", groups = JaEdit.GROUP_LIST)
     @JaCrud(value = "dateCrudFactory", cruds = {JaCrud.Crud.CREATE, JaCrud.Crud.UPDATE}, factory = DateCrudFactory.class)
     private long updateTime;
-
-    @JaLang("升级")
-    @JaEdit(editable = JeEditable.ENABLE)
-    @Transient
-    private boolean upgrade;
 
     @JaLang("开始时间")
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
@@ -100,6 +99,14 @@ public class JUpgrade extends JbBean implements ICrudBean {
         this.upgradeFile = upgradeFile;
     }
 
+    public boolean isUpgrade() {
+        return upgrade;
+    }
+
+    public void setUpgrade(boolean upgrade) {
+        this.upgrade = upgrade;
+    }
+
     public String getVersion() {
         return version;
     }
@@ -114,14 +121,6 @@ public class JUpgrade extends JbBean implements ICrudBean {
 
     public void setDescriptor(String descriptor) {
         this.descriptor = descriptor;
-    }
-
-    public boolean isValidation() {
-        return validation;
-    }
-
-    public void setValidation(boolean validation) {
-        this.validation = validation;
     }
 
     public long getCreateTime() {
@@ -140,14 +139,6 @@ public class JUpgrade extends JbBean implements ICrudBean {
         this.updateTime = updateTime;
     }
 
-    public boolean isUpgrade() {
-        return upgrade;
-    }
-
-    public void setUpgrade(boolean upgrade) {
-        this.upgrade = upgrade;
-    }
-
     public long getBeginTime() {
         return beginTime;
     }
@@ -159,37 +150,40 @@ public class JUpgrade extends JbBean implements ICrudBean {
     @Override
     public void processCrud(JaCrud.Crud crud, CrudHandler handler, Input input) {
         if (handler.isPersist() && crud != JaCrud.Crud.DELETE) {
-            Map<String, Object> versionMap = null;
-            String filePath = null;
-            if (!KernelString.isEmpty(upgradeFile)) {
-                filePath = UploadCrudFactory.getUploadPath() + upgradeFile;
-                File file = new File(filePath);
-                versionMap = UpgradeService.ME.getVersionMap(file);
-            }
-
-            if (versionMap == null) {
-                validation = false;
-
-            } else {
-                validation = true;
-                String version = UpgradeService.ME.getVersion(versionMap);
-                if (!KernelString.isEmpty(version)) {
-                    this.version = version;
+            PropertyErrors errors = handler.getErrors();
+            if (errors != null) {
+                Map<String, Object> versionMap = null;
+                String filePath = null;
+                if (!KernelString.isEmpty(upgradeFile)) {
+                    File file = UploadCrudFactory.ME.getUploadFile(upgradeFile);
+                    versionMap = UpgradeService.ME.getVersionMap(file);
                 }
 
-                if (KernelString.isEmpty(descriptor)) {
-                    descriptor = BeanConfigImpl.getMapValue(versionMap, "version.name", null, String.class);
-                }
+                if (versionMap == null || !UpgradeService.ME.validateAppCode(versionMap, InitBeanFactory.ME.getAppCode())) {
+                    UploadCrudFactory.ME.delete(upgradeFile);
+                    errors.addPropertyError("upgradeFile", LangCodeUtils.getLangMessage(UpgradeService.NOT_VALIDATOR, input), upgradeFile);
+                    return;
 
-                if (upgrade) {
-                    if (beginTime <= ContextUtils.getContextTime()) {
-                        upgradeFile(RouteAdapter.ADAPTER_TIME, filePath);
-
-                    } else {
-                        TaskService.ME.addPanel(null, "upgradeFile", beginTime, beginTime + 600000, 0, RouteAdapter.ADAPTER_TIME, filePath);
+                } else {
+                    String version = UpgradeService.ME.getVersion(versionMap);
+                    if (!KernelString.isEmpty(version)) {
+                        this.version = version;
                     }
 
-                    upgrade = false;
+                    if (KernelString.isEmpty(descriptor)) {
+                        descriptor = BeanConfigImpl.getMapValue(versionMap, "version.name", null, String.class);
+                    }
+
+                    if (upgrade) {
+                        if (beginTime <= ContextUtils.getContextTime()) {
+                            upgradeFile(RouteAdapter.ADAPTER_TIME, filePath);
+
+                        } else {
+                            TaskService.ME.addPanel(null, "upgradeFile", beginTime, beginTime + 600000, 0, RouteAdapter.ADAPTER_TIME, filePath);
+                        }
+
+                        upgrade = false;
+                    }
                 }
             }
         }

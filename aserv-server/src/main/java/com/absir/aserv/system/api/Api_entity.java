@@ -13,6 +13,7 @@ import com.absir.aserv.jdbc.JdbcEntities;
 import com.absir.aserv.jdbc.JdbcPage;
 import com.absir.aserv.system.bean.proxy.JiUpdate;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.system.domain.DCondition;
 import com.absir.aserv.system.helper.HelperCondition;
 import com.absir.aserv.system.service.BeanService;
@@ -31,6 +32,8 @@ import com.absir.bean.inject.value.Value;
 import com.absir.client.helper.HelperJson;
 import com.absir.context.config.BeanFactoryStopping;
 import com.absir.core.base.IBase;
+import com.absir.core.helper.HelperFileName;
+import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.value.JePermission;
@@ -40,7 +43,9 @@ import com.absir.server.in.InMethod;
 import com.absir.server.in.Input;
 import com.absir.server.value.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -482,6 +487,21 @@ public class Api_entity extends ApiServer {
         }
 
         return modelMap;
+    }
+
+    public void upgrade(String filePath, Input input, HttpServletResponse response) throws IOException {
+        JiUserBase user = SecurityService.ME.getUserBase(input);
+        if (user == null || !user.isDeveloper()) {
+            throw new ServerException(ServerStatus.ON_DENIED);
+        }
+
+        InputStream inputStream = UploadCrudFactory.ME.getUpgradeStream(filePath);
+        if (inputStream == null) {
+            throw new ServerException(ServerStatus.IN_404);
+        }
+
+        response.addHeader("Content-Disposition", "attachment;filename=" + HelperFileName.getName(filePath));
+        HelperIO.copy(inputStream, response.getOutputStream());
     }
 
     @Base

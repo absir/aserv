@@ -44,7 +44,7 @@ public class XlsBase extends Base<Serializable> {
     }
 
     protected HSSFWorkbook getHssfWorkbook(String workbook) throws IOException {
-        return new HSSFWorkbook(HelperFile.openInputStream(new File(BeanFactoryUtils.getBeanConfig().getResourcePath() + XLS_DIR
+        return new HSSFWorkbook(HelperFile.openInputStream(new File(BeanFactoryUtils.getBeanConfig().getClassPath() + XLS_DIR
                 + workbook + XLS_SUFFIX)));
     }
 

@@ -16,10 +16,12 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Value;
+import com.absir.bean.lang.LangCodeUtils;
 import com.absir.context.config.BeanFactoryStopping;
 import com.absir.core.helper.HelperFile;
 import com.absir.core.helper.HelperFileName;
 import com.absir.core.helper.HelperIO;
+import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,8 @@ import java.util.zip.ZipInputStream;
 public class UpgradeService {
 
     public static final UpgradeService ME = BeanFactoryUtils.get(UpgradeService.class);
+
+    public static final String NOT_VALIDATOR = LangCodeUtils.get("升级文件验证失败", UpgradeService.class);
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(UpgradeService.class);
 
@@ -121,10 +125,7 @@ public class UpgradeService {
             if (zipEntry != null) {
                 Map<String, Object> versionMap = new HashMap<String, Object>();
                 BeanConfigImpl.readProperties(null, versionMap, zipFile.getInputStream(zipEntry), null);
-                Object appCode = versionMap.get("app");
-                if (appCode != null && appCode.equals(InitBeanFactory.ME.getAppCode())) {
-                    return versionMap;
-                }
+                return versionMap;
             }
 
         } catch (Exception e) {
@@ -140,6 +141,15 @@ public class UpgradeService {
         }
 
         return null;
+    }
+
+    public String getAppCode(Map<String, Object> configMap) {
+        return BeanConfigImpl.getMapValue(configMap, "app", null, String.class);
+    }
+
+    public boolean validateAppCode(Map<String, Object> configMap, String appCode) {
+        String app = configMap == null ? null : getAppCode(configMap);
+        return KernelObject.equals(app, appCode);
     }
 
     public String getVersion(Map<String, Object> configMap) {
@@ -158,7 +168,7 @@ public class UpgradeService {
 
     public boolean upgrade(File upgradeFile, boolean full) throws IOException {
         Map<String, Object> configMap = getVersionMap(upgradeFile);
-        if (configMap != null) {
+        if (configMap != null && validateAppCode(configMap, InitBeanFactory.ME.getAppCode())) {
             if (full) {
                 String classPath = BeanFactoryUtils.getBeanConfig().getClassPath();
                 HelperFile.deleteFileNoBreak(new File(classPath), null);

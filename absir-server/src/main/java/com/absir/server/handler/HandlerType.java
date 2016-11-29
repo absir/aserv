@@ -79,7 +79,7 @@ public class HandlerType<T> {
                 continue;
             }
 
-            int count = method.getParameterCount();
+            int count = method.getParameterTypes().length;
             if (count > 0) {
                 name += ':' + count;
             }

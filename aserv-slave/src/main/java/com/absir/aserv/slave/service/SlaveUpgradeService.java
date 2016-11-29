@@ -7,8 +7,8 @@
  */
 package com.absir.aserv.slave.service;
 
-import com.absir.aserv.slave.bean.JSlaveUpgrading;
-import com.absir.aserv.slave.bean.JSlaveUpgrading.EUpgradeStatus;
+import com.absir.aserv.slave.bean.JSlaveUpgrade;
+import com.absir.aserv.slave.bean.JSlaveUpgrade.EUpgradeStatus;
 import com.absir.aserv.slave.bean.dto.DUpgradeSlave;
 import com.absir.aserv.upgrade.UpgradeService;
 import com.absir.bean.basis.Base;
@@ -50,7 +50,7 @@ public class SlaveUpgradeService {
 
     protected DUpgradeSlave upgradeSlave;
 
-    protected JSlaveUpgrading slaveUpgrading = new JSlaveUpgrading();
+    protected JSlaveUpgrade slaveUpgrading = new JSlaveUpgrade();
 
     private boolean startUpgraded;
 
@@ -217,7 +217,7 @@ public class SlaveUpgradeService {
     protected void commitUpgradeStatus(EUpgradeStatus status, boolean failed) {
         slaveUpgrading.setUpgradeStatus(status);
         slaveUpgrading.setFailed(failed);
-        SlaverMasterService.ME.addMasterSynch("slaveUpgrading", "api/master/upgradeStatus", slaveUpgrading);
+        SlaverSyncService.ME.addMasterSynch("slaveUpgrading", "api/master/upgradeStatus", slaveUpgrading);
     }
 
     /**

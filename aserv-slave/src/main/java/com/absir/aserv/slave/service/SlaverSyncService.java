@@ -35,11 +35,11 @@ import java.util.Iterator;
 @SuppressWarnings("unchecked")
 @Base
 @Bean
-public class SlaverMasterService {
+public class SlaverSyncService {
 
-    public static final SlaverMasterService ME = BeanFactoryUtils.get(SlaverMasterService.class);
+    public static final SlaverSyncService ME = BeanFactoryUtils.get(SlaverSyncService.class);
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(SlaverMasterService.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(SlaverSyncService.class);
 
     @Value("slave.sync.timeout")
     private int syncTimeout = 60000;
@@ -54,13 +54,13 @@ public class SlaverMasterService {
 
     @Transaction
     public boolean addMasterSynch(String id, String uri, Object postData, boolean varints) {
-        return addMasterSynch(0, id, uri, postData, varints);
+        return addMasterSynchIndex(0, id, uri, postData, varints);
     }
 
     @Transaction
-    public boolean addMasterSynch(int masterIndex, String id, String uri, Object postData, boolean varints) {
+    public boolean addMasterSynchIndex(int masterIndex, String id, String uri, Object postData, boolean varints) {
         try {
-            return addMasterSynchData(masterIndex, id, uri, postData == null ? null
+            return addMasterSynchDataIndex(masterIndex, id, uri, postData == null ? null
                     : postData.getClass() == byte[].class ? (byte[]) postData : HelperDataFormat.PACK.writeAsBytes(postData), varints);
 
         } catch (Exception e) {
@@ -71,7 +71,7 @@ public class SlaverMasterService {
     }
 
     @Transaction
-    public boolean addMasterSynchData(int masterIndex, String id, String uri, byte[] postData, boolean varints) {
+    public boolean addMasterSynchDataIndex(int masterIndex, String id, String uri, byte[] postData, boolean varints) {
         JMasterSynch masterSynch = new JMasterSynch();
         masterSynch.setId(id);
         masterSynch.setMasterIndex(masterIndex);
@@ -92,9 +92,11 @@ public class SlaverMasterService {
         return false;
     }
 
-    // 添加RPC同步
-    public void addMasterSynchRpc(int masterIndex, String id, RpcData rpcData) {
-        addMasterSynchData(masterIndex, id, rpcData.getUri(), rpcData.getParamData(), true);
+    /*
+     *添加RPC同步
+     */
+    public void addMasterSynchRpcIndex(int masterIndex, String id, RpcData rpcData) {
+        addMasterSynchDataIndex(masterIndex, id, rpcData.getUri(), rpcData.getParamData(), true);
     }
 
     /**

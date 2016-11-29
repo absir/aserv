@@ -405,8 +405,12 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
 
     @Override
     public boolean validator(JiUserBase userBase, String password, int error, long errorTime, String address) {
-        if (password == null || !(userBase instanceof IUser)) {
+        if (password == null) {
             return true;
+        }
+
+        if (!(userBase instanceof IUser)) {
+            return false;
         }
 
         IUser user = (IUser) userBase;

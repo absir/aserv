@@ -28,4 +28,8 @@ public class LangCodeUtils {
         return LANG_MESSAGE == null ? langCode : LANG_MESSAGE.getLangMessage(langCode);
     }
 
+    public static String getLangMessage(String langCode, ILangMessage langMessage) {
+        return langMessage == null ? langCode : langMessage.getLangMessage(langCode);
+    }
+
 }

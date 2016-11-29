@@ -13,6 +13,7 @@ import com.absir.aserv.system.service.BeanService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
 import com.absir.core.base.Environment;
+import com.absir.core.kernel.KernelDyna;
 import com.absir.master.InputMasterContext;
 import com.absir.master.MasterChannelContext;
 import com.absir.orm.transaction.value.Transaction;
@@ -49,13 +50,19 @@ public class InputMasterService extends InputMasterContext {
             slave.setPath(params[4]);
         }
 
+        if (params.length > 5) {
+            slave.setApp(params[5]);
+        }
+
+        slave.setStartTime(KernelDyna.to(params[2], long.class));
+
         slave.setIp(socketChannel.socket().getInetAddress().getHostAddress());
         slave.setConnecting(true);
         slave.setLastConnectTime(currentTime);
         slave.setSlaveKey(validate);
         if (id == null) {
             session.persist(slave);
-            MasterSlaveService.ME.checkSlaveSynch(slave);
+            MasterSyncService.ME.checkSlaveSynch(slave);
 
         } else {
             session.merge(slave);

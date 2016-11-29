@@ -9,8 +9,6 @@ package com.absir.aserv.slave.api;
 
 import com.absir.aserv.crud.ICrudSupply;
 import com.absir.aserv.slave.bean.JServer;
-import com.absir.aserv.slave.bean.dto.DUpgradeSlave;
-import com.absir.aserv.slave.service.SlaveUpgradeService;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.CrudService;
@@ -37,7 +35,7 @@ public class api_slave extends ApiSlave {
 
     @JaLang("同步服务实体")
     public void merge(String entityName, @Body byte[] postData) throws IOException {
-        option(entityName, 0, postData);
+        option(entityName, 1, postData);
     }
 
     @JaLang("同步服务实体")
@@ -46,18 +44,13 @@ public class api_slave extends ApiSlave {
         Class<?> entityClass = crudSupply.getEntityClass(entityName);
         Object entity = HelperDataFormat.PACK.read(postData, 0, postData.length, entityClass);
         if (option == 0) {
-            crudSupply.mergeEntity(entityName, entity, false);
+            crudSupply.mergeEntity(entityName, entity, true);
 
         } else if (option == 1) {
-            crudSupply.mergeEntity(entityName, entity, true);
+            crudSupply.mergeEntity(entityName, entity, false);
 
         } else {
             crudSupply.deleteEntity(entityName, entity);
         }
-    }
-
-    @JaLang("版本升级")
-    public void upgrade(@com.absir.server.value.Body DUpgradeSlave upgradeSlave) throws Exception {
-        SlaveUpgradeService.ME.addDUpgradeSlave(upgradeSlave);
     }
 }

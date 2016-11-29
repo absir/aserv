@@ -369,7 +369,7 @@ public class Pag {
     }
 
     public static String uploadUrl(String path) {
-        return UploadCrudFactory.getUploadUrl() + path;
+        return UploadCrudFactory.ME.getUploadUrl(path);
     }
 
     public static boolean isEmptyUpload(String path) {

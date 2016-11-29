@@ -205,14 +205,14 @@ public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object
             char[] chars = html.toCharArray();
             while (matcher.find()) {
                 String src = matcher.group(1);
-                if (!src.startsWith(UploadCrudFactory.getUploadUrl())) {
+                if (!UploadCrudFactory.ME.isUploadUrl(src)) {
                     String find = matcher.group();
                     String replace = UploadCrudFactory.ME.remoteDownload(src, "jpg", user);
                     if (replace == null) {
                         stringBuilder.append(chars, end, matcher.end() - end);
 
                     } else {
-                        replace = UploadCrudFactory.getUploadUrl() + replace;
+                        replace = UploadCrudFactory.ME.getUpgradeUrl(replace);
                         stringBuilder.append(chars, end, matcher.start() - end);
                         stringBuilder.append(find.replace(src, replace));
                     }
@@ -234,7 +234,7 @@ public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object
         // 查找关联文件
         int end = 0;
         int length = html.length();
-        String uploadUrl = UploadCrudFactory.getUploadUrl();
+        String uploadUrl = UploadCrudFactory.ME.forUploadUrl();
         int len = uploadUrl.length();
         while (end < length) {
             int pos = html.indexOf(uploadUrl, end);

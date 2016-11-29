@@ -8,8 +8,8 @@
 package com.absir.aserv.slave.domain;
 
 import com.absir.aserv.master.bean.JSlaveServer;
-import com.absir.aserv.master.bean.base.JbBeanTargetsO;
-import com.absir.aserv.master.bean.base.JbBeanTargetsOpen;
+import com.absir.aserv.master.bean.base.JbBeanServersO;
+import com.absir.aserv.master.bean.base.JbBeanServersOpen;
 import com.absir.aserv.master.service.MasterActivityService;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
@@ -24,35 +24,36 @@ import org.hibernate.Session;
 import java.lang.reflect.TypeVariable;
 import java.util.*;
 
+// 服务开启定时周期类
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends JbBeanTargetsOpen> {
+public abstract class OServersActivityOpen<T extends JbBeanServersO, O extends JbBeanServersOpen> {
 
-    protected static final TypeVariable<?> TARGETS_VARIABLE = OTargetsActivityOpen.class.getTypeParameters()[0];
+    protected static final TypeVariable<?> TARGETS_VARIABLE = OServersActivityOpen.class.getTypeParameters()[0];
 
-    protected static final TypeVariable<?> TARGETS_OPEN_VARIABLE = OTargetsActivityOpen.class.getTypeParameters()[1];
+    protected static final TypeVariable<?> TARGETS_OPEN_VARIABLE = OServersActivityOpen.class.getTypeParameters()[1];
 
-    protected Class<T> targetsClass;
+    protected Class<T> serversClass;
 
-    protected Class<O> targetsOpenClass;
+    protected Class<O> serversOpenClass;
 
-    protected String targetsName;
+    protected String serversName;
 
-    protected String targetsOpenName;
-
-    protected OTargetsActivity<List<O>> targetsActivity = new OTargetsActivity<List<O>>();
+    protected String serversOpenName;
 
     protected String selectAllOpenQuery;
 
     protected String selectServerActivityQuery;
 
-    public OTargetsActivityOpen() {
-        targetsClass = KernelClass.typeClass(getClass(), TARGETS_VARIABLE);
-        targetsOpenClass = KernelClass.typeClass(getClass(), TARGETS_OPEN_VARIABLE);
-        targetsName = targetsClass.getSimpleName();
-        targetsOpenName = targetsOpenClass.getSimpleName();
+    protected OServersActivity<List<O>> serversActivity = new OServersActivity<List<O>>();
+
+    public OServersActivityOpen() {
+        serversClass = KernelClass.typeClass(getClass(), TARGETS_VARIABLE);
+        serversOpenClass = KernelClass.typeClass(getClass(), TARGETS_OPEN_VARIABLE);
+        serversName = serversClass.getSimpleName();
+        serversOpenName = serversOpenClass.getSimpleName();
         initQueryString();
         reloadTargetsActivity();
-        L2EntityMergeService.ME.addEntityMerges(targetsOpenClass, new IEntityMerge<O>() {
+        L2EntityMergeService.ME.addEntityMerges(serversOpenClass, new IEntityMerge<O>() {
 
             @Override
             public void merge(String entityName, O entity,
@@ -64,18 +65,18 @@ public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends J
                     reloadTargetsActivity();
                 }
 
-                MasterActivityService.ME.reTargetsActivityOpen(OTargetsActivityOpen.this);
+                MasterActivityService.ME.reTargetsActivityOpen(OServersActivityOpen.this);
             }
         });
     }
 
-    public Class<T> getTargetsClass() {
-        return targetsClass;
+    public Class<T> getServersClass() {
+        return serversClass;
     }
 
     protected void initQueryString() {
-        selectAllOpenQuery = "SELECT o FROM " + targetsOpenName + " o WHERE o.openLifeDay > 0";
-        selectServerActivityQuery = "SELECT o FROM " + targetsName + " o WHERE o.serverId = ?";
+        selectAllOpenQuery = "SELECT o FROM " + serversOpenName + " o WHERE o.openLifeDay > 0";
+        selectServerActivityQuery = "SELECT o FROM " + serversName + " o WHERE o.serverId = ?";
     }
 
     /**
@@ -84,7 +85,7 @@ public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends J
     protected void reloadTargetsActivity() {
         TransactionContext<?> transactionContext = BeanDao.open(null, BeanService.TRANSACTION_READ_ONLY);
         try {
-            targetsActivity.clearActivity();
+            serversActivity.clearActivity();
             Iterator<O> iterator = QueryDaoUtils.createQueryArray(BeanDao.getSession(), selectAllOpenQuery).iterate();
             while (iterator.hasNext()) {
                 O activity = iterator.next();
@@ -97,44 +98,44 @@ public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends J
     }
 
     protected void addActivity(O activity) {
-        synchronized (targetsActivity) {
-            if (activity.getTargets() == null || activity.getTargets().length == 0) {
-                targetsActivity.singleActivity = mergeActivities(targetsActivity.singleActivity, activity);
+        synchronized (serversActivity) {
+            if (activity.getServerIds() == null || activity.getServerIds().length == 0) {
+                serversActivity.singleActivity = mergeActivities(serversActivity.singleActivity, activity);
 
             } else {
-                for (long targetId : activity.getTargets()) {
-                    targetsActivity.singleActivityMap.put(targetId,
-                            mergeActivities(targetsActivity.singleActivityMap.get(targetId), activity));
+                for (long targetId : activity.getServerIds()) {
+                    serversActivity.singleActivityMap.put(targetId,
+                            mergeActivities(serversActivity.singleActivityMap.get(targetId), activity));
                 }
             }
         }
     }
 
-    protected List<O> mergeActivities(List<O> activities, O activity) {
+    protected List<O> mergeActivities(List<O> activities, O newActivity) {
         if (activities == null) {
             activities = new ArrayList<O>();
-            activities.add(activity);
+            activities.add(newActivity);
 
         } else {
-            int subDay = activity.getOpenSubDay();
-            int endDay = subDay + activity.getOpenLifeDay();
+            int subDay = newActivity.getOpenSubDay();
+            int endDay = subDay + newActivity.getOpenLifeDay();
             List<O> newActivities = new ArrayList<O>();
-            for (O act : activities) {
-                if (HelperNumber.isNoCross(act.getOpenSubDay(), act.getOpenSubDay() + act.getOpenLifeDay(), subDay,
+            for (O activity : activities) {
+                if (HelperNumber.isNoCross(activity.getOpenSubDay(), activity.getOpenSubDay() + activity.getOpenLifeDay(), subDay,
                         endDay)) {
-                    if (!targetsActivity.canOverwriteTargets(act, activity)) {
-                        activity = null;
+                    if (!serversActivity.couldOverwriteServers(activity, newActivity)) {
+                        newActivity = null;
                         break;
                     }
 
                 } else {
-                    newActivities.add(act);
+                    newActivities.add(activity);
                 }
             }
 
-            if (activity != null) {
+            if (newActivity != null) {
                 activities = newActivities;
-                activities.add(activity);
+                activities.add(newActivity);
             }
         }
 
@@ -143,57 +144,57 @@ public abstract class OTargetsActivityOpen<T extends JbBeanTargetsO, O extends J
 
     protected abstract T createActivity();
 
-    protected void setActivity(long[] targets, Calendar calendar, T act, O activity) {
+    protected abstract void setActivityEmbed(T act, O activity);
+
+    protected void setActivity(long[] serverIds, Calendar calendar, T act, O activity) {
         setActivityEmbed(act, activity);
-        act.setTargets(targets);
-        act.setDescription(activity.getDescription());
+        act.setServerIds(serverIds);
+        act.setMark(activity.getMark());
+        int calendarDay = calendar.get(Calendar.DAY_OF_YEAR);
         calendar.add(Calendar.DAY_OF_YEAR, activity.getOpenSubDay());
         act.setBeginTime(calendar.getTimeInMillis());
         calendar.add(Calendar.DAY_OF_YEAR, activity.getOpenLifeDay());
         act.setPassTime(calendar.getTimeInMillis());
-        calendar.add(Calendar.DAY_OF_YEAR, -(activity.getOpenSubDay() + activity.getOpenLifeDay()));
+        calendar.set(Calendar.DAY_OF_YEAR, calendarDay);
     }
-
-    protected abstract void setActivityEmbed(T act, O activity);
 
     /**
      * 激活服务
-     *
-     * @param server
      */
     public void reActivityServer(JSlaveServer server) {
-        List<O> activities = targetsActivity.getSingleActivity(server.getId());
+        List<O> activities = serversActivity.getSingleActivity(server.getId());
         if (activities == null || activities.isEmpty()) {
             return;
         }
 
-        long[] targets = new long[]{server.getId()};
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(server.getBeginTime());
         calendar.set(Calendar.HOUR, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+
         Session session = BeanDao.getSession();
         Iterator<T> iterator = QueryDaoUtils.createQueryArray(session, selectServerActivityQuery, server.getId())
                 .iterate();
         Map<Long, T> idMapT = new HashMap<Long, T>();
         while (iterator.hasNext()) {
             T t = iterator.next();
-            idMapT.put(t.getOpenId(), t);
+            idMapT.put(t.getServersOpenId(), t);
         }
 
+        long[] serverIds = new long[]{server.getId()};
         for (O activity : activities) {
             T act = idMapT.get(activity.getId());
             if (act == null) {
                 act = createActivity();
                 act.setServerId(server.getId());
-                act.setOpenId(activity.getId());
-                setActivity(targets, calendar, act, activity);
+                act.setServersOpenId(activity.getId());
+                setActivity(serverIds, calendar, act, activity);
                 session.persist(act);
 
             } else {
-                setActivity(targets, calendar, act, activity);
+                setActivity(serverIds, calendar, act, activity);
                 session.merge(act);
             }
         }
