@@ -1,12 +1,4 @@
-/**
- * Copyright 2015 ABSir's Studio
- * <p/>
- * All right reserved
- * <p/>
- * Create on 2015年5月8日 下午1:48:02
- */
 package com.absir.aserv.system.bean;
-
 
 import com.absir.aserv.crud.CrudHandler;
 import com.absir.aserv.crud.value.ICrudBean;
@@ -18,10 +10,9 @@ import com.absir.aserv.system.bean.value.*;
 import com.absir.aserv.system.crud.DateCrudFactory;
 import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.system.crud.value.UploadRule;
-import com.absir.aserv.task.JaTask;
+import com.absir.aserv.system.service.impl.UpgradeServiceImpl;
 import com.absir.aserv.task.TaskService;
 import com.absir.aserv.upgrade.UpgradeService;
-import com.absir.bean.basis.Configure;
 import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.lang.LangCodeUtils;
 import com.absir.context.core.ContextUtils;
@@ -38,9 +29,9 @@ import java.io.File;
 import java.util.Map;
 
 /**
- * @author absir
+ * Created by absir on 2016/12/1.
  */
-@Configure
+//@Configure
 @MaEntity(parent = {@MaMenu("功能管理"), @MaMenu("版本管理")}, name = "升级")
 @JaModel(desc = true)
 @Entity
@@ -137,18 +128,6 @@ public class JUpgrade extends JbBean implements ICrudBean {
         this.beginTime = beginTime;
     }
 
-    @JaTask("upgradeFile")
-    public static void upgradeFile(long adapterTime, String filePath) {
-        if (RouteAdapter.ADAPTER_TIME == adapterTime) {
-            try {
-                UpgradeService.ME.restartUpgrade(UploadCrudFactory.ME.getUpgradeStream(filePath), true);
-
-            } catch (Exception e) {
-                LOGGER.error("upgradeFile error " + filePath, e);
-            }
-        }
-    }
-
     @Override
     public void processCrud(JaCrud.Crud crud, CrudHandler handler, Input input) {
         if (handler.isPersist() && crud != JaCrud.Crud.DELETE) {
@@ -177,7 +156,7 @@ public class JUpgrade extends JbBean implements ICrudBean {
 
                     if (upgrade) {
                         if (beginTime <= ContextUtils.getContextTime()) {
-                            upgradeFile(RouteAdapter.ADAPTER_TIME, upgradeFile);
+                            UpgradeServiceImpl.ME.upgradeFile(RouteAdapter.ADAPTER_TIME, upgradeFile);
 
                         } else {
                             TaskService.ME.addPanel(null, "upgradeFile", beginTime, beginTime + 600000, 0, RouteAdapter.ADAPTER_TIME, upgradeFile);

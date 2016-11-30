@@ -9,6 +9,7 @@ package com.absir.aserv.upgrade;
 
 import com.absir.aserv.init.InitBeanFactory;
 import com.absir.aserv.system.helper.HelperRandom;
+import com.absir.aserv.task.JaTask;
 import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanConfigImpl;
@@ -23,6 +24,7 @@ import com.absir.core.helper.HelperFileName;
 import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
+import com.absir.server.route.RouteAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,13 +47,11 @@ public class UpgradeService {
     public static final String NOT_VALIDATOR = LangCodeUtils.get("升级文件验证失败", UpgradeService.class);
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(UpgradeService.class);
-
+    protected static final String incrementalUpgrade = "incrementalUpgrade";
     @Value(value = "upgrade.config")
     private String upgradeConfig = "WEB-INF/classes/config.properties";
-
     @Value(value = "upgrade.destination", defaultValue = "${classPath}../../")
     private String upgradeDestination;
-
     @Value(value = "upgrade.restart")
     private String restartCommand;
 
@@ -117,6 +117,7 @@ public class UpgradeService {
             if (zipEntry != null) {
                 Map<String, Object> versionMap = new HashMap<String, Object>();
                 BeanConfigImpl.readProperties(null, versionMap, zipFile.getInputStream(zipEntry), null);
+                versionMap.put(incrementalUpgrade, zipFile.getEntry(incrementalUpgrade) != null ? Boolean.TRUE : Boolean.FALSE);
                 return versionMap;
             }
 
@@ -158,10 +159,11 @@ public class UpgradeService {
         }
     }
 
-    protected boolean upgrade(File upgradeFile, boolean full) throws IOException {
+    protected boolean upgrade(File upgradeFile) throws IOException {
         Map<String, Object> configMap = getVersionMap(upgradeFile);
         if (configMap != null && validateAppCode(configMap, InitBeanFactory.ME.getAppCode())) {
-            if (full) {
+            if (configMap.get(incrementalUpgrade) != Boolean.TRUE) {
+                //不是增量更新
                 String classPath = BeanFactoryUtils.getBeanConfig().getClassPath();
                 HelperFile.deleteFileNoBreak(new File(classPath), null);
                 HelperFile.deleteFileNoBreak(new File(classPath + "../lib"), null);
@@ -178,27 +180,39 @@ public class UpgradeService {
     }
 
     @Async(notifier = true, thread = true)
-    public void restartUpgrade(File file, boolean full) throws IOException {
+    public void restartUpgrade(File file) throws IOException {
         Object stopDone = stop();
-        upgrade(file, full);
+        upgrade(file);
         start(stopDone);
     }
 
     @Async(notifier = true, thread = true)
-    public void restartUpgrade(InputStream inputStream, boolean full) throws IOException {
+    public void restartUpgrade(InputStream inputStream) throws IOException {
         File upgradeFile = new File(HelperFileName.normalize(BeanFactoryUtils.getBeanConfig().getClassPath() + "../upgrade/"
                 + HelperRandom.randSecondId() + ".zip"));
         Object stopDone = null;
         try {
             HelperFile.write(upgradeFile, inputStream);
             stopDone = stop();
-            upgrade(upgradeFile, full);
+            upgrade(upgradeFile);
 
         } finally {
             HelperFile.deleteQuietly(upgradeFile);
         }
 
         start(stopDone);
+    }
+
+    @JaTask("upgradeFile")
+    public void upgradeFile(long adapterTime, String filePath) {
+        if (RouteAdapter.ADAPTER_TIME == adapterTime) {
+            try {
+                UpgradeService.ME.restartUpgrade(new File(filePath));
+
+            } catch (Exception e) {
+                LOGGER.error("upgradeFile error " + filePath, e);
+            }
+        }
     }
 
     public interface IUpgradeReStart {
