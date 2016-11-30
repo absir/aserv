@@ -169,7 +169,8 @@ public class UpgradeService {
 
             HelperFile.copyDirectoryOverWrite(new ZipInputStream(new FileInputStream(upgradeFile)), new File(upgradeDestination), true, null, true);
             upgradeRM(configMap);
-            restartCommand = BeanConfigImpl.getMapValue(configMap, "upgrade.restart", null, String.class);
+            String value = BeanConfigImpl.getMapValue(configMap, "upgrade.restart", null, String.class);
+            restartCommand = BeanFactoryUtils.getBeanConfig().getExpression(value);
         }
 
         LOGGER.warn("upgrade.fail => " + upgradeFile);
@@ -185,8 +186,8 @@ public class UpgradeService {
 
     @Async(notifier = true, thread = true)
     public void restartUpgrade(InputStream inputStream, boolean full) throws IOException {
-        File upgradeFile = new File(BeanFactoryUtils.getBeanConfig().getClassPath() + "upgrade/"
-                + HelperRandom.randSecondId() + ".zip");
+        File upgradeFile = new File(HelperFileName.normalize(BeanFactoryUtils.getBeanConfig().getClassPath() + "../upgrade/"
+                + HelperRandom.randSecondId() + ".zip"));
         Object stopDone = null;
         try {
             HelperFile.write(upgradeFile, inputStream);

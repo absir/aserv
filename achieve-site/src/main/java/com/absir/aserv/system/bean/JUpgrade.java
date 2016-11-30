@@ -81,18 +81,6 @@ public class JUpgrade extends JbBean implements ICrudBean {
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
     private long beginTime;
 
-    @JaTask("upgradeFile")
-    public static void upgradeFile(long adapterTime, String filePath) {
-        if (RouteAdapter.ADAPTER_TIME == adapterTime) {
-            try {
-                UpgradeService.ME.restartUpgrade(UploadCrudFactory.ME.getUpgradeStream(filePath), true);
-
-            } catch (Exception e) {
-                LOGGER.error("upgradeFile error " + filePath, e);
-            }
-        }
-    }
-
     public String getUpgradeFile() {
         return upgradeFile;
     }
@@ -149,13 +137,24 @@ public class JUpgrade extends JbBean implements ICrudBean {
         this.beginTime = beginTime;
     }
 
+    @JaTask("upgradeFile")
+    public static void upgradeFile(long adapterTime, String filePath) {
+        if (RouteAdapter.ADAPTER_TIME == adapterTime) {
+            try {
+                UpgradeService.ME.restartUpgrade(UploadCrudFactory.ME.getUpgradeStream(filePath), true);
+
+            } catch (Exception e) {
+                LOGGER.error("upgradeFile error " + filePath, e);
+            }
+        }
+    }
+
     @Override
     public void processCrud(JaCrud.Crud crud, CrudHandler handler, Input input) {
         if (handler.isPersist() && crud != JaCrud.Crud.DELETE) {
             PropertyErrors errors = handler.getErrors();
             if (errors != null) {
                 Map<String, Object> versionMap = null;
-                String filePath = null;
                 if (!KernelString.isEmpty(upgradeFile)) {
                     File file = UploadCrudFactory.ME.getUploadFile(upgradeFile);
                     versionMap = UpgradeService.ME.getVersionMap(file);
@@ -178,10 +177,10 @@ public class JUpgrade extends JbBean implements ICrudBean {
 
                     if (upgrade) {
                         if (beginTime <= ContextUtils.getContextTime()) {
-                            upgradeFile(RouteAdapter.ADAPTER_TIME, filePath);
+                            upgradeFile(RouteAdapter.ADAPTER_TIME, upgradeFile);
 
                         } else {
-                            TaskService.ME.addPanel(null, "upgradeFile", beginTime, beginTime + 600000, 0, RouteAdapter.ADAPTER_TIME, filePath);
+                            TaskService.ME.addPanel(null, "upgradeFile", beginTime, beginTime + 600000, 0, RouteAdapter.ADAPTER_TIME, upgradeFile);
                         }
 
                         upgrade = false;

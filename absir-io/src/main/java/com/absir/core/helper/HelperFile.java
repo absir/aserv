@@ -31,7 +31,8 @@ import java.util.zip.ZipInputStream;
 public class HelperFile extends FileUtils {
 
     // 毫秒不记录 || 4231000 零参数适应性更强
-    public static final long PRESERVE_FILE_MODIFIED_TIME = 0;
+    // 兼容JetTemplte MODIFIED 不能为0
+    public static final long PRESERVE_FILE_MODIFIED_TIME = 4231 * 1000;
 
     public static long lastModified(File file) {
         if (file == null || !file.exists()) {
