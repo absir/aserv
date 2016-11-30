@@ -13,16 +13,21 @@
         <!-- 用户名和密码 -->
         <property name="connection.username">${database.username}</property>
         <property name="connection.password">${database.password}</property>
-        <!-- 使用内置连接池，大小为1 -->
-        <property name="connection.pool_size">1</property>
-        <property name="connection.provider_class">org.hibernate.c3p0.internal.C3P0ConnectionProvider</property>
-        <property name="hibernate.c3p0.timeout">60</property>
-        <property name="hibernate.c3p0.min_size">2</property>
-        <property name="hibernate.c3p0.max_size">32</property>
-        <property name="hibernate.c3p0.idle_test_period">900</property>
-        <property name="hibernate.c3p0.preferredTestQuery">select 1</property>
-        <property name="hibernate.c3p0.max_statements">50</property>
-        <!-- <property name="c3p0.testConnectionOnCheckout">true</property> -->
+        <!-- 使用druid连接池 -->
+        <property name="connection.provider_class">com.alibaba.druid.support.hibernate.DruidConnectionProvider
+        </property>
+        <property name="url">${database.url}</property>
+        <property name="username">${database.username}</property>
+        <property name="password">${database.password}</property>
+        <property name="initialSize">1</property>
+        <property name="minIdle">2</property>
+        <property name="maxActive">32</property>
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait">60000</property>
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis">60000</property>
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis">300000</property>
         <!-- 数据库语言 -->
         <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="current_session_context_class">com.absir.orm.hibernate.transaction.JSessionContext</property>

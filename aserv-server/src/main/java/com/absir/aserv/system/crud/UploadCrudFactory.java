@@ -88,7 +88,8 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     public static final String RECORD = "UPLOAD@";
 
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
-
+    public static final String UPLOAD = "upload";
+    public static final int UPLOAD_LENGTH = UPLOAD.length();
     protected static final Logger LOGGER = LoggerFactory.getLogger(UploadCrudFactory.class);
     protected static final String[] UPLOAD_ROLE_REPLACES = new String[]{":name", ":id", ":ext", ":rand"};
     private static String uploadUrl;
@@ -106,6 +107,8 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     @Orders
     @Inject(type = InjectType.Selectable)
     private IUploadProcessor[] uploadProcessors;
+    @Value("upload.cache.control")
+    private String cacheControl = "max-age=3600";
 
     public static long getUploadPassTime() {
         return uploadPassTime;
@@ -157,14 +160,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         }
     }
 
-    public String getImageExtension() {
-        return imageExtension;
-    }
-
-    public String getManagerDir() {
-        return managerDir;
-    }
-
     public static String getConfigUrlPath(String expression, String route, String defaultUrlPath, boolean url) {
         String urlPath = BeanFactoryUtils.getBeanConfig().getExpressionValue(expression, null, String.class);
         if (KernelString.isEmpty(urlPath)) {
@@ -182,6 +177,14 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         }
 
         return urlPath;
+    }
+
+    public String getImageExtension() {
+        return imageExtension;
+    }
+
+    public String getManagerDir() {
+        return managerDir;
     }
 
     public boolean isUploadUrl(String url) {
@@ -613,13 +616,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     public ICrudProcessor getProcessor(JoEntity joEntity, JCrudField crudField) {
         return ME;
     }
-
-    public static final String UPLOAD = "upload";
-
-    public static final int UPLOAD_LENGTH = UPLOAD.length();
-
-    @Value("upload.cache.control")
-    private String cacheControl = "max-age=3600";
 
     /**
      * 上传文件静态文件服务(Cached)

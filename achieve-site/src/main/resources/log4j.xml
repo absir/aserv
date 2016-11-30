@@ -13,9 +13,9 @@
         <!--</filter>-->
     </appender>
 
-    <!-- main logger -->
+    <!-- warn logger -->
     <appender name="main" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="${classPath}/../logs/main.log"/>
+        <param name="File" value="${resourcePath}logs/warn.log"/>
         <param name="MaxFileSize" value="4096KB"/>
         <param name="MaxBackupIndex" value="32"/>
         <param name="Encoding" value="utf-8"/>
@@ -31,7 +31,7 @@
 
     <!-- error logger -->
     <appender name="error" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="${classPath}/../logs/error.log"/>
+        <param name="File" value="${resourcePath}logs/error.log"/>
         <param name="MaxFileSize" value="4096KB"/>
         <param name="MaxBackupIndex" value="32"/>
         <param name="Encoding" value="utf-8"/>
@@ -52,4 +52,10 @@
         <appender-ref ref="main"/>
         <appender-ref ref="error"/>
     </logger>
+    <!--<logger name="com.alibaba">-->
+    <!--<level value="ALL"/>-->
+    <!--<appender-ref ref="console"/>-->
+    <!--<appender-ref ref="main"/>-->
+    <!--<appender-ref ref="error"/>-->
+    <!--</logger>-->
 </log4j:configuration>

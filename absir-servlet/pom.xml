@@ -45,5 +45,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!--<dependency>-->
+        <!--<groupId>se.jiderhamn.classloader-leak-prevention</groupId>-->
+        <!--<artifactId>classloader-leak-prevention-servlet3</artifactId>-->
+        <!--<version>2.0.2</version>-->
+        <!--</dependency>-->
     </dependencies>
 </project>

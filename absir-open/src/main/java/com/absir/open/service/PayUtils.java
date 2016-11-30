@@ -28,26 +28,24 @@ public abstract class PayUtils {
     @Inject(type = InjectType.Selectable)
     private static IPayProcessor payService;
 
-    public static Object order(String platform, JPayTrade payTrade, Map<String, Object> paramMap)
+    public static String order(JPayTrade payTrade, String prepare, Map<String, Object> paramMap)
             throws Exception {
-        if (payTrade.getStatus() == null) {
-            if (payInterfaceMap != null) {
-                if (KernelString.isEmpty(platform)) {
-                    platform = payTrade.getPlatform();
-
-                } else {
-                    payTrade.setPlatform(platform);
-                }
-
+        String id = payTrade.getId();
+        if (payInterfaceMap != null) {
+            String platform = payTrade.getPlatform();
+            if (!KernelString.isEmpty(platform)) {
                 IPayInterface payInterface = payInterfaceMap.get(platform);
-                if (payInterface != null && payInterface instanceof IPayOrder) {
+                if (payInterface != null) {
                     payTrade.setPlatform(platform);
-                    return ((IPayOrder) payInterface).order(payTrade, paramMap);
+                    String orderInfo = payInterface.order(getPayInterfaceConfigure(payInterface, platform, payTrade.getConfigureId()), payTrade, prepare, paramMap);
+                    if (!KernelString.isEmpty(orderInfo)) {
+                        id = id + '@' + orderInfo;
+                    }
                 }
             }
         }
 
-        return null;
+        return id;
     }
 
     public static <T> T getPayInterfaceConfigure(IPayInterface<T> payInterface, String platform, int configureId) {

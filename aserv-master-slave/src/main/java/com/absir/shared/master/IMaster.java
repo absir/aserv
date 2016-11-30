@@ -15,5 +15,4 @@ public interface IMaster {
     public long time() throws IOException;
 
 
-
 }

@@ -65,7 +65,7 @@ public class ContextFactory {
     @Value("context.minUsableMemory")
     private long minUsableMemory = 4096000;
 
-    private Timer contextTimer = new Timer();
+    private Timer contextTimer = new Timer("ContextFactory.ContextTimer", true);
 
     private TimerTask contextTimerTask = new TimerTask() {
 

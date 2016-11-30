@@ -306,6 +306,7 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
             Thread.sleep(3000);
 
         } catch (Exception e) {
+            return;
         }
 
         Iterator<JSlaveSynch> iterator = QueryDaoUtils
@@ -404,6 +405,7 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
             Thread.sleep(3000);
 
         } catch (Exception e) {
+            return;
         }
 
         List<JSlaveServer> slaveServers = ME.getNoSyncServers();

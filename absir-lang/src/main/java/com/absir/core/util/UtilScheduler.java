@@ -131,7 +131,7 @@ public class UtilScheduler<T extends NextRunnable> extends Thread {
                     Thread.sleep(nextRunnableTime - time);
 
                 } catch (InterruptedException e) {
-                    continue;
+                    break;
                 }
             }
         }

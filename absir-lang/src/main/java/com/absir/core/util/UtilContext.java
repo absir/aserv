@@ -85,7 +85,7 @@ public class UtilContext {
                         Thread.sleep(1000);
 
                     } catch (InterruptedException e) {
-                        continue;
+                        break;
                     }
                 }
             }
@@ -97,6 +97,25 @@ public class UtilContext {
         thread.start();
         startYear = currentCalendar.get(Calendar.YEAR);
         return currentCalendar;
+    }
+
+    public static void interruptAllThread() {
+//        if (!Environment.isActive() && idleThread != null) {
+//            ThreadGroup group = idleThread.getThreadGroup();
+//            int estimatedSize = group.activeCount() * 2;
+//            Thread[] slackList = new Thread[estimatedSize];
+//            int actualSize = group.enumerate(slackList);
+//            Thread[] list = new Thread[actualSize];
+//            System.arraycopy(slackList, 0, list, 0, actualSize);
+//            for (Thread thread : list) {
+//                try {
+//                    thread.interrupt();
+//
+//                } catch (Throwable e) {
+//                    Environment.throwable(e);
+//                }
+//            }
+//        }
     }
 
     public final static Calendar getCurrentCalendar() {
@@ -155,13 +174,18 @@ public class UtilContext {
                 @Override
                 public void run() {
                     while (Environment.isStarted()) {
-                        if (warnIdlePool) {
-                            warnIdlePool = minIdlePool <= 0 ? false
-                                    : rejectedThreadPoolExecutor.getActiveCount() > 0 || (threadPoolExecutor.getMaximumPoolSize()
-                                    - threadPoolExecutor.getActiveCount()) < minIdlePool;
+                        try {
+                            if (warnIdlePool) {
+                                warnIdlePool = minIdlePool <= 0 ? false
+                                        : rejectedThreadPoolExecutor.getActiveCount() > 0 || (threadPoolExecutor.getMaximumPoolSize()
+                                        - threadPoolExecutor.getActiveCount()) < minIdlePool;
 
-                            Runtime runtime = Runtime.getRuntime();
-                            usableMemory = runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
+                                Runtime runtime = Runtime.getRuntime();
+                                usableMemory = runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
+                            }
+
+                        } catch (Throwable e) {
+                            Environment.throwable(e);
                         }
 
                         try {
@@ -173,7 +197,6 @@ public class UtilContext {
                     }
                 }
 
-                ;
             };
 
             idleThread.setName("UtilScheduler.idleThread");

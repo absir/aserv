@@ -49,10 +49,10 @@ public class api_open extends ApiServer {
     }
 
     @JaLang("购买")
-    public Object order(String platform, String channel, long serverId, long playerId, int index, float amount,
+    public String order(String platform, String channel, long serverId, long playerId, int index, float amount, String prepare,
                         Input input) throws Exception {
         JPayTrade payTrade = MasterTradeService.ME.buyDollar(platform, channel, serverId, playerId, index, amount);
-        return PayUtils.order(platform, payTrade, input.getParamMap());
+        return PayUtils.order(payTrade, prepare, input.getParamMap());
     }
 
     @JaLang("验证订单")

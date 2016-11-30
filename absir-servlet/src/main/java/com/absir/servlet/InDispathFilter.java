@@ -13,7 +13,9 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Orders;
 import com.absir.context.core.ContextUtils;
+import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelDyna;
+import com.absir.core.kernel.KernelReflect;
 import com.absir.server.in.InDispatcher;
 import com.absir.server.in.InMethod;
 import com.absir.server.in.InModel;
@@ -22,7 +24,10 @@ import com.absir.server.in.Input;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.beans.Introspector;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URLDecoder;
 
 @Configure
@@ -35,18 +40,13 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
     private static String contextResourcePath;
 
     private static String contextPath;
-
-    private int contextPathLength;
-
-    private String uriContextPath;
-
-    private int uriContextPathLength;
-
-    private boolean urlDecode;
-
     @Orders
     @Inject
     private static IFilter[] filters;
+    private int contextPathLength;
+    private String uriContextPath;
+    private int uriContextPathLength;
+    private boolean urlDecode;
 
     public static ServletContext getServletContext() {
         return servletContext;
@@ -173,6 +173,19 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
 
     @Override
     public void destroy() {
+        for (Field field : KernelReflect.declaredFields(getClass())) {
+            int modifiers = field.getModifiers();
+            if (KernelClass.isCustomClass(field.getType())) {
+                if (Modifier.isFinal(modifiers)) {
+                    System.err.println("WebappClassLoader will memory leak at " + field);
+
+                } else {
+                    KernelReflect.set(this, field, null);
+                }
+            }
+        }
+
+        Introspector.flushCaches();
     }
 
     @Override

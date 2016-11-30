@@ -44,7 +44,11 @@ public class InDispathContext extends InDispathFilter {
 
     @Override
     public void destroy() {
-        BeanFactoryStopping.stoppingAll();
-        super.destroy();
+        try {
+            BeanFactoryStopping.stoppingAll();
+
+        } finally {
+            super.destroy();
+        }
     }
 }

@@ -324,7 +324,7 @@ public abstract class SessionFactoryUtils {
             }
         }
 
-        return sessionFactory.getClassMetadata(entityClass);
+        return SessionFactoryBoost.getClassMetadata(sessionFactory, entityClass);
     }
 
     public static Serializable getIdentifierValue(String jpaEntityName, Object entity, Session session,

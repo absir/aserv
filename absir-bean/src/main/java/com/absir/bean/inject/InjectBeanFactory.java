@@ -16,6 +16,7 @@ import com.absir.core.kernel.*;
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.core.kernel.KernelLang.CallbackBreak;
 import com.absir.core.kernel.KernelLang.ObjectEntry;
+import com.absir.core.util.UtilContext;
 
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
@@ -756,5 +757,6 @@ public class InjectBeanFactory implements IBeanFactorySupport, IBeanDefineSupply
         }
 
         Environment.setStarted(false);
+        UtilContext.interruptAllThread();
     }
 }
