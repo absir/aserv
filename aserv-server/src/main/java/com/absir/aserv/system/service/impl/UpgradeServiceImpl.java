@@ -97,7 +97,7 @@ public class UpgradeServiceImpl extends UpgradeService {
     public void upgradeFile(long adapterTime, String filePath) {
         if (RouteAdapter.ADAPTER_TIME == adapterTime) {
             try {
-                UpgradeService.ME.restartUpgrade(UploadCrudFactory.ME.getUpgradeStream(filePath));
+                UpgradeService.ME.restartUpgrade(UploadCrudFactory.ME.getProtectedStream(filePath));
 
             } catch (Exception e) {
                 LOGGER.error("upgradeFile error " + filePath, e);

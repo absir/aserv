@@ -41,7 +41,7 @@ public class JUpgrade extends JbBean implements ICrudBean {
 
     @JaLang("升级文件")
     @JaEdit(types = "file", groups = JaEdit.GROUP_LIST)
-    @UploadRule("@:rand.:ext")
+    @UploadRule("@upgrade/:rand.:ext")
     @JaCrud(factory = UploadCrudFactory.class, parameters = {"-1", "zip,war"})
     private String upgradeFile;
 

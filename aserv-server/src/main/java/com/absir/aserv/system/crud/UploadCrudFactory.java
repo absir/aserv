@@ -94,8 +94,8 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     protected static final String[] UPLOAD_ROLE_REPLACES = new String[]{":name", ":id", ":ext", ":rand"};
     private static String uploadUrl;
     private static String uploadPath;
-    private static String upgradeUrl;
-    private static String upgradePath;
+    private static String protectedUrl;
+    private static String protectedPath;
     @Value(value = "upload.passTime")
     private static long uploadPassTime = 3600000;
     @Domain
@@ -201,18 +201,18 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         }
 
         if (filePath.charAt(0) == '@') {
-            return getUpgradeUrl(filePath);
+            return getProtectedUrl(filePath);
         }
 
         return uploadUrl + filePath;
     }
 
-    public String getUpgradeUrl(String filePath) {
+    public String getProtectedUrl(String filePath) {
         if (filePath.charAt(0) == '@') {
             filePath = filePath.substring(1);
         }
 
-        return upgradeUrl + filePath;
+        return protectedUrl + filePath;
     }
 
     public File getUploadFile(String filePath) {
@@ -221,18 +221,20 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         }
 
         if (filePath.charAt(0) == '@') {
-            return getUpgradeFile(filePath);
+            return getProtectedFile(filePath);
         }
 
-        return new File(uploadPath + filePath);
+        String filename = HelperFileName.normalize(uploadPath + filePath);
+        return filename.startsWith(uploadPath) ? new File(filename) : null;
     }
 
-    public File getUpgradeFile(String filePath) {
+    public File getProtectedFile(String filePath) {
         if (filePath.charAt(0) == '@') {
             filePath = filePath.substring(1);
         }
 
-        return new File(upgradePath + filePath);
+        String filename = HelperFileName.normalize(protectedPath + filePath);
+        return filename.startsWith(protectedPath) ? new File(filename) : null;
     }
 
     public InputStream getUploadStream(String filePath) throws IOException {
@@ -240,17 +242,17 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         return file.exists() ? new FileInputStream(file) : null;
     }
 
-    public InputStream getUpgradeStream(String filePath) throws IOException {
-        File file = getUpgradeFile(filePath);
+    public InputStream getProtectedStream(String filePath) throws IOException {
+        File file = getProtectedFile(filePath);
         return file.exists() ? new FileInputStream(file) : null;
     }
 
     @Started
     protected void started() {
-        UploadCrudFactory.uploadUrl = getConfigUrlPath("resource.upload.url", MenuContextUtils.getSiteRoute(), "upload/", true);
-        UploadCrudFactory.uploadPath = getConfigUrlPath("resource.upload.path", BeanFactoryUtils.getBeanConfig().getResourcePath(), "upload/", false);
-        UploadCrudFactory.upgradeUrl = getConfigUrlPath("resource.upgrade.url", MenuContextUtils.getSiteRoute(), "api/entity/upgrade/", true);
-        UploadCrudFactory.upgradePath = getConfigUrlPath("resource.upgrade.path", BeanFactoryUtils.getBeanConfig().getResourcePath(), "upgrade/", false);
+        uploadUrl = getConfigUrlPath("resource.upload.url", MenuContextUtils.getSiteRoute(), "upload/", true);
+        uploadPath = getConfigUrlPath("resource.upload.path", BeanFactoryUtils.getBeanConfig().getResourcePath(), "public/upload/", false);
+        protectedUrl = getConfigUrlPath("resource.protected.url", MenuContextUtils.getSiteRoute(), "api/entity/resource/", true);
+        protectedPath = getConfigUrlPath("resource.protected.path", BeanFactoryUtils.getBeanConfig().getResourcePath(), "protected/", false);
     }
 
     public String randUploadFile(int hashCode) {

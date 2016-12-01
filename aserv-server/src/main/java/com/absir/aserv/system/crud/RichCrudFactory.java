@@ -176,15 +176,6 @@ public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object
 
     /**
      * 富文本自动下载和获取关联链接
-     *
-     * @param propertyPath
-     * @param field
-     * @param entity
-     * @param srcs
-     * @param downloadPermission
-     * @param user
-     * @param input
-     * @return
      */
     protected void richHtml(String propertyPath, String field, Object entity, Set<String> srcs, boolean downloadPermission, JiUserBase user, Input input) {
         UtilAccessor.Accessor accessor = UtilAccessor.getAccessor(entity.getClass(), field, null);
@@ -212,7 +203,7 @@ public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object
                         stringBuilder.append(chars, end, matcher.end() - end);
 
                     } else {
-                        replace = UploadCrudFactory.ME.getUpgradeUrl(replace);
+                        replace = UploadCrudFactory.ME.getUploadUrl(replace);
                         stringBuilder.append(chars, end, matcher.start() - end);
                         stringBuilder.append(find.replace(src, replace));
                     }

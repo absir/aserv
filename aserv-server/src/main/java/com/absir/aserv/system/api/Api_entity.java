@@ -489,13 +489,13 @@ public class Api_entity extends ApiServer {
         return modelMap;
     }
 
-    public void upgrade(String filePath, Input input, HttpServletResponse response) throws IOException {
+    public void resource(String filePath, Input input, HttpServletResponse response) throws IOException {
         JiUserBase user = SecurityService.ME.getUserBase(input);
         if (user == null || !user.isDeveloper()) {
             throw new ServerException(ServerStatus.ON_DENIED);
         }
 
-        InputStream inputStream = UploadCrudFactory.ME.getUpgradeStream(filePath);
+        InputStream inputStream = UploadCrudFactory.ME.getUploadStream(filePath);
         if (inputStream == null) {
             throw new ServerException(ServerStatus.IN_404);
         }
