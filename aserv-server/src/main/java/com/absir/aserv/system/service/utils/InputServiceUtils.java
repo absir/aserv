@@ -68,12 +68,6 @@ public class InputServiceUtils {
 
     /**
      * 获取请求查询条件
-     *
-     * @param entityName
-     * @param filter
-     * @param jdbcCondition
-     * @param input
-     * @return
      */
     public static JdbcCondition getSearchCondition(String entityName, PropertyFilter filter, JdbcCondition jdbcCondition, Input input) {
         return getSearchCondition(entityName, SessionFactoryUtils.getEntityClass(entityName), filter, jdbcCondition, input);
@@ -81,13 +75,6 @@ public class InputServiceUtils {
 
     /**
      * 获取请求查询条件(包含非数据库)
-     *
-     * @param entityName
-     * @param entityClass
-     * @param filter
-     * @param jdbcCondition
-     * @param input
-     * @return
      */
     public static JdbcCondition getSearchCondition(String entityName, Class<?> entityClass, PropertyFilter filter, JdbcCondition jdbcCondition, Input input) {
         if (entityClass == null) {

@@ -57,6 +57,14 @@ public class JdbcCondition extends JdbcAlias {
         this.conditions = conditions;
     }
 
+    public void addConditions(Object[] params) {
+        int last = params.length - 1;
+        for (int i = 0; i < last; i += 2) {
+            conditions.add(params[i]);
+            conditions.add(params[i + 1]);
+        }
+    }
+
     public List<Object> getConditionList() {
         return getConditionList(conditions);
     }

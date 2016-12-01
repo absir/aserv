@@ -12,12 +12,14 @@ import com.absir.aserv.developer.Pag;
 import com.absir.aserv.dyna.DynaBinderUtils;
 import com.absir.aserv.jdbc.JdbcCondition;
 import com.absir.aserv.support.Developer;
+import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.CrudService;
 import com.absir.aserv.system.service.utils.AccessServiceUtils;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelCharset;
 import com.absir.core.kernel.KernelCollection;
+import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAccessor;
 import com.absir.core.util.UtilRuntime;
 import com.absir.server.in.IAttributes;
@@ -167,17 +169,27 @@ public class EntityStatics {
     }
 
     public static List suggest(String entityName, IAttributes input) {
-        String entitiesKey = EntityStatics.class.getName() + "-" + entityName + "@SUGGEST";
+        return suggestParam(entityName, null, input);
+    }
+
+    public static List suggestParam(String entityName, String param, IAttributes input) {
+        String entitiesKey = EntityStatics.class.getName() + "-" + entityName + "@SUGGEST" + param;
         List entities = (List) input.getAttribute(entitiesKey);
         if (entities == null) {
-            entities = CrudServiceUtils.list(entityName, AccessServiceUtils.suggestCondition(entityName, null), null, 0, 0);
+            JdbcCondition condition = null;
+            if (KernelString.isEmpty(param)) {
+                condition = new JdbcCondition();
+                condition.addConditions(HelperString.split(param, "=&"));
+            }
+
+            entities = CrudServiceUtils.list(entityName, AccessServiceUtils.suggestCondition(entityName, condition), null, 0, 0);
             input.setAttribute(entitiesKey, entities);
         }
 
         return entities;
     }
 
-    public static List suggest(String entityName, JdbcCondition condition, IAttributes input) {
+    public static List suggestCondition(String entityName, JdbcCondition condition, IAttributes input) {
         if (condition == null || condition.getConditions().isEmpty()) {
             return suggest(entityName, input);
         }

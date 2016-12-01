@@ -500,7 +500,7 @@ public class Admin_entity extends AdminServer {
         ICrudSupply crudSupply = getCrudSupply(entityName, input);
         suggest(entityName, crudSupply, input);
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
-        input.getModel().put("entities", EntityStatics.suggest(entityName, InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), null, null, input), input));
+        input.getModel().put("entities", EntityStatics.suggestCondition(entityName, InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), null, null, input), input));
     }
 
     public void lookup(String entityName, Input input) {
