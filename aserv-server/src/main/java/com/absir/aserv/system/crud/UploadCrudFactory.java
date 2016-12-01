@@ -272,7 +272,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     public void delete(String uploadFile) {
         if (uploadFile != null) {
-            HelperFile.deleteQuietly(new File(uploadPath + uploadFile));
+            HelperFile.deleteQuietly(getUploadFile(uploadFile));
         }
     }
 
