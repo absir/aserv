@@ -19,7 +19,7 @@ import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.proxy.JpRecycleBase;
 import com.absir.aserv.system.bean.value.JaRecycle;
 import com.absir.aserv.system.dao.BeanDao;
-import com.absir.aserv.system.domain.DCacheOpen;
+import com.absir.aserv.system.domain.DCacheOpenValue;
 import com.absir.aserv.system.domain.DCondition;
 import com.absir.aserv.system.service.utils.AccessServiceUtils;
 import com.absir.aserv.system.service.utils.BeanServiceUtils;
@@ -55,11 +55,11 @@ public class EntityService {
 
     public static final EntityService ME = BeanFactoryUtils.get(EntityService.class);
 
-    DCacheOpen<String, JDict> dictCache;
+    DCacheOpenValue<String, JDict> dictCache;
 
     private Map<String, Boolean> entityNameMapRecycle = new HashMap<String, Boolean>();
 
-    public DCacheOpen<String, JDict> getDictCache() {
+    public DCacheOpenValue<String, JDict> getDictCache() {
         return dictCache;
     }
 
@@ -68,14 +68,15 @@ public class EntityService {
      */
     @Inject
     protected void inject() {
-        dictCache = new DCacheOpen<String, JDict>(JDict.class, null);
+        dictCache = new DCacheOpenValue<String, JDict>(JDict.class, null);
+        dictCache.addEntityMerges();
         ME.reloadEntity();
     }
 
     /**
      * 重载实体
      */
-    @Schedule(cron = "0 0,30 * * * *")
+    @Schedule(cron = "0 0 30 * * * *")
     @Transaction(readOnly = true)
     protected void reloadEntity() {
         Session session = BeanDao.getSession();

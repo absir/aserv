@@ -7,11 +7,11 @@
  */
 package com.absir.aserv.system.domain;
 
-import com.absir.aserv.system.bean.value.JiOpen;
+import com.absir.aserv.system.bean.value.JiOpenValue;
 
-public class DCacheOpen<V, K extends JiOpen> extends DCache<K, K> {
+public class DCacheOpenValue<V, K extends JiOpenValue<V>> extends DCache<K, V> {
 
-    public DCacheOpen(Class<K> entityClass, String entityName) {
+    public DCacheOpenValue(Class<K> entityClass, String entityName) {
         super(entityClass, entityName);
     }
 
@@ -20,8 +20,12 @@ public class DCacheOpen<V, K extends JiOpen> extends DCache<K, K> {
     }
 
     @Override
-    protected K getCacheValue(K entity) {
-        return entity;
+    protected V getCacheValue(K entity) {
+        if (!entity.isOpen()) {
+            return null;
+        }
+
+        return entity.forValue();
     }
 
 }

@@ -14,7 +14,7 @@ import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.domain.DCache;
 import com.absir.aserv.system.domain.DCacheEntity;
-import com.absir.aserv.system.domain.DCacheOpen;
+import com.absir.aserv.system.domain.DCacheOpenValue;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
@@ -56,7 +56,7 @@ public abstract class MasterChannelService {
     @Inject
     protected void inject() {
         channelCache = new DCacheEntity<JChannel>(JChannel.class, null);
-        channelAnnouncementCache = new DCacheOpen<List<DAnnouncement>, JChannelAnnouncement>(JChannelAnnouncement.class,
+        channelAnnouncementCache = new DCacheOpenValue<List<DAnnouncement>, JChannelAnnouncement>(JChannelAnnouncement.class,
                 null);
         channelMapServers = new HashMap<String, List<DServer>>();
         ME.reloadCache();

@@ -33,6 +33,8 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
 
     protected String entityName;
 
+    protected String reloadHsql;
+
     protected Map<Serializable, V> cacheMap;
 
     protected Map<Serializable, V> cacheMapBuffer;
@@ -48,7 +50,7 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
 
         this.entityName = KernelString.isEmpty(entityName) ? entityClass.getSimpleName() : entityName;
         cacheMap = createCacheMap();
-        L2EntityMergeService.ME.addEntityMerges(entityClass, this);
+        reloadHsql = genReloadHsql();
     }
 
     protected Map<Serializable, V> createCacheMap() {
@@ -67,11 +69,19 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
         return cacheMap.get(id);
     }
 
+    public void addEntityMerges() {
+        L2EntityMergeService.ME.addEntityMerges(entityName, entityClass, this);
+    }
+
+    protected String genReloadHsql() {
+        return "SELECT o FROM " + entityName + " o";
+    }
+
     /**
      * 重载缓存
      */
     public void reloadCache(Session session) {
-        Iterator<K> iterator = QueryDaoUtils.createQueryArray(session, "SELECT o FROM " + entityName + " o").iterate();
+        Iterator<K> iterator = QueryDaoUtils.createQueryArray(session, reloadHsql).iterate();
         cacheMapBuffer = createCacheMap();
         while (iterator.hasNext()) {
             K entity = iterator.next();
