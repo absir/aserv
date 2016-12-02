@@ -16,24 +16,17 @@ import com.absir.aserv.transaction.TransactionIntercepter;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
-import com.absir.core.base.Environment;
-import com.absir.server.exception.ServerException;
-import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.Input;
 import com.absir.server.in.Interceptor;
 import com.absir.server.on.OnPut;
 import com.absir.server.value.*;
 import com.absir.servlet.InputRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 
 @Mapping("/api")
 @Interceptors(ApiServer.Route.class)
-public abstract class ApiServer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApiServer.class);
+public abstract class ApiServer extends ApiBase {
 
     /**
      * 统一返回类型 权限判断
@@ -43,73 +36,6 @@ public abstract class ApiServer {
     @Before
     protected SecurityContext onAuthentication(Input input) throws Throwable {
         return SecurityService.ME == null ? null : SecurityService.ME.getSecurityContext(input);
-    }
-
-    /**
-     * 统一异常返回
-     */
-    @Body
-    @OnException(Throwable.class)
-    protected Object onException(Throwable e, Input input) {
-        input.setStatus(ServerStatus.ON_ERROR.getCode());
-        if (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP) {
-            e.printStackTrace();
-        }
-
-        if (BeanFactoryUtils.getEnvironment().compareTo(Environment.DEBUG) <= 0 || input.isDebug()
-                || !(e instanceof ServerException)) {
-            LOGGER.debug("on server " + input.getUri(), e);
-        }
-
-        if (e instanceof ServerException) {
-            ServerException exception = (ServerException) e;
-            Object data = exception.getExceptionData();
-            if (exception.getServerStatus() == ServerStatus.ON_CODE) {
-                return data == null ? "fail" : data;
-            }
-
-            if (data != null && data instanceof MessageCode) {
-                return data;
-            }
-
-            MessageCode messageCode = new MessageCode();
-            messageCode.setServerException(exception);
-            return messageCode;
-        }
-
-        return new MessageCode(e);
-    }
-
-    /**
-     * 消息对象
-     */
-    public static class MessageCode {
-
-        public String message;
-
-        public int code;
-
-        public MessageCode() {
-        }
-
-        public MessageCode(Throwable e) {
-            if (e instanceof ServerException) {
-                setServerException((ServerException) e);
-
-            } else {
-                setThrowable(e);
-            }
-        }
-
-        public void setThrowable(Throwable e) {
-            message = e.toString();
-            code = ServerStatus.ON_ERROR.getCode();
-        }
-
-        public void setServerException(ServerException e) {
-            message = e.toString();
-            code = e.getServerStatus().getCode();
-        }
     }
 
     @Base

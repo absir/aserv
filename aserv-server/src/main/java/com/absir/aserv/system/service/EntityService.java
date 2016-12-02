@@ -35,6 +35,7 @@ import com.absir.context.schedule.value.Schedule;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
+import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.orm.value.JoEntity;
@@ -113,8 +114,23 @@ public class EntityService {
         if (queue == null) {
             JoEntity entity = new JoEntity(entityName, crudSupply.getEntityClass(entityName));
             DModel model = CrudUtils.getCrudModel(entity);
-            if (model.isDesc()) {
-                queue = "ORDER BY o." + crudSupply.getIdentifierName(entityName) + " DESC";
+            String value = model.getValue();
+            if (KernelString.isEmpty(value)) {
+                value = null;
+            }
+
+            if (model.isDesc() || value != null) {
+                queue = "ORDER BY o." + (value == null ? crudSupply.getIdentifierName(entityName) : value) + (model.isDesc() ? " DESC" : " ASC");
+            }
+
+            value = model.getQueue();
+            if (!KernelString.isEmpty(value)) {
+                if (queue == null) {
+                    queue = "ORDER BY " + value;
+
+                } else {
+                    queue = queue + " " + value;
+                }
             }
         }
 

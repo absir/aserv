@@ -21,7 +21,7 @@ public class DCacheOpen<V, K extends JiOpenValue<V>> extends DCache<K, V> {
             return null;
         }
 
-        return entity.getValue();
+        return entity.forValue();
     }
 
 }

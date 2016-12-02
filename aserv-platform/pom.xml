@@ -8,12 +8,17 @@
         <version>1.0-Final</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>achieve-platform</artifactId>
+    <artifactId>aserv-platform</artifactId>
     <version>${com.absir.version}</version>
     <dependencies>
         <dependency>
             <groupId>com.absir</groupId>
-            <artifactId>aserv-server</artifactId>
+            <artifactId>aserv-master</artifactId>
+            <version>${com.absir.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.absir</groupId>
+            <artifactId>absir-platform</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>

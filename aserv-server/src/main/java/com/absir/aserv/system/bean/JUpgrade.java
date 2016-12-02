@@ -45,7 +45,7 @@ public class JUpgrade extends JbBean implements ICrudBean {
     @JaCrud(factory = UploadCrudFactory.class, parameters = {"-1", "zip,war"})
     private String upgradeFile;
 
-    @JaLang("升级")
+    @JaLang("更新")
     @JaEdit(editable = JeEditable.ENABLE)
     @Transient
     private boolean upgrade;

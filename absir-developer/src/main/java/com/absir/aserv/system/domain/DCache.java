@@ -7,12 +7,15 @@
  */
 package com.absir.aserv.system.domain;
 
+import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
+import com.absir.aserv.system.service.BeanService;
 import com.absir.core.base.IBase;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.hibernate.boost.L2EntityMergeService;
+import com.absir.orm.transaction.TransactionContext;
 import org.hibernate.Session;
 
 import java.io.Serializable;
@@ -66,8 +69,6 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
 
     /**
      * 重载缓存
-     *
-     * @param session
      */
     public void reloadCache(Session session) {
         Iterator<K> iterator = QueryDaoUtils.createQueryArray(session, "SELECT o FROM " + entityName + " o").iterate();
@@ -84,9 +85,24 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
         cacheMapBuffer = null;
     }
 
+    protected void reloadCacheTransaction() {
+        TransactionContext<?> transactionContext = BeanDao.open(null, BeanService.TRANSACTION_READ_ONLY);
+        try {
+            reloadCache(BeanDao.getSession());
+
+        } finally {
+            BeanDao.commit(transactionContext, null);
+        }
+    }
+
     @Override
     public void merge(String entityName, K entity, com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType,
                       Object mergeEvent) {
+        if (mergeType == MergeType.RELOAD) {
+            reloadCacheTransaction();
+            return;
+        }
+
         Serializable id = entity.getId();
         if (id != null) {
             if (mergeType == null) {

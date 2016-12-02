@@ -12,11 +12,13 @@ import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.service.IdentityService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.aserv.system.service.impl.IdentityServiceLocal;
+import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
 import com.absir.servlet.InputRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Base
 @Bean
 public class ApiRoute extends Route implements IdentityService {
 

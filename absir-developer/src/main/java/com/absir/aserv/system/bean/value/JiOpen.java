@@ -7,8 +7,10 @@
  */
 package com.absir.aserv.system.bean.value;
 
-public interface JiOpenValue<T> extends JiOpen {
+import com.absir.aserv.system.bean.proxy.JiBase;
 
-    public T forValue();
+public interface JiOpen extends JiBase {
+
+    public boolean isOpen();
 
 }

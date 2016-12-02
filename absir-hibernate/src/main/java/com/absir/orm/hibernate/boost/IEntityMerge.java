@@ -17,7 +17,9 @@ public interface IEntityMerge<T> {
 
         UPDATE,
 
-        DELETE;
+        DELETE,
+
+        RELOAD,;
     }
 
 }

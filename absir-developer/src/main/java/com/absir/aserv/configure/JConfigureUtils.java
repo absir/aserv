@@ -195,4 +195,18 @@ public abstract class JConfigureUtils {
     public <T extends JConfigureBase> T getConfigure(Class<T> cls, Object... initargs) {
         return initargs.length == 0 ? getConfigure(cls) : getConfigure(cls, getConfigureId(cls, initargs), initargs);
     }
+
+    public void reloadConfigure(Class<? extends JConfigureBase> configureClass) {
+        JConfigureBase configureBase = findConfigure(configureClass);
+        if (configureBase != null) {
+            initConfigure(configureBase);
+        }
+    }
+
+    public void reloadAllConfigure() {
+        for (JConfigureBase configureBase : Configure_Class_Map_Instance.values()) {
+            initConfigure(configureBase);
+        }
+    }
+
 }

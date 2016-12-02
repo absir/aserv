@@ -13,9 +13,12 @@ import com.absir.aserv.system.bean.base.JbStragety;
 import com.absir.aserv.system.bean.base.JbSuggest;
 import com.absir.aserv.system.bean.proxy.JiUpdate;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.aserv.system.bean.value.JiOpen;
 import com.absir.aserv.system.domain.DCondition;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.value.JePermission;
+
+import java.util.List;
 
 public abstract class AccessServiceUtils {
 
@@ -29,12 +32,6 @@ public abstract class AccessServiceUtils {
 
     /**
      * 列表实体条件
-     *
-     * @param entityName
-     * @param user
-     * @param condition
-     * @param jdbcCondition
-     * @return
      */
     public static JdbcCondition selectCondition(String entityName, JiUserBase user, DCondition condition,
                                                 JdbcCondition jdbcCondition) {
@@ -81,11 +78,6 @@ public abstract class AccessServiceUtils {
 
     /**
      * 编辑实体条件
-     *
-     * @param entityName
-     * @param user
-     * @param jdbcCondition
-     * @return
      */
     public static JdbcCondition updateCondition(String entityName, JiUserBase user, JdbcCondition jdbcCondition) {
         Class<?> entityClass = SessionFactoryUtils.getEntityClass(entityName);
@@ -107,11 +99,6 @@ public abstract class AccessServiceUtils {
 
     /**
      * 删除实体条件
-     *
-     * @param entityName
-     * @param user
-     * @param jdbcCondition
-     * @return
      */
     public static JdbcCondition deleteCondition(String entityName, JiUserBase user, JdbcCondition jdbcCondition) {
         Class<?> entityClass = SessionFactoryUtils.getEntityClass(entityName);
@@ -133,11 +120,6 @@ public abstract class AccessServiceUtils {
 
     /**
      * 建议实体条件
-     *
-     * @param entityName
-     * @param user
-     * @param jdbcCondition
-     * @return
      */
     public static JdbcCondition suggestCondition(String entityName, JiUserBase user, JdbcCondition jdbcCondition) {
         return suggestCondition(entityName, JbSuggest.class, user, jdbcCondition);
@@ -154,7 +136,13 @@ public abstract class AccessServiceUtils {
             jdbcCondition = new JdbcCondition();
         }
 
-        AssocServiceUtils.assocConditions(permissionClass, entityName, user, JePermission.INSERT, jdbcCondition);
+        if (JiOpen.class.isAssignableFrom(entityClass)) {
+            List<Object> conditions = jdbcCondition.getConditions();
+            conditions.add("o.open");
+            conditions.add(Boolean.TRUE);
+        }
+
+        AssocServiceUtils.assocConditions(permissionClass, entityName, user, JePermission.SELECT, jdbcCondition);
         return jdbcCondition;
     }
 }

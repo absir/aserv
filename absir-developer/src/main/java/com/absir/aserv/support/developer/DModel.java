@@ -18,6 +18,10 @@ public class DModel implements Serializable {
 
     private boolean desc;
 
+    private String value;
+
+    private String queue;
+
     private String options;
 
     public boolean isFilter() {
@@ -34,6 +38,22 @@ public class DModel implements Serializable {
 
     public void setDesc(boolean desc) {
         this.desc = desc;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getQueue() {
+        return queue;
+    }
+
+    public void setQueue(String queue) {
+        this.queue = queue;
     }
 
     public String getOptions() {

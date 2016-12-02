@@ -42,7 +42,7 @@ public class PlatformService {
     private DSequence sessionSequence;
 
     public static String getPlatformUserRefId(String platform, String username) {
-        return platform + ',' + username;
+        return platform + '@' + username;
     }
 
     /**

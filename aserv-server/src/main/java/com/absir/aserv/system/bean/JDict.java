@@ -66,7 +66,7 @@ public class JDict extends JbBase implements JiOpenValue<String> {
         this.open = open;
     }
 
-    public String getValue() {
+    public String forValue() {
         return value;
     }
 

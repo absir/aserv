@@ -18,5 +18,9 @@ public @interface JaModel {
 
     boolean desc() default false;
 
+    String value() default "";
+
+    String queue() default "";
+
     String options() default "";
 }

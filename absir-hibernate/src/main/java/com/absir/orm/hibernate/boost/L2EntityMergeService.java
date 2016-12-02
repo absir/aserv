@@ -178,4 +178,13 @@ public class L2EntityMergeService
             }
         }
     }
+
+    public void reloadAll() {
+        for (Entry<String, UtilLinked<IEntityMerge>> entry : nameMapEntityMerges.entrySet()) {
+            String entityName = SessionFactoryUtils.getJpaEntityName(entry.getKey());
+            for (IEntityMerge entityMerge : entry.getValue().getList()) {
+                entityMerge.merge(entityName, null, MergeType.RELOAD, null);
+            }
+        }
+    }
 }

@@ -93,6 +93,11 @@ public class DActiver<T extends JiActive> implements IEntityMerge<T> {
 
     public void merge(T entity, MergeType mergeType, Object mergeEvent) {
         long contextTime = ContextUtils.getContextTime();
+        if (mergeType == MergeType.RELOAD) {
+            nextTime = contextTime + DELAY_NEXT_TIME;
+            return;
+        }
+
         if (mergeType == MergeType.DELETE) {
             if (entity.getBeginTime() < contextTime && entity.getPassTime() > contextTime) {
                 contextTime += DELAY_NEXT_TIME;

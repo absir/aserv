@@ -66,7 +66,7 @@ public class JChannelAnnouncement extends JbBase implements JiOpenValue<List<DAn
         this.open = open;
     }
 
-    public List<DAnnouncement> getValue() {
+    public List<DAnnouncement> forValue() {
         return value;
     }
 
