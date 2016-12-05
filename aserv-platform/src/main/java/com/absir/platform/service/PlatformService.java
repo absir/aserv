@@ -1,8 +1,10 @@
 package com.absir.platform.service;
 
+import com.absir.aserv.configure.JConfigureUtils;
 import com.absir.aserv.master.bean.JSlaveServer;
 import com.absir.aserv.system.bean.value.JiOrdinal;
 import com.absir.aserv.system.dao.BeanDao;
+import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.domain.DCacheOpen;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.async.value.Async;
@@ -14,12 +16,11 @@ import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelLang;
 import com.absir.orm.transaction.value.Transaction;
-import com.absir.platform.bean.JAnnouncement;
-import com.absir.platform.bean.JServer;
-import com.absir.platform.bean.JSetting;
+import com.absir.platform.bean.*;
 import com.absir.platform.bean.base.JbPlatform;
 import com.absir.platform.dto.DServer;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.*;
 
@@ -31,6 +32,8 @@ import java.util.*;
 public class PlatformService {
 
     public static final PlatformService ME = BeanFactoryUtils.get(PlatformService.class);
+
+    public static final JPlatformConfigure CONFIGURE = JConfigureUtils.getConfigure(JPlatformConfigure.class);
 
     protected DCacheOpen<Long, JSetting> settingDCacheOpen;
 
@@ -65,6 +68,46 @@ public class PlatformService {
         protected DServer dServer;
     }
 
+    @Transaction(readOnly = true)
+    public JPlatformFrom getPlatformFrom(String platform, String channel, String packageName, int versionCode, String from, boolean persist) {
+        String refId = platform + "@" + channel + "@" + packageName + "@" + versionCode + "@" + from;
+        Session session = BeanDao.getSession();
+        JPlatformFromRef ref = BeanDao.get(session, JPlatformFromRef.class, refId);
+        if (ref == null) {
+            JPlatformFrom platformFrom = new JPlatformFrom();
+            platformFrom.setPlatform(platform);
+            platformFrom.setChannel(channel);
+            platformFrom.setPackageName(packageName);
+            platformFrom.setVersionCode(versionCode);
+            platformFrom.setFormInfo(from);
+            if (!persist) {
+                return platformFrom;
+            }
+
+            try {
+                session.persist(platform);
+                session.flush();
+                ref = new JPlatformFromRef();
+                ref.setId(refId);
+                ref.setPlatformFrom(platformFrom);
+                session.merge(platform);
+
+            } catch (ConstraintViolationException e) {
+                session.clear();
+                ref = BeanDao.get(session, JPlatformFromRef.class, refId);
+                if (ref == null) {
+                    platformFrom = (JPlatformFrom) QueryDaoUtils.createQueryArray(session, "SELECT o FROM JPlatformFROM o WHERE o.platform = ? AND o.channel = ? AND o.packageName = ? AND o.versionCode = ? AND o.fromInfo = ?", platform, channel, packageName, versionCode, from).iterate().next();
+                    ref = new JPlatformFromRef();
+                    ref.setId(refId);
+                    ref.setPlatformFrom(platformFrom);
+                    session.merge(platform);
+                }
+            }
+        }
+
+        return ref.getPlatformFrom();
+    }
+
     @Inject
     protected void initService() {
         settingDCacheOpen = new DCacheOpen<Long, JSetting>(JSetting.class, null);
@@ -86,14 +129,12 @@ public class PlatformService {
                 ME.reloadSettings();
             }
         };
-
         announcementDCacheOpen.reloadListener = new Runnable() {
             @Override
             public void run() {
                 ME.reloadAnnouncements();
             }
         };
-
         serverDCacheOpen.reloadListener = new Runnable() {
             @Override
             public void run() {
@@ -189,48 +230,58 @@ public class PlatformService {
 
     }
 
-    public boolean isMatchPlatform(JbPlatform jbPlatform, String platform, String channel, int versionCode, String from) {
-        if (!jbPlatform.isOpen()) {
+    public static boolean isExcludeIds(Set<String> excludeIds, boolean allIds, Set<String> ids, String id) {
+        if (ids != null) {
+            if (excludeIds != null && !excludeIds.isEmpty() && excludeIds.contains(id)) {
+                return true;
+            }
+
+            if (!allIds) {
+                if (ids == null || ids.isEmpty() || !ids.contains(id)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isMatchPlatform(JbPlatform platform, JPlatformFrom platformFrom) {
+        if (!platform.isOpen()) {
             return false;
         }
 
-        Set<String> ids = jbPlatform.getExcludePlatformIds();
-        if (ids != null || ids.contains(platform)) {
+        if (isExcludeIds(platform.getExcludePlatforms(), platform.isAllPlatforms(), platform.getPlatforms(), platformFrom.getPlatform())) {
             return false;
         }
 
-        if (!jbPlatform.isAllPlatformIds()) {
-            ids = jbPlatform.getPlatformIds();
-            if (ids == null || !ids.contains(platform)) {
+        if (isExcludeIds(platform.getExcludeChannels(), platform.isAllChannels(), platform.getChannels(), platformFrom.getChannel())) {
+            return false;
+        }
+
+        if (isExcludeIds(platform.getExcludePackageNames(), platform.isAllPackageNames(), platform.getPackageNames(), platformFrom.getPackageName())) {
+            return false;
+        }
+
+        int versionCode = platformFrom.getVersionCode();
+        if (versionCode > 0) {
+            int code = platform.getMinVersionCode();
+            if (code != 0 && versionCode < code) {
+                return false;
+            }
+
+            code = platform.getMaxVersionCode();
+            if (code != 0 && versionCode > code) {
                 return false;
             }
         }
 
-        ids = jbPlatform.getExcludeChannelIds();
-        if (ids != null || ids.contains(channel)) {
-            return false;
-        }
-
-        if (!jbPlatform.isAllChannelIds()) {
-            ids = jbPlatform.getChannelIds();
-            if (ids == null || !ids.contains(channel)) {
+        String from = platformFrom.getFormInfo();
+        if (from != null) {
+            Map.Entry<String, KernelLang.IMatcherType> entry = platform.forMatchFromEntry();
+            if (entry != null && !KernelLang.MatcherType.isMatch(from, entry)) {
                 return false;
             }
-        }
-
-        int code = jbPlatform.getMinVersionCode();
-        if (code != 0 && versionCode < code) {
-            return false;
-        }
-
-        code = jbPlatform.getMaxVersionCode();
-        if (code != 0 && versionCode > code) {
-            return false;
-        }
-
-        Map.Entry<String, KernelLang.IMatcherType> entry = jbPlatform.forMatchFromEntry();
-        if (entry != null && !KernelLang.MatcherType.isMatch(from, entry)) {
-            return false;
         }
 
         return true;

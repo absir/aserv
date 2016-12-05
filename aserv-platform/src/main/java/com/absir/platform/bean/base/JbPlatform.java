@@ -23,30 +23,47 @@ public abstract class JbPlatform implements JiOpen, JiOrdinal {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String mark;
 
+    @JaLang("审核")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private boolean review;
+
     @JaName("JPlatform")
     @JaLang("平台")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonSet")
-    private Set<String> platformIds;
+    private Set<String> platforms;
 
-    private boolean allPlatformIds;
+    private boolean allPlatforms;
 
     @JaName("JPlatform")
     @JaLang("排除平台")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonSet")
-    private Set<String> excludePlatformIds;
+    private Set<String> excludePlatforms;
 
     @JaName("JChannel")
     @JaLang("渠道")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonSet")
-    private Set<String> channelIds;
+    private Set<String> channels;
 
     @JaLang("全渠道")
-    private boolean allChannelIds;
+    private boolean allChannels;
 
     @JaName("JChannel")
     @JaLang("排除渠道")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonSet")
-    private Set<String> excludeChannelIds;
+    private Set<String> excludeChannels;
+
+    @JaName("JPackageName")
+    @JaLang("渠道")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonSet")
+    private Set<String> packageNames;
+
+    @JaLang("全渠道")
+    private boolean allPackageNames;
+
+    @JaName("JPackageName")
+    @JaLang("排除渠道")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonSet")
+    private Set<String> excludePackageNames;
 
     @JaLang("最小版本号")
     private int minVersionCode;
@@ -78,52 +95,84 @@ public abstract class JbPlatform implements JiOpen, JiOrdinal {
         this.mark = mark;
     }
 
-    public Set<String> getPlatformIds() {
-        return platformIds;
+    public boolean isReview() {
+        return review;
     }
 
-    public void setPlatformIds(Set<String> platformIds) {
-        this.platformIds = platformIds;
+    public void setReview(boolean review) {
+        this.review = review;
     }
 
-    public boolean isAllPlatformIds() {
-        return allPlatformIds;
+    public Set<String> getPlatforms() {
+        return platforms;
     }
 
-    public void setAllPlatformIds(boolean allPlatformIds) {
-        this.allPlatformIds = allPlatformIds;
+    public void setPlatforms(Set<String> platforms) {
+        this.platforms = platforms;
     }
 
-    public Set<String> getExcludePlatformIds() {
-        return excludePlatformIds;
+    public boolean isAllPlatforms() {
+        return allPlatforms;
     }
 
-    public void setExcludePlatformIds(Set<String> excludePlatformIds) {
-        this.excludePlatformIds = excludePlatformIds;
+    public void setAllPlatforms(boolean allPlatforms) {
+        this.allPlatforms = allPlatforms;
     }
 
-    public Set<String> getChannelIds() {
-        return channelIds;
+    public Set<String> getExcludePlatforms() {
+        return excludePlatforms;
     }
 
-    public void setChannelIds(Set<String> channelIds) {
-        this.channelIds = channelIds;
+    public void setExcludePlatforms(Set<String> excludePlatforms) {
+        this.excludePlatforms = excludePlatforms;
     }
 
-    public boolean isAllChannelIds() {
-        return allChannelIds;
+    public Set<String> getChannels() {
+        return channels;
     }
 
-    public void setAllChannelIds(boolean allChannelIds) {
-        this.allChannelIds = allChannelIds;
+    public void setChannels(Set<String> channels) {
+        this.channels = channels;
     }
 
-    public Set<String> getExcludeChannelIds() {
-        return excludeChannelIds;
+    public boolean isAllChannels() {
+        return allChannels;
     }
 
-    public void setExcludeChannelIds(Set<String> excludeChannelIds) {
-        this.excludeChannelIds = excludeChannelIds;
+    public void setAllChannels(boolean allChannels) {
+        this.allChannels = allChannels;
+    }
+
+    public Set<String> getExcludeChannels() {
+        return excludeChannels;
+    }
+
+    public void setExcludeChannels(Set<String> excludeChannels) {
+        this.excludeChannels = excludeChannels;
+    }
+
+    public Set<String> getPackageNames() {
+        return packageNames;
+    }
+
+    public void setPackageNames(Set<String> packageNames) {
+        this.packageNames = packageNames;
+    }
+
+    public boolean isAllPackageNames() {
+        return allPackageNames;
+    }
+
+    public void setAllPackageNames(boolean allPackageNames) {
+        this.allPackageNames = allPackageNames;
+    }
+
+    public Set<String> getExcludePackageNames() {
+        return excludePackageNames;
+    }
+
+    public void setExcludePackageNames(Set<String> excludePackageNames) {
+        this.excludePackageNames = excludePackageNames;
     }
 
     public int getMinVersionCode() {
@@ -150,6 +199,14 @@ public abstract class JbPlatform implements JiOpen, JiOrdinal {
         this.matchFrom = matchFrom;
     }
 
+    public int getOrdinal() {
+        return ordinal;
+    }
+
+    public void setOrdinal(int ordinal) {
+        this.ordinal = ordinal;
+    }
+
     public Map.Entry<String, KernelLang.IMatcherType> forMatchFromEntry() {
         if (matchFromEntry == null && matchFrom != null) {
             if (KernelString.isEmpty(matchFrom)) {
@@ -161,13 +218,5 @@ public abstract class JbPlatform implements JiOpen, JiOrdinal {
         }
 
         return matchFromEntry;
-    }
-
-    public int getOrdinal() {
-        return ordinal;
-    }
-
-    public void setOrdinal(int ordinal) {
-        this.ordinal = ordinal;
     }
 }
