@@ -45,10 +45,13 @@ public class JServer extends JbPlatform {
         private String name;
 
         @JaLang("服务地址")
-        private String sAddr;
+        private String serverAddress;
+
+        @JaLang("端口")
+        private int port;
 
         @JaLang("下载地址")
-        private String dAddr;
+        private String downloadAddress;
 
         public long getId() {
             return id;
@@ -66,22 +69,29 @@ public class JServer extends JbPlatform {
             this.name = name;
         }
 
-        public String getsAddr() {
-            return sAddr;
+        public String getServerAddress() {
+            return serverAddress;
         }
 
-        public void setsAddr(String sAddr) {
-            this.sAddr = sAddr;
+        public void setServerAddress(String serverAddress) {
+            this.serverAddress = serverAddress;
         }
 
-        public String getdAddr() {
-            return dAddr;
+        public int getPort() {
+            return port;
         }
 
-        public void setdAddr(String dAddr) {
-            this.dAddr = dAddr;
+        public void setPort(int port) {
+            this.port = port;
         }
 
+        public String getDownloadAddress() {
+            return downloadAddress;
+        }
+
+        public void setDownloadAddress(String downloadAddress) {
+            this.downloadAddress = downloadAddress;
+        }
     }
 
     public Long getId() {

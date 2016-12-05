@@ -98,4 +98,5 @@ public class JSetting extends JbPlatform {
     public void setSettingEntry(SettingEntry settingEntry) {
         this.settingEntry = settingEntry;
     }
+
 }

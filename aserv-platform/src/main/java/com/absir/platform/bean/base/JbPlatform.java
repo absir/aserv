@@ -1,9 +1,6 @@
 package com.absir.platform.bean.base;
 
-import com.absir.aserv.system.bean.value.JaEdit;
-import com.absir.aserv.system.bean.value.JaLang;
-import com.absir.aserv.system.bean.value.JaName;
-import com.absir.aserv.system.bean.value.JiOpen;
+import com.absir.aserv.system.bean.value.*;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
 import org.hibernate.annotations.Type;
@@ -16,7 +13,7 @@ import java.util.Set;
  * Created by absir on 2016/12/2.
  */
 @MappedSuperclass
-public abstract class JbPlatform implements JiOpen {
+public abstract class JbPlatform implements JiOpen, JiOrdinal {
 
     @JaLang("开启")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -59,6 +56,9 @@ public abstract class JbPlatform implements JiOpen {
 
     @JaLang("匹配来源")
     private String matchFrom;
+
+    @JaLang("排序")
+    private int ordinal;
 
     private transient Map.Entry<String, KernelLang.IMatcherType> matchFromEntry;
 
@@ -161,5 +161,13 @@ public abstract class JbPlatform implements JiOpen {
         }
 
         return matchFromEntry;
+    }
+
+    public int getOrdinal() {
+        return ordinal;
+    }
+
+    public void setOrdinal(int ordinal) {
+        this.ordinal = ordinal;
     }
 }

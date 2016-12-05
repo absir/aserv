@@ -39,6 +39,8 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
 
     protected Map<Serializable, V> cacheMapBuffer;
 
+    public Runnable reloadListener;
+
     public DCache(String entityName) {
         this(null, null);
     }
@@ -57,7 +59,7 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
         return new HashMap<Serializable, V>();
     }
 
-    protected Map<Serializable, V> getCacheMap() {
+    public Map<Serializable, V> getCacheMap() {
         return cacheMap;
     }
 
@@ -93,6 +95,9 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
 
         cacheMap = cacheMapBuffer;
         cacheMapBuffer = null;
+        if (reloadListener != null) {
+            reloadListener.run();
+        }
     }
 
     protected void reloadCacheTransaction() {
@@ -135,6 +140,10 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
                     cacheMapBuffer.put(id, v);
                 }
             }
+        }
+
+        if (reloadListener != null) {
+            reloadListener.run();
         }
     }
 

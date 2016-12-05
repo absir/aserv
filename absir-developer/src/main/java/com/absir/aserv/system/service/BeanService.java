@@ -8,6 +8,7 @@
 package com.absir.aserv.system.service;
 
 import com.absir.aserv.jdbc.JdbcPage;
+import com.absir.aserv.system.bean.value.JiOrdinal;
 import com.absir.aserv.system.service.impl.BeanServiceBase;
 import com.absir.aserv.system.service.impl.BeanServiceImpl;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -23,6 +24,7 @@ import org.hibernate.SessionFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +39,14 @@ public interface BeanService {
 
     public static final TransactionAttribute TRANSACTION_READ_WRITE = new TransactionAttribute(false,
             new Class[]{Throwable.class}, false, true, 0);
+
+    public static final Comparator<JiOrdinal> COMPARATOR = new Comparator<JiOrdinal>() {
+
+        @Override
+        public int compare(JiOrdinal lhs, JiOrdinal rhs) {
+            return lhs.getOrdinal() - rhs.getOrdinal();
+        }
+    };
 
     @Transaction(readOnly = true)
     public <T> T get(Class<T> entityClass, Serializable id);

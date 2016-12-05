@@ -70,7 +70,7 @@ public class EntityService {
     protected void inject() {
         dictCache = new DCacheOpenValue<String, JDict>(JDict.class, null);
         dictCache.addEntityMerges();
-        ME.reloadEntity();
+        ME.reloadCaches();
     }
 
     /**
@@ -78,7 +78,7 @@ public class EntityService {
      */
     @Schedule(cron = "0 0 30 * * * *")
     @Transaction(readOnly = true)
-    protected void reloadEntity() {
+    protected void reloadCaches() {
         Session session = BeanDao.getSession();
         dictCache.reloadCache(session);
     }

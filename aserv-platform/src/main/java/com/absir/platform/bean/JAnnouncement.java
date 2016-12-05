@@ -8,6 +8,7 @@ import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JaName;
 import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.platform.bean.base.JbPlatform;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
@@ -46,6 +47,7 @@ public class JAnnouncement extends JbPlatform {
         @JaCrud(factory = UploadCrudFactory.class, parameters = {"jpg,png,zip"})
         private String attach;
 
+        @JsonIgnore
         @JaLang("排序")
         private int ordinal;
 
@@ -73,6 +75,7 @@ public class JAnnouncement extends JbPlatform {
             this.attach = attach;
         }
 
+        @JsonIgnore
         public int getOrdinal() {
             return ordinal;
         }
