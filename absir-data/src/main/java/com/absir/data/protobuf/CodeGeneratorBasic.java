@@ -54,8 +54,7 @@ public class CodeGeneratorBasic extends CodeGenerator {
             field.setAccessible(true);
             Object defaultValue = KernelReflect.get(getInstance(cls), field);
             if (defaultValue != null && defaultValue instanceof Number) {
-                String replace = access + " == " + defaultValue + " ? null : " + access;
-                codedConstant_isNull_field_replaces.put("CodedConstant.isNull(" + access + ")", "CodedConstant.isNull(" + replace + ")");
+                codedConstant_isNull_field_replaces.put("!CodedConstant.isNull(" + access + ")", access + " != " + defaultValue);
             }
         }
 
