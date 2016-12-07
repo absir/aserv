@@ -1,0 +1,21 @@
+package G2.Protocol;
+
+//option optimize_for = LITE_RUNTIME;
+
+message PlatformFrom {
+
+    optional int64 id = 1;
+
+    optional int64 id2 = 2;
+
+}
+
+
+service SearchService {
+
+    rpc Search (PlatformFrom) returns (PlatformFrom);
+
+}
+
+//option cc_generic_services = true;
+//option java_generic_sevices = true;

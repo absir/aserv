@@ -15,12 +15,15 @@ public class DServer extends JServer.ServerEntry {
     public String name;
 
     @JaLang("服务地址")
-    public String serverAddress;
+    public String sAddress;
 
     @JaLang("端口")
     public int port;
 
     @JaLang("下载地址")
-    public String downloadAddress;
+    public String dAddress;
+
+    @JaLang("权重")
+    public int weight;
 
 }

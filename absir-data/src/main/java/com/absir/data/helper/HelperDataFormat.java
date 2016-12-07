@@ -8,6 +8,7 @@
 package com.absir.data.helper;
 
 import com.absir.core.helper.HelperIO;
+import com.absir.core.kernel.KernelLang;
 import com.absir.data.format.DataFormat;
 import com.absir.data.json.DataDeserializationContext;
 import com.absir.data.json.DataDeserializationContext.JsonDeserializerResolver;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
+import java.util.Collection;
 
 @SuppressWarnings("unchecked")
 public class HelperDataFormat {
@@ -175,6 +177,20 @@ public class HelperDataFormat {
         protected Object[] formatReadArray(byte[] bytes, int off, int len, Type... toTypes) throws IOException {
             return readArray(factory.createParser(bytes, off, len), null, toTypes);
         }
+
+        public <T> void writeGetTemplates(OutputStream outputStream, Collection<T> templates, KernelLang.GetTemplate<T, Object> getTemplate) throws IOException {
+            JsonGenerator generator = factory.createGenerator(outputStream);
+            generator.writeStartArray();
+            for (T template : templates) {
+                Object o = getTemplate.getWith(template);
+                if (o != null) {
+                    mapper.writeValue(generator, o);
+                }
+            }
+
+            generator.writeEndArray();
+        }
+
     }
 
 }

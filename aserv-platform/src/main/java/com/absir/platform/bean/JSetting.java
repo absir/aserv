@@ -30,6 +30,10 @@ public class JSetting extends JbPlatform {
         @JaLang("认证")
         private boolean auth;
 
+        @JaLang("消息")
+        @JaEdit(types = "text")
+        private String message;
+
         @JaLang("强制更新")
         private boolean force;
 
@@ -48,6 +52,14 @@ public class JSetting extends JbPlatform {
 
         public void setAuth(boolean auth) {
             this.auth = auth;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
         }
 
         public boolean isForce() {

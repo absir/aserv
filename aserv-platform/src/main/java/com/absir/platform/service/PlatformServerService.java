@@ -14,14 +14,21 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
+import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelLang;
+import com.absir.data.helper.HelperDataFormat;
+import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.platform.bean.*;
 import com.absir.platform.bean.base.JbPlatform;
+import com.absir.platform.dto.DReviewSetting;
 import com.absir.platform.dto.DServer;
+import com.absir.server.in.Input;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -29,9 +36,9 @@ import java.util.*;
  */
 @Base
 @Bean
-public class PlatformService {
+public class PlatformServerService implements IEntityMerge<JSlaveServer> {
 
-    public static final PlatformService ME = BeanFactoryUtils.get(PlatformService.class);
+    public static final PlatformServerService ME = BeanFactoryUtils.get(PlatformServerService.class);
 
     public static final JPlatformConfigure CONFIGURE = JConfigureUtils.getConfigure(JPlatformConfigure.class);
 
@@ -47,7 +54,7 @@ public class PlatformService {
 
     protected List<PlatformServer> serverEntries;
 
-    public static class PlatformAnnouncement implements JiOrdinal {
+    public static class PlatformAnnouncement implements JiOrdinal, IPlatformGet {
 
         protected JAnnouncement.AnnouncementEntry entry;
 
@@ -57,15 +64,61 @@ public class PlatformService {
         public int getOrdinal() {
             return entry.getOrdinal();
         }
+
+        @Override
+        public JbPlatform getPlatform() {
+            return announcement;
+        }
+
+        @Override
+        public Object getEntry() {
+            return entry;
+        }
     }
 
-    public static class PlatformServer {
+    public static class PlatformServer implements IPlatformGet {
 
         protected JServer server;
 
         protected JServer.ServerEntry entry;
 
         protected DServer dServer;
+
+        @Override
+        public JbPlatform getPlatform() {
+            return server;
+        }
+
+        @Override
+        public Object getEntry() {
+            return dServer;
+        }
+    }
+
+    public List<JSetting> getSettingEntries() {
+        return settingEntries;
+    }
+
+    public List<PlatformAnnouncement> getAnnouncementEntries() {
+        return announcementEntries;
+    }
+
+    public List<PlatformServer> getServerEntries() {
+        return serverEntries;
+    }
+
+    public JPlatformFrom getPlatformFrom(Input input) {
+        long fromId = KernelDyna.to(input.getParam("fromId"), long.class);
+        JPlatformFrom platformFrom = null;
+        if (fromId != 0) {
+            platformFrom = BeanService.ME.get(JPlatformFrom.class, fromId);
+        }
+
+        if (platformFrom == null) {
+            platformFrom = getPlatformFrom(input.getParam("platform"), input.getParam("channel"), input.getParam("packageName"), KernelDyna.to(input.getParam("versionCode"), int.class), input.getParam("from"), true);
+        }
+
+        return platformFrom;
     }
 
     @Transaction(readOnly = true)
@@ -202,13 +255,16 @@ public class PlatformService {
                 JServer.ServerEntry[] serverEntries = server.getServerList();
                 if (serverEntries != null) {
                     for (JServer.ServerEntry serverEntry : serverEntries) {
-                        PlatformServer platformServer = new PlatformServer();
-                        platformServer.server = server;
-                        platformServer.entry = serverEntry;
-                        DServer dServer = createDServer(serverEntry);
                         JSlaveServer slaveServer = BeanService.ME.get(JSlaveServer.class, serverEntry.getId());
-                        setDServer(dServer, serverEntry, slaveServer);
-                        entries.add(platformServer);
+                        if (slaveServer != null) {
+                            DServer dServer = createDServer(serverEntry);
+                            setDServer(dServer, serverEntry, slaveServer);
+                            PlatformServer platformServer = new PlatformServer();
+                            platformServer.server = server;
+                            platformServer.entry = serverEntry;
+                            platformServer.dServer = dServer;
+                            entries.add(platformServer);
+                        }
                     }
                 }
             }
@@ -223,11 +279,39 @@ public class PlatformService {
     protected DServer createDServer(JServer.ServerEntry entry) {
         DServer dServer = new DServer();
         dServer.id = entry.getId();
+        dServer.port = entry.getPort();
+        dServer.weight = entry.getWeight();
         return dServer;
     }
 
+    // 合并自定义配置和Server服务配置
     protected void setDServer(DServer dServer, JServer.ServerEntry entry, JSlaveServer slaveServer) {
+        dServer.name = entry.getName();
+        dServer.sAddress = entry.getsAddress();
+        dServer.dAddress = entry.getdAddress();
+    }
 
+    @Override
+    public void merge(String entityName, JSlaveServer entity, MergeType mergeType, Object mergeEvent) {
+        if (mergeType == MergeType.INSERT) {
+            return;
+        }
+
+        if (entity != null) {
+            long serverId = entity.getId();
+            for (PlatformServer platformServer : serverEntries) {
+                if (platformServer.dServer.id == serverId) {
+                    if (mergeType == MergeType.DELETE) {
+                        break;
+
+                    } else {
+                        setDServer(platformServer.dServer, platformServer.entry, entity);
+                    }
+                }
+            }
+        }
+
+        ME.reloadServers();
     }
 
     public static boolean isExcludeIds(Set<String> excludeIds, boolean allIds, Set<String> ids, String id) {
@@ -246,8 +330,12 @@ public class PlatformService {
         return false;
     }
 
-    public boolean isMatchPlatform(JbPlatform platform, JPlatformFrom platformFrom) {
+    public boolean isMatchPlatform(JbPlatform platform, boolean review, JPlatformFrom platformFrom) {
         if (!platform.isOpen()) {
+            return false;
+        }
+
+        if (review != platform.isReview()) {
             return false;
         }
 
@@ -286,5 +374,46 @@ public class PlatformService {
 
         return true;
     }
+
+    public DReviewSetting reviewSetting(Input input) {
+        JPlatformFrom platformFrom = getPlatformFrom(input);
+        DReviewSetting reviewSetting = new DReviewSetting();
+        reviewSetting.fromId = platformFrom.getId();
+        boolean review = CONFIGURE.isReview(platformFrom.getPackageName(), platformFrom.getVersionCode());
+        for (JSetting setting : settingEntries) {
+            if (isMatchPlatform(setting, review, platformFrom)) {
+                reviewSetting.setting = setting;
+                break;
+            }
+        }
+
+        return reviewSetting;
+    }
+
+    protected interface IPlatformGet {
+
+        public JbPlatform getPlatform();
+
+        public Object getEntry();
+    }
+
+    public <T extends IPlatformGet> void listResponse(Collection<T> list, final boolean review, Input input) throws IOException {
+        OutputStream outputStream = input.getOutputStream();
+        if (outputStream != null) {
+            final JPlatformFrom platformFrom = getPlatformFrom(input);
+            HelperDataFormat.JSON.writeGetTemplates(outputStream, list, new KernelLang.GetTemplate<T, Object>() {
+
+                @Override
+                public Object getWith(T template) {
+                    if (isMatchPlatform(template.getPlatform(), review, platformFrom)) {
+                        return template.getEntry();
+                    }
+
+                    return null;
+                }
+            });
+        }
+    }
+
 
 }

@@ -19,7 +19,7 @@ import com.absir.open.bean.JPayTrade;
 import com.absir.open.bean.value.JePayStatus;
 import com.absir.open.service.PayUtils;
 import com.absir.platform.bean.JPlatformSession;
-import com.absir.platform.service.PlatformService;
+import com.absir.platform.service.PlatformUserService;
 import com.absir.server.in.Input;
 import com.absir.server.value.Body;
 import com.absir.server.value.Nullable;
@@ -73,7 +73,7 @@ public class api_open extends ApiServer {
             uuid = UUID.randomUUID().toString();
         }
 
-        JPlatformSession session = PlatformService.ME.loginReSession("OKL", uuid, channel, input.getAddress(), input.getFacade().getUserAgent());
+        JPlatformSession session = PlatformUserService.ME.loginReSession("OKL", uuid, channel, input.getAddress(), input.getFacade().getUserAgent());
         return new String[]{uuid, session.getId()};
     }
 

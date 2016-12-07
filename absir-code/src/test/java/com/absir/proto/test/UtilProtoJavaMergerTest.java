@@ -7,27 +7,33 @@
  */
 package com.absir.proto.test;
 
-import com.absir.code.ProtoJavaMerger;
-import com.absir.core.helper.HelperFileName;
+import com.absir.data.protobuf.ProtobufProxyBasic;
+import com.absir.proto.PPlatformFrom;
+import com.baidu.bjf.remoting.protobuf.Codec;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.util.Arrays;
 
 @RunWith(value = JUnit4.class)
 public class UtilProtoJavaMergerTest {
 
     @Test
     public void test() throws Exception {
-        ProtoJavaMerger javaMerger = new ProtoJavaMerger();
+        Codec<PPlatformFrom> codec = ProtobufProxyBasic.create(PPlatformFrom.class, true);
+        PPlatformFrom from = new PPlatformFrom();
+//        byte[] bytes = codec.encode(from);
+        System.out.println(Arrays.toString(codec.encode(from)));
 
-        javaMerger.toString();
+        from.setId2(3333L);
 
-        String classPath = HelperFileName.getClassPath(getClass());
-        System.out.println(classPath);
-        // javaMerger.mergeBaseDir(new File(classPath + "/G2"), new
-        // File(classPath + "/G3"));
+        System.out.println(Arrays.toString(codec.encode(from)));
 
-        //javaMerger.mergeBaseDir(new File("C:\\Users\\absir\\Desktop\\G2"), new File("C:\\Users\\absir\\Desktop\\G3"));
+        from.setId(1);
+
+
+        System.out.println(Arrays.toString(codec.encode(from)));
     }
 
 }

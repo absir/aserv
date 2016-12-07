@@ -45,13 +45,16 @@ public class JServer extends JbPlatform {
         private String name;
 
         @JaLang("服务地址")
-        private String serverAddress;
+        private String sAddress;
 
         @JaLang("端口")
         private int port;
 
         @JaLang("下载地址")
-        private String downloadAddress;
+        private String dAddress;
+
+        @JaLang("权重")
+        private int weight;
 
         public long getId() {
             return id;
@@ -69,12 +72,12 @@ public class JServer extends JbPlatform {
             this.name = name;
         }
 
-        public String getServerAddress() {
-            return serverAddress;
+        public String getsAddress() {
+            return sAddress;
         }
 
-        public void setServerAddress(String serverAddress) {
-            this.serverAddress = serverAddress;
+        public void setsAddress(String sAddress) {
+            this.sAddress = sAddress;
         }
 
         public int getPort() {
@@ -85,13 +88,22 @@ public class JServer extends JbPlatform {
             this.port = port;
         }
 
-        public String getDownloadAddress() {
-            return downloadAddress;
+        public String getdAddress() {
+            return dAddress;
         }
 
-        public void setDownloadAddress(String downloadAddress) {
-            this.downloadAddress = downloadAddress;
+        public void setdAddress(String dAddress) {
+            this.dAddress = dAddress;
         }
+
+        public int getWeight() {
+            return weight;
+        }
+
+        public void setWeight(int weight) {
+            this.weight = weight;
+        }
+
     }
 
     public Long getId() {

@@ -22,4 +22,25 @@ public class JPlatformConfigure extends JConfigureBase {
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonMap")
     private Map<String, String> mappingMap;
 
+    public Map<String, Boolean> getReviewMap() {
+        return reviewMap;
+    }
+
+    public void setReviewMap(Map<String, Boolean> reviewMap) {
+        this.reviewMap = reviewMap;
+    }
+
+    public Map<String, String> getMappingMap() {
+        return mappingMap;
+    }
+
+    public void setMappingMap(Map<String, String> mappingMap) {
+        this.mappingMap = mappingMap;
+    }
+
+    public boolean isReview(String packageName, int versionCode) {
+        return reviewMap == null || reviewMap.isEmpty() ? false : reviewMap.containsKey(packageName + '@' + versionCode);
+    }
+
+
 }

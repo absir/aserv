@@ -22,7 +22,7 @@ import com.absir.core.kernel.KernelLang.CallbackTemplate;
 import com.absir.core.util.UtilAbsir;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.platform.bean.JPlatformUser;
-import com.absir.platform.service.PlatformService;
+import com.absir.platform.service.PlatformUserService;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +81,7 @@ public abstract class PlayerService {
      * 获取用户角色ID
      */
     public Long getPlayerId(Long serverId, JiUserBase userBase) {
-        JPlatformUser platformUser = PlatformService.getPlatformUser(userBase, null);
+        JPlatformUser platformUser = PlatformUserService.getPlatformUser(userBase, null);
         if (platformUser == null) {
             return null;
         }
@@ -207,7 +207,7 @@ public abstract class PlayerService {
      */
     @Transaction(readOnly = true)
     public List<JbPlayer> players(Long serverId, JiUserBase userBase) {
-        JPlatformUser platformUser = PlatformService.getPlatformUser(userBase, null);
+        JPlatformUser platformUser = PlatformUserService.getPlatformUser(userBase, null);
         boolean userDirty = false;
         Session session = BeanDao.getSession();
         if (serverId == null) {
@@ -249,7 +249,7 @@ public abstract class PlayerService {
      */
     @Transaction(rollback = Exception.class)
     public JbPlayer createPlayer(Long serverId, JiUserBase userBase, String name) {
-        JPlatformUser platformUser = PlatformService.getPlatformUser(userBase, null);
+        JPlatformUser platformUser = PlatformUserService.getPlatformUser(userBase, null);
         if (serverId == null) {
             serverId = platformUser.getServerId();
 

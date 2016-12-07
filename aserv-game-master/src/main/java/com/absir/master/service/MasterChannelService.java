@@ -35,7 +35,7 @@ import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.hibernate.boost.L2EntityMergeService;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.platform.bean.JPlatformUser;
-import com.absir.platform.service.PlatformService;
+import com.absir.platform.service.PlatformUserService;
 import org.hibernate.Session;
 
 import java.util.*;
@@ -213,7 +213,7 @@ public abstract class MasterChannelService {
      * @return > 0 success | -1 login failed | -2 can't login
      */
     public long selectServerId(long serverId, String sessionId, String channel) {
-        JPlatformUser platformUser = PlatformService.ME.loginForSessionId(sessionId);
+        JPlatformUser platformUser = PlatformUserService.ME.loginForSessionId(sessionId);
         if (platformUser == null) {
             return -1;
         }

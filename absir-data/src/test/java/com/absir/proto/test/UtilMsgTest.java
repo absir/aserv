@@ -20,6 +20,7 @@ import org.junit.runners.JUnit4;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 @RunWith(value = JUnit4.class)
 public class UtilMsgTest {
@@ -53,9 +54,27 @@ public class UtilMsgTest {
         }
     }
 
+    public static class TestPP {
+
+        public int id;
+
+        public String name;
+
+    }
+
     @Test
     public void test() throws IOException {
-        byte[] bytes2 = HelperDataFormat.PACK.writeAsBytesArray(1, "123");
+        TestPP test = new TestPP();
+        test.id = 123;
+        test.name = "123";
+
+
+
+        byte[] bytes1 = HelperDataFormat.PACK.writeAsBytes(test);
+        System.out.println(Arrays.toString(bytes1));
+        System.out.println(HelperDataFormat.PACK.read(bytes1, String.class));
+        byte[] bytes2 = HelperDataFormat.PACK.writeAsBytesArray(128, "123");
+        System.out.println(Arrays.toString(bytes2));
         Object[] res = HelperDataFormat.PACK.readArray(bytes2, new Class<?>[]{long.class, String.class});
         System.out.println(HelperDataFormat.JSON.writeAsStringArray(res));
 

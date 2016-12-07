@@ -31,9 +31,9 @@ import java.util.Iterator;
 @SuppressWarnings("unchecked")
 @Base
 @Bean
-public class PlatformService {
+public class PlatformUserService {
 
-    public static final PlatformService ME = BeanFactoryUtils.get(PlatformService.class);
+    public static final PlatformUserService ME = BeanFactoryUtils.get(PlatformUserService.class);
 
     @Value("platform.lifeTime")
     private long lifeTime = 3600000 * 24;

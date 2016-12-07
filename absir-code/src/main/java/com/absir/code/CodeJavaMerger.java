@@ -157,7 +157,7 @@ public abstract class CodeJavaMerger {
             if (bodyDeclaration instanceof FieldDeclaration) {
                 FieldDeclaration fieldDeclaration = (FieldDeclaration) bodyDeclaration;
                 refactorType(fieldDeclaration.getType());
-                fromFieldMap.put(fieldDeclaration.getVariables().get(0).toString(), fieldDeclaration);
+                fromFieldMap.put(fieldDeclaration.getVariables().get(0).getId().toString(), fieldDeclaration);
 
             } else if (bodyDeclaration instanceof ConstructorDeclaration) {
                 ConstructorDeclaration constructorDeclaration = (ConstructorDeclaration) bodyDeclaration;

@@ -107,7 +107,7 @@ public class ProtoJavaMerger extends CodeJavaMerger {
 
                 } else if (body instanceof FieldDeclaration) {
                     FieldDeclaration toDeclaration = ((FieldDeclaration) body);
-                    String name = toDeclaration.getVariables().get(0).toString();
+                    String name = toDeclaration.getVariables().get(0).getId().toString();
                     FieldDeclaration fromDeclaration = fromFieldMap.get(name);
                     List<AnnotationExpr> toAnnotationExprs = new ArrayList<AnnotationExpr>();
                     if (toDeclaration.getAnnotations() != null) {
