@@ -7,9 +7,9 @@
  */
 package com.absir.data.json;
 
+import com.absir.data.protobuf.ProtobufProxyBasic;
 import com.absir.data.value.IProto;
 import com.baidu.bjf.remoting.protobuf.Codec;
-import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -30,7 +30,7 @@ public class ProtoJsonDeserializer<T extends IProto> extends JsonDeserializer<T>
         Object ob = jp.getEmbeddedObject();
         if (ob == null)
             return null;
-        Codec<T> codec = ProtobufProxy.create(sClass);
+        Codec<T> codec = ProtobufProxyBasic.create(sClass);
         return codec.decode((byte[]) ob);
     }
 
