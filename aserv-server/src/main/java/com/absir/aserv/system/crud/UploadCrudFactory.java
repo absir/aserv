@@ -40,6 +40,7 @@ import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAccessor.Accessor;
 import com.absir.core.util.UtilContext;
+import com.absir.core.util.UtilPipedStream;
 import com.absir.orm.value.JoEntity;
 import com.absir.property.PropertyErrors;
 import com.absir.server.exception.ServerException;
@@ -638,7 +639,17 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
                     res.addHeader("cache-control", cacheControl);
                     res.addHeader("last-modified", modified);
-                    HelperIO.copy(new FileInputStream(file), res.getOutputStream());
+                    InputStream inputStream = null;
+                    try {
+                        inputStream = new FileInputStream(file);
+                        HelperIO.copy(inputStream, res.getOutputStream());
+
+                    } finally {
+                        if (inputStream != null) {
+                            UtilPipedStream.closeCloseable(inputStream);
+                        }
+                    }
+
                     return true;
                 }
             }

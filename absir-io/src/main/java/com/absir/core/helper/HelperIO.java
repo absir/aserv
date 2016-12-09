@@ -36,6 +36,8 @@ public class HelperIO extends IOUtils {
             if (reader != null) {
                 reader.close();
             }
+
+            input.close();
         }
     }
 

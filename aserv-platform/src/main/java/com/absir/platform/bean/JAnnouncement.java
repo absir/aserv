@@ -23,16 +23,31 @@ import javax.persistence.Id;
 @Entity
 public class JAnnouncement extends JbPlatform {
 
+    @JaLang("公告列表")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @JaEdit(types = "subtable")
+    public JAnnouncement.AnnouncementEntry[] announcementList;
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("纪录编号")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JaLang("公告列表")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
-    @JaEdit(types = "subtable")
-    public JAnnouncement.AnnouncementEntry[] announcementList;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public AnnouncementEntry[] getAnnouncementList() {
+        return announcementList;
+    }
+
+    public void setAnnouncementList(AnnouncementEntry[] announcementList) {
+        this.announcementList = announcementList;
+    }
 
     public static class AnnouncementEntry {
 
@@ -83,21 +98,5 @@ public class JAnnouncement extends JbPlatform {
         public void setOrdinal(int ordinal) {
             this.ordinal = ordinal;
         }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public AnnouncementEntry[] getAnnouncementList() {
-        return announcementList;
-    }
-
-    public void setAnnouncementList(AnnouncementEntry[] announcementList) {
-        this.announcementList = announcementList;
     }
 }

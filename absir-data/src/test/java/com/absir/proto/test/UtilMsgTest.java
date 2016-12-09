@@ -54,20 +54,11 @@ public class UtilMsgTest {
         }
     }
 
-    public static class TestPP {
-
-        public int id;
-
-        public String name;
-
-    }
-
     @Test
     public void test() throws IOException {
         TestPP test = new TestPP();
         test.id = 123;
         test.name = "123";
-
 
 
         byte[] bytes1 = HelperDataFormat.PACK.writeAsBytes(test);
@@ -144,6 +135,14 @@ public class UtilMsgTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static class TestPP {
+
+        public int id;
+
+        public String name;
+
     }
 
     public static class TestA {

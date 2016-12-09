@@ -54,45 +54,20 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer> {
 
     protected List<PlatformServer> serverEntries;
 
-    public static class PlatformAnnouncement implements JiOrdinal, IPlatformGet {
+    public static boolean isExcludeIds(Set<String> excludeIds, boolean allIds, Set<String> ids, String id) {
+        if (ids != null) {
+            if (excludeIds != null && !excludeIds.isEmpty() && excludeIds.contains(id)) {
+                return true;
+            }
 
-        protected JAnnouncement.AnnouncementEntry entry;
-
-        protected JAnnouncement announcement;
-
-        @Override
-        public int getOrdinal() {
-            return entry.getOrdinal();
+            if (!allIds) {
+                if (ids == null || ids.isEmpty() || !ids.contains(id)) {
+                    return true;
+                }
+            }
         }
 
-        @Override
-        public JbPlatform getPlatform() {
-            return announcement;
-        }
-
-        @Override
-        public Object getEntry() {
-            return entry;
-        }
-    }
-
-    public static class PlatformServer implements IPlatformGet {
-
-        protected JServer server;
-
-        protected JServer.ServerEntry entry;
-
-        protected DServer dServer;
-
-        @Override
-        public JbPlatform getPlatform() {
-            return server;
-        }
-
-        @Override
-        public Object getEntry() {
-            return dServer;
-        }
+        return false;
     }
 
     public List<JSetting> getSettingEntries() {
@@ -199,7 +174,8 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer> {
     /**
      * 重载实体
      */
-    @Schedule(cron = "0 0 30 * * * *")
+    @Async(notifier = true)
+    @Schedule(cron = "0 30 0 * * *")
     @Transaction(readOnly = true)
     protected void reloadCaches() {
         Session session = BeanDao.getSession();
@@ -314,22 +290,6 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer> {
         ME.reloadServers();
     }
 
-    public static boolean isExcludeIds(Set<String> excludeIds, boolean allIds, Set<String> ids, String id) {
-        if (ids != null) {
-            if (excludeIds != null && !excludeIds.isEmpty() && excludeIds.contains(id)) {
-                return true;
-            }
-
-            if (!allIds) {
-                if (ids == null || ids.isEmpty() || !ids.contains(id)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     public boolean isMatchPlatform(JbPlatform platform, boolean review, JPlatformFrom platformFrom) {
         if (!platform.isOpen()) {
             return false;
@@ -390,13 +350,6 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer> {
         return reviewSetting;
     }
 
-    protected interface IPlatformGet {
-
-        public JbPlatform getPlatform();
-
-        public Object getEntry();
-    }
-
     public <T extends IPlatformGet> void listResponse(Collection<T> list, final boolean review, Input input) throws IOException {
         OutputStream outputStream = input.getOutputStream();
         if (outputStream != null) {
@@ -412,6 +365,54 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer> {
                     return null;
                 }
             });
+        }
+    }
+
+    protected interface IPlatformGet {
+
+        public JbPlatform getPlatform();
+
+        public Object getEntry();
+    }
+
+    public static class PlatformAnnouncement implements JiOrdinal, IPlatformGet {
+
+        protected JAnnouncement.AnnouncementEntry entry;
+
+        protected JAnnouncement announcement;
+
+        @Override
+        public int getOrdinal() {
+            return entry.getOrdinal();
+        }
+
+        @Override
+        public JbPlatform getPlatform() {
+            return announcement;
+        }
+
+        @Override
+        public Object getEntry() {
+            return entry;
+        }
+    }
+
+    public static class PlatformServer implements IPlatformGet {
+
+        protected JServer server;
+
+        protected JServer.ServerEntry entry;
+
+        protected DServer dServer;
+
+        @Override
+        public JbPlatform getPlatform() {
+            return server;
+        }
+
+        @Override
+        public Object getEntry() {
+            return dServer;
         }
     }
 

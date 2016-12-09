@@ -7,7 +7,6 @@
  */
 package com.absir.aserv.system.task;
 
-import com.absir.aserv.init.InitBeanFactory;
 import com.absir.aserv.system.bean.JUser;
 import com.absir.aserv.system.bean.JUserRole;
 import com.absir.aserv.system.bean.value.JeUserType;
@@ -16,7 +15,6 @@ import com.absir.aserv.system.dao.JUserDao;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Started;
-import com.absir.core.base.Environment;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.Session;
 
@@ -28,12 +26,12 @@ public class InitialTask {
     @Started
     @Transaction(rollback = Throwable.class)
     protected void started() {
-        if (Environment.isDevelop() || InitBeanFactory.ME.isRequireInit()) {
-            JUserRole userRole = insertUserRole(1L, "系统管理员");
-            insertUserRole(2L, "管理员");
-            insertUser("absir", "developer", userRole, true);
-            insertUser("admin", "admin888", userRole, false);
-        }
+//        if (Environment.isDevelop() || InitBeanFactory.ME.isRequireInit()) {
+//            JUserRole userRole = insertUserRole(1L, "系统管理员");
+//            insertUserRole(2L, "管理员");
+//            insertUser("absir", "developer", userRole, true);
+//            insertUser("admin", "admin888", userRole, false);
+//        }
     }
 
     private JUserRole insertUserRole(Long id, String rolename) {

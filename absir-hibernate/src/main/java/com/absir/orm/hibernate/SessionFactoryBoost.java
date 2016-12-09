@@ -35,8 +35,6 @@ import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.metamodel.spi.MetamodelImplementor;
-import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.type.BasicType;
 
 import java.lang.reflect.Field;
@@ -61,8 +59,9 @@ public class SessionFactoryBoost {
     private Object metadata;
 
     public static ClassMetadata getClassMetadata(SessionFactory sessionFactory, Class<?> entityClass) {
-        EntityPersister persister = ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersisters().get(entityClass.getName());
-        return persister == null || !(persister instanceof ClassMetadata) ? null : (ClassMetadata) persister;
+        return sessionFactory.getClassMetadata(entityClass);
+        //EntityPersister persister = ((MetamodelImplementor) sessionFactory.getMetamodel()).entityPersisters().get(entityClass.getName());
+        //return persister == null || !(persister instanceof ClassMetadata) ? null : (ClassMetadata) persister;
     }
 
     public BasicType[] getBasicTypes() {
@@ -166,20 +165,25 @@ public class SessionFactoryBoost {
     }
 
     protected void boost(SessionFactoryImpl sessionFactory) {
-        Map<String, EntityPersister> classMetadata = new HashMap<String, EntityPersister>();
-        for (Entry<String, EntityPersister> entry : sessionFactory.getMetamodel().entityPersisters().entrySet()) {
-            classMetadata.put(entry.getKey(), entry.getValue());
-            if (!(entry.getValue() instanceof ClassMetadata)) {
+        Map<String, Object> classMetadata = new HashMap<String, Object>();
+        Map<String, Object> classMetadataOld = (Map<String, Object>) (Object) sessionFactory.getAllClassMetadata();
+        //Map<String, Object> classMetadataOld = sessionFactory.getMetamodel().entityPersisters();
+        for (Entry<String, ?> entry : classMetadataOld.entrySet()) {
+            String entityName = entry.getKey();
+            Object value = entry.getValue();
+            classMetadata.put(entityName, value);
+            if (!(value instanceof ClassMetadata)) {
                 continue;
             }
 
-            String jpaEntityName = SessionFactoryUtils.getJpaEntityName(entry.getKey());
+            ClassMetadata metadata = (ClassMetadata) value;
+            String jpaEntityName = SessionFactoryUtils.getJpaEntityName(entityName);
             //下面代码会导致NativeSql无法执行
-            //classMetadata.put(jpaEntityName, entry.getValue());
-            List<AssocEntity> assocEntities = SessionFactoryUtils.get().getNameMapAssocEntities().get(entry.getKey());
+            //classMetadata.put(jpaEntityName, metadata);
+            List<AssocEntity> assocEntities = SessionFactoryUtils.get().getNameMapAssocEntities().get(entityName);
             if (assocEntities != null) {
-                String identifierName = entry.getValue().getIdentifierPropertyName();
-                Object propertyMap = KernelObject.declaredGet(entry.getValue(), "propertyMapping");
+                String identifierName = metadata.getIdentifierPropertyName();
+                Object propertyMap = KernelObject.declaredGet(metadata, "propertyMapping");
                 Map<Object, Object> typesByPropertyPath = (Map<Object, Object>) KernelObject.declaredGet(propertyMap,
                         "typesByPropertyPath");
                 Map<Object, Object> columnsByPropertyPath = (Map<Object, Object>) KernelObject.declaredGet(propertyMap,
@@ -226,7 +230,8 @@ public class SessionFactoryBoost {
         }
 
         classMetadata = Collections.unmodifiableMap(classMetadata);
-        KernelObject.declaredSet(sessionFactory.getMetamodel(), "entityPersisterMap", classMetadata);
+        KernelObject.declaredSet(sessionFactory, "classMetadata", classMetadata);
+        //KernelObject.declaredSet(sessionFactory.getMetamodel(), "entityPersisterMap", classMetadata);
 
         //下面代码可能会导致可能会出现多个数据
 //        Map<String, EntityPersister> entityPersisters = new HashMap<String, EntityPersister>();

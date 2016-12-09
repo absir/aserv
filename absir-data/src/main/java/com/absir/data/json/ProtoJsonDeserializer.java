@@ -7,7 +7,7 @@
  */
 package com.absir.data.json;
 
-import com.absir.data.protobuf.ProtobufProxyBasic;
+import com.absir.data._abp_jprotobuf.ProtobufProxyBasic;
 import com.absir.data.value.IProto;
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.fasterxml.jackson.core.JsonParser;

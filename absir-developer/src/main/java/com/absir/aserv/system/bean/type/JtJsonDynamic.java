@@ -12,7 +12,7 @@ import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelReflect;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.DynamicParameterizedType;
 import org.hibernate.usertype.UserType;
 
@@ -70,7 +70,8 @@ public class JtJsonDynamic implements UserType, DynamicParameterizedType, Serial
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException,
+            SQLException {
         String value = rs.getString(names[0]);
         if (value == null || value.trim().length() == 0) {
             return null;
@@ -80,7 +81,8 @@ public class JtJsonDynamic implements UserType, DynamicParameterizedType, Serial
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor sharedSessionContractImplementor) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException,
+            SQLException {
         if (value == null) {
             st.setNull(index, Types.VARCHAR);
         } else {

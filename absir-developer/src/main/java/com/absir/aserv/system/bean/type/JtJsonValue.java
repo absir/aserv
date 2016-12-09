@@ -10,7 +10,7 @@ package com.absir.aserv.system.bean.type;
 import com.absir.client.helper.HelperJson;
 import com.absir.core.kernel.KernelObject;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.usertype.UserType;
 
 import java.io.IOException;
@@ -62,7 +62,8 @@ public class JtJsonValue implements UserType, Serializable {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner)
+            throws HibernateException, SQLException {
         String value = rs.getString(names[0]);
         if (value == null || value.trim().length() == 0) {
             return null;
@@ -72,7 +73,8 @@ public class JtJsonValue implements UserType, Serializable {
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor sharedSessionContractImplementor) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session)
+            throws HibernateException, SQLException {
         if (value == null) {
             st.setNull(index, Types.VARCHAR);
         } else {

@@ -24,6 +24,22 @@ public class JSetting extends JbPlatform {
     @JaLang("设置")
     private SettingEntry settingEntry;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public SettingEntry getSettingEntry() {
+        return settingEntry;
+    }
+
+    public void setSettingEntry(SettingEntry settingEntry) {
+        this.settingEntry = settingEntry;
+    }
+
     @Embeddable
     public static class SettingEntry {
 
@@ -93,22 +109,6 @@ public class JSetting extends JbPlatform {
         public void setOtherUrl(String otherUrl) {
             this.otherUrl = otherUrl;
         }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public SettingEntry getSettingEntry() {
-        return settingEntry;
-    }
-
-    public void setSettingEntry(SettingEntry settingEntry) {
-        this.settingEntry = settingEntry;
     }
 
 }

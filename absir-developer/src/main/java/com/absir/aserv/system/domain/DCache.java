@@ -28,18 +28,12 @@ import java.util.Map;
 public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
 
     public static final TypeVariable<?> TYPE_VARIABLE = DCache.class.getTypeParameters()[0];
-
-    protected Class<K> entityClass;
-
-    protected String entityName;
-
-    protected String reloadHsql;
-
-    protected Map<Serializable, V> cacheMap;
-
-    protected Map<Serializable, V> cacheMapBuffer;
-
     public Runnable reloadListener;
+    protected Class<K> entityClass;
+    protected String entityName;
+    protected String reloadHsql;
+    protected Map<Serializable, V> cacheMap;
+    protected Map<Serializable, V> cacheMapBuffer;
 
     public DCache(String entityName) {
         this(null, null);
@@ -50,6 +44,7 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
             entityClass = KernelClass.typeClass(getClass(), TYPE_VARIABLE);
         }
 
+        this.entityClass = entityClass;
         this.entityName = KernelString.isEmpty(entityName) ? entityClass.getSimpleName() : entityName;
         cacheMap = createCacheMap();
         reloadHsql = genReloadHsql();

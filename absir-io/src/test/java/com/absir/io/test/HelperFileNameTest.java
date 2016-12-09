@@ -26,7 +26,7 @@ public class HelperFileNameTest {
         System.out.println(HelperFileName.getClassPath(String.class));
         System.out.println(String.class.getResource(""));
 
-        
+
     }
 
     protected void dump(URL url) {

@@ -97,12 +97,14 @@ public class BeanScanner {
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         for (String classname : classnames) {
-            try {
-                beanTypes.add(classLoader.loadClass(classname));
+            if (!classname.contains("_abp_")) {
+                try {
+                    beanTypes.add(classLoader.loadClass(classname));
 
-            } catch (ClassNotFoundException e) {
-                if (BeanFactoryUtils.getEnvironment().compareTo(Environment.DEBUG) <= 0) {
-                    e.printStackTrace();
+                } catch (Throwable e) {
+                    if (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

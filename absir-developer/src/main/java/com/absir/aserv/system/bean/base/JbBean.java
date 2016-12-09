@@ -9,8 +9,6 @@ package com.absir.aserv.system.bean.base;
 
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
-import com.baidu.bjf.remoting.protobuf.FieldType;
-import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,7 +19,7 @@ import java.io.Serializable;
 @MappedSuperclass
 public class JbBean extends JbBase implements JiBean {
 
-    @Protobuf(fieldType = FieldType.INT64, order = 1, required = false)
+    //@Protobuf(fieldType = FieldType.INT64, order = 1, required = false)
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("纪录编号")
     @Id

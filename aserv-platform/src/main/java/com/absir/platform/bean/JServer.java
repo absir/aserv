@@ -22,16 +22,31 @@ import javax.persistence.Id;
 @Entity
 public class JServer extends JbPlatform {
 
+    @JaLang("服务列表")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @JaEdit(types = "subtable")
+    public JServer.ServerEntry[] serverList;
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("纪录编号")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JaLang("服务列表")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
-    @JaEdit(types = "subtable")
-    public JServer.ServerEntry[] serverList;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public ServerEntry[] getServerList() {
+        return serverList;
+    }
+
+    public void setServerList(ServerEntry[] serverList) {
+        this.serverList = serverList;
+    }
 
     public static class ServerEntry {
 
@@ -104,21 +119,5 @@ public class JServer extends JbPlatform {
             this.weight = weight;
         }
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public ServerEntry[] getServerList() {
-        return serverList;
-    }
-
-    public void setServerList(ServerEntry[] serverList) {
-        this.serverList = serverList;
     }
 }

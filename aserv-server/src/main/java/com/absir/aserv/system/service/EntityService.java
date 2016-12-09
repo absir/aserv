@@ -24,6 +24,7 @@ import com.absir.aserv.system.domain.DCondition;
 import com.absir.aserv.system.service.utils.AccessServiceUtils;
 import com.absir.aserv.system.service.utils.BeanServiceUtils;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
+import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
@@ -76,7 +77,8 @@ public class EntityService {
     /**
      * 重载实体
      */
-    @Schedule(cron = "0 0 30 * * * *")
+    @Async(notifier = true)
+    @Schedule(cron = "0 30 0 * * *")
     @Transaction(readOnly = true)
     protected void reloadCaches() {
         Session session = BeanDao.getSession();
