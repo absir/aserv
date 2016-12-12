@@ -27,13 +27,13 @@
         <dependency>
             <groupId>com.baidu</groupId>
             <artifactId>jprotobuf</artifactId>
-            <version>2.0.2</version>
+            <version>${jprotobuf.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.facebook.swift</groupId>
             <artifactId>swift-codec</artifactId>
-            <version>0.23.1</version>
+            <version>${swift-codec.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

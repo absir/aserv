@@ -1,10 +1,12 @@
 namespace java thrift
 namespace csharp thrift
-namespace java.swift thrift
 
 struct Hello {
 	1: i32 id = 1;
 	2: i64 id2 = 2;
+	3: i64 id3 = 3;
+	4: i64 id4 = 4;
+	5: i64 id5 = 5;
 }
 
 struct Hello2 {

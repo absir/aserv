@@ -15,6 +15,7 @@ import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
@@ -29,6 +30,18 @@ import java.util.Map.Entry;
 public abstract class CodeJavaMerger {
 
     protected static final String JAVA_EXT_NAME = ".java";
+
+    public static AnnotationExpr getAnnotation(List<AnnotationExpr> annotations, String annotationName) {
+        if (annotations != null) {
+            for (AnnotationExpr annotation : annotations) {
+                if (annotation.getName().toString().equals(annotationName)) {
+                    return annotation;
+                }
+            }
+        }
+
+        return null;
+    }
 
     public String getJavaExtName() {
         return JAVA_EXT_NAME;
@@ -120,6 +133,8 @@ public abstract class CodeJavaMerger {
         }
     }
 
+    protected abstract boolean isNeedMergeType(TypeDeclaration type);
+
     protected void mergeCompilationUnitFile(String fromClassName, String className, CompilationUnit fromCompilationUnit,
                                             CompilationUnit toCompilationUnit, File toFile) throws Exception {
         TypeDeclaration fromType = null;
@@ -134,15 +149,17 @@ public abstract class CodeJavaMerger {
         }
 
         TypeDeclaration toType = null;
-        if (toCompilationUnit == null || toCompilationUnit.getTypes() == null) {
+        if (toCompilationUnit == null) {
             toCompilationUnit = fromCompilationUnit;
             toType = fromType;
             toType.setName(className);
+        }
 
-        } else {
+        if (toType == null) {
             for (TypeDeclaration type : toCompilationUnit.getTypes()) {
                 if (type.getName().equals(className)) {
                     toType = type;
+                    break;
                 }
             }
 
@@ -152,6 +169,42 @@ public abstract class CodeJavaMerger {
             }
         }
 
+        mergeFormTypeToType(className, fromCompilationUnit, toCompilationUnit, fromType, toType);
+        for (TypeDeclaration from : fromCompilationUnit.getTypes()) {
+            if (from.getName().equals(fromClassName)) {
+                continue;
+            }
+
+            TypeDeclaration _to = null;
+            for (TypeDeclaration to : toCompilationUnit.getTypes()) {
+                if (to.getName().equals(from.getName())) {
+                    _to = to;
+                    break;
+                }
+            }
+
+            if (!isNeedMergeType(from)) {
+                if (_to != null) {
+                    toCompilationUnit.getTypes().remove(_to);
+                }
+
+                toCompilationUnit.getTypes().add(fromType);
+                continue;
+            }
+
+            if (_to == null) {
+                _to = fromType;
+                toCompilationUnit.getTypes().add(fromType);
+            }
+
+            mergeFormTypeToType(className, fromCompilationUnit, toCompilationUnit, from, _to);
+        }
+
+        HelperFile.write(toFile, toCompilationUnit.toString());
+    }
+
+    protected void mergeFormTypeToType(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
+                                       TypeDeclaration fromType, TypeDeclaration toType) {
         Map<String, FieldDeclaration> fromFieldMap = new LinkedHashMap<String, FieldDeclaration>();
         for (BodyDeclaration bodyDeclaration : fromType.getMembers()) {
             if (bodyDeclaration instanceof FieldDeclaration) {
@@ -159,16 +212,45 @@ public abstract class CodeJavaMerger {
                 refactorType(fieldDeclaration.getType());
                 fromFieldMap.put(fieldDeclaration.getVariables().get(0).getId().toString(), fieldDeclaration);
 
-            } else if (bodyDeclaration instanceof ConstructorDeclaration) {
+            } else if (className != null && bodyDeclaration instanceof ConstructorDeclaration) {
                 ConstructorDeclaration constructorDeclaration = (ConstructorDeclaration) bodyDeclaration;
                 constructorDeclaration.setName(className);
+
+            } else if (bodyDeclaration instanceof TypeDeclaration) {
+                TypeDeclaration bodyDeclarationType = (TypeDeclaration) bodyDeclaration;
+                TypeDeclaration toBodyDeclarationType = null;
+                for (BodyDeclaration toBody : toType.getMembers()) {
+                    if (toBody instanceof TypeDeclaration) {
+                        TypeDeclaration typeDeclaration = (TypeDeclaration) toBody;
+                        if (typeDeclaration.getName().equals(bodyDeclarationType.getName())) {
+                            toBodyDeclarationType = typeDeclaration;
+                            break;
+                        }
+                    }
+                }
+
+                if (!isNeedMergeType(bodyDeclarationType)) {
+                    if (toBodyDeclarationType == null) {
+                        toType.getMembers().add(bodyDeclarationType);
+
+                    } else {
+                        toType.getMembers().set(toType.getMembers().indexOf(toBodyDeclarationType), bodyDeclarationType);
+                    }
+
+                } else {
+                    if (toBodyDeclarationType == null) {
+                        toBodyDeclarationType = bodyDeclarationType;
+                        toType.getMembers().add(toBodyDeclarationType);
+                    }
+
+                    mergeFormTypeToType(null, fromCompilationUnit, toCompilationUnit, bodyDeclarationType, toBodyDeclarationType);
+                }
             }
         }
 
-        mergeCompilationUnit(fromCompilationUnit, toCompilationUnit, fromType, toType, fromFieldMap);
-        HelperFile.write(toFile, toCompilationUnit.toString());
+        mergeCompilationUnit(className, fromCompilationUnit, toCompilationUnit, fromType, toType, fromFieldMap);
     }
 
-    public abstract void mergeCompilationUnit(CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
+    public abstract void mergeCompilationUnit(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
                                               TypeDeclaration fromType, TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap);
 }

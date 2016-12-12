@@ -2,6 +2,7 @@ package com.absir.proto.test;
 
 import com.absir.code.ProtoJavaMerger;
 import com.absir.core.helper.HelperFileName;
+import com.baidu.bjf.remoting.protobuf.ProtobufIDLProxy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -23,7 +24,7 @@ public class GenerateProtoTest {
         System.out.println(classPath);
 
         /****provide jprotobuf***/
-        //ProtobufIDLProxy.generateSource(new File(classPath + "/Proto/Platform.proto"), new File(classPath + "/G2"));
+        ProtobufIDLProxy.generateSource(new File(classPath + "/Proto/Platform.proto"), new File(classPath + "/G2"));
         javaMerger.mergeBaseDir(new File(classPath + "/G2"), new File(classPath + "/G3"));
 
         //javaMerger.mergeBaseDir(new File("C:\\Users\\absir\\Desktop\\G2"), new File("C:\\Users\\absir\\Desktop\\G3"));

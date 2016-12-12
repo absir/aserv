@@ -19,5 +19,17 @@
             <artifactId>javaparser-core</artifactId>
             <version>2.2.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.baidu</groupId>
+            <artifactId>jprotobuf</artifactId>
+            <version>${jprotobuf.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.facebook.swift</groupId>
+            <artifactId>swift-codec</artifactId>
+            <version>${swift-codec.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

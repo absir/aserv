@@ -9,6 +9,8 @@
         <com.absir.version>1.0.0-Final</com.absir.version>
         <org.slf4j-version>1.7.21</org.slf4j-version>
         <org.hibernate-version>5.1.3.Final</org.hibernate-version>
+        <jprotobuf.version>2.0.2</jprotobuf.version>
+        <swift-codec.version>0.23.1</swift-codec.version>
     </properties>
     <modelVersion>4.0.0</modelVersion>
     <modules>

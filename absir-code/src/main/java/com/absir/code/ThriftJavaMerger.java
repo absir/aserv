@@ -17,60 +17,43 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 import java.util.List;
 
-public class ProtoJavaMerger extends BeanJavaMerger {
-
-    protected static final String JP_EXT_NAME = "JProtoBufProtoClass";
-
-    protected static final int JP_EXT_NAME_LEN = JP_EXT_NAME.length();
-
-    protected static final String PB_PRE_NAME = "P";
+public class ThriftJavaMerger extends BeanJavaMerger {
 
     @Override
     protected boolean isBeanType(String className, TypeDeclaration toType) {
-        return className != null;
+        return className != null && !className.endsWith("Service");
     }
 
     @Override
     protected void setBeanInterface(List<ClassOrInterfaceType> implementsList, CompilationUnit toCompilationUnit) {
-        implementsList.add(new ClassOrInterfaceType("IProto"));
+        implementsList.add(new ClassOrInterfaceType("IThrift"));
         toCompilationUnit.getImports()
-                .add(new ImportDeclaration(new NameExpr("com.absir.data.value.IProto"), false, false));
+                .add(new ImportDeclaration(new NameExpr("com.absir.data.value.IThrift"), false, false));
     }
 
     @Override
     protected boolean isAnnotationConstructorDeclaration(ConstructorDeclaration constructorDeclaration) {
-        return false;
+        return getAnnotation(constructorDeclaration.getAnnotations(), "ThriftConstructor") != null;
     }
 
     @Override
     protected boolean isAnnotationMethodDeclaration(MethodDeclaration methodDeclaration) {
-        return false;
+        String name = methodDeclaration.getName();
+        return name.equals("toString") || name.equals("equals") || name.equals("hashCode");
     }
 
     @Override
     protected String getFieldAnnotationName() {
-        return "Protobuf";
+        return "ThriftField";
     }
 
     @Override
     protected boolean isCloneableClassName(String className) {
-        if (className.length() > PB_PRE_NAME.length() && className.startsWith(PB_PRE_NAME)) {
-            char chr = className.charAt(PB_PRE_NAME.length());
-            if (chr >= 'A' && chr <= 'Z') {
-                return !className.endsWith("Type");
-            }
-        }
-
         return false;
     }
 
     @Override
     public String getToClassName(String className) {
-        int length = className.length();
-        if (length > JP_EXT_NAME_LEN && className.endsWith(JP_EXT_NAME)) {
-            return PB_PRE_NAME + className.substring(0, length - JP_EXT_NAME_LEN);
-        }
-
         return className;
     }
 
@@ -78,5 +61,4 @@ public class ProtoJavaMerger extends BeanJavaMerger {
     protected boolean isNeedMergeType(TypeDeclaration type) {
         return false;
     }
-
 }
