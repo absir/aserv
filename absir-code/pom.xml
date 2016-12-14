@@ -23,12 +23,30 @@
             <groupId>com.baidu</groupId>
             <artifactId>jprotobuf</artifactId>
             <version>${jprotobuf.version}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.facebook.swift</groupId>
             <artifactId>swift-codec</artifactId>
             <version>${swift-codec.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.facebook.swift</groupId>
+            <artifactId>swift-generator</artifactId>
+            <version>${swift-codec.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>${thrift.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

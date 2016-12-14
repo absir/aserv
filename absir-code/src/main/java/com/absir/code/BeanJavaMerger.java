@@ -86,7 +86,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                 index++;
                 if (body instanceof MethodDeclaration) {
                     MethodDeclaration methodDeclaration = (MethodDeclaration) body;
-                    if (isAnnotationMethodDeclaration(methodDeclaration)) {
+                    if (getAnnotation(methodDeclaration.getAnnotations(), "AOverride") == null && isAnnotationMethodDeclaration(methodDeclaration)) {
                         for (BodyDeclaration fromBody : fromType.getMembers()) {
                             if (fromBody instanceof MethodDeclaration) {
                                 if (((MethodDeclaration) fromBody).getName().equals(methodDeclaration.getName())) {

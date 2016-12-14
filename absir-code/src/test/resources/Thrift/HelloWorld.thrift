@@ -2,16 +2,16 @@ namespace java thrift
 namespace csharp thrift
 
 struct Hello {
-	1: i32 id = 1;
-	2: i64 id2 = 2;
-	3: i64 id3 = 3;
-	4: i64 id4 = 4;
-	5: i64 id5 = 5;
+	1: i32 id = -1;
+	2: i64 id2 = -1;
+	3: i64 id3 = -1;
+	4: i64 id4 = -1;
+	5: i64 id5 = -1;
 }
 
 struct Hello2 {
-	1: i32 id = 1;
-	2: i64 id2 = 2;
+	1: optional i32 id = 1;
+	2: optional i64 id2 = 2;
 }
 
 service HelloWorldService {
