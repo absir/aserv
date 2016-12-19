@@ -21,6 +21,10 @@ public class DDirty implements IDirty {
         return dirty;
     }
 
+    public boolean isDirtyI(int index) {
+        return dirty;
+    }
+
     @Override
     public void setDirty() {
         dirty = true;

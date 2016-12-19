@@ -22,10 +22,21 @@
             <version>${com.absir.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.thrift</groupId>
+            <artifactId>libthrift</artifactId>
+            <version>${thrift.version}</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.absir</groupId>
+            <artifactId>absir-code</artifactId>
+            <version>${com.absir.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

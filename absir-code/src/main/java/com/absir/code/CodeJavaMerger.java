@@ -11,16 +11,14 @@ import com.absir.core.helper.HelperFile;
 import com.absir.core.helper.HelperFileName;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.BodyDeclaration;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
 
 import java.io.File;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -203,18 +201,34 @@ public abstract class CodeJavaMerger {
         HelperFile.write(toFile, toCompilationUnit.toString());
     }
 
+    protected static final int TRANSIENT_MODIFIER = Modifier.TRANSIENT | Modifier.STATIC | Modifier.FINAL;
+
     protected void mergeFormTypeToType(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
                                        TypeDeclaration fromType, TypeDeclaration toType) {
         Map<String, FieldDeclaration> fromFieldMap = new LinkedHashMap<String, FieldDeclaration>();
+        Map<String, BodyDeclaration> declarationMap = new LinkedHashMap<String, BodyDeclaration>();
         for (BodyDeclaration bodyDeclaration : fromType.getMembers()) {
             if (bodyDeclaration instanceof FieldDeclaration) {
                 FieldDeclaration fieldDeclaration = (FieldDeclaration) bodyDeclaration;
-                refactorType(fieldDeclaration.getType());
-                fromFieldMap.put(fieldDeclaration.getVariables().get(0).getId().toString(), fieldDeclaration);
+                String name = fieldDeclaration.getVariables().get(0).getId().toString();
+                if ((fieldDeclaration.getModifiers() & TRANSIENT_MODIFIER) == 0) {
+                    refactorType(fieldDeclaration.getType());
+                    fromFieldMap.put(name, fieldDeclaration);
+
+                } else {
+                    declarationMap.put(name, fieldDeclaration);
+                }
+
+            } else if (bodyDeclaration instanceof MethodDeclaration) {
+                MethodDeclaration methodDeclaration = (MethodDeclaration) bodyDeclaration;
+                //if ((methodDeclaration.getModifiers() & TRANSIENT_MODIFIER) != 0) {
+                declarationMap.put(methodDeclaration.getDeclarationAsString(), methodDeclaration);
+                //}
 
             } else if (className != null && bodyDeclaration instanceof ConstructorDeclaration) {
                 ConstructorDeclaration constructorDeclaration = (ConstructorDeclaration) bodyDeclaration;
                 constructorDeclaration.setName(className);
+                declarationMap.put(constructorDeclaration.getDeclarationAsString(), constructorDeclaration);
 
             } else if (bodyDeclaration instanceof TypeDeclaration) {
                 TypeDeclaration bodyDeclarationType = (TypeDeclaration) bodyDeclaration;
@@ -248,9 +262,9 @@ public abstract class CodeJavaMerger {
             }
         }
 
-        mergeCompilationUnit(className, fromCompilationUnit, toCompilationUnit, fromType, toType, fromFieldMap);
+        mergeCompilationUnit(className, fromCompilationUnit, toCompilationUnit, fromType, toType, fromFieldMap, declarationMap);
     }
 
     public abstract void mergeCompilationUnit(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
-                                              TypeDeclaration fromType, TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap);
+                                              TypeDeclaration fromType, TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap, Map<String, BodyDeclaration> declarationMap);
 }

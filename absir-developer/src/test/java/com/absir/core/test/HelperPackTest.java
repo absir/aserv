@@ -1,20 +1,30 @@
-package com.absir.proto.test;
+package com.absir.core.test;
 
 import com.absir.data.helper.HelperDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.io.IOException;
 import java.util.Arrays;
 
-/**
- * Created by absir on 2016/12/12.
- */
 @RunWith(value = JUnit4.class)
-public class CodecThriftTest {
+public class HelperPackTest {
+
+    public static class Hello2 {
+
+        public int id; // optional
+        public long id2; // optional
+
+
+        public void setId(int id) {
+            this.id = id;
+        }
+    }
 
     @Test
-    public void test() throws Exception {
+    public void test() throws InterruptedException, IOException {
+
         Hello2 hello2 = new Hello2();
 
         System.out.println(HelperDataFormat.JSON.writeAsStringArray(hello2));
@@ -23,7 +33,6 @@ public class CodecThriftTest {
         System.out.println(Arrays.toString(bytes));
 
         hello2.setId(2);
-        hello2.setId3("");
         System.out.println(HelperDataFormat.JSON.writeAsStringArray(hello2));
 
         bytes = HelperDataFormat.PACK.writeAsBytes(hello2);
@@ -32,4 +41,6 @@ public class CodecThriftTest {
         Object res = HelperDataFormat.PACK.read(bytes, Hello2.class);
         System.out.println(HelperDataFormat.JSON.writeAsStringArray(res));
     }
+
+
 }

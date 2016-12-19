@@ -10,19 +10,12 @@ package com.absir.code;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 import java.util.List;
 
-public class ThriftJavaMerger extends BeanJavaMerger {
-
-    @Override
-    protected boolean isBeanType(String className, TypeDeclaration toType) {
-        return className != null && !className.endsWith("Service");
-    }
+public class ThriftCodecJavaMerger extends ThriftJavaMerger {
 
     @Override
     protected void setBeanInterface(List<ClassOrInterfaceType> implementsList, CompilationUnit toCompilationUnit) {
@@ -33,32 +26,12 @@ public class ThriftJavaMerger extends BeanJavaMerger {
 
     @Override
     protected boolean isAnnotationConstructorDeclaration(ConstructorDeclaration constructorDeclaration) {
-        return true;
-    }
-
-    @Override
-    protected boolean isAnnotationMethodDeclaration(MethodDeclaration methodDeclaration) {
-        String name = methodDeclaration.getName();
-        return name.equals("toString") || name.equals("equals") || name.equals("hashCode") || name.equals("clear");
+        return getAnnotation(constructorDeclaration.getAnnotations(), "ThriftConstructor") != null;
     }
 
     @Override
     protected String getFieldAnnotationName() {
-        return null;
+        return "ThriftField";
     }
 
-    @Override
-    protected boolean isCloneableClassName(String className) {
-        return className.startsWith("T");
-    }
-
-    @Override
-    public String getToClassName(String className) {
-        return className;
-    }
-
-    @Override
-    protected boolean isNeedMergeType(TypeDeclaration type) {
-        return false;
-    }
 }

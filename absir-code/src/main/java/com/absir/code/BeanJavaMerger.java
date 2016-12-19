@@ -35,7 +35,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
 
     @Override
     public void mergeCompilationUnit(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
-                                     TypeDeclaration fromType, TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap) {
+                                     TypeDeclaration fromType, TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap, Map<String, BodyDeclaration> declarationMap) {
         boolean enumReadable = false;
         boolean isBean = false;
         int dirtyM = 0;
@@ -64,7 +64,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
 
                 if (dirtyM > 0) {
                     if (typeDeclaration.getExtends() == null || typeDeclaration.getExtends().isEmpty()) {
-                        String extendName = dirtyM == 1 ? "DDiry" : "DDirtyM";
+                        String extendName = dirtyM == 1 ? "DDirty" : "DDirtyM";
                         toCompilationUnit.getImports().add(
                                 new ImportDeclaration(new NameExpr("com.absir.data.base." + extendName), false, false));
                         List<ClassOrInterfaceType> extendsList = new ArrayList<ClassOrInterfaceType>();
@@ -80,6 +80,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
 
         Map<String, MethodDeclaration> toMethodMap = new HashMap<String, MethodDeclaration>();
         Map<String, FieldDeclaration> toFieldMap = new HashMap<String, FieldDeclaration>();
+        List<BodyDeclaration> removeDeclarations = new ArrayList<BodyDeclaration>();
         if (!enumReadable) {
             int index = -1;
             for (BodyDeclaration body : toType.getMembers()) {
@@ -89,7 +90,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                     if (getAnnotation(methodDeclaration.getAnnotations(), "AOverride") == null && isAnnotationMethodDeclaration(methodDeclaration)) {
                         for (BodyDeclaration fromBody : fromType.getMembers()) {
                             if (fromBody instanceof MethodDeclaration) {
-                                if (((MethodDeclaration) fromBody).getName().equals(methodDeclaration.getName())) {
+                                if (((MethodDeclaration) fromBody).getDeclarationAsString().equals(methodDeclaration.getDeclarationAsString())) {
                                     methodDeclaration = (MethodDeclaration) fromBody;
                                     toType.getMembers().set(index, methodDeclaration);
                                     break;
@@ -99,7 +100,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                     }
 
                     toMethodMap.put(methodDeclaration.getName(), methodDeclaration);
-
+                    declarationMap.remove(methodDeclaration.getDeclarationAsString());
 
                 } else if (body instanceof FieldDeclaration) {
                     FieldDeclaration toDeclaration = ((FieldDeclaration) body);
@@ -126,15 +127,18 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                     }
 
                     toDeclaration.setAnnotations(toAnnotationExprs);
+                    declarationMap.remove(name);
 
                 } else if (body instanceof ConstructorDeclaration) {
-                    if (isAnnotationConstructorDeclaration((ConstructorDeclaration) body)) {
-                        for (BodyDeclaration fromBody : fromType.getMembers()) {
-                            if (fromBody instanceof ConstructorDeclaration) {
-                                if (isAnnotationConstructorDeclaration((ConstructorDeclaration) fromBody)) {
-                                    toType.getMembers().set(index, fromBody);
-                                }
-                            }
+                    ConstructorDeclaration constructorDeclaration = (ConstructorDeclaration) body;
+                    String name = constructorDeclaration.getDeclarationAsString();
+                    ConstructorDeclaration fromConstructorDeclaration = (ConstructorDeclaration) declarationMap.remove(name);
+                    if (isAnnotationConstructorDeclaration(constructorDeclaration)) {
+                        if (fromConstructorDeclaration == null) {
+                            removeDeclarations.add(body);
+
+                        } else {
+                            toType.getMembers().set(index, fromConstructorDeclaration);
                         }
                     }
                 }
@@ -142,7 +146,6 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
         }
 
         List<BodyDeclaration> addDeclarations = new ArrayList<BodyDeclaration>();
-        List<BodyDeclaration> removeDeclarations = new ArrayList<BodyDeclaration>();
         if (enumReadable) {
             EnumDeclaration fromEnum = (EnumDeclaration) fromType;
             EnumDeclaration toEnum = (EnumDeclaration) toType;
@@ -165,6 +168,18 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
 
         } else {
             if (isBean) {
+                if (!declarationMap.isEmpty()) {
+                    for (Map.Entry<String, BodyDeclaration> entry : declarationMap.entrySet()) {
+                        String name = entry.getKey();
+                        BodyDeclaration body = entry.getValue();
+                        addDeclarations.add(body);
+                        if (body instanceof MethodDeclaration) {
+                            MethodDeclaration methodDeclaration = (MethodDeclaration) body;
+                            toMethodMap.put(methodDeclaration.getName(), methodDeclaration);
+                        }
+                    }
+                }
+
                 int index = 0;
                 for (Map.Entry<String, FieldDeclaration> entry : fromFieldMap.entrySet()) {
                     String name = entry.getKey();
@@ -313,7 +328,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                         List<Expression> args = new ArrayList<Expression>();
                         args.add(new IntegerLiteralExpr(String.valueOf(index)));
                         Statement stmt = new ExpressionStmt(new MethodCallExpr(null, "setDirtyI", args));
-                        statements.add(stmt);
+                        statements.add(0, stmt);
                     }
 
                 } else {

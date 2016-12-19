@@ -12,6 +12,8 @@ struct Hello {
 struct Hello2 {
 	1: optional i32 id = 1;
 	2: optional i64 id2 = 2;
+
+	3: optional string id3;
 }
 
 service HelloWorldService {

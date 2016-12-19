@@ -70,20 +70,7 @@ public class UpgradeService {
 
     public void restartCommand() throws IOException {
         if (!KernelString.isEmpty(restartCommand)) {
-            Process process = Runtime.getRuntime().exec(restartCommand);
-            try {
-                InputStream inputStream = process.getInputStream();
-                if (inputStream != null) {
-                    HelperIO.copy(inputStream, System.out);
-                }
-
-            } catch (IOException e) {
-            }
-
-            InputStream inputStream = process.getErrorStream();
-            if (inputStream != null) {
-                HelperIO.copy(inputStream, System.out);
-            }
+            HelperIO.execute(restartCommand);
         }
     }
 
