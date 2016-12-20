@@ -7,6 +7,7 @@
  */
 package com.absir.context.core;
 
+import com.absir.bean.basis.BeanConfig;
 import com.absir.bean.basis.Configure;
 import com.absir.bean.config.IBeanDefineEager;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -34,7 +35,8 @@ public abstract class ContextUtils implements IBeanDefineEager {
     private static ScheduleFactory scheduleFactory = BeanFactoryUtils.get(ScheduleFactory.class);
 
     static {
-        charset = BeanFactoryUtils.getBeanConfig().getExpressionObject("context.charset", null, Charset.class);
+        BeanConfig beanConfig = BeanFactoryUtils.getBeanConfig();
+        charset = beanConfig == null ? null : beanConfig.getExpressionObject("context.charset", null, Charset.class);
         if (charset == null) {
             charset = KernelCharset.getDefault();
 

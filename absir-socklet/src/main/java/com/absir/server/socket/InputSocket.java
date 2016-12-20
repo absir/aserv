@@ -21,6 +21,7 @@ import com.absir.server.in.InMethod;
 import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
 import com.absir.server.route.RouteAdapter;
+import com.absir.server.socket.resolver.IBufferResolver;
 import com.absir.server.socket.resolver.SocketBufferResolver;
 
 import java.io.*;
@@ -67,8 +68,19 @@ public abstract class InputSocket extends Input {
         return writeByteBuffer(selSession, socketChannel, success == true ? 0 : SocketAdapter.ERROR_OR_SPECIAL_FLAG, callbackIndex, bytes);
     }
 
+    protected static IBufferResolver bufferResolver;
+
+    static {
+        InputSocketContext socketContext = InputSocketContext.ME;
+        bufferResolver = socketContext == null ? new SocketBufferResolver() : socketContext.getBufferResolver();
+    }
+
+    public static IBufferResolver getBufferResolver() {
+        return bufferResolver;
+    }
+
     public static boolean writeByteBuffer(SelSession selSession, SocketChannel socketChannel, int callbackIndex, byte[] bytes) {
-        return InputSocketContext.ME.getBufferResolver().writeByteBuffer(selSession, socketChannel, (byte) 0, callbackIndex, bytes, 0, bytes.length, null, null);
+        return bufferResolver.writeByteBuffer(selSession, socketChannel, (byte) 0, callbackIndex, bytes, 0, bytes.length, null, null);
     }
 
     public static boolean writeByteBuffer(SelSession selSession, SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes) {
@@ -76,7 +88,7 @@ public abstract class InputSocket extends Input {
     }
 
     public static boolean writeByteBuffer(SelSession selSession, SocketChannel socketChannel, byte flag, int callbackIndex, byte[] bytes, int off, int len) {
-        return InputSocketContext.ME.getBufferResolver().writeByteBuffer(selSession, socketChannel, flag, callbackIndex, bytes, off, len, null, null);
+        return bufferResolver.writeByteBuffer(selSession, socketChannel, flag, callbackIndex, bytes, off, len, null, null);
     }
 
     public InputSocketAtt getSocketAtt() {

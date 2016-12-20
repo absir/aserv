@@ -105,7 +105,7 @@ public class SocketAdapter {
     private int disconnectNumber;
 
     public static void printException(Throwable e) {
-        printException(e);
+        Environment.throwable(e);
     }
 
     public static int addVarintsUri(String uri) {

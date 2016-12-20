@@ -115,8 +115,7 @@ public class RouteEntry {
             }
 
         } finally {
-            OnPut.close();
-            input.close();
+            onPut.close();
         }
 
         return onPut;

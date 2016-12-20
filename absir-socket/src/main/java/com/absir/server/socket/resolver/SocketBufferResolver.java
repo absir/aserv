@@ -143,9 +143,9 @@ public class SocketBufferResolver implements IBufferResolver {
                 socketBuffer.setLength(buffLength);
                 socketBuffer.setLengthIndex(++lengthIndex);
                 if (lengthIndex == 4 || (b & 0x80) == 0) {
-                    if (buffLength > 0 && buffLength < bufferMax) {
+                    if (buffLength >= 0 && buffLength < bufferMax) {
                         socketBuffer.setBuffLengthIndex(0);
-                        socketBuffer.setBuff(new byte[buffLength]);
+                        socketBuffer.setBuff(buffLength == 0 ? KernelLang.NULL_BYTES : new byte[buffLength]);
 
                     } else {
                         socketBuffer.setLength(0);

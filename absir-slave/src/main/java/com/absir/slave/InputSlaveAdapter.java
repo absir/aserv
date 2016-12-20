@@ -138,6 +138,7 @@ public class InputSlaveAdapter extends SocketAdapterSel {
                 SocketChannel socketChannel = SocketChannel.open();
                 socketChannel.connect(new InetSocketAddress(ip, port));
                 adapter.setSocket(socketChannel.socket());
+                //adapter.lastedBeat();
                 adapter.receiveSocketChannelStart();
 
             } catch (Exception e) {

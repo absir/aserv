@@ -156,8 +156,7 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
                     resolverHandler(onPut, input, code);
 
                 } finally {
-                    OnPut.close();
-                    input.close();
+                    onPut.close();
                 }
 
                 return true;

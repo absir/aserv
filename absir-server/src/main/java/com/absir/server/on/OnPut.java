@@ -46,12 +46,15 @@ public class OnPut {
         return put == null ? null : put.getInput();
     }
 
-    public static void close() {
-        On_Put_Thread_Local.remove();
-    }
-
     public void open() {
         On_Put_Thread_Local.set(this);
+    }
+
+    public void close() {
+        On_Put_Thread_Local.remove();
+        if (input != null) {
+            input.close();
+        }
     }
 
     public Input getInput() {

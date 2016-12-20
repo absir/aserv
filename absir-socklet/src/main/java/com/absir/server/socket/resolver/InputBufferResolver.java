@@ -15,6 +15,11 @@ import com.absir.bean.inject.value.Bean;
 @Bean
 public class InputBufferResolver extends SocketBufferResolver {
 
-    public static final InputBufferResolver ME = BeanFactoryUtils.get(InputBufferResolver.class);
+    public static final InputBufferResolver ME;
+
+    static {
+        InputBufferResolver resolver = BeanFactoryUtils.get(InputBufferResolver.class);
+        ME = resolver == null ? new InputBufferResolver() : resolver;
+    }
 
 }
