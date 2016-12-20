@@ -345,7 +345,7 @@ public class SocketServer {
      * @return
      * @throws IOException
      */
-    public synchronized boolean start(long acceptTimeout, long idleTimeout, int port, int backlog,
+    public synchronized boolean start(final long acceptTimeout, long idleTimeout, int port, int backlog,
                                       InetAddress inetAddress, final int bufferSize, int receiveBufferSize, final int sendBufferSize,
                                       IBufferResolver bufferResolver, ISessionResolver sessionResolver) throws IOException {
         maxAcceptTime = acceptTimeout;
@@ -392,14 +392,18 @@ public class SocketServer {
                                     socketChannel.socket().setSendBufferSize(sendBufferSize);
                                     try {
                                         // 处理注册请求
-                                        long acceptTimeout = socketSessionResolver.acceptTimeout(socketChannel);
-                                        if (acceptTimeout > 0) {
+                                        long timeout = socketSessionResolver.acceptTimeout(socketChannel);
+                                        if (timeout == 0) {
+                                            timeout = acceptTimeout;
+                                        }
+
+                                        if (timeout > 0) {
                                             if (acceptDebug) {
                                                 LOGGER.debug(SocketServer.this + " accept : " + socketChannel);
                                             }
 
                                             SelSession selSession = new SelSession(SocketServer.this, socketChannel);
-                                            selSession.retainIdleTimeout(acceptTimeout);
+                                            selSession.retainIdleTimeout(timeout);
                                             globalSelSessionMap.put(socketChannel, selSession);
                                             socketChannel.register(selector, SelectionKey.OP_READ, selSession);
                                             continue;

@@ -57,6 +57,7 @@
         <module>aserv-game</module>
         <module>aserv-game-master</module>
         <module>aserv-game-slave</module>
+        <module>absir-thrift</module>
     </modules>
     <dependencies>
         <dependency>

@@ -13,7 +13,7 @@ import java.io.File;
  * Created by absir on 2016/12/6.
  */
 @RunWith(value = JUnit4.class)
-public class GenerateThrift {
+public class GenerateThriftPlatform {
 
     @Test
     public void test() throws Exception {

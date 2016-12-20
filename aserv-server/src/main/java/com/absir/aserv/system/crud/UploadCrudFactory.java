@@ -89,7 +89,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     public static final String RECORD = "UPLOAD@";
 
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
-    public static final String UPLOAD = "upload";
+    public static final String UPLOAD = "upload/";
     public static final int UPLOAD_LENGTH = UPLOAD.length();
     protected static final Logger LOGGER = LoggerFactory.getLogger(UploadCrudFactory.class);
     protected static final String[] UPLOAD_ROLE_REPLACES = new String[]{":name", ":id", ":ext", ":rand"};

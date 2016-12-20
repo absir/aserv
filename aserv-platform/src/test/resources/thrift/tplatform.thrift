@@ -1,4 +1,4 @@
-namespace * _abp_tplatform
+namespace * tplatform
 
 // 平台来源
 struct TPlatformFrom {
