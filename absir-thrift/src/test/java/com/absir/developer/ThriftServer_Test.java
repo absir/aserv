@@ -129,7 +129,7 @@ public class ThriftServer_Test extends ThriftService {
         platformFrom = client.setting(platformFrom);
         System.out.println("return = " + HelperJson.encodeNull(platformFrom));
 
-        platformFrom.setChannel(null);
+        platformFrom = new TPlatformFrom();
         platformFrom = client.setting(platformFrom);
         System.out.println("return = " + HelperJson.encodeNull(platformFrom));
 

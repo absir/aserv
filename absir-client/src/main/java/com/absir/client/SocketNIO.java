@@ -13,7 +13,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.Arrays;
 
 public class SocketNIO {
 
@@ -50,10 +49,7 @@ public class SocketNIO {
                 _debugInfo = false;
 
             } else {
-//                if (byteBuffer.limit() == 1 && byteBuffer.array()[byteBuffer.position()] == 7) {
-//                    new Exception().printStackTrace();
-//                }
-                SocketAdapter._debugInfo("SocketNIO send  => " + Arrays.toString(Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit())));
+                //SocketAdapter._debugInfo("SocketNIO send  => " + Arrays.toString(Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit())));
             }
 
             while (byteBuffer.hasRemaining()) {

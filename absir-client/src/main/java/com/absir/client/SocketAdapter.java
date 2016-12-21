@@ -281,9 +281,9 @@ public class SocketAdapter {
         }
     }
 
-    public static void _debugInfo(String info) {
-        System.out.println("[DEBUG.INFO]  " + info);
-    }
+//    public static final void _debugInfo(String info) {
+//        System.out.println("[SOCKET.DEBUG.INFO]  " + info);
+//    }
 
     public void clearUriVarints() {
         if (uriVarints != null) {
@@ -756,7 +756,7 @@ public class SocketAdapter {
      * 接收完成数据
      */
     public void receiveBuffDone(byte[] buffer) {
-        _debugInfo("SocketAdapter receiveBuffDone <= " + Arrays.toString(buffer));
+        //_debugInfo("SocketAdapter receiveBuffDone <= " + Arrays.toString(buffer));
         int length = buffer.length;
         // 检测心跳
         if (beats != null && beats.length == buffer.length) {
@@ -994,7 +994,7 @@ public class SocketAdapter {
         Socket sendSocket = socket;
         if (sendSocket != null) {
             try {
-                _debugInfo("SocketAdapter sendDataReal  => " + Arrays.toString(buffer));
+                //_debugInfo("SocketAdapter sendDataReal  => " + Arrays.toString(buffer));
                 sendSocket.getOutputStream().write(buffer);
                 return true;
 

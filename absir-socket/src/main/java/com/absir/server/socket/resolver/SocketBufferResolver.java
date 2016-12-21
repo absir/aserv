@@ -216,7 +216,7 @@ public class SocketBufferResolver implements IBufferResolver {
                 if (streamIndex > 0 && pipedStream.getSize() < streamMax) {
                     final UtilPipedStream.NextOutputStream outputStream = pipedStream.createNextOutputStream(streamIndex);
                     try {
-                        SocketAdapter._debugInfo("SocketBufferResolver STREAM_FLAG open " + streamIndex);
+                        //SocketAdapter._debugInfo("SocketBufferResolver STREAM_FLAG open " + streamIndex);
                         UtilContext.getThreadPoolExecutor().execute(new Runnable() {
 
                             @Override
@@ -245,7 +245,7 @@ public class SocketBufferResolver implements IBufferResolver {
 
         } else if ((flag & SocketAdapter.STREAM_CLOSE_FLAG) != 0) {
             int streamIndex = SocketAdapter.getVarints(buffer, 1, buffer.length);
-            SocketAdapter._debugInfo("SocketBufferResolver STREAM_CLOSE_FLAG at " + streamIndex + " : " + ((flag & SocketAdapter.POST_FLAG) == 0));
+            //SocketAdapter._debugInfo("SocketBufferResolver STREAM_CLOSE_FLAG at " + streamIndex + " : " + ((flag & SocketAdapter.POST_FLAG) == 0));
             if ((flag & SocketAdapter.POST_FLAG) == 0) {
                 socketBuffer.getActivePool().remove(streamIndex);
 
@@ -388,7 +388,7 @@ public class SocketBufferResolver implements IBufferResolver {
                             UtilPipedStream.closeCloseable(inputStream);
                             UtilPipedStream.closeCloseable(pipeOutput);
 
-                            SocketAdapter._debugInfo("SocketBufferResolver writeByteBuffer inputStream close at " + streamIndex);
+                            //SocketAdapter._debugInfo("SocketBufferResolver writeByteBuffer inputStream close at " + streamIndex);
                             writeByteBuffer(selSession, socketChannel, (byte) (SocketAdapter.STREAM_CLOSE_FLAG | SocketAdapter.POST_FLAG), 0, sendBuffer, 3, offLen, null, null);
                         }
                     }

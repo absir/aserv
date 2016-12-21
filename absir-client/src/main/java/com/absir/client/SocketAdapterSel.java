@@ -22,7 +22,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.Arrays;
 import java.util.Iterator;
 
 public class SocketAdapterSel extends SocketAdapter {
@@ -138,7 +137,7 @@ public class SocketAdapterSel extends SocketAdapter {
     @Override
     public void close() {
         super.close();
-        _debugInfo("SocketAdapterSel close");
+        //_debugInfo("SocketAdapterSel close");
         if (pipedStream != null) {
             pipedStream.close();
             pipedStream = null;
@@ -158,7 +157,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 ByteBuffer byteBuffer = ByteBuffer.wrap(buffer, offset, length);
                 synchronized (socketChannel) {
                     try {
-                        _debugInfo("SocketAdapterSel sendData => " + Arrays.toString(Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit())));
+                        //_debugInfo("SocketAdapterSel sendData => " + Arrays.toString(Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit())));
                         SocketNIO._debugInfo = true;
                         synchronized (socketChannel) {
                             SocketNIO.writeTimeout(socketChannel, byteBuffer);
@@ -215,7 +214,7 @@ public class SocketAdapterSel extends SocketAdapter {
         } else if ((flag & STREAM_CLOSE_FLAG) != 0) {
             int length = buffer.length;
             int streamIndex = getVarints(buffer, offset, length);
-            _debugInfo("SocketAdapterSel STREAM_CLOSE_FLAG " + streamIndex + " : " + ((flag & SocketAdapter.POST_FLAG) == 0));
+            //_debugInfo("SocketAdapterSel STREAM_CLOSE_FLAG " + streamIndex + " : " + ((flag & SocketAdapter.POST_FLAG) == 0));
             if ((flag & POST_FLAG) == 0) {
                 //发送关闭
                 if (activePool != null) {
@@ -251,7 +250,7 @@ public class SocketAdapterSel extends SocketAdapter {
             int offLen = offset + streamIndexLen;
             try {
                 NextOutputStream outputStream = callbackAdapter instanceof CallbackAdapterStream ? createNextOutputStream(streamIndex) : null;
-                _debugInfo("SocketAdapterSel STREAM_FLAG open " + streamIndex + " : " + outputStream);
+                //_debugInfo("SocketAdapterSel STREAM_FLAG open " + streamIndex + " : " + outputStream);
                 if (outputStream == null) {
                     // 不是CallbackAdapterStream 不能接受流数据返回
                     sendData(sendDataBytesReal(0, buffer, offset, offLen, true, false, STREAM_CLOSE_FLAG, 0, null, 0, 0, true));
@@ -384,7 +383,7 @@ public class SocketAdapterSel extends SocketAdapter {
                         UtilPipedStream.closeCloseable(inputStream);
                         UtilPipedStream.closeCloseable(pipeOutput);
 
-                        _debugInfo("SocketAdapterSel sendData InputStream close at " + streamIndex);
+                        //_debugInfo("SocketAdapterSel sendData InputStream close at " + streamIndex);
                         sendData(sendDataBytes(0, SocketAdapter.getVarintsLengthBytes(streamIndex), true, false, STREAM_CLOSE_FLAG | POST_FLAG, 0, null));
                     }
                 }
