@@ -10,6 +10,7 @@ import org.apache.thrift.protocol.TMessage;
 import org.apache.thrift.transport.TIOStreamTransport;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 /**
  * Created by absir on 2016/12/20.
@@ -57,6 +58,14 @@ public class TAdapterProtocol extends TCompactProtocol {
         return 30000;
     }
 
+    public byte[] encrypt(ByteArrayOutputStream outputStream) {
+        return outputStream.toByteArray();
+    }
+
+    public InputStream decrypt(int offset, byte[] buffer) {
+        return new ByteArrayInputStream(buffer, offset, buffer.length);
+    }
+
     @Override
     public void writeMessageEnd() throws TException {
         ByteArrayOutputStream byteArrayOutputStream = getTransport().getOutputStream();
@@ -72,7 +81,7 @@ public class TAdapterProtocol extends TCompactProtocol {
 
                 final UtilAtomBuffer atomBuffer = atomBuffer_;
                 final int seqid = message.seqid;
-                getTransport().getSocketAdapter().sendDataVarints(uri, byteArrayOutputStream.toByteArray(), getTimeout(message), recv ? new SocketAdapter.CallbackAdapter() {
+                getTransport().getSocketAdapter().sendDataVarints(uri, encrypt(byteArrayOutputStream), getTimeout(message), recv ? new SocketAdapter.CallbackAdapter() {
                     @Override
                     public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
                         atomBuffer.seqid = seqid;
@@ -125,7 +134,7 @@ public class TAdapterProtocol extends TCompactProtocol {
                     getTransport().setInputStream(new ByteArrayInputStream(UNKOWN_EXCEPTION_BYTES));
 
                 } else {
-                    getTransport().setInputStream(new ByteArrayInputStream(buffer, offset, buffer.length));
+                    getTransport().setInputStream(decrypt(offset, buffer));
                 }
             }
 

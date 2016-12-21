@@ -15,6 +15,7 @@ import org.apache.thrift.transport.TIOStreamTransport;
 import org.apache.thrift.transport.TTransport;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,7 +88,7 @@ public class TMultiplexedProcessorProxy implements TProcessor {
         }
     }
 
-    public void process(TMultiplexedProcessorProxy.IFaceProcessProxy faceProcessProxy, Input input) throws IOException, TException {
+    public void process(TMultiplexedProcessorProxy.IFaceProcessProxy faceProcessProxy, Input input, ThriftService service) throws IOException, TException {
         IFaceProxy faceProxy = faceProcessProxy.faceProxy;
         OnPut onPut = faceProxy == null ? null : OnPut.get();
         Object iface = onPut == null ? faceProcessProxy.iface : faceProxy.getServer(onPut);
@@ -95,8 +96,13 @@ public class TMultiplexedProcessorProxy implements TProcessor {
             throw new TException("IFace is null!? " + input.getUri());
         }
 
+        InputStream inputStream = input.getInputStream();
+        if (service != null) {
+            inputStream = service.decrypt(input, inputStream);
+        }
+
         TTransport inTransport = new TIOStreamTransport(input.getInputStream());
-        OutputStream outputStream = input.getOutputStream();
+        OutputStream outputStream = service != null ? null : input.getOutputStream();
         ByteArrayOutputStream byteArrayOutputStream = null;
         if (outputStream == null) {
             byteArrayOutputStream = new ByteArrayOutputStream();
@@ -106,7 +112,7 @@ public class TMultiplexedProcessorProxy implements TProcessor {
         TTransport outTransport = new TIOStreamTransport(outputStream);
         faceProcessProxy.processFunction.process(0, new TCompactProtocol(inTransport), new TInputOutProtocol(outTransport), iface);
         if (byteArrayOutputStream != null) {
-            input.write(byteArrayOutputStream.toByteArray());
+            input.write(service.encrypt(input, byteArrayOutputStream));
         }
     }
 

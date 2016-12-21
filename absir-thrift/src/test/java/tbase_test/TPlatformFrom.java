@@ -72,6 +72,8 @@ public class TPlatformFrom implements org.apache.thrift.TBase<TPlatformFrom, TPl
 
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
 
+    private static final _Fields optionals[] = { _Fields.PLATFORM, _Fields.CHANNEL, _Fields.PACKAGE_NAME, _Fields.VERSION_DOUBLE, _Fields.FROM_STR };
+
     static {
         schemes.put(StandardScheme.class, new TPlatformFromStandardSchemeFactory());
         schemes.put(TupleScheme.class, new TPlatformFromTupleSchemeFactory());
@@ -163,16 +165,6 @@ public class TPlatformFrom implements org.apache.thrift.TBase<TPlatformFrom, TPl
     }
 
     public TPlatformFrom() {
-    }
-
-    public TPlatformFrom(String platform, String channel, String packageName, double versionDouble, String fromStr) {
-        this();
-        this.platform = platform;
-        this.channel = channel;
-        this.packageName = packageName;
-        this.versionDouble = versionDouble;
-        setVersionDoubleIsSet(true);
-        this.fromStr = fromStr;
     }
 
     /**
@@ -440,8 +432,8 @@ public class TPlatformFrom implements org.apache.thrift.TBase<TPlatformFrom, TPl
             if (!this.packageName.equals(that.packageName))
                 return false;
         }
-        boolean this_present_versionDouble = true;
-        boolean that_present_versionDouble = true;
+        boolean this_present_versionDouble = true && this.isSetVersionDouble();
+        boolean that_present_versionDouble = true && that.isSetVersionDouble();
         if (this_present_versionDouble || that_present_versionDouble) {
             if (!(this_present_versionDouble && that_present_versionDouble))
                 return false;
@@ -474,7 +466,7 @@ public class TPlatformFrom implements org.apache.thrift.TBase<TPlatformFrom, TPl
         list.add(present_packageName);
         if (present_packageName)
             list.add(packageName);
-        boolean present_versionDouble = true;
+        boolean present_versionDouble = true && (isSetVersionDouble());
         list.add(present_versionDouble);
         if (present_versionDouble)
             list.add(versionDouble);
@@ -560,45 +552,55 @@ public class TPlatformFrom implements org.apache.thrift.TBase<TPlatformFrom, TPl
     public String toString() {
         StringBuilder sb = new StringBuilder("TPlatformFrom(");
         boolean first = true;
-        sb.append("platform:");
-        if (this.platform == null) {
-            sb.append("null");
-        } else {
-            sb.append(this.platform);
+        if (isSetPlatform()) {
+            sb.append("platform:");
+            if (this.platform == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.platform);
+            }
+            first = false;
         }
-        first = false;
-        if (!first)
-            sb.append(", ");
-        sb.append("channel:");
-        if (this.channel == null) {
-            sb.append("null");
-        } else {
-            sb.append(this.channel);
+        if (isSetChannel()) {
+            if (!first)
+                sb.append(", ");
+            sb.append("channel:");
+            if (this.channel == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.channel);
+            }
+            first = false;
         }
-        first = false;
-        if (!first)
-            sb.append(", ");
-        sb.append("packageName:");
-        if (this.packageName == null) {
-            sb.append("null");
-        } else {
-            sb.append(this.packageName);
+        if (isSetPackageName()) {
+            if (!first)
+                sb.append(", ");
+            sb.append("packageName:");
+            if (this.packageName == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.packageName);
+            }
+            first = false;
         }
-        first = false;
-        if (!first)
-            sb.append(", ");
-        sb.append("versionDouble:");
-        sb.append(this.versionDouble);
-        first = false;
-        if (!first)
-            sb.append(", ");
-        sb.append("fromStr:");
-        if (this.fromStr == null) {
-            sb.append("null");
-        } else {
-            sb.append(this.fromStr);
+        if (isSetVersionDouble()) {
+            if (!first)
+                sb.append(", ");
+            sb.append("versionDouble:");
+            sb.append(this.versionDouble);
+            first = false;
         }
-        first = false;
+        if (isSetFromStr()) {
+            if (!first)
+                sb.append(", ");
+            sb.append("fromStr:");
+            if (this.fromStr == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.fromStr);
+            }
+            first = false;
+        }
         sb.append(")");
         return sb.toString();
     }
@@ -701,27 +703,37 @@ public class TPlatformFrom implements org.apache.thrift.TBase<TPlatformFrom, TPl
             struct.validate();
             oprot.writeStructBegin(STRUCT_DESC);
             if (struct.platform != null) {
-                oprot.writeFieldBegin(PLATFORM_FIELD_DESC);
-                oprot.writeString(struct.platform);
-                oprot.writeFieldEnd();
+                if (struct.isSetPlatform()) {
+                    oprot.writeFieldBegin(PLATFORM_FIELD_DESC);
+                    oprot.writeString(struct.platform);
+                    oprot.writeFieldEnd();
+                }
             }
             if (struct.channel != null) {
-                oprot.writeFieldBegin(CHANNEL_FIELD_DESC);
-                oprot.writeString(struct.channel);
-                oprot.writeFieldEnd();
+                if (struct.isSetChannel()) {
+                    oprot.writeFieldBegin(CHANNEL_FIELD_DESC);
+                    oprot.writeString(struct.channel);
+                    oprot.writeFieldEnd();
+                }
             }
             if (struct.packageName != null) {
-                oprot.writeFieldBegin(PACKAGE_NAME_FIELD_DESC);
-                oprot.writeString(struct.packageName);
+                if (struct.isSetPackageName()) {
+                    oprot.writeFieldBegin(PACKAGE_NAME_FIELD_DESC);
+                    oprot.writeString(struct.packageName);
+                    oprot.writeFieldEnd();
+                }
+            }
+            if (struct.isSetVersionDouble()) {
+                oprot.writeFieldBegin(VERSION_DOUBLE_FIELD_DESC);
+                oprot.writeDouble(struct.versionDouble);
                 oprot.writeFieldEnd();
             }
-            oprot.writeFieldBegin(VERSION_DOUBLE_FIELD_DESC);
-            oprot.writeDouble(struct.versionDouble);
-            oprot.writeFieldEnd();
             if (struct.fromStr != null) {
-                oprot.writeFieldBegin(FROM_STR_FIELD_DESC);
-                oprot.writeString(struct.fromStr);
-                oprot.writeFieldEnd();
+                if (struct.isSetFromStr()) {
+                    oprot.writeFieldBegin(FROM_STR_FIELD_DESC);
+                    oprot.writeString(struct.fromStr);
+                    oprot.writeFieldEnd();
+                }
             }
             oprot.writeFieldStop();
             oprot.writeStructEnd();

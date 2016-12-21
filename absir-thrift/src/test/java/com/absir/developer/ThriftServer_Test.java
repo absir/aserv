@@ -3,6 +3,7 @@ package com.absir.developer;
 import com.absir.client.SocketAdapter;
 import com.absir.client.helper.HelperJson;
 import com.absir.core.kernel.KernelLang;
+import com.absir.data.json.ThriftBaseSerializer;
 import com.absir.server.socket.resolver.IBufferResolver;
 import com.absir.server.socket.resolver.SocketBufferResolver;
 import com.absir.thrift.TAdapterProtocol;
@@ -17,6 +18,7 @@ import tbase_test.RpcService;
 import tbase_test.TPlatformFrom;
 
 import java.net.Socket;
+import java.util.Arrays;
 
 /**
  * Created by absir on 2016/12/6.
@@ -38,7 +40,7 @@ public class ThriftServer_Test extends ThriftService {
             public TPlatformFrom setting(TPlatformFrom platformFrom) throws TException {
                 System.out.println("invoke = " + HelperJson.encodeNull(platformFrom));
                 platformFrom.setChannel("ddddd");
-                //System.out.println(Arrays.toString(ThriftBaseSerializer.serializerBytes(platformFrom)));
+                System.out.println(Arrays.toString(ThriftBaseSerializer.serializerBytes(platformFrom)));
                 return platformFrom;
             }
         };
@@ -85,9 +87,12 @@ public class ThriftServer_Test extends ThriftService {
         //TAdapterProtocol adapterProtocol = new TAdapterProtocol(adapterTransport);
         RpcService.Client client = new RpcService.Client(new TAdapterProtocol(adapterTransport, RpcService.class.getSimpleName()));
         TPlatformFrom platformFrom = new TPlatformFrom();
-        platformFrom.setChannel("dsdsadsadasd");
+        //platformFrom.setChannel("dsdsadsadasd");
 
-        //System.out.println(Arrays.toString(ThriftBaseSerializer.serializerBytes(platformFrom)));
+        System.out.println(Arrays.toString(ThriftBaseSerializer.serializerBytes(platformFrom)));
+
+        platformFrom = client.setting(platformFrom);
+        System.out.println("return = " + HelperJson.encodeNull(platformFrom));
 
         platformFrom = client.setting(platformFrom);
         System.out.println("return = " + HelperJson.encodeNull(platformFrom));

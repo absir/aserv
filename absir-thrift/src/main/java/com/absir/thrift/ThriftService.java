@@ -12,6 +12,7 @@ import com.absir.core.base.Environment;
 import com.absir.core.util.UtilContext;
 import com.absir.core.util.UtilPipedStream;
 import com.absir.server.in.InModel;
+import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
 import com.absir.server.socket.InputSocket;
 import com.absir.server.socket.SelSession;
@@ -20,6 +21,7 @@ import com.absir.server.socket.SocketServer;
 import com.absir.server.socket.resolver.IBufferResolver;
 import com.absir.server.socket.resolver.ISessionResolver;
 import com.absir.server.socket.resolver.InputBufferResolver;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
@@ -201,6 +203,14 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
     protected void doResponse(SocketChannel socketChannel, Serializable id, byte flag, int off, byte[] buffer, InputStream inputStream) {
     }
 
+    public InputStream decrypt(Input input, InputStream inputStream) {
+        return inputStream;
+    }
+
+    public byte[] encrypt(Input input, ByteArrayOutputStream outputStream) {
+        return outputStream.toByteArray();
+    }
+
     // Processor处理入口
     public void onProcess(InputSocket.InputSocketAtt socketAtt, TMultiplexedProcessorProxy.IFaceProcessProxy faceProcessProxy) throws IOException, TException {
         ThriftInput input = new ThriftInput(new InModel(), socketAtt, null);
@@ -208,7 +218,7 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
         OnPut onPut = new OnPut(input);
         try {
             onPut.open();
-            processorProxy.process(faceProcessProxy, input);
+            processorProxy.process(faceProcessProxy, input, this);
 
         } finally {
             onPut.close();
