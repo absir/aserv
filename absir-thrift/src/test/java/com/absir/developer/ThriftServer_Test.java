@@ -43,6 +43,22 @@ public class ThriftServer_Test extends ThriftService {
                 System.out.println(Arrays.toString(ThriftBaseSerializer.serializerBytes(platformFrom)));
                 return platformFrom;
             }
+
+            @Override
+            public TPlatformFrom setting2(TPlatformFrom platformFrom) throws TException {
+                System.out.println("invoke2 = " + HelperJson.encodeNull(platformFrom));
+                platformFrom.setChannel("ddddd2");
+                System.out.println(Arrays.toString(ThriftBaseSerializer.serializerBytes(platformFrom)));
+                return platformFrom;
+            }
+
+            @Override
+            public TPlatformFrom setting3(TPlatformFrom platformFrom) throws TException {
+                System.out.println("invoke3 = " + HelperJson.encodeNull(platformFrom));
+                platformFrom.setChannel("ddddd3");
+                System.out.println(Arrays.toString(ThriftBaseSerializer.serializerBytes(platformFrom)));
+                return platformFrom;
+            }
         };
 
         processorProxy.registerProcessor(RpcService.class.getSimpleName(), rpcService, new RpcService.Processor<RpcService.Iface>(rpcService));
@@ -94,7 +110,10 @@ public class ThriftServer_Test extends ThriftService {
         platformFrom = client.setting(platformFrom);
         System.out.println("return = " + HelperJson.encodeNull(platformFrom));
 
-        platformFrom = client.setting(platformFrom);
+        platformFrom = client.setting2(platformFrom);
+        System.out.println("return = " + HelperJson.encodeNull(platformFrom));
+
+        platformFrom = client.setting3(platformFrom);
         System.out.println("return = " + HelperJson.encodeNull(platformFrom));
     }
 

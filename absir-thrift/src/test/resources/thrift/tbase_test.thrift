@@ -16,6 +16,10 @@ service RpcService {
 	// 来源设置
     TPlatformFrom setting(1:TPlatformFrom platformFrom)
 
+    TPlatformFrom setting2(1:TPlatformFrom platformFrom)
+
+    TPlatformFrom setting3(1:TPlatformFrom platformFrom)
+
 }
 
 service PushService {

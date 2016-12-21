@@ -5,6 +5,7 @@ import com.absir.core.kernel.KernelLang;
 import org.apache.thrift.ProcessFunction;
 import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.TException;
+import org.apache.thrift.ThriftVisitor;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.transport.TIOStreamTransport;
 import org.apache.thrift.transport.TMemoryInputTransport;
@@ -36,7 +37,13 @@ public class TAdapterReceiver implements SocketAdapter.CallbackAdapter {
         }
 
         for (Map.Entry<String, ProcessFunction> entry : ((Map<String, ProcessFunction>) (Object) baseProcessor.getProcessMapView()).entrySet()) {
-            nameMapIFaceProcessFunction.put(name + ":" + entry.getKey(), new KernelLang.ObjectEntry<Object, ProcessFunction>(iface, entry.getValue()));
+            ProcessFunction processFunction = entry.getValue();
+            if (!ThriftVisitor.isOneWay(processFunction)) {
+                LOGGER.warn("TAdapterReceiver bind  " + iface + " method:[" + processFunction.getMethodName() + "] is not oneway");
+                continue;
+            }
+
+            nameMapIFaceProcessFunction.put(name + ":" + entry.getKey(), new KernelLang.ObjectEntry<Object, ProcessFunction>(iface, processFunction));
         }
     }
 

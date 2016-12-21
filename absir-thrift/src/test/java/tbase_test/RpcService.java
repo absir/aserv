@@ -39,11 +39,19 @@ public class RpcService {
     public interface Iface {
 
         public TPlatformFrom setting(TPlatformFrom platformFrom) throws org.apache.thrift.TException;
+
+        public TPlatformFrom setting2(TPlatformFrom platformFrom) throws org.apache.thrift.TException;
+
+        public TPlatformFrom setting3(TPlatformFrom platformFrom) throws org.apache.thrift.TException;
     }
 
     public interface AsyncIface {
 
         public void setting(TPlatformFrom platformFrom, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+        public void setting2(TPlatformFrom platformFrom, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+        public void setting3(TPlatformFrom platformFrom, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
     }
 
     public static class Client extends org.apache.thrift.TServiceClient implements Iface {
@@ -88,6 +96,46 @@ public class RpcService {
                 return result.success;
             }
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "setting failed: unknown result");
+        }
+
+        public TPlatformFrom setting2(TPlatformFrom platformFrom) throws org.apache.thrift.TException {
+            send_setting2(platformFrom);
+            return recv_setting2();
+        }
+
+        public void send_setting2(TPlatformFrom platformFrom) throws org.apache.thrift.TException {
+            setting2_args args = new setting2_args();
+            args.setPlatformFrom(platformFrom);
+            sendBase("setting2", args);
+        }
+
+        public TPlatformFrom recv_setting2() throws org.apache.thrift.TException {
+            setting2_result result = new setting2_result();
+            receiveBase(result, "setting2");
+            if (result.isSetSuccess()) {
+                return result.success;
+            }
+            throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "setting2 failed: unknown result");
+        }
+
+        public TPlatformFrom setting3(TPlatformFrom platformFrom) throws org.apache.thrift.TException {
+            send_setting3(platformFrom);
+            return recv_setting3();
+        }
+
+        public void send_setting3(TPlatformFrom platformFrom) throws org.apache.thrift.TException {
+            setting3_args args = new setting3_args();
+            args.setPlatformFrom(platformFrom);
+            sendBase("setting3", args);
+        }
+
+        public TPlatformFrom recv_setting3() throws org.apache.thrift.TException {
+            setting3_result result = new setting3_result();
+            receiveBase(result, "setting3");
+            if (result.isSetSuccess()) {
+                return result.success;
+            }
+            throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "setting3 failed: unknown result");
         }
     }
 
@@ -146,6 +194,74 @@ public class RpcService {
                 return (new Client(prot)).recv_setting();
             }
         }
+
+        public void setting2(TPlatformFrom platformFrom, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+            checkReady();
+            setting2_call method_call = new setting2_call(platformFrom, resultHandler, this, ___protocolFactory, ___transport);
+            this.___currentMethod = method_call;
+            ___manager.call(method_call);
+        }
+
+        public static class setting2_call extends org.apache.thrift.async.TAsyncMethodCall {
+
+            private TPlatformFrom platformFrom;
+
+            public setting2_call(TPlatformFrom platformFrom, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+                super(client, protocolFactory, transport, resultHandler, false);
+                this.platformFrom = platformFrom;
+            }
+
+            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+                prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("setting2", org.apache.thrift.protocol.TMessageType.CALL, 0));
+                setting2_args args = new setting2_args();
+                args.setPlatformFrom(platformFrom);
+                args.write(prot);
+                prot.writeMessageEnd();
+            }
+
+            public TPlatformFrom getResult() throws org.apache.thrift.TException {
+                if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+                    throw new IllegalStateException("Method call not finished!");
+                }
+                org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+                org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+                return (new Client(prot)).recv_setting2();
+            }
+        }
+
+        public void setting3(TPlatformFrom platformFrom, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+            checkReady();
+            setting3_call method_call = new setting3_call(platformFrom, resultHandler, this, ___protocolFactory, ___transport);
+            this.___currentMethod = method_call;
+            ___manager.call(method_call);
+        }
+
+        public static class setting3_call extends org.apache.thrift.async.TAsyncMethodCall {
+
+            private TPlatformFrom platformFrom;
+
+            public setting3_call(TPlatformFrom platformFrom, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+                super(client, protocolFactory, transport, resultHandler, false);
+                this.platformFrom = platformFrom;
+            }
+
+            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+                prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("setting3", org.apache.thrift.protocol.TMessageType.CALL, 0));
+                setting3_args args = new setting3_args();
+                args.setPlatformFrom(platformFrom);
+                args.write(prot);
+                prot.writeMessageEnd();
+            }
+
+            public TPlatformFrom getResult() throws org.apache.thrift.TException {
+                if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+                    throw new IllegalStateException("Method call not finished!");
+                }
+                org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+                org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+                return (new Client(prot)).recv_setting3();
+            }
+        }
     }
 
     public static class Processor<I extends Iface> extends org.apache.thrift.TBaseProcessor<I> implements org.apache.thrift.TProcessor {
@@ -162,6 +278,8 @@ public class RpcService {
 
         private static <I extends Iface> Map<String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>> getProcessMap(Map<String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>> processMap) {
             processMap.put("setting", new setting());
+            processMap.put("setting2", new setting2());
+            processMap.put("setting3", new setting3());
             return processMap;
         }
 
@@ -185,6 +303,48 @@ public class RpcService {
                 return result;
             }
         }
+
+        public static class setting2<I extends Iface> extends org.apache.thrift.ProcessFunction<I, setting2_args> {
+
+            public setting2() {
+                super("setting2");
+            }
+
+            public setting2_args getEmptyArgsInstance() {
+                return new setting2_args();
+            }
+
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public setting2_result getResult(I iface, setting2_args args) throws org.apache.thrift.TException {
+                setting2_result result = new setting2_result();
+                result.success = iface.setting2(args.platformFrom);
+                return result;
+            }
+        }
+
+        public static class setting3<I extends Iface> extends org.apache.thrift.ProcessFunction<I, setting3_args> {
+
+            public setting3() {
+                super("setting3");
+            }
+
+            public setting3_args getEmptyArgsInstance() {
+                return new setting3_args();
+            }
+
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public setting3_result getResult(I iface, setting3_args args) throws org.apache.thrift.TException {
+                setting3_result result = new setting3_result();
+                result.success = iface.setting3(args.platformFrom);
+                return result;
+            }
+        }
     }
 
     public static class AsyncProcessor<I extends AsyncIface> extends org.apache.thrift.TBaseAsyncProcessor<I> {
@@ -201,6 +361,8 @@ public class RpcService {
 
         private static <I extends AsyncIface> Map<String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>> getProcessMap(Map<String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>> processMap) {
             processMap.put("setting", new setting());
+            processMap.put("setting2", new setting2());
+            processMap.put("setting3", new setting3());
             return processMap;
         }
 
@@ -255,6 +417,114 @@ public class RpcService {
 
             public void start(I iface, setting_args args, org.apache.thrift.async.AsyncMethodCallback<TPlatformFrom> resultHandler) throws TException {
                 iface.setting(args.platformFrom, resultHandler);
+            }
+        }
+
+        public static class setting2<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, setting2_args, TPlatformFrom> {
+
+            public setting2() {
+                super("setting2");
+            }
+
+            public setting2_args getEmptyArgsInstance() {
+                return new setting2_args();
+            }
+
+            public AsyncMethodCallback<TPlatformFrom> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+                final org.apache.thrift.AsyncProcessFunction fcall = this;
+                return new AsyncMethodCallback<TPlatformFrom>() {
+
+                    public void onComplete(TPlatformFrom o) {
+                        setting2_result result = new setting2_result();
+                        result.success = o;
+                        try {
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
+                            return;
+                        } catch (Exception e) {
+                            LOGGER.error("Exception writing to internal frame buffer", e);
+                        }
+                        fb.close();
+                    }
+
+                    public void onError(Exception e) {
+                        byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+                        org.apache.thrift.TBase msg;
+                        setting2_result result = new setting2_result();
+                        {
+                            msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                        }
+                        try {
+                            fcall.sendResponse(fb, msg, msgType, seqid);
+                            return;
+                        } catch (Exception ex) {
+                            LOGGER.error("Exception writing to internal frame buffer", ex);
+                        }
+                        fb.close();
+                    }
+                };
+            }
+
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public void start(I iface, setting2_args args, org.apache.thrift.async.AsyncMethodCallback<TPlatformFrom> resultHandler) throws TException {
+                iface.setting2(args.platformFrom, resultHandler);
+            }
+        }
+
+        public static class setting3<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, setting3_args, TPlatformFrom> {
+
+            public setting3() {
+                super("setting3");
+            }
+
+            public setting3_args getEmptyArgsInstance() {
+                return new setting3_args();
+            }
+
+            public AsyncMethodCallback<TPlatformFrom> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+                final org.apache.thrift.AsyncProcessFunction fcall = this;
+                return new AsyncMethodCallback<TPlatformFrom>() {
+
+                    public void onComplete(TPlatformFrom o) {
+                        setting3_result result = new setting3_result();
+                        result.success = o;
+                        try {
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
+                            return;
+                        } catch (Exception e) {
+                            LOGGER.error("Exception writing to internal frame buffer", e);
+                        }
+                        fb.close();
+                    }
+
+                    public void onError(Exception e) {
+                        byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+                        org.apache.thrift.TBase msg;
+                        setting3_result result = new setting3_result();
+                        {
+                            msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                        }
+                        try {
+                            fcall.sendResponse(fb, msg, msgType, seqid);
+                            return;
+                        } catch (Exception ex) {
+                            LOGGER.error("Exception writing to internal frame buffer", ex);
+                        }
+                        fb.close();
+                    }
+                };
+            }
+
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public void start(I iface, setting3_args args, org.apache.thrift.async.AsyncMethodCallback<TPlatformFrom> resultHandler) throws TException {
+                iface.setting3(args.platformFrom, resultHandler);
             }
         }
     }
@@ -949,6 +1219,1374 @@ public class RpcService {
 
             @Override
             public void read(org.apache.thrift.protocol.TProtocol prot, setting_result struct) throws org.apache.thrift.TException {
+                TTupleProtocol iprot = (TTupleProtocol) prot;
+                BitSet incoming = iprot.readBitSet(1);
+                if (incoming.get(0)) {
+                    struct.success = new TPlatformFrom();
+                    struct.success.read(iprot);
+                    struct.setSuccessIsSet(true);
+                }
+            }
+        }
+    }
+
+    public static class setting2_args implements org.apache.thrift.TBase<setting2_args, setting2_args._Fields>, java.io.Serializable, Cloneable, Comparable<setting2_args> {
+
+        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("setting2_args");
+
+        private static final org.apache.thrift.protocol.TField PLATFORM_FROM_FIELD_DESC = new org.apache.thrift.protocol.TField("platformFrom", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
+
+        private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
+        static {
+            schemes.put(StandardScheme.class, new setting2_argsStandardSchemeFactory());
+            schemes.put(TupleScheme.class, new setting2_argsTupleSchemeFactory());
+        }
+
+        // required
+        public TPlatformFrom platformFrom;
+
+        public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+
+            PLATFORM_FROM((short) 1, "platformFrom");
+
+            private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+            static {
+                for (_Fields field : EnumSet.allOf(_Fields.class)) {
+                    byName.put(field.getFieldName(), field);
+                }
+            }
+
+            public static _Fields findByThriftId(int fieldId) {
+                switch(fieldId) {
+                    case // PLATFORM_FROM
+                    1:
+                        return PLATFORM_FROM;
+                    default:
+                        return null;
+                }
+            }
+
+            public static _Fields findByThriftIdOrThrow(int fieldId) {
+                _Fields fields = findByThriftId(fieldId);
+                if (fields == null)
+                    throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+                return fields;
+            }
+
+            public static _Fields findByName(String name) {
+                return byName.get(name);
+            }
+
+            private final short _thriftId;
+
+            private final String _fieldName;
+
+            _Fields(short thriftId, String fieldName) {
+                _thriftId = thriftId;
+                _fieldName = fieldName;
+            }
+
+            public short getThriftFieldId() {
+                return _thriftId;
+            }
+
+            public String getFieldName() {
+                return _fieldName;
+            }
+        }
+
+        // isset id assignments
+        public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
+        static {
+            Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.PLATFORM_FROM, new org.apache.thrift.meta_data.FieldMetaData("platformFrom", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, TPlatformFrom.class)));
+            metaDataMap = Collections.unmodifiableMap(tmpMap);
+            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(setting2_args.class, metaDataMap);
+        }
+
+        public setting2_args() {
+        }
+
+        public setting2_args(TPlatformFrom platformFrom) {
+            this();
+            this.platformFrom = platformFrom;
+        }
+
+        public setting2_args(setting2_args other) {
+            if (other.isSetPlatformFrom()) {
+                this.platformFrom = new TPlatformFrom(other.platformFrom);
+            }
+        }
+
+        public setting2_args deepCopy() {
+            return new setting2_args(this);
+        }
+
+        @Override
+        public void clear() {
+            this.platformFrom = null;
+        }
+
+        public TPlatformFrom getPlatformFrom() {
+            return this.platformFrom;
+        }
+
+        public setting2_args setPlatformFrom(TPlatformFrom platformFrom) {
+            this.platformFrom = platformFrom;
+            return this;
+        }
+
+        public void unsetPlatformFrom() {
+            this.platformFrom = null;
+        }
+
+        public boolean isSetPlatformFrom() {
+            return this.platformFrom != null;
+        }
+
+        public void setPlatformFromIsSet(boolean value) {
+            if (!value) {
+                this.platformFrom = null;
+            }
+        }
+
+        public void setFieldValue(_Fields field, Object value) {
+            switch(field) {
+                case PLATFORM_FROM:
+                    if (value == null) {
+                        unsetPlatformFrom();
+                    } else {
+                        setPlatformFrom((TPlatformFrom) value);
+                    }
+                    break;
+            }
+        }
+
+        public Object getFieldValue(_Fields field) {
+            switch(field) {
+                case PLATFORM_FROM:
+                    return getPlatformFrom();
+            }
+            throw new IllegalStateException();
+        }
+
+        public boolean isSet(_Fields field) {
+            if (field == null) {
+                throw new IllegalArgumentException();
+            }
+            switch(field) {
+                case PLATFORM_FROM:
+                    return isSetPlatformFrom();
+            }
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that == null)
+                return false;
+            if (that instanceof setting2_args)
+                return this.equals((setting2_args) that);
+            return false;
+        }
+
+        public boolean equals(setting2_args that) {
+            if (that == null)
+                return false;
+            boolean this_present_platformFrom = true && this.isSetPlatformFrom();
+            boolean that_present_platformFrom = true && that.isSetPlatformFrom();
+            if (this_present_platformFrom || that_present_platformFrom) {
+                if (!(this_present_platformFrom && that_present_platformFrom))
+                    return false;
+                if (!this.platformFrom.equals(that.platformFrom))
+                    return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            List<Object> list = new ArrayList<Object>();
+            boolean present_platformFrom = true && (isSetPlatformFrom());
+            list.add(present_platformFrom);
+            if (present_platformFrom)
+                list.add(platformFrom);
+            return list.hashCode();
+        }
+
+        @Override
+        public int compareTo(setting2_args other) {
+            if (!getClass().equals(other.getClass())) {
+                return getClass().getName().compareTo(other.getClass().getName());
+            }
+            int lastComparison = 0;
+            lastComparison = Boolean.valueOf(isSetPlatformFrom()).compareTo(other.isSetPlatformFrom());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetPlatformFrom()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.platformFrom, other.platformFrom);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            return 0;
+        }
+
+        public _Fields fieldForId(int fieldId) {
+            return _Fields.findByThriftId(fieldId);
+        }
+
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+            schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+        }
+
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+            schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("setting2_args(");
+            boolean first = true;
+            sb.append("platformFrom:");
+            if (this.platformFrom == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.platformFrom);
+            }
+            first = false;
+            sb.append(")");
+            return sb.toString();
+        }
+
+        public void validate() throws org.apache.thrift.TException {
+            // check for sub-struct validity
+            if (platformFrom != null) {
+                platformFrom.validate();
+            }
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+            try {
+                write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+            try {
+                read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private static class setting2_argsStandardSchemeFactory implements SchemeFactory {
+
+            public setting2_argsStandardScheme getScheme() {
+                return new setting2_argsStandardScheme();
+            }
+        }
+
+        private static class setting2_argsStandardScheme extends StandardScheme<setting2_args> {
+
+            public void read(org.apache.thrift.protocol.TProtocol iprot, setting2_args struct) throws org.apache.thrift.TException {
+                org.apache.thrift.protocol.TField schemeField;
+                iprot.readStructBegin();
+                while (true) {
+                    schemeField = iprot.readFieldBegin();
+                    if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                        break;
+                    }
+                    switch(schemeField.id) {
+                        case // PLATFORM_FROM
+                        1:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                                struct.platformFrom = new TPlatformFrom();
+                                struct.platformFrom.read(iprot);
+                                struct.setPlatformFromIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        default:
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    iprot.readFieldEnd();
+                }
+                iprot.readStructEnd();
+                // check for required fields of primitive type, which can't be checked in the validate method
+                struct.validate();
+            }
+
+            public void write(org.apache.thrift.protocol.TProtocol oprot, setting2_args struct) throws org.apache.thrift.TException {
+                struct.validate();
+                oprot.writeStructBegin(STRUCT_DESC);
+                if (struct.platformFrom != null) {
+                    oprot.writeFieldBegin(PLATFORM_FROM_FIELD_DESC);
+                    struct.platformFrom.write(oprot);
+                    oprot.writeFieldEnd();
+                }
+                oprot.writeFieldStop();
+                oprot.writeStructEnd();
+            }
+        }
+
+        private static class setting2_argsTupleSchemeFactory implements SchemeFactory {
+
+            public setting2_argsTupleScheme getScheme() {
+                return new setting2_argsTupleScheme();
+            }
+        }
+
+        private static class setting2_argsTupleScheme extends TupleScheme<setting2_args> {
+
+            @Override
+            public void write(org.apache.thrift.protocol.TProtocol prot, setting2_args struct) throws org.apache.thrift.TException {
+                TTupleProtocol oprot = (TTupleProtocol) prot;
+                BitSet optionals = new BitSet();
+                if (struct.isSetPlatformFrom()) {
+                    optionals.set(0);
+                }
+                oprot.writeBitSet(optionals, 1);
+                if (struct.isSetPlatformFrom()) {
+                    struct.platformFrom.write(oprot);
+                }
+            }
+
+            @Override
+            public void read(org.apache.thrift.protocol.TProtocol prot, setting2_args struct) throws org.apache.thrift.TException {
+                TTupleProtocol iprot = (TTupleProtocol) prot;
+                BitSet incoming = iprot.readBitSet(1);
+                if (incoming.get(0)) {
+                    struct.platformFrom = new TPlatformFrom();
+                    struct.platformFrom.read(iprot);
+                    struct.setPlatformFromIsSet(true);
+                }
+            }
+        }
+    }
+
+    public static class setting2_result implements org.apache.thrift.TBase<setting2_result, setting2_result._Fields>, java.io.Serializable, Cloneable, Comparable<setting2_result> {
+
+        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("setting2_result");
+
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
+
+        private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
+        static {
+            schemes.put(StandardScheme.class, new setting2_resultStandardSchemeFactory());
+            schemes.put(TupleScheme.class, new setting2_resultTupleSchemeFactory());
+        }
+
+        // required
+        public TPlatformFrom success;
+
+        public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+
+            SUCCESS((short) 0, "success");
+
+            private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+            static {
+                for (_Fields field : EnumSet.allOf(_Fields.class)) {
+                    byName.put(field.getFieldName(), field);
+                }
+            }
+
+            public static _Fields findByThriftId(int fieldId) {
+                switch(fieldId) {
+                    case // SUCCESS
+                    0:
+                        return SUCCESS;
+                    default:
+                        return null;
+                }
+            }
+
+            public static _Fields findByThriftIdOrThrow(int fieldId) {
+                _Fields fields = findByThriftId(fieldId);
+                if (fields == null)
+                    throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+                return fields;
+            }
+
+            public static _Fields findByName(String name) {
+                return byName.get(name);
+            }
+
+            private final short _thriftId;
+
+            private final String _fieldName;
+
+            _Fields(short thriftId, String fieldName) {
+                _thriftId = thriftId;
+                _fieldName = fieldName;
+            }
+
+            public short getThriftFieldId() {
+                return _thriftId;
+            }
+
+            public String getFieldName() {
+                return _fieldName;
+            }
+        }
+
+        // isset id assignments
+        public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
+        static {
+            Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, TPlatformFrom.class)));
+            metaDataMap = Collections.unmodifiableMap(tmpMap);
+            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(setting2_result.class, metaDataMap);
+        }
+
+        public setting2_result() {
+        }
+
+        public setting2_result(TPlatformFrom success) {
+            this();
+            this.success = success;
+        }
+
+        public setting2_result(setting2_result other) {
+            if (other.isSetSuccess()) {
+                this.success = new TPlatformFrom(other.success);
+            }
+        }
+
+        public setting2_result deepCopy() {
+            return new setting2_result(this);
+        }
+
+        @Override
+        public void clear() {
+            this.success = null;
+        }
+
+        public TPlatformFrom getSuccess() {
+            return this.success;
+        }
+
+        public setting2_result setSuccess(TPlatformFrom success) {
+            this.success = success;
+            return this;
+        }
+
+        public void unsetSuccess() {
+            this.success = null;
+        }
+
+        public boolean isSetSuccess() {
+            return this.success != null;
+        }
+
+        public void setSuccessIsSet(boolean value) {
+            if (!value) {
+                this.success = null;
+            }
+        }
+
+        public void setFieldValue(_Fields field, Object value) {
+            switch(field) {
+                case SUCCESS:
+                    if (value == null) {
+                        unsetSuccess();
+                    } else {
+                        setSuccess((TPlatformFrom) value);
+                    }
+                    break;
+            }
+        }
+
+        public Object getFieldValue(_Fields field) {
+            switch(field) {
+                case SUCCESS:
+                    return getSuccess();
+            }
+            throw new IllegalStateException();
+        }
+
+        public boolean isSet(_Fields field) {
+            if (field == null) {
+                throw new IllegalArgumentException();
+            }
+            switch(field) {
+                case SUCCESS:
+                    return isSetSuccess();
+            }
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that == null)
+                return false;
+            if (that instanceof setting2_result)
+                return this.equals((setting2_result) that);
+            return false;
+        }
+
+        public boolean equals(setting2_result that) {
+            if (that == null)
+                return false;
+            boolean this_present_success = true && this.isSetSuccess();
+            boolean that_present_success = true && that.isSetSuccess();
+            if (this_present_success || that_present_success) {
+                if (!(this_present_success && that_present_success))
+                    return false;
+                if (!this.success.equals(that.success))
+                    return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            List<Object> list = new ArrayList<Object>();
+            boolean present_success = true && (isSetSuccess());
+            list.add(present_success);
+            if (present_success)
+                list.add(success);
+            return list.hashCode();
+        }
+
+        @Override
+        public int compareTo(setting2_result other) {
+            if (!getClass().equals(other.getClass())) {
+                return getClass().getName().compareTo(other.getClass().getName());
+            }
+            int lastComparison = 0;
+            lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetSuccess()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            return 0;
+        }
+
+        public _Fields fieldForId(int fieldId) {
+            return _Fields.findByThriftId(fieldId);
+        }
+
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+            schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+        }
+
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+            schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("setting2_result(");
+            boolean first = true;
+            sb.append("success:");
+            if (this.success == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.success);
+            }
+            first = false;
+            sb.append(")");
+            return sb.toString();
+        }
+
+        public void validate() throws org.apache.thrift.TException {
+            // check for sub-struct validity
+            if (success != null) {
+                success.validate();
+            }
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+            try {
+                write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+            try {
+                read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private static class setting2_resultStandardSchemeFactory implements SchemeFactory {
+
+            public setting2_resultStandardScheme getScheme() {
+                return new setting2_resultStandardScheme();
+            }
+        }
+
+        private static class setting2_resultStandardScheme extends StandardScheme<setting2_result> {
+
+            public void read(org.apache.thrift.protocol.TProtocol iprot, setting2_result struct) throws org.apache.thrift.TException {
+                org.apache.thrift.protocol.TField schemeField;
+                iprot.readStructBegin();
+                while (true) {
+                    schemeField = iprot.readFieldBegin();
+                    if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                        break;
+                    }
+                    switch(schemeField.id) {
+                        case // SUCCESS
+                        0:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                                struct.success = new TPlatformFrom();
+                                struct.success.read(iprot);
+                                struct.setSuccessIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        default:
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    iprot.readFieldEnd();
+                }
+                iprot.readStructEnd();
+                // check for required fields of primitive type, which can't be checked in the validate method
+                struct.validate();
+            }
+
+            public void write(org.apache.thrift.protocol.TProtocol oprot, setting2_result struct) throws org.apache.thrift.TException {
+                struct.validate();
+                oprot.writeStructBegin(STRUCT_DESC);
+                if (struct.success != null) {
+                    oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+                    struct.success.write(oprot);
+                    oprot.writeFieldEnd();
+                }
+                oprot.writeFieldStop();
+                oprot.writeStructEnd();
+            }
+        }
+
+        private static class setting2_resultTupleSchemeFactory implements SchemeFactory {
+
+            public setting2_resultTupleScheme getScheme() {
+                return new setting2_resultTupleScheme();
+            }
+        }
+
+        private static class setting2_resultTupleScheme extends TupleScheme<setting2_result> {
+
+            @Override
+            public void write(org.apache.thrift.protocol.TProtocol prot, setting2_result struct) throws org.apache.thrift.TException {
+                TTupleProtocol oprot = (TTupleProtocol) prot;
+                BitSet optionals = new BitSet();
+                if (struct.isSetSuccess()) {
+                    optionals.set(0);
+                }
+                oprot.writeBitSet(optionals, 1);
+                if (struct.isSetSuccess()) {
+                    struct.success.write(oprot);
+                }
+            }
+
+            @Override
+            public void read(org.apache.thrift.protocol.TProtocol prot, setting2_result struct) throws org.apache.thrift.TException {
+                TTupleProtocol iprot = (TTupleProtocol) prot;
+                BitSet incoming = iprot.readBitSet(1);
+                if (incoming.get(0)) {
+                    struct.success = new TPlatformFrom();
+                    struct.success.read(iprot);
+                    struct.setSuccessIsSet(true);
+                }
+            }
+        }
+    }
+
+    public static class setting3_args implements org.apache.thrift.TBase<setting3_args, setting3_args._Fields>, java.io.Serializable, Cloneable, Comparable<setting3_args> {
+
+        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("setting3_args");
+
+        private static final org.apache.thrift.protocol.TField PLATFORM_FROM_FIELD_DESC = new org.apache.thrift.protocol.TField("platformFrom", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
+
+        private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
+        static {
+            schemes.put(StandardScheme.class, new setting3_argsStandardSchemeFactory());
+            schemes.put(TupleScheme.class, new setting3_argsTupleSchemeFactory());
+        }
+
+        // required
+        public TPlatformFrom platformFrom;
+
+        public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+
+            PLATFORM_FROM((short) 1, "platformFrom");
+
+            private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+            static {
+                for (_Fields field : EnumSet.allOf(_Fields.class)) {
+                    byName.put(field.getFieldName(), field);
+                }
+            }
+
+            public static _Fields findByThriftId(int fieldId) {
+                switch(fieldId) {
+                    case // PLATFORM_FROM
+                    1:
+                        return PLATFORM_FROM;
+                    default:
+                        return null;
+                }
+            }
+
+            public static _Fields findByThriftIdOrThrow(int fieldId) {
+                _Fields fields = findByThriftId(fieldId);
+                if (fields == null)
+                    throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+                return fields;
+            }
+
+            public static _Fields findByName(String name) {
+                return byName.get(name);
+            }
+
+            private final short _thriftId;
+
+            private final String _fieldName;
+
+            _Fields(short thriftId, String fieldName) {
+                _thriftId = thriftId;
+                _fieldName = fieldName;
+            }
+
+            public short getThriftFieldId() {
+                return _thriftId;
+            }
+
+            public String getFieldName() {
+                return _fieldName;
+            }
+        }
+
+        // isset id assignments
+        public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
+        static {
+            Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.PLATFORM_FROM, new org.apache.thrift.meta_data.FieldMetaData("platformFrom", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, TPlatformFrom.class)));
+            metaDataMap = Collections.unmodifiableMap(tmpMap);
+            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(setting3_args.class, metaDataMap);
+        }
+
+        public setting3_args() {
+        }
+
+        public setting3_args(TPlatformFrom platformFrom) {
+            this();
+            this.platformFrom = platformFrom;
+        }
+
+        public setting3_args(setting3_args other) {
+            if (other.isSetPlatformFrom()) {
+                this.platformFrom = new TPlatformFrom(other.platformFrom);
+            }
+        }
+
+        public setting3_args deepCopy() {
+            return new setting3_args(this);
+        }
+
+        @Override
+        public void clear() {
+            this.platformFrom = null;
+        }
+
+        public TPlatformFrom getPlatformFrom() {
+            return this.platformFrom;
+        }
+
+        public setting3_args setPlatformFrom(TPlatformFrom platformFrom) {
+            this.platformFrom = platformFrom;
+            return this;
+        }
+
+        public void unsetPlatformFrom() {
+            this.platformFrom = null;
+        }
+
+        public boolean isSetPlatformFrom() {
+            return this.platformFrom != null;
+        }
+
+        public void setPlatformFromIsSet(boolean value) {
+            if (!value) {
+                this.platformFrom = null;
+            }
+        }
+
+        public void setFieldValue(_Fields field, Object value) {
+            switch(field) {
+                case PLATFORM_FROM:
+                    if (value == null) {
+                        unsetPlatformFrom();
+                    } else {
+                        setPlatformFrom((TPlatformFrom) value);
+                    }
+                    break;
+            }
+        }
+
+        public Object getFieldValue(_Fields field) {
+            switch(field) {
+                case PLATFORM_FROM:
+                    return getPlatformFrom();
+            }
+            throw new IllegalStateException();
+        }
+
+        public boolean isSet(_Fields field) {
+            if (field == null) {
+                throw new IllegalArgumentException();
+            }
+            switch(field) {
+                case PLATFORM_FROM:
+                    return isSetPlatformFrom();
+            }
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that == null)
+                return false;
+            if (that instanceof setting3_args)
+                return this.equals((setting3_args) that);
+            return false;
+        }
+
+        public boolean equals(setting3_args that) {
+            if (that == null)
+                return false;
+            boolean this_present_platformFrom = true && this.isSetPlatformFrom();
+            boolean that_present_platformFrom = true && that.isSetPlatformFrom();
+            if (this_present_platformFrom || that_present_platformFrom) {
+                if (!(this_present_platformFrom && that_present_platformFrom))
+                    return false;
+                if (!this.platformFrom.equals(that.platformFrom))
+                    return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            List<Object> list = new ArrayList<Object>();
+            boolean present_platformFrom = true && (isSetPlatformFrom());
+            list.add(present_platformFrom);
+            if (present_platformFrom)
+                list.add(platformFrom);
+            return list.hashCode();
+        }
+
+        @Override
+        public int compareTo(setting3_args other) {
+            if (!getClass().equals(other.getClass())) {
+                return getClass().getName().compareTo(other.getClass().getName());
+            }
+            int lastComparison = 0;
+            lastComparison = Boolean.valueOf(isSetPlatformFrom()).compareTo(other.isSetPlatformFrom());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetPlatformFrom()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.platformFrom, other.platformFrom);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            return 0;
+        }
+
+        public _Fields fieldForId(int fieldId) {
+            return _Fields.findByThriftId(fieldId);
+        }
+
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+            schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+        }
+
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+            schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("setting3_args(");
+            boolean first = true;
+            sb.append("platformFrom:");
+            if (this.platformFrom == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.platformFrom);
+            }
+            first = false;
+            sb.append(")");
+            return sb.toString();
+        }
+
+        public void validate() throws org.apache.thrift.TException {
+            // check for sub-struct validity
+            if (platformFrom != null) {
+                platformFrom.validate();
+            }
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+            try {
+                write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+            try {
+                read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private static class setting3_argsStandardSchemeFactory implements SchemeFactory {
+
+            public setting3_argsStandardScheme getScheme() {
+                return new setting3_argsStandardScheme();
+            }
+        }
+
+        private static class setting3_argsStandardScheme extends StandardScheme<setting3_args> {
+
+            public void read(org.apache.thrift.protocol.TProtocol iprot, setting3_args struct) throws org.apache.thrift.TException {
+                org.apache.thrift.protocol.TField schemeField;
+                iprot.readStructBegin();
+                while (true) {
+                    schemeField = iprot.readFieldBegin();
+                    if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                        break;
+                    }
+                    switch(schemeField.id) {
+                        case // PLATFORM_FROM
+                        1:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                                struct.platformFrom = new TPlatformFrom();
+                                struct.platformFrom.read(iprot);
+                                struct.setPlatformFromIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        default:
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    iprot.readFieldEnd();
+                }
+                iprot.readStructEnd();
+                // check for required fields of primitive type, which can't be checked in the validate method
+                struct.validate();
+            }
+
+            public void write(org.apache.thrift.protocol.TProtocol oprot, setting3_args struct) throws org.apache.thrift.TException {
+                struct.validate();
+                oprot.writeStructBegin(STRUCT_DESC);
+                if (struct.platformFrom != null) {
+                    oprot.writeFieldBegin(PLATFORM_FROM_FIELD_DESC);
+                    struct.platformFrom.write(oprot);
+                    oprot.writeFieldEnd();
+                }
+                oprot.writeFieldStop();
+                oprot.writeStructEnd();
+            }
+        }
+
+        private static class setting3_argsTupleSchemeFactory implements SchemeFactory {
+
+            public setting3_argsTupleScheme getScheme() {
+                return new setting3_argsTupleScheme();
+            }
+        }
+
+        private static class setting3_argsTupleScheme extends TupleScheme<setting3_args> {
+
+            @Override
+            public void write(org.apache.thrift.protocol.TProtocol prot, setting3_args struct) throws org.apache.thrift.TException {
+                TTupleProtocol oprot = (TTupleProtocol) prot;
+                BitSet optionals = new BitSet();
+                if (struct.isSetPlatformFrom()) {
+                    optionals.set(0);
+                }
+                oprot.writeBitSet(optionals, 1);
+                if (struct.isSetPlatformFrom()) {
+                    struct.platformFrom.write(oprot);
+                }
+            }
+
+            @Override
+            public void read(org.apache.thrift.protocol.TProtocol prot, setting3_args struct) throws org.apache.thrift.TException {
+                TTupleProtocol iprot = (TTupleProtocol) prot;
+                BitSet incoming = iprot.readBitSet(1);
+                if (incoming.get(0)) {
+                    struct.platformFrom = new TPlatformFrom();
+                    struct.platformFrom.read(iprot);
+                    struct.setPlatformFromIsSet(true);
+                }
+            }
+        }
+    }
+
+    public static class setting3_result implements org.apache.thrift.TBase<setting3_result, setting3_result._Fields>, java.io.Serializable, Cloneable, Comparable<setting3_result> {
+
+        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("setting3_result");
+
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
+
+        private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
+        static {
+            schemes.put(StandardScheme.class, new setting3_resultStandardSchemeFactory());
+            schemes.put(TupleScheme.class, new setting3_resultTupleSchemeFactory());
+        }
+
+        // required
+        public TPlatformFrom success;
+
+        public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+
+            SUCCESS((short) 0, "success");
+
+            private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+            static {
+                for (_Fields field : EnumSet.allOf(_Fields.class)) {
+                    byName.put(field.getFieldName(), field);
+                }
+            }
+
+            public static _Fields findByThriftId(int fieldId) {
+                switch(fieldId) {
+                    case // SUCCESS
+                    0:
+                        return SUCCESS;
+                    default:
+                        return null;
+                }
+            }
+
+            public static _Fields findByThriftIdOrThrow(int fieldId) {
+                _Fields fields = findByThriftId(fieldId);
+                if (fields == null)
+                    throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+                return fields;
+            }
+
+            public static _Fields findByName(String name) {
+                return byName.get(name);
+            }
+
+            private final short _thriftId;
+
+            private final String _fieldName;
+
+            _Fields(short thriftId, String fieldName) {
+                _thriftId = thriftId;
+                _fieldName = fieldName;
+            }
+
+            public short getThriftFieldId() {
+                return _thriftId;
+            }
+
+            public String getFieldName() {
+                return _fieldName;
+            }
+        }
+
+        // isset id assignments
+        public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
+        static {
+            Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, TPlatformFrom.class)));
+            metaDataMap = Collections.unmodifiableMap(tmpMap);
+            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(setting3_result.class, metaDataMap);
+        }
+
+        public setting3_result() {
+        }
+
+        public setting3_result(TPlatformFrom success) {
+            this();
+            this.success = success;
+        }
+
+        public setting3_result(setting3_result other) {
+            if (other.isSetSuccess()) {
+                this.success = new TPlatformFrom(other.success);
+            }
+        }
+
+        public setting3_result deepCopy() {
+            return new setting3_result(this);
+        }
+
+        @Override
+        public void clear() {
+            this.success = null;
+        }
+
+        public TPlatformFrom getSuccess() {
+            return this.success;
+        }
+
+        public setting3_result setSuccess(TPlatformFrom success) {
+            this.success = success;
+            return this;
+        }
+
+        public void unsetSuccess() {
+            this.success = null;
+        }
+
+        public boolean isSetSuccess() {
+            return this.success != null;
+        }
+
+        public void setSuccessIsSet(boolean value) {
+            if (!value) {
+                this.success = null;
+            }
+        }
+
+        public void setFieldValue(_Fields field, Object value) {
+            switch(field) {
+                case SUCCESS:
+                    if (value == null) {
+                        unsetSuccess();
+                    } else {
+                        setSuccess((TPlatformFrom) value);
+                    }
+                    break;
+            }
+        }
+
+        public Object getFieldValue(_Fields field) {
+            switch(field) {
+                case SUCCESS:
+                    return getSuccess();
+            }
+            throw new IllegalStateException();
+        }
+
+        public boolean isSet(_Fields field) {
+            if (field == null) {
+                throw new IllegalArgumentException();
+            }
+            switch(field) {
+                case SUCCESS:
+                    return isSetSuccess();
+            }
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that == null)
+                return false;
+            if (that instanceof setting3_result)
+                return this.equals((setting3_result) that);
+            return false;
+        }
+
+        public boolean equals(setting3_result that) {
+            if (that == null)
+                return false;
+            boolean this_present_success = true && this.isSetSuccess();
+            boolean that_present_success = true && that.isSetSuccess();
+            if (this_present_success || that_present_success) {
+                if (!(this_present_success && that_present_success))
+                    return false;
+                if (!this.success.equals(that.success))
+                    return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            List<Object> list = new ArrayList<Object>();
+            boolean present_success = true && (isSetSuccess());
+            list.add(present_success);
+            if (present_success)
+                list.add(success);
+            return list.hashCode();
+        }
+
+        @Override
+        public int compareTo(setting3_result other) {
+            if (!getClass().equals(other.getClass())) {
+                return getClass().getName().compareTo(other.getClass().getName());
+            }
+            int lastComparison = 0;
+            lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetSuccess()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            return 0;
+        }
+
+        public _Fields fieldForId(int fieldId) {
+            return _Fields.findByThriftId(fieldId);
+        }
+
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+            schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+        }
+
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+            schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("setting3_result(");
+            boolean first = true;
+            sb.append("success:");
+            if (this.success == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.success);
+            }
+            first = false;
+            sb.append(")");
+            return sb.toString();
+        }
+
+        public void validate() throws org.apache.thrift.TException {
+            // check for sub-struct validity
+            if (success != null) {
+                success.validate();
+            }
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+            try {
+                write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+            try {
+                read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private static class setting3_resultStandardSchemeFactory implements SchemeFactory {
+
+            public setting3_resultStandardScheme getScheme() {
+                return new setting3_resultStandardScheme();
+            }
+        }
+
+        private static class setting3_resultStandardScheme extends StandardScheme<setting3_result> {
+
+            public void read(org.apache.thrift.protocol.TProtocol iprot, setting3_result struct) throws org.apache.thrift.TException {
+                org.apache.thrift.protocol.TField schemeField;
+                iprot.readStructBegin();
+                while (true) {
+                    schemeField = iprot.readFieldBegin();
+                    if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                        break;
+                    }
+                    switch(schemeField.id) {
+                        case // SUCCESS
+                        0:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                                struct.success = new TPlatformFrom();
+                                struct.success.read(iprot);
+                                struct.setSuccessIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        default:
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    iprot.readFieldEnd();
+                }
+                iprot.readStructEnd();
+                // check for required fields of primitive type, which can't be checked in the validate method
+                struct.validate();
+            }
+
+            public void write(org.apache.thrift.protocol.TProtocol oprot, setting3_result struct) throws org.apache.thrift.TException {
+                struct.validate();
+                oprot.writeStructBegin(STRUCT_DESC);
+                if (struct.success != null) {
+                    oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+                    struct.success.write(oprot);
+                    oprot.writeFieldEnd();
+                }
+                oprot.writeFieldStop();
+                oprot.writeStructEnd();
+            }
+        }
+
+        private static class setting3_resultTupleSchemeFactory implements SchemeFactory {
+
+            public setting3_resultTupleScheme getScheme() {
+                return new setting3_resultTupleScheme();
+            }
+        }
+
+        private static class setting3_resultTupleScheme extends TupleScheme<setting3_result> {
+
+            @Override
+            public void write(org.apache.thrift.protocol.TProtocol prot, setting3_result struct) throws org.apache.thrift.TException {
+                TTupleProtocol oprot = (TTupleProtocol) prot;
+                BitSet optionals = new BitSet();
+                if (struct.isSetSuccess()) {
+                    optionals.set(0);
+                }
+                oprot.writeBitSet(optionals, 1);
+                if (struct.isSetSuccess()) {
+                    struct.success.write(oprot);
+                }
+            }
+
+            @Override
+            public void read(org.apache.thrift.protocol.TProtocol prot, setting3_result struct) throws org.apache.thrift.TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
