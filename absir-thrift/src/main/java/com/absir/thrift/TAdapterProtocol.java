@@ -1,6 +1,5 @@
 package com.absir.thrift;
 
-import com.absir.client.SocketAdapter;
 import com.absir.core.util.UtilAtom;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.thrift.TApplicationException;
@@ -15,37 +14,40 @@ import java.io.InputStream;
 /**
  * Created by absir on 2016/12/20.
  */
-public class TAdapterProtocol extends TCompactProtocol {
+public abstract class TAdapterProtocol<T> extends TCompactProtocol {
 
-    public String serviceName;
+    protected static final byte[] UNKOWN_EXCEPTION_BYTES;
+
+    static {
+        TApplicationException applicationException = new TApplicationException();
+        java.io.ByteArrayOutputStream outputStream = new java.io.ByteArrayOutputStream();
+        try {
+            applicationException.write(new TCompactProtocol(new TIOStreamTransport(outputStream)));
+
+        } catch (TException e) {
+            e.printStackTrace();
+        }
+
+        UNKOWN_EXCEPTION_BYTES = outputStream.toByteArray();
+    }
+
+    protected String serviceName;
+    protected TMessage message_;
+    protected UtilAtomBuffer atomBuffer_;
+
+    public TAdapterProtocol(TAdapterTransport<T> adapterTransport, String serviceName) {
+        super(adapterTransport);
+        this.serviceName = serviceName;
+    }
 
     @Override
-    public TAdapterTransport getTransport() {
+    public TAdapterTransport<T> getTransport() {
         return (TAdapterTransport) super.getTransport();
     }
 
     public String getServiceName() {
         return serviceName;
     }
-
-    public TAdapterProtocol(TAdapterTransport adapterTransport, String serviceName) {
-        super(adapterTransport);
-        this.serviceName = serviceName;
-    }
-
-    protected TMessage message_;
-
-    protected static class UtilAtomBuffer extends UtilAtom {
-
-        public int seqid;
-
-        public int offset;
-
-        public byte[] buffer;
-
-    }
-
-    private UtilAtomBuffer atomBuffer_;
 
     @Override
     public void writeMessageBegin(TMessage message) throws TException {
@@ -73,24 +75,7 @@ public class TAdapterProtocol extends TCompactProtocol {
             if (message_ != null) {
                 TMessage message = message_;
                 message_ = null;
-                String uri = serviceName + ":" + message.name;
-                boolean recv = message.type == 1;
-                if (recv) {
-                    atomBuffer_ = new UtilAtomBuffer();
-                }
-
-                final UtilAtomBuffer atomBuffer = atomBuffer_;
-                final int seqid = message.seqid;
-                getTransport().getSocketAdapter().sendDataVarints(uri, encrypt(byteArrayOutputStream), getTimeout(message), recv ? new SocketAdapter.CallbackAdapter() {
-                    @Override
-                    public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
-                        atomBuffer.seqid = seqid;
-                        atomBuffer.offset = offset;
-                        atomBuffer.buffer = buffer;
-                        atomBuffer.decrement();
-                    }
-
-                } : null);
+                sendMessage(message, byteArrayOutputStream);
             }
 
         } finally {
@@ -98,20 +83,7 @@ public class TAdapterProtocol extends TCompactProtocol {
         }
     }
 
-    protected static final byte[] UNKOWN_EXCEPTION_BYTES;
-
-    static {
-        TApplicationException applicationException = new TApplicationException();
-        java.io.ByteArrayOutputStream outputStream = new java.io.ByteArrayOutputStream();
-        try {
-            applicationException.write(new TCompactProtocol(new TIOStreamTransport(outputStream)));
-
-        } catch (TException e) {
-            e.printStackTrace();
-        }
-
-        UNKOWN_EXCEPTION_BYTES = outputStream.toByteArray();
-    }
+    protected abstract void sendMessage(TMessage message, ByteArrayOutputStream outputStream);
 
     @Override
     public TMessage readMessageBegin() throws TException {
@@ -147,6 +119,16 @@ public class TAdapterProtocol extends TCompactProtocol {
     @Override
     public void readMessageEnd() throws TException {
         getTransport().setInputStream(null);
+    }
+
+    protected static class UtilAtomBuffer extends UtilAtom {
+
+        public int seqid;
+
+        public int offset;
+
+        public byte[] buffer;
+
     }
 
 }

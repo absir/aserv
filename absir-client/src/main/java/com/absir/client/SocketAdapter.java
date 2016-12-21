@@ -57,9 +57,9 @@ public class SocketAdapter {
     public static final int MS_CALLBACK_INDEX = 1;
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(SocketAdapter.class);
-    protected static Map<Integer, String> varints_Uri;
-    protected static Map<String, Integer> uri_Varints;
-    protected static int varints_uri_Index;
+    protected static Map<Integer, String> indexMapUri;
+    protected static Map<String, Integer> uriMapIndex;
+    protected static int uriIndex;
     private static TimeoutThread timeoutThread;
     protected boolean registered;
     protected boolean receiveStarted;
@@ -73,6 +73,8 @@ public class SocketAdapter {
     protected long varintsServerTime;
 
     protected Map<String, Integer> uriVarints;
+
+    protected Map<Integer, String> varintsUri;
 
     private LinkedList<RegisteredRunnable> registeredRunnables = new LinkedList<RegisteredRunnable>();
 
@@ -103,40 +105,45 @@ public class SocketAdapter {
     private boolean tryConnecting;
 
     private int disconnectNumber;
+    private List<Runnable> closeRunnables;
 
     public static void printException(Throwable e) {
         Environment.throwable(e);
     }
 
-    public static int addVarintsUri(String uri) {
-        if (varints_Uri == null) {
+    public static int registerIndexUri(String uri) {
+        if (indexMapUri == null) {
             synchronized (SocketAdapter.class) {
-                if (varints_Uri == null) {
-                    varints_Uri = new HashMap<Integer, String>();
-                    uri_Varints = new HashMap<String, Integer>();
+                if (indexMapUri == null) {
+                    indexMapUri = new HashMap<Integer, String>();
+                    uriMapIndex = new HashMap<String, Integer>();
                 }
             }
         }
 
-        Integer index = uri_Varints.get(uri);
+        Integer index = uriMapIndex.get(uri);
         if (index != null) {
             return index;
         }
 
-        synchronized (varints_Uri) {
-            index = uri_Varints.get(uri);
+        synchronized (indexMapUri) {
+            index = uriMapIndex.get(uri);
             if (index != null) {
                 return index;
             }
 
-            varints_Uri.put(++varints_uri_Index, uri);
-            uri_Varints.put(uri, varints_uri_Index);
-            return varints_uri_Index;
+            indexMapUri.put(++uriIndex, uri);
+            uriMapIndex.put(uri, uriIndex);
+            return uriIndex;
         }
     }
 
-    public static String getVarintsUri(Integer index) {
-        return varints_Uri == null ? null : varints_Uri.get(index);
+    public static String uriForIndex(Integer index) {
+        return indexMapUri == null ? null : indexMapUri.get(index);
+    }
+
+    public static Integer indexForUri(String uri) {
+        return uriMapIndex == null ? null : uriMapIndex.get(uri);
     }
 
     /**
@@ -282,9 +289,13 @@ public class SocketAdapter {
         if (uriVarints != null) {
             uriVarints.clear();
         }
+
+        if (varintsUri != null) {
+            varintsUri.clear();
+        }
     }
 
-    public void addUriVarints(String uri, Integer varints) {
+    public void setUriVarints(String uri, Integer varints) {
         if (uriVarints == null) {
             synchronized (this) {
                 if (uriVarints == null) {
@@ -298,6 +309,22 @@ public class SocketAdapter {
 
     public Integer getUriVarints(String uri) {
         return uriVarints == null ? null : uriVarints.get(uri);
+    }
+
+    public void setVarintsUri(Integer index, String uri) {
+        if (varintsUri == null) {
+            synchronized (this) {
+                if (varintsUri == null) {
+                    varintsUri = new HashMap<Integer, String>();
+                }
+            }
+        }
+
+        varintsUri.put(index, uri);
+    }
+
+    public String getVarintsUri(Integer varints) {
+        return varintsUri == null ? null : varintsUri.get(varints);
     }
 
     public boolean isConnecting() {
@@ -519,6 +546,14 @@ public class SocketAdapter {
         }
     }
 
+    public void addCloseRunnable(Runnable runnable) {
+        if (closeRunnables == null) {
+            closeRunnables = new ArrayList<Runnable>();
+        }
+
+        closeRunnables.add(runnable);
+    }
+
     public void close() {
         addDisconnectNumber();
         if (socket != null) {
@@ -533,6 +568,16 @@ public class SocketAdapter {
         registered = false;
         receiveStarted = false;
         clearReceiveBuff();
+        if (closeRunnables != null) {
+            for (Runnable runnable : closeRunnables) {
+                try {
+                    runnable.run();
+
+                } catch (Throwable e) {
+                    Environment.throwable(e);
+                }
+            }
+        }
     }
 
     /**
@@ -784,9 +829,9 @@ public class SocketAdapter {
                     offset += getVarintsLength(varints2);
 
                     if (varints2 > 0) {
-                        String uri = getVarintsUri(varints1);
+                        String uri = uriForIndex(varints1);
                         if (!KernelString.isEmpty(uri)) {
-                            addUriVarints(uri, varints2);
+                            setUriVarints(uri, varints2);
                         }
                     }
                 }
@@ -1069,7 +1114,7 @@ public class SocketAdapter {
         if (index == null) {
             //没找到压缩字典，添加压缩回调参数
             flag |= ERROR_OR_SPECIAL_FLAG;
-            int uriVarints = addVarintsUri(uri);
+            int uriVarints = registerIndexUri(uri);
             int uriLength = getVarintsLength(uriVarints);
             dataBytes = uri.getBytes();
             byte[] bytes = sendDataBytesReal(off + uriLength, dataBytes, 0, dataBytes.length, true, human, flag, callbackIndex, postBytes, postOff, postLen, false);
@@ -1198,7 +1243,7 @@ public class SocketAdapter {
         }
     }
 
-    protected static class TimeoutThread extends Thread {
+    public static class TimeoutThread extends Thread {
 
         private final List<CallbackTimeout> addTimeouts = new ArrayList<CallbackTimeout>();
 

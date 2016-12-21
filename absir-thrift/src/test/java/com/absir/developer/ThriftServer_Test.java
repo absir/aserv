@@ -4,16 +4,16 @@ import com.absir.client.SocketAdapter;
 import com.absir.client.helper.HelperJson;
 import com.absir.core.kernel.KernelLang;
 import com.absir.data.json.ThriftBaseSerializer;
+import com.absir.server.on.OnPut;
+import com.absir.server.socket.InputSocket;
 import com.absir.server.socket.resolver.IBufferResolver;
 import com.absir.server.socket.resolver.SocketBufferResolver;
-import com.absir.thrift.TAdapterProtocol;
-import com.absir.thrift.TAdapterTransport;
-import com.absir.thrift.TMultiplexedProcessorProxy;
-import com.absir.thrift.ThriftService;
+import com.absir.thrift.*;
 import org.apache.thrift.TException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import tbase_test.PushService;
 import tbase_test.RpcService;
 import tbase_test.TPlatformFrom;
 
@@ -36,6 +36,8 @@ public class ThriftServer_Test extends ThriftService {
         TMultiplexedProcessorProxy processorProxy = new TMultiplexedProcessorProxy();
         RpcService.Iface rpcService = new RpcService.Iface() {
 
+            private PushService.Client push;
+
             @Override
             public TPlatformFrom setting(TPlatformFrom platformFrom) throws TException {
                 System.out.println("invoke = " + HelperJson.encodeNull(platformFrom));
@@ -46,6 +48,8 @@ public class ThriftServer_Test extends ThriftService {
 
             @Override
             public TPlatformFrom setting2(TPlatformFrom platformFrom) throws TException {
+                push = getPushClient(PushService.Client.class, new PushService.Client.Factory(), ((InputSocket) OnPut.get().getInput()).getSocketAtt().getSelSession());
+                push.setting(platformFrom);
                 System.out.println("invoke2 = " + HelperJson.encodeNull(platformFrom));
                 platformFrom.setChannel("ddddd2");
                 System.out.println(Arrays.toString(ThriftBaseSerializer.serializerBytes(platformFrom)));
@@ -56,12 +60,14 @@ public class ThriftServer_Test extends ThriftService {
             public TPlatformFrom setting3(TPlatformFrom platformFrom) throws TException {
                 System.out.println("invoke3 = " + HelperJson.encodeNull(platformFrom));
                 platformFrom.setChannel("ddddd3");
+                push.setting(platformFrom);
                 System.out.println(Arrays.toString(ThriftBaseSerializer.serializerBytes(platformFrom)));
                 return platformFrom;
             }
         };
 
-        processorProxy.registerProcessor(RpcService.class.getSimpleName(), rpcService, new RpcService.Processor<RpcService.Iface>(rpcService));
+
+        processorProxy.registerTypeProcessor(RpcService.Iface.class, rpcService, new RpcService.Processor<RpcService.Iface>(rpcService));
         this.processorProxy = processorProxy;
         this.startServer();
 
@@ -99,14 +105,35 @@ public class ThriftServer_Test extends ThriftService {
             }
         });
 
-        TAdapterTransport adapterTransport = new TAdapterTransport(socketAdapter);
-        //TAdapterProtocol adapterProtocol = new TAdapterProtocol(adapterTransport);
-        RpcService.Client client = new RpcService.Client(new TAdapterProtocol(adapterTransport, RpcService.class.getSimpleName()));
+
+        TAdapterTransport<SocketAdapter> adapterTransport = new TAdapterTransport(socketAdapter);
+        TSocketAdapterProtocol socketAdapterProtocol = new TSocketAdapterProtocol(adapterTransport, RpcService.class.getSimpleName());
+
+        TSocketAdapterReceiver socketAdapterReceiver = new TSocketAdapterReceiver();
+        socketAdapterReceiver.registerTypeProcessor(PushService.Iface.class, new PushService.Iface() {
+            @Override
+            public void setting(TPlatformFrom platformFrom) throws TException {
+                System.out.println("receiver push = " + HelperJson.encodeNull(platformFrom));
+            }
+
+        }, new PushService.Processor(null));
+
+        socketAdapterReceiver.bind(socketAdapterProtocol);
+
+        RpcService.Client client = new RpcService.Client(socketAdapterProtocol);
         TPlatformFrom platformFrom = new TPlatformFrom();
         //platformFrom.setChannel("dsdsadsadasd");
 
         System.out.println(Arrays.toString(ThriftBaseSerializer.serializerBytes(platformFrom)));
 
+        platformFrom = client.setting(platformFrom);
+        System.out.println("return = " + HelperJson.encodeNull(platformFrom));
+
+        platformFrom.setChannel(null);
+        platformFrom = client.setting(platformFrom);
+        System.out.println("return = " + HelperJson.encodeNull(platformFrom));
+
+        platformFrom.setChannel(null);
         platformFrom = client.setting(platformFrom);
         System.out.println("return = " + HelperJson.encodeNull(platformFrom));
 

@@ -27,27 +27,21 @@ public class TMultiplexedProcessorProxy implements TProcessor {
 
     protected Map<String, IFaceProcessProxy> nameMapIFaceProcessFunction = new HashMap<String, IFaceProcessProxy>();
 
-    public static class IFaceProcessProxy {
-
-        public Object iface;
-
-        public ProcessFunction processFunction;
-
-        public IFaceProxy faceProxy;
-
-    }
-
     public Map<String, IFaceProcessProxy> getNameMapIFaceProcessFunction() {
         return nameMapIFaceProcessFunction;
     }
 
-    public void registerProcessor(String name, Object iface, TBaseProcessor baseProcessor) {
+    public <T> void registerTypeProcessor(Class<T> ifaceType, T iface, TBaseProcessor<T> baseProcessor) {
+        registerBaseProcessor(TSocketAdapterReceiver.getServiceName(ifaceType), iface, baseProcessor);
+    }
+
+    public void registerBaseProcessor(String serviceName, Object iface, TBaseProcessor baseProcessor) {
         for (Map.Entry<String, ProcessFunction> entry : ((Map<String, ProcessFunction>) (Object) baseProcessor.getProcessMapView()).entrySet()) {
             IFaceProcessProxy processProxy = new IFaceProcessProxy();
             processProxy.iface = iface;
             processProxy.processFunction = entry.getValue();
             processProxy.faceProxy = iface == null || !(iface instanceof IFaceProxy) ? null : (IFaceProxy) iface;
-            nameMapIFaceProcessFunction.put(name + ":" + entry.getKey(), processProxy);
+            nameMapIFaceProcessFunction.put(TSocketAdapterReceiver.getServiceUri(serviceName, entry.getKey()), processProxy);
         }
     }
 
@@ -76,18 +70,6 @@ public class TMultiplexedProcessorProxy implements TProcessor {
         }
     }
 
-    public static class TInputOutProtocol extends TCompactProtocol {
-
-        public TInputOutProtocol(TTransport transport) {
-            super(transport);
-        }
-
-        @Override
-        public void writeMessageBegin(TMessage message) throws TException {
-            writeByte(message.type);
-        }
-    }
-
     public void process(TMultiplexedProcessorProxy.IFaceProcessProxy faceProcessProxy, Input input, ThriftService service) throws IOException, TException {
         IFaceProxy faceProxy = faceProcessProxy.faceProxy;
         OnPut onPut = faceProxy == null ? null : OnPut.get();
@@ -98,7 +80,7 @@ public class TMultiplexedProcessorProxy implements TProcessor {
 
         InputStream inputStream = input.getInputStream();
         if (service != null) {
-            inputStream = service.decrypt(input, inputStream);
+            inputStream = service.decrypt(input.getId(), inputStream);
         }
 
         TTransport inTransport = new TIOStreamTransport(input.getInputStream());
@@ -112,7 +94,29 @@ public class TMultiplexedProcessorProxy implements TProcessor {
         TTransport outTransport = new TIOStreamTransport(outputStream);
         faceProcessProxy.processFunction.process(0, new TCompactProtocol(inTransport), new TInputOutProtocol(outTransport), iface);
         if (byteArrayOutputStream != null) {
-            input.write(service.encrypt(input, byteArrayOutputStream));
+            input.write(service.encrypt(input.getId(), 1, byteArrayOutputStream));
+        }
+    }
+
+    public static class IFaceProcessProxy {
+
+        public Object iface;
+
+        public ProcessFunction processFunction;
+
+        public IFaceProxy faceProxy;
+
+    }
+
+    public static class TInputOutProtocol extends TCompactProtocol {
+
+        public TInputOutProtocol(TTransport transport) {
+            super(transport);
+        }
+
+        @Override
+        public void writeMessageBegin(TMessage message) throws TException {
+            writeByte(message.type);
         }
     }
 

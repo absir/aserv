@@ -18,17 +18,6 @@ import java.io.IOException;
  */
 public class ThriftBaseSerializer extends JsonSerializer<TBase> {
 
-    @Override
-    public void serialize(TBase tBase, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
-        try {
-            byte[] bytes = serializerBytes(tBase);
-            jsonGenerator.writeObject(bytes);
-
-        } catch (TException e) {
-            throw new IOException(e);
-        }
-    }
-
     public static byte[] serializerBytes(TBase tBase) throws TException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         tBase.write(new TCompactProtocol(new TIOStreamTransport(outputStream)));
@@ -39,6 +28,17 @@ public class ThriftBaseSerializer extends JsonSerializer<TBase> {
         T bean = sClass.newInstance();
         bean.read(new TCompactProtocol(new TMemoryInputTransport(bytes)));
         return bean;
+    }
+
+    @Override
+    public void serialize(TBase tBase, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
+        try {
+            byte[] bytes = serializerBytes(tBase);
+            jsonGenerator.writeObject(bytes);
+
+        } catch (TException e) {
+            throw new IOException(e);
+        }
     }
 }
 

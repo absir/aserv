@@ -36,6 +36,12 @@ public abstract class InputSocket extends Input {
     public static final byte[] NONE_RESPONSE_BYTES = NONE_RESPONSE.getBytes();
 
     protected static byte INPUT_FLAG = SocketAdapter.HUMAN_FLAG;
+    protected static IBufferResolver bufferResolver;
+
+    static {
+        InputSocketContext socketContext = InputSocketContext.ME;
+        bufferResolver = socketContext == null ? new SocketBufferResolver() : socketContext.getBufferResolver();
+    }
 
     protected InputSocketAtt socketAtt;
     private int status = ServerStatus.ON_SUCCESS.getCode();
@@ -66,13 +72,6 @@ public abstract class InputSocket extends Input {
 
     public static boolean writeByteBufferSuccess(SelSession selSession, SocketChannel socketChannel, boolean success, int callbackIndex, byte[] bytes) {
         return writeByteBuffer(selSession, socketChannel, success == true ? 0 : SocketAdapter.ERROR_OR_SPECIAL_FLAG, callbackIndex, bytes);
-    }
-
-    protected static IBufferResolver bufferResolver;
-
-    static {
-        InputSocketContext socketContext = InputSocketContext.ME;
-        bufferResolver = socketContext == null ? new SocketBufferResolver() : socketContext.getBufferResolver();
     }
 
     public static IBufferResolver getBufferResolver() {

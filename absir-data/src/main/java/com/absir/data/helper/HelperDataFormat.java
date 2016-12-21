@@ -42,11 +42,12 @@ public class HelperDataFormat {
     public static final JsonFormat JSON = new JsonFormat(JSON_MAPPER, JSON_FACTORY);
 
     public static final MessagePackFactory PACK_FACTORY = new MessagePackFactory();
-
+    public static final DataDeserializationContext PACK_DESERIALIZATION_CONTEXT = new PackDeserializationContext(
+            BeanDeserializerFactory.instance);
+    public static final ObjectMapper PACK_MAPPER = new ObjectMapper(PACK_FACTORY, null, PACK_DESERIALIZATION_CONTEXT);
+    public static final JsonFormat PACK = new JsonFormat(PACK_MAPPER, PACK_FACTORY);
     private static boolean tProto = true;
-
     private static boolean tBase = true;
-
     public static final JsonDeserializerResolver PACK_DESERIALIZER_RESOLVER = new JsonDeserializerResolver() {
 
         @Override
@@ -68,35 +69,6 @@ public class HelperDataFormat {
             return null;
         }
     };
-
-    protected static class PackDeserializationContext extends DataDeserializationContext {
-
-        public PackDeserializationContext(DeserializerFactory df) {
-            super(df);
-        }
-
-        protected PackDeserializationContext(DataDeserializationContext src, DeserializationConfig config, JsonParser jp, InjectableValues values) {
-            super(src, config, jp, values);
-        }
-
-        @Override
-        public DefaultDeserializationContext createInstance(DeserializationConfig config, JsonParser jp, InjectableValues values) {
-            return new PackDeserializationContext(this, config, jp, values);
-        }
-
-        @Override
-        public JsonDeserializer<?> handleSecondaryContextualization(JsonDeserializer<?> deser, BeanProperty prop, JavaType type) throws JsonMappingException {
-            JsonDeserializer<?> deserializer = PACK_DESERIALIZER_RESOLVER.forJavaType(type.getRawClass());
-            return deserializer == null ? super.handleSecondaryContextualization(deser, prop, type) : deserializer;
-        }
-    }
-
-    public static final DataDeserializationContext PACK_DESERIALIZATION_CONTEXT = new PackDeserializationContext(
-            BeanDeserializerFactory.instance);
-
-    public static final ObjectMapper PACK_MAPPER = new ObjectMapper(PACK_FACTORY, null, PACK_DESERIALIZATION_CONTEXT);
-
-    public static final JsonFormat PACK = new JsonFormat(PACK_MAPPER, PACK_FACTORY);
 
     static {
         // JSON_MAPPER.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
@@ -129,6 +101,28 @@ public class HelperDataFormat {
 
         PACK_MAPPER.registerModule(module);
         PACK_DESERIALIZATION_CONTEXT.addJsonDeserializerResolver(PACK_DESERIALIZER_RESOLVER);
+    }
+
+    protected static class PackDeserializationContext extends DataDeserializationContext {
+
+        public PackDeserializationContext(DeserializerFactory df) {
+            super(df);
+        }
+
+        protected PackDeserializationContext(DataDeserializationContext src, DeserializationConfig config, JsonParser jp, InjectableValues values) {
+            super(src, config, jp, values);
+        }
+
+        @Override
+        public DefaultDeserializationContext createInstance(DeserializationConfig config, JsonParser jp, InjectableValues values) {
+            return new PackDeserializationContext(this, config, jp, values);
+        }
+
+        @Override
+        public JsonDeserializer<?> handleSecondaryContextualization(JsonDeserializer<?> deser, BeanProperty prop, JavaType type) throws JsonMappingException {
+            JsonDeserializer<?> deserializer = PACK_DESERIALIZER_RESOLVER.forJavaType(type.getRawClass());
+            return deserializer == null ? super.handleSecondaryContextualization(deser, prop, type) : deserializer;
+        }
     }
 
     public static class JsonFormat extends DataFormat {

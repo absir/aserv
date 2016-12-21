@@ -11,17 +11,6 @@ import java.util.Arrays;
 @RunWith(value = JUnit4.class)
 public class HelperPackTest {
 
-    public static class Hello2 {
-
-        public int id; // optional
-        public long id2; // optional
-
-
-        public void setId(int id) {
-            this.id = id;
-        }
-    }
-
     @Test
     public void test() throws InterruptedException, IOException {
 
@@ -40,6 +29,17 @@ public class HelperPackTest {
 
         Object res = HelperDataFormat.PACK.read(bytes, Hello2.class);
         System.out.println(HelperDataFormat.JSON.writeAsStringArray(res));
+    }
+
+    public static class Hello2 {
+
+        public int id; // optional
+        public long id2; // optional
+
+
+        public void setId(int id) {
+            this.id = id;
+        }
     }
 
 

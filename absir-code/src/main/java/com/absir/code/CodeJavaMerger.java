@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 public abstract class CodeJavaMerger {
 
     protected static final String JAVA_EXT_NAME = ".java";
+    protected static final int TRANSIENT_MODIFIER = Modifier.TRANSIENT | Modifier.STATIC | Modifier.FINAL;
 
     public static AnnotationExpr getAnnotation(List<AnnotationExpr> annotations, String annotationName) {
         if (annotations != null) {
@@ -200,8 +201,6 @@ public abstract class CodeJavaMerger {
 
         HelperFile.write(toFile, toCompilationUnit.toString());
     }
-
-    protected static final int TRANSIENT_MODIFIER = Modifier.TRANSIENT | Modifier.STATIC | Modifier.FINAL;
 
     protected void mergeFormTypeToType(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
                                        TypeDeclaration fromType, TypeDeclaration toType) {

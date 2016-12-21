@@ -3,16 +3,14 @@ package com.absir.thrift;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.InjectBeanUtils;
-import com.absir.bean.inject.value.Bean;
-import com.absir.bean.inject.value.Inject;
-import com.absir.bean.inject.value.InjectType;
-import com.absir.bean.inject.value.Value;
+import com.absir.bean.inject.value.*;
 import com.absir.client.SocketAdapter;
 import com.absir.core.base.Environment;
+import com.absir.core.kernel.KernelClass;
+import com.absir.core.kernel.KernelReflect;
 import com.absir.core.util.UtilContext;
 import com.absir.core.util.UtilPipedStream;
 import com.absir.server.in.InModel;
-import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
 import com.absir.server.socket.InputSocket;
 import com.absir.server.socket.SelSession;
@@ -23,6 +21,9 @@ import com.absir.server.socket.resolver.ISessionResolver;
 import com.absir.server.socket.resolver.InputBufferResolver;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.thrift.TException;
+import org.apache.thrift.TServiceClient;
+import org.apache.thrift.TServiceClientFactory;
+import org.apache.thrift.protocol.TMessage;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +31,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.nio.channels.SocketChannel;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by absir on 2016/12/19.
@@ -72,6 +76,7 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
 
     @Value("thrift.sendBufferSize")
     protected int sendBufferSize = 2048;
+    protected Map<Class, String> classMapServiceName;
 
     public TMultiplexedProcessorProxy getProcessorProxy() {
         return processorProxy;
@@ -86,12 +91,17 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
         processorProxy = new TMultiplexedProcessorProxy();
         if (faceServers != null) {
             for (IFaceServer faceServer : faceServers) {
-                processorProxy.registerProcessor(InjectBeanUtils.getBeanType(faceServer).getSimpleName(), faceServer, faceServer.getBaseProcessor());
+                processorProxy.registerBaseProcessor(InjectBeanUtils.getBeanType(faceServer).getSimpleName(), faceServer, faceServer.getBaseProcessor());
             }
         }
+    }
 
+    @Started
+    protected void startServer() throws IOException {
         if (thriftPort > 0) {
-            startServer();
+            server = new SocketServer();
+            InetAddress inetAddress = InetAddress.getByName(thriftHost);
+            server.start(thriftAcceptTimeout, thriftIdleTimeout, thriftPort, backlog, inetAddress, bufferSize, receiveBufferSize, sendBufferSize, getBufferResolver(), this);
         }
     }
 
@@ -161,12 +171,6 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
         return InputBufferResolver.ME;
     }
 
-    protected void startServer() throws IOException {
-        server = new SocketServer();
-        InetAddress inetAddress = InetAddress.getByName(thriftHost);
-        server.start(thriftAcceptTimeout, thriftIdleTimeout, thriftPort, backlog, inetAddress, bufferSize, receiveBufferSize, sendBufferSize, getBufferResolver(), this);
-    }
-
     protected InputSocket.InputSocketAtt createSocketAtt(SelSession selSession, Serializable id, byte[] buffer, byte flag, int off,
                                                          SocketBuffer socketBuffer, InputStream inputStream) {
         return new InputSocket.InputSocketAtt(id, buffer, flag, off, selSession, inputStream);
@@ -196,18 +200,38 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
             }
 
         } else {
-            doResponse(socketChannel, id, flag, off, buffer, inputStream);
+            if ((flag & SocketAdapter.URI_DICT_FLAG) != 0) {
+                // PUSH URI_DICT_FLAG 字典压缩
+                int varint = SocketAdapter.getVarints(buffer, off, buffer.length);
+                String uri = SocketAdapter.uriForIndex(varint);
+                if (uri == null) {
+                    LOGGER.warn("ThriftService URI_DICT_FLAG not found " + varint);
+                }
+
+                int varintLength = SocketAdapter.getVarintsLength(varint);
+                int uriLength = uri == null ? 0 : uri.length();
+                byte[] dataBytes = new byte[varintLength + uriLength];
+                SocketAdapter.setVarintsLength(dataBytes, 0, varint);
+                if (uriLength > 0) {
+                    System.arraycopy(uri.getBytes(), 0, dataBytes, varintLength, uriLength);
+                }
+
+                InputSocket.writeByteBuffer(selSession, socketChannel, TSocketAdapterReceiver.DICT_CALLBACK_INDEX, dataBytes);
+
+            } else {
+                doResponse(socketChannel, id, flag, off, buffer, inputStream);
+            }
         }
     }
 
     protected void doResponse(SocketChannel socketChannel, Serializable id, byte flag, int off, byte[] buffer, InputStream inputStream) {
     }
 
-    public InputStream decrypt(Input input, InputStream inputStream) {
+    public InputStream decrypt(Serializable id, InputStream inputStream) {
         return inputStream;
     }
 
-    public byte[] encrypt(Input input, ByteArrayOutputStream outputStream) {
+    public byte[] encrypt(Serializable id, int offset, ByteArrayOutputStream outputStream) {
         return outputStream.toByteArray();
     }
 
@@ -222,6 +246,70 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
 
         } finally {
             onPut.close();
+        }
+    }
+
+    public <T extends TServiceClient> T getPushClient(Class<T> clientType, TServiceClientFactory<T> factory, SelSession selSession) {
+        if (classMapServiceName == null) {
+            classMapServiceName = new HashMap<Class, String>();
+        }
+
+        String serviceName = classMapServiceName.get(clientType);
+        String parentName = null;
+        if (serviceName == null) {
+            parentName = KernelClass.parentName(clientType);
+            serviceName = KernelClass.forName(parentName).getSimpleName();
+        }
+
+        TPushProtocol pushProtocol = new TPushProtocol(new TAdapterTransport<SelSession>(selSession), serviceName);
+        T client = factory.getClient(null, pushProtocol);
+        if (clientType != null) {
+            //Processor URI_DICT_FLAG
+            synchronized (this) {
+                if (!classMapServiceName.containsKey(clientType)) {
+                    try {
+                        Class<?> processorClass = KernelClass.forName(parentName + "$Processor");
+                        Map<String, org.apache.thrift.ProcessFunction> processMap = new HashMap<String, org.apache.thrift.ProcessFunction>();
+                        Method method = KernelReflect.declaredMethod(processorClass, "getProcessMap", Map.class);
+                        method.invoke(null, processMap);
+                        for (String name : processMap.keySet()) {
+                            SocketAdapter.registerIndexUri(TSocketAdapterReceiver.getServiceUri(serviceName, name));
+                        }
+
+                        classMapServiceName.put(clientType, serviceName);
+
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+
+        return client;
+    }
+
+    protected class TPushProtocol extends TAdapterProtocol<SelSession> {
+
+        public TPushProtocol(TAdapterTransport<SelSession> adapterTransport, String serviceName) {
+            super(adapterTransport, serviceName);
+        }
+
+        @Override
+        public void writeMessageBegin(TMessage message) throws TException {
+            super.writeMessageBegin(message);
+            String uri = TSocketAdapterReceiver.getServiceUri(serviceName, message.name);
+            Integer callbackIndex = SocketAdapter.indexForUri(uri);
+            if (callbackIndex == null) {
+                throw new RuntimeException("ThriftService push  " + uri + " not registered!?");
+            }
+
+            writeI32(callbackIndex);
+        }
+
+        @Override
+        protected void sendMessage(TMessage message, ByteArrayOutputStream outputStream) {
+            SelSession selSession = getTransport().getAdapter();
+            InputSocket.writeByteBuffer(selSession, selSession.getSocketChannel(), TSocketAdapterReceiver.PUSH_CALLBACK_INDEX, ThriftService.this.encrypt(selSession.getId(), 0, outputStream));
         }
     }
 
