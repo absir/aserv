@@ -7,7 +7,6 @@
  */
 package com.absir.aserv.slave.service;
 
-import com.absir.aserv.configure.JConfigureUtils;
 import com.absir.aserv.init.InitBeanFactory;
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
@@ -20,15 +19,11 @@ import com.absir.slave.InputSlaveContext;
 @Bean
 public class InputSlaveService extends InputSlaveContext {
 
-    protected static final String SLAVE_ID_NAME = InputSlaveService.class.getName() + "@SLAVE_ID_NAME";
-
-    protected String slaveId = JConfigureUtils.getOption(SLAVE_ID_NAME, String.class);
-
     @Override
     public byte[] registerData(InputSlaveAdapter adapter, byte[] buffer) {
-        String registerKey = HelperEncrypt.encryptionMD5(key, buffer) + ',' + group + ',' + RouteAdapter.ADAPTER_TIME + ',' +
-                InitBeanFactory.ME.getVersion() + ',' + InitBeanFactory.ME.getAppRoute() + ',' + InitBeanFactory.ME.getAppCode()
-                + (slaveId == null ? "" : slaveId);
+        String group = InitBeanFactory.ME.getAppCode() + '_' + adapter.getGroup();
+        String registerKey = HelperEncrypt.encryptionMD5(adapter.getKey(), buffer) + ',' + group + ',' + RouteAdapter.ADAPTER_TIME + ',' +
+                InitBeanFactory.ME.getVersion() + ',' + InitBeanFactory.ME.getAppRoute() + ',' + InitBeanFactory.ME.getAppCode();
         return adapter.sendDataBytes(registerKey.getBytes(), false, false, 0, null);
     }
 

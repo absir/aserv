@@ -102,7 +102,7 @@ public class InputSlaveContext {
      * 返回注册字符
      */
     public byte[] registerData(InputSlaveAdapter adapter, byte[] buffer) {
-        String registerKey = HelperEncrypt.encryptionMD5(key, buffer) + ',' + group + ',' + RouteAdapter.ADAPTER_TIME;
+        String registerKey = HelperEncrypt.encryptionMD5(adapter.getKey(), buffer) + ',' + adapter.getGroup() + ',' + RouteAdapter.ADAPTER_TIME;
         return adapter.sendDataBytes(registerKey.getBytes(), false, false, 0, null);
     }
 

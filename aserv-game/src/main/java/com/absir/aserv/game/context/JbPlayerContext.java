@@ -22,6 +22,7 @@ import com.absir.core.base.IBase;
 import com.absir.property.value.Allow;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
+import com.absir.server.socket.SelSession;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.Session;
@@ -54,7 +55,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
     @JaLang(value = "连接", tag = "connect")
     @JsonIgnore
     @JaEdit(editable = JeEditable.LOCKED)
-    protected SocketChannel socketChannel;
+    protected SelSession selSession;
 
     // 全部恢复
     @JsonSerialize(contentUsing = IBaseSerializer.class)
@@ -79,14 +80,14 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
      * 获取玩家当前连接
      */
     public SocketChannel getSocketChannel() {
-        return socketChannel;
+        return selSession.getSocketChannel();
     }
 
     /**
      * 设置当前玩家连接和在线状态
      */
-    public void setSocketChannel(SocketChannel socketChannel) {
-        this.socketChannel = socketChannel;
+    public void setSocketChannel(SelSession selSession) {
+        this.selSession = selSession;
     }
 
     @Override

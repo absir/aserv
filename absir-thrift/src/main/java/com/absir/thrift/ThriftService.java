@@ -12,6 +12,7 @@ import com.absir.core.util.UtilContext;
 import com.absir.core.util.UtilPipedStream;
 import com.absir.server.in.InModel;
 import com.absir.server.on.OnPut;
+import com.absir.server.route.RouteAdapter;
 import com.absir.server.socket.InputSocket;
 import com.absir.server.socket.SelSession;
 import com.absir.server.socket.SocketBuffer;
@@ -118,7 +119,7 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
     public void register(SocketChannel socketChannel, SelSession selSession) throws Throwable {
         String hashId = String.valueOf(socketChannel.hashCode());
         selSession.getSocketBuffer().setId(hashId);
-        InputSocket.writeByteBuffer(selSession, socketChannel, 0, hashId.getBytes());
+        InputSocket.writeByteBuffer(selSession, socketChannel, 0, (hashId + ',' + RouteAdapter.ADAPTER_TIME).getBytes());
     }
 
     @Override
