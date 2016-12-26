@@ -88,7 +88,17 @@ function ab_removeSubAttr($node, name, subName, value) {
 }
 
 function ab_reloadSelect(data, $select) {
-    console.log(data);
+    var opts = '';
+    for (var k in data) {
+        if (opts) {
+            opts += '\r';
+        }
+
+        opts += '<option value="' + k + '">' + data[k] + '</option>';
+    }
+
+    $select.html(opts);
+    console.log($select.html());
 }
 
 $(function () {

@@ -25,6 +25,7 @@ import com.absir.aserv.system.helper.HelperLong;
 import com.absir.aserv.system.server.ServerDiyView;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
+import com.absir.client.helper.HelperJson;
 import com.absir.context.lang.LangBundle;
 import com.absir.core.base.Environment;
 import com.absir.core.dyna.DynaBinder;
@@ -412,5 +413,9 @@ public class Pag {
     public static interface IPagLang {
 
         public String getPagLang(String transferredName);
+    }
+
+    public static String json(Object obj) throws IOException {
+        return HelperJson.encode(obj);
     }
 }

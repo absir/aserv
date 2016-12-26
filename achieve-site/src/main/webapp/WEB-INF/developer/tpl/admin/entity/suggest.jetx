@@ -1,0 +1,12 @@
+#include('../../../type/suggest.jetx', {
+joEntity : joEntity,
+entity : 'suggest'
+}, 'suggests')
+{
+\#for(suggest : entities)
+\#tag layout_block("value")
+${suggests}
+\#end
+\${for.index == 1 ? '': ','}\${Pag::json(EntityStatics::getPrimary(suggest, "${entityModel.getPrimary().getName()}"))}:\${Pag::json(value)}
+\#end
+}

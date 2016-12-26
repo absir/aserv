@@ -182,7 +182,7 @@ public class EntityStatics {
         List entities = (List) input.getAttribute(entitiesKey);
         if (entities == null) {
             JdbcCondition condition = null;
-            if (KernelString.isEmpty(param)) {
+            if (!KernelString.isEmpty(param)) {
                 condition = new JdbcCondition();
                 condition.addConditions(HelperString.split(param, "=&"));
             }

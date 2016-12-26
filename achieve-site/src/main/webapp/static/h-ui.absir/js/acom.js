@@ -1,6 +1,8 @@
 /**
  * Created by absir on 16/6/26.
  */
+
+
 function ab_humanTime(time, max) {
     if (time < (max || 1000)) {
         return time + 's';
