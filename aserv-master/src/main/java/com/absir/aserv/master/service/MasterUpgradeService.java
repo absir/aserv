@@ -2,12 +2,10 @@ package com.absir.aserv.master.service;
 
 import com.absir.aserv.master.bean.JSlaveUpgrade;
 import com.absir.aserv.task.JaTask;
-import com.absir.aserv.task.TaskService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Value;
-import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelString;
 
 /**
@@ -59,26 +57,26 @@ public class MasterUpgradeService {
     }
 
     public void planSlaveUpgrade(String app, JSlaveUpgrade slaveUpgrade) {
-        String[] slaveIds = slaveUpgrade.getSlaveIds();
-        if (slaveIds == null || slaveIds.length == 0) {
-            if (!slaveUpgrade.isAllSlaveIds()) {
-                return;
-            }
-
-
-        }
-
-        long contextTime = ContextUtils.getContextTime();
-        long beginTime = slaveUpgrade.getBeginTime();
-        String id = app + "@" + slaveUpgrade.getGroup();
-
-        TaskService.ME.addPanel(id, "slaveUpgrade", beginTime, (beginTime < contextTime ? contextTime : beginTime) + 3600000, 3, slaveUpgrade);
-        if (slaveUpgrade.isAllSlaveIds()) {
-
-
-        } else {
-
-        }
+//        String[] slaveIds = slaveUpgrade.getSlaveIds();
+//        if (slaveIds == null || slaveIds.length == 0) {
+//            if (!slaveUpgrade.isAllSlaveIds()) {
+//                return;
+//            }
+//
+//
+//        }
+//
+//        long contextTime = ContextUtils.getContextTime();
+//        long beginTime = slaveUpgrade.getBeginTime();
+//        String id = app + "@" + slaveUpgrade.getGroup();
+//
+//        TaskService.ME.addPanel(id, "slaveUpgrade", beginTime, (beginTime < contextTime ? contextTime : beginTime) + 3600000, 3, slaveUpgrade);
+//        if (slaveUpgrade.isAllSlaveIds()) {
+//
+//
+//        } else {
+//
+//        }
     }
 
     @JaTask("slaveUpgrade")

@@ -32,6 +32,11 @@ public class ServerException extends RuntimeException {
     }
 
     @Override
+    public String getMessage() {
+        return serverStatus == null ? null : serverStatus.name();
+    }
+
+    @Override
     public String toString() {
         String message = getLocalizedMessage();
         return getClass().getName() + (message == null ? ": " : (": " + message + ": ")) + serverStatus + (exceptionData == null ? ": " : (": " + exceptionData + ": "));

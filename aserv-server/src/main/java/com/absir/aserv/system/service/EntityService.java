@@ -19,7 +19,7 @@ import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.proxy.JpRecycleBase;
 import com.absir.aserv.system.bean.value.JaRecycle;
 import com.absir.aserv.system.dao.BeanDao;
-import com.absir.aserv.system.domain.DCacheOpenValue;
+import com.absir.aserv.system.domain.DCacheOpen;
 import com.absir.aserv.system.domain.DCondition;
 import com.absir.aserv.system.service.utils.AccessServiceUtils;
 import com.absir.aserv.system.service.utils.BeanServiceUtils;
@@ -56,11 +56,11 @@ public class EntityService {
 
     public static final EntityService ME = BeanFactoryUtils.get(EntityService.class);
 
-    DCacheOpenValue<String, JDict> dictCache;
+    DCacheOpen<String, JDict> dictCache;
 
     private Map<String, Boolean> entityNameMapRecycle = new HashMap<String, Boolean>();
 
-    public DCacheOpenValue<String, JDict> getDictCache() {
+    public DCacheOpen<String, JDict> getDictCache() {
         return dictCache;
     }
 
@@ -69,7 +69,7 @@ public class EntityService {
      */
     @Inject
     protected void inject() {
-        dictCache = new DCacheOpenValue<String, JDict>(JDict.class, null);
+        dictCache = new DCacheOpen<String, JDict>(JDict.class, null);
         dictCache.addEntityMerges();
         ME.reloadCaches();
     }

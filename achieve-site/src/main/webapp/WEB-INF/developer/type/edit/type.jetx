@@ -29,3 +29,8 @@ import = "com.absir.aserv.system.bean.value.JeEditable"
     ${input.addClass("${readonly ? 'ab_locked' : '' }")}
 #end
 #end
+
+#set(input_ext = field.getMetas().get("input_ext"))
+#if(input_ext)
+    ${ScriptNode::attr(input, input_ext)}
+#end

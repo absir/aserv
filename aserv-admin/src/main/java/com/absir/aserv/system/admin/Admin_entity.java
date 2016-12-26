@@ -488,7 +488,7 @@ public class Admin_entity extends AdminServer {
             throw new ServerException(ServerStatus.IN_404);
         }
 
-        if (((InputRequest) input).getSession(EntityStatics.suggest(entityName)) == null) {
+        if (((InputRequest) input).getSession(EntityStatics.suggestKey(entityName)) == null) {
             throw new ServerException(ServerStatus.ON_DENIED);
         }
     }

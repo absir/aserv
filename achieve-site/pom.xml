@@ -56,6 +56,11 @@
             <version>${org.hibernate-version}</version>
         </dependency>
         <dependency>
+            <groupId>com.absir</groupId>
+            <artifactId>aserv-master</artifactId>
+            <version>${com.absir.version}</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>

@@ -10,7 +10,7 @@ entity : 'suggest'
 
 #tag layout_block("shtml")
 \#set(selected = ${iselects ? ('Pag::params(' + inputval + ', true)') : ('EntityStatics::getPrimarys(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
-\#for(suggest : EntityStatics::suggest('${joEntity.getEntityName()}', '${field.getMetas().get("suggest")}', INPUT))
+\#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get("suggest")}', INPUT))
 \#set(value = EntityStatics::getPrimary(suggest, '${entityModel.getPrimary().getName()}'))
 <option value="\${value}" \${Pag::isParams(selected, value) ? 'selected' : ''}>
 ${suggests}

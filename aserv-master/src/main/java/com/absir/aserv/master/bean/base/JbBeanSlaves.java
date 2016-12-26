@@ -11,6 +11,7 @@ import com.absir.aserv.system.bean.base.JbBean;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JaName;
+import com.absir.validator.value.NotEmpty;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
@@ -18,6 +19,11 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public class JbBeanSlaves extends JbBean {
+
+    @JaLang("应用")
+    @NotEmpty
+    @JaEdit(groups = JaEdit.GROUP_SUG, listColType = 1, metas = "{\"input_ext\": \"${EntityStatics::suggestPermission('JSlave', request)}ab_toggle='linkage' linkage='slaveIds' select='${ADMIN_ROUTE}entity/suggest/JSlave?appCode=$val'\"}")
+    public String appCode;
 
     @JaLang(value = "目标节点", tag = "targetSlave")
     @JaName("JSlave")

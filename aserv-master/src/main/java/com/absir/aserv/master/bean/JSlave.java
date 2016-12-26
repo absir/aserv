@@ -12,44 +12,47 @@ import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.base.JbBase;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
+import com.absir.orm.value.JaColum;
+import com.absir.validator.value.NotEmpty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Index;
 
 @MaEntity(parent = {@MaMenu("节点管理")}, name = "节点", value = @MaMenu(order = -128))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 public class JSlave extends JbBase {
 
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
+    @NotEmpty
     @JaLang(value = "验证主键", tag = "verifierId")
     @Id
     private String id;
 
     @JaLang("名称")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     private String name;
 
     @JaLang("IP")
-    @JaEdit(groups = {JaEdit.GROUP_SUG})
+    @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
     private String ip;
 
     @JaLang("组号")
-    @JaEdit(groups = {JaEdit.GROUP_SUG})
+    @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
     private String groupId;
 
     @JaLang("版本")
-    @JaEdit(groups = {JaEdit.GROUP_SUG})
+    @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
     private String version;
 
     @JaLang("路径")
-    @JaEdit(groups = {JaEdit.GROUP_SUG})
+    @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
     private String path;
 
     @JaLang("应用")
-    private String app;
+    @JaColum(indexs = @Index(columnList = "app"))
+    private String appCode;
 
     @JaLang("启动时间")
     private long startTime;
@@ -122,12 +125,12 @@ public class JSlave extends JbBase {
         this.path = path;
     }
 
-    public String getApp() {
-        return app;
+    public String getAppCode() {
+        return appCode;
     }
 
-    public void setApp(String app) {
-        this.app = app;
+    public void setAppCode(String appCode) {
+        this.appCode = appCode;
     }
 
     public long getStartTime() {

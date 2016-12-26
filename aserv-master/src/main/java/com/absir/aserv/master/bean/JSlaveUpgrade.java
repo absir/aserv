@@ -30,9 +30,6 @@ import javax.persistence.Transient;
 @Entity
 public class JSlaveUpgrade extends JbBeanSlaves implements ICrudBean {
 
-    @JaLang("组号")
-    private int group;
-
     @JaLang("升级文件")
     @JaEdit(types = "file")
     @JaCrud(factory = UploadCrudFactory.class, parameters = {"0", "zip,war"})
@@ -75,14 +72,6 @@ public class JSlaveUpgrade extends JbBeanSlaves implements ICrudBean {
     @JaLang("升级消息")
     @JaEdit(types = "text")
     private String upgradeMessage;
-
-    public int getGroup() {
-        return group;
-    }
-
-    public void setGroup(int group) {
-        this.group = group;
-    }
 
     public String getUpgradeFile() {
         return upgradeFile;

@@ -28,12 +28,20 @@ function ab_evalParams(expr) {
     return evalParams;
 }
 
+ab_lang_map.first_select_target = "请先选择对象";
+ab_lang_map.format_error = "格式错误";
+ab_lang_map.confirm_error = "内容不一致";
+
 function ab_evalRequire(evalParams, noParam) {
     var len = evalParams.length;
     var require = evalParams[0];
     for (var i = 1; i < len; i++) {
         var param = ab_getParam(evalParams[i]);
         if (param === undefined) {
+            if (!noParam) {
+                noParam = ab_lang_map.first_select_target;
+            }
+
             layer.alert(noParam, {icon: 2});
             return undefined;
         }
@@ -47,9 +55,41 @@ function ab_evalRequire(evalParams, noParam) {
     return require;
 }
 
-ab_lang_map.first_select_target = "请先选择对象";
-ab_lang_map.format_error = "格式错误";
-ab_lang_map.confirm_error = "内容不一致";
+function ab_addSubAttr($node, name, subName, value) {
+    var attr = $node.attr(name);
+    var pos = attr ? attr.indexOf(subName) : -1;
+    if (pos >= 0) {
+        var lst = attr.indexOf(' ', pos);
+        var start = attr.substring(0, pos);
+        var end = lst > pos ? attr.substring(lst) : '';
+        if (value) {
+            attr = start + ' ' + subName + ':' + value + end;
+
+        } else {
+            attr = start + end;
+        }
+
+    } else {
+        if (value) {
+            if (attr) {
+                attr += ' ' + subName + ':' + value;
+
+            } else {
+                attr = subName + ':' + value;
+            }
+        }
+    }
+
+    $node.attr(name, attr);
+}
+
+function ab_removeSubAttr($node, name, subName, value) {
+    ab_addSubAttr($node, name, subName);
+}
+
+function ab_reloadSelect(data, $select) {
+    console.log(data);
+}
 
 $(function () {
         $.fn.ab_eval = function (expr) {
@@ -116,9 +156,6 @@ $(function () {
         abToggles['click'] = function ($this) {
             var confirm = $this.attr('ab_confirm');
             var noParam = $this.attr('ab_noParam');
-            if (!noParam) {
-                noParam = ab_lang_map.first_select_target;
-            }
 
             var evalParams = ab_evalParams($this.attr('ab_click'));
             $this.click(function () {
@@ -572,6 +609,30 @@ $(function () {
                         return value === $confirm.val();
 
                     }, error];
+                }
+            }
+        };
+
+        abToggles['linkage'] = function ($this) {
+            var $form = $this.closest('form');
+            if ($form && $form.length) {
+                var linkage = $this.attr('linkage');
+                var name = $this.attr('linkage_name') || $this.attr('name');
+                var $linkage = $('[name="' + linkage + '"]', $form);
+                if ($linkage && $linkage.length) {
+                    var params = $linkage[0].tagName.toUpperCase() === 'SELECT' ? ab_evalParams($this.attr('select')) : undefined;
+                    var noParam = params ? $linkage.attr('linkage_noParam') : undefined;
+                    $this.bind('change', function () {
+                        var val = $this.val();
+                        if (params) {
+                            var require = ab_evalRequire(params, noParam);
+                            require = require.replace('$val', val);
+                            ab_ajax(require, 0, ab_reloadSelect, $linkage);
+
+                        } else {
+                            ab_addSubAttr($linkage, 'linkage', name, val);
+                        }
+                    });
                 }
             }
         };

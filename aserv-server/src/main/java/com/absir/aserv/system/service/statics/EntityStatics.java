@@ -24,6 +24,7 @@ import com.absir.core.util.UtilAccessor;
 import com.absir.core.util.UtilRuntime;
 import com.absir.server.in.IAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -164,8 +165,12 @@ public class EntityStatics {
         }
     }
 
-    public static String suggest(String entityName) {
+    public static String suggestKey(String entityName) {
         return "SUGGEST@" + entityName;
+    }
+
+    public static void suggestPermission(String entityName, HttpServletRequest request) {
+        request.getSession().setAttribute(suggestKey(entityName), true);
     }
 
     public static List suggest(String entityName, IAttributes input) {

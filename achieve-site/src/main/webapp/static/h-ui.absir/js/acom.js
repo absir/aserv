@@ -179,11 +179,24 @@ function ab_isHasFrame() {
     return iframe && iframe.length;
 }
 
-function ab_ajax(url, callback, complete) {
+function ab_ajax(url, callback, complete, dt) {
     var opts = url.constructor == Object ? url : {"url": url};
-    callback = callback || ab_ajaxCallback;
+    callback = callback || function (data, dt) {
+            return ab_ajaxCallback(data, undefined, undefined, undefined, dt);
+        }
     opts.success = complete ? function (data) {
-        callback(data), complete(data)
+        if (dt) {
+            data = callback(data, dt);
+            if (data === undefined) {
+                return;
+            }
+
+        } else {
+            callback(data);
+        }
+
+        complete(data, dt);
+
     } : callback;
     opts.error = function () {
         layer.alert(ab_lang_map.request_fail, {icon: 3});
@@ -377,9 +390,13 @@ function ab_ajaxCallbackBefore(json, $form, $tForm, callback) {
     }
 }
 
-function ab_ajaxCallbackData(data) {
+function ab_ajaxCallbackData(data, dt) {
     if (data) {
         var icon = data.icon;
+        if (dt && (!icon || icon === 1)) {
+            return data;
+        }
+
         var message = data.message;
         if (!message) {
             switch (icon) {
@@ -404,8 +421,8 @@ function ab_ajaxCallbackData(data) {
     }
 }
 
-function ab_ajaxCallback(json, $form, $tForm, callback) {
-    ab_ajaxCallbackData(ab_ajaxCallbackBefore(json, $form, $tForm, callback));
+function ab_ajaxCallback(json, $form, $tForm, callback, dt) {
+    return ab_ajaxCallbackData(ab_ajaxCallbackBefore(json, $form, $tForm, callback), dt);
 }
 
 function ab_ajaxSubmit($form, callback, $tForm) {

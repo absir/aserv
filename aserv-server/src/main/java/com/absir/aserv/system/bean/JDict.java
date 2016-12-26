@@ -22,7 +22,7 @@ import java.util.Map;
 
 @MaEntity(parent = {@MaMenu("系统配置"), @MaMenu("常用配置")}, name = "字典")
 @Entity
-public class JDict extends JbBase implements JiOpenValue<String> {
+public class JDict extends JbBase implements JiOpen {
 
     @JaLang(value = "键", tag = "key")
     @Id
@@ -64,10 +64,6 @@ public class JDict extends JbBase implements JiOpenValue<String> {
 
     public void setOpen(boolean open) {
         this.open = open;
-    }
-
-    public String forValue() {
-        return value;
     }
 
     public void setValue(String value) {

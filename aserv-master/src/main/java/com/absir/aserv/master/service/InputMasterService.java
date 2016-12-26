@@ -51,7 +51,7 @@ public class InputMasterService extends InputMasterContext {
         }
 
         if (params.length > 5) {
-            slave.setApp(params[5]);
+            slave.setAppCode(params[5]);
         }
 
         slave.setStartTime(KernelDyna.to(params[2], long.class));
