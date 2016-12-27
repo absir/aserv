@@ -21,7 +21,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@MaEntity(parent = {@MaMenu("菜单管理")}, name = "权限")
+@MaEntity(parent = {@MaMenu("用户管理")}, name = "菜单权限$")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 public class JMenuPermission extends JbBase {

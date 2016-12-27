@@ -141,8 +141,13 @@ public class MenuBeanRoot {
             }
         }
 
-        if (caption == name && caption != null && suffix != null) {
-            caption += suffix;
+        if (caption == name && caption != null) {
+            if (caption.endsWith("$")) {
+                caption = caption.substring(0, caption.length() - 1);
+
+            } else if (suffix != null) {
+                caption += suffix;
+            }
         }
 
         return getChildrenRoot(caption, order, ref, url, type, icon);

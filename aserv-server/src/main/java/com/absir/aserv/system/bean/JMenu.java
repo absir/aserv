@@ -34,11 +34,11 @@ public class JMenu extends JbBean implements IMenuBean, JiTree<JMenu> {
     private JMenu parent;
 
     @JaLang(value = "菜单名称", tag = "menuName")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST}, listColType = 1)
+    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST}, listColType = 1)
     private String name;
 
     @JaLang("类型")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST})
+    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     private String type;
 
     @JaLang("排序")
@@ -46,7 +46,7 @@ public class JMenu extends JbBean implements IMenuBean, JiTree<JMenu> {
     private int ordinal;
 
     @JaLang("链接")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST})
+    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     private String url;
 
     @JaLang("标注")
@@ -58,7 +58,7 @@ public class JMenu extends JbBean implements IMenuBean, JiTree<JMenu> {
     private MeUrlType urlType;
 
     @JaLang("图标")
-    @JaEdit(types = "icon", metas = "{type:menu}", groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST})
+    @JaEdit(types = "icon", metas = "{\"type\":\"menu\"}", groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST})
     private String icon;
 
     @JaLang(value = "子级菜单", tag = "subMenu")

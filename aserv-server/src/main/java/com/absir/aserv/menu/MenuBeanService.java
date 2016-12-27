@@ -26,13 +26,10 @@ import com.absir.core.kernel.KernelString;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.Session;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Bean
-public class MenuBeanService {
+public class MenuBeanService implements Comparator<MenuBeanRoot> {
 
     private Map<String, IMenuSupport> typeMapMenuSupport = new HashMap<String, IMenuSupport>();
 
@@ -206,7 +203,9 @@ public class MenuBeanService {
             return;
         }
 
-        for (MenuBeanRoot beanRoot : menuBeanRoot.getChildren().values()) {
+        List<MenuBeanRoot> beanRoots = new ArrayList<MenuBeanRoot>(menuBeanRoot.getChildren().values());
+        Collections.sort(beanRoots, this);
+        for (MenuBeanRoot beanRoot : beanRoots) {
             JMenu menuBean = beanRoot.getMenuBean();
             JMenu menu = (JMenu) QueryDaoUtils.select(session, "JMenu", KernelString.isEmpty(menuBean.getUrl()) ? new Object[]{"o.parent", parent, "o.name", menuBean.getName()} : new Object[]{
                     "o.parent", parent, "o.url", menuBean.getUrl()});
@@ -222,5 +221,10 @@ public class MenuBeanService {
 
             addMenuBeanRoot(session, beanRoot, menu, urlType);
         }
+    }
+
+    @Override
+    public int compare(MenuBeanRoot o1, MenuBeanRoot o2) {
+        return KernelString.compare(o1.getMenuBean().getName(), o2.getMenuBean().getName());
     }
 }

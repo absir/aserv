@@ -22,7 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Map;
 
-@MaEntity(parent = {@MaMenu("用户管理")}, name = "权限")
+@MaEntity(parent = {@MaMenu("用户管理")}, name = "实体权限$")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 public class JMaMenu extends JbBase {
