@@ -7,12 +7,16 @@
  */
 package com.absir.aserv.system.admin;
 
+import com.absir.aserv.crud.CrudSupply;
+import com.absir.aserv.crud.ICrudSupply;
 import com.absir.aserv.menu.MenuContextUtils;
 import com.absir.aserv.system.bean.value.JeRoleLevel;
 import com.absir.aserv.system.helper.HelperInput;
 import com.absir.aserv.system.security.SecurityContext;
 import com.absir.aserv.system.server.ServerResolverRedirect;
+import com.absir.aserv.system.service.CrudService;
 import com.absir.aserv.system.service.SecurityService;
+import com.absir.aserv.system.service.statics.EntityStatics;
 import com.absir.aserv.transaction.TransactionIntercepter;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.InjectType;
@@ -22,7 +26,9 @@ import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAbsir;
+import com.absir.orm.value.JoEntity;
 import com.absir.server.exception.ServerException;
+import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.InMethod;
 import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
@@ -32,6 +38,7 @@ import com.absir.server.route.RouteAction;
 import com.absir.server.route.RouteMapping;
 import com.absir.server.route.returned.ReturnedResolverView;
 import com.absir.server.value.*;
+import com.absir.servlet.InputRequest;
 import org.hibernate.exception.ConstraintViolationException;
 
 import java.lang.reflect.Method;
@@ -122,8 +129,38 @@ public abstract class AdminServer {
 
         @Override
         public void routeMapping(String name, Entry<Mapping, List<String>> mapping, Method method, List<String> parameterPathNames, List<String> mappings, List<InMethod> inMethods) {
-            RouteMapping.routeMapping(AdminServer.route, name, mapping, method, method.getName(), KernelString.implode(KernelArray.repeat('*', parameterPathNames.size()), '/'),
+            RouteMapping.routeMapping(!KernelString.isEmpty(name) && name.equals("open") ? null : AdminServer.route, name, mapping, method, method.getName(), KernelString.implode(KernelArray.repeat('*', parameterPathNames.size()), '/'),
                     KernelCollection.toArray(parameterPathNames, String.class), mappings, inMethods);
+        }
+    }
+
+    /**
+     * CRUDSupply统一入口
+     */
+    protected ICrudSupply getCrudSupply(String entityName, Input input) {
+        ICrudSupply crudSupply = CrudService.ME.getCrudSupply(entityName);
+        if (crudSupply == null) {
+            throw new ServerException(ServerStatus.IN_404);
+        }
+
+        if (input != null) {
+            JoEntity joEntity = new JoEntity(entityName, crudSupply.getEntityClass(entityName));
+            input.setAttribute("joEntity", joEntity);
+        }
+
+        return crudSupply;
+    }
+
+    /**
+     * 选择授权
+     */
+    protected void suggest(String entityName, ICrudSupply crudSupply, Input input) {
+        if (crudSupply instanceof CrudSupply || !(input instanceof InputRequest)) {
+            throw new ServerException(ServerStatus.IN_404);
+        }
+
+        if (((InputRequest) input).getSession(EntityStatics.suggestKey(entityName)) == null) {
+            throw new ServerException(ServerStatus.ON_DENIED);
         }
     }
 }

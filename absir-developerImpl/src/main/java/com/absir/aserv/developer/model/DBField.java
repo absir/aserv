@@ -54,7 +54,9 @@ public class DBField implements IField {
 
     protected Object defaultEntity;
 
-    private String nodeName;
+    protected String nodeName;
+
+    protected boolean suggest;
 
     public DBField() {
         crudField = new JCrudField();
@@ -86,6 +88,14 @@ public class DBField implements IField {
         }
 
         return nodeName;
+    }
+
+    public boolean isSuggest() {
+        return suggest;
+    }
+
+    public void setSuggest(boolean suggest) {
+        this.suggest = suggest;
     }
 
     public Class<?> getType() {

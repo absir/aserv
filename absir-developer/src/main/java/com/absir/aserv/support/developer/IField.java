@@ -55,4 +55,10 @@ public interface IField {
     public void setListColType(int listColType);
 
     public Object getDefaultEntity();
+
+    public String getNodeName();
+
+    public boolean isSuggest();
+
+    public void setSuggest(boolean suggest);
 }

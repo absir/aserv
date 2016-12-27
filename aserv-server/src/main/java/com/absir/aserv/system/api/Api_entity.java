@@ -24,13 +24,11 @@ import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.aserv.system.service.utils.EntityServiceUtils;
 import com.absir.aserv.system.service.utils.SearchServiceUtils;
 import com.absir.aserv.transaction.TransactionIntercepter;
-import com.absir.aserv.upgrade.UpgradeService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Value;
 import com.absir.client.helper.HelperJson;
-import com.absir.context.config.BeanFactoryStopping;
 import com.absir.core.base.IBase;
 import com.absir.core.helper.HelperFileName;
 import com.absir.core.helper.HelperIO;
@@ -57,32 +55,6 @@ public class Api_entity extends ApiServer {
 
     @Inject
     protected Version version;
-
-    /**
-     * 关闭服务了
-     */
-    public String stop(Input input) {
-        JiUserBase user = SecurityService.ME.getUserBase(input);
-        if (user != null && user.isDeveloper()) {
-            BeanFactoryStopping.stoppingAll();
-            return "stopped";
-        }
-
-        return "denied";
-    }
-
-    /**
-     * 重启命令
-     */
-    public String restart(Input input) throws IOException {
-        JiUserBase user = SecurityService.ME.getUserBase(input);
-        if (user != null && user.isDeveloper()) {
-            UpgradeService.ME.restartCommand();
-            return "restarting";
-        }
-
-        return "denied";
-    }
 
     /**
      * 返回版本信息
@@ -533,4 +505,5 @@ public class Api_entity extends ApiServer {
 
         public Map<String, List<?>> mirrors;
     }
+
 }

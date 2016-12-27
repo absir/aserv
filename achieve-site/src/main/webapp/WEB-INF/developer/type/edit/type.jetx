@@ -30,6 +30,13 @@ import = "com.absir.aserv.system.bean.value.JeEditable"
 #end
 #end
 
+#if(field.isSuggest())
+    #set(joEntity = archetype_key ? field.getCrudField().getKeyJoEntity() : field.getCrudField().getJoEntity())
+    #if(joEntity)
+        ${ScriptNode::append(nodes.get(0), "${EntityStatics::suggestPermission('" + joEntity.entityName + "', request)}").voidValue()}
+    #end
+#end
+
 #set(input_ext = field.getMetas().get("input_ext"))
 #if(input_ext)
     ${ScriptNode::attr(input, input_ext)}

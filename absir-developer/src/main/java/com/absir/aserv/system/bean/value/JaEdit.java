@@ -50,4 +50,9 @@ public @interface JaEdit {
      * 列表显示类型
      */
     int listColType() default 0;
+
+    /*
+     * suggest授权
+     */
+    boolean suggest() default false;
 }

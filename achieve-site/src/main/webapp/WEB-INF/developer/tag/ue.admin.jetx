@@ -3,7 +3,7 @@
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/ueditor/1.4.3/ueditor.all.min.js"></script>
 <script type="text/javascript" src="\${SITE_STATIC}/../lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
 <script type="text/javascript">
-    window.UEDITOR_CONFIG.serverUrl = "\${ADMIN_ROUTE}entity/ue";
+    window.UEDITOR_CONFIG.serverUrl = "\${SITE_ROUTE}admin/open/ue";
 </script>
 #end
 

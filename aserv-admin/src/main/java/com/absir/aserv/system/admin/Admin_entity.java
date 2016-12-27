@@ -11,20 +11,14 @@ import com.absir.aserv.configure.xls.XlsAccessorUtils;
 import com.absir.aserv.configure.xls.XlsUtils;
 import com.absir.aserv.crud.*;
 import com.absir.aserv.dyna.DynaBinderUtils;
-import com.absir.aserv.jdbc.JdbcCondition;
 import com.absir.aserv.jdbc.JdbcPage;
-import com.absir.aserv.menu.value.MaPermission;
 import com.absir.aserv.system.bean.JLog;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
-import com.absir.aserv.system.crud.RichCrudFactory;
-import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.BeanService;
-import com.absir.aserv.system.service.CrudService;
 import com.absir.aserv.system.service.EntityService;
 import com.absir.aserv.system.service.SecurityService;
-import com.absir.aserv.system.service.statics.EntityStatics;
 import com.absir.aserv.system.service.utils.AccessServiceUtils;
 import com.absir.aserv.system.service.utils.AuthServiceUtils;
 import com.absir.aserv.system.service.utils.InputServiceUtils;
@@ -44,9 +38,7 @@ import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
 import com.absir.server.route.parameter.ParameterResolverBinder;
 import com.absir.server.value.*;
-import com.absir.servlet.InputRequest;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import javax.servlet.http.HttpServletResponse;
@@ -61,23 +53,6 @@ import java.util.Map;
 @Base
 @Server
 public class Admin_entity extends AdminServer {
-
-    /**
-     * CRUDSupply统一入口
-     */
-    protected ICrudSupply getCrudSupply(String entityName, Input input) {
-        ICrudSupply crudSupply = CrudService.ME.getCrudSupply(entityName);
-        if (crudSupply == null) {
-            throw new ServerException(ServerStatus.IN_404);
-        }
-
-        if (input != null) {
-            JoEntity joEntity = new JoEntity(entityName, crudSupply.getEntityClass(entityName));
-            input.setAttribute("joEntity", joEntity);
-        }
-
-        return crudSupply;
-    }
 
     /**
      * 列表页面
@@ -480,76 +455,4 @@ public class Admin_entity extends AdminServer {
         return "admin/entity/mapped/" + entityName + '.' + field;
     }
 
-    /**
-     * 选择授权
-     */
-    private void suggest(String entityName, ICrudSupply crudSupply, Input input) {
-        if (crudSupply instanceof CrudSupply || !(input instanceof InputRequest)) {
-            throw new ServerException(ServerStatus.IN_404);
-        }
-
-        if (((InputRequest) input).getSession(EntityStatics.suggestKey(entityName)) == null) {
-            throw new ServerException(ServerStatus.ON_DENIED);
-        }
-    }
-
-    /**
-     * 弹出列表
-     */
-    public void suggest(String entityName, Input input) {
-        ICrudSupply crudSupply = getCrudSupply(entityName, input);
-        suggest(entityName, crudSupply, input);
-        TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
-        input.getModel().put("entities", EntityStatics.suggestCondition(entityName, InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), null, null, input), input));
-    }
-
-    public void lookup(String entityName, Input input) {
-        lookup(entityName, null, input);
-    }
-
-    /**
-     * 查找页面
-     */
-    @Mapping(method = InMethod.POST)
-    public void lookup(String entityName, @Binder JdbcPage jdbcPage, Input input) {
-        ICrudSupply crudSupply = getCrudSupply(entityName, input);
-        suggest(entityName, crudSupply, input);
-        JdbcCondition jdbcCondition = AccessServiceUtils.suggestCondition(entityName, SecurityService.ME.getUserBase(input),
-                InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), null, null, input));
-        jdbcPage = InputServiceUtils.getJdbcPage(entityName, jdbcPage, input);
-        InModel model = input.getModel();
-        model.put("page", jdbcPage);
-        TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
-        model.put("entities", crudSupply.list(entityName, jdbcCondition, InputServiceUtils.getOrderQueue(entityName, input), jdbcPage));
-    }
-
-    /**
-     * 上传图片
-     */
-    @MaPermission(RichCrudFactory.UPLOAD)
-    public void upload(InputRequest inputRequest) throws IOException, FileUploadException {
-        inputRequest.getModel().put("paths", UploadCrudFactory.ME.uploads(SecurityService.ME.getUserBase(inputRequest), inputRequest.getRequest()));
-    }
-
-    /**
-     * 文件列表
-     */
-    public void filemanager(@Nullable @Param String path, @Nullable @Param String order, Input input) {
-        input.getModel().put("path", path);
-        input.getModel().put("files", UploadCrudFactory.ME.list(path, order));
-    }
-
-    /**
-     * UE编辑器后端支持
-     */
-    public String ue(InputRequest inputRequest) {
-        String action = inputRequest.getParam("action");
-        if (!KernelString.isEmpty(action)) {
-            if (action.equals("config")) {
-                return "admin/ue.config";
-            }
-        }
-
-        return "ue.error";
-    }
 }

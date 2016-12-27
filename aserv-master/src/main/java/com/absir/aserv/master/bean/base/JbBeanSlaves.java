@@ -22,12 +22,12 @@ public class JbBeanSlaves extends JbBean {
 
     @JaLang("应用")
     @NotEmpty
-    @JaEdit(groups = JaEdit.GROUP_SUG, listColType = 1, metas = "{\"input_ext\": \"${EntityStatics::suggestPermission('JSlave', request)}ab_toggle='linkage' linkage='slaveIds' select='${ADMIN_ROUTE}entity/suggest/JSlave?appCode%20%3D=$val'\"}")
+    @JaEdit(groups = JaEdit.GROUP_SUG, listColType = 1, metas = "{\"input_ext\": \"ab_toggle='linkage' linkage='slaveIds' select='${SITE_ROUTE}admin/open/suggest/JSlave?appCode%20%3D=$val'\"}")
     public String appCode;
 
     @JaLang(value = "目标节点", tag = "targetSlave")
     @JaName("JSlave")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
+    @JaEdit(groups = JaEdit.GROUP_LIST, suggest = true)
     @Column(length = 10240)
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     private String[] slaveIds;
