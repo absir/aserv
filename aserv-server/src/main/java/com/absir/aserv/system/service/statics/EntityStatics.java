@@ -16,6 +16,8 @@ import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.CrudService;
 import com.absir.aserv.system.service.utils.AccessServiceUtils;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
+import com.absir.bean.basis.Configure;
+import com.absir.bean.inject.value.Value;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelCharset;
 import com.absir.core.kernel.KernelCollection;
@@ -32,6 +34,7 @@ import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
+@Configure
 public class EntityStatics {
 
     public static String getPrimary(Object entity, String primary) {
@@ -194,6 +197,9 @@ public class EntityStatics {
         return entities;
     }
 
+    @Value("suggest.max.results")
+    private static int suggestMaxResults = 20;
+
     public static List suggestCondition(String entityName, JdbcCondition condition, IAttributes input) {
         if (condition == null || condition.getConditions().isEmpty()) {
             return suggest(entityName, input);
@@ -202,7 +208,7 @@ public class EntityStatics {
         String entitiesKey = EntityStatics.class.getName() + "-" + entityName + "@SUGGEST";
         List entities = (List) input.getAttribute(entitiesKey);
         if (entities == null) {
-            entities = CrudServiceUtils.list(entityName, AccessServiceUtils.suggestCondition(entityName, condition), null, 0, 0);
+            entities = CrudServiceUtils.list(entityName, AccessServiceUtils.suggestCondition(entityName, condition), null, 0, suggestMaxResults);
             input.setAttribute(entitiesKey, entities);
         }
 
