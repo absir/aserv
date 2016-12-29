@@ -1,0 +1,23 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+#set(dateFmt = field.getMetas().get("dateFmt") ?! 'yyyy-MM-dd HH:mm:ss')
+#set(name = input.attr('name'))
+#tag layout_block("shtml")
+<div class="ab_span">
+    #set(cname = name + ' >=')
+    <input name="${cname}" type="text" class="ab_span_l input-text Wdate"
+           value="\${Pag::dateFormat(searchConditionMap['${cname}'], '${dateFmt}')}"
+    onfocus="WdatePicker({dateFmt:'${dateFmt}'})">
+    #set(cname = name + ' <=')
+    <input name="${cname}" type="text" class="ab_span_r input-text Wdate"
+           value="\${Pag::dateFormat(searchConditionMap['${cname}'], '${dateFmt}')}"
+    onfocus="WdatePicker({dateFmt:'${dateFmt}'})">
+</div>
+#end
+${ScriptNode::append(input.parent(), shtml)};
+${input.remove()}
+${request.setAttribute('input', null)}
+
+${Pag::setNameTag(INPUT, 'footer', '<script type="text/javascript" src="${SITE_STATIC}/../lib/My97DatePicker/WdatePicker.js"></script>')}

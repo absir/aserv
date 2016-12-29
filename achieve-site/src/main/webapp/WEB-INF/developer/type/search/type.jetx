@@ -4,21 +4,23 @@ import = "com.absir.aserv.system.bean.value.JeEditable"
 )
 
 #if(Scenario::pop("search", request) != null)
-    #if(KernelClass::getMatchNumberClass(field.getType()) != null)
-        #set(name = input.attr('name'))
-    #tag layout_block("shtml")
-    <div class="ab_span">
-        #set(cname = name + ' >=')
-        <input name="${cname}" type="text" class="ab_span_l input-text"
-               value="\${searchConditionMap['${cname}']}">
-        #set(cname = name + ' <=')
-        <input name="${cname}" type="text" class="ab_span_r input-text"
-               value="\${searchConditionMap['${cname}']}">
-    </div>
+    #if(input)
+        #if(KernelClass::getMatchNumberClass(field.getType()) != null)
+            #set(name = input.attr('name'))
+        #tag layout_block("shtml")
+        <div class="ab_span">
+            #set(cname = name + ' >=')
+            <input name="${cname}" type="text" class="ab_span_l input-text"
+                   value="\${searchConditionMap['${cname}']}">
+            #set(cname = name + ' <=')
+            <input name="${cname}" type="text" class="ab_span_r input-text"
+                   value="\${searchConditionMap['${cname}']}">
+        </div>
+        #end
+        ${ScriptNode::append(input.parent(), shtml)};
+        ${input.remove()}
+    #else
+        ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
     #end
-    ${ScriptNode::append(input.parent(), shtml)};
-    ${input.remove()}
 #end
-#else
-    ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
 #end

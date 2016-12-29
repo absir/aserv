@@ -1,0 +1,17 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+#set(dateFmt = field.getMetas().get("dateFmt") ?! 'yyyy-MM-dd HH:mm:ss')
+#set(name = input.attr('name'))
+#tag layout_block("shtml")
+<select name="${name}" class="input-text">
+    \#set(selected = Pag::value(searchConditionMap['${name}']))
+    <option value="">${Pag::getLang('未选择')}</option>
+    <option value="1" \${selected=='true' ? 'selected' : ''}>${Pag::getLang('是')}</option>
+    <option value="0" \${selected=='false' ? 'selected' : ''}>${Pag::getLang('否')}</option>
+</select>
+#end
+${ScriptNode::appendNode(input.parent(), ScriptNode::node(shtml))};
+${input.remove()}
+${request.setAttribute('input', null)}
