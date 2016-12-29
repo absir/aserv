@@ -1,0 +1,2 @@
+#include('../edit/base.jetx')
+${Scenario::push("search", true, request)}

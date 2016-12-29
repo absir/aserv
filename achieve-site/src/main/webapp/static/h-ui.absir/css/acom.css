@@ -23,3 +23,6 @@ input.required{background: url("../images/required.png") right center no-repeat}
 .btn-upload{overflow: visible}
 .btn-upload .input-file{bottom: 0; width: 96px}
 .btn-upload label.error{right: -100px}
+.ab_span{position: relative}
+.ab_span .ab_span_l{width: 49.5%; position: absolute; left: 0}
+.ab_span .ab_span_r{width: 49.5%; position: absolute; right: 0}

@@ -21,6 +21,7 @@ import com.absir.aserv.system.crud.BeanCrudFactory;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelList;
+import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAnnotation;
 import com.absir.orm.value.JoEntity;
 
@@ -112,6 +113,10 @@ public class EntityModel implements IModel {
     }
 
     public void setCaption(String caption) {
+        if (!KernelString.isEmpty(caption) && caption.endsWith("$")) {
+            caption = caption.substring(0, caption.length() - 1);
+        }
+
         this.caption = caption;
     }
 

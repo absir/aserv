@@ -623,6 +623,21 @@ $(function () {
             }
         };
 
+        abToggles['dropdown'] = function ($this) {
+            var $form = $this.closest('form');
+            if ($form && $form.length) {
+                var href = $this.attr('href');
+                var $dropdown = $(href, $form);
+                if ($dropdown && $dropdown.length) {
+                    var $dropdown_hidden = $(href + '_hidden', $form);
+                    $this.bind('click', function () {
+                        $dropdown.toggle();
+                        $dropdown_hidden.val($dropdown.is(':hidden') ? 0 : 1);
+                    });
+                }
+            }
+        }
+
         abToggles['linkage'] = function ($this) {
             var $form = $this.closest('form');
             if ($form && $form.length) {

@@ -11,13 +11,16 @@
         <span class="mb-5">${Pag::getLang('模糊搜索')}：</span>
         <input type="text" name="!suggest" class="input-text ab_search_input mb-5"
                value="\${searchConditionMap['!suggest'] ?! ''}">
-        <button class="btn btn-primary mb-5" type="button" data-toggle="dropdown" href="#searchMore">
+        <button class="btn btn-primary mb-5" type="button" ab_toggle="dropdown" href="#searchMore">
             <i class="Hui-iconfont">&#xe715;</i>${Pag::getLang('详细')}
         </button>
         <button class="btn btn-success mb-5" type="submit">
             <i class="Hui-iconfont">&#xe665;</i>${Pag::getLang('搜索')}
         </button>
-        <div id="searchMore" class="dropDown ab_search_more" ab_toggle="stop">
+        \#set(_searchMore_hidden = request.getParameter('_searchMore_hidden'))
+        <input id="searchMore_hidden" name="_searchMore_hidden" type="hidden" value="\${_searchMore_hidden}">
+        <div id="searchMore" class="dropDown ab_search_more" ab_toggle="stop"
+             style="display: \${_searchMore_hidden == '1' ? 'block' : 'none'}">
             <div class="page-container form">
                 ${Pag::includeGen("search/" + entityName + ".jetx", "search.jetx")}
                 \#include("../search/" + entityName + ".jetx")
