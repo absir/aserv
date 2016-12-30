@@ -90,8 +90,11 @@
     display: inline-block;
 }
 
-.input-group {
+.btn-group,
+.btn-group button,
+.btn-group input {
     line-height: 14px;
+    font-size: 14px;
 }
 
 .input-group .btn {
@@ -113,6 +116,13 @@
 }
 
 .form-control {
-    padding: 6px 6px;
+    height: 20px;
+    padding: 4px 6px;
     border: solid 1px #ddd;
+}
+
+@media screen and (max-width: 480px) {
+    .input-group input {
+        width: 80px;
+    }
 }
