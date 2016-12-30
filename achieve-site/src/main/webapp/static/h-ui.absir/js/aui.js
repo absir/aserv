@@ -31,6 +31,10 @@ function ab_evalParams(expr) {
 ab_lang_map.first_select_target = "请先选择对象";
 ab_lang_map.format_error = "格式错误";
 ab_lang_map.confirm_error = "内容不一致";
+ab_lang_map.selectAllText = " 全选";
+ab_lang_map.nonSelectedText = "未选择";
+ab_lang_map.nSelectedText = "选择";
+ab_lang_map.allSelectedText = "全部选择";
 
 function ab_evalRequire(evalParams, noParam) {
     var len = evalParams.length;
@@ -660,6 +664,17 @@ $(function () {
                     });
                 }
             }
+        };
+
+        abToggles['multiselect'] = function ($this) {
+            $this.multiselect({
+                selectAllText: ab_lang_map.selectAllText,
+                nonSelectedText: ab_lang_map.nonSelectedText,
+                nSelectedText: ab_lang_map.nSelectedText,
+                allSelectedText: ab_lang_map.allSelectedText,
+                enableFiltering: true,
+                includeSelectAllOption: true,
+            });
         };
 
     }

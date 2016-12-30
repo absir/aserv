@@ -19,7 +19,7 @@
         </button>
         \#set(_searchMore_hidden = request.getParameter('_searchMore_hidden'))
         <input id="searchMore_hidden" name="_searchMore_hidden" type="hidden" value="\${_searchMore_hidden}">
-        <div id="searchMore" class="dropDown ab_search_more" ab_toggle="stop"
+        <div id="searchMore" class="dropDown ab_search_more"
              style="display: \${_searchMore_hidden == '1' ? 'block' : 'none'}">
             <div class="page-container form">
                 ${Pag::includeGen("search/" + entityName + ".jetx", "search.jetx")}

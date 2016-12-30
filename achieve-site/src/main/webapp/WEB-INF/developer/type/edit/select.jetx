@@ -25,4 +25,5 @@ ${suggests}
 ${input.tagName('select')}
 ${input.removeAttr('value')}
 ${input.removeAttr('type')}
+${input.attr('ab_toggle', 'multiselect')}
 ${input.appendChild(ScriptNode::node(shtml)).voidValue()}

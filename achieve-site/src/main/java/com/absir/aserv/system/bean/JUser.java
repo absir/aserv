@@ -164,7 +164,7 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
             if (!KernelString.isEmpty(username)) {
                 nickname = username;
 
-            } else {
+            } else if (getId() != null) {
                 nickname = "User." + getId();
             }
         }

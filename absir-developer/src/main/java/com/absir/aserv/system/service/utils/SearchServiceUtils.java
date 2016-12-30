@@ -241,8 +241,21 @@ public abstract class SearchServiceUtils {
             }
 
         } else if (expression || metas.length == 1) {
-            propertyValue = DynaBinderUtils.to(propertyValue instanceof Object[] ? ((Object[]) propertyValue)[0] : propertyValue, fieldType);
-            searchConditions.add(alias + '.' + propertyName);
+            Object[] values = propertyValue instanceof Object[] ? (Object[]) propertyValue : null;
+            if (values == null || values.length == 1) {
+                propertyValue = DynaBinderUtils.to(values == null ? propertyValue : values[0], fieldType);
+
+            } else {
+                int length = values.length;
+                Object[] properties = new Object[length];
+                for (int i = 0; i < length; i++) {
+                    properties[i] = DynaBinderUtils.to(values[i], fieldType);
+                }
+
+                propertyValue = properties;
+            }
+
+            searchConditions.add(values == null ? (alias + '.' + propertyName) : (alias + '.' + propertyName + " IN (?)"));
             searchConditions.add(propertyValue);
 
         } else {

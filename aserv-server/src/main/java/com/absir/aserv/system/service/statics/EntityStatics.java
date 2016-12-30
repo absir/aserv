@@ -41,7 +41,11 @@ public class EntityStatics {
         return DynaBinderUtils.getParamFromValue(UtilAccessor.get(entity, primary));
     }
 
-    public static String[] getPrimarys(Collection<?> entities, String primary) {
+    public static String[] getPrimariesObj(Object entities, String primary) {
+        return getPrimaries(DynaBinder.to(entities, List.class), primary);
+    }
+
+    public static String[] getPrimaries(Collection<?> entities, String primary) {
         if (entities == null || entities.size() == 0) {
             return null;
         }

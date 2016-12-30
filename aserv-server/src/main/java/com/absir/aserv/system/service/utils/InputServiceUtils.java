@@ -92,9 +92,11 @@ public class InputServiceUtils {
             Map<String, Object[]> fieldMetas = SessionFactoryUtils.getEntityFieldMetas(entityName, entityClass);
             List<List<Object>> metasConditions = new ArrayList<List<Object>>();
             int size = 0;
-            for (Entry<String, String[]> entry : ((Map<String, String[]>) (Object) input.getParamMap()).entrySet()) {
-                String value = entry.getValue()[0];
-                if (!KernelString.isEmpty(value)) {
+            Map<String, String[]> paramMap = (Map<String, String[]>) (Object) input.getParamMap();
+            for (Entry<String, String[]> entry : paramMap.entrySet()) {
+                String[] values = entry.getValue();
+                Object value = values.length > 1 ? values : entry.getValue()[0];
+                if (values.length > 1 || !KernelString.isEmpty((String) value)) {
                     String propertyPath = entry.getKey();
                     if (propertyPath.length() > 1 && propertyPath.charAt(0) == '.') {
                         for (String path : propertyPath.substring(1).split("\\|")) {

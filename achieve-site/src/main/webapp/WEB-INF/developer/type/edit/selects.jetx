@@ -9,7 +9,7 @@ entity : 'suggest'
 }, 'suggests')
 
 #tag layout_block("shtml")
-\#set(selected = ${iselects ? ('Pag::params(' + inputval + ', true)') : ('EntityStatics::getPrimarys(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
+\#set(selected = ${iselects ? ('Pag::params(' + inputval + ', true)') : ('EntityStatics::getPrimaries(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
 \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get("suggest")}', INPUT))
 \#set(value = EntityStatics::getPrimary(suggest, '${entityModel.getPrimary().getName()}'))
 <option value="\${value}" \${Pag::isParams(selected, value) ? 'selected' : ''}>
@@ -21,6 +21,8 @@ ${suggests}
 
 ${input.tagName('select')}
 ${input.attr('multiple', 'true')}
+##${input.attr('multiple', 'multiple')}
+${input.attr('ab_toggle', 'multiselect')}
 ${input.addClass('ab_ah')}
 ${input.attr('size', field.metas.size ?! '3')}
 ${input.removeAttr('value')}

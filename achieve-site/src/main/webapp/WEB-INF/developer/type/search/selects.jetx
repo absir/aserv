@@ -1,0 +1,2 @@
+#include('../edit/iselects.jetx')
+${request.setAttribute('input', null)}

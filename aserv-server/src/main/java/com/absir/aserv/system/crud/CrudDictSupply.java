@@ -46,7 +46,7 @@ public class CrudDictSupply implements ICrudSupply {
 
     @Override
     public Class<?> getEntityClass(String entityName) {
-        if (entityName.startsWith(NAME_PRE)) {
+        if (entityName.startsWith(NAME_PRE) && EntityService.ME.getDictCache().getCacheValue(entityName.substring(NAME_PRE_LENGTH)) != null) {
             return Map.Entry.class;
         }
 

@@ -1,6 +1,9 @@
 #for(Map.Entry entry : Pag::getNameTag(INPUT, 'header'))
 ${entry.value}
 #end
+<link rel="stylesheet" href="\${SITE_STATIC}/h-ui.absir/css/bootstrap.css" type="text/css"/>
+<link rel="stylesheet" href="\${SITE_STATIC}/h-ui.absir/bootstrap-multiselect/bootstrap-multiselect.css"
+      type="text/css"/>
 <nav class="breadcrumb text-c">
     <a class="btn btn-secondary radius l ab_nav_btn"
        href="javascript:ab_open(location.href);" title="${Pag::getLang('打开')}">
@@ -22,3 +25,4 @@ ${bodyContent}
 #for(Map.Entry entry : Pag::getNameTag(INPUT, 'footer'))
 ${entry.value}
 #end
+<script type="text/javascript" src="\${SITE_STATIC}/h-ui.absir/bootstrap-multiselect/bootstrap-multiselect.js"></script>
