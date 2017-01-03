@@ -148,6 +148,7 @@ public class JShowForm extends JbBean implements ICrudSubmit<JShowForm.DemoOpiti
     public Map<Element, Element> metaMap4;
 
     @JaLang("Enum选择")
+    @NotEmpty
     @JaEdit(groups = {JaEdit.GROUP_LIST})
     public DemoOpition opition;
 
@@ -157,6 +158,7 @@ public class JShowForm extends JbBean implements ICrudSubmit<JShowForm.DemoOpiti
     public Long showMappedId;
 
     @JaLang("关联多择")
+    @NotEmpty
     @JaEdit(groups = {JaEdit.GROUP_LIST})
     @JaClasses(JShowMapped.class)
     public Long[] showMappedIds;

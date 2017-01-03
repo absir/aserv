@@ -19,10 +19,10 @@
 .input-text{background: #fff}
 .ab_locked{background: #f6f6f6 !important}
 input.required{background: url("../images/required.png") right center no-repeat}
-.ab_requiredDiv label.error{right: 25px}
+.ab_requiredDiv label.error{right: 25px; z-index: 1000}
 .btn-upload{overflow: visible}
 .btn-upload .input-file{bottom: 0; width: 96px}
-.btn-upload label.error{right: -100px}
+.btn-upload label.error{right: -100px; z-index: 1000}
 .ab_span{position: relative}
 .ab_span .ab_span_l{width: 49.5%; position: absolute; left: 0}
 .ab_span .ab_span_r{width: 49.5%; position: absolute; right: 0}

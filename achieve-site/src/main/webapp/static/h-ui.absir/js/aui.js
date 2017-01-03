@@ -102,7 +102,7 @@ function ab_reloadSelect(data, $select) {
     }
 
     $select.html(opts);
-    console.log($select.html());
+    ab_init($select.parent());
 }
 
 $(function () {
@@ -667,6 +667,13 @@ $(function () {
         };
 
         abToggles['multiselect'] = function ($this) {
+            $parent = $this.parent();
+            if ($parent.hasClass('multiselect-native-select')) {
+                $this.insertBefore($parent);
+                $parent.remove();
+                $this.removeData('multiselect');
+            }
+
             $this.multiselect({
                 selectAllText: ab_lang_map.selectAllText,
                 nonSelectedText: ab_lang_map.nonSelectedText,

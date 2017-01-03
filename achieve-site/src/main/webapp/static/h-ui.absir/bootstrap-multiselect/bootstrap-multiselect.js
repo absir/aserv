@@ -1605,6 +1605,12 @@
          * Update the button text and its title based on the currently selected options.
          */
         updateButtonText: function () {
+            var updateButtonTextHook = this.options.updateButtonTextHook;
+            if (updateButtonTextHook) {
+                updateButtonTextHook();
+                return;
+            }
+
             var options = this.getSelected();
 
             // First update the displayed button text.

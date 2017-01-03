@@ -84,3 +84,8 @@ span.multiselect-native-select select {
 .multiselect-container label.checkbox, .multiselect-container label.radio {
     width: 100%
 }
+
+.multiselect-native-select {
+    width: 100%;
+    display: inline-block
+}
