@@ -12,6 +12,7 @@ import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.base.JbBase;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
+import com.absir.aserv.system.bean.value.JiOpen;
 import com.absir.orm.value.JaColum;
 import com.absir.validator.value.NotEmpty;
 import org.hibernate.annotations.Cache;
@@ -24,12 +25,15 @@ import javax.persistence.Index;
 @MaEntity(parent = {@MaMenu("节点管理")}, name = "节点", value = @MaMenu(order = -128))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
-public class JSlave extends JbBase {
+public class JSlave extends JbBase implements JiOpen {
 
     @NotEmpty
     @JaLang(value = "验证主键", tag = "verifierId")
     @Id
     private String id;
+
+    @JaLang("开启")
+    private boolean open;
 
     @JaLang("名称")
     private String name;
@@ -83,6 +87,14 @@ public class JSlave extends JbBase {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
     }
 
     public String getName() {

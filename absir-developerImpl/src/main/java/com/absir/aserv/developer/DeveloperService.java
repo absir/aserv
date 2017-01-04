@@ -253,7 +253,7 @@ public class DeveloperService implements IDeveloper, IDeploy {
     }
 
     @Override
-    public void generate(String filepath, String includePath, Object... renders) throws IOException {
-        DeveloperUtils.generateRenders(filepath, includePath, renders);
+    public void generate(String filePath, String includePath, Object... renders) throws IOException {
+        DeveloperUtils.generateRenders(filePath, includePath, renders);
     }
 }

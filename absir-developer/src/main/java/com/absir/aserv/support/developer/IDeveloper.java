@@ -39,7 +39,7 @@ public interface IDeveloper {
 
     public void copyDeveloper(File file, String filePath) throws IOException;
 
-    public void generate(String filepath, String includePath, Object... renders) throws IOException;
+    public void generate(String filePath, String includePath, Object... renders) throws IOException;
 
     public static interface IDeploy {
 

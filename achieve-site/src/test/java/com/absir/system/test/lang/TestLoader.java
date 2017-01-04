@@ -27,6 +27,8 @@ public class TestLoader extends AbstractTest {
         System.out.println(testAop.getName());
         String str = "\">" + "${entity.";
 
+
+
     }
 
     public static abstract class TestAop {

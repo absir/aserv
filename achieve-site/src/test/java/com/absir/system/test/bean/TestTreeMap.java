@@ -7,7 +7,6 @@
  */
 package com.absir.system.test.bean;
 
-import com.absir.client.helper.HelperEncrypt;
 import com.absir.core.base.IBase;
 import com.absir.system.test.AbstractTest;
 import org.junit.Test;
@@ -19,10 +18,8 @@ public class TestTreeMap extends AbstractTest {
 
     @Test
     public void main() throws IOException {
-        String str = HelperEncrypt.aesEncryptBase64("abc", "123");
-        System.out.println(str);
-        str = HelperEncrypt.aesDecryptBase64(str, "123");
-        System.out.println(str);
+//        HelperIO.execute("cat /Developer/test/1.sh");
+//        HelperIO.executeArray("ls -la", "/Developer/aserv/achieve-site/webResources/root/protected/maintenance/scripts");
     }
 
     public static class TreeKey implements IBase<Serializable> {

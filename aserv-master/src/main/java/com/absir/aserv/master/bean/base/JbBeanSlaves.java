@@ -27,7 +27,7 @@ public class JbBeanSlaves extends JbBean {
 
     @JaLang(value = "目标节点", tag = "targetSlave")
     @JaName("JSlave")
-    @JaEdit(groups = JaEdit.GROUP_LIST, suggest = true)
+    @JaEdit(groups = JaEdit.GROUP_LIST, suggest = true, metas = "{\"suggest\":\"appCode=NONE\"}")
     @Column(length = 10240)
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     private String[] slaveIds;

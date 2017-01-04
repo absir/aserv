@@ -76,19 +76,31 @@ public class HelperIO extends IOUtils {
     }
 
     public static void execute(String command) throws IOException {
-        Process process = Runtime.getRuntime().exec(command);
+        executeProcess(Runtime.getRuntime().exec(command));
+    }
+
+    public static void executeArray(String... commands) throws IOException {
+        executeProcess(Runtime.getRuntime().exec(commands));
+    }
+
+    public static void executeProcess(Process process) throws IOException {
         try {
-            InputStream inputStream = process.getInputStream();
-            if (inputStream != null) {
-                HelperIO.copy(inputStream, System.out);
+            try {
+                InputStream inputStream = process.getInputStream();
+                if (inputStream != null) {
+                    HelperIO.copy(inputStream, System.out);
+                }
+
+            } catch (IOException e) {
             }
 
-        } catch (IOException e) {
-        }
+            InputStream inputStream = process.getErrorStream();
+            if (inputStream != null) {
+                HelperIO.copy(inputStream, System.err);
+            }
 
-        InputStream inputStream = process.getErrorStream();
-        if (inputStream != null) {
-            HelperIO.copy(inputStream, System.err);
+        } finally {
+            process.destroy();
         }
     }
 

@@ -5,8 +5,9 @@ import com.absir.aserv.task.JaTask;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
-import com.absir.bean.inject.value.Value;
 import com.absir.core.kernel.KernelString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by absir on 2016/11/18.
@@ -15,10 +16,32 @@ import com.absir.core.kernel.KernelString;
 @Bean
 public class MasterUpgradeService {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(MasterUpgradeService.class);
+
     public static final MasterUpgradeService ME = BeanFactoryUtils.get(MasterUpgradeService.class);
 
-    @Value("master.upgrade.slave.app")
-    private String slaveAppCode = "slave";
+//    @Started
+//    protected void postConstuctor() {
+//        if (InitBeanFactory.ME.isDevelopOrVersionChange()) {
+//            String deployPath = HelperFileName.normalizeNoEndSeparator(BeanFactoryUtils.getBeanConfig().getResourcePath() + "/shell/");
+//            LOGGER.info("deploy : " + deployPath);
+//            File file = new File(BeanFactoryUtils.getBeanConfig().getClassPath() + "deploy");
+//            if (file.exists() && file.isDirectory()) {
+//                for (File depFile : file.listFiles()) {
+//                    if (depFile.isFile() && depFile.getName().endsWith(".zip")) {
+//                        try {
+//                            HelperFile.copyDirectoryOverWrite(new ZipInputStream(new FileInputStream(depFile)), new File(deployPath), false, null, true);
+//
+//                        } catch (Exception e) {
+//                            LOGGER.error("deployDir " + depFile, e);
+//                        }
+//                    }
+//                }
+//            }
+//
+//
+//        }
+//    }
 
     public String crudSlaveUpgrade(JSlaveUpgrade slaveUpgrade) {
         String upgradeFile = slaveUpgrade.getUpgradeFile();
@@ -53,7 +76,7 @@ public class MasterUpgradeService {
 //            }
         }
 
-        return slaveAppCode;
+        return "";
     }
 
     public void planSlaveUpgrade(String app, JSlaveUpgrade slaveUpgrade) {
