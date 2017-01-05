@@ -375,13 +375,17 @@ public class SocketServer {
             public void run() {
                 Selector selector = serverSelector;
                 ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-                while (selector == serverSelector && !Thread.interrupted()) {
+                while (selector == serverSelector && !Thread.interrupted() && Environment.isActive()) {
                     try {
                         selector.select();
                         Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
                         while (iterator.hasNext()) {
                             SelectionKey key = iterator.next();
                             iterator.remove();
+                            if (!Environment.isActive()) {
+                                break;
+                            }
+
                             if (key.isAcceptable()) {
                                 // 接受请求
                                 SocketChannel socketChannel = ((ServerSocketChannel) key.channel()).accept();

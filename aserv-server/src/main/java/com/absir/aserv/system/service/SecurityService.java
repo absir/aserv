@@ -12,7 +12,9 @@ import com.absir.aserv.dyna.DynaBinderUtils;
 import com.absir.aserv.support.developer.IDeveloper.ISecurity;
 import com.absir.aserv.system.bean.JLog;
 import com.absir.aserv.system.bean.JbSession;
+import com.absir.aserv.system.bean.base.JbUserRole;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.aserv.system.bean.proxy.JiUserRole;
 import com.absir.aserv.system.bean.value.IUser;
 import com.absir.aserv.system.bean.value.JeRoleLevel;
 import com.absir.aserv.system.crud.PasswordCrudFactory;
@@ -29,6 +31,7 @@ import com.absir.bean.inject.value.Domain;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Value;
 import com.absir.bean.lang.LangCodeUtils;
+import com.absir.context.core.ContextDaemon;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.boost.IEntityMerge;
@@ -40,6 +43,7 @@ import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
 
 import javax.servlet.ServletRequest;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -279,6 +283,67 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
     public SecurityContext autoLogin(String name, boolean remember, int roleLevel, Input input) {
         SecurityContext securityContext = getSecurityContext(input);
         if (securityContext == null) {
+            String daemon = input.getParam("__daemon__");
+            if (!KernelString.isEmpty(daemon)) {
+                if (ContextDaemon.ME.isDeveloper(daemon)) {
+                    // __daemon__ developer user
+                    securityContext = new SecurityContext();
+                    securityContext.setUser(new JiUserBase() {
+                        @Override
+                        public Long getUserId() {
+                            return -99L;
+                        }
+
+                        @Override
+                        public boolean isDeveloper() {
+                            return true;
+                        }
+
+                        @Override
+                        public boolean isActivation() {
+                            return true;
+                        }
+
+                        @Override
+                        public boolean isDisabled() {
+                            return false;
+                        }
+
+                        @Override
+                        public String getUsername() {
+                            return "__daemon__";
+                        }
+
+                        @Override
+                        public int getUserRoleLevel() {
+                            return 99;
+                        }
+
+                        @Override
+                        public Collection<? extends JiUserRole> userRoles() {
+                            return null;
+                        }
+
+                        @Override
+                        public Collection<? extends JbUserRole> getUserRoles() {
+                            return null;
+                        }
+
+                        @Override
+                        public Object getMetaMap(String key) {
+                            return null;
+                        }
+
+                        @Override
+                        public void setMetaMap(String key, String value) {
+
+                        }
+                    });
+                    setSecurityContext(securityContext, input);
+                    return securityContext;
+                }
+            }
+
             if (input.isInFacade()) {
                 SecurityManager securityManager = getSecurityManager(name);
                 String sessionId = null;

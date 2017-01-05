@@ -285,6 +285,10 @@ public class ContextFactory {
         return contextMap;
     }
 
+    public List<Class> getContextClasses() {
+        return new ArrayList<Class>(classMapIdMapContext.keySet());
+    }
+
     public Map<Serializable, Context> findContextMap(Class<?> cls) {
         return classMapIdMapContext.get(cls);
     }

@@ -9,6 +9,7 @@ package com.absir.server.in;
 
 import com.absir.bean.basis.Configure;
 import com.absir.bean.inject.value.Inject;
+import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelByte;
 import com.absir.core.util.UtilAbsir;
 import com.absir.data.format.IFormat;
@@ -53,7 +54,7 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
     }
 
     public boolean on(String uri, T req, R res) throws Throwable {
-        if (uri == null) {
+        if (uri == null || !Environment.isActive()) {
             return false;
         }
 
