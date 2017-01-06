@@ -9,7 +9,6 @@ package com.absir.aserv.system.admin;
 
 import com.absir.aserv.menu.MenuContextUtils;
 import com.absir.aserv.system.server.value.Redirect;
-import com.absir.aserv.system.service.MaintenanceService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.basis.BeanConfig;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -25,7 +24,7 @@ import java.util.Properties;
 
 @Base
 @Server
-public class Admin_route extends AdminServer implements MaintenanceService.IMaintenance {
+public class Admin_route extends AdminServer {
 
     /**
      * 默认跳转首页

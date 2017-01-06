@@ -21,6 +21,7 @@ import com.absir.core.base.Environment;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.helper.HelperFile;
 import com.absir.core.helper.HelperFileName;
+import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
@@ -85,7 +86,7 @@ public class DeveloperService implements IDeveloper, IDeploy {
 
             for (IDeploy deploy : BeanFactoryUtils.getOrderBeanObjects(IDeploy.class)) {
                 try {
-                    HelperFile.copyDirectoryOverWrite(deploy.getClass().getResource("/deployResource"), new File(deployPath), false, null, true);
+                    HelperFile.copyDirectoryOverWrite(KernelClass.getCodeSource(deploy.getClass(), "/deployResource"), new File(deployPath), false, null, true);
 
                 } catch (Throwable e) {
                     LOGGER.error("deployResource " + deploy, e);

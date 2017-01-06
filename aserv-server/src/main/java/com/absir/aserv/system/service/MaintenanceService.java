@@ -11,6 +11,7 @@ import com.absir.bean.inject.value.Started;
 import com.absir.core.helper.HelperFile;
 import com.absir.core.helper.HelperFileName;
 import com.absir.core.helper.HelperIO;
+import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +74,7 @@ public class MaintenanceService {
 
             for (Class<?> maintenanceClass : maintenanceClasses) {
                 try {
-                    HelperFile.copyDirectoryOverWrite(maintenanceClass.getResource("/maintenance"), maintenanceFile, false, null, true);
+                    HelperFile.copyDirectoryOverWrite(KernelClass.getCodeSource(maintenanceClass, "/maintenance"), maintenanceFile, false, null, true);
 
                 } catch (Throwable e) {
                     LOGGER.error("deploy maintenanceClass " + maintenanceClass, e);

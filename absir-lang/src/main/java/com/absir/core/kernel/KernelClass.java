@@ -12,6 +12,8 @@ import com.absir.core.kernel.KernelLang.CallbackBreak;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -904,5 +906,16 @@ public abstract class KernelClass {
         }
 
         return simpleName;
+    }
+
+    public static URL getCodeSource(Class cls, String path) throws MalformedURLException {
+        URL url = cls.getProtectionDomain().getCodeSource().getLocation();
+        String spec = url.toString();
+        if (spec.endsWith(".jar")) {
+            return new URL("jar:" + spec + '!' + path);
+
+        } else {
+            return cls.getResource(path);
+        }
     }
 }
