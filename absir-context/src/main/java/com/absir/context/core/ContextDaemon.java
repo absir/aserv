@@ -42,6 +42,11 @@ public class ContextDaemon implements Runnable {
     @Inject
     protected void injectShutDown() {
         daemonDir = BeanFactoryUtils.getBeanConfig().getResourcePath() + "protected/daemon/";
+        File daemonFile = new File(daemonDir);
+        if ((!daemonFile.exists() && !daemonFile.mkdir()) || daemonFile.isFile()) {
+            throw new RuntimeException("could not create daemonDir = " + daemonDir);
+        }
+
         developerFile = new File(daemonDir + "developer");
         Thread thread = new Thread(ME);
         thread.setDaemon(true);

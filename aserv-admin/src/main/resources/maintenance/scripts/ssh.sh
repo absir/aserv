@@ -10,7 +10,7 @@ if [ -z $remoteUser ];then
 	remoteUser=root
 fi
 
-echo "rsa.ssh $remoteUser@$remoteIP"
+echo "ssh.rsa $remoteUser@$remoteIP"
 
 sshDir=`printf ~/.ssh`
 #echo "sshDir = $sshDir"
