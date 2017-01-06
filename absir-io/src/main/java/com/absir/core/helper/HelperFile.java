@@ -241,7 +241,14 @@ public class HelperFile extends FileUtils {
 
     public static void copyDirectoryOverWrite(JarURLConnection jarURLConnection, File destDir, boolean overWrite,
                                               FileFilter filter, boolean preserveFileDate) throws IOException {
-        JarFile jarFile = jarURLConnection.getJarFile();
+        JarFile jarFile;
+        try {
+            jarFile = jarURLConnection.getJarFile();
+
+        } catch (FileNotFoundException e) {
+            return;
+        }
+
         Enumeration<JarEntry> enumeration = jarFile.entries();
         String entryName = jarURLConnection.getEntryName();
         int entryLength = entryName.length();
