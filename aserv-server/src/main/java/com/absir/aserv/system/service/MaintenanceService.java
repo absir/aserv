@@ -80,6 +80,12 @@ public class MaintenanceService {
                 }
             }
 
+            // war deploy maintenance
+            File classMaintenanceFile = new File(beanConfig.getClassPath() + "maintenance");
+            if (classMaintenanceFile.exists() && classMaintenanceFile.isDirectory()) {
+                HelperFile.copyDirectoryOverWrite(classMaintenanceFile, maintenanceFile, true, null, true);
+            }
+
             chmodX(maintenancePath + "/scripts");
         }
     }

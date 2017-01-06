@@ -79,25 +79,15 @@ public class ContextDaemon implements Runnable {
             try {
                 Thread.sleep(idleTime);
                 if (shutdownFile.exists()) {
+                    File stoppingFile = new File(daemonDir + "stopping");
+                    stoppingFile.createNewFile();
                     Environment.setActive(false);
                     boolean done = false;
                     while (!done) {
                         try {
-                            ContextFactory contextFactory = ContextUtils.getContextFactory();
-                            for (Class cls : contextFactory.getContextClasses()) {
-                                Map<Serializable, Context> map = contextFactory.getContextMap(cls);
-                                Iterator<Map.Entry<Serializable, Context>> iterator = map.entrySet().iterator();
-                                while (iterator.hasNext()) {
-                                    Context context = iterator.next().getValue();
-                                    if (context != null && context.uninitializeDone()) {
-                                        context.uninitialize();
-                                    }
-
-                                    iterator.remove();
-                                }
-                            }
-
+                            shutdown();
                             stoppedFile.createNewFile();
+                            stoppingFile.delete();
                             done = true;
                             BeanFactoryStopping.stoppingAll();
 
@@ -109,6 +99,22 @@ public class ContextDaemon implements Runnable {
 
             } catch (Throwable e) {
                 Environment.throwable(e);
+            }
+        }
+    }
+
+    protected void shutdown() {
+        ContextFactory contextFactory = ContextUtils.getContextFactory();
+        for (Class cls : contextFactory.getContextClasses()) {
+            Map<Serializable, Context> map = contextFactory.getContextMap(cls);
+            Iterator<Map.Entry<Serializable, Context>> iterator = map.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Context context = iterator.next().getValue();
+                if (context != null && context.uninitializeDone()) {
+                    context.uninitialize();
+                }
+
+                iterator.remove();
             }
         }
     }
