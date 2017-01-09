@@ -83,7 +83,8 @@ public class HelperIO extends IOUtils {
         executeProcess(Runtime.getRuntime().exec(commands));
     }
 
-    public static void executeProcess(Process process) throws IOException {
+    public static boolean executeProcess(Process process) throws IOException {
+        boolean success = true;
         try {
             try {
                 InputStream inputStream = process.getInputStream();
@@ -92,16 +93,21 @@ public class HelperIO extends IOUtils {
                 }
 
             } catch (IOException e) {
+                success = false;
             }
 
             InputStream inputStream = process.getErrorStream();
             if (inputStream != null) {
-                HelperIO.copy(inputStream, System.err);
+                if (HelperIO.copy(inputStream, System.err) > 0) {
+                    success = false;
+                }
             }
 
         } finally {
             process.destroy();
         }
+
+        return success;
     }
 
 }

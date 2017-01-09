@@ -23,6 +23,7 @@ public class JbBeanSlaves extends JbBean {
     @JaLang("应用")
     @NotEmpty
     @JaEdit(groups = JaEdit.GROUP_SUG, listColType = 1, metas = "{\"input_ext\": \"ab_toggle='linkage' linkage='slaveIds' select='${SITE_ROUTE}admin/open/suggest/JSlave?appCode%20%3D=$val'\"}")
+    @JaName("JSlaveAppCode")
     public String appCode;
 
     @JaLang(value = "目标节点", tag = "targetSlave")

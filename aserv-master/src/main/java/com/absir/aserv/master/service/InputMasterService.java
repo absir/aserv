@@ -8,6 +8,7 @@
 package com.absir.aserv.master.service;
 
 import com.absir.aserv.master.bean.JSlave;
+import com.absir.aserv.master.bean.JSlaveAppCode;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.bean.basis.Base;
@@ -66,6 +67,13 @@ public class InputMasterService extends InputMasterContext {
 
         } else {
             session.merge(slave);
+        }
+
+        JSlaveAppCode slaveAppCode = BeanDao.get(session, JSlaveAppCode.class, slave.getAppCode());
+        if (slaveAppCode == null) {
+            slaveAppCode = new JSlaveAppCode();
+            slaveAppCode.setId(slave.getAppCode());
+            session.merge(slaveAppCode);
         }
     }
 

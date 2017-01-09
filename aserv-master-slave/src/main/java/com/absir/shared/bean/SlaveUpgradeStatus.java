@@ -10,7 +10,7 @@ import javax.persistence.MappedSuperclass;
  * Created by absir on 2016/11/18.
  */
 @MappedSuperclass
-public class SlaveStatus {
+public class SlaveUpgradeStatus {
 
     @JaLang("升级状态")
     @JaEdit(groups = JaEdit.GROUP_LIST)

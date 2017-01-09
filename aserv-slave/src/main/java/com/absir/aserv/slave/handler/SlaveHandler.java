@@ -8,7 +8,7 @@ import com.absir.server.handler.HandlerType;
 import com.absir.server.handler.IHandler;
 import com.absir.server.on.OnPut;
 import com.absir.server.value.Handler;
-import com.absir.shared.bean.SlaveStatus;
+import com.absir.shared.bean.SlaveUpgradeStatus;
 import com.absir.shared.slave.ISlave;
 import com.absir.slave.InputSlave;
 
@@ -37,12 +37,12 @@ public class SlaveHandler implements IHandler, ISlave {
     }
 
     @Override
-    public RpcData readyUpgrade(SlaveStatus slaveStatus) {
+    public RpcData readyUpgrade(SlaveUpgradeStatus slaveUpgradeStatus) {
         return null;
     }
 
     @Override
-    public void doUpgrade(SlaveStatus slaveStatus) {
+    public void doUpgrade(SlaveUpgradeStatus slaveUpgradeStatus) {
     }
 
 }

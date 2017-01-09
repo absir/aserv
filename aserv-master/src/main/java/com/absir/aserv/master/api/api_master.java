@@ -7,7 +7,7 @@
  */
 package com.absir.aserv.master.api;
 
-import com.absir.aserv.master.bean.JSlaveStatus;
+import com.absir.aserv.master.bean.JSlaveUpgradeStatus;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.system.service.BeanService;
@@ -54,7 +54,7 @@ public class api_master extends ApiMaster {
     }
 
     @JaLang("升级状态")
-    public void upgradeStatus(@Body JSlaveStatus slaveUpgrading, InputMaster inputMaster) throws IOException {
+    public void upgradeStatus(@Body JSlaveUpgradeStatus slaveUpgrading, InputMaster inputMaster) throws IOException {
         slaveUpgrading.setId((String) inputMaster.getId());
         slaveUpgrading.setUpdateTime(ContextUtils.getContextTime());
         BeanService.ME.merge(slaveUpgrading);
