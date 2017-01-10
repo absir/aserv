@@ -7,7 +7,11 @@ import com.absir.aserv.system.bean.value.JaLang;
  */
 public enum EUpgradeStatus {
 
-    @JaLang("下载...")DOWNLOADING,
+    @JaLang("命令中")ACTIONING,
+
+    @JaLang("命令取消中")ACTIONING_CANCEL,
+
+    @JaLang("下载中")DOWNLOADING,
 
     @JaLang("下载完成")DOWNLOAD_COMPLETE,
 

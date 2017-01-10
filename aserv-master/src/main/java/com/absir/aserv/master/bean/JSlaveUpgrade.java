@@ -10,6 +10,7 @@ package com.absir.aserv.master.bean;
 import com.absir.aserv.crud.CrudHandler;
 import com.absir.aserv.crud.value.ICrudBean;
 import com.absir.aserv.master.bean.base.JbBeanSlaves;
+import com.absir.aserv.master.handler.MasterHandler;
 import com.absir.aserv.master.service.MasterSyncService;
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
@@ -26,6 +27,7 @@ import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
 import com.absir.property.PropertyErrors;
 import com.absir.server.in.Input;
+import com.absir.shared.bean.EUpgradeStatus;
 import com.absir.shared.bean.SlaveUpgrade;
 
 import javax.persistence.Entity;
@@ -141,11 +143,13 @@ public class JSlaveUpgrade extends JbBeanSlaves implements ICrudBean {
 
     @Override
     protected void doSlaveId(String slaveId) {
+        MasterHandler.ME.upgradeStatues(slaveId, EUpgradeStatus.ACTIONING, null, false);
         MasterSyncService.ME.addSlaveSynchRpc(slaveId, "slaveUpgrade", MasterSyncService.RpcDataSlave.upgrade(slaveUpgrade), false);
     }
 
     @Override
     protected void stopSlaveId(String slaveId) {
+        MasterHandler.ME.upgradeStatues(slaveId, EUpgradeStatus.ACTIONING_CANCEL, null, false);
         MasterSyncService.ME.addSlaveSynchRpc(slaveId, "slaveUpgrade", MasterSyncService.RpcDataSlave.upgrade(null), false);
     }
 
