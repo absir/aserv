@@ -35,9 +35,11 @@ import com.absir.core.util.UtilAtom;
 import com.absir.data.helper.HelperDataFormat;
 import com.absir.master.InputMasterContext;
 import com.absir.master.MasterChannelContext;
+import com.absir.master.MasterRpcAdapter;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.hibernate.boost.L2CacheCollectionService;
 import com.absir.orm.transaction.value.Transaction;
+import com.absir.shared.slave.ISlave;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -250,6 +252,10 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
 
         return false;
     }
+
+    public static final MasterRpcAdapter MASTER_RPC_ADAPTER = new MasterRpcAdapter(null);
+
+    public static final ISlave RpcDataSlave = MASTER_RPC_ADAPTER.getRpcInvoker(ISlave.class);
 
     // 添加RPC同步
     public void addSlaveSynchRpc(String slaveId, String mid, RpcData rpcData, boolean autoSynch) {

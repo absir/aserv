@@ -44,7 +44,9 @@ public class UpgradeService {
 
     public static final UpgradeService ME = BeanFactoryUtils.get(UpgradeService.class);
 
+    public static final String NO_APP_CODE = LangCodeUtils.get("应用不存在", UpgradeService.class);
     public static final String NOT_VALIDATOR = LangCodeUtils.get("升级文件验证失败", UpgradeService.class);
+    public static final String IO_EXCEPTION = LangCodeUtils.get("文件异常", UpgradeService.class);
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(UpgradeService.class);
     protected static final String incrementalUpgrade = "incrementalUpgrade";
@@ -134,6 +136,10 @@ public class UpgradeService {
 
     public String getVersion(Map<String, Object> configMap) {
         return BeanConfigImpl.getMapValue(configMap, "version", null, String.class);
+    }
+
+    public String getVersionName(Map<String, Object> configMap) {
+        return BeanConfigImpl.getMapValue(configMap, "version.name", null, String.class);
     }
 
     /**

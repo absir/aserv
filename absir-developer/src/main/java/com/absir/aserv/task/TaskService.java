@@ -257,4 +257,16 @@ public class TaskService extends ContextService {
         BeanDao.getSession().merge(plan);
         return true;
     }
+
+    @Transaction
+    public boolean removePanel(String id) {
+        Session session = BeanDao.getSession();
+        JPlan plan = BeanDao.get(session, JPlan.class, id);
+        if (plan != null) {
+            session.delete(plan);
+            return true;
+        }
+
+        return false;
+    }
 }

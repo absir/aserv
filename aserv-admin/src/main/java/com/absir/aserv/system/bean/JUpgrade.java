@@ -13,7 +13,6 @@ import com.absir.aserv.system.crud.value.UploadRule;
 import com.absir.aserv.system.service.impl.UpgradeServiceImpl;
 import com.absir.aserv.task.TaskService;
 import com.absir.aserv.upgrade.UpgradeService;
-import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.lang.LangCodeUtils;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelString;
@@ -151,7 +150,7 @@ public class JUpgrade extends JbBean implements ICrudBean {
                     }
 
                     if (KernelString.isEmpty(descriptor)) {
-                        descriptor = BeanConfigImpl.getMapValue(versionMap, "version.name", null, String.class);
+                        descriptor = UpgradeService.ME.getVersionName(versionMap);
                     }
 
                     if (upgrade) {

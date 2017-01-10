@@ -225,8 +225,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
             return getProtectedFile(filePath);
         }
 
-        String filename = HelperFileName.normalize(uploadPath + filePath);
-        return filename.startsWith(uploadPath) ? new File(filename) : null;
+        return new File(uploadPath + HelperFileName.normalize(filePath));
     }
 
     public File getProtectedFile(String filePath) {
@@ -234,8 +233,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
             filePath = filePath.substring(1);
         }
 
-        String filename = HelperFileName.normalize(protectedPath + filePath);
-        return filename.startsWith(protectedPath) ? new File(filename) : null;
+        return new File(protectedPath + HelperFileName.normalize(filePath));
     }
 
     public InputStream getUploadStream(String filePath) throws IOException {

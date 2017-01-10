@@ -84,12 +84,16 @@ public class HelperIO extends IOUtils {
     }
 
     public static boolean executeProcess(Process process) throws IOException {
+        return executeProcessOut(process, System.out, System.err);
+    }
+
+    public static boolean executeProcessOut(Process process, OutputStream outStream, OutputStream errorStream) throws IOException {
         boolean success = true;
         try {
             try {
                 InputStream inputStream = process.getInputStream();
                 if (inputStream != null) {
-                    HelperIO.copy(inputStream, System.out);
+                    HelperIO.copy(inputStream, outStream);
                 }
 
             } catch (IOException e) {
@@ -98,7 +102,7 @@ public class HelperIO extends IOUtils {
 
             InputStream inputStream = process.getErrorStream();
             if (inputStream != null) {
-                if (HelperIO.copy(inputStream, System.err) > 0) {
+                if (HelperIO.copy(inputStream, errorStream) > 0) {
                     success = false;
                 }
             }

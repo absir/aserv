@@ -10,7 +10,7 @@ package com.absir.aserv.master.bean;
 import com.absir.aserv.crud.CrudHandler;
 import com.absir.aserv.crud.value.ICrudBean;
 import com.absir.aserv.master.bean.base.JbBeanSlaves;
-import com.absir.aserv.master.service.MasterUpgradeService;
+import com.absir.aserv.master.service.MasterSyncService;
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.value.*;
@@ -19,42 +19,29 @@ import com.absir.aserv.system.crud.DateCrudFactory;
 import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.upgrade.UpgradeService;
 import com.absir.bean.lang.LangCodeUtils;
+import com.absir.client.helper.HelperEncrypt;
+import com.absir.context.core.ContextUtils;
+import com.absir.core.base.Environment;
+import com.absir.core.kernel.KernelObject;
+import com.absir.core.kernel.KernelString;
 import com.absir.property.PropertyErrors;
 import com.absir.server.in.Input;
+import com.absir.shared.bean.SlaveUpgrade;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
+import java.io.IOException;
+import java.util.Map;
 
 @MaEntity(parent = {@MaMenu("节点管理")}, name = "升级")
 @JaModel(desc = true)
 @Entity
 public class JSlaveUpgrade extends JbBeanSlaves implements ICrudBean {
 
-    @JaLang("升级文件")
-    @JaEdit(types = "file")
-    @JaCrud(factory = UploadCrudFactory.class, parameters = {"0", "zip,war"})
-    private String upgradeFile;
-
     @JaLang("升级")
     @JaEdit(editable = JeEditable.ENABLE)
     @Transient
     private boolean upgrade;
-
-    @JaLang("升级版本")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
-    private String upgradeVersion;
-
-    @JaLang("升级MD5")
-    private String upgradeMd5;
-
-    @JaLang("资源文件")
-    @JaEdit(types = "file")
-    @JaCrud(factory = UploadCrudFactory.class, parameters = {"0", "zip"})
-    private String resourceFile;
-
-    @JaLang("开始时间")
-    @JaEdit(groups = JaEdit.GROUP_LIST, types = "dateTime")
-    private long beginTime;
 
     @JaLang("创建时间")
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST)
@@ -66,20 +53,8 @@ public class JSlaveUpgrade extends JbBeanSlaves implements ICrudBean {
     @JaCrud(value = "dateCrudFactory", cruds = {Crud.CREATE, Crud.UPDATE}, factory = DateCrudFactory.class)
     private long updateTime;
 
-    @JaLang("特殊")
-    private boolean special;
-
-    @JaLang("升级消息")
-    @JaEdit(types = "text")
-    private String upgradeMessage;
-
-    public String getUpgradeFile() {
-        return upgradeFile;
-    }
-
-    public void setUpgradeFile(String upgradeFile) {
-        this.upgradeFile = upgradeFile;
-    }
+    @JaLang("节点升级")
+    private SlaveUpgrade slaveUpgrade;
 
     public boolean isUpgrade() {
         return upgrade;
@@ -87,38 +62,6 @@ public class JSlaveUpgrade extends JbBeanSlaves implements ICrudBean {
 
     public void setUpgrade(boolean upgrade) {
         this.upgrade = upgrade;
-    }
-
-    public String getUpgradeVersion() {
-        return upgradeVersion;
-    }
-
-    public void setUpgradeVersion(String upgradeVersion) {
-        this.upgradeVersion = upgradeVersion;
-    }
-
-    public String getUpgradeMd5() {
-        return upgradeMd5;
-    }
-
-    public void setUpgradeMd5(String upgradeMd5) {
-        this.upgradeMd5 = upgradeMd5;
-    }
-
-    public String getResourceFile() {
-        return resourceFile;
-    }
-
-    public void setResourceFile(String resourceFile) {
-        this.resourceFile = resourceFile;
-    }
-
-    public long getBeginTime() {
-        return beginTime;
-    }
-
-    public void setBeginTime(long beginTime) {
-        this.beginTime = beginTime;
     }
 
     public long getCreateTime() {
@@ -137,37 +80,73 @@ public class JSlaveUpgrade extends JbBeanSlaves implements ICrudBean {
         this.updateTime = updateTime;
     }
 
-    public boolean isSpecial() {
-        return special;
-    }
-
-    public void setSpecial(boolean special) {
-        this.special = special;
-    }
-
-    public String getUpgradeMessage() {
-        return upgradeMessage;
-    }
-
-    public void setUpgradeMessage(String upgradeMessage) {
-        this.upgradeMessage = upgradeMessage;
-    }
-
     @Override
     public void processCrud(Crud crud, CrudHandler handler, Input input) {
         if (crud != Crud.DELETE && handler.isPersist()) {
             PropertyErrors errors = handler.getErrors();
-            if (errors != null) {
-                String app = MasterUpgradeService.ME.crudSlaveUpgrade(this);
-                if (app == null) {
-                    UploadCrudFactory.ME.delete(upgradeFile);
-                    UploadCrudFactory.ME.delete(resourceFile);
-                    errors.addPropertyError("upgradeFile", LangCodeUtils.getLangMessage(UpgradeService.NOT_VALIDATOR, input), upgradeFile);
-                    return;
-                }
+            if (errors != null && slaveUpgrade != null) {
+                try {
+                    if (KernelString.isEmpty(appCode)) {
+                        errors.addPropertyError("appCode", LangCodeUtils.getLangMessage(UpgradeService.NO_APP_CODE, input), appCode);
+                        return;
+                    }
 
-                
+                    Map<String, Object> versionMap = KernelString.isEmpty(slaveUpgrade.getUpgradeFile()) ? null : UpgradeService.ME.getVersionMap(UploadCrudFactory.ME.getProtectedFile(slaveUpgrade.getUpgradeFile()));
+                    if (versionMap != null) {
+                        if (!KernelObject.equals(appCode, UpgradeService.ME.getAppCode(versionMap))) {
+                            errors.addPropertyError("slaveUpgrade.upgradeFile", LangCodeUtils.getLangMessage(UpgradeService.NOT_VALIDATOR, input), slaveUpgrade.getUpgradeFile());
+                            return;
+                        }
+                    }
+
+                    if (upgrade) {
+                        String propertyName = null;
+                        try {
+                            if (versionMap != null) {
+                                slaveUpgrade.setUpgradeVersion(UpgradeService.ME.getVersion(versionMap));
+                                if (KernelString.isEmpty(slaveUpgrade.getUpgradeDescriptor())) {
+                                    slaveUpgrade.setUpgradeDescriptor(UpgradeService.ME.getVersionName(versionMap));
+                                }
+
+                                propertyName = "slaveUpgrade.upgradeFile";
+                                slaveUpgrade.setUpgradeMd5(HelperEncrypt.encryptionMD5(UploadCrudFactory.ME.getUploadStream(slaveUpgrade.getUpgradeFile())));
+                            }
+
+                            if (!KernelString.isEmpty(slaveUpgrade.getResourceFile())) {
+                                propertyName = "slaveUpgrade.resourceFile";
+                                slaveUpgrade.setResourceMd5(HelperEncrypt.encryptionMD5(UploadCrudFactory.ME.getUploadStream(slaveUpgrade.getResourceFile())));
+                            }
+
+                            slaveUpgrade.setActionTime(ContextUtils.getContextTime());
+                            workSlaves(input);
+
+                        } catch (IOException e) {
+                            if (propertyName != null) {
+                                errors.addPropertyError(propertyName, LangCodeUtils.getLangMessage(UpgradeService.IO_EXCEPTION, input), e);
+                            }
+
+                            Environment.throwable(e);
+                        }
+                    }
+
+                } finally {
+                    if (errors.hashErrors()) {
+                        UploadCrudFactory.ME.delete(slaveUpgrade.getUpgradeFile());
+                        UploadCrudFactory.ME.delete(slaveUpgrade.getResourceFile());
+                    }
+                }
             }
         }
     }
+
+    @Override
+    protected void doSlaveId(String slaveId) {
+        MasterSyncService.ME.addSlaveSynchRpc(slaveId, "slaveUpgrade", MasterSyncService.RpcDataSlave.upgrade(slaveUpgrade), false);
+    }
+
+    @Override
+    protected void stopSlaveId(String slaveId) {
+        MasterSyncService.ME.addSlaveSynchRpc(slaveId, "slaveUpgrade", MasterSyncService.RpcDataSlave.upgrade(null), false);
+    }
+
 }

@@ -30,4 +30,38 @@ public class UtilInputStream extends InputStream {
         }
     }
 
+    public static class ThreadInputStream extends InputStream {
+
+        InputStream dataInput;
+
+        public ThreadInputStream(InputStream dataInput) {
+            this.dataInput = dataInput;
+        }
+
+        @Override
+        public int read() throws IOException {
+            if (Thread.interrupted()) {
+                throw new IOException("thread is interrupted");
+            }
+
+            return dataInput.read();
+        }
+
+        @Override
+        public int read(byte[] b) throws IOException {
+            return dataInput.read(b);
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            return dataInput.read(b, off, len);
+        }
+
+        @Override
+        public synchronized void reset() throws IOException {
+            dataInput.reset();
+        }
+
+    }
+
 }
