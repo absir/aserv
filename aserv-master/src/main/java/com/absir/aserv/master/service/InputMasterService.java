@@ -36,6 +36,7 @@ public class InputMasterService extends InputMasterContext {
         if (slave == null) {
             slave = new JSlave();
             slave.setId(id);
+            slave.setOpen(true);
             id = null;
         }
 
@@ -73,6 +74,7 @@ public class InputMasterService extends InputMasterContext {
         if (slaveAppCode == null) {
             slaveAppCode = new JSlaveAppCode();
             slaveAppCode.setId(slave.getAppCode());
+            slaveAppCode.setOpen(true);
             session.merge(slaveAppCode);
         }
     }

@@ -26,7 +26,7 @@ public class SlaveUpgrade {
     @JaLang("升级文件")
     @JaEdit(types = "file")
     @UploadRule("@slave/upgrade_:rand.:ext")
-    @JaCrud(factory = UploadCrudFactory.class, parameters = {"0", "zip,war"})
+    @JaCrud(factory = UploadCrudFactory.class, parameters = {"-1", "zip,war"})
     private String upgradeFile;
 
     @JaLang("升级版本")
@@ -43,7 +43,7 @@ public class SlaveUpgrade {
     @JaLang("资源文件")
     @JaEdit(types = "file")
     @UploadRule("@slave/resource_:rand.:ext")
-    @JaCrud(factory = UploadCrudFactory.class, parameters = {"0", "zip"})
+    @JaCrud(factory = UploadCrudFactory.class, parameters = {"-1", "zip"})
     private String resourceFile;
 
     @JaLang("资源MD5")

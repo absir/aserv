@@ -138,13 +138,25 @@ $(function () {
         }
 
         $.fn.ab_toggle_fun = function (ui) {
-            (ui ? $("[ab_toggle]", $(ui)) : $("[ab_toggle]")).each(function () {
+            (ui ? $("[ab_toggle],[ab_toggles]", $(ui)) : $("[ab_toggle]")).each(function () {
                 var $this = $(this);
                 var name = $this.attr('ab_toggle');
                 if (name) {
                     var toggle = abToggles[name];
                     if (toggle && toggle.constructor == Function) {
                         toggle($this);
+                    }
+                }
+
+                var names = $this.attr('ab_toggles');
+                if (names) {
+                    names = names.split(' ');
+                    for (var i in names) {
+                        var name = names[i];
+                        var toggle = abToggles[name];
+                        if (toggle && toggle.constructor == Function) {
+                            toggle($this);
+                        }
                     }
                 }
             });
@@ -651,7 +663,7 @@ $(function () {
                 if ($linkage && $linkage.length) {
                     var params = $linkage[0].tagName.toUpperCase() === 'SELECT' ? ab_evalParams($this.attr('select')) : undefined;
                     var noParam = params ? $linkage.attr('linkage_noParam') : undefined;
-                    $this.bind('change', function () {
+                    var change = function () {
                         var val = $this.val();
                         if (params) {
                             var require = ab_evalRequire(params, noParam);
@@ -661,7 +673,11 @@ $(function () {
                         } else {
                             ab_addSubAttr($linkage, 'linkage', name, val);
                         }
-                    });
+                    };
+                    $this.bind('change', change);
+                    if ($this.val()) {
+                        change();
+                    }
                 }
             }
         };

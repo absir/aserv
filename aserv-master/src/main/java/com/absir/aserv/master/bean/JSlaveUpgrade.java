@@ -82,6 +82,14 @@ public class JSlaveUpgrade extends JbBeanSlaves implements ICrudBean {
         this.updateTime = updateTime;
     }
 
+    public SlaveUpgrade getSlaveUpgrade() {
+        return slaveUpgrade;
+    }
+
+    public void setSlaveUpgrade(SlaveUpgrade slaveUpgrade) {
+        this.slaveUpgrade = slaveUpgrade;
+    }
+
     @Override
     public void processCrud(Crud crud, CrudHandler handler, Input input) {
         if (crud != Crud.DELETE && handler.isPersist()) {
