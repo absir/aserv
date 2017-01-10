@@ -7,15 +7,20 @@ import com.absir.aserv.system.bean.value.JaLang;
  */
 public enum EUpgradeStatus {
 
-    @JaLang("准备下载")READY_DOWNLOADING,
+    @JaLang("下载...")DOWNLOADING,
 
-    @JaLang("下载完成")DOWNLOADING_COMPLETE,
+    @JaLang("下载完成")DOWNLOAD_COMPLETE,
 
-    @JaLang("开始保存数据")BEGIN_SAVEDATA,
+    @JaLang("文件验证")FILE_VALIDATE,
 
-    @JaLang("开始重启升级")BEGIN_RESTART_UPRADE,
+    @JaLang("资源准备")RESOURCE_READY,
 
-    @JaLang("刷新资源")REFRESH_RESOUCE_COMPLETE,
+    @JaLang("资源完成")RESOURCE_COMPLETE,
 
-    @JaLang("启动升级完成")START_UPRADE_COMPLETE,
+    @JaLang("重启准备")RESTART_READY,
+
+    @JaLang("重启开始")RESTART_BEGIN,
+
+    @JaLang("重启完成")RESTART_COMPLETE,
+
 }

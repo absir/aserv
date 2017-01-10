@@ -21,8 +21,9 @@ public class SlaveUpgradeStatus {
     @JsonIgnore
     private long updateTime;
 
-    @JaLang("进度")
-    private long progress;
+    @JaLang("参数")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private String param;
 
     @JaLang("失败")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -44,12 +45,12 @@ public class SlaveUpgradeStatus {
         this.updateTime = updateTime;
     }
 
-    public long getProgress() {
-        return progress;
+    public String getParam() {
+        return param;
     }
 
-    public void setProgress(long progress) {
-        this.progress = progress;
+    public void setParam(String param) {
+        this.param = param;
     }
 
     public boolean isFailed() {

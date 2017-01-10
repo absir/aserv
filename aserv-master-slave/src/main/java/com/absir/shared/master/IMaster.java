@@ -20,6 +20,6 @@ public interface IMaster {
     public InputStream download(String filePath) throws IOException;
 
     @JaLang("节点下载")
-    public void upgradeStatues(EUpgradeStatus status, long progress, boolean failed);
+    public void upgradeStatues(EUpgradeStatus status, String param, boolean failed);
 
 }

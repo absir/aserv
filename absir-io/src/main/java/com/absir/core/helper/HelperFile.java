@@ -20,9 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -329,6 +327,33 @@ public class HelperFile extends FileUtils {
             file.delete();
 
         } catch (Exception e) {
+        }
+    }
+
+    public static final Comparator<File> LastModifiedComparator = new Comparator<File>() {
+        @Override
+        public int compare(File o1, File o2) {
+            return (int) ((o1.lastModified() - o2.lastModified()) / 1000);
+        }
+    };
+
+    public static List<File> getFileList(File[] files) {
+        List<File> fileList = new ArrayList<File>();
+        for (File file : files) {
+            fileList.add(file);
+        }
+
+        return fileList;
+    }
+
+    public static void releaseCacheFiles(File[] files, int maxCount) {
+        if (files.length > maxCount) {
+            List<File> fileList = getFileList(files);
+            Collections.sort(fileList, LastModifiedComparator);
+            maxCount = files.length - maxCount;
+            for (int i = 0; i < maxCount; i++) {
+                fileList.get(i).delete();
+            }
         }
     }
 }

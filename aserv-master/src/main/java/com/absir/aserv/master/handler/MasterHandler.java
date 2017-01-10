@@ -50,20 +50,19 @@ public class MasterHandler implements IHandler, IMaster {
     }
 
     @Override
-    public void upgradeStatues(EUpgradeStatus status, long progress, boolean failed) {
+    public void upgradeStatues(EUpgradeStatus status, String param, boolean failed) {
         Input input = OnPut.input();
         if (input != null && input instanceof InputMaster) {
-            upgradeStatues((String) input.getId(), status, progress, failed);
+            upgradeStatues((String) input.getId(), status, param, failed);
         }
     }
 
     @Transaction
-    public void upgradeStatues(String slaveId, EUpgradeStatus status, long progress, boolean failed) {
+    public void upgradeStatues(String slaveId, EUpgradeStatus status, String param, boolean failed) {
         JSlaveUpgradeStatus upgradeStatus = new JSlaveUpgradeStatus();
         upgradeStatus.setId(slaveId);
         upgradeStatus.setUpgradeStatus(status);
         upgradeStatus.setUpdateTime(ContextUtils.getContextTime());
-        upgradeStatus.setProgress(progress);
         upgradeStatus.setFailed(failed);
         BeanService.ME.merge(upgradeStatus);
     }
