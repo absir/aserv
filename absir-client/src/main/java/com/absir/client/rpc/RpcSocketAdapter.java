@@ -3,6 +3,7 @@ package com.absir.client.rpc;
 import com.absir.client.SocketAdapter;
 import com.absir.client.SocketAdapterSel;
 import com.absir.core.base.Environment;
+import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelByte;
 import com.absir.core.util.UtilAtom;
 import com.absir.core.util.UtilContext;
@@ -143,7 +144,6 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
                     }
 
                 } finally {
-                    System.out.println(HelperDataFormat.JSON.writeAsStringArray(returns));
                     UtilPipedStream.closeCloseable(inputStream);
                 }
             }
@@ -152,7 +152,21 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
             byte[] buffer = (byte[]) returns[0];
             int offset = (Integer) returns[1];
             int code = buffer == null ? RpcFactory.RPC_CODE.RPC_ERROR.ordinal() : SocketAdapter.getVarints(buffer, offset, buffer.length);
-            if (code == RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal()) {
+            if (attribute != null && attribute.rpcData && !attribute.sendStream) {
+                //rpcData resolver
+                if (code != RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal()) {
+                    RpcData rpcData = new RpcData();
+                    rpcData.args = args;
+                    rpcData.uri = uri;
+                    rpcData.paramData = paramData;
+                    resolverRpcData(attribute, rpcData);
+                }
+
+                if (returnType != null || returnType != void.class) {
+                    returns[0] = DynaBinder.to(null, returnType);
+                }
+
+            } else if (code == RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal()) {
                 offset += KernelByte.getVarintsLength(code);
                 try {
                     if (returnType != null || returnType != void.class) {
@@ -171,4 +185,8 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
 
         return returns[0];
     }
+
+    protected void resolverRpcData(RpcInterface.RpcAttribute attribute, RpcData rpcData) {
+    }
+
 }

@@ -25,6 +25,16 @@ import java.util.Arrays;
 @RunWith(value = JUnit4.class)
 public class UtilMsgTest {
 
+    public enum TestEnum {
+
+        A,
+
+        B,
+
+        C,
+
+    }
+
 
     public void testMsg(boolean single, Object... args) throws IOException {
         if (single && args.length == 1) {
@@ -64,9 +74,9 @@ public class UtilMsgTest {
         byte[] bytes1 = HelperDataFormat.PACK.writeAsBytes(test);
         System.out.println(Arrays.toString(bytes1));
         System.out.println(HelperDataFormat.PACK.read(bytes1, String.class));
-        byte[] bytes2 = HelperDataFormat.PACK.writeAsBytesArray(128, "123");
+        byte[] bytes2 = HelperDataFormat.PACK.writeAsBytesArray(TestEnum.A, "123");
         System.out.println(Arrays.toString(bytes2));
-        Object[] res = HelperDataFormat.PACK.readArray(bytes2, new Class<?>[]{long.class, String.class});
+        Object[] res = HelperDataFormat.PACK.readArray(bytes2, new Class<?>[]{TestEnum.class, String.class});
         System.out.println(HelperDataFormat.JSON.writeAsStringArray(res));
 
         testMsg(true, 127);

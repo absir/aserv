@@ -52,6 +52,12 @@
         <appender-ref ref="main"/>
         <appender-ref ref="error"/>
     </logger>
+    <logger name="org.hibernate">
+        <level value="WARN"/>
+        <appender-ref ref="console"/>
+        <appender-ref ref="main"/>
+        <appender-ref ref="error"/>
+    </logger>
     <!--<logger name="com.alibaba">-->
     <!--<level value="ALL"/>-->
     <!--<appender-ref ref="console"/>-->

@@ -1,20 +1,31 @@
 package com.absir.bean.inject;
 
-import com.absir.bean.basis.Configure;
-import com.absir.bean.inject.value.Inject;
-import com.absir.bean.inject.value.Orders;
+import com.absir.bean.basis.BeanFactory;
+import com.absir.bean.core.BeanFactoryUtils;
+import com.absir.core.kernel.KernelCollection;
+import com.absir.core.kernel.KernelList;
+
+import java.util.List;
 
 /**
  * Created by absir on 16/9/5.
  */
-@Configure
 public class InjectBeanUtils {
 
-    @Orders
-    @Inject
     protected static IBeanProxy[] beanProxies;
 
     public static Object getBeanObject(Object proxy) {
+        if (beanProxies == null) {
+            BeanFactory beanFactory = BeanFactoryUtils.get();
+            if (beanFactory != null) {
+                List<IBeanProxy> beanProxyList = beanFactory.getBeanObjects(IBeanProxy.class);
+                if (beanProxyList != null && !beanProxyList.isEmpty()) {
+                    KernelList.sortCommonObjects(beanProxyList);
+                    beanProxies = KernelCollection.toArray(beanProxyList, IBeanProxy.class);
+                }
+            }
+        }
+
         if (beanProxies == null || beanProxies.length == 0) {
             return proxy;
         }

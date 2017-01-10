@@ -33,6 +33,7 @@ import java.util.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Basis
+@Bean
 public class AopDefineProcessor implements IBeanDefineSupply, IBeanDefineProcessor, IBeanFactoryAware, IBeanProxy {
 
     private static AopMethodDefine[] aopMethodDefines = KernelCollection.toArray(BeanFactoryUtils.getOrderBeanObjects(AopMethodDefine.class), AopMethodDefine.class);

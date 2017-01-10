@@ -16,10 +16,11 @@ public interface IMaster {
     @JaLang("时间")
     public long time() throws IOException;
 
-    @JaLang("节点下载")
+    @JaLang("下载")
     public InputStream download(String filePath) throws IOException;
 
-    @JaLang("节点下载")
+    @JaLang("升级状态")
+    @Rpc(rpcData = true)
     public void upgradeStatues(EUpgradeStatus status, String param, boolean failed);
 
 }

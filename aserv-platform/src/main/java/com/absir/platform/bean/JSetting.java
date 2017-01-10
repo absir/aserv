@@ -51,7 +51,7 @@ public class JSetting extends JbPlatform {
         private String message;
 
         @JaLang("强制更新")
-        private boolean force;
+        private boolean forceUpgrade;
 
         @JaLang("下载地址")
         private String downloadUrl;
@@ -78,12 +78,12 @@ public class JSetting extends JbPlatform {
             this.message = message;
         }
 
-        public boolean isForce() {
-            return force;
+        public boolean isForceUpgrade() {
+            return forceUpgrade;
         }
 
-        public void setForce(boolean force) {
-            this.force = force;
+        public void setForceUpgrade(boolean forceUpgrade) {
+            this.forceUpgrade = forceUpgrade;
         }
 
         public String getDownloadUrl() {

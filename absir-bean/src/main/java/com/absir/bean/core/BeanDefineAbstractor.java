@@ -161,7 +161,14 @@ public abstract class BeanDefineAbstractor extends BeanDefineAbstract {
         } else {
             if (beanDefineRoot.getBeanScope() != BeanScope.PROTOTYPE) {
                 loaded = true;
-                preloadBeanDefine();
+                try {
+                    preloadBeanDefine();
+
+                } catch (Throwable e) {
+                    System.err.println(this + " preloadBeanDefine [" + getBeanType() + "] error");
+                    throw new RuntimeException(e);
+                }
+
                 BeanDefine beanDefineLoaded = beanFactory.getBeanDefine(beanDefineRoot.getBeanName());
                 if (beanDefineLoaded != null && beanDefineLoaded != beanDefineRoot) {
                     return beanDefineLoaded.getBeanObject(beanFactory);

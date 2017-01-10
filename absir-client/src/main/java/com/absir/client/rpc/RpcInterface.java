@@ -141,6 +141,7 @@ public class RpcInterface {
             attribute.timeout = rpc.timeout();
             attribute.sendStream = rpc.sendStream();
             attribute.async = rpc == null ? false : rpc.async();
+            attribute.rpcData = rpc == null ? false : rpc.rpcData();
             return attribute;
         }
 
@@ -156,6 +157,7 @@ public class RpcInterface {
             attribute.sendStream = streamIndex >= 0 ? true : rpc.sendStream();
             attribute.sendInputStream = streamIndex >= 0;
             attribute.async = rpc.async();
+            attribute.rpcData = rpc.rpcData();
             rpcAttribute = attribute;
 
         } else if (streamIndex >= 0 && (rpcAttribute == null || !rpcAttribute.sendStream)) {
@@ -164,6 +166,7 @@ public class RpcInterface {
             attribute.sendStream = true;
             attribute.sendInputStream = streamIndex >= 0;
             attribute.async = rpcAttribute == null ? false : rpcAttribute.async;
+            attribute.rpcData = rpcAttribute == null ? false : rpcAttribute.rpcData;
             rpcAttribute = attribute;
         }
 
@@ -183,6 +186,8 @@ public class RpcInterface {
         protected boolean sendInputStream;
 
         protected boolean async;
+
+        protected boolean rpcData;
 
     }
 

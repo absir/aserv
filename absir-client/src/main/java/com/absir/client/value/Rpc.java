@@ -27,4 +27,7 @@ public @interface Rpc {
     // 调用不考虑返回（不保证成功）
     boolean async() default false;
 
+    // 调用失败，再统一走rpcData处理
+    boolean rpcData() default false;
+
 }

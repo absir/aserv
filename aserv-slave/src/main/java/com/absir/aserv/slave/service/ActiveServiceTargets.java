@@ -58,4 +58,5 @@ public abstract class ActiveServiceTargets<T extends JiActive, K> extends Active
         super.reloadAllActiveContext(hasClosed);
         updateActiverMap();
     }
+
 }

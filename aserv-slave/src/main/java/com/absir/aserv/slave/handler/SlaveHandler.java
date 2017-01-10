@@ -46,7 +46,7 @@ public class SlaveHandler implements IHandler, ISlave {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(SlaveHandler.class);
 
-    public static final IMaster MASTER = InputSlaveContext.ME.getSlaveAdapter().getRpcInvoker(IMaster.class);
+    private IMaster master;
 
     @Value("slave.upgrade.passTime")
     protected long passTime = 3600000;
@@ -56,6 +56,16 @@ public class SlaveHandler implements IHandler, ISlave {
 
     @Value("slave.upgrade.maxCount")
     private int maxCount = 10;
+
+    public IMaster getMaster() {
+        return master;
+    }
+
+    @Started
+    protected void started() {
+        master = InputSlaveContext.ME.getSlaveAdapter().getRpcInvoker(IMaster.class);
+        master.upgradeStatues(EUpgradeStatus.RESTART_COMPLETE, null, false);
+    }
 
     @Override
     public boolean _permission(OnPut onPut) {
@@ -122,9 +132,9 @@ public class SlaveHandler implements IHandler, ISlave {
                         upgradeFile = new File(slaveUpgradeDir + HelperFileName.getName(slaveUpgrade.getUpgradeFile()));
                         if (!upgradeFile.exists()) {
                             downloadName = upgradeFile.getName();
-                            MASTER.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, false);
-                            HelperFile.write(upgradeFile, new UtilInputStream.ThreadInputStream(MASTER.download(slaveUpgrade.getUpgradeFile())));
-                            MASTER.upgradeStatues(EUpgradeStatus.DOWNLOAD_COMPLETE, downloadName, false);
+                            master.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, false);
+                            HelperFile.write(upgradeFile, new UtilInputStream.ThreadInputStream(master.download(slaveUpgrade.getUpgradeFile())));
+                            master.upgradeStatues(EUpgradeStatus.DOWNLOAD_COMPLETE, downloadName, false);
                             downloadName = null;
                         }
                     }
@@ -133,9 +143,9 @@ public class SlaveHandler implements IHandler, ISlave {
                         resourceFile = new File(slaveUpgradeDir + HelperFileName.getName(slaveUpgrade.getResourceFile()));
                         if (!resourceFile.exists()) {
                             downloadName = resourceFile.getName();
-                            MASTER.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, false);
-                            HelperFile.write(resourceFile, new UtilInputStream.ThreadInputStream(MASTER.download(slaveUpgrade.getResourceFile())));
-                            MASTER.upgradeStatues(EUpgradeStatus.DOWNLOAD_COMPLETE, downloadName, false);
+                            master.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, false);
+                            HelperFile.write(resourceFile, new UtilInputStream.ThreadInputStream(master.download(slaveUpgrade.getResourceFile())));
+                            master.upgradeStatues(EUpgradeStatus.DOWNLOAD_COMPLETE, downloadName, false);
                             downloadName = null;
                         }
                     }
@@ -160,7 +170,7 @@ public class SlaveHandler implements IHandler, ISlave {
                 }
 
                 if (downloadName != null) {
-                    MASTER.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, true);
+                    master.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, true);
                 }
 
                 if (++i >= retryCount) {
@@ -221,7 +231,7 @@ public class SlaveHandler implements IHandler, ISlave {
         try {
             if (upgradeFile != null) {
                 validateName = upgradeFile.getName();
-                MASTER.upgradeStatues(EUpgradeStatus.FILE_VALIDATE, validateName, false);
+                master.upgradeStatues(EUpgradeStatus.FILE_VALIDATE, validateName, false);
                 if (!HelperEncrypt.encryptionMD5(new FileInputStream(upgradeFile)).equals(slaveUpgrade.getUpgradeMd5())) {
                     throw new IOException("upgradeFile md5 not match");
                 }
@@ -232,27 +242,27 @@ public class SlaveHandler implements IHandler, ISlave {
 
             if (resourceFile != null) {
                 validateName = resourceFile.getName();
-                MASTER.upgradeStatues(EUpgradeStatus.FILE_VALIDATE, validateName, false);
+                master.upgradeStatues(EUpgradeStatus.FILE_VALIDATE, validateName, false);
                 if (!HelperEncrypt.encryptionMD5(new FileInputStream(resourceFile)).equals(slaveUpgrade.getResourceMd5())) {
                     throw new IOException("resourceFile md5 not match");
                 }
 
                 validateName = null;
-                MASTER.upgradeStatues(EUpgradeStatus.RESOURCE_READY, resourceFile.getName(), false);
+                master.upgradeStatues(EUpgradeStatus.RESOURCE_READY, resourceFile.getName(), false);
                 doSlaveUpgradeResource(slaveUpgrade, resourceFile, restart);
-                MASTER.upgradeStatues(EUpgradeStatus.RESOURCE_COMPLETE, resourceFile.getName(), false);
+                master.upgradeStatues(EUpgradeStatus.RESOURCE_COMPLETE, resourceFile.getName(), false);
             }
 
         } finally {
             if (validateName != null) {
-                MASTER.upgradeStatues(EUpgradeStatus.FILE_VALIDATE, validateName, true);
+                master.upgradeStatues(EUpgradeStatus.FILE_VALIDATE, validateName, true);
             }
         }
 
         if (restart) {
-            MASTER.upgradeStatues(EUpgradeStatus.RESTART_READY, null, false);
+            master.upgradeStatues(EUpgradeStatus.RESTART_READY, null, false);
             doSlaveUpgradeRestart(slaveUpgrade);
-            MASTER.upgradeStatues(EUpgradeStatus.RESTART_BEGIN, null, false);
+            master.upgradeStatues(EUpgradeStatus.RESTART_BEGIN, null, false);
             if (upgradeFile == null) {
                 UpgradeService.ME.restart();
 
@@ -260,11 +270,6 @@ public class SlaveHandler implements IHandler, ISlave {
                 UpgradeService.ME.restartUpgrade(upgradeFile);
             }
         }
-    }
-
-    @Started
-    protected void started() {
-        MASTER.upgradeStatues(EUpgradeStatus.RESTART_COMPLETE, null, false);
     }
 
     protected void doSlaveUpgradeResource(SlaveUpgrade slaveUpgrade, File resourceFile, boolean restart) {

@@ -17,7 +17,7 @@ public class SlaveUpgradeStatus {
     private EUpgradeStatus upgradeStatus;
 
     @JaLang("变更时间")
-    @JaEdit(groups = JaEdit.GROUP_LIST, types = "dataTime")
+    @JaEdit(groups = JaEdit.GROUP_LIST, types = "dateTime")
     @JsonIgnore
     private long updateTime;
 

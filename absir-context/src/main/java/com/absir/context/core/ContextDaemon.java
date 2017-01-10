@@ -27,33 +27,24 @@ public class ContextDaemon implements Runnable {
 
     protected String daemonDir;
 
+    protected File shutdownFile;
+
+    protected File stoppedFile;
+
     protected File developerFile;
 
     @Value("daemon.developer.timeout")
     protected long developerTimeout = 300000;
 
-    protected File shutdownFile;
-
-    protected File stoppedFile;
-
     @Value("daemon.idle.time")
     protected long idleTime = 2000;
 
     @Inject
-    protected void injectShutDown() {
+    protected void injectShutDown() throws IOException {
         daemonDir = BeanFactoryUtils.getBeanConfig().getResourcePath() + "protected/daemon/";
-        File daemonFile = new File(daemonDir);
-        if ((!daemonFile.exists() && !daemonFile.mkdir()) || daemonFile.isFile()) {
-            throw new RuntimeException("could not create daemonDir = " + daemonDir);
-        }
-
-        developerFile = new File(daemonDir + "developer");
-        Thread thread = new Thread(ME);
-        thread.setDaemon(true);
-        thread.setName("ContextDaemon");
-        thread.start();
 
         shutdownFile = new File(daemonDir + "shutdown");
+        HelperFile.write(shutdownFile, "");
         if (shutdownFile.exists()) {
             shutdownFile.delete();
         }
@@ -62,6 +53,14 @@ public class ContextDaemon implements Runnable {
         if (stoppedFile.exists()) {
             stoppedFile.delete();
         }
+
+        developerFile = new File(daemonDir + "developer");
+        Thread thread = new Thread(ME);
+        thread.setDaemon(true);
+        thread.setName("ContextDaemon");
+        thread.start();
+
+
     }
 
     public boolean isDeveloper(String daemon) {

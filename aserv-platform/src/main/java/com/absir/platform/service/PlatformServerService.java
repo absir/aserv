@@ -12,6 +12,7 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
+import com.absir.bean.inject.value.Started;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelDyna;
@@ -144,7 +145,11 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer> {
         announcementDCacheOpen.addEntityMerges();
         serverDCacheOpen = new DCacheOpen<Long, JServer>(JServer.class, null);
         serverDCacheOpen.addEntityMerges();
+    }
 
+    @Transaction
+    @Started
+    protected void startService() {
         reloadCaches();
 
         reloadSettings();

@@ -12,6 +12,8 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.*;
 import com.absir.client.SocketAdapter;
 import com.absir.client.helper.HelperEncrypt;
+import com.absir.client.rpc.RpcData;
+import com.absir.client.rpc.RpcInterface;
 import com.absir.client.rpc.RpcSocketAdapter;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
@@ -53,11 +55,26 @@ public class InputSlaveContext {
     @Orders
     protected ISlaveCallback[] slaveCallbacks;
 
-    protected RpcSocketAdapter<InputSlaveAdapter> slaveAdapter;
+    protected SlaveRpcAdapter slaveAdapter;
 
-    protected List<RpcSocketAdapter<InputSlaveAdapter>> slaveAdapters = new ArrayList<RpcSocketAdapter<InputSlaveAdapter>>();
+    protected List<SlaveRpcAdapter> slaveAdapters = new ArrayList<SlaveRpcAdapter>();
 
-    protected List<RpcSocketAdapter<InputSlaveAdapter>> slaveAdapterAdds;
+    protected List<SlaveRpcAdapter> slaveAdapterAdds;
+
+    protected class SlaveRpcAdapter extends RpcSocketAdapter<InputSlaveAdapter> {
+
+        protected int slaveIndex;
+
+        public SlaveRpcAdapter(InputSlaveAdapter adapter) {
+            super(adapter);
+        }
+
+        @Override
+        protected void resolverRpcData(RpcInterface.RpcAttribute attribute, RpcData rpcData) {
+            ME.resolverRpcData(attribute, rpcData, slaveIndex);
+        }
+
+    }
 
     public String getKey() {
         return key;
@@ -86,15 +103,16 @@ public class InputSlaveContext {
     /**
      * 创建
      */
-    protected RpcSocketAdapter<InputSlaveAdapter> createSlaveAdapter() {
-        return new RpcSocketAdapter<InputSlaveAdapter>(new InputSlaveAdapter(ip, port, group, key, url, slaveCallbacks));
+    protected SlaveRpcAdapter createSlaveAdapter() {
+        return new SlaveRpcAdapter(new InputSlaveAdapter(ip, port, group, key, url, slaveCallbacks));
     }
 
-    public synchronized void addSlaveAdapter(RpcSocketAdapter<InputSlaveAdapter> adapter) {
+    public synchronized void addSlaveAdapter(SlaveRpcAdapter adapter) {
         if (slaveAdapterAdds == null) {
-            slaveAdapterAdds = new ArrayList<RpcSocketAdapter<InputSlaveAdapter>>();
+            slaveAdapterAdds = new ArrayList<SlaveRpcAdapter>();
         }
 
+        adapter.slaveIndex = slaveAdapters.size() + slaveAdapterAdds.size();
         slaveAdapterAdds.add(adapter);
     }
 
@@ -123,7 +141,7 @@ public class InputSlaveContext {
         if (slaveAdapterAdds != null) {
             synchronized (this) {
                 if (slaveAdapterAdds != null) {
-                    List<RpcSocketAdapter<InputSlaveAdapter>> adapters = new ArrayList<RpcSocketAdapter<InputSlaveAdapter>>(slaveAdapters);
+                    List<SlaveRpcAdapter> adapters = new ArrayList<SlaveRpcAdapter>(slaveAdapters);
                     adapters.addAll(slaveAdapterAdds);
                     slaveAdapterAdds = null;
                     slaveAdapters = adapters;
@@ -157,6 +175,9 @@ public class InputSlaveContext {
             SocketAdapter adapter = slaveAdapter.getSocketAdapter();
             adapter.disconnect(null);
         }
+    }
+
+    protected void resolverRpcData(RpcInterface.RpcAttribute attribute, RpcData rpcData, int rpcIndex) {
     }
 
 }

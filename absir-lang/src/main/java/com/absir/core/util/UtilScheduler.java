@@ -67,19 +67,19 @@ public class UtilScheduler<T extends NextRunnable> extends Thread {
             Date date = UtilContext.getCurrentDate();
             UtilNode<T> node = runnableHeader.getNext();
             UtilNode<T> nodeNext = null;
-            T runable;
+            T runnable;
             while (node != null) {
                 nodeNext = node.getNext();
-                runable = node.getElement();
-                if (runable.getNextTime() <= time) {
+                runnable = node.getElement();
+                if (runnable.getNextTime() <= time) {
                     try {
-                        runable.run(date);
+                        runnable.run(date);
 
                     } catch (Throwable e) {
                         logThrowable(e);
                     }
 
-                    if (runable.getNextTime() <= time) {
+                    if (runnable.getNextTime() <= time) {
                         removeRunnableNode(node);
 
                     } else {
@@ -167,21 +167,21 @@ public class UtilScheduler<T extends NextRunnable> extends Thread {
         }
     }
 
-    protected void removeRunnableNode(UtilNode<T> runableNode) {
-        if (runableNode == runnableFooter) {
+    protected void removeRunnableNode(UtilNode<T> runnableNode) {
+        if (runnableNode == runnableFooter) {
             runnableFooter = runnableFooter.previous;
         }
 
-        runableNode.remove();
+        runnableNode.remove();
     }
 
-    protected void sortNextRunnableNode(UtilNode<T> runableNode) {
-        UtilNode.sortOrderableNode(runableNode);
+    protected void sortNextRunnableNode(UtilNode<T> runnableNode) {
+        UtilNode.sortOrderableNode(runnableNode);
         computeAddFooter();
     }
 
-    protected void addNextRunnableNode(T runableNode) {
-        UtilNode.insertOrderableNodeFooter(runnableFooter, runableNode);
+    protected void addNextRunnableNode(T runnableNode) {
+        UtilNode.insertOrderableNodeFooter(runnableFooter, runnableNode);
         computeAddFooter();
     }
 
