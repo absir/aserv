@@ -159,7 +159,25 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
             List<EnumConstantDeclaration> toDeclarations = new ArrayList<EnumConstantDeclaration>();
             for (EnumConstantDeclaration declaration : toEnum.getEntries()) {
                 EnumConstantDeclaration fromDeclaration = nameMapEnum.remove(declaration.getName());
-                toDeclarations.add(fromDeclaration == null ? declaration : fromDeclaration);
+                if (fromDeclaration == null) {
+                    fromDeclaration = declaration;
+
+                } else {
+                    if (declaration != null) {
+                        String fieldAnnotationName = getFieldAnnotationName();
+                        if (KernelString.isEmpty(fieldAnnotationName)) {
+                            fieldAnnotationName = null;
+                        }
+
+                        for (AnnotationExpr annotationExpr : declaration.getAnnotations()) {
+                            if (fieldAnnotationName == null || !fieldAnnotationName.contains(annotationExpr.getName().getName())) {
+                                fromDeclaration.getAnnotations().add(annotationExpr);
+                            }
+                        }
+                    }
+                }
+
+                toDeclarations.add(fromDeclaration);
             }
 
             for (EnumConstantDeclaration fromDeclaration : nameMapEnum.values()) {

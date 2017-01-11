@@ -17,7 +17,7 @@ public enum Environment {
 
     PRODUCT,
 
-    Environment, Environment;
+    Environment;
 
     private static Environment environment = DEVELOP;
 

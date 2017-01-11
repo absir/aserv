@@ -2,8 +2,8 @@ package com.absir.platform.service;
 
 import com.absir.aserv.configure.JConfigureUtils;
 import com.absir.aserv.master.bean.JSlaveServer;
-import com.absir.aserv.system.bean.value.JiOrdinal;
 import com.absir.aserv.system.dao.BeanDao;
+import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.domain.DCacheOpen;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.async.value.Async;
@@ -14,17 +14,17 @@ import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Started;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
+import com.absir.core.kernel.KernelLang;
+import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.transaction.value.Transaction;
-import com.absir.platform.bean.JAnnouncement;
-import com.absir.platform.bean.JPlatformConfigure;
-import com.absir.platform.bean.JServer;
-import com.absir.platform.bean.JSetting;
+import com.absir.platform.bean.*;
 import com.absir.platform.bean.base.JbPlatform;
 import com.absir.thrift.IFaceServer;
 import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.TException;
 import org.hibernate.Session;
+import org.hibernate.exception.ConstraintViolationException;
 import tplatform.*;
 
 import java.util.*;
@@ -34,7 +34,7 @@ import java.util.*;
  */
 @Base
 @Bean
-public class PlatformServerService implements IFaceServer<PlatformFromService.Iface>, PlatformFromService.Iface, IEntityMerge<JSlaveServer> {
+public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceServer<PlatformFromService.Iface>, PlatformFromService.Iface {
 
     public static final PlatformServerService ME = BeanFactoryUtils.get(PlatformServerService.class);
 
@@ -52,36 +52,23 @@ public class PlatformServerService implements IFaceServer<PlatformFromService.If
 
     protected List<PlatformServer> serverList;
 
-    protected interface IPlatformGet {
-
-        public JbPlatform getPlatform();
-
-        public Object getValue();
-    }
-
-    public static class PlatformAnnouncement implements JiOrdinal, IPlatformGet {
+    public static class PlatformAnnouncement {
 
         protected JAnnouncement announcement;
 
         protected DAnnouncement value;
 
-        @Override
         public JbPlatform getPlatform() {
             return announcement;
         }
 
-        @Override
         public Object getValue() {
             return value;
         }
 
-        @Override
-        public int getOrdinal() {
-            return value.getOrdinal();
-        }
     }
 
-    public static class PlatformServer implements IPlatformGet {
+    public static class PlatformServer {
 
         protected JServer server;
 
@@ -89,12 +76,10 @@ public class PlatformServerService implements IFaceServer<PlatformFromService.If
 
         protected DServer dServer;
 
-        @Override
         public JbPlatform getPlatform() {
             return server;
         }
 
-        @Override
         public Object getValue() {
             return value;
         }
@@ -215,7 +200,7 @@ public class PlatformServerService implements IFaceServer<PlatformFromService.If
                 DServer[] dServers = server.getServers();
                 if (dServers != null) {
                     for (DServer dServer : dServers) {
-                        JSlaveServer slaveServer = BeanService.ME.get(JSlaveServer.class, serverEntry.getId());
+                        JSlaveServer slaveServer = BeanService.ME.get(JSlaveServer.class, dServer.getId());
                         if (slaveServer != null) {
                             DServer value = createDServer(dServer);
                             setDServer(value, dServer, slaveServer);
@@ -242,8 +227,124 @@ public class PlatformServerService implements IFaceServer<PlatformFromService.If
 
     // 合并自定义配置和Server服务配置
     protected void setDServer(DServer value, DServer dServer, JSlaveServer slaveServer) {
-        value.setName(slaveServer.getName());
-        value.setsAddress(slaveServer.getServerAddress());
+        value.setName(KernelString.isEmpty(dServer.getName()) ? slaveServer.getName() : dServer.getName());
+        value.setsAddress(KernelString.isEmpty(dServer.getsAddress()) ? slaveServer.getServerAddress() : dServer.getsAddress());
+        value.setPort(dServer.getPort() == 0 ? slaveServer.getPort() : dServer.getPort());
+        value.setdAddress(KernelString.isEmpty(dServer.getdAddress()) ? slaveServer.getResourceUrl() : dServer.getdAddress());
+        value.setStatus(value.getStatus() == null || value.getStatus() == EServerStatus.normal ? (slaveServer.getSlave().isConnecting() ? EServerStatus.open : EServerStatus.maintain) : value.getStatus());
+    }
+
+    @Override
+    public void merge(String entityName, JSlaveServer entity, MergeType mergeType, Object mergeEvent) {
+        if (mergeType == MergeType.INSERT) {
+            return;
+        }
+
+        if (entity != null) {
+            boolean deleted = false;
+            long serverId = entity.getId();
+            for (PlatformServer platformServer : serverList) {
+                if (platformServer.dServer.getId() == serverId) {
+                    if (mergeType == MergeType.DELETE) {
+                        deleted = true;
+                        break;
+
+                    } else {
+                        setDServer(platformServer.value, platformServer.dServer, entity);
+                    }
+                }
+            }
+
+            if (!deleted) {
+                return;
+            }
+        }
+
+        ME.reloadServers();
+    }
+
+    @Transaction
+    public JPlatformFrom getPlatformFrom(DPlatformFrom platformFrom) {
+        String refId = platformFrom.getPlatform() + "@" + platformFrom.getChannel() + "@" + platformFrom.getPackageName() + "@" + platformFrom.getVersionDouble() + "@" + platformFrom.getFromStr();
+        Session session = BeanDao.getSession();
+        JPlatformFromRef ref = BeanDao.get(session, JPlatformFromRef.class, refId);
+        if (ref == null) {
+            JPlatformFrom jPlatformFrom = new JPlatformFrom();
+            jPlatformFrom.setPlatform(platformFrom.getPlatform());
+            jPlatformFrom.setChannel(platformFrom.getChannel());
+            jPlatformFrom.setPackageName(platformFrom.getPackageName());
+            jPlatformFrom.setVersionDouble(platformFrom.getVersionDouble());
+            jPlatformFrom.setFromStr(platformFrom.getFromStr());
+
+            try {
+                session.persist(jPlatformFrom);
+                session.flush();
+
+            } catch (ConstraintViolationException e) {
+                session.clear();
+                ref = BeanDao.get(session, JPlatformFromRef.class, refId);
+                if (ref == null) {
+                    jPlatformFrom = (JPlatformFrom) QueryDaoUtils.createQueryArray(session, "SELECT o FROM JPlatformFrom o WHERE o.platform = ? AND o.channel = ? AND o.packageName = ? AND o.versionDouble = ? AND o.fromStr = ?", platformFrom.getPlatform(), platformFrom.getChannel(), platformFrom.getPackageName(), platformFrom.getVersionDouble(), platformFrom.getFromStr()).iterate().next();
+                }
+            }
+
+            ref = new JPlatformFromRef();
+            ref.setId(refId);
+            ref.setPlatformFrom(jPlatformFrom);
+            session.merge(ref);
+        }
+
+        return ref.getPlatformFrom();
+    }
+
+    @Transaction(readOnly = true)
+    public JPlatformFrom getPlatformFromId(int id) {
+        return BeanDao.get(BeanDao.getSession(), JPlatformFrom.class, (long) id);
+    }
+
+    public boolean isMatchPlatform(JbPlatform platform, boolean review, DPlatformFrom platformFrom) {
+        if (!platform.isOpen()) {
+            return false;
+        }
+
+        if (review != platform.isReview()) {
+            return false;
+        }
+
+        if (isExcludeIds(platform.getExcludePlatforms(), platform.isAllPlatforms(), platform.getPlatforms(), platformFrom.getPlatform())) {
+            return false;
+        }
+
+        if (isExcludeIds(platform.getExcludeChannels(), platform.isAllChannels(), platform.getChannels(), platformFrom.getChannel())) {
+            return false;
+        }
+
+        if (isExcludeIds(platform.getExcludePackageNames(), platform.isAllPackageNames(), platform.getPackageNames(), platformFrom.getPackageName())) {
+            return false;
+        }
+
+        double versionDouble = platformFrom.getVersionDouble();
+        if (versionDouble > 0) {
+            double minVersionDouble = platform.getMinVersionDouble();
+            if (minVersionDouble != 0 && versionDouble < minVersionDouble) {
+                return false;
+            }
+
+            double maxVersionDouble = platform.getMaxVersionDouble();
+            if (maxVersionDouble != 0 && versionDouble > maxVersionDouble) {
+                return false;
+            }
+        }
+
+        String fromStr = platformFrom.getFromStr();
+        if (!KernelString.isEmpty(fromStr)) {
+            Map.Entry<String, KernelLang.IMatcherType> entry = platform.forMatchFromEntry();
+            if (entry != null && !KernelLang.MatcherType.isMatch(fromStr, entry)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -253,17 +354,47 @@ public class PlatformServerService implements IFaceServer<PlatformFromService.If
 
     @Override
     public DPlatformFromSetting setting(DPlatformFrom platformFrom) throws TException {
-        return null;
+        boolean review = CONFIGURE.isReview(platformFrom.getPackageName(), platformFrom.getVersionDouble());
+        DFromSetting fromSetting = null;
+        for (JSetting setting : settingList) {
+            if (isMatchPlatform(setting, review, platformFrom)) {
+                fromSetting = setting.getFromSetting();
+                break;
+            }
+        }
+
+        JPlatformFrom jPlatformFrom = ME.getPlatformFrom(platformFrom);
+        DPlatformFromSetting setting = new DPlatformFromSetting();
+        setting.setFromId((int) (long) jPlatformFrom.getId());
+        setting.setReview(review);
+        setting.setSetting(fromSetting);
+        return setting;
     }
 
     @Override
     public List<DAnnouncement> announcements(int fromId, boolean review) throws TException {
-        return null;
+        DPlatformFrom platformFrom = ME.getPlatformFromId(fromId);
+        List<DAnnouncement> announcements = new ArrayList<DAnnouncement>(announcementList.size());
+        for (PlatformAnnouncement announcement : announcementList) {
+            if (isMatchPlatform(announcement.getPlatform(), review, platformFrom)) {
+                announcements.add(announcement.value);
+            }
+        }
+
+        return announcements;
     }
 
     @Override
     public List<DServer> servers(int fromId, boolean review) throws TException {
-        return null;
+        DPlatformFrom platformFrom = ME.getPlatformFromId(fromId);
+        List<DServer> servers = new ArrayList<DServer>(serverList.size());
+        for (PlatformServer server : serverList) {
+            if (isMatchPlatform(server.getPlatform(), review, platformFrom)) {
+                servers.add(server.value);
+            }
+        }
+
+        return servers;
     }
 
     @Override
@@ -295,390 +426,5 @@ public class PlatformServerService implements IFaceServer<PlatformFromService.If
     public boolean validate(DOrderValidator validator) throws TException {
         return false;
     }
-
-    @Override
-    public void merge(String entityName, JSlaveServer entity, MergeType mergeType, Object mergeEvent) {
-
-    }
-
-
-//    protected DCacheOpen<Long, JSetting> settingDCacheOpen;
-//
-//    protected DCacheOpen<Long, JAnnouncement> announcementDCacheOpen;
-//
-//    protected DCacheOpen<Long, JServer> serverDCacheOpen;
-//
-//    protected List<JSetting> settingEntries;
-//
-//    protected List<PlatformAnnouncement> announcementEntries;
-//
-//    protected List<PlatformServer> serverEntries;
-//
-//    public static boolean isExcludeIds(Set<String> excludeIds, boolean allIds, Set<String> ids, String id) {
-//        if (ids != null) {
-//            if (excludeIds != null && !excludeIds.isEmpty() && excludeIds.contains(id)) {
-//                return true;
-//            }
-//
-//            if (!allIds) {
-//                if (ids == null || ids.isEmpty() || !ids.contains(id)) {
-//                    return true;
-//                }
-//            }
-//        }
-//
-//        return false;
-//    }
-//
-//    public List<JSetting> getSettingEntries() {
-//        return settingEntries;
-//    }
-//
-//    public List<PlatformAnnouncement> getAnnouncementEntries() {
-//        return announcementEntries;
-//    }
-//
-//    public List<PlatformServer> getServerEntries() {
-//        return serverEntries;
-//    }
-//
-//    public JPlatformFrom getPlatformFrom(Input input) {
-//        long fromId = KernelDyna.to(input.getParam("fromId"), long.class);
-//        JPlatformFrom platformFrom = null;
-//        if (fromId != 0) {
-//            platformFrom = BeanService.ME.get(JPlatformFrom.class, fromId);
-//        }
-//
-//        if (platformFrom == null) {
-//            platformFrom = getPlatformFrom(input.getParam("platform"), input.getParam("channel"), input.getParam("packageName"), KernelDyna.to(input.getParam("versionCode"), int.class), input.getParam("from"), true);
-//        }
-//
-//        return platformFrom;
-//    }
-//
-//    @Transaction(readOnly = true)
-//    public JPlatformFrom getPlatformFrom(String platform, String channel, String packageName, int versionCode, String from, boolean persist) {
-//        String refId = platform + "@" + channel + "@" + packageName + "@" + versionCode + "@" + from;
-//        Session session = BeanDao.getSession();
-//        JPlatformFromRef ref = BeanDao.get(session, JPlatformFromRef.class, refId);
-//        if (ref == null) {
-//            JPlatformFrom platformFrom = new JPlatformFrom();
-//            platformFrom.setPlatform(platform);
-//            platformFrom.setChannel(channel);
-//            platformFrom.setPackageName(packageName);
-//            platformFrom.setVersionCode(versionCode);
-//            platformFrom.setFormInfo(from);
-//            if (!persist) {
-//                return platformFrom;
-//            }
-//
-//            try {
-//                session.persist(platform);
-//                session.flush();
-//                ref = new JPlatformFromRef();
-//                ref.setId(refId);
-//                ref.setPlatformFrom(platformFrom);
-//                session.merge(platform);
-//
-//            } catch (ConstraintViolationException e) {
-//                session.clear();
-//                ref = BeanDao.get(session, JPlatformFromRef.class, refId);
-//                if (ref == null) {
-//                    platformFrom = (JPlatformFrom) QueryDaoUtils.createQueryArray(session, "SELECT o FROM JPlatformFROM o WHERE o.platform = ? AND o.channel = ? AND o.packageName = ? AND o.versionCode = ? AND o.fromInfo = ?", platform, channel, packageName, versionCode, from).iterate().next();
-//                    ref = new JPlatformFromRef();
-//                    ref.setId(refId);
-//                    ref.setPlatformFrom(platformFrom);
-//                    session.merge(platform);
-//                }
-//            }
-//        }
-//
-//        return ref.getPlatformFrom();
-//    }
-//
-//    @Inject
-//    protected void initService() {
-//        settingDCacheOpen = new DCacheOpen<Long, JSetting>(JSetting.class, null);
-//        settingDCacheOpen.addEntityMerges();
-//        announcementDCacheOpen = new DCacheOpen<Long, JAnnouncement>(JAnnouncement.class, null);
-//        announcementDCacheOpen.addEntityMerges();
-//        serverDCacheOpen = new DCacheOpen<Long, JServer>(JServer.class, null);
-//        serverDCacheOpen.addEntityMerges();
-//    }
-//
-//    @Transaction
-//    @Started
-//    protected void startService() {
-//        reloadCaches();
-//
-//        reloadSettings();
-//        reloadAnnouncements();
-//        reloadServers();
-//
-//        settingDCacheOpen.reloadListener = new Runnable() {
-//            @Override
-//            public void run() {
-//                ME.reloadSettings();
-//            }
-//        };
-//        announcementDCacheOpen.reloadListener = new Runnable() {
-//            @Override
-//            public void run() {
-//                ME.reloadAnnouncements();
-//            }
-//        };
-//        serverDCacheOpen.reloadListener = new Runnable() {
-//            @Override
-//            public void run() {
-//                ME.reloadServers();
-//            }
-//        };
-//    }
-//
-//    /**
-//     * 重载实体
-//     */
-//    @Async(notifier = true)
-//    @Schedule(cron = "0 30 0 * * *")
-//    @Transaction(readOnly = true)
-//    protected void reloadCaches() {
-//        Session session = BeanDao.getSession();
-//        settingDCacheOpen.reloadCache(session);
-//        announcementDCacheOpen.reloadCache(session);
-//        serverDCacheOpen.reloadCache(session);
-//    }
-//
-//    @Async(notifier = true)
-//    protected void reloadSettings() {
-//        try {
-//            List<JSetting> settings = new ArrayList<JSetting>(settingDCacheOpen.getCacheMap().values());
-//            Collections.sort(settings, BeanService.COMPARATOR);
-//            settingEntries = settings;
-//
-//        } catch (ConcurrentModificationException e) {
-//            Environment.throwable(e);
-//        }
-//    }
-//
-//    @Async(notifier = true)
-//    protected void reloadAnnouncements() {
-//        List<PlatformAnnouncement> entries = new ArrayList<PlatformAnnouncement>();
-//        try {
-//            List<JAnnouncement> announcements = new ArrayList<JAnnouncement>(announcementDCacheOpen.getCacheMap().values());
-//            Collections.sort(announcements, BeanService.COMPARATOR);
-//            for (JAnnouncement announcement : announcements) {
-//                JAnnouncement.AnnouncementEntry[] announcementEntries = announcement.getAnnouncementList();
-//                if (announcementEntries != null) {
-//                    for (JAnnouncement.AnnouncementEntry announcementEntry : announcementEntries) {
-//                        PlatformAnnouncement platformAnnouncement = new PlatformAnnouncement();
-//                        platformAnnouncement.announcement = announcement;
-//                        platformAnnouncement.entry = announcementEntry;
-//                        entries.add(platformAnnouncement);
-//                    }
-//                }
-//            }
-//
-//            announcementEntries = entries;
-//
-//        } catch (ConcurrentModificationException e) {
-//            Environment.throwable(e);
-//        }
-//    }
-//
-//    @Async(notifier = true)
-//    protected void reloadServers() {
-//        List<PlatformServer> entries = new ArrayList<PlatformServer>();
-//        try {
-//            List<JServer> servers = new ArrayList<JServer>(serverDCacheOpen.getCacheMap().values());
-//            Collections.sort(servers, BeanService.COMPARATOR);
-//            for (JServer server : servers) {
-//                JServer.ServerEntry[] serverEntries = server.getServerList();
-//                if (serverEntries != null) {
-//                    for (JServer.ServerEntry serverEntry : serverEntries) {
-//                        JSlaveServer slaveServer = BeanService.ME.get(JSlaveServer.class, serverEntry.getId());
-//                        if (slaveServer != null) {
-//                            DServer dServer = createDServer(serverEntry);
-//                            setDServer(dServer, serverEntry, slaveServer);
-//                            PlatformServer platformServer = new PlatformServer();
-//                            platformServer.server = server;
-//                            platformServer.entry = serverEntry;
-//                            platformServer.dServer = dServer;
-//                            entries.add(platformServer);
-//                        }
-//                    }
-//                }
-//            }
-//
-//            serverEntries = entries;
-//
-//        } catch (ConcurrentModificationException e) {
-//            Environment.throwable(e);
-//        }
-//    }
-
-//    protected TServer createDServer(TServer server) {
-//        TServer dServer = new TServer();
-//        dServer.id = server.getId();
-//        dServer.port = server.getPort();
-//        dServer.weight = server.getWeight();
-//        return dServer;
-//    }
-//
-//    // 合并自定义配置和Server服务配置
-//    protected void setDServer(DServer dServer, JServer.ServerEntry entry, JSlaveServer slaveServer) {
-//        dServer.name = entry.getName();
-//        dServer.sAddress = entry.getsAddress();
-//        dServer.dAddress = entry.getdAddress();
-//    }
-//
-//    @Override
-//    public void merge(String entityName, JSlaveServer entity, MergeType mergeType, Object mergeEvent) {
-//        if (mergeType == MergeType.INSERT) {
-//            return;
-//        }
-//
-//        if (entity != null) {
-//            long serverId = entity.getId();
-//            for (PlatformServer platformServer : serverEntries) {
-//                if (platformServer.dServer.id == serverId) {
-//                    if (mergeType == MergeType.DELETE) {
-//                        break;
-//
-//                    } else {
-//                        setDServer(platformServer.dServer, platformServer.entry, entity);
-//                    }
-//                }
-//            }
-//        }
-//
-//        ME.reloadServers();
-//    }
-//
-//    public boolean isMatchPlatform(JbPlatform platform, boolean review, JPlatformFrom platformFrom) {
-//        if (!platform.isOpen()) {
-//            return false;
-//        }
-//
-//        if (review != platform.isReview()) {
-//            return false;
-//        }
-//
-//        if (isExcludeIds(platform.getExcludePlatforms(), platform.isAllPlatforms(), platform.getPlatforms(), platformFrom.getPlatform())) {
-//            return false;
-//        }
-//
-//        if (isExcludeIds(platform.getExcludeChannels(), platform.isAllChannels(), platform.getChannels(), platformFrom.getChannel())) {
-//            return false;
-//        }
-//
-//        if (isExcludeIds(platform.getExcludePackageNames(), platform.isAllPackageNames(), platform.getPackageNames(), platformFrom.getPackageName())) {
-//            return false;
-//        }
-//
-//        int versionCode = platformFrom.getVersionCode();
-//        if (versionCode > 0) {
-//            int code = platform.getMinVersionCode();
-//            if (code != 0 && versionCode < code) {
-//                return false;
-//            }
-//
-//            code = platform.getMaxVersionCode();
-//            if (code != 0 && versionCode > code) {
-//                return false;
-//            }
-//        }
-//
-//        String from = platformFrom.getFormInfo();
-//        if (from != null) {
-//            Map.Entry<String, KernelLang.IMatcherType> entry = platform.forMatchFromEntry();
-//            if (entry != null && !KernelLang.MatcherType.isMatch(from, entry)) {
-//                return false;
-//            }
-//        }
-//
-//        return true;
-//    }
-//
-//    public DReviewSetting reviewSetting(Input input) {
-//        JPlatformFrom platformFrom = getPlatformFrom(input);
-//        DReviewSetting reviewSetting = new DReviewSetting();
-//        reviewSetting.fromId = platformFrom.getId();
-//        boolean review = CONFIGURE.isReview(platformFrom.getPackageName(), platformFrom.getVersionCode());
-//        for (JSetting setting : settingEntries) {
-//            if (isMatchPlatform(setting, review, platformFrom)) {
-//                reviewSetting.setting = setting;
-//                break;
-//            }
-//        }
-//
-//        return reviewSetting;
-//    }
-//
-//    public <T extends IPlatformGet> void listResponse(Collection<T> list, final boolean review, Input input) throws IOException {
-//        OutputStream outputStream = input.getOutputStream();
-//        if (outputStream != null) {
-//            final JPlatformFrom platformFrom = getPlatformFrom(input);
-//            HelperDataFormat.JSON.writeGetTemplates(outputStream, list, new KernelLang.GetTemplate<T, Object>() {
-//
-//                @Override
-//                public Object getWith(T template) {
-//                    if (isMatchPlatform(template.getPlatform(), review, platformFrom)) {
-//                        return template.getEntry();
-//                    }
-//
-//                    return null;
-//                }
-//            });
-//        }
-//    }
-//
-//    protected interface IPlatformGet {
-//
-//        public JbPlatform getPlatform();
-//
-//        public Object getEntry();
-//    }
-//
-//    public static class PlatformAnnouncement implements JiOrdinal, IPlatformGet {
-//
-//        protected JAnnouncement.AnnouncementEntry entry;
-//
-//        protected JAnnouncement announcement;
-//
-//        @Override
-//        public int getOrdinal() {
-//            return entry.getOrdinal();
-//        }
-//
-//        @Override
-//        public JbPlatform getPlatform() {
-//            return announcement;
-//        }
-//
-//        @Override
-//        public Object getEntry() {
-//            return entry;
-//        }
-//    }
-//
-//    public static class PlatformServer implements IPlatformGet {
-//
-//        protected JServer server;
-//
-//        protected JServer.ServerEntry entry;
-//
-//        protected DServer dServer;
-//
-//        @Override
-//        public JbPlatform getPlatform() {
-//            return server;
-//        }
-//
-//        @Override
-//        public Object getEntry() {
-//            return dServer;
-//        }
-//    }
-
 
 }

@@ -73,6 +73,11 @@ public class JSlaveServer extends JbBean implements ICrudBean {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String serverAddress;
 
+    @JaLang("资源链接")
+    @JsonIgnore
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private String resourceUrl;
+
     @JaLang("关闭")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean closed;
@@ -153,6 +158,14 @@ public class JSlaveServer extends JbBean implements ICrudBean {
 
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
+    }
+
+    public String getResourceUrl() {
+        return resourceUrl;
+    }
+
+    public void setResourceUrl(String resourceUrl) {
+        this.resourceUrl = resourceUrl;
     }
 
     public boolean isClosed() {

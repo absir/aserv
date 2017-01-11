@@ -67,13 +67,13 @@ public abstract class JbPlatform extends JbBase implements JiOpen, JiOrdinal {
     private Set<String> excludePackageNames;
 
     @JaLang("最小版本号")
-    private int minVersionCode;
+    private double minVersionDouble;
 
     @JaLang("最大版本号")
-    private int maxVersionCode;
+    private double maxVersionDouble;
 
     @JaLang("匹配来源")
-    private String matchFrom;
+    private String matchFromStr;
 
     @JaLang("排序")
     private int ordinal;
@@ -176,28 +176,28 @@ public abstract class JbPlatform extends JbBase implements JiOpen, JiOrdinal {
         this.excludePackageNames = excludePackageNames;
     }
 
-    public int getMinVersionCode() {
-        return minVersionCode;
+    public double getMinVersionDouble() {
+        return minVersionDouble;
     }
 
-    public void setMinVersionCode(int minVersionCode) {
-        this.minVersionCode = minVersionCode;
+    public void setMinVersionDouble(double minVersionDouble) {
+        this.minVersionDouble = minVersionDouble;
     }
 
-    public int getMaxVersionCode() {
-        return maxVersionCode;
+    public double getMaxVersionDouble() {
+        return maxVersionDouble;
     }
 
-    public void setMaxVersionCode(int maxVersionCode) {
-        this.maxVersionCode = maxVersionCode;
+    public void setMaxVersionDouble(double maxVersionDouble) {
+        this.maxVersionDouble = maxVersionDouble;
     }
 
-    public String getMatchFrom() {
-        return matchFrom;
+    public String getMatchFromStr() {
+        return matchFromStr;
     }
 
-    public void setMatchFrom(String matchFrom) {
-        this.matchFrom = matchFrom;
+    public void setMatchFromStr(String matchFromStr) {
+        this.matchFromStr = matchFromStr;
     }
 
     public int getOrdinal() {
@@ -209,12 +209,12 @@ public abstract class JbPlatform extends JbBase implements JiOpen, JiOrdinal {
     }
 
     public Map.Entry<String, KernelLang.IMatcherType> forMatchFromEntry() {
-        if (matchFromEntry == null && matchFrom != null) {
-            if (KernelString.isEmpty(matchFrom)) {
-                matchFrom = null;
+        if (matchFromEntry == null && matchFromStr != null) {
+            if (KernelString.isEmpty(matchFromStr)) {
+                matchFromStr = null;
 
             } else {
-                matchFromEntry = KernelLang.MatcherType.getMatchEntry(matchFrom, true);
+                matchFromEntry = KernelLang.MatcherType.getMatchEntry(matchFromStr, true);
             }
         }
 

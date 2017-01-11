@@ -65,6 +65,24 @@ struct DServer {
     5: optional string dAddress = "";
     // 权重
     6: optional i32 weight;
+    // 状态
+    7: optional EServerStatus status;
+}
+
+// 服务状态
+enum EServerStatus {
+    // 默认
+    normal,
+    // 强开,
+    open,
+    // 维护
+    maintain,
+    // 爆满,
+    full,
+    // 审核
+    review,
+    // 测试
+    test,
 }
 
 // 授权结果

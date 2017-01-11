@@ -17,7 +17,6 @@ import org.apache.thrift.scheme.TupleScheme;
 import org.apache.thrift.server.AbstractNonblockingServer.AsyncFrameBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.annotation.Generated;
 import java.util.*;
 
