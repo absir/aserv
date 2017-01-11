@@ -109,11 +109,13 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                     List<AnnotationExpr> toAnnotationExprs = new ArrayList<AnnotationExpr>();
                     if (toDeclaration.getAnnotations() != null) {
                         String fieldAnnotationName = getFieldAnnotationName();
-                        if (!KernelString.isEmpty(fieldAnnotationName)) {
-                            for (AnnotationExpr annotationExpr : toDeclaration.getAnnotations()) {
-                                if (!annotationExpr.getName().getName().equals(fieldAnnotationName)) {
-                                    toAnnotationExprs.add(annotationExpr);
-                                }
+                        if (KernelString.isEmpty(fieldAnnotationName)) {
+                            fieldAnnotationName = null;
+                        }
+
+                        for (AnnotationExpr annotationExpr : toDeclaration.getAnnotations()) {
+                            if (fieldAnnotationName == null || !fieldAnnotationName.contains(annotationExpr.getName().getName())) {
+                                toAnnotationExprs.add(annotationExpr);
                             }
                         }
                     }

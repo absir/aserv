@@ -1,5 +1,6 @@
 package com.absir.platform.bean.base;
 
+import com.absir.aserv.system.bean.base.JbBase;
 import com.absir.aserv.system.bean.value.*;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
@@ -13,7 +14,7 @@ import java.util.Set;
  * Created by absir on 2016/12/2.
  */
 @MappedSuperclass
-public abstract class JbPlatform implements JiOpen, JiOrdinal {
+public abstract class JbPlatform extends JbBase implements JiOpen, JiOrdinal {
 
     @JaLang("开启")
     @JaEdit(groups = JaEdit.GROUP_LIST)

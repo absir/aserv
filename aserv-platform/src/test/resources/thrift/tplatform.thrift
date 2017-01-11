@@ -1,7 +1,7 @@
 namespace * tplatform
 
 // 平台来源
-struct TPlatformFrom {
+struct DPlatformFrom {
     1: string platform;
     2: string channel;
     // 安卓.包名 IOS.BunlderId
@@ -13,33 +13,34 @@ struct TPlatformFrom {
 }
 
 // 平台来源审核
-struct TPlatformFromSetting {
+struct DPlatformFromSetting {
     // 平台来源信息编号
     1: i32 fromId;
     // 审核状态
     2: bool review;
     // 客户端配置
-    3: optional TFromSetting setting;
+    3: optional DFromSetting setting;
 }
 
 // 来源设置
-struct TFromSetting {
+struct DFromSetting {
+    1: optional bool auth;
     // 标题
-    1: optional string title = "";
+    2: optional string title = "";
     // 消息
-    2: optional string message = "";
-    // 强制
-    3: optional bool force;
+    3: optional string message = "";
+    // 强制更新
+    4: optional bool forceUpgrade;
     // 打开地址
-    4: optional string openUrl = "";
+    5: optional string openUrl = "";
     // CDN地址
-    5: optional string cdnUrl = "";
+    6: optional string cdnUrl = "";
     // 其他地址
-    6: optional string otherUrl = "";
+    7: optional string otherUrl = "";
 }
 
 // 公告
-struct TAnnouncement {
+struct DAnnouncement {
     // 标题
     1: string title;
     // 内容
@@ -51,7 +52,7 @@ struct TAnnouncement {
 }
 
 // 服务
-struct TServer {
+struct DServer {
     // 编号
     1: i64 id;
     // 名称
@@ -67,7 +68,7 @@ struct TServer {
 }
 
 // 授权结果
-struct TIdentityResult {
+struct DIdentityResult {
     // 用户编号
     1: i64 userId;
     // 用户数据(透传)
@@ -79,7 +80,7 @@ struct TIdentityResult {
 }
 
 // 登陆错误
-enum LoginError
+enum ELoginError
 {
     // 成功
     success,
@@ -92,15 +93,15 @@ enum LoginError
 }
 
 // 登陆结果
-struct TLoginResult {
+struct DLoginResult {
     // 错误
-    1: optional LoginError error;
+    1: optional ELoginError error;
     // 授权结果
-    2: optional TIdentityResult result;
+    2: optional DIdentityResult result;
 }
 
 // 注册错误
-enum RegisterError
+enum ERegisterError
 {
     // 成功
     success,
@@ -113,15 +114,15 @@ enum RegisterError
 }
 
 // 注册结果
-struct TRegisterResult {
+struct DRegisterResult {
     // 错误
-    1: optional RegisterError error;
+    1: optional ERegisterError error;
     // 授权结果
-    2: optional TIdentityResult result;
+    2: optional DIdentityResult result;
 }
 
 // 修改密码
-enum TPasswordResult
+enum EPasswordResult
 {
     // 成功
     success,
@@ -134,7 +135,7 @@ enum TPasswordResult
 }
 
 // 下单信息
-struct OrderInfo {
+struct DOrderInfo {
     // 来源编号
     1: optional i32 fromId;
     // 平台
@@ -158,7 +159,7 @@ struct OrderInfo {
 }
 
 // 下单结果
-struct OrderResult {
+struct DOrderResult {
     // 订单编号
     1: string tradeId;
     // 透传参数
@@ -166,7 +167,7 @@ struct OrderResult {
 }
 
 // 订单验证
-struct OrderValidator {
+struct DOrderValidator {
     // 来源编号
     1: optional i32 fromId;
     // 平台
@@ -189,30 +190,30 @@ struct OrderValidator {
 service PlatformFromService {
 
 	// 来源设置
-    TPlatformFromSetting setting(1:TPlatformFrom platformFrom)
+    DPlatformFromSetting setting(1:DPlatformFrom platformFrom)
 
     // 公告列表
-    list<TAnnouncement> announcements(1:i32 fromId, 2:bool review)
+    list<DAnnouncement> announcements(1:i32 fromId, 2:bool review)
 
     // 服务列表
-    list<TServer> servers(1:i32 fromId, 2:bool review)
+    list<DServer> servers(1:i32 fromId, 2:bool review)
 
     // 授权
-    TIdentityResult identity(1:i32 fromId, 2:i64 serverId, 3:string identities)
+    DIdentityResult identity(1:i32 fromId, 2:i64 serverId, 3:string identities)
 
     // 登陆账号
-    TLoginResult login(1:i32 fromId, 2:i64 serverId, 3:string username, 4:string password)
+    DLoginResult login(1:i32 fromId, 2:i64 serverId, 3:string username, 4:string password)
 
     // 注册账号
-    TRegisterResult sign(1:i32 fromId, 2:i64 serverId, 3:string username, 4:string password)
+    DRegisterResult sign(1:i32 fromId, 2:i64 serverId, 3:string username, 4:string password)
 
     // 修改密码
-    TPasswordResult password(1:string sessionId, 2:string oldPassword, 3:string newPassword)
+    EPasswordResult password(1:string sessionId, 2:string oldPassword, 3:string newPassword)
 
     // 下订单
-    OrderResult order(1:OrderInfo info)
+    DOrderResult order(1:DOrderInfo info)
 
     // 验证订单
-    bool validate(1:OrderValidator validator)
+    bool validate(1:DOrderValidator validator)
 
 }
