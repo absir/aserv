@@ -7,10 +7,7 @@ import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.platform.bean.base.JbPlatform;
 import tplatform.DFromSetting;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Created by absir on 2016/12/2.
@@ -26,6 +23,7 @@ public class JSetting extends JbPlatform {
     private Long id;
 
     @JaLang("设置")
+    @Embedded
     private DFromSetting fromSetting;
 
     public Long getId() {

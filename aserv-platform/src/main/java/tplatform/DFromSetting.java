@@ -8,6 +8,7 @@ package tplatform;
 
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.thrift.EncodingUtils;
 import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.scheme.IScheme;
@@ -168,19 +169,6 @@ public class DFromSetting implements org.apache.thrift.TBase<DFromSetting, DFrom
         }
     }
 
-    static {
-        Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-        tmpMap.put(_Fields.AUTH, new org.apache.thrift.meta_data.FieldMetaData("auth", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
-        tmpMap.put(_Fields.TITLE, new org.apache.thrift.meta_data.FieldMetaData("title", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.MESSAGE, new org.apache.thrift.meta_data.FieldMetaData("message", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.FORCE_UPGRADE, new org.apache.thrift.meta_data.FieldMetaData("forceUpgrade", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
-        tmpMap.put(_Fields.OPEN_URL, new org.apache.thrift.meta_data.FieldMetaData("openUrl", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.CDN_URL, new org.apache.thrift.meta_data.FieldMetaData("cdnUrl", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.OTHER_URL, new org.apache.thrift.meta_data.FieldMetaData("otherUrl", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        metaDataMap = Collections.unmodifiableMap(tmpMap);
-        org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DFromSetting.class, metaDataMap);
-    }
-
     public DFromSetting() {
         this.title = "";
         this.message = "";
@@ -245,6 +233,7 @@ public class DFromSetting implements org.apache.thrift.TBase<DFromSetting, DFrom
     }
 
     /** Returns true if field auth is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetAuth() {
         return EncodingUtils.testBit(__isset_bitfield, __AUTH_ISSET_ID);
     }
@@ -267,6 +256,7 @@ public class DFromSetting implements org.apache.thrift.TBase<DFromSetting, DFrom
     }
 
     /** Returns true if field title is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetTitle() {
         return this.title != null;
     }
@@ -291,6 +281,7 @@ public class DFromSetting implements org.apache.thrift.TBase<DFromSetting, DFrom
     }
 
     /** Returns true if field message is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetMessage() {
         return this.message != null;
     }
@@ -316,6 +307,7 @@ public class DFromSetting implements org.apache.thrift.TBase<DFromSetting, DFrom
     }
 
     /** Returns true if field forceUpgrade is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetForceUpgrade() {
         return EncodingUtils.testBit(__isset_bitfield, __FORCEUPGRADE_ISSET_ID);
     }
@@ -338,6 +330,7 @@ public class DFromSetting implements org.apache.thrift.TBase<DFromSetting, DFrom
     }
 
     /** Returns true if field openUrl is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetOpenUrl() {
         return this.openUrl != null;
     }
@@ -362,6 +355,7 @@ public class DFromSetting implements org.apache.thrift.TBase<DFromSetting, DFrom
     }
 
     /** Returns true if field cdnUrl is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetCdnUrl() {
         return this.cdnUrl != null;
     }
@@ -386,6 +380,7 @@ public class DFromSetting implements org.apache.thrift.TBase<DFromSetting, DFrom
     }
 
     /** Returns true if field otherUrl is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetOtherUrl() {
         return this.otherUrl != null;
     }
@@ -1023,12 +1018,17 @@ public class DFromSetting implements org.apache.thrift.TBase<DFromSetting, DFrom
         }
     }
 
-    public byte get__isset_bitfield() {
-        return __isset_bitfield;
-    }
-
-    public void set__isset_bitfield(byte __isset_bitfield) {
-        this.__isset_bitfield = __isset_bitfield;
+    static {
+        Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+        tmpMap.put(_Fields.AUTH, new org.apache.thrift.meta_data.FieldMetaData("auth", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+        tmpMap.put(_Fields.TITLE, new org.apache.thrift.meta_data.FieldMetaData("title", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.MESSAGE, new org.apache.thrift.meta_data.FieldMetaData("message", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.FORCE_UPGRADE, new org.apache.thrift.meta_data.FieldMetaData("forceUpgrade", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+        tmpMap.put(_Fields.OPEN_URL, new org.apache.thrift.meta_data.FieldMetaData("openUrl", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.CDN_URL, new org.apache.thrift.meta_data.FieldMetaData("cdnUrl", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.OTHER_URL, new org.apache.thrift.meta_data.FieldMetaData("otherUrl", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        metaDataMap = Collections.unmodifiableMap(tmpMap);
+        org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DFromSetting.class, metaDataMap);
     }
 
     public DFromSetting create() {
@@ -1039,20 +1039,12 @@ public class DFromSetting implements org.apache.thrift.TBase<DFromSetting, DFrom
         return cloneDepth(0);
     }
 
-    public void cloneMore(DFromSetting _clone, int _depth) {
-    }
-
     public DFromSetting cloneDepth(int _depth) {
         DFromSetting _clone = create();
-        _clone.auth = auth;
-        _clone.title = title;
-        _clone.message = message;
-        _clone.forceUpgrade = forceUpgrade;
-        _clone.openUrl = openUrl;
-        _clone.cdnUrl = cdnUrl;
-        _clone.otherUrl = otherUrl;
-        _clone.__isset_bitfield = __isset_bitfield;
         cloneMore(_clone, _depth);
         return _clone;
+    }
+
+    public void cloneMore(DFromSetting _clone, int _depth) {
     }
 }

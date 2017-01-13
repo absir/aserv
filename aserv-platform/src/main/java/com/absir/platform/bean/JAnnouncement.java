@@ -8,10 +8,7 @@ import com.absir.platform.bean.base.JbPlatform;
 import org.hibernate.annotations.Type;
 import tplatform.DAnnouncement;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Created by absir on 2016/12/1.
@@ -28,8 +25,8 @@ public class JAnnouncement extends JbPlatform {
 
     @JaLang("公告列表")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
-    @JaEdit(types = "subtable")
-    public DAnnouncement[] announcements;
+    @Embedded
+    public DAnnouncement announcement;
 
     public Long getId() {
         return id;
@@ -39,11 +36,11 @@ public class JAnnouncement extends JbPlatform {
         this.id = id;
     }
 
-    public DAnnouncement[] getAnnouncements() {
-        return announcements;
+    public DAnnouncement getAnnouncement() {
+        return announcement;
     }
 
-    public void setAnnouncements(DAnnouncement[] announcements) {
-        this.announcements = announcements;
+    public void setAnnouncement(DAnnouncement announcement) {
+        this.announcement = announcement;
     }
 }

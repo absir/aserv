@@ -10,8 +10,9 @@ package tplatform;
 import com.absir.aserv.system.bean.value.JaCrud;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
-import com.absir.aserv.system.bean.value.JaName;
 import com.absir.aserv.system.crud.UploadCrudFactory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.thrift.EncodingUtils;
 import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.SchemeFactory;
@@ -30,9 +31,7 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
 
     private static final org.apache.thrift.protocol.TField CONTENT_FIELD_DESC = new org.apache.thrift.protocol.TField("content", org.apache.thrift.protocol.TType.STRING, (short) 2);
 
-    private static final org.apache.thrift.protocol.TField ATTACH_FIELD_DESC = new org.apache.thrift.protocol.TField("attach", org.apache.thrift.protocol.TType.STRING, (short) 3);
-
-    private static final org.apache.thrift.protocol.TField OPEN_URL_FIELD_DESC = new org.apache.thrift.protocol.TField("openUrl", org.apache.thrift.protocol.TType.STRING, (short) 4);
+    private static final org.apache.thrift.protocol.TField OPEN_URL_FIELD_DESC = new org.apache.thrift.protocol.TField("openUrl", org.apache.thrift.protocol.TType.STRING, (short) 5);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
 
@@ -45,19 +44,31 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
     @JaEdit(types = "text")
     protected String content;
 
-    // required
-    @JaName("附件")
-    @JaCrud(factory = UploadCrudFactory.class, parameters = { "jpg,png,zip" })
-    protected String attach;
+    // optional
+    @JaLang("图片隐藏")
+    @JaCrud(factory = UploadCrudFactory.class, parameters = { "jpg,png" })
+    protected String image;
 
     // optional
     @JaLang("打开链接")
     protected String openUrl;
 
-    // isset id assignments
-    private static final _Fields optionals[] = { _Fields.OPEN_URL };
+    // optional
+    @JaLang("图片隐藏")
+    protected boolean imageHide;
+
+    private static final _Fields optionals[] = { _Fields.IMAGE, _Fields.IMAGE_HIDE, _Fields.OPEN_URL };
 
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
+    private static final org.apache.thrift.protocol.TField IMAGE_FIELD_DESC = new org.apache.thrift.protocol.TField("image", org.apache.thrift.protocol.TType.STRING, (short) 3);
+
+    private static final org.apache.thrift.protocol.TField IMAGE_HIDE_FIELD_DESC = new org.apache.thrift.protocol.TField("imageHide", org.apache.thrift.protocol.TType.BOOL, (short) 4);
+
+    // isset id assignments
+    private static final int __IMAGEHIDE_ISSET_ID = 0;
+
+    protected byte __isset_bitfield = 0;
 
     static {
         schemes.put(StandardScheme.class, new DAnnouncementStandardSchemeFactory());
@@ -67,7 +78,7 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 
-        TITLE((short) 1, "title"), CONTENT((short) 2, "content"), ATTACH((short) 3, "attach"), OPEN_URL((short) 4, "openUrl");
+        TITLE((short) 1, "title"), CONTENT((short) 2, "content"), IMAGE((short) 3, "image"), IMAGE_HIDE((short) 4, "imageHide"), OPEN_URL((short) 5, "openUrl");
 
         private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -88,11 +99,14 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
                 case // CONTENT
                 2:
                     return CONTENT;
-                case // ATTACH
+                case // IMAGE
                 3:
-                    return ATTACH;
-                case // OPEN_URL
+                    return IMAGE;
+                case // IMAGE_HIDE
                 4:
+                    return IMAGE_HIDE;
+                case // OPEN_URL
+                5:
                     return OPEN_URL;
                 default:
                     return null;
@@ -135,40 +149,25 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
         }
     }
 
-    static {
-        Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-        tmpMap.put(_Fields.TITLE, new org.apache.thrift.meta_data.FieldMetaData("title", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.CONTENT, new org.apache.thrift.meta_data.FieldMetaData("content", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.ATTACH, new org.apache.thrift.meta_data.FieldMetaData("attach", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.OPEN_URL, new org.apache.thrift.meta_data.FieldMetaData("openUrl", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        metaDataMap = Collections.unmodifiableMap(tmpMap);
-        org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DAnnouncement.class, metaDataMap);
-    }
-
     public DAnnouncement() {
         this.openUrl = "";
-    }
-
-    public DAnnouncement(String title, String content, String attach) {
-        this();
-        this.title = title;
-        this.content = content;
-        this.attach = attach;
     }
 
     /**
    * Performs a deep copy on <i>other</i>.
    */
     public DAnnouncement(DAnnouncement other) {
+        __isset_bitfield = other.__isset_bitfield;
         if (other.isSetTitle()) {
             this.title = other.title;
         }
         if (other.isSetContent()) {
             this.content = other.content;
         }
-        if (other.isSetAttach()) {
-            this.attach = other.attach;
+        if (other.isSetImage()) {
+            this.image = other.image;
         }
+        this.imageHide = other.imageHide;
         if (other.isSetOpenUrl()) {
             this.openUrl = other.openUrl;
         }
@@ -182,7 +181,9 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
     public void clear() {
         this.title = null;
         this.content = null;
-        this.attach = null;
+        this.image = null;
+        setImageHideIsSet(false);
+        this.imageHide = false;
         this.openUrl = "";
     }
 
@@ -199,9 +200,8 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
         this.title = null;
     }
 
-    /**
-     * Returns true if field title is set (has been assigned a value) and false otherwise
-     */
+    /** Returns true if field title is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetTitle() {
         return this.title != null;
     }
@@ -225,9 +225,8 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
         this.content = null;
     }
 
-    /**
-     * Returns true if field content is set (has been assigned a value) and false otherwise
-     */
+    /** Returns true if field content is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetContent() {
         return this.content != null;
     }
@@ -235,32 +234,6 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
     public void setContentIsSet(boolean value) {
         if (!value) {
             this.content = null;
-        }
-    }
-
-    public String getAttach() {
-        return this.attach;
-    }
-
-    public DAnnouncement setAttach(String attach) {
-        this.attach = attach;
-        return this;
-    }
-
-    public void unsetAttach() {
-        this.attach = null;
-    }
-
-    /**
-     * Returns true if field attach is set (has been assigned a value) and false otherwise
-     */
-    public boolean isSetAttach() {
-        return this.attach != null;
-    }
-
-    public void setAttachIsSet(boolean value) {
-        if (!value) {
-            this.attach = null;
         }
     }
 
@@ -277,9 +250,8 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
         this.openUrl = null;
     }
 
-    /**
-     * Returns true if field openUrl is set (has been assigned a value) and false otherwise
-     */
+    /** Returns true if field openUrl is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetOpenUrl() {
         return this.openUrl != null;
     }
@@ -306,11 +278,18 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
                     setContent((String) value);
                 }
                 break;
-            case ATTACH:
+            case IMAGE:
                 if (value == null) {
-                    unsetAttach();
+                    unsetImage();
                 } else {
-                    setAttach((String) value);
+                    setImage((String) value);
+                }
+                break;
+            case IMAGE_HIDE:
+                if (value == null) {
+                    unsetImageHide();
+                } else {
+                    setImageHide((Boolean) value);
                 }
                 break;
             case OPEN_URL:
@@ -329,17 +308,17 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
                 return getTitle();
             case CONTENT:
                 return getContent();
-            case ATTACH:
-                return getAttach();
+            case IMAGE:
+                return getImage();
+            case IMAGE_HIDE:
+                return isImageHide();
             case OPEN_URL:
                 return getOpenUrl();
         }
         throw new IllegalStateException();
     }
 
-    /**
-     * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
-     */
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
     public boolean isSet(_Fields field) {
         if (field == null) {
             throw new IllegalArgumentException();
@@ -349,8 +328,10 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
                 return isSetTitle();
             case CONTENT:
                 return isSetContent();
-            case ATTACH:
-                return isSetAttach();
+            case IMAGE:
+                return isSetImage();
+            case IMAGE_HIDE:
+                return isSetImageHide();
             case OPEN_URL:
                 return isSetOpenUrl();
         }
@@ -385,12 +366,20 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
             if (!this.content.equals(that.content))
                 return false;
         }
-        boolean this_present_attach = true && this.isSetAttach();
-        boolean that_present_attach = true && that.isSetAttach();
-        if (this_present_attach || that_present_attach) {
-            if (!(this_present_attach && that_present_attach))
+        boolean this_present_image = true && this.isSetImage();
+        boolean that_present_image = true && that.isSetImage();
+        if (this_present_image || that_present_image) {
+            if (!(this_present_image && that_present_image))
                 return false;
-            if (!this.attach.equals(that.attach))
+            if (!this.image.equals(that.image))
+                return false;
+        }
+        boolean this_present_imageHide = true && this.isSetImageHide();
+        boolean that_present_imageHide = true && that.isSetImageHide();
+        if (this_present_imageHide || that_present_imageHide) {
+            if (!(this_present_imageHide && that_present_imageHide))
+                return false;
+            if (this.imageHide != that.imageHide)
                 return false;
         }
         boolean this_present_openUrl = true && this.isSetOpenUrl();
@@ -415,10 +404,14 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
         list.add(present_content);
         if (present_content)
             list.add(content);
-        boolean present_attach = true && (isSetAttach());
-        list.add(present_attach);
-        if (present_attach)
-            list.add(attach);
+        boolean present_image = true && (isSetImage());
+        list.add(present_image);
+        if (present_image)
+            list.add(image);
+        boolean present_imageHide = true && (isSetImageHide());
+        list.add(present_imageHide);
+        if (present_imageHide)
+            list.add(imageHide);
         boolean present_openUrl = true && (isSetOpenUrl());
         list.add(present_openUrl);
         if (present_openUrl)
@@ -452,12 +445,22 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
                 return lastComparison;
             }
         }
-        lastComparison = Boolean.valueOf(isSetAttach()).compareTo(other.isSetAttach());
+        lastComparison = Boolean.valueOf(isSetImage()).compareTo(other.isSetImage());
         if (lastComparison != 0) {
             return lastComparison;
         }
-        if (isSetAttach()) {
-            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.attach, other.attach);
+        if (isSetImage()) {
+            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.image, other.image);
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+        }
+        lastComparison = Boolean.valueOf(isSetImageHide()).compareTo(other.isSetImageHide());
+        if (lastComparison != 0) {
+            return lastComparison;
+        }
+        if (isSetImageHide()) {
+            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.imageHide, other.imageHide);
             if (lastComparison != 0) {
                 return lastComparison;
             }
@@ -507,15 +510,24 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
             sb.append(this.content);
         }
         first = false;
-        if (!first)
-            sb.append(", ");
-        sb.append("attach:");
-        if (this.attach == null) {
-            sb.append("null");
-        } else {
-            sb.append(this.attach);
+        if (isSetImage()) {
+            if (!first)
+                sb.append(", ");
+            sb.append("image:");
+            if (this.image == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.image);
+            }
+            first = false;
         }
-        first = false;
+        if (isSetImageHide()) {
+            if (!first)
+                sb.append(", ");
+            sb.append("imageHide:");
+            sb.append(this.imageHide);
+            first = false;
+        }
         if (isSetOpenUrl()) {
             if (!first)
                 sb.append(", ");
@@ -544,6 +556,8 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
 
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
         try {
+            // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+            __isset_bitfield = 0;
             read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
         } catch (org.apache.thrift.TException te) {
             throw new java.io.IOException(te);
@@ -586,17 +600,26 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
-                    case // ATTACH
+                    case // IMAGE
                     3:
                         if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                            struct.attach = iprot.readString();
-                            struct.setAttachIsSet(true);
+                            struct.image = iprot.readString();
+                            struct.setImageIsSet(true);
+                        } else {
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        }
+                        break;
+                    case // IMAGE_HIDE
+                    4:
+                        if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+                            struct.imageHide = iprot.readBool();
+                            struct.setImageHideIsSet(true);
                         } else {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
                     case // OPEN_URL
-                    4:
+                    5:
                         if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
                             struct.openUrl = iprot.readString();
                             struct.setOpenUrlIsSet(true);
@@ -627,9 +650,16 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
                 oprot.writeString(struct.content);
                 oprot.writeFieldEnd();
             }
-            if (struct.attach != null) {
-                oprot.writeFieldBegin(ATTACH_FIELD_DESC);
-                oprot.writeString(struct.attach);
+            if (struct.image != null) {
+                if (struct.isSetImage()) {
+                    oprot.writeFieldBegin(IMAGE_FIELD_DESC);
+                    oprot.writeString(struct.image);
+                    oprot.writeFieldEnd();
+                }
+            }
+            if (struct.isSetImageHide()) {
+                oprot.writeFieldBegin(IMAGE_HIDE_FIELD_DESC);
+                oprot.writeBool(struct.imageHide);
                 oprot.writeFieldEnd();
             }
             if (struct.openUrl != null) {
@@ -663,21 +693,27 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
             if (struct.isSetContent()) {
                 optionals.set(1);
             }
-            if (struct.isSetAttach()) {
+            if (struct.isSetImage()) {
                 optionals.set(2);
             }
-            if (struct.isSetOpenUrl()) {
+            if (struct.isSetImageHide()) {
                 optionals.set(3);
             }
-            oprot.writeBitSet(optionals, 4);
+            if (struct.isSetOpenUrl()) {
+                optionals.set(4);
+            }
+            oprot.writeBitSet(optionals, 5);
             if (struct.isSetTitle()) {
                 oprot.writeString(struct.title);
             }
             if (struct.isSetContent()) {
                 oprot.writeString(struct.content);
             }
-            if (struct.isSetAttach()) {
-                oprot.writeString(struct.attach);
+            if (struct.isSetImage()) {
+                oprot.writeString(struct.image);
+            }
+            if (struct.isSetImageHide()) {
+                oprot.writeBool(struct.imageHide);
             }
             if (struct.isSetOpenUrl()) {
                 oprot.writeString(struct.openUrl);
@@ -687,7 +723,7 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
         @Override
         public void read(org.apache.thrift.protocol.TProtocol prot, DAnnouncement struct) throws org.apache.thrift.TException {
             TTupleProtocol iprot = (TTupleProtocol) prot;
-            BitSet incoming = iprot.readBitSet(4);
+            BitSet incoming = iprot.readBitSet(5);
             if (incoming.get(0)) {
                 struct.title = iprot.readString();
                 struct.setTitleIsSet(true);
@@ -697,14 +733,84 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
                 struct.setContentIsSet(true);
             }
             if (incoming.get(2)) {
-                struct.attach = iprot.readString();
-                struct.setAttachIsSet(true);
+                struct.image = iprot.readString();
+                struct.setImageIsSet(true);
             }
             if (incoming.get(3)) {
+                struct.imageHide = iprot.readBool();
+                struct.setImageHideIsSet(true);
+            }
+            if (incoming.get(4)) {
                 struct.openUrl = iprot.readString();
                 struct.setOpenUrlIsSet(true);
             }
         }
+    }
+
+    public DAnnouncement(String title, String content) {
+        this();
+        this.title = title;
+        this.content = content;
+    }
+
+    public String getImage() {
+        return this.image;
+    }
+
+    public DAnnouncement setImage(String image) {
+        this.image = image;
+        return this;
+    }
+
+    public void unsetImage() {
+        this.image = null;
+    }
+
+    /** Returns true if field image is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
+    public boolean isSetImage() {
+        return this.image != null;
+    }
+
+    public void setImageIsSet(boolean value) {
+        if (!value) {
+            this.image = null;
+        }
+    }
+
+    public boolean isImageHide() {
+        return this.imageHide;
+    }
+
+    public DAnnouncement setImageHide(boolean imageHide) {
+        this.imageHide = imageHide;
+        setImageHideIsSet(true);
+        return this;
+    }
+
+    public void unsetImageHide() {
+        __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __IMAGEHIDE_ISSET_ID);
+    }
+
+    /** Returns true if field imageHide is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
+    public boolean isSetImageHide() {
+        return EncodingUtils.testBit(__isset_bitfield, __IMAGEHIDE_ISSET_ID);
+    }
+
+    public void setImageHideIsSet(boolean value) {
+        __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __IMAGEHIDE_ISSET_ID, value);
+    }
+
+    static {
+        Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+        tmpMap.put(_Fields.TITLE, new org.apache.thrift.meta_data.FieldMetaData("title", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.CONTENT, new org.apache.thrift.meta_data.FieldMetaData("content", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.IMAGE, new org.apache.thrift.meta_data.FieldMetaData("image", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.IMAGE_HIDE, new org.apache.thrift.meta_data.FieldMetaData("imageHide", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+        tmpMap.put(_Fields.OPEN_URL, new org.apache.thrift.meta_data.FieldMetaData("openUrl", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        metaDataMap = Collections.unmodifiableMap(tmpMap);
+        org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DAnnouncement.class, metaDataMap);
     }
 
     public DAnnouncement create() {
@@ -715,16 +821,12 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
         return cloneDepth(0);
     }
 
-    public void cloneMore(DAnnouncement _clone, int _depth) {
-    }
-
     public DAnnouncement cloneDepth(int _depth) {
         DAnnouncement _clone = create();
-        _clone.title = title;
-        _clone.content = content;
-        _clone.attach = attach;
-        _clone.openUrl = openUrl;
         cloneMore(_clone, _depth);
         return _clone;
+    }
+
+    public void cloneMore(DAnnouncement _clone, int _depth) {
     }
 }

@@ -25,13 +25,78 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
 
     protected abstract void setBeanInterface(List<ClassOrInterfaceType> implementsList, CompilationUnit toCompilationUnit);
 
-    protected abstract boolean isAnnotationConstructorDeclaration(ConstructorDeclaration constructorDeclaration);
+    protected abstract boolean isBeanField(FieldDeclaration fieldDeclaration, String name);
 
-    protected abstract boolean isAnnotationMethodDeclaration(MethodDeclaration methodDeclaration);
+    protected abstract String getDefinedAnnotationNames(BodyDeclaration bodyDeclaration);
 
-    protected abstract String getFieldAnnotationName();
+    protected abstract boolean isDefinedBodyDeclaration(BodyDeclaration bodyDeclaration, String declarationAsString);
 
     protected abstract boolean isCloneableClassName(String className);
+
+    protected List<AnnotationExpr> mergeAnnotationExpr(List<AnnotationExpr> fromAnnotations, List<AnnotationExpr> toAnnotations, BodyDeclaration bodyDeclaration) {
+        List<AnnotationExpr> annotations = new ArrayList<AnnotationExpr>();
+        Map<String, AnnotationExpr> fromAnnotationMap = null;
+        if (fromAnnotations != null) {
+            fromAnnotationMap = new LinkedHashMap<String, AnnotationExpr>();
+            for (AnnotationExpr annotation : fromAnnotations) {
+                fromAnnotationMap.put(annotation.getName().getName(), annotation);
+            }
+        }
+
+        if (toAnnotations != null) {
+            String definedAnnotationNames = getDefinedAnnotationNames(bodyDeclaration);
+            for (AnnotationExpr annotation : toAnnotations) {
+                String name = annotation.getName().getName();
+                AnnotationExpr fromAnnotation = fromAnnotationMap == null ? null : fromAnnotationMap.remove(name);
+                if (fromAnnotation == null) {
+                    if (!KernelString.patternInclude(definedAnnotationNames, name)) {
+                        annotations.add(annotation);
+                    }
+
+                } else {
+                    annotations.add(fromAnnotation);
+                }
+            }
+        }
+
+        if (fromAnnotationMap != null) {
+            for (AnnotationExpr annotation : fromAnnotationMap.values()) {
+                annotations.add(annotation);
+            }
+        }
+
+        return annotations;
+    }
+
+    protected void processBodyDeclaration(BodyDeclaration bodyDeclaration, String declarationAsString) {
+    }
+
+    protected BodyDeclaration mergeBodyDeclaration(TypeDeclaration toType, Map<String, BodyDeclaration> declarationMap, List<BodyDeclaration> removeDeclarations, int index, BodyDeclaration bodyDeclaration, String declarationAsString) {
+        BodyDeclaration fromDeclaration = declarationMap.remove(declarationAsString);
+        if (getAnnotation(bodyDeclaration.getAnnotations(), "AOverride") == null) {
+            if (fromDeclaration != null) {
+                bodyDeclaration = fromDeclaration;
+                toType.getMembers().set(index, bodyDeclaration);
+
+            } else {
+                if (isDefinedBodyDeclaration(bodyDeclaration, declarationAsString)) {
+                    removeDeclarations.add(bodyDeclaration);
+                    bodyDeclaration = null;
+                }
+            }
+
+            if (bodyDeclaration != null && bodyDeclaration instanceof MethodDeclaration) {
+                processBodyDeclaration(bodyDeclaration, declarationAsString);
+            }
+
+        } else {
+            if (fromDeclaration != null) {
+                bodyDeclaration.setAnnotations(mergeAnnotationExpr(fromDeclaration.getAnnotations(), bodyDeclaration.getAnnotations(), bodyDeclaration));
+            }
+        }
+
+        return bodyDeclaration;
+    }
 
     @Override
     public void mergeCompilationUnit(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
@@ -78,71 +143,49 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
             enumReadable = true;
         }
 
-        Map<String, MethodDeclaration> toMethodMap = new HashMap<String, MethodDeclaration>();
         Map<String, FieldDeclaration> toFieldMap = new HashMap<String, FieldDeclaration>();
+        Map<String, MethodDeclaration> toMethodMap = new HashMap<String, MethodDeclaration>();
         List<BodyDeclaration> removeDeclarations = new ArrayList<BodyDeclaration>();
-        if (!enumReadable) {
+        {
             int index = -1;
-            for (BodyDeclaration body : toType.getMembers()) {
+            for (BodyDeclaration bodyDeclaration : toType.getMembers()) {
                 index++;
-                if (body instanceof MethodDeclaration) {
-                    MethodDeclaration methodDeclaration = (MethodDeclaration) body;
-                    if (getAnnotation(methodDeclaration.getAnnotations(), "AOverride") == null && isAnnotationMethodDeclaration(methodDeclaration)) {
-                        for (BodyDeclaration fromBody : fromType.getMembers()) {
-                            if (fromBody instanceof MethodDeclaration) {
-                                if (((MethodDeclaration) fromBody).getDeclarationAsString().equals(methodDeclaration.getDeclarationAsString())) {
-                                    methodDeclaration = (MethodDeclaration) fromBody;
-                                    toType.getMembers().set(index, methodDeclaration);
-                                    break;
-                                }
-                            }
+                if (bodyDeclaration instanceof FieldDeclaration) {
+                    FieldDeclaration fieldDeclaration = ((FieldDeclaration) bodyDeclaration);
+                    String name = fieldDeclaration.getVariables().get(0).getId().toString();
+                    FieldDeclaration fromFieldDeclaration = fromFieldMap.remove(name);
+                    if (fromFieldDeclaration == null) {
+                        fromFieldDeclaration = (FieldDeclaration) declarationMap.remove(name);
+                        if (fromFieldDeclaration != null) {
+                            toType.getMembers().set(index, fromFieldDeclaration);
+
+                        } else if (fieldDeclaration.getAnnotations() == null || fieldDeclaration.getAnnotations().isEmpty()) {
+                            removeDeclarations.add(fieldDeclaration);
+                        }
+
+                    } else {
+                        fieldDeclaration.setAnnotations(mergeAnnotationExpr(fromFieldDeclaration.getAnnotations(), fieldDeclaration.getAnnotations(), bodyDeclaration));
+                        if (!enumReadable && isBeanField(fieldDeclaration, name)) {
+                            fieldDeclaration.setModifiers(Modifier.PROTECTED);
+                            toFieldMap.put(name, fieldDeclaration);
                         }
                     }
 
-                    toMethodMap.put(methodDeclaration.getName(), methodDeclaration);
-                    declarationMap.remove(methodDeclaration.getDeclarationAsString());
-
-                } else if (body instanceof FieldDeclaration) {
-                    FieldDeclaration toDeclaration = ((FieldDeclaration) body);
-                    String name = toDeclaration.getVariables().get(0).getId().toString();
-                    FieldDeclaration fromDeclaration = fromFieldMap.get(name);
-                    List<AnnotationExpr> toAnnotationExprs = new ArrayList<AnnotationExpr>();
-                    if (toDeclaration.getAnnotations() != null) {
-                        String fieldAnnotationName = getFieldAnnotationName();
-                        if (KernelString.isEmpty(fieldAnnotationName)) {
-                            fieldAnnotationName = null;
-                        }
-
-                        for (AnnotationExpr annotationExpr : toDeclaration.getAnnotations()) {
-                            if (fieldAnnotationName == null || !fieldAnnotationName.contains(annotationExpr.getName().getName())) {
-                                toAnnotationExprs.add(annotationExpr);
-                            }
+                } else if (bodyDeclaration instanceof MethodDeclaration) {
+                    MethodDeclaration methodDeclaration = (MethodDeclaration) bodyDeclaration;
+                    bodyDeclaration = mergeBodyDeclaration(toType, declarationMap, removeDeclarations, index, methodDeclaration, methodDeclaration.getDeclarationAsString());
+                    if (bodyDeclaration != null) {
+                        if (!enumReadable) {
+                            methodDeclaration = (MethodDeclaration) bodyDeclaration;
+                            toMethodMap.put(methodDeclaration.getName(), methodDeclaration);
                         }
                     }
 
-                    if (fromDeclaration != null) {
-                        toFieldMap.put(name, toDeclaration);
-                        toDeclaration.setModifiers(Modifier.PROTECTED);
-                        if (fromDeclaration.getAnnotations() != null) {
-                            toAnnotationExprs.addAll(fromDeclaration.getAnnotations());
-                        }
-                    }
+                } else if (bodyDeclaration instanceof ConstructorDeclaration) {
+                    mergeBodyDeclaration(toType, declarationMap, removeDeclarations, index, bodyDeclaration, ((ConstructorDeclaration) bodyDeclaration).getDeclarationAsString());
 
-                    toDeclaration.setAnnotations(toAnnotationExprs);
-                    declarationMap.remove(name);
-
-                } else if (body instanceof ConstructorDeclaration) {
-                    ConstructorDeclaration constructorDeclaration = (ConstructorDeclaration) body;
-                    String name = constructorDeclaration.getDeclarationAsString();
-                    ConstructorDeclaration fromConstructorDeclaration = (ConstructorDeclaration) declarationMap.remove(name);
-                    if (isAnnotationConstructorDeclaration(constructorDeclaration)) {
-                        if (fromConstructorDeclaration == null) {
-                            removeDeclarations.add(body);
-
-                        } else {
-                            toType.getMembers().set(index, fromConstructorDeclaration);
-                        }
-                    }
+                } else if (bodyDeclaration instanceof InitializerDeclaration) {
+                    mergeBodyDeclaration(toType, declarationMap, removeDeclarations, index, bodyDeclaration, "@Initializer0");
                 }
             }
         }
@@ -151,7 +194,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
         if (enumReadable) {
             EnumDeclaration fromEnum = (EnumDeclaration) fromType;
             EnumDeclaration toEnum = (EnumDeclaration) toType;
-            Map<String, EnumConstantDeclaration> nameMapEnum = new HashMap<String, EnumConstantDeclaration>();
+            Map<String, EnumConstantDeclaration> nameMapEnum = new LinkedHashMap<String, EnumConstantDeclaration>();
             for (EnumConstantDeclaration declaration : fromEnum.getEntries()) {
                 nameMapEnum.put(declaration.getName(), declaration);
             }
@@ -160,21 +203,14 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
             for (EnumConstantDeclaration declaration : toEnum.getEntries()) {
                 EnumConstantDeclaration fromDeclaration = nameMapEnum.remove(declaration.getName());
                 if (fromDeclaration == null) {
+                    if (declaration.getAnnotations() == null || declaration.getAnnotations().isEmpty()) {
+                        continue;
+                    }
+
                     fromDeclaration = declaration;
 
                 } else {
-                    if (declaration != null) {
-                        String fieldAnnotationName = getFieldAnnotationName();
-                        if (KernelString.isEmpty(fieldAnnotationName)) {
-                            fieldAnnotationName = null;
-                        }
-
-                        for (AnnotationExpr annotationExpr : declaration.getAnnotations()) {
-                            if (fieldAnnotationName == null || !fieldAnnotationName.contains(annotationExpr.getName().getName())) {
-                                fromDeclaration.getAnnotations().add(annotationExpr);
-                            }
-                        }
-                    }
+                    fromDeclaration.setAnnotations(mergeAnnotationExpr(fromDeclaration.getAnnotations(), declaration.getAnnotations(), fromDeclaration));
                 }
 
                 toDeclarations.add(fromDeclaration);
@@ -192,6 +228,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                     for (Map.Entry<String, BodyDeclaration> entry : declarationMap.entrySet()) {
                         String name = entry.getKey();
                         BodyDeclaration body = entry.getValue();
+                        processBodyDeclaration(body, null);
                         addDeclarations.add(body);
                         if (body instanceof MethodDeclaration) {
                             MethodDeclaration methodDeclaration = (MethodDeclaration) body;

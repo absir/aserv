@@ -9,7 +9,7 @@ package com.absir.code;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
@@ -25,13 +25,12 @@ public class ThriftCodecJavaMerger extends ThriftJavaMerger {
     }
 
     @Override
-    protected boolean isAnnotationConstructorDeclaration(ConstructorDeclaration constructorDeclaration) {
-        return getAnnotation(constructorDeclaration.getAnnotations(), "ThriftConstructor") != null;
+    protected String getDefinedAnnotationNames(BodyDeclaration bodyDeclaration) {
+        return "ThriftField,ThriftConstructor";
     }
 
     @Override
-    protected String getFieldAnnotationName() {
-        return "ThriftField";
+    protected void processBodyDeclaration(BodyDeclaration bodyDeclaration, String declarationAsString) {
     }
 
 }

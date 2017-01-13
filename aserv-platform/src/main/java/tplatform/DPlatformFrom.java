@@ -9,6 +9,7 @@ package tplatform;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.orm.value.JaColum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.thrift.EncodingUtils;
 import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.scheme.IScheme;
@@ -151,17 +152,6 @@ public class DPlatformFrom implements org.apache.thrift.TBase<DPlatformFrom, DPl
         }
     }
 
-    static {
-        Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-        tmpMap.put(_Fields.PLATFORM, new org.apache.thrift.meta_data.FieldMetaData("platform", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.CHANNEL, new org.apache.thrift.meta_data.FieldMetaData("channel", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.PACKAGE_NAME, new org.apache.thrift.meta_data.FieldMetaData("packageName", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.VERSION_DOUBLE, new org.apache.thrift.meta_data.FieldMetaData("versionDouble", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
-        tmpMap.put(_Fields.FROM_STR, new org.apache.thrift.meta_data.FieldMetaData("fromStr", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        metaDataMap = Collections.unmodifiableMap(tmpMap);
-        org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DPlatformFrom.class, metaDataMap);
-    }
-
     public DPlatformFrom() {
     }
 
@@ -223,6 +213,7 @@ public class DPlatformFrom implements org.apache.thrift.TBase<DPlatformFrom, DPl
     }
 
     /** Returns true if field platform is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetPlatform() {
         return this.platform != null;
     }
@@ -247,6 +238,7 @@ public class DPlatformFrom implements org.apache.thrift.TBase<DPlatformFrom, DPl
     }
 
     /** Returns true if field channel is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetChannel() {
         return this.channel != null;
     }
@@ -271,6 +263,7 @@ public class DPlatformFrom implements org.apache.thrift.TBase<DPlatformFrom, DPl
     }
 
     /** Returns true if field packageName is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetPackageName() {
         return this.packageName != null;
     }
@@ -296,6 +289,7 @@ public class DPlatformFrom implements org.apache.thrift.TBase<DPlatformFrom, DPl
     }
 
     /** Returns true if field versionDouble is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetVersionDouble() {
         return EncodingUtils.testBit(__isset_bitfield, __VERSIONDOUBLE_ISSET_ID);
     }
@@ -318,6 +312,7 @@ public class DPlatformFrom implements org.apache.thrift.TBase<DPlatformFrom, DPl
     }
 
     /** Returns true if field fromStr is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetFromStr() {
         return this.fromStr != null;
     }
@@ -801,12 +796,15 @@ public class DPlatformFrom implements org.apache.thrift.TBase<DPlatformFrom, DPl
         }
     }
 
-    public byte get__isset_bitfield() {
-        return __isset_bitfield;
-    }
-
-    public void set__isset_bitfield(byte __isset_bitfield) {
-        this.__isset_bitfield = __isset_bitfield;
+    static {
+        Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+        tmpMap.put(_Fields.PLATFORM, new org.apache.thrift.meta_data.FieldMetaData("platform", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.CHANNEL, new org.apache.thrift.meta_data.FieldMetaData("channel", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.PACKAGE_NAME, new org.apache.thrift.meta_data.FieldMetaData("packageName", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.VERSION_DOUBLE, new org.apache.thrift.meta_data.FieldMetaData("versionDouble", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.DOUBLE)));
+        tmpMap.put(_Fields.FROM_STR, new org.apache.thrift.meta_data.FieldMetaData("fromStr", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        metaDataMap = Collections.unmodifiableMap(tmpMap);
+        org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DPlatformFrom.class, metaDataMap);
     }
 
     public DPlatformFrom create() {
@@ -817,18 +815,12 @@ public class DPlatformFrom implements org.apache.thrift.TBase<DPlatformFrom, DPl
         return cloneDepth(0);
     }
 
-    public void cloneMore(DPlatformFrom _clone, int _depth) {
-    }
-
     public DPlatformFrom cloneDepth(int _depth) {
         DPlatformFrom _clone = create();
-        _clone.platform = platform;
-        _clone.channel = channel;
-        _clone.packageName = packageName;
-        _clone.versionDouble = versionDouble;
-        _clone.fromStr = fromStr;
-        _clone.__isset_bitfield = __isset_bitfield;
         cloneMore(_clone, _depth);
         return _clone;
+    }
+
+    public void cloneMore(DPlatformFrom _clone, int _depth) {
     }
 }

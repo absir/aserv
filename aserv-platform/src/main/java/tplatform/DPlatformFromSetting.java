@@ -6,6 +6,7 @@
  */
 package tplatform;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.thrift.EncodingUtils;
 import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.scheme.IScheme;
@@ -122,15 +123,6 @@ public class DPlatformFromSetting implements org.apache.thrift.TBase<DPlatformFr
         }
     }
 
-    static {
-        Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-        tmpMap.put(_Fields.FROM_ID, new org.apache.thrift.meta_data.FieldMetaData("fromId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-        tmpMap.put(_Fields.REVIEW, new org.apache.thrift.meta_data.FieldMetaData("review", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
-        tmpMap.put(_Fields.SETTING, new org.apache.thrift.meta_data.FieldMetaData("setting", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT, "DFromSetting")));
-        metaDataMap = Collections.unmodifiableMap(tmpMap);
-        org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DPlatformFromSetting.class, metaDataMap);
-    }
-
     public DPlatformFromSetting() {
     }
 
@@ -182,6 +174,7 @@ public class DPlatformFromSetting implements org.apache.thrift.TBase<DPlatformFr
     }
 
     /** Returns true if field fromId is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetFromId() {
         return EncodingUtils.testBit(__isset_bitfield, __FROMID_ISSET_ID);
     }
@@ -205,6 +198,7 @@ public class DPlatformFromSetting implements org.apache.thrift.TBase<DPlatformFr
     }
 
     /** Returns true if field review is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetReview() {
         return EncodingUtils.testBit(__isset_bitfield, __REVIEW_ISSET_ID);
     }
@@ -227,6 +221,7 @@ public class DPlatformFromSetting implements org.apache.thrift.TBase<DPlatformFr
     }
 
     /** Returns true if field setting is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetSetting() {
         return this.setting != null;
     }
@@ -578,12 +573,13 @@ public class DPlatformFromSetting implements org.apache.thrift.TBase<DPlatformFr
         }
     }
 
-    public byte get__isset_bitfield() {
-        return __isset_bitfield;
-    }
-
-    public void set__isset_bitfield(byte __isset_bitfield) {
-        this.__isset_bitfield = __isset_bitfield;
+    static {
+        Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+        tmpMap.put(_Fields.FROM_ID, new org.apache.thrift.meta_data.FieldMetaData("fromId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        tmpMap.put(_Fields.REVIEW, new org.apache.thrift.meta_data.FieldMetaData("review", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+        tmpMap.put(_Fields.SETTING, new org.apache.thrift.meta_data.FieldMetaData("setting", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRUCT, "DFromSetting")));
+        metaDataMap = Collections.unmodifiableMap(tmpMap);
+        org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DPlatformFromSetting.class, metaDataMap);
     }
 
     public DPlatformFromSetting create() {
@@ -594,16 +590,12 @@ public class DPlatformFromSetting implements org.apache.thrift.TBase<DPlatformFr
         return cloneDepth(0);
     }
 
-    public void cloneMore(DPlatformFromSetting _clone, int _depth) {
-    }
-
     public DPlatformFromSetting cloneDepth(int _depth) {
         DPlatformFromSetting _clone = create();
-        _clone.fromId = fromId;
-        _clone.review = review;
-        _clone.setting = setting;
-        _clone.__isset_bitfield = __isset_bitfield;
         cloneMore(_clone, _depth);
         return _clone;
+    }
+
+    public void cloneMore(DPlatformFromSetting _clone, int _depth) {
     }
 }

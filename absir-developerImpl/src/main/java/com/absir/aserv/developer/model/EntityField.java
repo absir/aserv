@@ -129,6 +129,7 @@ public class EntityField extends DBField {
         Class[] componentClasses = property.getGenericType() == null ? KernelClass.componentClasses(fieldType) : KernelClass.componentClasses(property.getGenericType());
         entityName = SessionFactoryUtils.getEntityNameNull(componentClasses[0]);
         boolean mapped = false;
+        boolean singleEditSubtable = false;
         if (!typeFieldType(fieldType)) {
             if (Map.class.isAssignableFrom(fieldType)) {
                 mapped = true;
@@ -211,6 +212,7 @@ public class EntityField extends DBField {
                             referenceCrud = true;
                         }
 
+                        singleEditSubtable = true;
                         types.add(0, JaEdit.EDIT_SUBTABLE);
                     }
 
@@ -342,6 +344,10 @@ public class EntityField extends DBField {
                     crudField.setJoEntity(new JoEntity(entityName, entityClass));
                 }
             }
+        }
+
+        if (singleEditSubtable && entityName != null) {
+            types.remove(0);
         }
 
         // embedd curd select selects

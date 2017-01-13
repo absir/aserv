@@ -9,12 +9,16 @@ package com.absir.code;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.MarkerAnnotationExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ThriftJavaMerger extends BeanJavaMerger {
@@ -29,22 +33,23 @@ public class ThriftJavaMerger extends BeanJavaMerger {
         implementsList.add(new ClassOrInterfaceType("IThrift"));
         toCompilationUnit.getImports()
                 .add(new ImportDeclaration(new NameExpr("com.absir.data.value.IThrift"), false, false));
+        toCompilationUnit.getImports()
+                .add(new ImportDeclaration(new NameExpr("com.fasterxml.jackson.annotation.JsonIgnore"), false, false));
     }
 
     @Override
-    protected boolean isAnnotationConstructorDeclaration(ConstructorDeclaration constructorDeclaration) {
-        return true;
+    protected boolean isBeanField(FieldDeclaration fieldDeclaration, String name) {
+        return !name.startsWith("__");
     }
 
     @Override
-    protected boolean isAnnotationMethodDeclaration(MethodDeclaration methodDeclaration) {
-        String name = methodDeclaration.getName();
-        return name.equals("toString") || name.equals("equals") || name.equals("hashCode") || name.equals("clear");
-    }
-
-    @Override
-    protected String getFieldAnnotationName() {
+    protected String getDefinedAnnotationNames(BodyDeclaration bodyDeclaration) {
         return null;
+    }
+
+    @Override
+    protected boolean isDefinedBodyDeclaration(BodyDeclaration bodyDeclaration, String declarationAsString) {
+        return true;
     }
 
     @Override
@@ -58,7 +63,25 @@ public class ThriftJavaMerger extends BeanJavaMerger {
     }
 
     @Override
-    protected boolean isNeedMergeType(TypeDeclaration type) {
+    protected boolean isCouldMergeType(TypeDeclaration type) {
         return false;
+    }
+
+    @Override
+    protected void processBodyDeclaration(BodyDeclaration bodyDeclaration, String declarationAsString) {
+        if (bodyDeclaration instanceof MethodDeclaration) {
+            MethodDeclaration methodDeclaration = (MethodDeclaration) bodyDeclaration;
+            declarationAsString = methodDeclaration.getName();
+            if (declarationAsString.startsWith("isSet") && methodDeclaration.getParameters().isEmpty()) {
+                List<AnnotationExpr> annotationExprs = methodDeclaration.getAnnotations();
+                if (getAnnotation(annotationExprs, "JsonIgnore") == null) {
+                    if (annotationExprs == null) {
+                        annotationExprs = new ArrayList<AnnotationExpr>();
+                    }
+
+                    annotationExprs.add(new MarkerAnnotationExpr(new NameExpr("JsonIgnore")));
+                }
+            }
+        }
     }
 }

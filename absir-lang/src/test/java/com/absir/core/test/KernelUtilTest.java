@@ -1,6 +1,7 @@
 package com.absir.core.test;
 
 import com.absir.core.kernel.KernelDyna;
+import com.absir.core.kernel.KernelString;
 import com.absir.core.kernel.KernelUtil;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -12,7 +13,8 @@ public class KernelUtilTest {
 
     @Test
     public void test() {
-
+        System.out.println(KernelString.capitalize("abc"));
+        System.out.println(KernelString.capitalize("aBc"));
         //System.out.println(String.format("%dtest", 1, 2, 3));
         System.out.println(KernelDyna.toLong(" 1"));
 

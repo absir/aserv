@@ -71,9 +71,10 @@ public class HelperDataFormat {
     };
 
     static {
-        // JSON_MAPPER.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+        //JSON_MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.DEFAULT);
         JSON_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         JSON_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        // JSON_MAPPER.setSerializationInclusion(Include.NON_DEFAULT);
 
         // PACK_MAPPER.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
         PACK_MAPPER.setSerializationInclusion(Include.NON_DEFAULT);

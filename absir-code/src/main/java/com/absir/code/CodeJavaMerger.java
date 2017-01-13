@@ -132,7 +132,7 @@ public abstract class CodeJavaMerger {
         }
     }
 
-    protected abstract boolean isNeedMergeType(TypeDeclaration type);
+    protected abstract boolean isCouldMergeType(TypeDeclaration type);
 
     protected void mergeCompilationUnitFile(String fromClassName, String className, CompilationUnit fromCompilationUnit,
                                             CompilationUnit toCompilationUnit, File toFile) throws Exception {
@@ -182,7 +182,7 @@ public abstract class CodeJavaMerger {
                 }
             }
 
-            if (!isNeedMergeType(from)) {
+            if (!isCouldMergeType(from)) {
                 if (_to != null) {
                     toCompilationUnit.getTypes().remove(_to);
                 }
@@ -206,6 +206,7 @@ public abstract class CodeJavaMerger {
                                        TypeDeclaration fromType, TypeDeclaration toType) {
         Map<String, FieldDeclaration> fromFieldMap = new LinkedHashMap<String, FieldDeclaration>();
         Map<String, BodyDeclaration> declarationMap = new LinkedHashMap<String, BodyDeclaration>();
+        int initializerIndex = 0;
         for (BodyDeclaration bodyDeclaration : fromType.getMembers()) {
             if (bodyDeclaration instanceof FieldDeclaration) {
                 FieldDeclaration fieldDeclaration = (FieldDeclaration) bodyDeclaration;
@@ -220,9 +221,7 @@ public abstract class CodeJavaMerger {
 
             } else if (bodyDeclaration instanceof MethodDeclaration) {
                 MethodDeclaration methodDeclaration = (MethodDeclaration) bodyDeclaration;
-                //if ((methodDeclaration.getModifiers() & TRANSIENT_MODIFIER) != 0) {
                 declarationMap.put(methodDeclaration.getDeclarationAsString(), methodDeclaration);
-                //}
 
             } else if (className != null && bodyDeclaration instanceof ConstructorDeclaration) {
                 ConstructorDeclaration constructorDeclaration = (ConstructorDeclaration) bodyDeclaration;
@@ -242,7 +241,7 @@ public abstract class CodeJavaMerger {
                     }
                 }
 
-                if (!isNeedMergeType(bodyDeclarationType)) {
+                if (!isCouldMergeType(bodyDeclarationType)) {
                     if (toBodyDeclarationType == null) {
                         toType.getMembers().add(bodyDeclarationType);
 
@@ -258,6 +257,9 @@ public abstract class CodeJavaMerger {
 
                     mergeFormTypeToType(null, fromCompilationUnit, toCompilationUnit, bodyDeclarationType, toBodyDeclarationType);
                 }
+
+            } else if (bodyDeclaration instanceof InitializerDeclaration) {
+                declarationMap.put("@Initializer" + (initializerIndex++), bodyDeclaration);
             }
         }
 

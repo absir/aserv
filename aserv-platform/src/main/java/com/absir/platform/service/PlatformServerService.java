@@ -15,6 +15,7 @@ import com.absir.bean.inject.value.Started;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelLang;
+import com.absir.core.kernel.KernelList;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.transaction.value.Transaction;
@@ -68,13 +69,17 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
 
     }
 
-    public static class PlatformServer {
+    public static class PlatformServer implements KernelList.Orderable {
 
         protected JServer server;
 
         protected DServer value;
 
         protected DServer dServer;
+
+        protected long beginTime;
+
+        protected long passTime;
 
         public JbPlatform getPlatform() {
             return server;
@@ -83,22 +88,11 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
         public Object getValue() {
             return value;
         }
-    }
 
-    public static boolean isExcludeIds(Set<String> excludeIds, boolean allIds, Set<String> ids, String id) {
-        if (ids != null) {
-            if (excludeIds != null && !excludeIds.isEmpty() && excludeIds.contains(id)) {
-                return true;
-            }
-
-            if (!allIds) {
-                if (ids == null || ids.isEmpty() || !ids.contains(id)) {
-                    return true;
-                }
-            }
+        @Override
+        public int getOrder() {
+            return (int) (beginTime / 1000);
         }
-
-        return false;
     }
 
     @Inject
@@ -172,14 +166,12 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
             List<JAnnouncement> announcements = new ArrayList<JAnnouncement>(announcementDCacheOpen.getCacheMap().values());
             Collections.sort(announcements, BeanService.COMPARATOR);
             for (JAnnouncement announcement : announcements) {
-                DAnnouncement[] dAnnouncements = announcement.getAnnouncements();
-                if (dAnnouncements != null) {
-                    for (DAnnouncement dAnnouncement : dAnnouncements) {
-                        PlatformAnnouncement platformAnnouncement = new PlatformAnnouncement();
-                        platformAnnouncement.announcement = announcement;
-                        platformAnnouncement.value = dAnnouncement;
-                        list.add(platformAnnouncement);
-                    }
+                DAnnouncement dAnnouncement = announcement.getAnnouncement();
+                if (dAnnouncement != null) {
+                    PlatformAnnouncement platformAnnouncement = new PlatformAnnouncement();
+                    platformAnnouncement.announcement = announcement;
+                    platformAnnouncement.value = dAnnouncement;
+                    list.add(platformAnnouncement);
                 }
             }
 
@@ -203,11 +195,11 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
                         JSlaveServer slaveServer = BeanService.ME.get(JSlaveServer.class, dServer.getId());
                         if (slaveServer != null) {
                             DServer value = createDServer(dServer);
-                            setDServer(value, dServer, slaveServer);
                             PlatformServer platformServer = new PlatformServer();
                             platformServer.server = server;
                             platformServer.value = value;
                             platformServer.dServer = dServer;
+                            setDServer(platformServer, slaveServer);
                             list.add(platformServer);
                         }
                     }
@@ -215,6 +207,7 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
             }
 
             serverList = list;
+            KernelList.sortOrderable(serverList);
 
         } catch (ConcurrentModificationException e) {
             Environment.throwable(e);
@@ -226,12 +219,16 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
     }
 
     // 合并自定义配置和Server服务配置
-    protected void setDServer(DServer value, DServer dServer, JSlaveServer slaveServer) {
+    protected void setDServer(PlatformServer platformServer, JSlaveServer slaveServer) {
+        platformServer.beginTime = slaveServer.getBeginTime();
+        platformServer.passTime = slaveServer.getPassTime();
+        DServer value = platformServer.value;
+        DServer dServer = platformServer.dServer;
         value.setName(KernelString.isEmpty(dServer.getName()) ? slaveServer.getName() : dServer.getName());
-        value.setsAddress(KernelString.isEmpty(dServer.getsAddress()) ? slaveServer.getServerAddress() : dServer.getsAddress());
+        value.setSAddress(KernelString.isEmpty(dServer.getSAddress()) ? slaveServer.getServerAddress() : dServer.getSAddress());
         value.setPort(dServer.getPort() == 0 ? slaveServer.getPort() : dServer.getPort());
-        value.setdAddress(KernelString.isEmpty(dServer.getdAddress()) ? slaveServer.getResourceUrl() : dServer.getdAddress());
-        value.setStatus(value.getStatus() == null || value.getStatus() == EServerStatus.normal ? (slaveServer.getSlave().isConnecting() ? EServerStatus.open : EServerStatus.maintain) : value.getStatus());
+        value.setDAddress(KernelString.isEmpty(dServer.getDAddress()) ? slaveServer.getResourceUrl() : dServer.getDAddress());
+        value.setStatus(slaveServer.isClosed() ? EServerStatus.maintain : value.getStatus());
     }
 
     @Override
@@ -250,7 +247,7 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
                         break;
 
                     } else {
-                        setDServer(platformServer.value, platformServer.dServer, entity);
+                        setDServer(platformServer, entity);
                     }
                 }
             }
@@ -302,6 +299,18 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
         return BeanDao.get(BeanDao.getSession(), JPlatformFrom.class, (long) id);
     }
 
+    public static boolean isExcludeIds(String ids, String id) {
+        if (!KernelString.isEmpty(ids)) {
+            if (KernelString.patternInclude(ids, id)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     public boolean isMatchPlatform(JbPlatform platform, boolean review, DPlatformFrom platformFrom) {
         if (!platform.isOpen()) {
             return false;
@@ -311,15 +320,15 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
             return false;
         }
 
-        if (isExcludeIds(platform.getExcludePlatforms(), platform.isAllPlatforms(), platform.getPlatforms(), platformFrom.getPlatform())) {
+        if (isExcludeIds(platform.getPlatforms(), platformFrom.getPlatform())) {
             return false;
         }
 
-        if (isExcludeIds(platform.getExcludeChannels(), platform.isAllChannels(), platform.getChannels(), platformFrom.getChannel())) {
+        if (isExcludeIds(platform.getChannels(), platformFrom.getChannel())) {
             return false;
         }
 
-        if (isExcludeIds(platform.getExcludePackageNames(), platform.isAllPackageNames(), platform.getPackageNames(), platformFrom.getPackageName())) {
+        if (isExcludeIds(platform.getPackageNames(), platformFrom.getPackageName())) {
             return false;
         }
 

@@ -9,8 +9,8 @@ package com.absir.code;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
@@ -38,18 +38,18 @@ public class ProtoJavaMerger extends BeanJavaMerger {
     }
 
     @Override
-    protected boolean isAnnotationConstructorDeclaration(ConstructorDeclaration constructorDeclaration) {
-        return false;
+    protected boolean isBeanField(FieldDeclaration fieldDeclaration, String name) {
+        return true;
     }
 
     @Override
-    protected boolean isAnnotationMethodDeclaration(MethodDeclaration methodDeclaration) {
-        return false;
-    }
-
-    @Override
-    protected String getFieldAnnotationName() {
+    protected String getDefinedAnnotationNames(BodyDeclaration bodyDeclaration) {
         return "Protobuf";
+    }
+
+    @Override
+    protected boolean isDefinedBodyDeclaration(BodyDeclaration bodyDeclaration, String declarationAsString) {
+        return false;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class ProtoJavaMerger extends BeanJavaMerger {
     }
 
     @Override
-    protected boolean isNeedMergeType(TypeDeclaration type) {
+    protected boolean isCouldMergeType(TypeDeclaration type) {
         return false;
     }
 

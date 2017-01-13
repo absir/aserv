@@ -490,6 +490,42 @@ public abstract class KernelString {
         return -1;
     }
 
+    public static int patternOf(String string, String pattern) {
+        if (pattern == null) {
+            return 0;
+        }
+
+        if (string == null) {
+            return -1;
+        }
+
+        int pos = 0;
+        while (true) {
+            pos = string.indexOf(pattern, pos);
+            if (pos < 0) {
+                return -1;
+            }
+
+            pos += pattern.length();
+            if (pos >= string.length() || string.charAt(pos) == ',') {
+                return pos;
+            }
+        }
+    }
+
+    public static boolean patternInclude(String string, String pattern) {
+        int pos = patternOf(string, pattern);
+        if (pos >= 0) {
+            if (pos > 0 && string.charAt(0) == '^') {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     public static String hiddenString(int start, int end, String string) {
         StringBuilder stringBuilder = new StringBuilder();
         int len = string.length();

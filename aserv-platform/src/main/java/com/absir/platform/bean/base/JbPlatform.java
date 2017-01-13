@@ -1,14 +1,16 @@
 package com.absir.platform.bean.base;
 
 import com.absir.aserv.system.bean.base.JbBase;
-import com.absir.aserv.system.bean.value.*;
+import com.absir.aserv.system.bean.value.JaEdit;
+import com.absir.aserv.system.bean.value.JaLang;
+import com.absir.aserv.system.bean.value.JiOpen;
+import com.absir.aserv.system.bean.value.JiOrdinal;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
-import org.hibernate.annotations.Type;
 
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by absir on 2016/12/2.
@@ -28,43 +30,17 @@ public abstract class JbPlatform extends JbBase implements JiOpen, JiOrdinal {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean review;
 
-    @JaName("JPlatform")
     @JaLang("平台")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonSet")
-    private Set<String> platforms;
+    @Column(length = 2048)
+    private String platforms;
 
-    private boolean allPlatforms;
-
-    @JaName("JPlatform")
-    @JaLang("排除平台")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonSet")
-    private Set<String> excludePlatforms;
-
-    @JaName("JChannel")
     @JaLang("渠道")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonSet")
-    private Set<String> channels;
+    @Column(length = 2048)
+    private String channels;
 
-    @JaLang("全渠道")
-    private boolean allChannels;
-
-    @JaName("JChannel")
-    @JaLang("排除渠道")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonSet")
-    private Set<String> excludeChannels;
-
-    @JaName("JPackageName")
-    @JaLang("渠道")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonSet")
-    private Set<String> packageNames;
-
-    @JaLang("全渠道")
-    private boolean allPackageNames;
-
-    @JaName("JPackageName")
-    @JaLang("排除渠道")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonSet")
-    private Set<String> excludePackageNames;
+    @JaLang("包名")
+    @Column(length = 2048)
+    private String packageNames;
 
     @JaLang("最小版本号")
     private double minVersionDouble;
@@ -104,76 +80,28 @@ public abstract class JbPlatform extends JbBase implements JiOpen, JiOrdinal {
         this.review = review;
     }
 
-    public Set<String> getPlatforms() {
+    public String getPlatforms() {
         return platforms;
     }
 
-    public void setPlatforms(Set<String> platforms) {
+    public void setPlatforms(String platforms) {
         this.platforms = platforms;
     }
 
-    public boolean isAllPlatforms() {
-        return allPlatforms;
-    }
-
-    public void setAllPlatforms(boolean allPlatforms) {
-        this.allPlatforms = allPlatforms;
-    }
-
-    public Set<String> getExcludePlatforms() {
-        return excludePlatforms;
-    }
-
-    public void setExcludePlatforms(Set<String> excludePlatforms) {
-        this.excludePlatforms = excludePlatforms;
-    }
-
-    public Set<String> getChannels() {
+    public String getChannels() {
         return channels;
     }
 
-    public void setChannels(Set<String> channels) {
+    public void setChannels(String channels) {
         this.channels = channels;
     }
 
-    public boolean isAllChannels() {
-        return allChannels;
-    }
-
-    public void setAllChannels(boolean allChannels) {
-        this.allChannels = allChannels;
-    }
-
-    public Set<String> getExcludeChannels() {
-        return excludeChannels;
-    }
-
-    public void setExcludeChannels(Set<String> excludeChannels) {
-        this.excludeChannels = excludeChannels;
-    }
-
-    public Set<String> getPackageNames() {
+    public String getPackageNames() {
         return packageNames;
     }
 
-    public void setPackageNames(Set<String> packageNames) {
+    public void setPackageNames(String packageNames) {
         this.packageNames = packageNames;
-    }
-
-    public boolean isAllPackageNames() {
-        return allPackageNames;
-    }
-
-    public void setAllPackageNames(boolean allPackageNames) {
-        this.allPackageNames = allPackageNames;
-    }
-
-    public Set<String> getExcludePackageNames() {
-        return excludePackageNames;
-    }
-
-    public void setExcludePackageNames(Set<String> excludePackageNames) {
-        this.excludePackageNames = excludePackageNames;
     }
 
     public double getMinVersionDouble() {

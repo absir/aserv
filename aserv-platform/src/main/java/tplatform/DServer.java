@@ -10,6 +10,7 @@ import com.absir.aserv.master.bean.JSlaveServer;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.orm.value.JaClasses;
 import com.absir.validator.value.NotEmpty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.thrift.EncodingUtils;
 import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.scheme.IScheme;
@@ -75,7 +76,7 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
 
     protected byte __isset_bitfield = 0;
 
-    private static final _Fields optionals[] = { _Fields.D_ADDRESS, _Fields.WEIGHT };
+    private static final _Fields optionals[] = { _Fields.D_ADDRESS, _Fields.WEIGHT, _Fields.STATUS };
 
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
 
@@ -169,18 +170,6 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
         }
     }
 
-    static {
-        Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-        tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-        tmpMap.put(_Fields.NAME, new org.apache.thrift.meta_data.FieldMetaData("name", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.S_ADDRESS, new org.apache.thrift.meta_data.FieldMetaData("sAddress", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.PORT, new org.apache.thrift.meta_data.FieldMetaData("port", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-        tmpMap.put(_Fields.D_ADDRESS, new org.apache.thrift.meta_data.FieldMetaData("dAddress", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.WEIGHT, new org.apache.thrift.meta_data.FieldMetaData("weight", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-        metaDataMap = Collections.unmodifiableMap(tmpMap);
-        org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DServer.class, metaDataMap);
-    }
-
     public DServer() {
         this.dAddress = "";
     }
@@ -250,6 +239,7 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
     }
 
     /** Returns true if field id is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetId() {
         return EncodingUtils.testBit(__isset_bitfield, __ID_ISSET_ID);
     }
@@ -272,6 +262,7 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
     }
 
     /** Returns true if field name is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetName() {
         return this.name != null;
     }
@@ -296,6 +287,7 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
     }
 
     /** Returns true if field sAddress is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetSAddress() {
         return this.sAddress != null;
     }
@@ -321,6 +313,7 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
     }
 
     /** Returns true if field port is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetPort() {
         return EncodingUtils.testBit(__isset_bitfield, __PORT_ISSET_ID);
     }
@@ -343,6 +336,7 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
     }
 
     /** Returns true if field dAddress is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetDAddress() {
         return this.dAddress != null;
     }
@@ -368,6 +362,7 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
     }
 
     /** Returns true if field weight is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetWeight() {
         return EncodingUtils.testBit(__isset_bitfield, __WEIGHT_ISSET_ID);
     }
@@ -420,6 +415,13 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
                     setWeight((Integer) value);
                 }
                 break;
+            case STATUS:
+                if (value == null) {
+                    unsetStatus();
+                } else {
+                    setStatus((EServerStatus) value);
+                }
+                break;
         }
     }
 
@@ -437,6 +439,8 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
                 return getDAddress();
             case WEIGHT:
                 return getWeight();
+            case STATUS:
+                return getStatus();
         }
         throw new IllegalStateException();
     }
@@ -459,6 +463,8 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
                 return isSetDAddress();
             case WEIGHT:
                 return isSetWeight();
+            case STATUS:
+                return isSetStatus();
         }
         throw new IllegalStateException();
     }
@@ -630,6 +636,16 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
         }
         if (isSetWeight()) {
             lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.weight, other.weight);
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+        }
+        lastComparison = Boolean.valueOf(isSetStatus()).compareTo(other.isSetStatus());
+        if (lastComparison != 0) {
+            return lastComparison;
+        }
+        if (isSetStatus()) {
+            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.status, other.status);
             if (lastComparison != 0) {
                 return lastComparison;
             }
@@ -960,41 +976,6 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
         }
     }
 
-    public String getsAddress() {
-        return sAddress;
-    }
-
-    public void setsAddress(String sAddress) {
-        this.sAddress = sAddress;
-    }
-
-    public String getdAddress() {
-        return dAddress;
-    }
-
-    public void setdAddress(String dAddress) {
-        this.dAddress = dAddress;
-    }
-
-    public byte get__isset_bitfield() {
-        return __isset_bitfield;
-    }
-
-    public void set__isset_bitfield(byte __isset_bitfield) {
-        this.__isset_bitfield = __isset_bitfield;
-    }
-
-    public DServer create() {
-        return new DServer();
-    }
-
-    public DServer clone() {
-        return cloneDepth(0);
-    }
-
-    public void cloneMore(DServer _clone, int _depth) {
-    }
-
     public EServerStatus getStatus() {
         return this.status;
     }
@@ -1009,6 +990,7 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
     }
 
     /** Returns true if field status is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
     public boolean isSetStatus() {
         return this.status != null;
     }
@@ -1019,17 +1001,33 @@ public class DServer implements org.apache.thrift.TBase<DServer, DServer._Fields
         }
     }
 
+    static {
+        Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+        tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+        tmpMap.put(_Fields.NAME, new org.apache.thrift.meta_data.FieldMetaData("name", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.S_ADDRESS, new org.apache.thrift.meta_data.FieldMetaData("sAddress", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.PORT, new org.apache.thrift.meta_data.FieldMetaData("port", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        tmpMap.put(_Fields.D_ADDRESS, new org.apache.thrift.meta_data.FieldMetaData("dAddress", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.WEIGHT, new org.apache.thrift.meta_data.FieldMetaData("weight", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        tmpMap.put(_Fields.STATUS, new org.apache.thrift.meta_data.FieldMetaData("status", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.ENUM, "EServerStatus")));
+        metaDataMap = Collections.unmodifiableMap(tmpMap);
+        org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DServer.class, metaDataMap);
+    }
+
+    public DServer create() {
+        return new DServer();
+    }
+
+    public DServer clone() {
+        return cloneDepth(0);
+    }
+
     public DServer cloneDepth(int _depth) {
         DServer _clone = create();
-        _clone.id = id;
-        _clone.name = name;
-        _clone.sAddress = sAddress;
-        _clone.port = port;
-        _clone.dAddress = dAddress;
-        _clone.weight = weight;
-        _clone.status = status;
-        _clone.__isset_bitfield = __isset_bitfield;
         cloneMore(_clone, _depth);
         return _clone;
+    }
+
+    public void cloneMore(DServer _clone, int _depth) {
     }
 }

@@ -45,10 +45,12 @@ struct DAnnouncement {
     1: string title;
     // 内容
     2: string content;
-    // 附件
-    3: string attach;
+    // 图片
+    3: optional string image;
+    // 图片隐藏
+    4: optional bool imageHide;
     // 打开地址
-    4: optional string openUrl = "";
+    5: optional string openUrl = "";
 }
 
 // 服务
@@ -71,8 +73,8 @@ struct DServer {
 
 // 服务状态
 enum EServerStatus {
-    // 默认
-    normal,
+    // 等待
+    wait,
     // 强开,
     open,
     // 维护

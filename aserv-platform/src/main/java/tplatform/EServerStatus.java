@@ -16,7 +16,7 @@ public enum EServerStatus implements org.apache.thrift.TEnum {
     maintain(2), @JaLang("爆满")
     full(3), @JaLang("审核")
     review(4), @JaLang("测试")
-    test(5);
+    test(5), wait(0);
 
     private final int value;
 
@@ -38,7 +38,7 @@ public enum EServerStatus implements org.apache.thrift.TEnum {
     public static EServerStatus findByValue(int value) {
         switch(value) {
             case 0:
-                return normal;
+                return wait;
             case 1:
                 return open;
             case 2:
