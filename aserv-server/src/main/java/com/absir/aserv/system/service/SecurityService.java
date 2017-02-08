@@ -127,7 +127,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
     }
 
     public JiUserBase findUserBase(JbSession session) {
-        return ME.getUserBase(session.getUserId());
+        return ME.getUserBase(session.getUserId(), session.getRoleLevel());
     }
 
     protected SecurityContext createSecurityContext(String sessionId) {

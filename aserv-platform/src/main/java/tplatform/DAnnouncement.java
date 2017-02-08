@@ -45,7 +45,8 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
     protected String content;
 
     // optional
-    @JaLang("图片隐藏")
+    @JaLang("图片")
+    @JaEdit(types = "file")
     @JaCrud(factory = UploadCrudFactory.class, parameters = { "jpg,png" })
     protected String image;
 

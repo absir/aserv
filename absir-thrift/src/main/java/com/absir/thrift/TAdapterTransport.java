@@ -33,4 +33,5 @@ public class TAdapterTransport<T> extends TIOStreamTransport {
     @Override
     public void flush() throws TTransportException {
     }
+
 }

@@ -68,9 +68,6 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<JUserRole> userRoles;
 
-    /**
-     * @author absir 扩展存储
-     */
     @JaLang("扩展纪录")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonMap")
     private Map<String, String> metaMap;

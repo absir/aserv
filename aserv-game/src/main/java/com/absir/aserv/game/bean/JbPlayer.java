@@ -7,7 +7,6 @@
  */
 package com.absir.aserv.game.bean;
 
-import com.absir.aserv.game.value.ILevelExp;
 import com.absir.aserv.system.bean.base.JbBase;
 import com.absir.aserv.system.bean.base.JiBase;
 import com.absir.aserv.system.bean.value.JaEdit;
@@ -20,7 +19,7 @@ import javax.persistence.Index;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public abstract class JbPlayer extends JbBase implements JiBase<Long>, ILevelExp {
+public abstract class JbPlayer extends JbBase implements JiBase<Long> {
 
     @JaLang("服务区")
     @JsonIgnore

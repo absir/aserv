@@ -26,18 +26,18 @@ public class SecurityServiceImpl extends SecurityService {
         return new JSession();
     }
 
-    @Transaction(readOnly = true)
-    @Override
-    public JiUserBase getUserBase(Long userId) {
-        return loadUser(BeanDao.get(BeanDao.getSession(), JUser.class, userId));
-    }
-
     private JUser loadUser(JUser user) {
         if (user != null) {
             user.getUserRoles().isEmpty();
         }
 
         return user;
+    }
+
+    @Transaction(readOnly = true)
+    @Override
+    public JiUserBase getUserBase(Long userId, int roleLevel) {
+        return loadUser(BeanDao.get(BeanDao.getSession(), JUser.class, userId));
     }
 
     @Transaction(readOnly = true)

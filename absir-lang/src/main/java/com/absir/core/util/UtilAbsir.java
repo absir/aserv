@@ -20,6 +20,10 @@ public class UtilAbsir {
 
     public static final long WEEK_TIME = 7 * DAY_TIME;
 
+    public static final int shortTime(long time) {
+        return (int) (time / 1000);
+    }
+
     public static String getId(Class<?> cls, Serializable id) {
         return cls.getName() + '@' + id;
     }

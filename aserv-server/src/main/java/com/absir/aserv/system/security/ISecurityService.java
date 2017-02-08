@@ -12,7 +12,7 @@ import com.absir.server.in.Input;
 
 public interface ISecurityService {
 
-    public JiUserBase getUserBase(Long userId);
+    public JiUserBase getUserBase(Long userId, int roleLevel);
 
     public JiUserBase getUserBase(String username, int roleLevel);
 

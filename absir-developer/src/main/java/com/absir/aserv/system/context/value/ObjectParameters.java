@@ -20,8 +20,9 @@ public class ObjectParameters {
     public ObjectParameters(String[] parameters) {
         List<Field> fields = HelperAccessor.getFields(getClass());
         int size = fields.size();
-        if (size > parameters.length) {
-            size = parameters.length;
+        int length = parameters == null ? 0 : parameters.length;
+        if (size > length) {
+            size = length;
         }
 
         for (int i = 0; i < size; i++) {

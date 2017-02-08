@@ -524,7 +524,12 @@ public class HelperRandom {
 
         public int randIndex() {
             float[] probabilities = getProbabilities();
-            return probabilities == null ? -1 : HelperRandom.randIndex(probabilities);
+            if (probabilities == null) {
+                return -1;
+            }
+
+            int length = probabilities.length;
+            return length == 0 ? -1 : length == 1 ? 0 : HelperRandom.randIndex(probabilities);
         }
 
         public T randElement() {
@@ -579,7 +584,6 @@ public class HelperRandom {
         public float rare;
 
         public RandomPoolElement() {
-
         }
 
         public RandomPoolElement(T element, float rare) {

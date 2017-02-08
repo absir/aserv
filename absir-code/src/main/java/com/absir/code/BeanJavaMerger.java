@@ -108,8 +108,9 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
             isBean = isBeanType(className, toType);
             if (isBean) {
                 ClassOrInterfaceDeclaration typeDeclaration = (ClassOrInterfaceDeclaration) toType;
-                if (typeDeclaration.getImplements() == null || typeDeclaration.getImplements().isEmpty()) {
-                    List<ClassOrInterfaceType> implementsList = new ArrayList<ClassOrInterfaceType>();
+                if (fromType == toType || typeDeclaration.getImplements() == null || typeDeclaration.getImplements().isEmpty()) {
+                    List<ClassOrInterfaceType> implementsList = typeDeclaration.getImplements();
+                    implementsList = implementsList == null ? new ArrayList<ClassOrInterfaceType>() : new ArrayList<ClassOrInterfaceType>(implementsList);
                     setBeanInterface(implementsList, toCompilationUnit);
                     typeDeclaration.setImplements(implementsList);
                 }
@@ -166,7 +167,8 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                     } else {
                         fieldDeclaration.setAnnotations(mergeAnnotationExpr(fromFieldDeclaration.getAnnotations(), fieldDeclaration.getAnnotations(), bodyDeclaration));
                         if (!enumReadable && isBeanField(fieldDeclaration, name)) {
-                            fieldDeclaration.setModifiers(Modifier.PROTECTED);
+                            //fieldDeclaration.setModifiers(Modifier.PROTECTED);
+                            fromFieldMap.put(name, fromFieldDeclaration);
                             toFieldMap.put(name, fieldDeclaration);
                         }
                     }

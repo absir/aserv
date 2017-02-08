@@ -25,7 +25,7 @@ public class ThriftJavaMerger extends BeanJavaMerger {
 
     @Override
     protected boolean isBeanType(String className, TypeDeclaration toType) {
-        return className != null && !className.endsWith("Service");
+        return className != null && !className.startsWith("R") && !className.endsWith("Service");
     }
 
     @Override

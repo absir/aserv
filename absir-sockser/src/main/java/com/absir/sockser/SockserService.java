@@ -18,6 +18,7 @@ import com.absir.server.socket.InputSocketContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
 
@@ -51,18 +52,23 @@ public class SockserService extends ActiveService<JiServer, SocketSer> {
     @Override
     protected SocketSer createActiveContext(JiServer active) {
         SocketSer ser = new SocketSer(active);
-        InputSocketContext context = InputSocketContext.ME;
         try {
-            ser.start(InputSocketContext.getAcceptTimeout(), InputSocketContext.getIdleTimeout(), active.getPort(),
-                    context.getBacklog(), InetAddress.getByName(active.getIp()), context.getBufferSize(),
-                    context.getReceiveBufferSize(), context.getBufferSize(), context.getBufferResolver(),
-                    context.getSessionResolver());
+            startSer(ser);
 
         } catch (Exception e) {
             LOGGER.error("start server failed " + active.getIp() + " => " + active.getPort(), e);
         }
 
         return ser;
+    }
+
+    protected void startSer(SocketSer ser) throws IOException {
+        JiServer active = ser.getServer();
+        InputSocketContext context = InputSocketContext.ME;
+        ser.start(InputSocketContext.getAcceptTimeout(), InputSocketContext.getIdleTimeout(), active.getPort(),
+                context.getBacklog(), InetAddress.getByName(active.getIp()), context.getBufferSize(),
+                context.getReceiveBufferSize(), context.getBufferSize(), context.getBufferResolver(),
+                context.getSessionResolver());
     }
 
     @Override

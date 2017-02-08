@@ -22,19 +22,17 @@ import com.absir.core.base.IBase;
 import com.absir.property.value.Allow;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
-import com.absir.server.socket.SelSession;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.Session;
 
 import javax.persistence.Embedded;
-import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({"rawtypes"})
 @Inject
-public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> extends ContextBean<Long> {
+public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R> extends ContextBean<Long> {
 
     // 玩家基本数据
     @Embedded
@@ -51,11 +49,11 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
     @Allow
     protected long loginTime;
 
-    // SOCKET连接
+    // 连接接收
     @JaLang(value = "连接", tag = "connect")
     @JsonIgnore
     @JaEdit(editable = JeEditable.LOCKED)
-    protected SelSession selSession;
+    protected R receiver;
 
     // 全部恢复
     @JsonSerialize(contentUsing = IBaseSerializer.class)
@@ -79,15 +77,21 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
     /**
      * 获取玩家当前连接
      */
-    public SocketChannel getSocketChannel() {
-        return selSession.getSocketChannel();
+    public R getReceiver() {
+        return receiver;
     }
 
     /**
      * 设置当前玩家连接和在线状态
      */
-    public void setSocketChannel(SelSession selSession) {
-        this.selSession = selSession;
+    public void setReceiver(R r) {
+        if (r != receiver) {
+            if (r != null && receiver != null) {
+                writeKickMessage();
+            }
+
+            receiver = r;
+        }
     }
 
     @Override
@@ -96,7 +100,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
         loginTime = ContextUtils.getContextTime();
         checkOnlineDay();
 
-        // 初始化自动回复
+        // 初始化最后离线时间
         long lastOffline = playerA.getLastOffline();
         if (lastOffline > loginTime) {
             lastOffline = loginTime;
@@ -112,8 +116,9 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
 
                 } else {
                     long recoveryTime = recoveryTimes[i];
-                    if (recoveryTime > loginTime + recovery.getRecoveryInterval()) {
-                        recoveryTime = loginTime + recovery.getRecoveryInterval();
+                    long maxRecoveryTime = loginTime + recovery.getRecoveryInterval();
+                    if (recoveryTime > maxRecoveryTime) {
+                        recoveryTime = maxRecoveryTime;
                     }
 
                     recovery.recoveryTime = recoveryTime;
@@ -195,10 +200,10 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
             i++;
         }
 
-        long contextTime = ContextUtils.getContextTime();
-        playerA.setLastOffline(contextTime);
-        playerA.setOnlineTime(playerA.getOnlineTime() + contextTime - loginTime);
-        loginTime = contextTime;
+        long lastOffline = ContextUtils.getContextTime();
+        playerA.setLastOffline(lastOffline);
+        playerA.setOnlineTime(playerA.getOnlineTime() + lastOffline - loginTime);
+        loginTime = lastOffline;
         PlayerService.ME.save(this);
     }
 
@@ -211,10 +216,15 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
         session.merge(playerA);
     }
 
+    /*
+     * 关闭连接
+     */
+    public abstract void writeThrow(Throwable e);
+
     /**
      * 写入登录消息
      */
-    public abstract void writeLoginMessage();
+    public abstract void writeKickMessage();
 
     /**
      * 写入封禁消息
@@ -224,7 +234,8 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA> e
     /**
      * 准备更改消息
      */
-    public abstract void prepareModify();
+    public void prepareModify() {
+    }
 
     /**
      * 写入更改消息
