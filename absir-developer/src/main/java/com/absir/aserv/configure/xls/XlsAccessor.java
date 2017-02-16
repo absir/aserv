@@ -72,7 +72,8 @@ public class XlsAccessor {
 
         String name = field.getName();
         JaLang jaLang = field.getAnnotation(JaLang.class);
-        return new XlsCellValue(jaLang == null || "".equals(jaLang.value()) ? field.getName() : jaLang.value() + "(" + name + ")");
+        String headName = jaLang == null || "".equals(jaLang.value()) ? field.getName() : jaLang.value() + "(" + name + ")";
+        return new XlsCellValue('#' + headName);
     }
 
     public void writeXlsCells(List<XlsCell> xlsCells, Object obj, XlsBase xlsBase) {

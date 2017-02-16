@@ -138,16 +138,16 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
     protected void load() {
         Session session = BeanDao.getSession();
         long id = getId();
-        player = (P) session.get(GameComponent.ME.PLAYERA_CLASS, getId());
+        player = (P) session.get(AGameComponent.ME.PLAYERA_CLASS, getId());
         if (player == null) {
             throw new ServerException(ServerStatus.NO_LOGIN);
         }
 
         boolean newPlayerA = false;
-        playerA = (A) BeanDao.get(session, GameComponent.ME.PLAYERA_CLASS, getId());
+        playerA = (A) BeanDao.get(session, AGameComponent.ME.PLAYERA_CLASS, getId());
         if (playerA == null) {
             newPlayerA = true;
-            playerA = (A) GameComponent.ME.createPlayerA();
+            playerA = (A) AGameComponent.ME.createPlayerA();
             playerA.setId(id);
             playerA.setLastOffline(ContextUtils.getContextTime());
         }

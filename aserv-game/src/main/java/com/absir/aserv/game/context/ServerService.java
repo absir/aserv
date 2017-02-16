@@ -21,9 +21,6 @@ public class ServerService {
 
     /**
      * 载入区对象
-     *
-     * @param serverContext
-     * @return
      */
     @Transaction(readOnly = true)
     public void load(JbServerContext serverContext) {
@@ -32,8 +29,6 @@ public class ServerService {
 
     /**
      * 保存区对象
-     *
-     * @param serverContext
      */
     @Transaction
     public void save(JbServerContext serverContext) {

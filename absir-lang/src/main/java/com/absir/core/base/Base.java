@@ -23,4 +23,10 @@ public abstract class Base<ID extends Serializable> implements IBase<ID> {
     public boolean equals(Object obj) {
         return obj != null && obj.getClass() == getClass() && KernelObject.equals(getId(), ((IBase) obj).getId());
     }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + '[' + getId() + ']';
+    }
+
 }

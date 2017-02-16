@@ -7,7 +7,7 @@
  */
 package com.absir.aserv.game.value;
 
-public class LevelExpCxt<T extends ILevelExp> extends LevelCxt<T> {
+public class LevelExpCxt<T extends ILevelExp> extends LevelCxt<T> implements ILevelExpCxt<T> {
 
     public int getExp(T obj) {
         return obj.getExp();
@@ -16,4 +16,5 @@ public class LevelExpCxt<T extends ILevelExp> extends LevelCxt<T> {
     public void setExp(T obj, int exp) {
         obj.setExp(exp);
     }
+
 }

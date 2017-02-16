@@ -14,15 +14,10 @@ import java.util.List;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class GameUtils {
 
-    static final LevelExpCxt LEVEL_EXP_CXT = new LevelExpCxt();
+    public static final LevelExpCxt LEVEL_EXP_CXT = new LevelExpCxt();
 
     /**
      * 等级分布
-     *
-     * @param att
-     * @param maxAtt
-     * @param maxLevel
-     * @return
      */
     public static int[] atts(int att, int maxAtt, int maxLevel) {
         float iAtt = maxAtt / (float) (maxLevel - 1);
@@ -36,28 +31,15 @@ public abstract class GameUtils {
 
     /**
      * 经验升级
-     *
-     * @param exp
-     * @param iLevel
-     * @param iExps
-     * @param maxLevel
-     * @return
      */
-    public static int doExp(int exp, ILevel iLevel, List<? extends IExp> iExps, int maxLevel) {
+    protected static int doExp(int exp, ILevel iLevel, List<? extends IExp> iExps, int maxLevel) {
         return doExp(exp, iLevel, LEVEL_EXP_CXT, iExps, maxLevel);
     }
 
     /**
      * 经验升级
-     *
-     * @param exp
-     * @param obj
-     * @param levelCxt
-     * @param iExps
-     * @param maxLevel
-     * @return
      */
-    public static <T extends ILevel> int doExp(int exp, T obj, LevelCxt<T> levelCxt, List<? extends IExp> iExps, int maxLevel) {
+    protected static <T> int doExp(int exp, T obj, ILevelCxt<T> levelCxt, List<? extends IExp> iExps, int maxLevel) {
         int level = levelCxt.getLevel(obj);
         while (true) {
             IExp iExp = iExps.get(level);
@@ -66,7 +48,11 @@ public abstract class GameUtils {
             }
 
             exp -= iExp.getExp();
-            if (++level >= maxLevel) {
+            if (level < maxLevel) {
+                levelCxt.levelUp(obj, ++level);
+            }
+
+            if (level >= maxLevel) {
                 exp = 0;
                 level = maxLevel;
             }
@@ -82,19 +68,13 @@ public abstract class GameUtils {
 
     /**
      * 更改经验
-     *
-     * @param exp
-     * @param obj
-     * @param levelExpCxt
-     * @param iExps
-     * @param maxLevel
      */
-    public static <T extends ILevelExp> void modifyExp(int exp, T obj, LevelExpCxt<T> levelExpCxt, List<? extends IExp> iExps, int maxLevel) {
+    public static <T> void modifyExp(int exp, T obj, ILevelExpCxt<T> levelExpCxt, List<? extends IExp> iExps, int maxLevel) {
         if (levelExpCxt.getLevel(obj) > maxLevel) {
             return;
         }
 
-        exp += obj.getExp();
+        exp += levelExpCxt.getExp(obj);
         if (exp < 0) {
             exp = 0;
 
@@ -103,10 +83,33 @@ public abstract class GameUtils {
         }
     }
 
+    public static <T extends ILevelExp> void modifyExpNumber(int number, ILevelExp iLevelExp, List<? extends IExp> iExps, int maxLevel) {
+        modifyExpNumber(number, iLevelExp, LEVEL_EXP_CXT, iExps, maxLevel);
+    }
+
+    public static <T extends ILevelExp> void modifyExpNumber(int number, T obj, ILevelExpCxt<T> levelExpCxt, List<? extends IExp> iExps, int maxLevel) {
+        number += levelExpCxt.getExp(obj);
+        if (number < 0) {
+            number = 0;
+
+        } else {
+            int level = levelExpCxt.getLevel(obj);
+            while (level < maxLevel) {
+                if (number < iExps.get(level).getExp()) {
+                    break;
+                }
+
+                levelExpCxt.levelUp(obj, ++level);
+            }
+
+            levelExpCxt.setLevel(obj, level);
+        }
+
+        levelExpCxt.setExp(obj, number);
+    }
+
     /**
      * 反转战斗结果
-     *
-     * @param result
      */
     public static void revert(IResult result) {
         if (result.getResult() == EResult.VICTORY) {
@@ -116,4 +119,5 @@ public abstract class GameUtils {
             result.setResult(EResult.VICTORY);
         }
     }
+
 }

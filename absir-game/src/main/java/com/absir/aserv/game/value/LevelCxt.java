@@ -7,10 +7,14 @@
  */
 package com.absir.aserv.game.value;
 
-public class LevelCxt<T extends ILevel> {
+public class LevelCxt<T extends ILevel> implements ILevelCxt<T> {
 
     public int getLevel(T obj) {
         return obj.getLevel();
+    }
+
+    public void levelUp(T obj, int level) {
+        obj.levelUp(level);
     }
 
     public void setLevel(T obj, int level) {
