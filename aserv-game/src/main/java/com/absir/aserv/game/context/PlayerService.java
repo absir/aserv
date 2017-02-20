@@ -380,7 +380,6 @@ public abstract class PlayerService {
                     mergePlayer(playerId, playerModifier);
 
                 } else {
-                    playerContext.prepareModify();
                     synchronized (playerContext) {
                         playerModifier.doWith(playerContext.getPlayer());
                     }

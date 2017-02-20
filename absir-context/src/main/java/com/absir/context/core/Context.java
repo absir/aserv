@@ -36,7 +36,7 @@ public abstract class Context<ID extends Serializable> extends Base<ID> {
 
     protected abstract void initialize();
 
-    public abstract boolean uninitializeDone();
+    public abstract boolean unInitializeDone();
 
-    public abstract void uninitialize();
+    public abstract void unInitialize();
 }

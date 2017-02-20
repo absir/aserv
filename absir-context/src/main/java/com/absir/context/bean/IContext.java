@@ -11,7 +11,7 @@ public interface IContext extends IStep {
 
     public void retainAt(long contextTime);
 
-    public boolean uninitializeDone();
+    public boolean unInitializeDone();
 
-    public void uninitialize();
+    public void unInitialize();
 }

@@ -128,16 +128,16 @@ public class SecurityContext extends ContextBean<String> {
     protected void initialize() {
     }
 
-    public boolean uninitializeDone() {
+    public boolean unInitializeDone() {
         return session == null || !changed || maxExpirationTime <= ContextUtils.getContextTime();
     }
 
     @Override
-    public void uninitialize() {
+    public void unInitialize() {
         SecurityService.ME.updateSession(user, session);
     }
 
-    public void destorySession() {
+    public void destroySession() {
         setExpiration();
         if (session != null) {
             SecurityService.ME.deleteSession(session);

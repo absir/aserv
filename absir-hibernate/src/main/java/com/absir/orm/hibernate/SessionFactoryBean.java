@@ -99,7 +99,7 @@ public class SessionFactoryBean implements IBeanFactoryStopping {
             if (method == null) {
                 method = KernelReflect.declaredMethod(connectionProvider.getClass(), "stop");
                 if (method == null) {
-                    method = KernelReflect.declaredMethod(connectionProvider.getClass(), "destory");
+                    method = KernelReflect.declaredMethod(connectionProvider.getClass(), "destroy");
                 }
             }
 

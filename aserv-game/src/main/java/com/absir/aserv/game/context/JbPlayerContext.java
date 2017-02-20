@@ -177,17 +177,26 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         playerA.setOnlineDay(onlineDay);
     }
 
+    protected boolean stepDirty = false;
+
     @Override
     public boolean stepDone(long contextTime) {
         for (Recovery recovery : recoveries) {
-            recovery.step(contextTime);
+            if (recovery.step(contextTime)) {
+                stepDirty = true;
+            }
+        }
+
+        if (stepDirty) {
+            stepDirty = false;
+            writeModifyMessage();
         }
 
         return super.stepDone(contextTime);
     }
 
     @Override
-    public void uninitialize() {
+    public void unInitialize() {
         long[] recoveryTimes = playerA.getRecoveryTimes();
         if (recoveryTimes == null || recoveryTimes.length != recoveries.size()) {
             recoveryTimes = new long[recoveries.size()];
@@ -230,12 +239,6 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
      * 写入封禁消息
      */
     public abstract void writeBanMessage();
-
-    /**
-     * 准备更改消息
-     */
-    public void prepareModify() {
-    }
 
     /**
      * 写入更改消息
@@ -301,14 +304,14 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         /**
          * 恢复步进
          */
-        public void step(long contextTime) {
+        public boolean step(long contextTime) {
             if (recoveryTime <= 0) {
                 // 启动恢复
                 if (getRecoveryNumber() < getMaxRecoveryNumber()) {
                     start();
                 }
 
-                return;
+                return false;
             }
 
             if (recoveryTime <= contextTime) {
@@ -341,8 +344,12 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
                             }
                         }
                     }
+
+                    return true;
                 }
             }
+
+            return false;
         }
     }
 

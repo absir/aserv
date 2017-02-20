@@ -78,14 +78,14 @@ public class ContextFactory {
                 try {
                     if (contextBase.isExpiration() || contextBase.stepDone(contextTime)) {
                         contextBaseIterator.remove();
-                        if (!contextBase.uninitializeDone()) {
+                        if (!contextBase.unInitializeDone()) {
                             threadPoolExecutor.execute(new RunnableGuarantee() {
 
                                 @Override
                                 public void run() {
                                     for (int i = 0; i < unInitCount; i++) {
                                         try {
-                                            contextBase.uninitialize();
+                                            contextBase.unInitialize();
                                             break;
 
                                         } catch (Throwable e) {
@@ -115,7 +115,7 @@ public class ContextFactory {
                         contextBeanIterator.remove();
                         contextBean.setExpiration();
                         final Map<Serializable, Context> contextMap = classMapIdMapContext.get(contextBean.getContextClass());
-                        if (contextBean.uninitializeDone()) {
+                        if (contextBean.unInitializeDone()) {
                             if (contextMap != null) {
                                 synchronized (contextMap) {
                                     if (contextBean.isExpiration()) {
@@ -134,7 +134,7 @@ public class ContextFactory {
                                 public void run() {
                                     for (int i = 0; i < unInitCount; i++) {
                                         try {
-                                            contextBean.uninitialize();
+                                            contextBean.unInitialize();
                                             if (contextMap != null) {
                                                 synchronized (contextMap) {
                                                     if (contextBean.isExpiration()) {
@@ -369,12 +369,12 @@ public class ContextFactory {
             Map<Serializable, Context> contextMap = classMapIdMapContext.get(cls);
             if (contextMap != null) {
                 synchronized (concurrent ? UtilAbsir.getToken(cls, context.getId(), contextMap) : contextMap) {
-                    context.uninitialize();
+                    context.unInitialize();
                     contextMap.remove(context.getId());
                 }
 
             } else {
-                context.uninitialize();
+                context.unInitialize();
             }
         }
     }
@@ -396,7 +396,7 @@ public class ContextFactory {
         Queue<ContextBase> contextBases = this.contextBases;
         this.contextBases = new ConcurrentLinkedQueue<ContextBase>();
         for (final ContextBase contextBase : contextBases) {
-            if (contextBase.uninitializeDone()) {
+            if (contextBase.unInitializeDone()) {
                 continue;
             }
 
@@ -408,7 +408,7 @@ public class ContextFactory {
                     try {
                         for (int i = 0; i < unInitCount; i++) {
                             try {
-                                contextBase.uninitialize();
+                                contextBase.unInitialize();
                                 break;
 
                             } catch (Exception e) {
@@ -428,7 +428,7 @@ public class ContextFactory {
         for (Entry<Class<?>, Map<Serializable, Context>> entry : classMapIdMapContext.entrySet()) {
             for (Entry<Serializable, Context> contextEntry : entry.getValue().entrySet()) {
                 final Context context = contextEntry.getValue();
-                if (context.uninitializeDone()) {
+                if (context.unInitializeDone()) {
                     continue;
                 }
 
@@ -440,7 +440,7 @@ public class ContextFactory {
                         try {
                             for (int i = 0; i < unInitCount; i++) {
                                 try {
-                                    context.uninitialize();
+                                    context.unInitialize();
                                     break;
 
                                 } catch (Exception e) {

@@ -29,8 +29,8 @@ public class ContextWrapper extends ContextBase {
     }
 
     @Override
-    public void uninitialize() {
-        context.uninitialize();
+    public void unInitialize() {
+        context.unInitialize();
     }
 
     @Override

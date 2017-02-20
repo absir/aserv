@@ -114,8 +114,8 @@ public class ContextDaemon implements Runnable {
             Iterator<Map.Entry<Serializable, Context>> iterator = map.entrySet().iterator();
             while (iterator.hasNext()) {
                 Context context = iterator.next().getValue();
-                if (context != null && context.uninitializeDone()) {
-                    context.uninitialize();
+                if (context != null && context.unInitializeDone()) {
+                    context.unInitialize();
                 }
 
                 iterator.remove();

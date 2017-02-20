@@ -56,11 +56,11 @@ public abstract class ContextBean<ID extends Serializable> extends Context<ID> i
     }
 
     @Override
-    public boolean uninitializeDone() {
+    public boolean unInitializeDone() {
         return false;
     }
 
     @Override
-    public void uninitialize() {
+    public void unInitialize() {
     }
 }

@@ -9,6 +9,7 @@ struct TPlatformFrom {
     4: optional double versionDouble;
     // 来源(国际化|别版|测试等)
     5: optional string fromStr;
+    6: list<string> strList;
 }
 
 service RpcService {

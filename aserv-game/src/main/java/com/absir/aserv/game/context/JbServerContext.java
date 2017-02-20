@@ -31,7 +31,7 @@ public abstract class JbServerContext<S extends JiServer> extends ContextBean<Lo
     protected abstract void load();
 
     @Override
-    public void uninitialize() {
+    public void unInitialize() {
         ServerService.ME.save(this);
     }
 

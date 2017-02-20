@@ -18,6 +18,7 @@ import tbase_test.RpcService;
 import tbase_test.TPlatformFrom;
 
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -123,6 +124,10 @@ public class ThriftServer_Test extends ThriftService {
         RpcService.Client client = new RpcService.Client(socketAdapterProtocol);
         TPlatformFrom platformFrom = new TPlatformFrom();
         //platformFrom.setChannel("dsdsadsadasd");
+        platformFrom.setStrList(new ArrayList<String>());
+        platformFrom.getStrList().add("ccc");
+        //platformFrom.getStrList().add(null);
+        platformFrom.getStrList().add("ddd");
 
         System.out.println(Arrays.toString(ThriftBaseSerializer.serializerBytes(platformFrom)));
 

@@ -40,11 +40,11 @@ public class ContextBase implements IContext {
     }
 
     @Override
-    public boolean uninitializeDone() {
+    public boolean unInitializeDone() {
         return true;
     }
 
     @Override
-    public void uninitialize() {
+    public void unInitialize() {
     }
 }

@@ -87,7 +87,7 @@ public abstract class GameUtils {
         modifyExpNumber(number, iLevelExp, LEVEL_EXP_CXT, iExps, maxLevel);
     }
 
-    public static <T extends ILevelExp> void modifyExpNumber(int number, T obj, ILevelExpCxt<T> levelExpCxt, List<? extends IExp> iExps, int maxLevel) {
+    public static <T> void modifyExpNumber(int number, T obj, ILevelExpCxt<T> levelExpCxt, List<? extends IExp> iExps, int maxLevel) {
         number += levelExpCxt.getExp(obj);
         if (number < 0) {
             number = 0;

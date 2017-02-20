@@ -413,7 +413,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
 
         } else {
             // 销毁之前的登录
-            securityContext.destorySession();
+            securityContext.destroySession();
             if (input.isInFacade()) {
                 SecurityManager securityManager = getSecurityManager(name);
                 input.getFacade().removeSession(securityManager.getSessionKey());
@@ -535,6 +535,6 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
 
     @Override
     public void afterInvoker(SecurityContext obj) {
-        obj.uninitialize();
+        obj.unInitialize();
     }
 }

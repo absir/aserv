@@ -74,7 +74,7 @@ public class EntityOnPut extends RouteEntity {
         }
 
         @Override
-        public void uninitialize() {
+        public void unInitialize() {
             if (isExpiration()) {
                 idMapBeanObject.remove(id);
 
