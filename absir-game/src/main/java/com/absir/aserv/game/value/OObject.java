@@ -157,23 +157,16 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 是否可以攻击
-     *
-     * @return
      */
     public abstract boolean atk();
 
     /**
      * 寻找目标
-     *
-     * @return
      */
     protected abstract T fetchTarget();
 
     /**
      * 战斗目标结果
-     *
-     * @param result
-     * @param invincible
      */
     public final void targetResult(IResult result, boolean invincible) {
         if (target != null) {
@@ -193,21 +186,11 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 自动攻击
-     *
-     * @param target
-     * @param time
-     * @param result
-     * @return
      */
     protected abstract void atk(T target, long time, IResult result);
 
     /**
      * 攻击目标
-     *
-     * @param target
-     * @param atk
-     * @param damageFrom
-     * @param result
      */
     public final int atk(T target, int atk, Object damageFrom, IResult result) {
         // 攻击BUFF
@@ -335,16 +318,12 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 角色死亡
-     *
-     * @param result
      */
     public void die(IResult result) {
     }
 
     /**
      * 角色是否死亡
-     *
-     * @return
      */
     public boolean died() {
         return hp <= 0;
@@ -352,11 +331,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 治疗目标
-     *
-     * @param target
-     * @param hp
-     * @param hpFrom
-     * @param result
      */
     public final int treat(T target, int hp, Object hpFrom, IResult result) {
         // 治疗BUFF
@@ -450,9 +424,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 添加BUFF
-     *
-     * @param buff
-     * @param result
      */
     public final void addBuff(OBuff buff, IResult result) {
         int id = buffs.size();
@@ -492,9 +463,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 取消BUFF
-     *
-     * @param buffId
-     * @param result
      */
     protected void clearBuff(long buffId, IResult result) {
         if (buffs != null) {
@@ -512,8 +480,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 清除全部BUFFS
-     *
-     * @param result
      */
     public void clearAllBuffs(IResult result) {
         if (buffs != null) {
@@ -527,9 +493,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * AttBuff结构
-     *
-     * @param name
-     * @return
      */
     protected float[] getAttBuffs(String name) {
         if (attBuffs == null) {
@@ -558,10 +521,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 计算AttBuff
-     *
-     * @param base
-     * @param buffs
-     * @return
      */
     protected float getAttBuff(float base, float[] buffs) {
         return base * buffs[1] + buffs[0];
@@ -569,11 +528,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 比例增减
-     *
-     * @param name
-     * @param base
-     * @param buff
-     * @return
      */
     public float getBuffAtt(String name, float base, float buff) {
         float[] buffs = getAttBuffs(name);
@@ -583,11 +537,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 比例提升
-     *
-     * @param name
-     * @param base
-     * @param buffP
-     * @return
      */
     public float getBuffAttP(String name, float base, float buffP) {
         float[] buffs = getAttBuffs(name);
@@ -597,11 +546,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 比例恢复
-     *
-     * @param name
-     * @param base
-     * @param buffP
-     * @return
      */
     public float getBuffAttPR(String name, float base, float buffP) {
         float[] buffs = getAttBuffs(name);
@@ -611,10 +555,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 添加战报
-     *
-     * @param targets
-     * @param effect
-     * @param parameters
      */
     public abstract void addReportDetail(T target, String effect, Object parameters);
 }

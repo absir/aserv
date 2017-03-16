@@ -19,6 +19,7 @@ import com.absir.bean.inject.value.Inject;
 import com.absir.context.core.ContextBean;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.base.IBase;
+import com.absir.core.kernel.KernelObject;
 import com.absir.property.value.Allow;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
@@ -33,6 +34,9 @@ import java.util.List;
 @SuppressWarnings({"rawtypes"})
 @Inject
 public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R> extends ContextBean<Long> {
+
+    // 验证登陆(加快断线重连验证)
+    protected String sessionId;
 
     // 玩家基本数据
     @Embedded
@@ -60,11 +64,27 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
     @JaEdit(editable = JeEditable.DISABLE)
     protected transient List<Recovery> recoveries = new ArrayList<Recovery>();
 
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public boolean validateSessionId(String sessionId) {
+        return KernelObject.equals(this.sessionId, sessionId);
+    }
+
     /**
      * 获取玩家基本信息
      */
     public P getPlayer() {
         return player;
+    }
+
+    public A getPlayerA() {
+        return playerA;
     }
 
     /**
@@ -84,7 +104,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
     /**
      * 设置当前玩家连接和在线状态
      */
-    public void setReceiver(R r) {
+    public synchronized void setReceiver(R r) {
         if (r != receiver) {
             if (r != null && receiver != null) {
                 writeKickMessage();
@@ -177,22 +197,125 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         playerA.setOnlineDay(onlineDay);
     }
 
-    protected boolean stepDirty = false;
+    private boolean asyncRunning;
+
+    private List<Runnable> asyncRunnables;
+
+    /**
+     * 异步执行
+     */
+    public synchronized void async(final Runnable asyncRunnable) {
+        if (asyncRunning) {
+            if (asyncRunnables == null) {
+                asyncRunnables = new ArrayList<Runnable>();
+            }
+
+            asyncRunnables.add(asyncRunnable);
+            return;
+        }
+
+        asyncRunning = true;
+        try {
+            ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (asyncRunnable != null) {
+                            asyncRunnable.run();
+                        }
+
+                        R _receiver = null;
+                        while (true) {
+                            List<Runnable> runnables = null;
+                            synchronized (JbPlayerContext.this) {
+                                runnables = asyncRunnables;
+                                asyncRunnables = null;
+                                _receiver = receiver;
+                            }
+
+                            if (runnables == null) {
+                                synchronized (this) {
+                                    asyncRunning = false;
+                                }
+
+                                break;
+                            }
+
+                            for (Runnable runnable : runnables) {
+                                if (_receiver != receiver) {
+                                    break;
+                                }
+
+                                runnable.run();
+                            }
+                        }
+
+                    } finally {
+                        synchronized (JbPlayerContext.this) {
+                            if (asyncRunning) {
+                                asyncRunning = false;
+                                if (asyncRunnables != null) {
+                                    async(null);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+        } catch (Throwable e) {
+            asyncClear();
+            asyncRunning = false;
+        }
+    }
+
+    protected synchronized void asyncClear() {
+        asyncRunnables = null;
+    }
+
+    protected boolean modifyDirty;
+
+    protected static final long DIRTY_TIME = 1000;
+
+    protected long mailDirty;
+
+    public void setMailDirty() {
+        mailDirty = ContextUtils.getContextTime() + DIRTY_TIME;
+    }
 
     @Override
     public boolean stepDone(long contextTime) {
+        if (super.stepDone(contextTime)) {
+            return true;
+        }
+
         for (Recovery recovery : recoveries) {
             if (recovery.step(contextTime)) {
-                stepDirty = true;
+                modifyDirty = true;
             }
         }
 
-        if (stepDirty) {
-            stepDirty = false;
-            writeModifyMessage();
+        if (modifyDirty) {
+            modifyDirty = false;
+            async(new Runnable() {
+                @Override
+                public void run() {
+                    writeModifyMessage();
+                }
+            });
         }
 
-        return super.stepDone(contextTime);
+        if (mailDirty != 0 && mailDirty < contextTime) {
+            mailDirty = 0;
+            async(new Runnable() {
+                @Override
+                public void run() {
+                    writeMailMessage();
+                }
+            });
+        }
+
+        return false;
     }
 
     @Override
@@ -244,6 +367,11 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
      * 写入更改消息
      */
     public abstract void writeModifyMessage();
+
+    /**
+     * 写入邮件消息
+     */
+    protected abstract void writeMailMessage();
 
     /**
      * 恢复

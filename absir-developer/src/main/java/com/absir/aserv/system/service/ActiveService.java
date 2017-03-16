@@ -36,6 +36,10 @@ public abstract class ActiveService<T extends JiActive, K> extends ContextServic
 
     protected DActiverMap<T, K> activerMap;
 
+    public Map<Serializable, K> getOnlineActiveContexts() {
+        return activerMap.getOnlineActiveContexts();
+    }
+
     /**
      * 查找关联实体
      *

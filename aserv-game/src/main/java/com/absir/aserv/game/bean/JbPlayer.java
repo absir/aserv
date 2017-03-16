@@ -42,9 +42,9 @@ public abstract class JbPlayer extends JbBase implements JiBase<Long> {
     @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
     private String platform;
 
-    @JaLang("渠道")
+    @JaLang("用户名")
     @JaEdit(groups = {JaEdit.GROUP_LIST})
-    private String channel;
+    private String username;
 
     @JaLang("创建时间")
     @JaEdit(types = "dateTime")
@@ -84,6 +84,14 @@ public abstract class JbPlayer extends JbBase implements JiBase<Long> {
 
     public void setPlatform(String platform) {
         this.platform = platform;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public long getCreateTime() {

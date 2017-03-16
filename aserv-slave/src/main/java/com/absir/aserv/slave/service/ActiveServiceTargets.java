@@ -7,7 +7,7 @@
  */
 package com.absir.aserv.slave.service;
 
-import com.absir.aserv.slave.bean.base.JbBeanLTargets;
+import com.absir.aserv.slave.bean.base.JbBeanServers;
 import com.absir.aserv.slave.domain.OTargetsActivity;
 import com.absir.aserv.system.bean.value.JiActive;
 import com.absir.aserv.system.service.ActiveService.ActiveServiceData;
@@ -17,8 +17,8 @@ public abstract class ActiveServiceTargets<T extends JiActive, K> extends Active
 
     private OTargetsActivity<ObjectEntry<T, K>> targetsActivity = new OTargetsActivity<ObjectEntry<T, K>>();
 
-    public JbBeanLTargets getBeanLTargets(T active) {
-        return (JbBeanLTargets) active;
+    public JbBeanServers getBeanLTargets(T active) {
+        return (JbBeanServers) active;
     }
 
     public ObjectEntry<T, K> getSingleEntry(long serverId) {

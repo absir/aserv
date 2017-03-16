@@ -25,8 +25,8 @@ public abstract class ContextBean<ID extends Serializable> extends Context<ID> i
         expirationTime = -1;
     }
 
-    public void setIdleRemove(boolean flag) {
-        retainAt = flag ? expirationTime : -1;
+    public void setIdleCheck(boolean check) {
+        retainAt = check ? expirationTime : -1;
     }
 
     protected long getLifeTime() {

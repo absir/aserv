@@ -7,7 +7,7 @@
  */
 package com.absir.aserv.slave.domain;
 
-import com.absir.aserv.slave.bean.base.JbBeanLTargets;
+import com.absir.aserv.slave.bean.base.JbBeanServers;
 import com.absir.aserv.system.helper.HelperArray;
 
 import java.util.HashMap;
@@ -34,27 +34,27 @@ public class OTargetsActivity<T> {
         singleActivityMap.clear();
     }
 
-    public JbBeanLTargets getTargets(T activity) {
+    public JbBeanServers getTargets(T activity) {
         if (activity == null) {
             return null;
         }
 
-        if (activity instanceof JbBeanLTargets) {
-            return (JbBeanLTargets) activity;
+        if (activity instanceof JbBeanServers) {
+            return (JbBeanServers) activity;
         }
 
         if (activity instanceof Entry) {
             Object key = ((Entry<?, ?>) activity).getKey();
-            if (key instanceof JbBeanLTargets) {
-                return (JbBeanLTargets) key;
+            if (key instanceof JbBeanServers) {
+                return (JbBeanServers) key;
             }
         }
 
         return null;
     }
 
-    public boolean canOverwrite(T oldActivity, JbBeanLTargets targets) {
-        JbBeanLTargets oldTargets = getTargets(oldActivity);
+    public boolean canOverwrite(T oldActivity, JbBeanServers targets) {
+        JbBeanServers oldTargets = getTargets(oldActivity);
         return oldActivity == null
                 || oldTargets.getTargets() == null
                 || oldTargets.getTargets().length == 0
@@ -62,7 +62,7 @@ public class OTargetsActivity<T> {
                 .getTargets().length);
     }
 
-    public void addActivity(JbBeanLTargets targets, T activity) {
+    public void addActivity(JbBeanServers targets, T activity) {
         if (targets == null || targets.getTargets() == null || targets.getTargets().length == 0) {
             singleActivity = activity;
 

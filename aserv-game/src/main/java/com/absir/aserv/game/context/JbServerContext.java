@@ -9,15 +9,14 @@ package com.absir.aserv.game.context;
 
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.context.core.ContextBean;
-import com.absir.sockser.JiServer;
 
-public abstract class JbServerContext<S extends JiServer> extends ContextBean<Long> {
+public abstract class JbServerContext<SA> extends ContextBean<Long> {
 
     @JaLang("服务区")
-    private S server;
+    protected SA serverA;
 
-    public S getServer() {
-        return server;
+    public SA getServerA() {
+        return serverA;
     }
 
     @Override
@@ -39,5 +38,10 @@ public abstract class JbServerContext<S extends JiServer> extends ContextBean<Lo
      * 保存数据
      */
     protected abstract void save();
+
+    @Override
+    public boolean stepDone(long contextTime) {
+        return retainAt >= 0 && super.stepDone(contextTime);
+    }
 
 }

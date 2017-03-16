@@ -13,7 +13,7 @@ import com.absir.aserv.system.bean.value.JaLang;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public class JbBeanLTargetsOpen extends JbBeanLTargets {
+public class JbBeanServersOpen extends JbBeanServers {
 
     @JaLang("开启间隔天数")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -38,4 +38,5 @@ public class JbBeanLTargetsOpen extends JbBeanLTargets {
     public void setOpenLifeDay(int openLifeDay) {
         this.openLifeDay = openLifeDay;
     }
+
 }

@@ -101,9 +101,12 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
     protected void startServer() throws IOException {
         if (thriftPort > 0) {
             server = new SocketServer();
-            InetAddress inetAddress = InetAddress.getByName(thriftHost);
-            server.start(thriftAcceptTimeout, thriftIdleTimeout, thriftPort, backlog, inetAddress, bufferSize, receiveBufferSize, sendBufferSize, getBufferResolver(), this);
+            startThriftServer(thriftPort, InetAddress.getByName(thriftHost), server);
         }
+    }
+
+    public void startThriftServer(int port, InetAddress inetAddress, SocketServer server) throws IOException {
+        server.start(thriftAcceptTimeout, thriftIdleTimeout, port, backlog, inetAddress, bufferSize, receiveBufferSize, sendBufferSize, getBufferResolver(), this);
     }
 
     @Override

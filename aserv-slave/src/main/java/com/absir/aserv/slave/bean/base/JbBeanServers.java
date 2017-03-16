@@ -16,32 +16,31 @@ import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public class JbBeanLTargets extends JbBeanL {
+public class JbBeanServers extends JbBeanL {
 
-    @JaLang("目标")
+    @JaLang("目标服务")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     @Column(length = 10240)
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
-    private long[] targets;
+    private long[] serverIds;
 
-    @JaLang("描述")
+    @JaLang("备注")
     @JaEdit(groups = JaEdit.GROUP_LIST)
-    private String description;
+    private String mark;
 
-    public long[] getTargets() {
-        return targets;
+    public long[] getServerIds() {
+        return serverIds;
     }
 
-    public void setTargets(long[] targets) {
-        this.targets = targets;
+    public void setServerIds(long[] serverIds) {
+        this.serverIds = serverIds;
     }
 
-    public String getDescription() {
-        return description;
+    public String getMark() {
+        return mark;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setMark(String mark) {
+        this.mark = mark;
     }
-
 }
