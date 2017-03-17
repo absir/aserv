@@ -12,8 +12,8 @@ import com.absir.aserv.master.bean.JSlave;
 import com.absir.aserv.master.bean.JSlaveServer;
 import com.absir.aserv.master.bean.JSlaveSynch;
 import com.absir.aserv.master.bean.base.ISlaveAutoSynch;
-import com.absir.aserv.master.bean.base.JbBeanServers;
-import com.absir.aserv.master.bean.base.JbBeanSlaves;
+import com.absir.aserv.master.bean.base.JbServerTargets;
+import com.absir.aserv.master.bean.base.JbSlaveTargets;
 import com.absir.aserv.system.bean.JEmbedSS;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
@@ -61,7 +61,8 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
     @Value("master.sync.timeout")
     private int syncTimeout = 60000;
 
-    public static <T extends JbBeanServers> void addSyncEntityServers(Class<T> entityClass) {
+
+    public static <T extends JbServerTargets> void addSyncEntityServers(Class<T> entityClass) {
         L2CacheCollectionService.ME.addEntityMerges(entityClass, new IEntityMerge<T>() {
 
             @Override
@@ -70,14 +71,15 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
                 if (!syncShared && mergeType == MergeType.UPDATE && !entity.isAllServerIds()) {
                     // syncShared分库状态，更新目标，数据同步
                     long[] lastServerIds = entity.getLastServerIds();
-                    if (entity.getLastAllServerIds() == 1 || lastServerIds == null || lastServerIds.length == 0) {
+                    String[] lastGroups = entity.getLastGroups();
+                    if ((entity.getLastAllServerIds() == 1 && (lastGroups == null || lastGroups.length == 0)) || lastServerIds == null || lastServerIds.length == 0) {
                         // 从全部选择状态更新到不全部选择
-                        MasterSyncService.ME.addSlaveSynchServerIds(lastServerIds, true, entityName + "@" + entity.getId(),
+                        MasterSyncService.ME.addSlaveSynchServerIds(lastServerIds, true, lastGroups, entityName + "@" + entity.getId(),
                                 "api/slave/option/" + entityName + "/2", entity, false);
 
                     } else {
                         // 比对选择状态变化
-                        long[] serverIds = entity.getServerIds();
+                        long[] serverIds = entity.getLastAllServerIds() == 1 ? ME.getServerIdsFromGroups(lastGroups) : entity.getServerIds();
                         if (serverIds != null && serverIds.length != 0) {
                             List<Long> deleteIds = new ArrayList<Long>();
                             for (long serverId : lastServerIds) {
@@ -93,20 +95,20 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
                             }
                         }
 
-                        // 从全选选择状态更新不全部选择
-                        MasterSyncService.ME.addSlaveSynchServerIds(lastServerIds, false, entityName + "@" + entity.getId(),
+                        // 设置取消选择状态
+                        MasterSyncService.ME.addSlaveSynchServerIds(lastServerIds, false, null, entityName + "@" + entity.getId(),
                                 "api/slave/option/" + entityName + "/2", entity, false);
                     }
                 }
 
-                MasterSyncService.ME.addSlaveSynchServerIds(entity.getServerIds(), entity.isAllServerIds(), entityName + "@" + entity.getId(),
+                MasterSyncService.ME.addSlaveSynchServerIds(entity.getServerIds(), entity.isAllServerIds(), entity.getGroups(), entityName + "@" + entity.getId(),
                         "api/slave/option/" + entityName + "/" + (mergeType == MergeType.DELETE ? 2 : 1), entity, false);
             }
 
         });
     }
 
-    public static <T extends JbBeanSlaves> void addSyncEntitySlaves(Class<T> entityClass) {
+    public static <T extends JbSlaveTargets> void addSyncEntitySlaves(Class<T> entityClass) {
         L2CacheCollectionService.ME.addEntityMerges(entityClass, new IEntityMerge<T>() {
 
             @Override
@@ -154,6 +156,15 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
     @DataQuery("SELECT o.slave.id FROM JSlaveServer o WHERE o.id IN (:p0)")
     public abstract String[] getSlaveIds(long[] serverIds);
 
+    @DataQuery("SELECT o.id FROM JSlaveServer o WHERE o.group IN (:p0)")
+    public abstract long[] getServerIdsFromGroups(String[] groups);
+
+    @DataQuery("SELECT o.slave.id FROM JSlaveServer o WHERE o.group IN (:p0)")
+    public abstract String[] getSlaveIdsFromGroups(String[] groups);
+
+    @DataQuery("SELECT o FROM JSlaveServer o WHERE o.group IN (:p0)")
+    public abstract JSlaveServer[] getSlaveServersFromGroups(String[] groups);
+
     @Transaction
     @Inject
     public void initService() {
@@ -165,9 +176,16 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
      * 添加同步
      */
     @Transaction
-    public void addSlaveSynchServerIds(long[] serverIds, boolean all, String mid, String uri, Object postData, boolean varints) {
+    public void addSlaveSynchServerIds(long[] serverIds, boolean all, String[] groups, String mid, String uri, Object postData, boolean varints) {
         if (all) {
-            addSlaveSynch("*", mid, uri, postData, varints);
+            if (groups == null || groups.length == 0) {
+                addSlaveSynch("*", mid, uri, postData, varints);
+
+            } else {
+                for (String slaveId : ME.getSlaveIdsFromGroups(groups)) {
+                    addSlaveSynch(slaveId, mid, uri, postData, varints);
+                }
+            }
 
         } else {
             if (serverIds != null && serverIds.length > 0) {

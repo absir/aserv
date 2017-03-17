@@ -48,6 +48,14 @@ public interface BeanService {
         }
     };
 
+    public static final Comparator<JiOrdinal> COMPARATOR_DESC = new Comparator<JiOrdinal>() {
+
+        @Override
+        public int compare(JiOrdinal lhs, JiOrdinal rhs) {
+            return rhs.getOrdinal() - lhs.getOrdinal();
+        }
+    };
+
     @Transaction(readOnly = true)
     public <T> T get(Class<T> entityClass, Serializable id);
 

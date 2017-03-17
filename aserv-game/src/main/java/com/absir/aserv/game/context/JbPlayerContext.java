@@ -35,7 +35,7 @@ import java.util.List;
 @Inject
 public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R> extends ContextBean<Long> {
 
-    // 验证登陆(加快断线重连验证)
+    // 验证登录(加快断线重连验证)
     protected String sessionId;
 
     // 玩家基本数据
@@ -277,10 +277,10 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
 
     protected static final long DIRTY_TIME = 1000;
 
-    protected long mailDirty;
+    protected long writeMailTime;
 
-    public void setMailDirty() {
-        mailDirty = ContextUtils.getContextTime() + DIRTY_TIME;
+    protected void mailDirtyAt() {
+        writeMailTime = ContextUtils.getContextTime() + DIRTY_TIME;
     }
 
     @Override
@@ -305,8 +305,8 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
             });
         }
 
-        if (mailDirty != 0 && mailDirty < contextTime) {
-            mailDirty = 0;
+        if (writeMailTime != 0 && writeMailTime < contextTime) {
+            writeMailTime = 0;
             async(new Runnable() {
                 @Override
                 public void run() {

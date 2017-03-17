@@ -10,7 +10,7 @@ package com.absir.aserv.system.bean.value;
 public enum JeRoleLevel {
 
     /**
-     * 登陆用户
+     * 登录用户
      */
     ROLE_USER,
 

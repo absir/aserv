@@ -53,7 +53,7 @@ public class HelperClass {
         });
 
         identity = KernelString.implode(fields, ',');
-        identity = cls.getSimpleName() + ":" + HelperEncrypt.encryptionMD5(identity);
+        identity = '#' + cls.getSimpleName() + ":" + HelperEncrypt.encryptionMD5(identity);
         if (cache) {
             clsMapIdentity.put(cls, identity);
         }

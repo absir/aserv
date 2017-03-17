@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 @MappedSuperclass
-public class JbBeanSlaves extends JbBean {
+public class JbSlaveTargets extends JbBean {
 
     @JaLang("应用")
     @NotEmpty

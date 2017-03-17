@@ -36,7 +36,7 @@ public class Admin_login extends AdminServer {
     }
 
     /**
-     * 登陆界面
+     * 登录界面
      *
      * @param input
      * @return

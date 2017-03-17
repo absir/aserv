@@ -54,7 +54,7 @@ public class UtilPackage {
             @Override
             public void doWith(String template) throws BreakException {
                 try {
-                    classLoader.loadClass(template);
+                    classes.add(classLoader.loadClass(template));
 
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();

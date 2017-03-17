@@ -1,6 +1,6 @@
 package com.absir.aserv.game.bean;
 
-import com.absir.aserv.master.bean.base.JbBeanServersO;
+import com.absir.aserv.master.bean.base.JbServerTargetsO;
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.value.JaLang;
@@ -12,7 +12,7 @@ import javax.persistence.Entity;
  */
 @MaEntity(parent = {@MaMenu("节点管理")}, name = "通知")
 @Entity
-public class JNotice extends JbBeanServersO {
+public class JNotice extends JbServerTargetsO {
 
     @JaLang("标题")
     private String subject;

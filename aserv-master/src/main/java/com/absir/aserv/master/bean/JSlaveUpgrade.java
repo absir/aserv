@@ -9,7 +9,7 @@ package com.absir.aserv.master.bean;
 
 import com.absir.aserv.crud.CrudHandler;
 import com.absir.aserv.crud.value.ICrudBean;
-import com.absir.aserv.master.bean.base.JbBeanSlaves;
+import com.absir.aserv.master.bean.base.JbSlaveTargets;
 import com.absir.aserv.master.handler.MasterHandler;
 import com.absir.aserv.master.service.MasterSyncService;
 import com.absir.aserv.menu.value.MaEntity;
@@ -38,7 +38,7 @@ import java.util.Map;
 @MaEntity(parent = {@MaMenu("节点管理")}, name = "升级")
 @JaModel(desc = true)
 @Entity
-public class JSlaveUpgrade extends JbBeanSlaves implements ICrudBean {
+public class JSlaveUpgrade extends JbSlaveTargets implements ICrudBean {
 
     @JaLang("升级")
     @JaEdit(editable = JeEditable.ENABLE)

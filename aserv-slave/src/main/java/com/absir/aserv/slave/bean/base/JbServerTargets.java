@@ -3,35 +3,32 @@
  * <p/>
  * All right reserved
  * <p/>
- * Create on 2015年5月14日 上午10:28:04
+ * Create on 2015年7月10日 下午3:14:11
  */
-package com.absir.aserv.master.bean.base;
+package com.absir.aserv.slave.bean.base;
 
-import com.absir.aserv.system.bean.base.JbBean;
+import com.absir.aserv.system.bean.base.JbBeanL;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
-import com.absir.aserv.system.bean.value.JaName;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public class JbBeanServers extends JbBean {
+public class JbServerTargets extends JbBeanL {
 
-    @JaLang(value = "目标服务", tag = "targetServer")
-    @JaName("JSlaveServer")
+    @JaLang("目标服务")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     @Column(length = 10240)
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     private long[] serverIds;
 
-    private transient long[] lastServerIds;
-
     @JaLang("全部服务")
     private boolean allServerIds;
 
-    private transient int lastAllServerIds;
+    @JaLang("分组")
+    private String[] groups;
 
     @JaLang("备注")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -41,32 +38,24 @@ public class JbBeanServers extends JbBean {
         return serverIds;
     }
 
-    public final void setServerIds(long[] serverIds) {
-        if (lastServerIds == null) {
-            lastServerIds = this.serverIds;
-        }
-
+    public void setServerIds(long[] serverIds) {
         this.serverIds = serverIds;
-    }
-
-    public long[] getLastServerIds() {
-        return lastServerIds;
     }
 
     public boolean isAllServerIds() {
         return allServerIds;
     }
 
-    public final void setAllServerIds(boolean allServerIds) {
-        if (lastAllServerIds == 0) {
-            lastAllServerIds = this.allServerIds ? 1 : -1;
-        }
-
+    public void setAllServerIds(boolean allServerIds) {
         this.allServerIds = allServerIds;
     }
 
-    public int getLastAllServerIds() {
-        return lastAllServerIds;
+    public String[] getGroups() {
+        return groups;
+    }
+
+    public void setGroups(String[] groups) {
+        this.groups = groups;
     }
 
     public String getMark() {

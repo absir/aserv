@@ -8,8 +8,8 @@
 package com.absir.aserv.slave.domain;
 
 import com.absir.aserv.master.bean.JSlaveServer;
-import com.absir.aserv.master.bean.base.JbBeanServersO;
-import com.absir.aserv.master.bean.base.JbBeanServersOpen;
+import com.absir.aserv.master.bean.base.JbServerTargetsO;
+import com.absir.aserv.master.bean.base.JbServerTargetsOpen;
 import com.absir.aserv.master.service.MasterActivityService;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
@@ -26,7 +26,7 @@ import java.util.*;
 
 // 服务开启定时周期类
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class OServersActivityOpen<T extends JbBeanServersO, O extends JbBeanServersOpen> {
+public abstract class OServersActivityOpen<T extends JbServerTargetsO, O extends JbServerTargetsOpen> {
 
     protected static final TypeVariable<?> TARGETS_VARIABLE = OServersActivityOpen.class.getTypeParameters()[0];
 
@@ -123,7 +123,7 @@ public abstract class OServersActivityOpen<T extends JbBeanServersO, O extends J
             for (O activity : activities) {
                 if (HelperNumber.isNoCross(activity.getOpenSubDay(), activity.getOpenSubDay() + activity.getOpenLifeDay(), subDay,
                         endDay)) {
-                    if (!serversActivity.couldOverwriteServers(activity, newActivity)) {
+                    if (!serversActivity.canOverwriteTargets(activity, newActivity)) {
                         newActivity = null;
                         break;
                     }

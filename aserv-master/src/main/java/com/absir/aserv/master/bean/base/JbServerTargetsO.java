@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public class JbBeanServersO extends JbBeanServers implements JiActive {
+public class JbServerTargetsO extends JbServerTargets implements JiActive {
 
     @JaLang("服务编号")
     @JsonIgnore

@@ -88,6 +88,10 @@ public class JSlaveServer extends JbBean implements ICrudBean {
     @JaColum(indexs = @Index(columnList = "synched"))
     private boolean synched;
 
+    @JaLang("分组")
+    @JaColum(indexs = @Index(columnList = "group"))
+    private String group;
+
     public String getName() {
         return name;
     }
@@ -182,6 +186,14 @@ public class JSlaveServer extends JbBean implements ICrudBean {
 
     public void setSynched(boolean synched) {
         this.synched = synched;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     @Override

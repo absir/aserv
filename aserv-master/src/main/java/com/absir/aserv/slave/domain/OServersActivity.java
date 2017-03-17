@@ -7,7 +7,10 @@
  */
 package com.absir.aserv.slave.domain;
 
-import com.absir.aserv.master.bean.base.JbBeanServers;
+import com.absir.aserv.master.bean.JSlaveServer;
+import com.absir.aserv.master.bean.base.JbServerTargets;
+import com.absir.aserv.master.service.MasterSyncService;
+import com.absir.aserv.system.helper.HelperArray;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +23,21 @@ public class OServersActivity<T> {
 
     protected Map<Long, T> singleActivityMap = new HashMap<Long, T>();
 
+    public static boolean isContainTargetId(long[] targetIds, long serverId) {
+        return targetIds == null || targetIds.length == 0 || HelperArray.contains(targetIds, serverId);
+    }
+
+    public static boolean isContainTarget(JbServerTargets targets, JSlaveServer server) {
+        if (targets.isAllServerIds()) {
+            String[] groups = targets.getGroups();
+            return groups == null || groups.length == 0 || HelperArray.contains(groups, server.getGroup());
+
+        } else {
+            long[] targetIds = targets.getServerIds();
+            return targetIds != null && targetIds.length > 0 && HelperArray.contains(targetIds, server.getId());
+        }
+    }
+
     public T getSingleActivity(long serverId) {
         T activity = singleActivityMap.get(serverId);
         return activity == null ? singleActivity : activity;
@@ -30,55 +48,74 @@ public class OServersActivity<T> {
         singleActivityMap.clear();
     }
 
-    protected JbBeanServers getServers(T activity) {
+    public JbServerTargets getTargets(T activity) {
         if (activity == null) {
             return null;
         }
 
-        if (activity instanceof JbBeanServers) {
-            return (JbBeanServers) activity;
+        if (activity instanceof JbServerTargets) {
+            return (JbServerTargets) activity;
         }
 
         if (activity instanceof Entry) {
             Object key = ((Entry<?, ?>) activity).getKey();
-            if (key instanceof JbBeanServers) {
-                return (JbBeanServers) key;
+            if (key instanceof JbServerTargets) {
+                return (JbServerTargets) key;
             }
         }
 
         return null;
     }
 
-    public boolean couldOverwriteActivity(T activity, JbBeanServers bean) {
-        return couldOverwriteServers(getServers(activity), bean);
+    public boolean canOverwrite(T oldActivity, JbServerTargets targets) {
+        JbServerTargets oldTargets = getTargets(oldActivity);
+        return canOverwriteTargets(oldTargets, targets);
     }
 
-    public boolean couldOverwriteServers(JbBeanServers servers, JbBeanServers bean) {
-        if (servers != null) {
-            long[] serverIds = servers.getServerIds();
-            if (serverIds != null) {
-                int length = serverIds.length;
-                if (length > 0) {
-                    serverIds = bean.getServerIds();
-                    if (serverIds == null || serverIds.length >= length) {
-                        return false;
-                    }
-                }
-            }
+    public boolean canOverwriteTargets(JbServerTargets oldTargets, JbServerTargets targets) {
+        if (oldTargets == null) {
+            return true;
         }
 
-        return true;
+        if (oldTargets.isAllServerIds()) {
+            if (targets.isAllServerIds()) {
+                int oldLength = oldTargets.getGroups() == null ? 0 : oldTargets.getGroups().length;
+                int length = targets.getGroups() == null ? 0 : targets.getGroups().length;
+                return oldLength >= length;
+            }
+
+            return true;
+        }
+
+        if (targets.isAllServerIds()) {
+            return false;
+        }
+
+        int oldLength = oldTargets.getServerIds() == null ? 0 : oldTargets.getServerIds().length;
+        int length = targets.getServerIds() == null ? 0 : targets.getServerIds().length;
+        return oldLength >= length;
     }
 
-    public void addServersActivity(JbBeanServers servers, T activity) {
-        if (servers == null || servers.getServerIds() == null || servers.getServerIds().length == 0) {
+    public void addActivity(JbServerTargets targets, T activity) {
+        if (targets == null || (targets.isAllServerIds() || targets.getGroups() == null || targets.getGroups().length == 0)) {
             singleActivity = activity;
 
         } else {
-            for (long targetId : servers.getServerIds()) {
-                T oldActivity = singleActivityMap.get(targetId);
-                if (oldActivity == null || couldOverwriteActivity(oldActivity, servers)) {
-                    singleActivityMap.put(targetId, activity);
+            if (targets.isAllServerIds()) {
+                for (JSlaveServer server : MasterSyncService.ME.getSlaveServersFromGroups(targets.getGroups())) {
+                    Long targetId = server.getId();
+                    T oldActivity = singleActivityMap.get(targetId);
+                    if (oldActivity == null || canOverwrite(oldActivity, targets)) {
+                        singleActivityMap.put(targetId, activity);
+                    }
+                }
+
+            } else {
+                for (long targetId : targets.getServerIds()) {
+                    T oldActivity = singleActivityMap.get(targetId);
+                    if (oldActivity == null || canOverwrite(oldActivity, targets)) {
+                        singleActivityMap.put(targetId, activity);
+                    }
                 }
             }
         }
