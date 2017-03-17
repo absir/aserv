@@ -36,6 +36,8 @@ public class SocketBuffer {
 
     private UtilPipedStream pipedStream;
 
+    private Object encryptKey;
+
     public Serializable getId() {
         return id;
     }
@@ -147,6 +149,14 @@ public class SocketBuffer {
         }
 
         return pipedStream;
+    }
+
+    public Object getEncryptKey() {
+        return encryptKey;
+    }
+
+    public void setEncryptKey(Object encryptKey) {
+        this.encryptKey = encryptKey;
     }
 
     public void close() {

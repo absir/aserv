@@ -29,8 +29,8 @@ public class OServersActivity<T> {
 
     public static boolean isContainTarget(JbServerTargets targets, JSlaveServer server) {
         if (targets.isAllServerIds()) {
-            String[] groups = targets.getGroups();
-            return groups == null || groups.length == 0 || HelperArray.contains(groups, server.getGroup());
+            String[] groupIds = targets.getGroupIds();
+            return groupIds == null || groupIds.length == 0 || HelperArray.contains(groupIds, server.getGroupId());
 
         } else {
             long[] targetIds = targets.getServerIds();
@@ -79,8 +79,8 @@ public class OServersActivity<T> {
 
         if (oldTargets.isAllServerIds()) {
             if (targets.isAllServerIds()) {
-                int oldLength = oldTargets.getGroups() == null ? 0 : oldTargets.getGroups().length;
-                int length = targets.getGroups() == null ? 0 : targets.getGroups().length;
+                int oldLength = oldTargets.getGroupIds() == null ? 0 : oldTargets.getGroupIds().length;
+                int length = targets.getGroupIds() == null ? 0 : targets.getGroupIds().length;
                 return oldLength >= length;
             }
 
@@ -97,12 +97,12 @@ public class OServersActivity<T> {
     }
 
     public void addActivity(JbServerTargets targets, T activity) {
-        if (targets == null || (targets.isAllServerIds() || targets.getGroups() == null || targets.getGroups().length == 0)) {
+        if (targets == null || (targets.isAllServerIds() || targets.getGroupIds() == null || targets.getGroupIds().length == 0)) {
             singleActivity = activity;
 
         } else {
             if (targets.isAllServerIds()) {
-                for (JSlaveServer server : MasterSyncService.ME.getSlaveServersFromGroups(targets.getGroups())) {
+                for (JSlaveServer server : MasterSyncService.ME.getSlaveServersFromGroupIds(targets.getGroupIds())) {
                     Long targetId = server.getId();
                     T oldActivity = singleActivityMap.get(targetId);
                     if (oldActivity == null || canOverwrite(oldActivity, targets)) {

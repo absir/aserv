@@ -27,6 +27,10 @@
             <param name="LevelMin" value="WARN"/>
             <param name="LevelMax" value="WARN"/>
         </filter>
+        <!--<filter class="org.apache.log4j.varia.StringMatchFilter">-->
+            <!--<param name="StringToMatch" value="Positional parameter are considered deprecated"/>-->
+            <!--<param name="AcceptOnMatch" value="FALSE"/>-->
+        <!--</filter>-->
     </appender>
 
     <!-- error logger -->

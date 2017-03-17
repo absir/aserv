@@ -20,6 +20,7 @@ import com.absir.server.socket.SocketServer;
 import com.absir.server.socket.resolver.IBufferResolver;
 import com.absir.server.socket.resolver.ISessionResolver;
 import com.absir.server.socket.resolver.InputBufferResolver;
+import com.absir.server.socket.resolver.SocketSessionResolver;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.thrift.TException;
 import org.apache.thrift.TServiceClient;
@@ -115,7 +116,15 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
     }
 
     @Override
-    public void idle(SocketChannel socketChannel, SelSession selSession, long contextTime) {
+    public void idle(final SocketChannel socketChannel, final SelSession selSession, long contextTime) {
+        selSession.retainIdleTimeout();
+        UtilContext.getThreadPoolExecutor().execute(new Runnable() {
+
+            @Override
+            public void run() {
+                InputSocket.writeByteBuffer(selSession, socketChannel, 0, SocketSessionResolver.getBeat());
+            }
+        });
     }
 
     @Override
@@ -128,7 +137,6 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
     @Override
     public void receiveByteBuffer(final SocketChannel socketChannel, final SelSession selSession) throws Throwable {
         final SocketBuffer socketBuffer = selSession.getSocketBuffer();
-        final Serializable id = socketBuffer.getId();
         final byte[] buffer = socketBuffer.getBuff();
         socketBuffer.setBuff(null);
         if (socketBuffer.addBufferQueue(buffer)) {

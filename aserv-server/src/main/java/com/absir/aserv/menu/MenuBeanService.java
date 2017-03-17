@@ -23,6 +23,7 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.InjectType;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.kernel.KernelUtil;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.Session;
 
@@ -225,6 +226,6 @@ public class MenuBeanService implements Comparator<MenuBeanRoot> {
 
     @Override
     public int compare(MenuBeanRoot o1, MenuBeanRoot o2) {
-        return KernelString.compare(o1.getMenuBean().getName(), o2.getMenuBean().getName());
+        return KernelUtil.compareVersion(o1.getMenuBean().getName(), o2.getMenuBean().getName());
     }
 }

@@ -71,15 +71,15 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
                 if (!syncShared && mergeType == MergeType.UPDATE && !entity.isAllServerIds()) {
                     // syncShared分库状态，更新目标，数据同步
                     long[] lastServerIds = entity.getLastServerIds();
-                    String[] lastGroups = entity.getLastGroups();
-                    if ((entity.getLastAllServerIds() == 1 && (lastGroups == null || lastGroups.length == 0)) || lastServerIds == null || lastServerIds.length == 0) {
+                    String[] lastGroupIds = entity.getLastGroupIds();
+                    if ((entity.getLastAllServerIds() == 1 && (lastGroupIds == null || lastGroupIds.length == 0)) || lastServerIds == null || lastServerIds.length == 0) {
                         // 从全部选择状态更新到不全部选择
-                        MasterSyncService.ME.addSlaveSynchServerIds(lastServerIds, true, lastGroups, entityName + "@" + entity.getId(),
+                        MasterSyncService.ME.addSlaveSynchServerIds(lastServerIds, true, lastGroupIds, entityName + "@" + entity.getId(),
                                 "api/slave/option/" + entityName + "/2", entity, false);
 
                     } else {
                         // 比对选择状态变化
-                        long[] serverIds = entity.getLastAllServerIds() == 1 ? ME.getServerIdsFromGroups(lastGroups) : entity.getServerIds();
+                        long[] serverIds = entity.getLastAllServerIds() == 1 ? ME.getServerIdsFromGroupIds(lastGroupIds) : entity.getServerIds();
                         if (serverIds != null && serverIds.length != 0) {
                             List<Long> deleteIds = new ArrayList<Long>();
                             for (long serverId : lastServerIds) {
@@ -101,7 +101,7 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
                     }
                 }
 
-                MasterSyncService.ME.addSlaveSynchServerIds(entity.getServerIds(), entity.isAllServerIds(), entity.getGroups(), entityName + "@" + entity.getId(),
+                MasterSyncService.ME.addSlaveSynchServerIds(entity.getServerIds(), entity.isAllServerIds(), entity.getGroupIds(), entityName + "@" + entity.getId(),
                         "api/slave/option/" + entityName + "/" + (mergeType == MergeType.DELETE ? 2 : 1), entity, false);
             }
 
@@ -156,14 +156,14 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
     @DataQuery("SELECT o.slave.id FROM JSlaveServer o WHERE o.id IN (:p0)")
     public abstract String[] getSlaveIds(long[] serverIds);
 
-    @DataQuery("SELECT o.id FROM JSlaveServer o WHERE o.group IN (:p0)")
-    public abstract long[] getServerIdsFromGroups(String[] groups);
+    @DataQuery("SELECT o.id FROM JSlaveServer o WHERE o.groupId IN (:p0)")
+    public abstract long[] getServerIdsFromGroupIds(String[] groupIds);
 
-    @DataQuery("SELECT o.slave.id FROM JSlaveServer o WHERE o.group IN (:p0)")
-    public abstract String[] getSlaveIdsFromGroups(String[] groups);
+    @DataQuery("SELECT o.slave.id FROM JSlaveServer o WHERE o.groupId IN (:p0)")
+    public abstract String[] getSlaveIdsFromGroupIds(String[] groupIds);
 
-    @DataQuery("SELECT o FROM JSlaveServer o WHERE o.group IN (:p0)")
-    public abstract JSlaveServer[] getSlaveServersFromGroups(String[] groups);
+    @DataQuery("SELECT o FROM JSlaveServer o WHERE o.groupId IN (:p0)")
+    public abstract JSlaveServer[] getSlaveServersFromGroupIds(String[] groupIds);
 
     @Transaction
     @Inject
@@ -176,13 +176,13 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
      * 添加同步
      */
     @Transaction
-    public void addSlaveSynchServerIds(long[] serverIds, boolean all, String[] groups, String mid, String uri, Object postData, boolean varints) {
+    public void addSlaveSynchServerIds(long[] serverIds, boolean all, String[] groupIds, String mid, String uri, Object postData, boolean varints) {
         if (all) {
-            if (groups == null || groups.length == 0) {
+            if (groupIds == null || groupIds.length == 0) {
                 addSlaveSynch("*", mid, uri, postData, varints);
 
             } else {
-                for (String slaveId : ME.getSlaveIdsFromGroups(groups)) {
+                for (String slaveId : ME.getSlaveIdsFromGroupIds(groupIds)) {
                     addSlaveSynch(slaveId, mid, uri, postData, varints);
                 }
             }

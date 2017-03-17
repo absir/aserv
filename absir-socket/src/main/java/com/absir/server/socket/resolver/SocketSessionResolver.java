@@ -121,7 +121,7 @@ public class SocketSessionResolver implements ISessionResolver {
 
             @Override
             public void run() {
-                if (SocketBufferResolver.writeBufferTimeout(selSession, socketChannel, beatBuffer)) {
+                if (writeBeat(selSession, socketChannel, beatBuffer)) {
                     getServerResolver().doBeat(socketChannel, selSession, contextTime);
                 }
             }

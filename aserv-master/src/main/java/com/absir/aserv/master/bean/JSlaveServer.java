@@ -88,9 +88,9 @@ public class JSlaveServer extends JbBean implements ICrudBean {
     @JaColum(indexs = @Index(columnList = "synched"))
     private boolean synched;
 
-    @JaLang("分组")
+    @JaLang("组号")
     @JaColum(indexs = @Index(columnList = "group"))
-    private String group;
+    private String groupId;
 
     public String getName() {
         return name;
@@ -188,12 +188,12 @@ public class JSlaveServer extends JbBean implements ICrudBean {
         this.synched = synched;
     }
 
-    public String getGroup() {
-        return group;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setGroup(String group) {
-        this.group = group;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     @Override

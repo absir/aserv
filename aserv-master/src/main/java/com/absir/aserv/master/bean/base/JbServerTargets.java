@@ -34,10 +34,10 @@ public class JbServerTargets extends JbBean {
 
     private transient int lastAllServerIds;
 
-    @JaLang("分组")
-    private String[] groups;
+    @JaLang("组号")
+    private String[] groupIds;
 
-    private transient String[] lastGroups;
+    private transient String[] lastGroupIds;
 
     @JaLang("备注")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -75,20 +75,20 @@ public class JbServerTargets extends JbBean {
         return lastAllServerIds;
     }
 
-    public String[] getGroups() {
-        return groups;
+    public String[] getGroupIds() {
+        return groupIds;
     }
 
-    public void setGroups(String[] groups) {
-        if (lastGroups == null) {
-            lastGroups = groups == null ? KernelLang.NULL_STRINGS : groups;
+    public void setGroupIds(String[] groupIds) {
+        if (lastGroupIds == null) {
+            lastGroupIds = groupIds == null ? KernelLang.NULL_STRINGS : groupIds;
         }
 
-        this.groups = groups;
+        this.groupIds = groupIds;
     }
 
-    public String[] getLastGroups() {
-        return lastGroups;
+    public String[] getLastGroupIds() {
+        return lastGroupIds;
     }
 
     public String getMark() {

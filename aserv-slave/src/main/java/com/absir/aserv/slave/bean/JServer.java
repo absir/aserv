@@ -15,15 +15,14 @@ import javax.persistence.Entity;
 @Entity
 public class JServer extends JbServerBase {
 
-    @JaLang("分组")
-    private String group;
+    @JaLang("组号")
+    private String groupId;
 
-    public String getGroup() {
-        return group;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setGroup(String group) {
-        this.group = group;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
-
 }

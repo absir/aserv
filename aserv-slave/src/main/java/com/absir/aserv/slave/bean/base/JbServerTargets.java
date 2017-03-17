@@ -27,8 +27,8 @@ public class JbServerTargets extends JbBeanL {
     @JaLang("全部服务")
     private boolean allServerIds;
 
-    @JaLang("分组")
-    private String[] groups;
+    @JaLang("组号")
+    private String[] groupIds;
 
     @JaLang("备注")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -50,12 +50,12 @@ public class JbServerTargets extends JbBeanL {
         this.allServerIds = allServerIds;
     }
 
-    public String[] getGroups() {
-        return groups;
+    public String[] getGroupIds() {
+        return groupIds;
     }
 
-    public void setGroups(String[] groups) {
-        this.groups = groups;
+    public void setGroupIds(String[] groupIds) {
+        this.groupIds = groupIds;
     }
 
     public String getMark() {
