@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.*;
@@ -1099,6 +1100,51 @@ public class SocketAdapter {
         }
     }
 
+    public void sendAdapterDataBytes(int callbackIndex, final AdapterDataBytes adapterDataBytes, int timeout, CallbackAdapter callbackAdapter) {
+        CallbackTimeout callbackTimeout = null;
+        if (callbackAdapter != null) {
+            callbackTimeout = putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
+        }
+
+        connect();
+        try {
+            if (!(registered && sendData(adapterDataBytes.getSendDataBytes(this)))) {
+                final CallbackTimeout sendCallbackTimeout = callbackTimeout;
+                RegisteredRunnable runnable = new RegisteredRunnable() {
+
+                    @Override
+                    public void doRun() {
+                        try {
+                            failed = !sendData(adapterDataBytes.getSendDataBytes(SocketAdapter.this));
+
+                        } catch (IOException e) {
+                            if (sendCallbackTimeout != null) {
+                                sendCallbackTimeout.run();
+                            }
+
+                            Environment.throwable(e);
+                        }
+                    }
+                };
+
+                addRegisterRunnable(runnable);
+                afterRegisterRunnable();
+                if (callbackTimeout != null) {
+                    callbackTimeout.setRegisteredRunnable(runnable);
+                }
+
+                connect();
+            }
+
+        } catch (IOException e) {
+            if (callbackTimeout != null) {
+                callbackTimeout.run();
+            }
+
+            Environment.throwable(e);
+        }
+    }
+
     public byte[] sendDataBytesVarints(String uri, int callbackIndex, byte[] postBytes, int postOff, int postLen) {
         return sendDataBytesVarintsReal(0, uri, false, (byte) 0, callbackIndex, postBytes, postOff, postLen);
     }
@@ -1157,6 +1203,11 @@ public class SocketAdapter {
     public static interface CallbackAdapter {
 
         public void doWith(SocketAdapter adapter, int offset, byte[] buffer);
+    }
+
+    public static interface AdapterDataBytes {
+
+        public byte[] getSendDataBytes(SocketAdapter socketAdapter) throws IOException;
     }
 
     public static abstract class RegisteredRunnable {

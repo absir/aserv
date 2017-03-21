@@ -12,15 +12,20 @@ import com.absir.bean.basis.Configure;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.InjectType;
+import com.absir.client.helper.HelperJson;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelString;
 import com.absir.open.bean.JPayTrade;
 import com.absir.open.bean.value.JePayStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 @Configure
 public abstract class PayUtils {
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(PayUtils.class);
 
     @Inject(value = "PayInterface", type = InjectType.Selectable)
     private static Map<String, IPayInterface> payInterfaceMap;
@@ -111,7 +116,7 @@ public abstract class PayUtils {
                         }
 
                     } catch (Exception e) {
-                        Environment.throwable(e);
+                        LOGGER.error("pay notify error => " + HelperJson.encodeNull(payTrade), e);
                     }
                 }
 

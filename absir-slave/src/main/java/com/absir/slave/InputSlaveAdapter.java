@@ -165,8 +165,9 @@ public class InputSlaveAdapter extends SocketAdapterSel {
      * 注册
      */
     protected void registerAdapter(SocketAdapter adapter, byte[] buffer) {
-        if (InputSlaveContext.ME.isRegisterData(this, buffer)) {
-            adapter.setRegistered(true);
+        long serverTime = InputSlaveContext.ME.getRegisterServerTime(this, buffer);
+        if (serverTime >= 0) {
+            adapter.setRegistered(true, serverTime);
 
         } else {
             LOGGER.error("registerAdapter failed status : " + new String(buffer));

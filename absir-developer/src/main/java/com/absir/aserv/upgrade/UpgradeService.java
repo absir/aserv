@@ -18,13 +18,13 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Value;
 import com.absir.bean.lang.LangCodeUtils;
+import com.absir.client.ServerEnvironment;
 import com.absir.context.config.BeanFactoryStopping;
 import com.absir.core.helper.HelperFile;
 import com.absir.core.helper.HelperFileName;
 import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
-import com.absir.server.route.RouteAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,7 +198,7 @@ public class UpgradeService {
 
     @JaTask("upgradeFile")
     public void upgradeFile(long adapterTime, String filePath) {
-        if (RouteAdapter.ADAPTER_TIME == adapterTime) {
+        if (ServerEnvironment.getStartTime() == adapterTime) {
             try {
                 UpgradeService.ME.restartUpgrade(new File(filePath));
 

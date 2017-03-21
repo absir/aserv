@@ -3,6 +3,7 @@ package com.absir.thrift;
 import com.absir.server.in.IFaceProxy;
 import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
+import com.absir.server.socket.InputSocket;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.thrift.ProcessFunction;
 import org.apache.thrift.TBaseProcessor;
@@ -78,12 +79,14 @@ public class TMultiplexedProcessorProxy implements TProcessor {
             throw new TException("IFace is null!? " + input.getUri());
         }
 
+        InputSocket inputSocket = input instanceof InputSocket ? (InputSocket) input : null;
+
         InputStream inputStream = input.getInputStream();
         if (service != null) {
-            inputStream = service.decrypt(input.getId(), inputStream);
+            inputStream = inputSocket == null ? inputStream : service.decrypt(inputSocket.getSocketAtt().getSelSession(), inputSocket);
         }
 
-        TTransport inTransport = new TIOStreamTransport(input.getInputStream());
+        TTransport inTransport = new TIOStreamTransport(inputStream);
         OutputStream outputStream = service != null ? null : input.getOutputStream();
         ByteArrayOutputStream byteArrayOutputStream = null;
         if (outputStream == null) {
@@ -94,7 +97,7 @@ public class TMultiplexedProcessorProxy implements TProcessor {
         TTransport outTransport = new TIOStreamTransport(outputStream);
         faceProcessProxy.processFunction.process(0, new TCompactProtocol(inTransport), new TInputOutProtocol(outTransport), iface);
         if (byteArrayOutputStream != null) {
-            input.write(service.encrypt(input.getId(), 1, byteArrayOutputStream));
+            input.write(inputSocket == null ? byteArrayOutputStream.toByteArray() : service.encrypt(inputSocket.getSocketAtt().getSelSession(), 1, byteArrayOutputStream));
         }
     }
 

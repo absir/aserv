@@ -10,7 +10,6 @@ import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilContext;
 import org.apache.thrift.ProcessFunction;
 import org.apache.thrift.TBaseProcessor;
-import org.apache.thrift.TException;
 import org.apache.thrift.ThriftVisitor;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -63,7 +62,7 @@ public class TSocketAdapterReceiver implements SocketAdapter.CallbackAdapter {
 
     public void bind(TSocketAdapterProtocol protocol) {
         adapterProtocol = protocol;
-        socketAdapter = protocol.getTransport().getAdapter();
+        socketAdapter = protocol.getTransport().getAdapter().getSocketAdapter();
         socketAdapter.putReceiveCallbacks(PUSH_CALLBACK_INDEX, 0, this);
         socketAdapter.putReceiveCallbacks(DICT_CALLBACK_INDEX, 0, new SocketAdapter.CallbackAdapter() {
 
@@ -205,7 +204,7 @@ public class TSocketAdapterReceiver implements SocketAdapter.CallbackAdapter {
 
             ifaceProcessFunction.getValue().process(0, protocol, null, ifaceProcessFunction.getKey());
 
-        } catch (TException e) {
+        } catch (Exception e) {
             LOGGER.error("PUSH callback " + callbackIndex + " error[" + methodName + "]", e);
         }
     }

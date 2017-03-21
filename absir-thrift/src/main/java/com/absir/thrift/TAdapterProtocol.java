@@ -1,5 +1,6 @@
 package com.absir.thrift;
 
+import com.absir.core.base.Environment;
 import com.absir.core.util.UtilAtom;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.thrift.TApplicationException;
@@ -9,6 +10,7 @@ import org.apache.thrift.protocol.TMessage;
 import org.apache.thrift.transport.TIOStreamTransport;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -60,11 +62,11 @@ public abstract class TAdapterProtocol<T> extends TCompactProtocol {
         return 30000;
     }
 
-    public byte[] encrypt(ByteArrayOutputStream outputStream) {
-        return outputStream.toByteArray();
+    public byte[] encrypt(byte[] buffer) throws IOException {
+        return buffer;
     }
 
-    public InputStream decrypt(int offset, byte[] buffer) {
+    public InputStream decrypt(int offset, byte[] buffer) throws IOException {
         return new ByteArrayInputStream(buffer, offset, buffer.length);
     }
 
@@ -78,12 +80,15 @@ public abstract class TAdapterProtocol<T> extends TCompactProtocol {
                 sendMessage(message, byteArrayOutputStream);
             }
 
+        } catch (IOException e) {
+            throw new TException(e);
+
         } finally {
             byteArrayOutputStream.reset();
         }
     }
 
-    protected abstract void sendMessage(TMessage message, ByteArrayOutputStream outputStream);
+    protected abstract void sendMessage(TMessage message, ByteArrayOutputStream outputStream) throws IOException;
 
     @Override
     public TMessage readMessageBegin() throws TException {
@@ -106,7 +111,13 @@ public abstract class TAdapterProtocol<T> extends TCompactProtocol {
                     getTransport().setInputStream(new ByteArrayInputStream(UNKOWN_EXCEPTION_BYTES));
 
                 } else {
-                    getTransport().setInputStream(decrypt(offset, buffer));
+                    try {
+                        getTransport().setInputStream(decrypt(offset, buffer));
+
+                    } catch (IOException e) {
+                        getTransport().setInputStream(new ByteArrayInputStream(UNKOWN_EXCEPTION_BYTES));
+                        Environment.throwable(e);
+                    }
                 }
             }
 

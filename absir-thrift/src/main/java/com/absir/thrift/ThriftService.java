@@ -4,15 +4,17 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.InjectBeanUtils;
 import com.absir.bean.inject.value.*;
+import com.absir.client.ServerEnvironment;
 import com.absir.client.SocketAdapter;
+import com.absir.client.helper.HelperEncrypt;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelReflect;
+import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilContext;
 import com.absir.core.util.UtilPipedStream;
 import com.absir.server.in.InModel;
 import com.absir.server.on.OnPut;
-import com.absir.server.route.RouteAdapter;
 import com.absir.server.socket.InputSocket;
 import com.absir.server.socket.SelSession;
 import com.absir.server.socket.SocketBuffer;
@@ -30,6 +32,7 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -80,6 +83,9 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
     protected int sendBufferSize = 2048;
     protected Map<Class, String> classMapServiceName;
 
+    @Value("thrift.encryptKey")
+    protected String encryptKey = "absir.thrift";
+
     public TMultiplexedProcessorProxy getProcessorProxy() {
         return processorProxy;
     }
@@ -127,11 +133,27 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
         });
     }
 
+    protected String getEncryptKey(SocketChannel socketChannel, SelSession selSession) {
+        if (KernelString.isEmpty(encryptKey)) {
+            return null;
+        }
+
+        String key = String.valueOf(socketChannel.hashCode());
+        selSession.getSocketBuffer().setEncryptKey(HelperEncrypt.getSROREncryptKey(encryptKey + key));
+        return key;
+    }
+
     @Override
     public void register(SocketChannel socketChannel, SelSession selSession) throws Throwable {
-        String hashId = String.valueOf(socketChannel.hashCode());
+        int hashId = socketChannel.hashCode();
         selSession.getSocketBuffer().setId(hashId);
-        InputSocket.writeByteBuffer(selSession, socketChannel, 0, (hashId + ',' + RouteAdapter.ADAPTER_TIME).getBytes());
+        String entryKey = getEncryptKey(socketChannel, selSession);
+        if (entryKey == null) {
+            InputSocket.writeByteBuffer(selSession, socketChannel, 0, ("ok" + ',' + ServerEnvironment.getStartTime()).getBytes());
+
+        } else {
+            InputSocket.writeByteBuffer(selSession, socketChannel, 0, ("ok" + ',' + ServerEnvironment.getStartTime() + "," + entryKey).getBytes());
+        }
     }
 
     @Override
@@ -239,12 +261,29 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
     protected void doResponse(SocketChannel socketChannel, Serializable id, byte flag, int off, byte[] buffer, InputStream inputStream) {
     }
 
-    public InputStream decrypt(Serializable id, InputStream inputStream) {
+    public InputStream decrypt(SelSession selSession, InputSocket inputSocket) throws IOException {
+        InputStream inputStream = inputSocket.getInputStream();
+        Object encryptKey = selSession.getSocketBuffer().getEncryptKey();
+        if (encryptKey != null) {
+            if (inputStream.getClass() == ByteArrayInputStream.class) {
+                InputSocket.InputSocketAtt att = inputSocket.getSocketAtt();
+                byte[] inBuffer = att.getBuffer();
+                HelperEncrypt.decryptSRORKey(inBuffer, inBuffer.length - att.getPostDataLength(), inBuffer.length, (byte[]) encryptKey);
+            }
+        }
+
         return inputStream;
     }
 
-    public byte[] encrypt(Serializable id, int offset, ByteArrayOutputStream outputStream) {
-        return outputStream.toByteArray();
+    public byte[] encrypt(SelSession selSession, int offset, ByteArrayOutputStream outputStream) throws IOException {
+        Object encryptKey = selSession.getSocketBuffer().getEncryptKey();
+        if (encryptKey == null) {
+            return outputStream.toByteArray();
+
+        } else {
+            byte[] bytes = outputStream.toByteArray();
+            return HelperEncrypt.encryptSRORKey(bytes, offset, bytes.length, (byte[]) encryptKey);
+        }
     }
 
     // Processor处理入口
@@ -319,9 +358,9 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
         }
 
         @Override
-        protected void sendMessage(TMessage message, ByteArrayOutputStream outputStream) {
+        protected void sendMessage(TMessage message, ByteArrayOutputStream outputStream) throws IOException {
             SelSession selSession = getTransport().getAdapter();
-            InputSocket.writeByteBuffer(selSession, selSession.getSocketChannel(), TSocketAdapterReceiver.PUSH_CALLBACK_INDEX, ThriftService.this.encrypt(selSession.getId(), 0, outputStream));
+            InputSocket.writeByteBuffer(selSession, selSession.getSocketChannel(), TSocketAdapterReceiver.PUSH_CALLBACK_INDEX, ThriftService.this.encrypt(selSession, 0, outputStream));
         }
     }
 

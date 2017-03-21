@@ -338,6 +338,10 @@ public abstract class InputSocket extends Input {
             return callbackIndex;
         }
 
+        public byte[] getBuffer() {
+            return buffer;
+        }
+
         public int getPostDataLength() {
             return postDataLength;
         }

@@ -263,4 +263,89 @@ public class HelperEncrypt {
         byte[] buffer = aesDecrypt(secretKeySpec, Base64.decodeBase64(inBuffer));
         return buffer == null ? null : new String(buffer, KernelCharset.getDefault());
     }
+
+    public static byte[] getSROREncryptKey(String encryptKey) {
+        byte[] bytes = encryptKey.getBytes();
+        int length = bytes.length;
+        byte b = 0;
+        for (int i = 0; i < length; i++) {
+            bytes[i] = b = (byte) (b ^ bytes[i]);
+        }
+
+        for (int i = length - 1; i >= 0; i--) {
+            bytes[i] = b = (byte) (b ^ bytes[i]);
+        }
+
+        return bytes;
+    }
+
+    public static byte[] encryptSRORKey(byte[] inBuffer, byte[] keyBytes) {
+        return encryptSRORKey(inBuffer, 0, inBuffer.length, keyBytes);
+    }
+
+    public static byte[] encryptSRORKey(byte[] inBuffer, int offset, int length, byte[] keyBytes) {
+        if ((length - offset) > 1) {
+            int klen = keyBytes.length;
+            if (klen > 0) {
+                int iK = 0;
+                int ki = 0;
+                for (int i = offset; i < length; i++) {
+                    iK ^= inBuffer[i] ^ keyBytes[ki];
+                    inBuffer[i] = (byte) iK;
+                    if (++ki >= klen) {
+                        ki = 0;
+                    }
+                }
+
+                iK = 0;
+                ki = 0;
+                for (int i = length - 1; i >= offset; i--) {
+                    iK ^= inBuffer[i] ^ keyBytes[ki];
+                    inBuffer[i] = (byte) iK;
+                    if (++ki >= klen) {
+                        ki = 0;
+                    }
+                }
+            }
+        }
+
+        return inBuffer;
+    }
+
+    public static byte[] decryptSRORKey(byte[] inBuffer, byte[] keyBytes) {
+        return decryptSRORKey(inBuffer, 0, inBuffer.length, keyBytes);
+    }
+
+    public static byte[] decryptSRORKey(byte[] inBuffer, int offset, int length, byte[] keyBytes) {
+        if ((length - offset) > 1) {
+            int klen = keyBytes.length;
+            if (klen > 0) {
+                int iK = 0;
+                int ki = 0;
+                byte b;
+                for (int i = length - 1; i >= offset; i--) {
+                    iK ^= keyBytes[ki];
+                    inBuffer[i] = b = (byte) (inBuffer[i] ^ iK);
+                    iK ^= b;
+                    if (++ki >= klen) {
+                        ki = 0;
+                    }
+                }
+
+                iK = 0;
+                ki = 0;
+                for (int i = offset; i < length; i++) {
+                    iK ^= keyBytes[ki];
+                    inBuffer[i] = b = (byte) (inBuffer[i] ^ iK);
+                    iK ^= b;
+                    if (++ki >= klen) {
+                        ki = 0;
+                    }
+                }
+            }
+        }
+
+        return inBuffer;
+    }
+
 }

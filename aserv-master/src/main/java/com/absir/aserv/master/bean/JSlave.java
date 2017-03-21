@@ -59,6 +59,7 @@ public class JSlave extends JbBase implements JiOpen {
     private String appCode;
 
     @JaLang("启动时间")
+    @JaEdit(types = "dateTime")
     private long startTime;
 
     @JaLang("连接中")

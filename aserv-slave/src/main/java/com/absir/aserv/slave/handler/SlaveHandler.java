@@ -8,6 +8,7 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Started;
 import com.absir.bean.inject.value.Value;
+import com.absir.client.ServerEnvironment;
 import com.absir.client.helper.HelperEncrypt;
 import com.absir.client.rpc.RpcData;
 import com.absir.context.core.ContextUtils;
@@ -19,7 +20,6 @@ import com.absir.core.util.UtilInputStream;
 import com.absir.server.handler.HandlerType;
 import com.absir.server.handler.IHandler;
 import com.absir.server.on.OnPut;
-import com.absir.server.route.RouteAdapter;
 import com.absir.server.value.Handler;
 import com.absir.shared.bean.EUpgradeStatus;
 import com.absir.shared.bean.SlaveUpgrade;
@@ -83,7 +83,7 @@ public class SlaveHandler implements IHandler, ISlave {
 
     @Override
     public RpcData upgrade(SlaveUpgrade slaveUpgrade) {
-        if (slaveUpgrade == null || slaveUpgrade.getActionTime() > RouteAdapter.ADAPTER_TIME) {
+        if (slaveUpgrade == null || slaveUpgrade.getActionTime() > ServerEnvironment.getStartTime()) {
             try {
                 if (slaveUpgrade == null) {
                     TaskService.ME.removePanel("slaveUpgrade");
@@ -192,7 +192,7 @@ public class SlaveHandler implements IHandler, ISlave {
 
     @JaTask("slaveUpgrade")
     protected void slaveUpgrade(SlaveUpgrade slaveUpgrade, boolean doUpgrade) throws IOException {
-        if (slaveUpgrade != null && slaveUpgrade.getActionTime() <= RouteAdapter.ADAPTER_TIME) {
+        if (slaveUpgrade != null && slaveUpgrade.getActionTime() <= ServerEnvironment.getStartTime()) {
             return;
         }
 

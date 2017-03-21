@@ -12,9 +12,9 @@ import com.absir.aserv.task.JaTask;
 import com.absir.aserv.upgrade.UpgradeService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
+import com.absir.client.ServerEnvironment;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
-import com.absir.server.route.RouteAdapter;
 import com.absir.servlet.InDispathContext;
 
 import java.io.IOException;
@@ -95,7 +95,7 @@ public class UpgradeServiceImpl extends UpgradeService {
     @JaTask("upgradeFile")
     @Override
     public void upgradeFile(long adapterTime, String filePath) {
-        if (RouteAdapter.ADAPTER_TIME == adapterTime) {
+        if (ServerEnvironment.getStartTime() == adapterTime) {
             try {
                 UpgradeService.ME.restartUpgrade(UploadCrudFactory.ME.getProtectedStream(filePath));
 

@@ -92,22 +92,7 @@ public class ThriftServer_Test extends ThriftService {
             }
         });
 
-        socketAdapter.setAcceptCallback(new SocketAdapter.CallbackAdapter() {
-            @Override
-            public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
-                adapter.setRegistered(true);
-            }
-        });
-
-        socketAdapter.setRegisterCallback(new SocketAdapter.CallbackAdapter() {
-            @Override
-            public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
-                adapter.setRegistered(true);
-            }
-        });
-
-
-        TAdapterTransport<SocketAdapter> adapterTransport = new TAdapterTransport(socketAdapter);
+        TAdapterTransport<TSocketAdapter> adapterTransport = new TAdapterTransport(new TSocketAdapter(socketAdapter));
         TSocketAdapterProtocol socketAdapterProtocol = new TSocketAdapterProtocol(adapterTransport, RpcService.class.getSimpleName());
 
         TSocketAdapterReceiver socketAdapterReceiver = new TSocketAdapterReceiver();

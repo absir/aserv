@@ -25,7 +25,6 @@ import java.util.*;
 @Bean
 public class RouteAdapter implements IBeanFactoryStarted {
 
-    public static final long ADAPTER_TIME = System.currentTimeMillis();
     public static final Comparator<InMatcher> IN_MATCHER_COMPARATOR = new Comparator<InMatcher>() {
 
         @Override

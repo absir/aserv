@@ -7,6 +7,7 @@
  */
 package com.absir.server.socket.resolver;
 
+import com.absir.client.ServerEnvironment;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
 import com.absir.core.util.UtilContext;
 import com.absir.core.util.UtilContext.RunnableGuarantee;
@@ -31,7 +32,11 @@ public class SocketSessionResolver implements ISessionResolver {
 
     protected static byte[] beatBuffer;
 
-    protected static byte[] okBuffer;
+    protected static byte[] ok;
+
+    protected static long adapterTime;
+
+    protected static byte[] _okBuffer;
 
     protected static byte[] failedBuffer;
 
@@ -45,8 +50,17 @@ public class SocketSessionResolver implements ISessionResolver {
         return beatBuffer;
     }
 
+    public static byte[] getOk() {
+        return ok;
+    }
+
     public static byte[] getOkBuffer() {
-        return okBuffer;
+        if (_okBuffer == null || adapterTime != ServerEnvironment.getStartTime()) {
+            byte[] ok = (new String(SocketSessionResolver.ok) + ',' + System.currentTimeMillis()).getBytes();
+            _okBuffer = SocketBufferResolver.createByteBufferFull(bufferResolver, null, 0, ok, 0, ok.length);
+        }
+
+        return _okBuffer;
     }
 
     public static byte[] getFailedBuffer() {
@@ -59,7 +73,7 @@ public class SocketSessionResolver implements ISessionResolver {
         SocketSessionResolver.serverResolver = serverResolver;
         SocketSessionResolver.beat = beat;
         beatBuffer = SocketBufferResolver.createByteBufferFull(bufferResolver, null, 0, beat, 0, beat.length);
-        okBuffer = SocketBufferResolver.createByteBufferFull(bufferResolver, null, 0, ok, 0, ok.length);
+        SocketSessionResolver.ok = ok;
         failedBuffer = SocketBufferResolver.createByteBufferFull(bufferResolver, null, 0, failed, 0, failed.length);
     }
 
@@ -72,7 +86,7 @@ public class SocketSessionResolver implements ISessionResolver {
     }
 
     protected boolean writeSuccess(SelSession selSession, SocketChannel socketChannel, Serializable id) {
-        return SocketBufferResolver.writeBufferTimeout(selSession, socketChannel, okBuffer);
+        return SocketBufferResolver.writeBufferTimeout(selSession, socketChannel, getOkBuffer());
     }
 
     protected boolean writeFailed(SelSession selSession, SocketChannel socketChannel) {

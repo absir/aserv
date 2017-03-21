@@ -10,6 +10,7 @@ package com.absir.slave;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.*;
+import com.absir.client.ServerEnvironment;
 import com.absir.client.SocketAdapter;
 import com.absir.client.helper.HelperEncrypt;
 import com.absir.client.rpc.RpcData;
@@ -17,13 +18,12 @@ import com.absir.client.rpc.RpcInterface;
 import com.absir.client.rpc.RpcSocketAdapter;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
-import com.absir.server.route.RouteAdapter;
+import com.absir.core.kernel.KernelDyna;
 import com.absir.slave.resolver.ISlaveCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Base
@@ -120,12 +120,29 @@ public class InputSlaveContext {
      * 返回注册字符
      */
     public byte[] registerData(InputSlaveAdapter adapter, byte[] buffer) {
-        String registerKey = HelperEncrypt.encryptionMD5(adapter.getKey(), buffer) + ',' + adapter.getGroup() + ',' + RouteAdapter.ADAPTER_TIME;
+        String registerKey = HelperEncrypt.encryptionMD5(adapter.getKey(), buffer) + ',' + adapter.getGroup() + ',' + ServerEnvironment.getStartTime();
         return adapter.sendDataBytes(registerKey.getBytes(), false, false, 0, null);
     }
 
-    public boolean isRegisterData(InputSlaveAdapter adapter, byte[] buffer) {
-        return Arrays.equals(buffer, SocketAdapter.ok);
+    public long getRegisterServerTime(InputSlaveAdapter adapter, byte[] buffer) {
+        byte[] ok = SocketAdapter.ok;
+        int length = ok.length;
+        if (buffer.length >= length) {
+            for (int i = 0; i < length; i++) {
+                if (buffer[i] != ok[i]) {
+                    return -1;
+                }
+            }
+
+            if (buffer.length > ++length) {
+                String param = new String(buffer, length, buffer.length - length);
+                return KernelDyna.to(param, long.class);
+            }
+
+            return 0;
+        }
+
+        return -1;
     }
 
     /**

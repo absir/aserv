@@ -14,11 +14,11 @@ import com.absir.aserv.system.service.impl.UpgradeServiceImpl;
 import com.absir.aserv.task.TaskService;
 import com.absir.aserv.upgrade.UpgradeService;
 import com.absir.bean.lang.LangCodeUtils;
+import com.absir.client.ServerEnvironment;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelString;
 import com.absir.property.PropertyErrors;
 import com.absir.server.in.Input;
-import com.absir.server.route.RouteAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,10 +155,10 @@ public class JUpgrade extends JbBean implements ICrudBean {
 
                     if (upgrade) {
                         if (beginTime <= ContextUtils.getContextTime()) {
-                            UpgradeServiceImpl.ME.upgradeFile(RouteAdapter.ADAPTER_TIME, upgradeFile);
+                            UpgradeServiceImpl.ME.upgradeFile(ServerEnvironment.getStartTime(), upgradeFile);
 
                         } else {
-                            TaskService.ME.addPanel(null, "upgradeFile", beginTime, beginTime + 600000, 0, RouteAdapter.ADAPTER_TIME, upgradeFile);
+                            TaskService.ME.addPanel(null, "upgradeFile", beginTime, beginTime + 600000, 0, ServerEnvironment.getStartTime(), upgradeFile);
                         }
 
                         upgrade = false;
