@@ -302,7 +302,11 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
 
     public <T extends TServiceClient> T getPushClient(Class<T> clientType, TServiceClientFactory<T> factory, SelSession selSession) {
         if (classMapServiceName == null) {
-            classMapServiceName = new HashMap<Class, String>();
+            synchronized (this) {
+                if (classMapServiceName == null) {
+                    classMapServiceName = new HashMap<Class, String>();
+                }
+            }
         }
 
         String serviceName = classMapServiceName.get(clientType);
@@ -314,7 +318,7 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
 
         TPushProtocol pushProtocol = new TPushProtocol(new TAdapterTransport<SelSession>(selSession), serviceName);
         T client = factory.getClient(null, pushProtocol);
-        if (clientType != null) {
+        if (parentName != null) {
             //Processor URI_DICT_FLAG
             synchronized (this) {
                 if (!classMapServiceName.containsKey(clientType)) {

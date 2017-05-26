@@ -97,7 +97,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
     /**
      * 获取玩家当前连接
      */
-    public R getReceiver() {
+    protected R getReceiver() {
         return receiver;
     }
 

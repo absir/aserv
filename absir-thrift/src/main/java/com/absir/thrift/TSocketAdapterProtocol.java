@@ -29,7 +29,6 @@ public class TSocketAdapterProtocol extends TAdapterProtocol<TSocketAdapter> {
 
     @Override
     protected void sendMessage(TMessage message, ByteArrayOutputStream outputStream) {
-        final String uri = TSocketAdapterReceiver.getServiceUri(serviceName, message.name);
         boolean recv = message.type == 1;
         if (recv) {
             atomBuffer_ = new UtilAtomBuffer();
@@ -37,9 +36,7 @@ public class TSocketAdapterProtocol extends TAdapterProtocol<TSocketAdapter> {
 
         final UtilAtomBuffer atomBuffer = atomBuffer_;
         final int seqid = message.seqid;
-
         // 准备SocketAdapter回调
-        SocketAdapter socketAdapter = getTransport().getAdapter().getSocketAdapter();
         SocketAdapter.CallbackAdapter callbackAdapter = recv ? new SocketAdapter.CallbackAdapter() {
             @Override
             public void doWith(SocketAdapter adapter, int offset, byte[] buffer) {
@@ -51,9 +48,24 @@ public class TSocketAdapterProtocol extends TAdapterProtocol<TSocketAdapter> {
 
         } : null;
 
+        try {
+            sendMessageCallback(message, outputStream, callbackAdapter);
+            message = null;
+
+        } finally {
+            if (atomBuffer_ != null && message != null) {
+                atomBuffer_.decrement();
+            }
+        }
+    }
+
+    protected void sendMessageCallback(TMessage message, ByteArrayOutputStream outputStream, SocketAdapter.CallbackAdapter callbackAdapter) {
+        final String uri = TSocketAdapterReceiver.getServiceUri(serviceName, message.name);
+        SocketAdapter socketAdapter = getTransport().getAdapter().getSocketAdapter();
         // 发送AdapterDataBytes
         final byte[] postDataBytes = outputStream.toByteArray();
         final int callbackIndex = socketAdapter.getNextCallbackIndex(callbackAdapter);
+        socketAdapter.clearRetryConnect();
         socketAdapter.sendAdapterDataBytes(callbackIndex, new SocketAdapter.AdapterDataBytes() {
             @Override
             public byte[] getSendDataBytes(SocketAdapter socketAdapter) {
@@ -66,6 +78,7 @@ public class TSocketAdapterProtocol extends TAdapterProtocol<TSocketAdapter> {
                 }
 
                 return null;
+
             }
 
         }, getTimeout(message), callbackAdapter);

@@ -106,6 +106,7 @@ public class SocketAdapter {
     private boolean tryConnecting;
 
     private int disconnectNumber;
+
     private List<Runnable> closeRunnables;
 
     public static void printException(Throwable e) {
@@ -505,17 +506,36 @@ public class SocketAdapter {
             synchronized (this) {
                 try {
                     tryConnecting = true;
-                    if (socket == null && !isRetryConnectMax()) {
-                        retryConnect++;
-                        callbackConnect.doWith(this, 0, null);
-                        if (socket != null) {
-                            waiteAccept();
+                    if (socket == null) {
+                        if (isRetryConnectMax()) {
+                            disconnect(null);
+
+                        } else {
+                            retryConnect++;
+                            callbackConnect.doWith(this, 0, null);
+                            if (socket == null) {
+                                addDisconnectNumber();
+
+                            } else {
+                                waiteAccept();
+                            }
                         }
                     }
 
                 } finally {
                     tryConnecting = false;
                 }
+            }
+        }
+    }
+
+    private long checkConnectTime;
+
+    public void checkConnect(long contextTime) {
+        if (checkConnectTime != contextTime) {
+            checkConnectTime = contextTime;
+            if (!registeredRunnables.isEmpty()) {
+                connect();
             }
         }
     }
@@ -563,19 +583,19 @@ public class SocketAdapter {
 
             } catch (Exception e) {
             }
-        }
 
-        socket = null;
-        registered = false;
-        receiveStarted = false;
-        clearReceiveBuff();
-        if (closeRunnables != null) {
-            for (Runnable runnable : closeRunnables) {
-                try {
-                    runnable.run();
+            socket = null;
+            registered = false;
+            receiveStarted = false;
+            clearReceiveBuff();
+            if (closeRunnables != null) {
+                for (Runnable runnable : closeRunnables) {
+                    try {
+                        runnable.run();
 
-                } catch (Throwable e) {
-                    Environment.throwable(e);
+                    } catch (Throwable e) {
+                        Environment.throwable(e);
+                    }
                 }
             }
         }
@@ -626,10 +646,10 @@ public class SocketAdapter {
             lastedBeat();
             afterRegisterRunnable();
             return true;
-
-        } else {
-            addDisconnectNumber();
         }
+//        else {
+//            addDisconnectNumber();
+//        }
 
         return false;
     }
@@ -1252,12 +1272,17 @@ public class SocketAdapter {
             }
         }
 
-        public boolean isAdapterDisconnect() {
+        public boolean isAdapterTimeout(long contextTime) {
+            if (timeout <= contextTime) {
+                return true;
+            }
+
             SocketAdapter adapter = socketAdapter;
             if (adapter == null) {
                 return true;
 
             } else {
+                adapter.checkConnect(contextTime);
                 if (disconnectNumber == 0) {
                     disconnectNumber = adapter.getDisconnectNumber();
 
@@ -1364,7 +1389,7 @@ public class SocketAdapter {
                     iterator = callbackTimeouts.iterator();
                     while (iterator.hasNext()) {
                         callbackTimeout = iterator.next();
-                        if (callbackTimeout.timeout <= contextTime || callbackTimeout.isAdapterDisconnect()) {
+                        if (callbackTimeout.isAdapterTimeout(contextTime)) {
                             callbackTimeout.run();
                             iterator.remove();
                         }

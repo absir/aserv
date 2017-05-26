@@ -95,6 +95,7 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
             }
         };
 
+        socketAdapter.clearRetryConnect();
         if (attribute == null || !attribute.sendStream) {
             socketAdapter.sendDataVarints(uri, paramData, timeout, callbackAdapter);
 
