@@ -66,7 +66,13 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
         return cacheMap.get(id);
     }
 
+    private boolean isAddedEntityMerges;
+
     public void addEntityMerges() {
+        if (isAddedEntityMerges) {
+            return;
+        }
+
         L2EntityMergeService.ME.addEntityMerges(entityName, entityClass, this);
     }
 
@@ -110,6 +116,10 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
                       Object mergeEvent) {
         if (mergeType == MergeType.RELOAD) {
             reloadCacheTransaction();
+            if (reloadListener != null) {
+                reloadListener.run();
+            }
+
             return;
         }
 

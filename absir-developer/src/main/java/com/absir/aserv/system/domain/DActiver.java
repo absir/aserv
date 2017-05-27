@@ -203,7 +203,14 @@ public class DActiver<T extends JiActive> implements IEntityMerge<T> {
         merge(entity, mergeType, mergeEvent);
     }
 
+    private boolean isAddedEntityMerges;
+
     public void addEntityMerges() {
+        if (isAddedEntityMerges) {
+            return;
+        }
+
+        isAddedEntityMerges = true;
         L2EntityMergeService.ME.addEntityMerges(entityName, null, this);
     }
 }

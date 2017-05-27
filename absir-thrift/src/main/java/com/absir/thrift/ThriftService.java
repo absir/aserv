@@ -2,7 +2,6 @@ package com.absir.thrift;
 
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
-import com.absir.bean.inject.InjectBeanUtils;
 import com.absir.bean.inject.value.*;
 import com.absir.client.ServerEnvironment;
 import com.absir.client.SocketAdapter;
@@ -24,6 +23,7 @@ import com.absir.server.socket.resolver.ISessionResolver;
 import com.absir.server.socket.resolver.InputBufferResolver;
 import com.absir.server.socket.resolver.SocketSessionResolver;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.TException;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.TServiceClientFactory;
@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.reflect.TypeVariable;
 import java.net.InetAddress;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
@@ -52,6 +53,14 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
     public static final ThriftService ME = BeanFactoryUtils.get(ThriftService.class);
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(ThriftService.class);
+
+    protected static final TypeVariable BASE_VARIABLE = TBaseProcessor.class.getTypeParameters()[0];
+
+    public static String getServiceName(TBaseProcessor baseProcessor) {
+        Class<?> faceType = KernelClass.typeClass(baseProcessor.getClass(), BASE_VARIABLE);
+        String parentName = KernelClass.parentName(faceType);
+        return parentName.substring(parentName.lastIndexOf('.') + 1, parentName.length());
+    }
 
     protected TMultiplexedProcessorProxy processorProxy;
 
@@ -99,7 +108,8 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
         processorProxy = new TMultiplexedProcessorProxy();
         if (faceServers != null) {
             for (IFaceServer faceServer : faceServers) {
-                processorProxy.registerBaseProcessor(InjectBeanUtils.getBeanType(faceServer).getSimpleName(), faceServer, faceServer.getBaseProcessor());
+                TBaseProcessor baseProcessor = faceServer.getBaseProcessor();
+                processorProxy.registerBaseProcessor(getServiceName(baseProcessor), faceServer, baseProcessor);
             }
         }
     }

@@ -106,6 +106,8 @@ public class L2EntityMergeService
             if (!entityClass.isAssignableFrom(SessionFactoryUtils.getEntityClass(entityName))) {
                 return;
             }
+
+            entityName = SessionFactoryUtils.getEntityName(entityName);
         }
 
         getEntityMerges(entityName).add(entityMerge);

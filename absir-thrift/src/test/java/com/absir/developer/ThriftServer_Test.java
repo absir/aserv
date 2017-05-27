@@ -70,7 +70,7 @@ public class ThriftServer_Test extends ThriftService {
 
         processorProxy.registerTypeProcessor(RpcService.Iface.class, rpcService, new RpcService.Processor<RpcService.Iface>(rpcService));
         this.processorProxy = processorProxy;
-        //this.startServer();
+        this.startServer();
 
         SocketAdapter socketAdapter = new SocketAdapter();
         socketAdapter.setCallbackConnect(new SocketAdapter.CallbackAdapter() {
