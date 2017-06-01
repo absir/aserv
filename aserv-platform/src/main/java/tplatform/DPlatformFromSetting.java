@@ -592,6 +592,9 @@ public class DPlatformFromSetting implements org.apache.thrift.TBase<DPlatformFr
 
     public DPlatformFromSetting cloneDepth(int _depth) {
         DPlatformFromSetting _clone = create();
+        _clone.fromId = fromId;
+        _clone.review = review;
+        _clone.setting = setting;
         cloneMore(_clone, _depth);
         return _clone;
     }

@@ -73,6 +73,11 @@ public class JSlaveServer extends JbBean implements ICrudBean {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String serverAddress;
 
+    @JaLang("服务地址V6")
+    @JsonIgnore
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private String serverAddressV6;
+
     @JaLang("资源链接")
     @JsonIgnore
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -164,6 +169,14 @@ public class JSlaveServer extends JbBean implements ICrudBean {
         this.serverAddress = serverAddress;
     }
 
+    public String getServerAddressV6() {
+        return serverAddressV6;
+    }
+
+    public void setServerAddressV6(String serverAddressV6) {
+        this.serverAddressV6 = serverAddressV6;
+    }
+
     public String getResourceUrl() {
         return resourceUrl;
     }
@@ -209,9 +222,16 @@ public class JSlaveServer extends JbBean implements ICrudBean {
                 serverAddress = null;
             }
 
+            if (KernelString.isEmpty(serverAddressV6)) {
+                serverAddressV6 = slave.getServerAddressV6();
+
+            } else if ("*".equals(serverAddressV6)) {
+                serverAddressV6 = null;
+            }
+
             if (port == 0) {
                 Integer portInteger = (Integer) BeanService.ME
-                        .selectQuerySingle("SELECT MAX(o.port) FROM JSlaveServer o WHERE o.host.id = ?", slave.getId());
+                        .selectQuerySingle("SELECT MAX(o.port) FROM JSlaveServer o WHERE o.slave.id = ?", slave.getId());
                 port = portInteger == null ? 18891 : (portInteger + 1);
             }
         }

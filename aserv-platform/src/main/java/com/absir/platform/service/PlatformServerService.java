@@ -164,7 +164,7 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
         List<PlatformAnnouncement> list = new ArrayList<PlatformAnnouncement>();
         try {
             List<JAnnouncement> announcements = new ArrayList<JAnnouncement>(announcementDCacheOpen.getCacheMap().values());
-            Collections.sort(announcements, BeanService.COMPARATOR);
+            Collections.sort(announcements, BeanService.COMPARATOR_ID_DESC);
             for (JAnnouncement announcement : announcements) {
                 DAnnouncement dAnnouncement = announcement.getAnnouncement();
                 if (dAnnouncement != null) {
@@ -187,11 +187,13 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
         List<PlatformServer> list = new ArrayList<PlatformServer>();
         try {
             List<JServer> servers = new ArrayList<JServer>(serverDCacheOpen.getCacheMap().values());
-            Collections.sort(servers, BeanService.COMPARATOR);
+            Collections.sort(servers, BeanService.COMPARATOR_ID_DESC);
             for (JServer server : servers) {
                 DServer[] dServers = server.getServers();
                 if (dServers != null) {
-                    for (DServer dServer : dServers) {
+                    int last = dServers.length - 1;
+                    for (; last >= 0; last--) {
+                        DServer dServer = dServers[last];
                         JSlaveServer slaveServer = BeanService.ME.get(JSlaveServer.class, dServer.getId());
                         if (slaveServer != null) {
                             DServer value = createDServer(dServer);
@@ -207,7 +209,7 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
             }
 
             serverList = list;
-            KernelList.sortOrderable(serverList);
+            //KernelList.sortOrderable(serverList);
 
         } catch (ConcurrentModificationException e) {
             Environment.throwable(e);
@@ -226,6 +228,7 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
         DServer dServer = platformServer.dServer;
         value.setName(KernelString.isEmpty(dServer.getName()) ? slaveServer.getName() : dServer.getName());
         value.setSAddress(KernelString.isEmpty(dServer.getSAddress()) ? slaveServer.getServerAddress() : dServer.getSAddress());
+        value.setsAddressV6(KernelString.isEmpty(dServer.getsAddressV6()) ? slaveServer.getServerAddressV6() : dServer.getSAddressV6());
         value.setPort(dServer.getPort() == 0 ? slaveServer.getPort() : dServer.getPort());
         value.setDAddress(KernelString.isEmpty(dServer.getDAddress()) ? slaveServer.getResourceUrl() : dServer.getDAddress());
         value.setStatus(slaveServer.isClosed() ? EServerStatus.maintain : value.getStatus());

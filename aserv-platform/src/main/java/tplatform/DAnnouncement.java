@@ -824,6 +824,11 @@ public class DAnnouncement implements org.apache.thrift.TBase<DAnnouncement, DAn
 
     public DAnnouncement cloneDepth(int _depth) {
         DAnnouncement _clone = create();
+        _clone.title = title;
+        _clone.content = content;
+        _clone.image = image;
+        _clone.openUrl = openUrl;
+        _clone.imageHide = imageHide;
         cloneMore(_clone, _depth);
         return _clone;
     }

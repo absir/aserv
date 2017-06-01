@@ -506,6 +506,8 @@ public class DLoginResult implements org.apache.thrift.TBase<DLoginResult, DLogi
 
     public DLoginResult cloneDepth(int _depth) {
         DLoginResult _clone = create();
+        _clone.error = error;
+        _clone.result = result;
         cloneMore(_clone, _depth);
         return _clone;
     }

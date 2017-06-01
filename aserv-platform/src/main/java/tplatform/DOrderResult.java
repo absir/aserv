@@ -489,6 +489,8 @@ public class DOrderResult implements org.apache.thrift.TBase<DOrderResult, DOrde
 
     public DOrderResult cloneDepth(int _depth) {
         DOrderResult _clone = create();
+        _clone.tradeId = tradeId;
+        _clone.tradeData = tradeData;
         cloneMore(_clone, _depth);
         return _clone;
     }

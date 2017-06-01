@@ -817,6 +817,11 @@ public class DPlatformFrom implements org.apache.thrift.TBase<DPlatformFrom, DPl
 
     public DPlatformFrom cloneDepth(int _depth) {
         DPlatformFrom _clone = create();
+        _clone.platform = platform;
+        _clone.channel = channel;
+        _clone.packageName = packageName;
+        _clone.versionDouble = versionDouble;
+        _clone.fromStr = fromStr;
         cloneMore(_clone, _depth);
         return _clone;
     }

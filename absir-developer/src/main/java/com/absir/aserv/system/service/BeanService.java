@@ -13,6 +13,8 @@ import com.absir.aserv.system.service.impl.BeanServiceBase;
 import com.absir.aserv.system.service.impl.BeanServiceImpl;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
+import com.absir.core.base.IBase;
+import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelLang.CallbackTemplate;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.TransactionAttribute;
@@ -52,7 +54,39 @@ public interface BeanService {
 
         @Override
         public int compare(JiOrdinal lhs, JiOrdinal rhs) {
-            return rhs.getOrdinal() - lhs.getOrdinal();
+            return COMPARATOR.compare(rhs, lhs);
+        }
+    };
+
+    public static final Comparator<JiOrdinal> COMPARATOR_ID = new Comparator<JiOrdinal>() {
+
+        @Override
+        public int compare(JiOrdinal lhs, JiOrdinal rhs) {
+            int order = lhs.getOrdinal() - rhs.getOrdinal();
+            if (order == 0) {
+                long lid = KernelDyna.to(((IBase) lhs).getId(), long.class);
+                long rid = KernelDyna.to(((IBase) rhs).getId(), long.class);
+                lid -= rid;
+                if (lid > Integer.MAX_VALUE) {
+                    return Integer.MAX_VALUE;
+                }
+
+                if (lid < Integer.MIN_VALUE) {
+                    return Integer.MIN_VALUE;
+                }
+
+                return (int) lid;
+            }
+
+            return order;
+        }
+    };
+
+    public static final Comparator<JiOrdinal> COMPARATOR_ID_DESC = new Comparator<JiOrdinal>() {
+
+        @Override
+        public int compare(JiOrdinal lhs, JiOrdinal rhs) {
+            return COMPARATOR_ID.compare(rhs, lhs);
         }
     };
 

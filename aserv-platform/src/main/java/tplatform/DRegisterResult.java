@@ -506,6 +506,8 @@ public class DRegisterResult implements org.apache.thrift.TBase<DRegisterResult,
 
     public DRegisterResult cloneDepth(int _depth) {
         DRegisterResult _clone = create();
+        _clone.error = error;
+        _clone.result = result;
         cloneMore(_clone, _depth);
         return _clone;
     }

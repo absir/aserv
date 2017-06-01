@@ -9,6 +9,7 @@ package com.absir.async;
 
 import com.absir.aop.AopInterceptor;
 import com.absir.aop.AopProxyHandler;
+import com.absir.context.core.ContextUtils;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
@@ -111,4 +112,56 @@ public class AsyncRunnableNotifier extends AsyncRunnable {
 
         private MethodProxy methodProxy;
     }
+
+    public interface INotifierProxy {
+
+        public Runnable getNotifierRunnable();
+
+        public void setNotifierRunnable(Runnable runnable);
+
+    }
+
+    public static final Runnable _NOTIFIER_RUNNABLE = new Runnable() {
+        @Override
+        public void run() {
+
+        }
+    };
+
+    public static void notifierProxyRun(final INotifierProxy proxy, final Runnable runnable) {
+        synchronized (proxy) {
+            Runnable _runnable = proxy.getNotifierRunnable();
+            if (_runnable == null) {
+                proxy.setNotifierRunnable(_NOTIFIER_RUNNABLE);
+                ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Runnable _runnable = runnable;
+                        while (_runnable != null) {
+                            try {
+                                runnable.run();
+
+                            } catch (Throwable e) {
+                                LOGGER.error("notifierProxyRun run error: " + proxy, e);
+                            }
+
+                            synchronized (proxy) {
+                                _runnable = proxy.getNotifierRunnable();
+                                if (_runnable == null || _runnable == _NOTIFIER_RUNNABLE) {
+                                    proxy.setNotifierRunnable(null);
+                                    return;
+                                }
+
+                                proxy.setNotifierRunnable(_NOTIFIER_RUNNABLE);
+                            }
+                        }
+                    }
+                });
+
+            } else {
+                proxy.setNotifierRunnable(runnable);
+            }
+        }
+    }
+
 }

@@ -39,19 +39,19 @@ public class JSlave extends JbBase implements JiOpen {
     private String name;
 
     @JaLang("IP")
-    @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
+    @JaEdit(groups = {JaEdit.GROUP_LIST})
     private String ip;
 
     @JaLang("组号")
-    @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
+    @JaEdit(groups = {JaEdit.GROUP_LIST})
     private String groupId;
 
     @JaLang("版本")
-    @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
+    @JaEdit(groups = {JaEdit.GROUP_LIST})
     private String version;
 
     @JaLang("路径")
-    @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
+    @JaEdit(groups = {JaEdit.GROUP_LIST})
     private String path;
 
     @JaLang("应用")
@@ -73,6 +73,10 @@ public class JSlave extends JbBase implements JiOpen {
     @JaLang("服务地址")
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     private String serverAddress;
+
+    @JaLang("服务地址V6")
+    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
+    private String serverAddressV6;
 
     @JaLang("强制开启")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -176,6 +180,14 @@ public class JSlave extends JbBase implements JiOpen {
 
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
+    }
+
+    public String getServerAddressV6() {
+        return serverAddressV6;
+    }
+
+    public void setServerAddressV6(String serverAddressV6) {
+        this.serverAddressV6 = serverAddressV6;
     }
 
     public boolean isForceOpen() {

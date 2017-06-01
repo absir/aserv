@@ -61,14 +61,16 @@ struct DServer {
     2: string name;
     // 服务地址
     3: string sAddress;
+    // 服务地址
+    4: string sAddressV6;
     // 端口号
-    4: i32 port;
+    5: i32 port;
     // 下载地址
-    5: optional string dAddress = "";
+    6: optional string dAddress = "";
     // 权重
-    6: optional i32 weight;
+    7: optional i32 weight;
     // 状态
-    7: optional EServerStatus status;
+    8: optional EServerStatus status;
 }
 
 // 服务状态

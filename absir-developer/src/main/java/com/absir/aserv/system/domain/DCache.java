@@ -10,6 +10,7 @@ package com.absir.aserv.system.domain;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.service.BeanService;
+import com.absir.async.AsyncRunnableNotifier;
 import com.absir.core.base.IBase;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelString;
@@ -25,7 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
-public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
+public abstract class DCache<K extends IBase, V> implements IEntityMerge<K>, AsyncRunnableNotifier.INotifierProxy {
 
     public static final TypeVariable<?> TYPE_VARIABLE = DCache.class.getTypeParameters()[0];
     public Runnable reloadListener;
@@ -33,7 +34,7 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
     protected String entityName;
     protected String reloadHsql;
     protected Map<Serializable, V> cacheMap;
-    protected Map<Serializable, V> cacheMapBuffer;
+    protected Runnable notifierRunnable;
 
     public DCache(String entityName) {
         this(null, null);
@@ -85,7 +86,7 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
      */
     public void reloadCache(Session session) {
         Iterator<K> iterator = QueryDaoUtils.createQueryArray(session, reloadHsql).iterate();
-        cacheMapBuffer = createCacheMap();
+        Map<Serializable, V> cacheMapBuffer = createCacheMap();
         while (iterator.hasNext()) {
             K entity = iterator.next();
             V v = getCacheValue(entity);
@@ -95,61 +96,44 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K> {
         }
 
         cacheMap = cacheMapBuffer;
-        cacheMapBuffer = null;
         if (reloadListener != null) {
             reloadListener.run();
         }
     }
 
-    protected void reloadCacheTransaction() {
-        TransactionContext<?> transactionContext = BeanDao.open(null, BeanService.TRANSACTION_READ_ONLY);
-        try {
-            reloadCache(BeanDao.getSession());
+    protected Runnable reloadCacheRunnable;
 
-        } finally {
-            BeanDao.commit(transactionContext, null);
+    public void reloadCacheTransaction() {
+        if (reloadCacheRunnable == null) {
+            reloadCacheRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    TransactionContext<?> transactionContext = BeanDao.open(null, BeanService.TRANSACTION_READ_ONLY);
+                    try {
+                        reloadCache(BeanDao.getSession());
+
+                    } finally {
+                        BeanDao.commit(transactionContext, null);
+                    }
+                }
+            };
         }
+
+        AsyncRunnableNotifier.notifierProxyRun(this, reloadCacheRunnable);
     }
 
     @Override
     public void merge(String entityName, K entity, com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType,
                       Object mergeEvent) {
-        if (mergeType == MergeType.RELOAD) {
-            reloadCacheTransaction();
-            if (reloadListener != null) {
-                reloadListener.run();
-            }
+        reloadCacheTransaction();
+    }
 
-            return;
-        }
+    public Runnable getNotifierRunnable() {
+        return notifierRunnable;
+    }
 
-        Serializable id = entity.getId();
-        if (id != null) {
-            if (mergeType == null) {
-                cacheMap.remove(id);
-                if (cacheMapBuffer != null) {
-                    cacheMapBuffer.remove(id);
-                }
-            }
-
-            V v = getCacheValue(entity);
-            if (v == null) {
-                cacheMap.remove(id);
-                if (cacheMapBuffer != null) {
-                    cacheMapBuffer.remove(id);
-                }
-
-            } else {
-                cacheMap.put(id, v);
-                if (cacheMapBuffer != null) {
-                    cacheMapBuffer.put(id, v);
-                }
-            }
-        }
-
-        if (reloadListener != null) {
-            reloadListener.run();
-        }
+    public void setNotifierRunnable(Runnable notifierRunnable) {
+        this.notifierRunnable = notifierRunnable;
     }
 
     protected abstract V getCacheValue(K entity);

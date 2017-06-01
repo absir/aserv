@@ -1041,6 +1041,13 @@ public class DFromSetting implements org.apache.thrift.TBase<DFromSetting, DFrom
 
     public DFromSetting cloneDepth(int _depth) {
         DFromSetting _clone = create();
+        _clone.auth = auth;
+        _clone.title = title;
+        _clone.message = message;
+        _clone.forceUpgrade = forceUpgrade;
+        _clone.openUrl = openUrl;
+        _clone.cdnUrl = cdnUrl;
+        _clone.otherUrl = otherUrl;
         cloneMore(_clone, _depth);
         return _clone;
     }

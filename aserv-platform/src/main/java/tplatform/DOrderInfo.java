@@ -1324,6 +1324,16 @@ public class DOrderInfo implements org.apache.thrift.TBase<DOrderInfo, DOrderInf
 
     public DOrderInfo cloneDepth(int _depth) {
         DOrderInfo _clone = create();
+        _clone.fromId = fromId;
+        _clone.platform = platform;
+        _clone.serverId = serverId;
+        _clone.playerId = playerId;
+        _clone.id = id;
+        _clone.name = name;
+        _clone.desc = desc;
+        _clone.price = price;
+        _clone.number = number;
+        _clone.orderData = orderData;
         cloneMore(_clone, _depth);
         return _clone;
     }

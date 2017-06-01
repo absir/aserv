@@ -747,6 +747,10 @@ public class DIdentityResult implements org.apache.thrift.TBase<DIdentityResult,
 
     public DIdentityResult cloneDepth(int _depth) {
         DIdentityResult _clone = create();
+        _clone.userId = userId;
+        _clone.userData = userData;
+        _clone.sessionId = sessionId;
+        _clone.serverIds = serverIds;
         cloneMore(_clone, _depth);
         return _clone;
     }

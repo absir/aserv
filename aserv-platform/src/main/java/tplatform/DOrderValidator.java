@@ -1114,6 +1114,14 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
 
     public DOrderValidator cloneDepth(int _depth) {
         DOrderValidator _clone = create();
+        _clone.fromId = fromId;
+        _clone.platform = platform;
+        _clone.serverId = serverId;
+        _clone.playerId = playerId;
+        _clone.id = id;
+        _clone.number = number;
+        _clone.orderData = orderData;
+        _clone.receiptId = receiptId;
         cloneMore(_clone, _depth);
         return _clone;
     }
