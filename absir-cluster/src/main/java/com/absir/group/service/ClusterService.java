@@ -20,10 +20,10 @@ import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAbsir;
 import com.absir.core.util.UtilRuntime;
 import com.absir.group.bean.JNode;
+import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,7 +185,8 @@ public class ClusterService implements ISingle {
             session.persist(verifier);
             session.flush();
 
-        } catch (ConstraintViolationException e) {
+        } catch (RuntimeException e) {
+            SessionFactoryUtils.throwNoConstraintViolationException(e);
             session.clear();
             return null;
         }

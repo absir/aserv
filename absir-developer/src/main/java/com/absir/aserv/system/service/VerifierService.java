@@ -35,7 +35,6 @@ import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +99,8 @@ public class VerifierService extends ContextService {
             session.persist(verifier);
             session.flush();
 
-        } catch (ConstraintViolationException e) {
+        } catch (RuntimeException e) {
+            SessionFactoryUtils.throwNoConstraintViolationException(e);
             session.clear();
             if (unique) {
                 return null;

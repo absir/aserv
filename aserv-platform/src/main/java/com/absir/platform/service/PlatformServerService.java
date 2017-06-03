@@ -27,6 +27,7 @@ import com.absir.core.kernel.KernelString;
 import com.absir.open.bean.JPayTrade;
 import com.absir.open.bean.value.JePayStatus;
 import com.absir.open.service.PayUtils;
+import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.platform.bean.*;
@@ -35,7 +36,6 @@ import com.absir.thrift.IFaceServer;
 import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.TException;
 import org.hibernate.Session;
-import org.hibernate.exception.ConstraintViolationException;
 import tplatform.*;
 
 import java.util.*;
@@ -290,7 +290,8 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
                 session.persist(jPlatformFrom);
                 session.flush();
 
-            } catch (ConstraintViolationException e) {
+            } catch (RuntimeException e) {
+                SessionFactoryUtils.throwNoConstraintViolationException(e);
                 session.clear();
                 ref = BeanDao.get(session, JPlatformFromRef.class, refId);
                 if (ref == null) {
@@ -456,7 +457,7 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
             identityResult.setUserId(0);
 
         } else {
-            JPlatformFrom platformFrom = getPlatformFromId(fromId);
+            JPlatformFrom platformFrom = ME.getPlatformFromId(fromId);
             platformUser.setChannel(getPlatformFromChannel(platformFrom));
             PlatformUserService.ME.loginSessionUserType(platformUser, PlatformUserService.ME.getLifeTime(), 2);
 
@@ -514,7 +515,7 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
     @Override
     public DOrderResult order(int fromId, DOrderInfo info) throws TException {
         DOrderResult orderResult = new DOrderResult();
-        JPlatformFrom platformFrom = getPlatformFromId(fromId);
+        JPlatformFrom platformFrom = ME.getPlatformFromId(fromId);
         String[] moreDatas = getMoreDatas(info.getMoreDatas());
         JPayTrade payTrade = PayUtils.createTrade(info.getConfigureId(), info.getPlatform(), info.getPlatformData(), getPlatformFromChannel(platformFrom), info.getGoodsId(), info.getGoodsNumber(), (float) info.getAmount(), info.getUserId(), info.getServerId(), info.getPlayerId(), info.isShortTradeId(), moreDatas);
         try {

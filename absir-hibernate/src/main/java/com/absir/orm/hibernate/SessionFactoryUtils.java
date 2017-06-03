@@ -15,6 +15,7 @@ import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.core.kernel.KernelLang.CallbackBreak;
 import com.absir.core.kernel.KernelReflect;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.util.UtilAbsir;
 import com.absir.orm.hibernate.boost.EntityAssoc.AssocEntity;
 import com.absir.orm.hibernate.boost.EntityAssoc.AssocField;
 import com.absir.orm.hibernate.boost.EntityAssoc.EntityAssocEntity;
@@ -24,6 +25,7 @@ import com.absir.property.PropertyUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.metadata.ClassMetadata;
 
 import javax.persistence.ManyToMany;
@@ -505,4 +507,9 @@ public abstract class SessionFactoryUtils {
 
         return metas;
     }
+
+    public static void throwNoConstraintViolationException(RuntimeException e) {
+        UtilAbsir.throwNoRuntimeType(e, ConstraintViolationException.class);
+    }
+
 }

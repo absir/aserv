@@ -66,4 +66,17 @@ public class UtilAbsir {
 
         return e;
     }
+
+    public static void throwNoRuntimeType(RuntimeException e, Class<? extends Throwable> runtimeType) {
+        Throwable throwable = e;
+        while (throwable != null) {
+            if (throwable.getClass() == runtimeType) {
+                return;
+            }
+
+            throwable = throwable.getCause();
+        }
+
+        throw e;
+    }
 }

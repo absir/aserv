@@ -17,9 +17,9 @@ import com.absir.bean.inject.value.Domain;
 import com.absir.context.core.ContextUtils;
 import com.absir.open.bean.JPayHistory;
 import com.absir.open.bean.JPayTrade;
+import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.Session;
-import org.hibernate.exception.ConstraintViolationException;
 
 @Base
 @Bean
@@ -55,7 +55,8 @@ public class TradeService {
         try {
             session.persist(payHistory);
 
-        } catch (ConstraintViolationException e) {
+        } catch (RuntimeException e) {
+            SessionFactoryUtils.throwNoConstraintViolationException(e);
             return false;
         }
 

@@ -27,6 +27,7 @@ import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelMap;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
+import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
@@ -40,7 +41,6 @@ import com.absir.validator.value.NotEmpty;
 import com.absir.validator.value.Regex;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
-import org.hibernate.exception.ConstraintViolationException;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -369,7 +369,8 @@ public class PortalService {
         try {
             CrudServiceUtils.merge("JUser", null, user, true, null, null);
 
-        } catch (ConstraintViolationException e) {
+        } catch (RuntimeException e) {
+            SessionFactoryUtils.throwNoConstraintViolationException(e);
             if (type == 1) {
                 InvokerResolverErrors.onError("username", Site.USERNAME_REGISTERED, null, null);
 
@@ -530,7 +531,8 @@ public class PortalService {
         try {
             CrudServiceUtils.merge("JUser", null, user, true, null, null);
 
-        } catch (ConstraintViolationException e) {
+        } catch (RuntimeException e) {
+            SessionFactoryUtils.throwNoConstraintViolationException(e);
             InvokerResolverErrors.onError("username", Site.USERNAME_REGISTERED, null, null);
         }
     }
