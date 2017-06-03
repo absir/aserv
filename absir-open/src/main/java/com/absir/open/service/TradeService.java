@@ -28,10 +28,14 @@ public class TradeService {
     public static final TradeService ME = BeanFactoryUtils.get(TradeService.class);
 
     @Domain
-    private DSequence sessionSequence;
+    private DSequence tradeSequence;
 
-    public String nextTradeId(int hashCode) {
-        return sessionSequence.getNextId();
+    public String nextTradeId() {
+        return tradeSequence.getNextId();
+    }
+
+    public String nextShortTradeId() {
+        return tradeSequence.getNextDigLetterId();
     }
 
     @Transaction

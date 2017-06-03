@@ -49,7 +49,7 @@ public class DIdentityResult implements org.apache.thrift.TBase<DIdentityResult,
 
     protected byte __isset_bitfield = 0;
 
-    private static final _Fields optionals[] = { _Fields.USER_DATA, _Fields.SERVER_IDS };
+    private static final _Fields optionals[] = { _Fields.USER_DATA, _Fields.SESSION_ID, _Fields.SERVER_IDS };
 
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
 
@@ -130,13 +130,6 @@ public class DIdentityResult implements org.apache.thrift.TBase<DIdentityResult,
     }
 
     public DIdentityResult() {
-    }
-
-    public DIdentityResult(long userId, String sessionId) {
-        this();
-        this.userId = userId;
-        setUserIdIsSet(true);
-        this.sessionId = sessionId;
     }
 
     /**
@@ -497,15 +490,17 @@ public class DIdentityResult implements org.apache.thrift.TBase<DIdentityResult,
             }
             first = false;
         }
-        if (!first)
-            sb.append(", ");
-        sb.append("sessionId:");
-        if (this.sessionId == null) {
-            sb.append("null");
-        } else {
-            sb.append(this.sessionId);
+        if (isSetSessionId()) {
+            if (!first)
+                sb.append(", ");
+            sb.append("sessionId:");
+            if (this.sessionId == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.sessionId);
+            }
+            first = false;
         }
-        first = false;
         if (isSetServerIds()) {
             if (!first)
                 sb.append(", ");
@@ -629,9 +624,11 @@ public class DIdentityResult implements org.apache.thrift.TBase<DIdentityResult,
                 }
             }
             if (struct.sessionId != null) {
-                oprot.writeFieldBegin(SESSION_ID_FIELD_DESC);
-                oprot.writeString(struct.sessionId);
-                oprot.writeFieldEnd();
+                if (struct.isSetSessionId()) {
+                    oprot.writeFieldBegin(SESSION_ID_FIELD_DESC);
+                    oprot.writeString(struct.sessionId);
+                    oprot.writeFieldEnd();
+                }
             }
             if (struct.serverIds != null) {
                 if (struct.isSetServerIds()) {
@@ -727,11 +724,17 @@ public class DIdentityResult implements org.apache.thrift.TBase<DIdentityResult,
         }
     }
 
+    public DIdentityResult(long userId) {
+        this();
+        this.userId = userId;
+        setUserIdIsSet(true);
+    }
+
     static {
         Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
         tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
         tmpMap.put(_Fields.USER_DATA, new org.apache.thrift.meta_data.FieldMetaData("userData", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.SESSION_ID, new org.apache.thrift.meta_data.FieldMetaData("sessionId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.SESSION_ID, new org.apache.thrift.meta_data.FieldMetaData("sessionId", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
         tmpMap.put(_Fields.SERVER_IDS, new org.apache.thrift.meta_data.FieldMetaData("serverIds", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64))));
         metaDataMap = Collections.unmodifiableMap(tmpMap);
         org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DIdentityResult.class, metaDataMap);

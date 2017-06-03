@@ -2,10 +2,16 @@ package com.absir.platform.service;
 
 import com.absir.aserv.configure.JConfigureUtils;
 import com.absir.aserv.master.bean.JSlaveServer;
+import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.aserv.system.bean.value.IUser;
+import com.absir.aserv.system.crud.PasswordCrudFactory;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.domain.DCacheOpen;
+import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.BeanService;
+import com.absir.aserv.system.service.SecurityService;
+import com.absir.aserv.system.service.impl.IdentityServiceLocal;
 import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -14,9 +20,13 @@ import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Started;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
+import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelList;
 import com.absir.core.kernel.KernelString;
+import com.absir.open.bean.JPayTrade;
+import com.absir.open.bean.value.JePayStatus;
+import com.absir.open.service.PayUtils;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.platform.bean.*;
@@ -35,7 +45,7 @@ import java.util.*;
  */
 @Base
 @Bean
-public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceServer<PlatformFromService.Iface>, PlatformFromService.Iface {
+public abstract class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceServer<PlatformFromService.Iface>, PlatformFromService.Iface {
 
     public static final PlatformServerService ME = BeanFactoryUtils.get(PlatformServerService.class);
 
@@ -409,34 +419,125 @@ public class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceS
         return servers;
     }
 
-    @Override
-    public DIdentityResult identity(int fromId, long serverId, String identities) throws TException {
-        return null;
+    public interface IPlatformUserId {
+
+        public Long getPlatformUserId();
+
+    }
+
+    protected String getPlatformFromChannel(JPlatformFrom platformFrom) {
+        return platformFrom == null ? null : (platformFrom.getPlatform() + '@' + platformFrom.getChannel());
+    }
+
+    protected DIdentityResult loginUser(int fromId, boolean serverIds, JiUserBase user, String userData) {
+        if (user == null) {
+            return null;
+        }
+
+        DIdentityResult identityResult = new DIdentityResult();
+        JPlatformUser platformUser = null;
+        if (user instanceof JPlatformUser) {
+            platformUser = (JPlatformUser) user;
+
+        } else {
+            if (user instanceof IPlatformUserId) {
+                Long id = ((IPlatformUserId) user).getPlatformUserId();
+                if (id != null && id != 0) {
+                    platformUser = BeanService.ME.get(JPlatformUser.class, id);
+                }
+            }
+
+            if (platformUser == null) {
+                platformUser = PlatformUserService.ME.getPlatformUser("JUser", user.getUsername(), null);
+            }
+        }
+
+        if (platformUser.isDisabled()) {
+            identityResult.setUserId(0);
+
+        } else {
+            JPlatformFrom platformFrom = getPlatformFromId(fromId);
+            platformUser.setChannel(getPlatformFromChannel(platformFrom));
+            PlatformUserService.ME.loginSessionUserType(platformUser, PlatformUserService.ME.getLifeTime(), 2);
+
+            identityResult.setUserId(platformUser.getId());
+            identityResult.setUserData(userData);
+            identityResult.setSessionId(platformUser.getSessionId());
+        }
+
+        return identityResult;
     }
 
     @Override
-    public DLoginResult login(int fromId, long serverId, String username, String password) throws TException {
-        return null;
+    public DIdentityResult identity(int fromId, boolean serverIds, String identities) throws TException {
+        String[] parameters = HelperString.split(identities, ',');
+        JiUserBase userBase = IdentityServiceLocal.getUserBaseParams(parameters, null);
+        return loginUser(fromId, serverIds, userBase, parameters[0] == null ? parameters[1] : null);
     }
 
     @Override
-    public DRegisterResult sign(int fromId, long serverId, String username, String password) throws TException {
-        return null;
+    public DLoginResult login(int fromId, boolean serverIds, String username, String password) throws TException {
+        JiUserBase userBase = SecurityService.ME.getUserBase(username, 0);
+        DLoginResult loginResult = new DLoginResult();
+        if (userBase == null) {
+            loginResult.setError(ELoginError.userNotExist);
+
+        } else {
+            IUser user = (IUser) (userBase);
+            if (PasswordCrudFactory.getPasswordEncrypt(password, user.getSalt(), user.getSaltCount()).equals(user.getPassword())) {
+                loginResult.setError(ELoginError.success);
+                loginResult.setResult(loginUser(fromId, serverIds, userBase, null));
+                loginResult.setUserId(userBase.getUserId());
+
+            } else {
+                loginResult.setError(ELoginError.passwordError);
+            }
+        }
+
+        return loginResult;
     }
 
     @Override
-    public EPasswordResult password(String sessionId, String oldPassword, String newPassword) throws TException {
-        return null;
+    public DIdentityResult loginUUID(int fromId, boolean serverIds, String uuid) throws TException {
+        return loginUser(fromId, serverIds, SecurityService.ME.openUserBase(uuid, null, "UUID", null), null);
     }
 
     @Override
-    public DOrderResult order(DOrderInfo info) throws TException {
-        return null;
+    public DRegisterResult sign(int fromId, String username, String password) throws TException {
+        return signUUID(fromId, username, password, null);
+    }
+
+    protected static String[] getMoreDatas(List<String> moreDatas) {
+        return moreDatas == null || moreDatas.size() == 0 ? null : (KernelCollection.toArray(moreDatas, String.class));
     }
 
     @Override
-    public boolean validate(DOrderValidator validator) throws TException {
-        return false;
+    public DOrderResult order(int fromId, DOrderInfo info) throws TException {
+        DOrderResult orderResult = new DOrderResult();
+        JPlatformFrom platformFrom = getPlatformFromId(fromId);
+        String[] moreDatas = getMoreDatas(info.getMoreDatas());
+        JPayTrade payTrade = PayUtils.createTrade(info.getConfigureId(), info.getPlatform(), info.getPlatformData(), getPlatformFromChannel(platformFrom), info.getGoodsId(), info.getGoodsNumber(), (float) info.getAmount(), info.getUserId(), info.getServerId(), info.getPlayerId(), info.isShortTradeId(), moreDatas);
+        try {
+            orderResult.setTradeData(PayUtils.orderTrade(payTrade, info.getPrepare(), moreDatas));
+
+        } catch (Exception e) {
+            throw new TException(e);
+        }
+
+        BeanService.ME.persist(payTrade);
+        orderResult.setTradeId(payTrade.getId());
+        return orderResult;
+    }
+
+    @Override
+    public boolean validate(int fromId, DOrderValidator validator) throws TException {
+        JPayTrade payTrade = BeanService.ME.get(JPayTrade.class, validator.getTradeId());
+        if (payTrade == null) {
+            return false;
+        }
+
+        Object result = PayUtils.payStatus(payTrade, validator.getConfigureId(), validator.getPlatform(), validator.getPlatformData(), validator.getTradeNo(), validator.getTradeReceipt(), 0, validator.isSanbox(), getMoreDatas(validator.getMoreDatas()), JePayStatus.PAYING, null);
+        return result != null;
     }
 
 }

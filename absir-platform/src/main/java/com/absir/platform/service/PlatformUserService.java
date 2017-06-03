@@ -157,7 +157,7 @@ public class PlatformUserService {
     }
 
     public String nextSessionId() {
-        return sessionSequence.getNextHexId();
+        return sessionSequence.getNextDigLetterId();
     }
 
     /**

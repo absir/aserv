@@ -23,6 +23,11 @@
         </dependency>
         <dependency>
             <groupId>com.absir</groupId>
+            <artifactId>absir-open</artifactId>
+            <version>${com.absir.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.absir</groupId>
             <artifactId>absir-thrift</artifactId>
             <version>${com.absir.version}</version>
         </dependency>

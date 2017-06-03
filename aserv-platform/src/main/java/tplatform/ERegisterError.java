@@ -12,7 +12,7 @@ import org.apache.thrift.TEnum;
 
 public enum ERegisterError implements org.apache.thrift.TEnum {
 
-    success(0), validateError(1), usernameExist(2), unkown(3);
+    success(0), usernameExist(3), unkown(4), usernameError(1), passwordError(2);
 
     private final int value;
 
@@ -36,10 +36,12 @@ public enum ERegisterError implements org.apache.thrift.TEnum {
             case 0:
                 return success;
             case 1:
-                return validateError;
+                return usernameError;
             case 2:
-                return usernameExist;
+                return passwordError;
             case 3:
+                return usernameExist;
+            case 4:
                 return unkown;
             default:
                 return null;

@@ -26,6 +26,16 @@ public class SecurityServiceImpl extends SecurityService {
         return new JSession();
     }
 
+    @Override
+    public Class<? extends JiUserBase> forUserType(int roleLevel) {
+        return JUser.class;
+    }
+
+    @Override
+    public JiUserBase createUserBase(int roleLevel) {
+        return new JUser();
+    }
+
     private JUser loadUser(JUser user) {
         if (user != null) {
             user.getUserRoles().isEmpty();

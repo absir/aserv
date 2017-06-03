@@ -259,7 +259,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     }
 
     public String randUploadFile(int hashCode, boolean uploadDir) {
-        String name = nameSequence.getNextHexId();
+        String name = nameSequence.getNextDigLetterId();
         return uploadDir ? (DATE_FORMAT.format(UtilContext.getCurrentDate()) + '/' + name) : name;
     }
 

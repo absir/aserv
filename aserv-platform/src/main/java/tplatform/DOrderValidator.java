@@ -22,62 +22,60 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
 
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("DOrderValidator");
 
-    private static final org.apache.thrift.protocol.TField FROM_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("fromId", org.apache.thrift.protocol.TType.I32, (short) 1);
-
-    private static final org.apache.thrift.protocol.TField PLATFORM_FIELD_DESC = new org.apache.thrift.protocol.TField("platform", org.apache.thrift.protocol.TType.STRING, (short) 2);
-
-    private static final org.apache.thrift.protocol.TField SERVER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("serverId", org.apache.thrift.protocol.TType.I64, (short) 3);
-
-    private static final org.apache.thrift.protocol.TField PLAYER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("playerId", org.apache.thrift.protocol.TType.I64, (short) 4);
-
-    private static final org.apache.thrift.protocol.TField ID_FIELD_DESC = new org.apache.thrift.protocol.TField("id", org.apache.thrift.protocol.TType.STRING, (short) 5);
-
-    private static final org.apache.thrift.protocol.TField NUMBER_FIELD_DESC = new org.apache.thrift.protocol.TField("number", org.apache.thrift.protocol.TType.I32, (short) 6);
-
-    private static final org.apache.thrift.protocol.TField ORDER_DATA_FIELD_DESC = new org.apache.thrift.protocol.TField("orderData", org.apache.thrift.protocol.TType.STRING, (short) 7);
-
-    private static final org.apache.thrift.protocol.TField RECEIPT_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("receiptId", org.apache.thrift.protocol.TType.STRING, (short) 8);
+    private static final org.apache.thrift.protocol.TField PLATFORM_FIELD_DESC = new org.apache.thrift.protocol.TField("platform", org.apache.thrift.protocol.TType.STRING, (short) 3);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
 
     // optional
-    protected int fromId;
-
-    // optional
     protected String platform;
-
-    // optional
-    protected long serverId;
-
-    // required
-    protected long playerId;
-
-    // required
-    protected String id;
-
-    // optional
-    protected int number;
-
-    // optional
-    protected String orderData;
-
-    // required
-    protected String receiptId;
-
-    // isset id assignments
-    private static final int __FROMID_ISSET_ID = 0;
-
-    private static final int __SERVERID_ISSET_ID = 1;
-
-    private static final int __PLAYERID_ISSET_ID = 2;
-
-    private static final int __NUMBER_ISSET_ID = 3;
 
     protected byte __isset_bitfield = 0;
 
-    private static final _Fields optionals[] = { _Fields.FROM_ID, _Fields.PLATFORM, _Fields.SERVER_ID, _Fields.NUMBER, _Fields.ORDER_DATA };
+    private static final _Fields optionals[] = { _Fields.CONFIGURE_ID, _Fields.PLATFORM, _Fields.PLATFORM_DATA, _Fields.TRADE_NO, _Fields.TRADE_RECEIPT, _Fields.SANBOX, _Fields.MORE_DATAS };
 
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
+    private static final org.apache.thrift.protocol.TField CONFIGURE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("configureId", org.apache.thrift.protocol.TType.I32, (short) 2);
+
+    private static final org.apache.thrift.protocol.TField TRADE_NO_FIELD_DESC = new org.apache.thrift.protocol.TField("tradeNo", org.apache.thrift.protocol.TType.STRING, (short) 5);
+
+    private static final org.apache.thrift.protocol.TField TRADE_RECEIPT_FIELD_DESC = new org.apache.thrift.protocol.TField("tradeReceipt", org.apache.thrift.protocol.TType.STRING, (short) 6);
+
+    private static final org.apache.thrift.protocol.TField PLATFORM_DATA_FIELD_DESC = new org.apache.thrift.protocol.TField("platformData", org.apache.thrift.protocol.TType.STRING, (short) 4);
+
+    private static final int __CONFIGUREID_ISSET_ID = 1;
+
+    // optional
+    protected int configureId;
+
+    // required
+    protected String tradeNo;
+
+    // optional
+    protected String tradeReceipt;
+
+    // optional
+    protected String platformData;
+
+    private static final org.apache.thrift.protocol.TField SANBOX_FIELD_DESC = new org.apache.thrift.protocol.TField("sanbox", org.apache.thrift.protocol.TType.BOOL, (short) 7);
+
+    private static final org.apache.thrift.protocol.TField MORE_DATAS_FIELD_DESC = new org.apache.thrift.protocol.TField("moreDatas", org.apache.thrift.protocol.TType.LIST, (short) 8);
+
+    private static final int __SANBOX_ISSET_ID = 2;
+
+    // optional
+    protected boolean sanbox;
+
+    // optional
+    protected List<String> moreDatas;
+
+    private static final org.apache.thrift.protocol.TField TRADE_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("tradeId", org.apache.thrift.protocol.TType.I32, (short) 1);
+
+    // isset id assignments
+    private static final int __TRADEID_ISSET_ID = 0;
+
+    // required
+    protected int tradeId;
 
     static {
         schemes.put(StandardScheme.class, new DOrderValidatorStandardSchemeFactory());
@@ -87,7 +85,7 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 
-        FROM_ID((short) 1, "fromId"), PLATFORM((short) 2, "platform"), SERVER_ID((short) 3, "serverId"), PLAYER_ID((short) 4, "playerId"), ID((short) 5, "id"), NUMBER((short) 6, "number"), ORDER_DATA((short) 7, "orderData"), RECEIPT_ID((short) 8, "receiptId");
+        TRADE_ID((short) 1, "tradeId"), CONFIGURE_ID((short) 2, "configureId"), PLATFORM((short) 3, "platform"), PLATFORM_DATA((short) 4, "platformData"), TRADE_NO((short) 5, "tradeNo"), TRADE_RECEIPT((short) 6, "tradeReceipt"), SANBOX((short) 7, "sanbox"), MORE_DATAS((short) 8, "moreDatas");
 
         private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -102,30 +100,30 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
      */
         public static _Fields findByThriftId(int fieldId) {
             switch(fieldId) {
-                case // FROM_ID
+                case // TRADE_ID
                 1:
-                    return FROM_ID;
-                case // PLATFORM
+                    return TRADE_ID;
+                case // CONFIGURE_ID
                 2:
-                    return PLATFORM;
-                case // SERVER_ID
+                    return CONFIGURE_ID;
+                case // PLATFORM
                 3:
-                    return SERVER_ID;
-                case // PLAYER_ID
+                    return PLATFORM;
+                case // PLATFORM_DATA
                 4:
-                    return PLAYER_ID;
-                case // ID
+                    return PLATFORM_DATA;
+                case // TRADE_NO
                 5:
-                    return ID;
-                case // NUMBER
+                    return TRADE_NO;
+                case // TRADE_RECEIPT
                 6:
-                    return NUMBER;
-                case // ORDER_DATA
+                    return TRADE_RECEIPT;
+                case // SANBOX
                 7:
-                    return ORDER_DATA;
-                case // RECEIPT_ID
+                    return SANBOX;
+                case // MORE_DATAS
                 8:
-                    return RECEIPT_ID;
+                    return MORE_DATAS;
                 default:
                     return null;
             }
@@ -170,34 +168,29 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
     public DOrderValidator() {
     }
 
-    public DOrderValidator(long playerId, String id, String receiptId) {
-        this();
-        this.playerId = playerId;
-        setPlayerIdIsSet(true);
-        this.id = id;
-        this.receiptId = receiptId;
-    }
-
     /**
    * Performs a deep copy on <i>other</i>.
    */
     public DOrderValidator(DOrderValidator other) {
         __isset_bitfield = other.__isset_bitfield;
-        this.fromId = other.fromId;
+        this.tradeId = other.tradeId;
+        this.configureId = other.configureId;
         if (other.isSetPlatform()) {
             this.platform = other.platform;
         }
-        this.serverId = other.serverId;
-        this.playerId = other.playerId;
-        if (other.isSetId()) {
-            this.id = other.id;
+        if (other.isSetPlatformData()) {
+            this.platformData = other.platformData;
         }
-        this.number = other.number;
-        if (other.isSetOrderData()) {
-            this.orderData = other.orderData;
+        if (other.isSetTradeNo()) {
+            this.tradeNo = other.tradeNo;
         }
-        if (other.isSetReceiptId()) {
-            this.receiptId = other.receiptId;
+        if (other.isSetTradeReceipt()) {
+            this.tradeReceipt = other.tradeReceipt;
+        }
+        this.sanbox = other.sanbox;
+        if (other.isSetMoreDatas()) {
+            List<String> __this__moreDatas = new ArrayList<String>(other.moreDatas);
+            this.moreDatas = __this__moreDatas;
         }
     }
 
@@ -207,42 +200,17 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
 
     @Override
     public void clear() {
-        setFromIdIsSet(false);
-        this.fromId = 0;
+        setTradeIdIsSet(false);
+        this.tradeId = 0;
+        setConfigureIdIsSet(false);
+        this.configureId = 0;
         this.platform = null;
-        setServerIdIsSet(false);
-        this.serverId = 0;
-        setPlayerIdIsSet(false);
-        this.playerId = 0;
-        this.id = null;
-        setNumberIsSet(false);
-        this.number = 0;
-        this.orderData = null;
-        this.receiptId = null;
-    }
-
-    public int getFromId() {
-        return this.fromId;
-    }
-
-    public DOrderValidator setFromId(int fromId) {
-        this.fromId = fromId;
-        setFromIdIsSet(true);
-        return this;
-    }
-
-    public void unsetFromId() {
-        __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __FROMID_ISSET_ID);
-    }
-
-    /** Returns true if field fromId is set (has been assigned a value) and false otherwise */
-    @JsonIgnore
-    public boolean isSetFromId() {
-        return EncodingUtils.testBit(__isset_bitfield, __FROMID_ISSET_ID);
-    }
-
-    public void setFromIdIsSet(boolean value) {
-        __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __FROMID_ISSET_ID, value);
+        this.platformData = null;
+        this.tradeNo = null;
+        this.tradeReceipt = null;
+        setSanboxIsSet(false);
+        this.sanbox = false;
+        this.moreDatas = null;
     }
 
     public String getPlatform() {
@@ -270,160 +238,20 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
         }
     }
 
-    public long getServerId() {
-        return this.serverId;
-    }
-
-    public DOrderValidator setServerId(long serverId) {
-        this.serverId = serverId;
-        setServerIdIsSet(true);
-        return this;
-    }
-
-    public void unsetServerId() {
-        __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SERVERID_ISSET_ID);
-    }
-
-    /** Returns true if field serverId is set (has been assigned a value) and false otherwise */
-    @JsonIgnore
-    public boolean isSetServerId() {
-        return EncodingUtils.testBit(__isset_bitfield, __SERVERID_ISSET_ID);
-    }
-
-    public void setServerIdIsSet(boolean value) {
-        __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SERVERID_ISSET_ID, value);
-    }
-
-    public long getPlayerId() {
-        return this.playerId;
-    }
-
-    public DOrderValidator setPlayerId(long playerId) {
-        this.playerId = playerId;
-        setPlayerIdIsSet(true);
-        return this;
-    }
-
-    public void unsetPlayerId() {
-        __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __PLAYERID_ISSET_ID);
-    }
-
-    /** Returns true if field playerId is set (has been assigned a value) and false otherwise */
-    @JsonIgnore
-    public boolean isSetPlayerId() {
-        return EncodingUtils.testBit(__isset_bitfield, __PLAYERID_ISSET_ID);
-    }
-
-    public void setPlayerIdIsSet(boolean value) {
-        __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __PLAYERID_ISSET_ID, value);
-    }
-
-    public String getId() {
-        return this.id;
-    }
-
-    public DOrderValidator setId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    public void unsetId() {
-        this.id = null;
-    }
-
-    /** Returns true if field id is set (has been assigned a value) and false otherwise */
-    @JsonIgnore
-    public boolean isSetId() {
-        return this.id != null;
-    }
-
-    public void setIdIsSet(boolean value) {
-        if (!value) {
-            this.id = null;
-        }
-    }
-
-    public int getNumber() {
-        return this.number;
-    }
-
-    public DOrderValidator setNumber(int number) {
-        this.number = number;
-        setNumberIsSet(true);
-        return this;
-    }
-
-    public void unsetNumber() {
-        __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __NUMBER_ISSET_ID);
-    }
-
-    /** Returns true if field number is set (has been assigned a value) and false otherwise */
-    @JsonIgnore
-    public boolean isSetNumber() {
-        return EncodingUtils.testBit(__isset_bitfield, __NUMBER_ISSET_ID);
-    }
-
-    public void setNumberIsSet(boolean value) {
-        __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __NUMBER_ISSET_ID, value);
-    }
-
-    public String getOrderData() {
-        return this.orderData;
-    }
-
-    public DOrderValidator setOrderData(String orderData) {
-        this.orderData = orderData;
-        return this;
-    }
-
-    public void unsetOrderData() {
-        this.orderData = null;
-    }
-
-    /** Returns true if field orderData is set (has been assigned a value) and false otherwise */
-    @JsonIgnore
-    public boolean isSetOrderData() {
-        return this.orderData != null;
-    }
-
-    public void setOrderDataIsSet(boolean value) {
-        if (!value) {
-            this.orderData = null;
-        }
-    }
-
-    public String getReceiptId() {
-        return this.receiptId;
-    }
-
-    public DOrderValidator setReceiptId(String receiptId) {
-        this.receiptId = receiptId;
-        return this;
-    }
-
-    public void unsetReceiptId() {
-        this.receiptId = null;
-    }
-
-    /** Returns true if field receiptId is set (has been assigned a value) and false otherwise */
-    @JsonIgnore
-    public boolean isSetReceiptId() {
-        return this.receiptId != null;
-    }
-
-    public void setReceiptIdIsSet(boolean value) {
-        if (!value) {
-            this.receiptId = null;
-        }
-    }
-
     public void setFieldValue(_Fields field, Object value) {
         switch(field) {
-            case FROM_ID:
+            case TRADE_ID:
                 if (value == null) {
-                    unsetFromId();
+                    unsetTradeId();
                 } else {
-                    setFromId((Integer) value);
+                    setTradeId((Integer) value);
+                }
+                break;
+            case CONFIGURE_ID:
+                if (value == null) {
+                    unsetConfigureId();
+                } else {
+                    setConfigureId((Integer) value);
                 }
                 break;
             case PLATFORM:
@@ -433,46 +261,39 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
                     setPlatform((String) value);
                 }
                 break;
-            case SERVER_ID:
+            case PLATFORM_DATA:
                 if (value == null) {
-                    unsetServerId();
+                    unsetPlatformData();
                 } else {
-                    setServerId((Long) value);
+                    setPlatformData((String) value);
                 }
                 break;
-            case PLAYER_ID:
+            case TRADE_NO:
                 if (value == null) {
-                    unsetPlayerId();
+                    unsetTradeNo();
                 } else {
-                    setPlayerId((Long) value);
+                    setTradeNo((String) value);
                 }
                 break;
-            case ID:
+            case TRADE_RECEIPT:
                 if (value == null) {
-                    unsetId();
+                    unsetTradeReceipt();
                 } else {
-                    setId((String) value);
+                    setTradeReceipt((String) value);
                 }
                 break;
-            case NUMBER:
+            case SANBOX:
                 if (value == null) {
-                    unsetNumber();
+                    unsetSanbox();
                 } else {
-                    setNumber((Integer) value);
+                    setSanbox((Boolean) value);
                 }
                 break;
-            case ORDER_DATA:
+            case MORE_DATAS:
                 if (value == null) {
-                    unsetOrderData();
+                    unsetMoreDatas();
                 } else {
-                    setOrderData((String) value);
-                }
-                break;
-            case RECEIPT_ID:
-                if (value == null) {
-                    unsetReceiptId();
-                } else {
-                    setReceiptId((String) value);
+                    setMoreDatas((List<String>) value);
                 }
                 break;
         }
@@ -480,22 +301,22 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
 
     public Object getFieldValue(_Fields field) {
         switch(field) {
-            case FROM_ID:
-                return getFromId();
+            case TRADE_ID:
+                return getTradeId();
+            case CONFIGURE_ID:
+                return getConfigureId();
             case PLATFORM:
                 return getPlatform();
-            case SERVER_ID:
-                return getServerId();
-            case PLAYER_ID:
-                return getPlayerId();
-            case ID:
-                return getId();
-            case NUMBER:
-                return getNumber();
-            case ORDER_DATA:
-                return getOrderData();
-            case RECEIPT_ID:
-                return getReceiptId();
+            case PLATFORM_DATA:
+                return getPlatformData();
+            case TRADE_NO:
+                return getTradeNo();
+            case TRADE_RECEIPT:
+                return getTradeReceipt();
+            case SANBOX:
+                return isSanbox();
+            case MORE_DATAS:
+                return getMoreDatas();
         }
         throw new IllegalStateException();
     }
@@ -506,22 +327,22 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
             throw new IllegalArgumentException();
         }
         switch(field) {
-            case FROM_ID:
-                return isSetFromId();
+            case TRADE_ID:
+                return isSetTradeId();
+            case CONFIGURE_ID:
+                return isSetConfigureId();
             case PLATFORM:
                 return isSetPlatform();
-            case SERVER_ID:
-                return isSetServerId();
-            case PLAYER_ID:
-                return isSetPlayerId();
-            case ID:
-                return isSetId();
-            case NUMBER:
-                return isSetNumber();
-            case ORDER_DATA:
-                return isSetOrderData();
-            case RECEIPT_ID:
-                return isSetReceiptId();
+            case PLATFORM_DATA:
+                return isSetPlatformData();
+            case TRADE_NO:
+                return isSetTradeNo();
+            case TRADE_RECEIPT:
+                return isSetTradeReceipt();
+            case SANBOX:
+                return isSetSanbox();
+            case MORE_DATAS:
+                return isSetMoreDatas();
         }
         throw new IllegalStateException();
     }
@@ -538,12 +359,20 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
     public boolean equals(DOrderValidator that) {
         if (that == null)
             return false;
-        boolean this_present_fromId = true && this.isSetFromId();
-        boolean that_present_fromId = true && that.isSetFromId();
-        if (this_present_fromId || that_present_fromId) {
-            if (!(this_present_fromId && that_present_fromId))
+        boolean this_present_tradeId = true;
+        boolean that_present_tradeId = true;
+        if (this_present_tradeId || that_present_tradeId) {
+            if (!(this_present_tradeId && that_present_tradeId))
                 return false;
-            if (this.fromId != that.fromId)
+            if (this.tradeId != that.tradeId)
+                return false;
+        }
+        boolean this_present_configureId = true && this.isSetConfigureId();
+        boolean that_present_configureId = true && that.isSetConfigureId();
+        if (this_present_configureId || that_present_configureId) {
+            if (!(this_present_configureId && that_present_configureId))
+                return false;
+            if (this.configureId != that.configureId)
                 return false;
         }
         boolean this_present_platform = true && this.isSetPlatform();
@@ -554,52 +383,44 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
             if (!this.platform.equals(that.platform))
                 return false;
         }
-        boolean this_present_serverId = true && this.isSetServerId();
-        boolean that_present_serverId = true && that.isSetServerId();
-        if (this_present_serverId || that_present_serverId) {
-            if (!(this_present_serverId && that_present_serverId))
+        boolean this_present_platformData = true && this.isSetPlatformData();
+        boolean that_present_platformData = true && that.isSetPlatformData();
+        if (this_present_platformData || that_present_platformData) {
+            if (!(this_present_platformData && that_present_platformData))
                 return false;
-            if (this.serverId != that.serverId)
-                return false;
-        }
-        boolean this_present_playerId = true;
-        boolean that_present_playerId = true;
-        if (this_present_playerId || that_present_playerId) {
-            if (!(this_present_playerId && that_present_playerId))
-                return false;
-            if (this.playerId != that.playerId)
+            if (!this.platformData.equals(that.platformData))
                 return false;
         }
-        boolean this_present_id = true && this.isSetId();
-        boolean that_present_id = true && that.isSetId();
-        if (this_present_id || that_present_id) {
-            if (!(this_present_id && that_present_id))
+        boolean this_present_tradeNo = true && this.isSetTradeNo();
+        boolean that_present_tradeNo = true && that.isSetTradeNo();
+        if (this_present_tradeNo || that_present_tradeNo) {
+            if (!(this_present_tradeNo && that_present_tradeNo))
                 return false;
-            if (!this.id.equals(that.id))
-                return false;
-        }
-        boolean this_present_number = true && this.isSetNumber();
-        boolean that_present_number = true && that.isSetNumber();
-        if (this_present_number || that_present_number) {
-            if (!(this_present_number && that_present_number))
-                return false;
-            if (this.number != that.number)
+            if (!this.tradeNo.equals(that.tradeNo))
                 return false;
         }
-        boolean this_present_orderData = true && this.isSetOrderData();
-        boolean that_present_orderData = true && that.isSetOrderData();
-        if (this_present_orderData || that_present_orderData) {
-            if (!(this_present_orderData && that_present_orderData))
+        boolean this_present_tradeReceipt = true && this.isSetTradeReceipt();
+        boolean that_present_tradeReceipt = true && that.isSetTradeReceipt();
+        if (this_present_tradeReceipt || that_present_tradeReceipt) {
+            if (!(this_present_tradeReceipt && that_present_tradeReceipt))
                 return false;
-            if (!this.orderData.equals(that.orderData))
+            if (!this.tradeReceipt.equals(that.tradeReceipt))
                 return false;
         }
-        boolean this_present_receiptId = true && this.isSetReceiptId();
-        boolean that_present_receiptId = true && that.isSetReceiptId();
-        if (this_present_receiptId || that_present_receiptId) {
-            if (!(this_present_receiptId && that_present_receiptId))
+        boolean this_present_sanbox = true && this.isSetSanbox();
+        boolean that_present_sanbox = true && that.isSetSanbox();
+        if (this_present_sanbox || that_present_sanbox) {
+            if (!(this_present_sanbox && that_present_sanbox))
                 return false;
-            if (!this.receiptId.equals(that.receiptId))
+            if (this.sanbox != that.sanbox)
+                return false;
+        }
+        boolean this_present_moreDatas = true && this.isSetMoreDatas();
+        boolean that_present_moreDatas = true && that.isSetMoreDatas();
+        if (this_present_moreDatas || that_present_moreDatas) {
+            if (!(this_present_moreDatas && that_present_moreDatas))
+                return false;
+            if (!this.moreDatas.equals(that.moreDatas))
                 return false;
         }
         return true;
@@ -608,38 +429,38 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
     @Override
     public int hashCode() {
         List<Object> list = new ArrayList<Object>();
-        boolean present_fromId = true && (isSetFromId());
-        list.add(present_fromId);
-        if (present_fromId)
-            list.add(fromId);
+        boolean present_tradeId = true;
+        list.add(present_tradeId);
+        if (present_tradeId)
+            list.add(tradeId);
+        boolean present_configureId = true && (isSetConfigureId());
+        list.add(present_configureId);
+        if (present_configureId)
+            list.add(configureId);
         boolean present_platform = true && (isSetPlatform());
         list.add(present_platform);
         if (present_platform)
             list.add(platform);
-        boolean present_serverId = true && (isSetServerId());
-        list.add(present_serverId);
-        if (present_serverId)
-            list.add(serverId);
-        boolean present_playerId = true;
-        list.add(present_playerId);
-        if (present_playerId)
-            list.add(playerId);
-        boolean present_id = true && (isSetId());
-        list.add(present_id);
-        if (present_id)
-            list.add(id);
-        boolean present_number = true && (isSetNumber());
-        list.add(present_number);
-        if (present_number)
-            list.add(number);
-        boolean present_orderData = true && (isSetOrderData());
-        list.add(present_orderData);
-        if (present_orderData)
-            list.add(orderData);
-        boolean present_receiptId = true && (isSetReceiptId());
-        list.add(present_receiptId);
-        if (present_receiptId)
-            list.add(receiptId);
+        boolean present_platformData = true && (isSetPlatformData());
+        list.add(present_platformData);
+        if (present_platformData)
+            list.add(platformData);
+        boolean present_tradeNo = true && (isSetTradeNo());
+        list.add(present_tradeNo);
+        if (present_tradeNo)
+            list.add(tradeNo);
+        boolean present_tradeReceipt = true && (isSetTradeReceipt());
+        list.add(present_tradeReceipt);
+        if (present_tradeReceipt)
+            list.add(tradeReceipt);
+        boolean present_sanbox = true && (isSetSanbox());
+        list.add(present_sanbox);
+        if (present_sanbox)
+            list.add(sanbox);
+        boolean present_moreDatas = true && (isSetMoreDatas());
+        list.add(present_moreDatas);
+        if (present_moreDatas)
+            list.add(moreDatas);
         return list.hashCode();
     }
 
@@ -649,12 +470,22 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
             return getClass().getName().compareTo(other.getClass().getName());
         }
         int lastComparison = 0;
-        lastComparison = Boolean.valueOf(isSetFromId()).compareTo(other.isSetFromId());
+        lastComparison = Boolean.valueOf(isSetTradeId()).compareTo(other.isSetTradeId());
         if (lastComparison != 0) {
             return lastComparison;
         }
-        if (isSetFromId()) {
-            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.fromId, other.fromId);
+        if (isSetTradeId()) {
+            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.tradeId, other.tradeId);
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+        }
+        lastComparison = Boolean.valueOf(isSetConfigureId()).compareTo(other.isSetConfigureId());
+        if (lastComparison != 0) {
+            return lastComparison;
+        }
+        if (isSetConfigureId()) {
+            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.configureId, other.configureId);
             if (lastComparison != 0) {
                 return lastComparison;
             }
@@ -669,62 +500,52 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
                 return lastComparison;
             }
         }
-        lastComparison = Boolean.valueOf(isSetServerId()).compareTo(other.isSetServerId());
+        lastComparison = Boolean.valueOf(isSetPlatformData()).compareTo(other.isSetPlatformData());
         if (lastComparison != 0) {
             return lastComparison;
         }
-        if (isSetServerId()) {
-            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.serverId, other.serverId);
+        if (isSetPlatformData()) {
+            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.platformData, other.platformData);
             if (lastComparison != 0) {
                 return lastComparison;
             }
         }
-        lastComparison = Boolean.valueOf(isSetPlayerId()).compareTo(other.isSetPlayerId());
+        lastComparison = Boolean.valueOf(isSetTradeNo()).compareTo(other.isSetTradeNo());
         if (lastComparison != 0) {
             return lastComparison;
         }
-        if (isSetPlayerId()) {
-            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.playerId, other.playerId);
+        if (isSetTradeNo()) {
+            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.tradeNo, other.tradeNo);
             if (lastComparison != 0) {
                 return lastComparison;
             }
         }
-        lastComparison = Boolean.valueOf(isSetId()).compareTo(other.isSetId());
+        lastComparison = Boolean.valueOf(isSetTradeReceipt()).compareTo(other.isSetTradeReceipt());
         if (lastComparison != 0) {
             return lastComparison;
         }
-        if (isSetId()) {
-            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.id, other.id);
+        if (isSetTradeReceipt()) {
+            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.tradeReceipt, other.tradeReceipt);
             if (lastComparison != 0) {
                 return lastComparison;
             }
         }
-        lastComparison = Boolean.valueOf(isSetNumber()).compareTo(other.isSetNumber());
+        lastComparison = Boolean.valueOf(isSetSanbox()).compareTo(other.isSetSanbox());
         if (lastComparison != 0) {
             return lastComparison;
         }
-        if (isSetNumber()) {
-            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.number, other.number);
+        if (isSetSanbox()) {
+            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.sanbox, other.sanbox);
             if (lastComparison != 0) {
                 return lastComparison;
             }
         }
-        lastComparison = Boolean.valueOf(isSetOrderData()).compareTo(other.isSetOrderData());
+        lastComparison = Boolean.valueOf(isSetMoreDatas()).compareTo(other.isSetMoreDatas());
         if (lastComparison != 0) {
             return lastComparison;
         }
-        if (isSetOrderData()) {
-            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.orderData, other.orderData);
-            if (lastComparison != 0) {
-                return lastComparison;
-            }
-        }
-        lastComparison = Boolean.valueOf(isSetReceiptId()).compareTo(other.isSetReceiptId());
-        if (lastComparison != 0) {
-            return lastComparison;
-        }
-        if (isSetReceiptId()) {
-            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.receiptId, other.receiptId);
+        if (isSetMoreDatas()) {
+            lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.moreDatas, other.moreDatas);
             if (lastComparison != 0) {
                 return lastComparison;
             }
@@ -748,9 +569,14 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
     public String toString() {
         StringBuilder sb = new StringBuilder("DOrderValidator(");
         boolean first = true;
-        if (isSetFromId()) {
-            sb.append("fromId:");
-            sb.append(this.fromId);
+        sb.append("tradeId:");
+        sb.append(this.tradeId);
+        first = false;
+        if (isSetConfigureId()) {
+            if (!first)
+                sb.append(", ");
+            sb.append("configureId:");
+            sb.append(this.configureId);
             first = false;
         }
         if (isSetPlatform()) {
@@ -764,54 +590,57 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
             }
             first = false;
         }
-        if (isSetServerId()) {
+        if (isSetPlatformData()) {
             if (!first)
                 sb.append(", ");
-            sb.append("serverId:");
-            sb.append(this.serverId);
-            first = false;
-        }
-        if (!first)
-            sb.append(", ");
-        sb.append("playerId:");
-        sb.append(this.playerId);
-        first = false;
-        if (!first)
-            sb.append(", ");
-        sb.append("id:");
-        if (this.id == null) {
-            sb.append("null");
-        } else {
-            sb.append(this.id);
-        }
-        first = false;
-        if (isSetNumber()) {
-            if (!first)
-                sb.append(", ");
-            sb.append("number:");
-            sb.append(this.number);
-            first = false;
-        }
-        if (isSetOrderData()) {
-            if (!first)
-                sb.append(", ");
-            sb.append("orderData:");
-            if (this.orderData == null) {
+            sb.append("platformData:");
+            if (this.platformData == null) {
                 sb.append("null");
             } else {
-                sb.append(this.orderData);
+                sb.append(this.platformData);
             }
             first = false;
         }
-        if (!first)
-            sb.append(", ");
-        sb.append("receiptId:");
-        if (this.receiptId == null) {
-            sb.append("null");
-        } else {
-            sb.append(this.receiptId);
+        if (isSetTradeNo()) {
+            if (!first)
+                sb.append(", ");
+            sb.append("tradeNo:");
+            if (this.tradeNo == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.tradeNo);
+            }
+            first = false;
         }
-        first = false;
+        if (isSetTradeReceipt()) {
+            if (!first)
+                sb.append(", ");
+            sb.append("tradeReceipt:");
+            if (this.tradeReceipt == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.tradeReceipt);
+            }
+            first = false;
+        }
+        if (isSetSanbox()) {
+            if (!first)
+                sb.append(", ");
+            sb.append("sanbox:");
+            sb.append(this.sanbox);
+            first = false;
+        }
+        if (isSetMoreDatas()) {
+            if (!first)
+                sb.append(", ");
+            sb.append("moreDatas:");
+            if (this.moreDatas == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.moreDatas);
+            }
+            first = false;
+        }
         sb.append(")");
         return sb.toString();
     }
@@ -855,17 +684,26 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
                     break;
                 }
                 switch(schemeField.id) {
-                    case // FROM_ID
+                    case // TRADE_ID
                     1:
                         if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                            struct.fromId = iprot.readI32();
-                            struct.setFromIdIsSet(true);
+                            struct.tradeId = iprot.readI32();
+                            struct.setTradeIdIsSet(true);
+                        } else {
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                        }
+                        break;
+                    case // CONFIGURE_ID
+                    2:
+                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                            struct.configureId = iprot.readI32();
+                            struct.setConfigureIdIsSet(true);
                         } else {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
                     case // PLATFORM
-                    2:
+                    3:
                         if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
                             struct.platform = iprot.readString();
                             struct.setPlatformIsSet(true);
@@ -873,56 +711,56 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
-                    case // SERVER_ID
-                    3:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                            struct.serverId = iprot.readI64();
-                            struct.setServerIdIsSet(true);
-                        } else {
-                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-                        }
-                        break;
-                    case // PLAYER_ID
+                    case // PLATFORM_DATA
                     4:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                            struct.playerId = iprot.readI64();
-                            struct.setPlayerIdIsSet(true);
+                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                            struct.platformData = iprot.readString();
+                            struct.setPlatformDataIsSet(true);
                         } else {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
-                    case // ID
+                    case // TRADE_NO
                     5:
                         if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                            struct.id = iprot.readString();
-                            struct.setIdIsSet(true);
+                            struct.tradeNo = iprot.readString();
+                            struct.setTradeNoIsSet(true);
                         } else {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
-                    case // NUMBER
+                    case // TRADE_RECEIPT
                     6:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
-                            struct.number = iprot.readI32();
-                            struct.setNumberIsSet(true);
+                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                            struct.tradeReceipt = iprot.readString();
+                            struct.setTradeReceiptIsSet(true);
                         } else {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
-                    case // ORDER_DATA
+                    case // SANBOX
                     7:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                            struct.orderData = iprot.readString();
-                            struct.setOrderDataIsSet(true);
+                        if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+                            struct.sanbox = iprot.readBool();
+                            struct.setSanboxIsSet(true);
                         } else {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                         }
                         break;
-                    case // RECEIPT_ID
+                    case // MORE_DATAS
                     8:
-                        if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                            struct.receiptId = iprot.readString();
-                            struct.setReceiptIdIsSet(true);
+                        if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
+                            {
+                                org.apache.thrift.protocol.TList _list16 = iprot.readListBegin();
+                                struct.moreDatas = new ArrayList<String>(_list16.size);
+                                String _elem17;
+                                for (int _i18 = 0; _i18 < _list16.size; ++_i18) {
+                                    _elem17 = iprot.readString();
+                                    struct.moreDatas.add(_elem17);
+                                }
+                                iprot.readListEnd();
+                            }
+                            struct.setMoreDatasIsSet(true);
                         } else {
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                         }
@@ -940,9 +778,12 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
         public void write(org.apache.thrift.protocol.TProtocol oprot, DOrderValidator struct) throws org.apache.thrift.TException {
             struct.validate();
             oprot.writeStructBegin(STRUCT_DESC);
-            if (struct.isSetFromId()) {
-                oprot.writeFieldBegin(FROM_ID_FIELD_DESC);
-                oprot.writeI32(struct.fromId);
+            oprot.writeFieldBegin(TRADE_ID_FIELD_DESC);
+            oprot.writeI32(struct.tradeId);
+            oprot.writeFieldEnd();
+            if (struct.isSetConfigureId()) {
+                oprot.writeFieldBegin(CONFIGURE_ID_FIELD_DESC);
+                oprot.writeI32(struct.configureId);
                 oprot.writeFieldEnd();
             }
             if (struct.platform != null) {
@@ -952,35 +793,44 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
                     oprot.writeFieldEnd();
                 }
             }
-            if (struct.isSetServerId()) {
-                oprot.writeFieldBegin(SERVER_ID_FIELD_DESC);
-                oprot.writeI64(struct.serverId);
-                oprot.writeFieldEnd();
-            }
-            oprot.writeFieldBegin(PLAYER_ID_FIELD_DESC);
-            oprot.writeI64(struct.playerId);
-            oprot.writeFieldEnd();
-            if (struct.id != null) {
-                oprot.writeFieldBegin(ID_FIELD_DESC);
-                oprot.writeString(struct.id);
-                oprot.writeFieldEnd();
-            }
-            if (struct.isSetNumber()) {
-                oprot.writeFieldBegin(NUMBER_FIELD_DESC);
-                oprot.writeI32(struct.number);
-                oprot.writeFieldEnd();
-            }
-            if (struct.orderData != null) {
-                if (struct.isSetOrderData()) {
-                    oprot.writeFieldBegin(ORDER_DATA_FIELD_DESC);
-                    oprot.writeString(struct.orderData);
+            if (struct.platformData != null) {
+                if (struct.isSetPlatformData()) {
+                    oprot.writeFieldBegin(PLATFORM_DATA_FIELD_DESC);
+                    oprot.writeString(struct.platformData);
                     oprot.writeFieldEnd();
                 }
             }
-            if (struct.receiptId != null) {
-                oprot.writeFieldBegin(RECEIPT_ID_FIELD_DESC);
-                oprot.writeString(struct.receiptId);
+            if (struct.tradeNo != null) {
+                if (struct.isSetTradeNo()) {
+                    oprot.writeFieldBegin(TRADE_NO_FIELD_DESC);
+                    oprot.writeString(struct.tradeNo);
+                    oprot.writeFieldEnd();
+                }
+            }
+            if (struct.tradeReceipt != null) {
+                if (struct.isSetTradeReceipt()) {
+                    oprot.writeFieldBegin(TRADE_RECEIPT_FIELD_DESC);
+                    oprot.writeString(struct.tradeReceipt);
+                    oprot.writeFieldEnd();
+                }
+            }
+            if (struct.isSetSanbox()) {
+                oprot.writeFieldBegin(SANBOX_FIELD_DESC);
+                oprot.writeBool(struct.sanbox);
                 oprot.writeFieldEnd();
+            }
+            if (struct.moreDatas != null) {
+                if (struct.isSetMoreDatas()) {
+                    oprot.writeFieldBegin(MORE_DATAS_FIELD_DESC);
+                    {
+                        oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, struct.moreDatas.size()));
+                        for (String _iter19 : struct.moreDatas) {
+                            oprot.writeString(_iter19);
+                        }
+                        oprot.writeListEnd();
+                    }
+                    oprot.writeFieldEnd();
+                }
             }
             oprot.writeFieldStop();
             oprot.writeStructEnd();
@@ -1000,54 +850,59 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
         public void write(org.apache.thrift.protocol.TProtocol prot, DOrderValidator struct) throws org.apache.thrift.TException {
             TTupleProtocol oprot = (TTupleProtocol) prot;
             BitSet optionals = new BitSet();
-            if (struct.isSetFromId()) {
+            if (struct.isSetTradeId()) {
                 optionals.set(0);
             }
-            if (struct.isSetPlatform()) {
+            if (struct.isSetConfigureId()) {
                 optionals.set(1);
             }
-            if (struct.isSetServerId()) {
+            if (struct.isSetPlatform()) {
                 optionals.set(2);
             }
-            if (struct.isSetPlayerId()) {
+            if (struct.isSetPlatformData()) {
                 optionals.set(3);
             }
-            if (struct.isSetId()) {
+            if (struct.isSetTradeNo()) {
                 optionals.set(4);
             }
-            if (struct.isSetNumber()) {
+            if (struct.isSetTradeReceipt()) {
                 optionals.set(5);
             }
-            if (struct.isSetOrderData()) {
+            if (struct.isSetSanbox()) {
                 optionals.set(6);
             }
-            if (struct.isSetReceiptId()) {
+            if (struct.isSetMoreDatas()) {
                 optionals.set(7);
             }
             oprot.writeBitSet(optionals, 8);
-            if (struct.isSetFromId()) {
-                oprot.writeI32(struct.fromId);
+            if (struct.isSetTradeId()) {
+                oprot.writeI32(struct.tradeId);
+            }
+            if (struct.isSetConfigureId()) {
+                oprot.writeI32(struct.configureId);
             }
             if (struct.isSetPlatform()) {
                 oprot.writeString(struct.platform);
             }
-            if (struct.isSetServerId()) {
-                oprot.writeI64(struct.serverId);
+            if (struct.isSetPlatformData()) {
+                oprot.writeString(struct.platformData);
             }
-            if (struct.isSetPlayerId()) {
-                oprot.writeI64(struct.playerId);
+            if (struct.isSetTradeNo()) {
+                oprot.writeString(struct.tradeNo);
             }
-            if (struct.isSetId()) {
-                oprot.writeString(struct.id);
+            if (struct.isSetTradeReceipt()) {
+                oprot.writeString(struct.tradeReceipt);
             }
-            if (struct.isSetNumber()) {
-                oprot.writeI32(struct.number);
+            if (struct.isSetSanbox()) {
+                oprot.writeBool(struct.sanbox);
             }
-            if (struct.isSetOrderData()) {
-                oprot.writeString(struct.orderData);
-            }
-            if (struct.isSetReceiptId()) {
-                oprot.writeString(struct.receiptId);
+            if (struct.isSetMoreDatas()) {
+                {
+                    oprot.writeI32(struct.moreDatas.size());
+                    for (String _iter20 : struct.moreDatas) {
+                        oprot.writeString(_iter20);
+                    }
+                }
             }
         }
 
@@ -1056,50 +911,251 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
             TTupleProtocol iprot = (TTupleProtocol) prot;
             BitSet incoming = iprot.readBitSet(8);
             if (incoming.get(0)) {
-                struct.fromId = iprot.readI32();
-                struct.setFromIdIsSet(true);
+                struct.tradeId = iprot.readI32();
+                struct.setTradeIdIsSet(true);
             }
             if (incoming.get(1)) {
+                struct.configureId = iprot.readI32();
+                struct.setConfigureIdIsSet(true);
+            }
+            if (incoming.get(2)) {
                 struct.platform = iprot.readString();
                 struct.setPlatformIsSet(true);
             }
-            if (incoming.get(2)) {
-                struct.serverId = iprot.readI64();
-                struct.setServerIdIsSet(true);
-            }
             if (incoming.get(3)) {
-                struct.playerId = iprot.readI64();
-                struct.setPlayerIdIsSet(true);
+                struct.platformData = iprot.readString();
+                struct.setPlatformDataIsSet(true);
             }
             if (incoming.get(4)) {
-                struct.id = iprot.readString();
-                struct.setIdIsSet(true);
+                struct.tradeNo = iprot.readString();
+                struct.setTradeNoIsSet(true);
             }
             if (incoming.get(5)) {
-                struct.number = iprot.readI32();
-                struct.setNumberIsSet(true);
+                struct.tradeReceipt = iprot.readString();
+                struct.setTradeReceiptIsSet(true);
             }
             if (incoming.get(6)) {
-                struct.orderData = iprot.readString();
-                struct.setOrderDataIsSet(true);
+                struct.sanbox = iprot.readBool();
+                struct.setSanboxIsSet(true);
             }
             if (incoming.get(7)) {
-                struct.receiptId = iprot.readString();
-                struct.setReceiptIdIsSet(true);
+                {
+                    org.apache.thrift.protocol.TList _list21 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRING, iprot.readI32());
+                    struct.moreDatas = new ArrayList<String>(_list21.size);
+                    String _elem22;
+                    for (int _i23 = 0; _i23 < _list21.size; ++_i23) {
+                        _elem22 = iprot.readString();
+                        struct.moreDatas.add(_elem22);
+                    }
+                }
+                struct.setMoreDatasIsSet(true);
             }
         }
     }
 
+    public int getConfigureId() {
+        return this.configureId;
+    }
+
+    public DOrderValidator setConfigureId(int configureId) {
+        this.configureId = configureId;
+        setConfigureIdIsSet(true);
+        return this;
+    }
+
+    public void unsetConfigureId() {
+        __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __CONFIGUREID_ISSET_ID);
+    }
+
+    /** Returns true if field configureId is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
+    public boolean isSetConfigureId() {
+        return EncodingUtils.testBit(__isset_bitfield, __CONFIGUREID_ISSET_ID);
+    }
+
+    public void setConfigureIdIsSet(boolean value) {
+        __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __CONFIGUREID_ISSET_ID, value);
+    }
+
+    public String getTradeNo() {
+        return this.tradeNo;
+    }
+
+    public DOrderValidator setTradeNo(String tradeNo) {
+        this.tradeNo = tradeNo;
+        return this;
+    }
+
+    public void unsetTradeNo() {
+        this.tradeNo = null;
+    }
+
+    /** Returns true if field tradeNo is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
+    public boolean isSetTradeNo() {
+        return this.tradeNo != null;
+    }
+
+    public void setTradeNoIsSet(boolean value) {
+        if (!value) {
+            this.tradeNo = null;
+        }
+    }
+
+    public void unsetTradeReceipt() {
+        this.tradeReceipt = null;
+    }
+
+    /** Returns true if field tradeReceipt is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
+    public boolean isSetTradeReceipt() {
+        return this.tradeReceipt != null;
+    }
+
+    public void setTradeReceiptIsSet(boolean value) {
+        if (!value) {
+            this.tradeReceipt = null;
+        }
+    }
+
+    public String getPlatformData() {
+        return this.platformData;
+    }
+
+    public DOrderValidator setPlatformData(String platformData) {
+        this.platformData = platformData;
+        return this;
+    }
+
+    public void unsetPlatformData() {
+        this.platformData = null;
+    }
+
+    /** Returns true if field platformData is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
+    public boolean isSetPlatformData() {
+        return this.platformData != null;
+    }
+
+    public void setPlatformDataIsSet(boolean value) {
+        if (!value) {
+            this.platformData = null;
+        }
+    }
+
+    public boolean isSanbox() {
+        return this.sanbox;
+    }
+
+    public DOrderValidator setSanbox(boolean sanbox) {
+        this.sanbox = sanbox;
+        setSanboxIsSet(true);
+        return this;
+    }
+
+    public void unsetSanbox() {
+        __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SANBOX_ISSET_ID);
+    }
+
+    /** Returns true if field sanbox is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
+    public boolean isSetSanbox() {
+        return EncodingUtils.testBit(__isset_bitfield, __SANBOX_ISSET_ID);
+    }
+
+    public void setSanboxIsSet(boolean value) {
+        __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SANBOX_ISSET_ID, value);
+    }
+
+    public int getMoreDatasSize() {
+        return (this.moreDatas == null) ? 0 : this.moreDatas.size();
+    }
+
+    public java.util.Iterator<String> getMoreDatasIterator() {
+        return (this.moreDatas == null) ? null : this.moreDatas.iterator();
+    }
+
+    public void addToMoreDatas(String elem) {
+        if (this.moreDatas == null) {
+            this.moreDatas = new ArrayList<String>();
+        }
+        this.moreDatas.add(elem);
+    }
+
+    public List<String> getMoreDatas() {
+        return this.moreDatas;
+    }
+
+    public DOrderValidator setMoreDatas(List<String> moreDatas) {
+        this.moreDatas = moreDatas;
+        return this;
+    }
+
+    public void unsetMoreDatas() {
+        this.moreDatas = null;
+    }
+
+    /** Returns true if field moreDatas is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
+    public boolean isSetMoreDatas() {
+        return this.moreDatas != null;
+    }
+
+    public void setMoreDatasIsSet(boolean value) {
+        if (!value) {
+            this.moreDatas = null;
+        }
+    }
+
+    public String getTradeReceipt() {
+        return this.tradeReceipt;
+    }
+
+    public DOrderValidator setTradeReceipt(String tradeReceipt) {
+        this.tradeReceipt = tradeReceipt;
+        return this;
+    }
+
+    public DOrderValidator(int tradeId) {
+        this();
+        this.tradeId = tradeId;
+        setTradeIdIsSet(true);
+    }
+
+    public int getTradeId() {
+        return this.tradeId;
+    }
+
+    public DOrderValidator setTradeId(int tradeId) {
+        this.tradeId = tradeId;
+        setTradeIdIsSet(true);
+        return this;
+    }
+
+    public void unsetTradeId() {
+        __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __TRADEID_ISSET_ID);
+    }
+
+    /** Returns true if field tradeId is set (has been assigned a value) and false otherwise */
+    @JsonIgnore
+    public boolean isSetTradeId() {
+        return EncodingUtils.testBit(__isset_bitfield, __TRADEID_ISSET_ID);
+    }
+
+    public void setTradeIdIsSet(boolean value) {
+        __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __TRADEID_ISSET_ID, value);
+    }
+
     static {
         Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-        tmpMap.put(_Fields.FROM_ID, new org.apache.thrift.meta_data.FieldMetaData("fromId", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        tmpMap.put(_Fields.TRADE_ID, new org.apache.thrift.meta_data.FieldMetaData("tradeId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+        tmpMap.put(_Fields.CONFIGURE_ID, new org.apache.thrift.meta_data.FieldMetaData("configureId", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
         tmpMap.put(_Fields.PLATFORM, new org.apache.thrift.meta_data.FieldMetaData("platform", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.SERVER_ID, new org.apache.thrift.meta_data.FieldMetaData("serverId", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-        tmpMap.put(_Fields.PLAYER_ID, new org.apache.thrift.meta_data.FieldMetaData("playerId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-        tmpMap.put(_Fields.ID, new org.apache.thrift.meta_data.FieldMetaData("id", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.NUMBER, new org.apache.thrift.meta_data.FieldMetaData("number", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-        tmpMap.put(_Fields.ORDER_DATA, new org.apache.thrift.meta_data.FieldMetaData("orderData", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
-        tmpMap.put(_Fields.RECEIPT_ID, new org.apache.thrift.meta_data.FieldMetaData("receiptId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.PLATFORM_DATA, new org.apache.thrift.meta_data.FieldMetaData("platformData", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.TRADE_NO, new org.apache.thrift.meta_data.FieldMetaData("tradeNo", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.TRADE_RECEIPT, new org.apache.thrift.meta_data.FieldMetaData("tradeReceipt", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+        tmpMap.put(_Fields.SANBOX, new org.apache.thrift.meta_data.FieldMetaData("sanbox", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+        tmpMap.put(_Fields.MORE_DATAS, new org.apache.thrift.meta_data.FieldMetaData("moreDatas", org.apache.thrift.TFieldRequirementType.OPTIONAL, new org.apache.thrift.meta_data.ListMetaData(org.apache.thrift.protocol.TType.LIST, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING))));
         metaDataMap = Collections.unmodifiableMap(tmpMap);
         org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(DOrderValidator.class, metaDataMap);
     }
@@ -1114,14 +1170,14 @@ public class DOrderValidator implements org.apache.thrift.TBase<DOrderValidator,
 
     public DOrderValidator cloneDepth(int _depth) {
         DOrderValidator _clone = create();
-        _clone.fromId = fromId;
         _clone.platform = platform;
-        _clone.serverId = serverId;
-        _clone.playerId = playerId;
-        _clone.id = id;
-        _clone.number = number;
-        _clone.orderData = orderData;
-        _clone.receiptId = receiptId;
+        _clone.configureId = configureId;
+        _clone.tradeNo = tradeNo;
+        _clone.tradeReceipt = tradeReceipt;
+        _clone.platformData = platformData;
+        _clone.sanbox = sanbox;
+        _clone.moreDatas = moreDatas;
+        _clone.tradeId = tradeId;
         cloneMore(_clone, _depth);
         return _clone;
     }

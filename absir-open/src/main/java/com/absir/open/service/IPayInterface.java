@@ -10,7 +10,6 @@ package com.absir.open.service;
 import com.absir.open.bean.JPayTrade;
 
 import java.lang.reflect.TypeVariable;
-import java.util.Map;
 
 public interface IPayInterface<T> {
 
@@ -18,8 +17,10 @@ public interface IPayInterface<T> {
 
     public T getConfigure();
 
-    public String order(T configure, JPayTrade payTrade, String prepare, Map<String, Object> paramMap) throws Exception;
+    // return tradeData
+    public String order(T configure, JPayTrade payTrade, String prepare, String[] moreDatas) throws Exception;
 
-    public String validator(T configure, String tradeNo, String tradeReceipt, String platformData, String goodsId, int goodsNumber, float amount, boolean sandbox, String[] moreDatas) throws Exception;
+    // return unique tradeId
+    public String validator(T configure, String platformData, String tradeNo, String tradeReceipt, String goodsId, int goodsNumber, float amount, boolean sandbox, String[] moreDatas) throws Exception;
 
 }

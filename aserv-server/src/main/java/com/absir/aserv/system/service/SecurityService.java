@@ -107,7 +107,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
                                                String address, String agent);
 
     public String nextSecurityId() {
-        return sessionSequence.getNextHexId();
+        return sessionSequence.getNextDigLetterId();
     }
 
     public void insertSession(JiUserBase userBase, JbSession session) {
@@ -537,4 +537,5 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
     public void afterInvoker(SecurityContext obj) {
         obj.unInitialize();
     }
+
 }

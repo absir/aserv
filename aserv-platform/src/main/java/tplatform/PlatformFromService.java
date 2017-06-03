@@ -32,17 +32,21 @@ public class PlatformFromService {
 
         public List<DServer> servers(int fromId, boolean review) throws org.apache.thrift.TException;
 
-        public DIdentityResult identity(int fromId, long serverId, String identities) throws org.apache.thrift.TException;
+        public DIdentityResult identity(int fromId, boolean serverIds, String identity) throws org.apache.thrift.TException;
 
-        public DLoginResult login(int fromId, long serverId, String username, String password) throws org.apache.thrift.TException;
+        public DLoginResult login(int fromId, boolean serverIds, String username, String password) throws org.apache.thrift.TException;
 
-        public DRegisterResult sign(int fromId, long serverId, String username, String password) throws org.apache.thrift.TException;
+        public DIdentityResult loginUUID(int fromId, boolean serverIds, String uuid) throws org.apache.thrift.TException;
 
-        public EPasswordResult password(String sessionId, String oldPassword, String newPassword) throws org.apache.thrift.TException;
+        public DRegisterResult sign(int fromId, String username, String password) throws org.apache.thrift.TException;
 
-        public DOrderResult order(DOrderInfo info) throws org.apache.thrift.TException;
+        public DRegisterResult signUUID(int fromId, String username, String password, String uuid) throws org.apache.thrift.TException;
 
-        public boolean validate(DOrderValidator validator) throws org.apache.thrift.TException;
+        public EPasswordResult password(long userId, String sessionId, String oldPassword, String newPassword) throws org.apache.thrift.TException;
+
+        public DOrderResult order(int fromId, DOrderInfo info) throws org.apache.thrift.TException;
+
+        public boolean validate(int fromId, DOrderValidator validator) throws org.apache.thrift.TException;
     }
 
     public interface AsyncIface {
@@ -53,17 +57,21 @@ public class PlatformFromService {
 
         public void servers(int fromId, boolean review, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-        public void identity(int fromId, long serverId, String identities, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void identity(int fromId, boolean serverIds, String identity, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-        public void login(int fromId, long serverId, String username, String password, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void login(int fromId, boolean serverIds, String username, String password, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-        public void sign(int fromId, long serverId, String username, String password, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void loginUUID(int fromId, boolean serverIds, String uuid, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-        public void password(String sessionId, String oldPassword, String newPassword, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void sign(int fromId, String username, String password, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-        public void order(DOrderInfo info, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void signUUID(int fromId, String username, String password, String uuid, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-        public void validate(DOrderValidator validator, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void password(long userId, String sessionId, String oldPassword, String newPassword, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+        public void order(int fromId, DOrderInfo info, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+        public void validate(int fromId, DOrderValidator validator, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
     }
 
     public static class Client extends org.apache.thrift.TServiceClient implements Iface {
@@ -152,16 +160,16 @@ public class PlatformFromService {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "servers failed: unknown result");
         }
 
-        public DIdentityResult identity(int fromId, long serverId, String identities) throws org.apache.thrift.TException {
-            send_identity(fromId, serverId, identities);
+        public DIdentityResult identity(int fromId, boolean serverIds, String identity) throws org.apache.thrift.TException {
+            send_identity(fromId, serverIds, identity);
             return recv_identity();
         }
 
-        public void send_identity(int fromId, long serverId, String identities) throws org.apache.thrift.TException {
+        public void send_identity(int fromId, boolean serverIds, String identity) throws org.apache.thrift.TException {
             identity_args args = new identity_args();
             args.setFromId(fromId);
-            args.setServerId(serverId);
-            args.setIdentities(identities);
+            args.setServerIds(serverIds);
+            args.setIdentity(identity);
             sendBase("identity", args);
         }
 
@@ -174,15 +182,15 @@ public class PlatformFromService {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "identity failed: unknown result");
         }
 
-        public DLoginResult login(int fromId, long serverId, String username, String password) throws org.apache.thrift.TException {
-            send_login(fromId, serverId, username, password);
+        public DLoginResult login(int fromId, boolean serverIds, String username, String password) throws org.apache.thrift.TException {
+            send_login(fromId, serverIds, username, password);
             return recv_login();
         }
 
-        public void send_login(int fromId, long serverId, String username, String password) throws org.apache.thrift.TException {
+        public void send_login(int fromId, boolean serverIds, String username, String password) throws org.apache.thrift.TException {
             login_args args = new login_args();
             args.setFromId(fromId);
-            args.setServerId(serverId);
+            args.setServerIds(serverIds);
             args.setUsername(username);
             args.setPassword(password);
             sendBase("login", args);
@@ -197,15 +205,36 @@ public class PlatformFromService {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "login failed: unknown result");
         }
 
-        public DRegisterResult sign(int fromId, long serverId, String username, String password) throws org.apache.thrift.TException {
-            send_sign(fromId, serverId, username, password);
+        public DIdentityResult loginUUID(int fromId, boolean serverIds, String uuid) throws org.apache.thrift.TException {
+            send_loginUUID(fromId, serverIds, uuid);
+            return recv_loginUUID();
+        }
+
+        public void send_loginUUID(int fromId, boolean serverIds, String uuid) throws org.apache.thrift.TException {
+            loginUUID_args args = new loginUUID_args();
+            args.setFromId(fromId);
+            args.setServerIds(serverIds);
+            args.setUuid(uuid);
+            sendBase("loginUUID", args);
+        }
+
+        public DIdentityResult recv_loginUUID() throws org.apache.thrift.TException {
+            loginUUID_result result = new loginUUID_result();
+            receiveBase(result, "loginUUID");
+            if (result.isSetSuccess()) {
+                return result.success;
+            }
+            throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "loginUUID failed: unknown result");
+        }
+
+        public DRegisterResult sign(int fromId, String username, String password) throws org.apache.thrift.TException {
+            send_sign(fromId, username, password);
             return recv_sign();
         }
 
-        public void send_sign(int fromId, long serverId, String username, String password) throws org.apache.thrift.TException {
+        public void send_sign(int fromId, String username, String password) throws org.apache.thrift.TException {
             sign_args args = new sign_args();
             args.setFromId(fromId);
-            args.setServerId(serverId);
             args.setUsername(username);
             args.setPassword(password);
             sendBase("sign", args);
@@ -220,13 +249,37 @@ public class PlatformFromService {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "sign failed: unknown result");
         }
 
-        public EPasswordResult password(String sessionId, String oldPassword, String newPassword) throws org.apache.thrift.TException {
-            send_password(sessionId, oldPassword, newPassword);
+        public DRegisterResult signUUID(int fromId, String username, String password, String uuid) throws org.apache.thrift.TException {
+            send_signUUID(fromId, username, password, uuid);
+            return recv_signUUID();
+        }
+
+        public void send_signUUID(int fromId, String username, String password, String uuid) throws org.apache.thrift.TException {
+            signUUID_args args = new signUUID_args();
+            args.setFromId(fromId);
+            args.setUsername(username);
+            args.setPassword(password);
+            args.setUuid(uuid);
+            sendBase("signUUID", args);
+        }
+
+        public DRegisterResult recv_signUUID() throws org.apache.thrift.TException {
+            signUUID_result result = new signUUID_result();
+            receiveBase(result, "signUUID");
+            if (result.isSetSuccess()) {
+                return result.success;
+            }
+            throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "signUUID failed: unknown result");
+        }
+
+        public EPasswordResult password(long userId, String sessionId, String oldPassword, String newPassword) throws org.apache.thrift.TException {
+            send_password(userId, sessionId, oldPassword, newPassword);
             return recv_password();
         }
 
-        public void send_password(String sessionId, String oldPassword, String newPassword) throws org.apache.thrift.TException {
+        public void send_password(long userId, String sessionId, String oldPassword, String newPassword) throws org.apache.thrift.TException {
             password_args args = new password_args();
+            args.setUserId(userId);
             args.setSessionId(sessionId);
             args.setOldPassword(oldPassword);
             args.setNewPassword(newPassword);
@@ -242,13 +295,14 @@ public class PlatformFromService {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "password failed: unknown result");
         }
 
-        public DOrderResult order(DOrderInfo info) throws org.apache.thrift.TException {
-            send_order(info);
+        public DOrderResult order(int fromId, DOrderInfo info) throws org.apache.thrift.TException {
+            send_order(fromId, info);
             return recv_order();
         }
 
-        public void send_order(DOrderInfo info) throws org.apache.thrift.TException {
+        public void send_order(int fromId, DOrderInfo info) throws org.apache.thrift.TException {
             order_args args = new order_args();
+            args.setFromId(fromId);
             args.setInfo(info);
             sendBase("order", args);
         }
@@ -262,13 +316,14 @@ public class PlatformFromService {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "order failed: unknown result");
         }
 
-        public boolean validate(DOrderValidator validator) throws org.apache.thrift.TException {
-            send_validate(validator);
+        public boolean validate(int fromId, DOrderValidator validator) throws org.apache.thrift.TException {
+            send_validate(fromId, validator);
             return recv_validate();
         }
 
-        public void send_validate(DOrderValidator validator) throws org.apache.thrift.TException {
+        public void send_validate(int fromId, DOrderValidator validator) throws org.apache.thrift.TException {
             validate_args args = new validate_args();
+            args.setFromId(fromId);
             args.setValidator(validator);
             sendBase("validate", args);
         }
@@ -415,9 +470,9 @@ public class PlatformFromService {
             }
         }
 
-        public void identity(int fromId, long serverId, String identities, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void identity(int fromId, boolean serverIds, String identity, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
             checkReady();
-            identity_call method_call = new identity_call(fromId, serverId, identities, resultHandler, this, ___protocolFactory, ___transport);
+            identity_call method_call = new identity_call(fromId, serverIds, identity, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
             ___manager.call(method_call);
         }
@@ -426,23 +481,23 @@ public class PlatformFromService {
 
             private int fromId;
 
-            private long serverId;
+            private boolean serverIds;
 
-            private String identities;
+            private String identity;
 
-            public identity_call(int fromId, long serverId, String identities, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+            public identity_call(int fromId, boolean serverIds, String identity, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.fromId = fromId;
-                this.serverId = serverId;
-                this.identities = identities;
+                this.serverIds = serverIds;
+                this.identity = identity;
             }
 
             public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
                 prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("identity", org.apache.thrift.protocol.TMessageType.CALL, 0));
                 identity_args args = new identity_args();
                 args.setFromId(fromId);
-                args.setServerId(serverId);
-                args.setIdentities(identities);
+                args.setServerIds(serverIds);
+                args.setIdentity(identity);
                 args.write(prot);
                 prot.writeMessageEnd();
             }
@@ -457,9 +512,9 @@ public class PlatformFromService {
             }
         }
 
-        public void login(int fromId, long serverId, String username, String password, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void login(int fromId, boolean serverIds, String username, String password, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
             checkReady();
-            login_call method_call = new login_call(fromId, serverId, username, password, resultHandler, this, ___protocolFactory, ___transport);
+            login_call method_call = new login_call(fromId, serverIds, username, password, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
             ___manager.call(method_call);
         }
@@ -468,16 +523,16 @@ public class PlatformFromService {
 
             private int fromId;
 
-            private long serverId;
+            private boolean serverIds;
 
             private String username;
 
             private String password;
 
-            public login_call(int fromId, long serverId, String username, String password, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+            public login_call(int fromId, boolean serverIds, String username, String password, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.fromId = fromId;
-                this.serverId = serverId;
+                this.serverIds = serverIds;
                 this.username = username;
                 this.password = password;
             }
@@ -486,7 +541,7 @@ public class PlatformFromService {
                 prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("login", org.apache.thrift.protocol.TMessageType.CALL, 0));
                 login_args args = new login_args();
                 args.setFromId(fromId);
-                args.setServerId(serverId);
+                args.setServerIds(serverIds);
                 args.setUsername(username);
                 args.setPassword(password);
                 args.write(prot);
@@ -503,9 +558,51 @@ public class PlatformFromService {
             }
         }
 
-        public void sign(int fromId, long serverId, String username, String password, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void loginUUID(int fromId, boolean serverIds, String uuid, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
             checkReady();
-            sign_call method_call = new sign_call(fromId, serverId, username, password, resultHandler, this, ___protocolFactory, ___transport);
+            loginUUID_call method_call = new loginUUID_call(fromId, serverIds, uuid, resultHandler, this, ___protocolFactory, ___transport);
+            this.___currentMethod = method_call;
+            ___manager.call(method_call);
+        }
+
+        public static class loginUUID_call extends org.apache.thrift.async.TAsyncMethodCall {
+
+            private int fromId;
+
+            private boolean serverIds;
+
+            private String uuid;
+
+            public loginUUID_call(int fromId, boolean serverIds, String uuid, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+                super(client, protocolFactory, transport, resultHandler, false);
+                this.fromId = fromId;
+                this.serverIds = serverIds;
+                this.uuid = uuid;
+            }
+
+            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+                prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("loginUUID", org.apache.thrift.protocol.TMessageType.CALL, 0));
+                loginUUID_args args = new loginUUID_args();
+                args.setFromId(fromId);
+                args.setServerIds(serverIds);
+                args.setUuid(uuid);
+                args.write(prot);
+                prot.writeMessageEnd();
+            }
+
+            public DIdentityResult getResult() throws org.apache.thrift.TException {
+                if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+                    throw new IllegalStateException("Method call not finished!");
+                }
+                org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+                org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+                return (new Client(prot)).recv_loginUUID();
+            }
+        }
+
+        public void sign(int fromId, String username, String password, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+            checkReady();
+            sign_call method_call = new sign_call(fromId, username, password, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
             ___manager.call(method_call);
         }
@@ -514,16 +611,13 @@ public class PlatformFromService {
 
             private int fromId;
 
-            private long serverId;
-
             private String username;
 
             private String password;
 
-            public sign_call(int fromId, long serverId, String username, String password, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+            public sign_call(int fromId, String username, String password, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.fromId = fromId;
-                this.serverId = serverId;
                 this.username = username;
                 this.password = password;
             }
@@ -532,7 +626,6 @@ public class PlatformFromService {
                 prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("sign", org.apache.thrift.protocol.TMessageType.CALL, 0));
                 sign_args args = new sign_args();
                 args.setFromId(fromId);
-                args.setServerId(serverId);
                 args.setUsername(username);
                 args.setPassword(password);
                 args.write(prot);
@@ -549,14 +642,62 @@ public class PlatformFromService {
             }
         }
 
-        public void password(String sessionId, String oldPassword, String newPassword, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void signUUID(int fromId, String username, String password, String uuid, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
             checkReady();
-            password_call method_call = new password_call(sessionId, oldPassword, newPassword, resultHandler, this, ___protocolFactory, ___transport);
+            signUUID_call method_call = new signUUID_call(fromId, username, password, uuid, resultHandler, this, ___protocolFactory, ___transport);
+            this.___currentMethod = method_call;
+            ___manager.call(method_call);
+        }
+
+        public static class signUUID_call extends org.apache.thrift.async.TAsyncMethodCall {
+
+            private int fromId;
+
+            private String username;
+
+            private String password;
+
+            private String uuid;
+
+            public signUUID_call(int fromId, String username, String password, String uuid, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+                super(client, protocolFactory, transport, resultHandler, false);
+                this.fromId = fromId;
+                this.username = username;
+                this.password = password;
+                this.uuid = uuid;
+            }
+
+            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+                prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("signUUID", org.apache.thrift.protocol.TMessageType.CALL, 0));
+                signUUID_args args = new signUUID_args();
+                args.setFromId(fromId);
+                args.setUsername(username);
+                args.setPassword(password);
+                args.setUuid(uuid);
+                args.write(prot);
+                prot.writeMessageEnd();
+            }
+
+            public DRegisterResult getResult() throws org.apache.thrift.TException {
+                if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+                    throw new IllegalStateException("Method call not finished!");
+                }
+                org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+                org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+                return (new Client(prot)).recv_signUUID();
+            }
+        }
+
+        public void password(long userId, String sessionId, String oldPassword, String newPassword, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+            checkReady();
+            password_call method_call = new password_call(userId, sessionId, oldPassword, newPassword, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
             ___manager.call(method_call);
         }
 
         public static class password_call extends org.apache.thrift.async.TAsyncMethodCall {
+
+            private long userId;
 
             private String sessionId;
 
@@ -564,8 +705,9 @@ public class PlatformFromService {
 
             private String newPassword;
 
-            public password_call(String sessionId, String oldPassword, String newPassword, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+            public password_call(long userId, String sessionId, String oldPassword, String newPassword, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
+                this.userId = userId;
                 this.sessionId = sessionId;
                 this.oldPassword = oldPassword;
                 this.newPassword = newPassword;
@@ -574,6 +716,7 @@ public class PlatformFromService {
             public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
                 prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("password", org.apache.thrift.protocol.TMessageType.CALL, 0));
                 password_args args = new password_args();
+                args.setUserId(userId);
                 args.setSessionId(sessionId);
                 args.setOldPassword(oldPassword);
                 args.setNewPassword(newPassword);
@@ -591,25 +734,29 @@ public class PlatformFromService {
             }
         }
 
-        public void order(DOrderInfo info, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void order(int fromId, DOrderInfo info, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
             checkReady();
-            order_call method_call = new order_call(info, resultHandler, this, ___protocolFactory, ___transport);
+            order_call method_call = new order_call(fromId, info, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
             ___manager.call(method_call);
         }
 
         public static class order_call extends org.apache.thrift.async.TAsyncMethodCall {
 
+            private int fromId;
+
             private DOrderInfo info;
 
-            public order_call(DOrderInfo info, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+            public order_call(int fromId, DOrderInfo info, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
+                this.fromId = fromId;
                 this.info = info;
             }
 
             public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
                 prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("order", org.apache.thrift.protocol.TMessageType.CALL, 0));
                 order_args args = new order_args();
+                args.setFromId(fromId);
                 args.setInfo(info);
                 args.write(prot);
                 prot.writeMessageEnd();
@@ -625,25 +772,29 @@ public class PlatformFromService {
             }
         }
 
-        public void validate(DOrderValidator validator, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void validate(int fromId, DOrderValidator validator, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
             checkReady();
-            validate_call method_call = new validate_call(validator, resultHandler, this, ___protocolFactory, ___transport);
+            validate_call method_call = new validate_call(fromId, validator, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
             ___manager.call(method_call);
         }
 
         public static class validate_call extends org.apache.thrift.async.TAsyncMethodCall {
 
+            private int fromId;
+
             private DOrderValidator validator;
 
-            public validate_call(DOrderValidator validator, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+            public validate_call(int fromId, DOrderValidator validator, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
+                this.fromId = fromId;
                 this.validator = validator;
             }
 
             public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
                 prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("validate", org.apache.thrift.protocol.TMessageType.CALL, 0));
                 validate_args args = new validate_args();
+                args.setFromId(fromId);
                 args.setValidator(validator);
                 args.write(prot);
                 prot.writeMessageEnd();
@@ -678,7 +829,9 @@ public class PlatformFromService {
             processMap.put("servers", new servers());
             processMap.put("identity", new identity());
             processMap.put("login", new login());
+            processMap.put("loginUUID", new loginUUID());
             processMap.put("sign", new sign());
+            processMap.put("signUUID", new signUUID());
             processMap.put("password", new password());
             processMap.put("order", new order());
             processMap.put("validate", new validate());
@@ -764,7 +917,7 @@ public class PlatformFromService {
 
             public identity_result getResult(I iface, identity_args args) throws org.apache.thrift.TException {
                 identity_result result = new identity_result();
-                result.success = iface.identity(args.fromId, args.serverId, args.identities);
+                result.success = iface.identity(args.fromId, args.serverIds, args.identity);
                 return result;
             }
         }
@@ -785,7 +938,28 @@ public class PlatformFromService {
 
             public login_result getResult(I iface, login_args args) throws org.apache.thrift.TException {
                 login_result result = new login_result();
-                result.success = iface.login(args.fromId, args.serverId, args.username, args.password);
+                result.success = iface.login(args.fromId, args.serverIds, args.username, args.password);
+                return result;
+            }
+        }
+
+        public static class loginUUID<I extends Iface> extends org.apache.thrift.ProcessFunction<I, loginUUID_args> {
+
+            public loginUUID() {
+                super("loginUUID");
+            }
+
+            public loginUUID_args getEmptyArgsInstance() {
+                return new loginUUID_args();
+            }
+
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public loginUUID_result getResult(I iface, loginUUID_args args) throws org.apache.thrift.TException {
+                loginUUID_result result = new loginUUID_result();
+                result.success = iface.loginUUID(args.fromId, args.serverIds, args.uuid);
                 return result;
             }
         }
@@ -806,7 +980,28 @@ public class PlatformFromService {
 
             public sign_result getResult(I iface, sign_args args) throws org.apache.thrift.TException {
                 sign_result result = new sign_result();
-                result.success = iface.sign(args.fromId, args.serverId, args.username, args.password);
+                result.success = iface.sign(args.fromId, args.username, args.password);
+                return result;
+            }
+        }
+
+        public static class signUUID<I extends Iface> extends org.apache.thrift.ProcessFunction<I, signUUID_args> {
+
+            public signUUID() {
+                super("signUUID");
+            }
+
+            public signUUID_args getEmptyArgsInstance() {
+                return new signUUID_args();
+            }
+
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public signUUID_result getResult(I iface, signUUID_args args) throws org.apache.thrift.TException {
+                signUUID_result result = new signUUID_result();
+                result.success = iface.signUUID(args.fromId, args.username, args.password, args.uuid);
                 return result;
             }
         }
@@ -827,7 +1022,7 @@ public class PlatformFromService {
 
             public password_result getResult(I iface, password_args args) throws org.apache.thrift.TException {
                 password_result result = new password_result();
-                result.success = iface.password(args.sessionId, args.oldPassword, args.newPassword);
+                result.success = iface.password(args.userId, args.sessionId, args.oldPassword, args.newPassword);
                 return result;
             }
         }
@@ -848,7 +1043,7 @@ public class PlatformFromService {
 
             public order_result getResult(I iface, order_args args) throws org.apache.thrift.TException {
                 order_result result = new order_result();
-                result.success = iface.order(args.info);
+                result.success = iface.order(args.fromId, args.info);
                 return result;
             }
         }
@@ -869,7 +1064,7 @@ public class PlatformFromService {
 
             public validate_result getResult(I iface, validate_args args) throws org.apache.thrift.TException {
                 validate_result result = new validate_result();
-                result.success = iface.validate(args.validator);
+                result.success = iface.validate(args.fromId, args.validator);
                 result.setSuccessIsSet(true);
                 return result;
             }
@@ -894,7 +1089,9 @@ public class PlatformFromService {
             processMap.put("servers", new servers());
             processMap.put("identity", new identity());
             processMap.put("login", new login());
+            processMap.put("loginUUID", new loginUUID());
             processMap.put("sign", new sign());
+            processMap.put("signUUID", new signUUID());
             processMap.put("password", new password());
             processMap.put("order", new order());
             processMap.put("validate", new validate());
@@ -1113,7 +1310,7 @@ public class PlatformFromService {
             }
 
             public void start(I iface, identity_args args, org.apache.thrift.async.AsyncMethodCallback<DIdentityResult> resultHandler) throws TException {
-                iface.identity(args.fromId, args.serverId, args.identities, resultHandler);
+                iface.identity(args.fromId, args.serverIds, args.identity, resultHandler);
             }
         }
 
@@ -1167,7 +1364,61 @@ public class PlatformFromService {
             }
 
             public void start(I iface, login_args args, org.apache.thrift.async.AsyncMethodCallback<DLoginResult> resultHandler) throws TException {
-                iface.login(args.fromId, args.serverId, args.username, args.password, resultHandler);
+                iface.login(args.fromId, args.serverIds, args.username, args.password, resultHandler);
+            }
+        }
+
+        public static class loginUUID<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, loginUUID_args, DIdentityResult> {
+
+            public loginUUID() {
+                super("loginUUID");
+            }
+
+            public loginUUID_args getEmptyArgsInstance() {
+                return new loginUUID_args();
+            }
+
+            public AsyncMethodCallback<DIdentityResult> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+                final org.apache.thrift.AsyncProcessFunction fcall = this;
+                return new AsyncMethodCallback<DIdentityResult>() {
+
+                    public void onComplete(DIdentityResult o) {
+                        loginUUID_result result = new loginUUID_result();
+                        result.success = o;
+                        try {
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
+                            return;
+                        } catch (Exception e) {
+                            LOGGER.error("Exception writing to internal frame buffer", e);
+                        }
+                        fb.close();
+                    }
+
+                    public void onError(Exception e) {
+                        byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+                        org.apache.thrift.TBase msg;
+                        loginUUID_result result = new loginUUID_result();
+                        {
+                            msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                        }
+                        try {
+                            fcall.sendResponse(fb, msg, msgType, seqid);
+                            return;
+                        } catch (Exception ex) {
+                            LOGGER.error("Exception writing to internal frame buffer", ex);
+                        }
+                        fb.close();
+                    }
+                };
+            }
+
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public void start(I iface, loginUUID_args args, org.apache.thrift.async.AsyncMethodCallback<DIdentityResult> resultHandler) throws TException {
+                iface.loginUUID(args.fromId, args.serverIds, args.uuid, resultHandler);
             }
         }
 
@@ -1221,7 +1472,61 @@ public class PlatformFromService {
             }
 
             public void start(I iface, sign_args args, org.apache.thrift.async.AsyncMethodCallback<DRegisterResult> resultHandler) throws TException {
-                iface.sign(args.fromId, args.serverId, args.username, args.password, resultHandler);
+                iface.sign(args.fromId, args.username, args.password, resultHandler);
+            }
+        }
+
+        public static class signUUID<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, signUUID_args, DRegisterResult> {
+
+            public signUUID() {
+                super("signUUID");
+            }
+
+            public signUUID_args getEmptyArgsInstance() {
+                return new signUUID_args();
+            }
+
+            public AsyncMethodCallback<DRegisterResult> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+                final org.apache.thrift.AsyncProcessFunction fcall = this;
+                return new AsyncMethodCallback<DRegisterResult>() {
+
+                    public void onComplete(DRegisterResult o) {
+                        signUUID_result result = new signUUID_result();
+                        result.success = o;
+                        try {
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
+                            return;
+                        } catch (Exception e) {
+                            LOGGER.error("Exception writing to internal frame buffer", e);
+                        }
+                        fb.close();
+                    }
+
+                    public void onError(Exception e) {
+                        byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+                        org.apache.thrift.TBase msg;
+                        signUUID_result result = new signUUID_result();
+                        {
+                            msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                        }
+                        try {
+                            fcall.sendResponse(fb, msg, msgType, seqid);
+                            return;
+                        } catch (Exception ex) {
+                            LOGGER.error("Exception writing to internal frame buffer", ex);
+                        }
+                        fb.close();
+                    }
+                };
+            }
+
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public void start(I iface, signUUID_args args, org.apache.thrift.async.AsyncMethodCallback<DRegisterResult> resultHandler) throws TException {
+                iface.signUUID(args.fromId, args.username, args.password, args.uuid, resultHandler);
             }
         }
 
@@ -1275,7 +1580,7 @@ public class PlatformFromService {
             }
 
             public void start(I iface, password_args args, org.apache.thrift.async.AsyncMethodCallback<EPasswordResult> resultHandler) throws TException {
-                iface.password(args.sessionId, args.oldPassword, args.newPassword, resultHandler);
+                iface.password(args.userId, args.sessionId, args.oldPassword, args.newPassword, resultHandler);
             }
         }
 
@@ -1329,7 +1634,7 @@ public class PlatformFromService {
             }
 
             public void start(I iface, order_args args, org.apache.thrift.async.AsyncMethodCallback<DOrderResult> resultHandler) throws TException {
-                iface.order(args.info, resultHandler);
+                iface.order(args.fromId, args.info, resultHandler);
             }
         }
 
@@ -1384,7 +1689,7 @@ public class PlatformFromService {
             }
 
             public void start(I iface, validate_args args, org.apache.thrift.async.AsyncMethodCallback<Boolean> resultHandler) throws TException {
-                iface.validate(args.validator, resultHandler);
+                iface.validate(args.fromId, args.validator, resultHandler);
             }
         }
     }
@@ -2819,13 +3124,13 @@ public class PlatformFromService {
                         0:
                             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                                 {
-                                    org.apache.thrift.protocol.TList _list8 = iprot.readListBegin();
-                                    struct.success = new ArrayList<DAnnouncement>(_list8.size);
-                                    DAnnouncement _elem9;
-                                    for (int _i10 = 0; _i10 < _list8.size; ++_i10) {
-                                        _elem9 = new DAnnouncement();
-                                        _elem9.read(iprot);
-                                        struct.success.add(_elem9);
+                                    org.apache.thrift.protocol.TList _list24 = iprot.readListBegin();
+                                    struct.success = new ArrayList<DAnnouncement>(_list24.size);
+                                    DAnnouncement _elem25;
+                                    for (int _i26 = 0; _i26 < _list24.size; ++_i26) {
+                                        _elem25 = new DAnnouncement();
+                                        _elem25.read(iprot);
+                                        struct.success.add(_elem25);
                                     }
                                     iprot.readListEnd();
                                 }
@@ -2851,8 +3156,8 @@ public class PlatformFromService {
                     oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
                     {
                         oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-                        for (DAnnouncement _iter11 : struct.success) {
-                            _iter11.write(oprot);
+                        for (DAnnouncement _iter27 : struct.success) {
+                            _iter27.write(oprot);
                         }
                         oprot.writeListEnd();
                     }
@@ -2883,8 +3188,8 @@ public class PlatformFromService {
                 if (struct.isSetSuccess()) {
                     {
                         oprot.writeI32(struct.success.size());
-                        for (DAnnouncement _iter12 : struct.success) {
-                            _iter12.write(oprot);
+                        for (DAnnouncement _iter28 : struct.success) {
+                            _iter28.write(oprot);
                         }
                     }
                 }
@@ -2896,13 +3201,13 @@ public class PlatformFromService {
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
                     {
-                        org.apache.thrift.protocol.TList _list13 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-                        struct.success = new ArrayList<DAnnouncement>(_list13.size);
-                        DAnnouncement _elem14;
-                        for (int _i15 = 0; _i15 < _list13.size; ++_i15) {
-                            _elem14 = new DAnnouncement();
-                            _elem14.read(iprot);
-                            struct.success.add(_elem14);
+                        org.apache.thrift.protocol.TList _list29 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+                        struct.success = new ArrayList<DAnnouncement>(_list29.size);
+                        DAnnouncement _elem30;
+                        for (int _i31 = 0; _i31 < _list29.size; ++_i31) {
+                            _elem30 = new DAnnouncement();
+                            _elem30.read(iprot);
+                            struct.success.add(_elem30);
                         }
                     }
                     struct.setSuccessIsSet(true);
@@ -3638,13 +3943,13 @@ public class PlatformFromService {
                         0:
                             if (schemeField.type == org.apache.thrift.protocol.TType.LIST) {
                                 {
-                                    org.apache.thrift.protocol.TList _list16 = iprot.readListBegin();
-                                    struct.success = new ArrayList<DServer>(_list16.size);
-                                    DServer _elem17;
-                                    for (int _i18 = 0; _i18 < _list16.size; ++_i18) {
-                                        _elem17 = new DServer();
-                                        _elem17.read(iprot);
-                                        struct.success.add(_elem17);
+                                    org.apache.thrift.protocol.TList _list32 = iprot.readListBegin();
+                                    struct.success = new ArrayList<DServer>(_list32.size);
+                                    DServer _elem33;
+                                    for (int _i34 = 0; _i34 < _list32.size; ++_i34) {
+                                        _elem33 = new DServer();
+                                        _elem33.read(iprot);
+                                        struct.success.add(_elem33);
                                     }
                                     iprot.readListEnd();
                                 }
@@ -3670,8 +3975,8 @@ public class PlatformFromService {
                     oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
                     {
                         oprot.writeListBegin(new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, struct.success.size()));
-                        for (DServer _iter19 : struct.success) {
-                            _iter19.write(oprot);
+                        for (DServer _iter35 : struct.success) {
+                            _iter35.write(oprot);
                         }
                         oprot.writeListEnd();
                     }
@@ -3702,8 +4007,8 @@ public class PlatformFromService {
                 if (struct.isSetSuccess()) {
                     {
                         oprot.writeI32(struct.success.size());
-                        for (DServer _iter20 : struct.success) {
-                            _iter20.write(oprot);
+                        for (DServer _iter36 : struct.success) {
+                            _iter36.write(oprot);
                         }
                     }
                 }
@@ -3715,13 +4020,13 @@ public class PlatformFromService {
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
                     {
-                        org.apache.thrift.protocol.TList _list21 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
-                        struct.success = new ArrayList<DServer>(_list21.size);
-                        DServer _elem22;
-                        for (int _i23 = 0; _i23 < _list21.size; ++_i23) {
-                            _elem22 = new DServer();
-                            _elem22.read(iprot);
-                            struct.success.add(_elem22);
+                        org.apache.thrift.protocol.TList _list37 = new org.apache.thrift.protocol.TList(org.apache.thrift.protocol.TType.STRUCT, iprot.readI32());
+                        struct.success = new ArrayList<DServer>(_list37.size);
+                        DServer _elem38;
+                        for (int _i39 = 0; _i39 < _list37.size; ++_i39) {
+                            _elem38 = new DServer();
+                            _elem38.read(iprot);
+                            struct.success.add(_elem38);
                         }
                     }
                     struct.setSuccessIsSet(true);
@@ -3736,9 +4041,9 @@ public class PlatformFromService {
 
         private static final org.apache.thrift.protocol.TField FROM_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("fromId", org.apache.thrift.protocol.TType.I32, (short) 1);
 
-        private static final org.apache.thrift.protocol.TField SERVER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("serverId", org.apache.thrift.protocol.TType.I64, (short) 2);
+        private static final org.apache.thrift.protocol.TField SERVER_IDS_FIELD_DESC = new org.apache.thrift.protocol.TField("serverIds", org.apache.thrift.protocol.TType.BOOL, (short) 2);
 
-        private static final org.apache.thrift.protocol.TField IDENTITIES_FIELD_DESC = new org.apache.thrift.protocol.TField("identities", org.apache.thrift.protocol.TType.STRING, (short) 3);
+        private static final org.apache.thrift.protocol.TField IDENTITY_FIELD_DESC = new org.apache.thrift.protocol.TField("identity", org.apache.thrift.protocol.TType.STRING, (short) 3);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
 
@@ -3751,14 +4056,14 @@ public class PlatformFromService {
         public int fromId;
 
         // required
-        public long serverId;
+        public boolean serverIds;
 
         // required
-        public String identities;
+        public String identity;
 
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 
-            FROM_ID((short) 1, "fromId"), SERVER_ID((short) 2, "serverId"), IDENTITIES((short) 3, "identities");
+            FROM_ID((short) 1, "fromId"), SERVER_IDS((short) 2, "serverIds"), IDENTITY((short) 3, "identity");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -3773,12 +4078,12 @@ public class PlatformFromService {
                     case // FROM_ID
                     1:
                         return FROM_ID;
-                    case // SERVER_ID
+                    case // SERVER_IDS
                     2:
-                        return SERVER_ID;
-                    case // IDENTITIES
+                        return SERVER_IDS;
+                    case // IDENTITY
                     3:
-                        return IDENTITIES;
+                        return IDENTITY;
                     default:
                         return null;
                 }
@@ -3816,7 +4121,7 @@ public class PlatformFromService {
         // isset id assignments
         private static final int __FROMID_ISSET_ID = 0;
 
-        private static final int __SERVERID_ISSET_ID = 1;
+        private static final int __SERVERIDS_ISSET_ID = 1;
 
         private byte __isset_bitfield = 0;
 
@@ -3825,8 +4130,8 @@ public class PlatformFromService {
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.FROM_ID, new org.apache.thrift.meta_data.FieldMetaData("fromId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-            tmpMap.put(_Fields.SERVER_ID, new org.apache.thrift.meta_data.FieldMetaData("serverId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-            tmpMap.put(_Fields.IDENTITIES, new org.apache.thrift.meta_data.FieldMetaData("identities", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+            tmpMap.put(_Fields.SERVER_IDS, new org.apache.thrift.meta_data.FieldMetaData("serverIds", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+            tmpMap.put(_Fields.IDENTITY, new org.apache.thrift.meta_data.FieldMetaData("identity", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
             metaDataMap = Collections.unmodifiableMap(tmpMap);
             org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(identity_args.class, metaDataMap);
         }
@@ -3834,21 +4139,21 @@ public class PlatformFromService {
         public identity_args() {
         }
 
-        public identity_args(int fromId, long serverId, String identities) {
+        public identity_args(int fromId, boolean serverIds, String identity) {
             this();
             this.fromId = fromId;
             setFromIdIsSet(true);
-            this.serverId = serverId;
-            setServerIdIsSet(true);
-            this.identities = identities;
+            this.serverIds = serverIds;
+            setServerIdsIsSet(true);
+            this.identity = identity;
         }
 
         public identity_args(identity_args other) {
             __isset_bitfield = other.__isset_bitfield;
             this.fromId = other.fromId;
-            this.serverId = other.serverId;
-            if (other.isSetIdentities()) {
-                this.identities = other.identities;
+            this.serverIds = other.serverIds;
+            if (other.isSetIdentity()) {
+                this.identity = other.identity;
             }
         }
 
@@ -3860,9 +4165,9 @@ public class PlatformFromService {
         public void clear() {
             setFromIdIsSet(false);
             this.fromId = 0;
-            setServerIdIsSet(false);
-            this.serverId = 0;
-            this.identities = null;
+            setServerIdsIsSet(false);
+            this.serverIds = false;
+            this.identity = null;
         }
 
         public int getFromId() {
@@ -3887,50 +4192,50 @@ public class PlatformFromService {
             __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __FROMID_ISSET_ID, value);
         }
 
-        public long getServerId() {
-            return this.serverId;
+        public boolean isServerIds() {
+            return this.serverIds;
         }
 
-        public identity_args setServerId(long serverId) {
-            this.serverId = serverId;
-            setServerIdIsSet(true);
+        public identity_args setServerIds(boolean serverIds) {
+            this.serverIds = serverIds;
+            setServerIdsIsSet(true);
             return this;
         }
 
-        public void unsetServerId() {
-            __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SERVERID_ISSET_ID);
+        public void unsetServerIds() {
+            __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SERVERIDS_ISSET_ID);
         }
 
-        /** Returns true if field serverId is set (has been assigned a value) and false otherwise */
-        public boolean isSetServerId() {
-            return EncodingUtils.testBit(__isset_bitfield, __SERVERID_ISSET_ID);
+        /** Returns true if field serverIds is set (has been assigned a value) and false otherwise */
+        public boolean isSetServerIds() {
+            return EncodingUtils.testBit(__isset_bitfield, __SERVERIDS_ISSET_ID);
         }
 
-        public void setServerIdIsSet(boolean value) {
-            __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SERVERID_ISSET_ID, value);
+        public void setServerIdsIsSet(boolean value) {
+            __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SERVERIDS_ISSET_ID, value);
         }
 
-        public String getIdentities() {
-            return this.identities;
+        public String getIdentity() {
+            return this.identity;
         }
 
-        public identity_args setIdentities(String identities) {
-            this.identities = identities;
+        public identity_args setIdentity(String identity) {
+            this.identity = identity;
             return this;
         }
 
-        public void unsetIdentities() {
-            this.identities = null;
+        public void unsetIdentity() {
+            this.identity = null;
         }
 
-        /** Returns true if field identities is set (has been assigned a value) and false otherwise */
-        public boolean isSetIdentities() {
-            return this.identities != null;
+        /** Returns true if field identity is set (has been assigned a value) and false otherwise */
+        public boolean isSetIdentity() {
+            return this.identity != null;
         }
 
-        public void setIdentitiesIsSet(boolean value) {
+        public void setIdentityIsSet(boolean value) {
             if (!value) {
-                this.identities = null;
+                this.identity = null;
             }
         }
 
@@ -3943,18 +4248,18 @@ public class PlatformFromService {
                         setFromId((Integer) value);
                     }
                     break;
-                case SERVER_ID:
+                case SERVER_IDS:
                     if (value == null) {
-                        unsetServerId();
+                        unsetServerIds();
                     } else {
-                        setServerId((Long) value);
+                        setServerIds((Boolean) value);
                     }
                     break;
-                case IDENTITIES:
+                case IDENTITY:
                     if (value == null) {
-                        unsetIdentities();
+                        unsetIdentity();
                     } else {
-                        setIdentities((String) value);
+                        setIdentity((String) value);
                     }
                     break;
             }
@@ -3964,10 +4269,10 @@ public class PlatformFromService {
             switch(field) {
                 case FROM_ID:
                     return getFromId();
-                case SERVER_ID:
-                    return getServerId();
-                case IDENTITIES:
-                    return getIdentities();
+                case SERVER_IDS:
+                    return isServerIds();
+                case IDENTITY:
+                    return getIdentity();
             }
             throw new IllegalStateException();
         }
@@ -3979,10 +4284,10 @@ public class PlatformFromService {
             switch(field) {
                 case FROM_ID:
                     return isSetFromId();
-                case SERVER_ID:
-                    return isSetServerId();
-                case IDENTITIES:
-                    return isSetIdentities();
+                case SERVER_IDS:
+                    return isSetServerIds();
+                case IDENTITY:
+                    return isSetIdentity();
             }
             throw new IllegalStateException();
         }
@@ -4007,20 +4312,20 @@ public class PlatformFromService {
                 if (this.fromId != that.fromId)
                     return false;
             }
-            boolean this_present_serverId = true;
-            boolean that_present_serverId = true;
-            if (this_present_serverId || that_present_serverId) {
-                if (!(this_present_serverId && that_present_serverId))
+            boolean this_present_serverIds = true;
+            boolean that_present_serverIds = true;
+            if (this_present_serverIds || that_present_serverIds) {
+                if (!(this_present_serverIds && that_present_serverIds))
                     return false;
-                if (this.serverId != that.serverId)
+                if (this.serverIds != that.serverIds)
                     return false;
             }
-            boolean this_present_identities = true && this.isSetIdentities();
-            boolean that_present_identities = true && that.isSetIdentities();
-            if (this_present_identities || that_present_identities) {
-                if (!(this_present_identities && that_present_identities))
+            boolean this_present_identity = true && this.isSetIdentity();
+            boolean that_present_identity = true && that.isSetIdentity();
+            if (this_present_identity || that_present_identity) {
+                if (!(this_present_identity && that_present_identity))
                     return false;
-                if (!this.identities.equals(that.identities))
+                if (!this.identity.equals(that.identity))
                     return false;
             }
             return true;
@@ -4033,14 +4338,14 @@ public class PlatformFromService {
             list.add(present_fromId);
             if (present_fromId)
                 list.add(fromId);
-            boolean present_serverId = true;
-            list.add(present_serverId);
-            if (present_serverId)
-                list.add(serverId);
-            boolean present_identities = true && (isSetIdentities());
-            list.add(present_identities);
-            if (present_identities)
-                list.add(identities);
+            boolean present_serverIds = true;
+            list.add(present_serverIds);
+            if (present_serverIds)
+                list.add(serverIds);
+            boolean present_identity = true && (isSetIdentity());
+            list.add(present_identity);
+            if (present_identity)
+                list.add(identity);
             return list.hashCode();
         }
 
@@ -4060,22 +4365,22 @@ public class PlatformFromService {
                     return lastComparison;
                 }
             }
-            lastComparison = Boolean.valueOf(isSetServerId()).compareTo(other.isSetServerId());
+            lastComparison = Boolean.valueOf(isSetServerIds()).compareTo(other.isSetServerIds());
             if (lastComparison != 0) {
                 return lastComparison;
             }
-            if (isSetServerId()) {
-                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.serverId, other.serverId);
+            if (isSetServerIds()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.serverIds, other.serverIds);
                 if (lastComparison != 0) {
                     return lastComparison;
                 }
             }
-            lastComparison = Boolean.valueOf(isSetIdentities()).compareTo(other.isSetIdentities());
+            lastComparison = Boolean.valueOf(isSetIdentity()).compareTo(other.isSetIdentity());
             if (lastComparison != 0) {
                 return lastComparison;
             }
-            if (isSetIdentities()) {
-                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.identities, other.identities);
+            if (isSetIdentity()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.identity, other.identity);
                 if (lastComparison != 0) {
                     return lastComparison;
                 }
@@ -4104,16 +4409,16 @@ public class PlatformFromService {
             first = false;
             if (!first)
                 sb.append(", ");
-            sb.append("serverId:");
-            sb.append(this.serverId);
+            sb.append("serverIds:");
+            sb.append(this.serverIds);
             first = false;
             if (!first)
                 sb.append(", ");
-            sb.append("identities:");
-            if (this.identities == null) {
+            sb.append("identity:");
+            if (this.identity == null) {
                 sb.append("null");
             } else {
-                sb.append(this.identities);
+                sb.append(this.identity);
             }
             first = false;
             sb.append(")");
@@ -4168,20 +4473,20 @@ public class PlatformFromService {
                                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                             }
                             break;
-                        case // SERVER_ID
+                        case // SERVER_IDS
                         2:
-                            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                                struct.serverId = iprot.readI64();
-                                struct.setServerIdIsSet(true);
+                            if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+                                struct.serverIds = iprot.readBool();
+                                struct.setServerIdsIsSet(true);
                             } else {
                                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                             }
                             break;
-                        case // IDENTITIES
+                        case // IDENTITY
                         3:
                             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                                struct.identities = iprot.readString();
-                                struct.setIdentitiesIsSet(true);
+                                struct.identity = iprot.readString();
+                                struct.setIdentityIsSet(true);
                             } else {
                                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                             }
@@ -4202,12 +4507,12 @@ public class PlatformFromService {
                 oprot.writeFieldBegin(FROM_ID_FIELD_DESC);
                 oprot.writeI32(struct.fromId);
                 oprot.writeFieldEnd();
-                oprot.writeFieldBegin(SERVER_ID_FIELD_DESC);
-                oprot.writeI64(struct.serverId);
+                oprot.writeFieldBegin(SERVER_IDS_FIELD_DESC);
+                oprot.writeBool(struct.serverIds);
                 oprot.writeFieldEnd();
-                if (struct.identities != null) {
-                    oprot.writeFieldBegin(IDENTITIES_FIELD_DESC);
-                    oprot.writeString(struct.identities);
+                if (struct.identity != null) {
+                    oprot.writeFieldBegin(IDENTITY_FIELD_DESC);
+                    oprot.writeString(struct.identity);
                     oprot.writeFieldEnd();
                 }
                 oprot.writeFieldStop();
@@ -4231,21 +4536,21 @@ public class PlatformFromService {
                 if (struct.isSetFromId()) {
                     optionals.set(0);
                 }
-                if (struct.isSetServerId()) {
+                if (struct.isSetServerIds()) {
                     optionals.set(1);
                 }
-                if (struct.isSetIdentities()) {
+                if (struct.isSetIdentity()) {
                     optionals.set(2);
                 }
                 oprot.writeBitSet(optionals, 3);
                 if (struct.isSetFromId()) {
                     oprot.writeI32(struct.fromId);
                 }
-                if (struct.isSetServerId()) {
-                    oprot.writeI64(struct.serverId);
+                if (struct.isSetServerIds()) {
+                    oprot.writeBool(struct.serverIds);
                 }
-                if (struct.isSetIdentities()) {
-                    oprot.writeString(struct.identities);
+                if (struct.isSetIdentity()) {
+                    oprot.writeString(struct.identity);
                 }
             }
 
@@ -4258,12 +4563,12 @@ public class PlatformFromService {
                     struct.setFromIdIsSet(true);
                 }
                 if (incoming.get(1)) {
-                    struct.serverId = iprot.readI64();
-                    struct.setServerIdIsSet(true);
+                    struct.serverIds = iprot.readBool();
+                    struct.setServerIdsIsSet(true);
                 }
                 if (incoming.get(2)) {
-                    struct.identities = iprot.readString();
-                    struct.setIdentitiesIsSet(true);
+                    struct.identity = iprot.readString();
+                    struct.setIdentityIsSet(true);
                 }
             }
         }
@@ -4617,7 +4922,7 @@ public class PlatformFromService {
 
         private static final org.apache.thrift.protocol.TField FROM_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("fromId", org.apache.thrift.protocol.TType.I32, (short) 1);
 
-        private static final org.apache.thrift.protocol.TField SERVER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("serverId", org.apache.thrift.protocol.TType.I64, (short) 2);
+        private static final org.apache.thrift.protocol.TField SERVER_IDS_FIELD_DESC = new org.apache.thrift.protocol.TField("serverIds", org.apache.thrift.protocol.TType.BOOL, (short) 2);
 
         private static final org.apache.thrift.protocol.TField USERNAME_FIELD_DESC = new org.apache.thrift.protocol.TField("username", org.apache.thrift.protocol.TType.STRING, (short) 3);
 
@@ -4634,7 +4939,7 @@ public class PlatformFromService {
         public int fromId;
 
         // required
-        public long serverId;
+        public boolean serverIds;
 
         // required
         public String username;
@@ -4644,7 +4949,7 @@ public class PlatformFromService {
 
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 
-            FROM_ID((short) 1, "fromId"), SERVER_ID((short) 2, "serverId"), USERNAME((short) 3, "username"), PASSWORD((short) 4, "password");
+            FROM_ID((short) 1, "fromId"), SERVER_IDS((short) 2, "serverIds"), USERNAME((short) 3, "username"), PASSWORD((short) 4, "password");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -4659,9 +4964,9 @@ public class PlatformFromService {
                     case // FROM_ID
                     1:
                         return FROM_ID;
-                    case // SERVER_ID
+                    case // SERVER_IDS
                     2:
-                        return SERVER_ID;
+                        return SERVER_IDS;
                     case // USERNAME
                     3:
                         return USERNAME;
@@ -4705,7 +5010,7 @@ public class PlatformFromService {
         // isset id assignments
         private static final int __FROMID_ISSET_ID = 0;
 
-        private static final int __SERVERID_ISSET_ID = 1;
+        private static final int __SERVERIDS_ISSET_ID = 1;
 
         private byte __isset_bitfield = 0;
 
@@ -4714,7 +5019,7 @@ public class PlatformFromService {
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.FROM_ID, new org.apache.thrift.meta_data.FieldMetaData("fromId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-            tmpMap.put(_Fields.SERVER_ID, new org.apache.thrift.meta_data.FieldMetaData("serverId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+            tmpMap.put(_Fields.SERVER_IDS, new org.apache.thrift.meta_data.FieldMetaData("serverIds", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
             tmpMap.put(_Fields.USERNAME, new org.apache.thrift.meta_data.FieldMetaData("username", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
             tmpMap.put(_Fields.PASSWORD, new org.apache.thrift.meta_data.FieldMetaData("password", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
             metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -4724,12 +5029,12 @@ public class PlatformFromService {
         public login_args() {
         }
 
-        public login_args(int fromId, long serverId, String username, String password) {
+        public login_args(int fromId, boolean serverIds, String username, String password) {
             this();
             this.fromId = fromId;
             setFromIdIsSet(true);
-            this.serverId = serverId;
-            setServerIdIsSet(true);
+            this.serverIds = serverIds;
+            setServerIdsIsSet(true);
             this.username = username;
             this.password = password;
         }
@@ -4737,7 +5042,7 @@ public class PlatformFromService {
         public login_args(login_args other) {
             __isset_bitfield = other.__isset_bitfield;
             this.fromId = other.fromId;
-            this.serverId = other.serverId;
+            this.serverIds = other.serverIds;
             if (other.isSetUsername()) {
                 this.username = other.username;
             }
@@ -4754,8 +5059,8 @@ public class PlatformFromService {
         public void clear() {
             setFromIdIsSet(false);
             this.fromId = 0;
-            setServerIdIsSet(false);
-            this.serverId = 0;
+            setServerIdsIsSet(false);
+            this.serverIds = false;
             this.username = null;
             this.password = null;
         }
@@ -4782,26 +5087,26 @@ public class PlatformFromService {
             __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __FROMID_ISSET_ID, value);
         }
 
-        public long getServerId() {
-            return this.serverId;
+        public boolean isServerIds() {
+            return this.serverIds;
         }
 
-        public login_args setServerId(long serverId) {
-            this.serverId = serverId;
-            setServerIdIsSet(true);
+        public login_args setServerIds(boolean serverIds) {
+            this.serverIds = serverIds;
+            setServerIdsIsSet(true);
             return this;
         }
 
-        public void unsetServerId() {
-            __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SERVERID_ISSET_ID);
+        public void unsetServerIds() {
+            __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SERVERIDS_ISSET_ID);
         }
 
-        public boolean isSetServerId() {
-            return EncodingUtils.testBit(__isset_bitfield, __SERVERID_ISSET_ID);
+        public boolean isSetServerIds() {
+            return EncodingUtils.testBit(__isset_bitfield, __SERVERIDS_ISSET_ID);
         }
 
-        public void setServerIdIsSet(boolean value) {
-            __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SERVERID_ISSET_ID, value);
+        public void setServerIdsIsSet(boolean value) {
+            __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SERVERIDS_ISSET_ID, value);
         }
 
         public String getUsername() {
@@ -4861,11 +5166,11 @@ public class PlatformFromService {
                         setFromId((Integer) value);
                     }
                     break;
-                case SERVER_ID:
+                case SERVER_IDS:
                     if (value == null) {
-                        unsetServerId();
+                        unsetServerIds();
                     } else {
-                        setServerId((Long) value);
+                        setServerIds((Boolean) value);
                     }
                     break;
                 case USERNAME:
@@ -4889,8 +5194,8 @@ public class PlatformFromService {
             switch(field) {
                 case FROM_ID:
                     return getFromId();
-                case SERVER_ID:
-                    return getServerId();
+                case SERVER_IDS:
+                    return isServerIds();
                 case USERNAME:
                     return getUsername();
                 case PASSWORD:
@@ -4906,8 +5211,8 @@ public class PlatformFromService {
             switch(field) {
                 case FROM_ID:
                     return isSetFromId();
-                case SERVER_ID:
-                    return isSetServerId();
+                case SERVER_IDS:
+                    return isSetServerIds();
                 case USERNAME:
                     return isSetUsername();
                 case PASSWORD:
@@ -4936,12 +5241,12 @@ public class PlatformFromService {
                 if (this.fromId != that.fromId)
                     return false;
             }
-            boolean this_present_serverId = true;
-            boolean that_present_serverId = true;
-            if (this_present_serverId || that_present_serverId) {
-                if (!(this_present_serverId && that_present_serverId))
+            boolean this_present_serverIds = true;
+            boolean that_present_serverIds = true;
+            if (this_present_serverIds || that_present_serverIds) {
+                if (!(this_present_serverIds && that_present_serverIds))
                     return false;
-                if (this.serverId != that.serverId)
+                if (this.serverIds != that.serverIds)
                     return false;
             }
             boolean this_present_username = true && this.isSetUsername();
@@ -4970,10 +5275,10 @@ public class PlatformFromService {
             list.add(present_fromId);
             if (present_fromId)
                 list.add(fromId);
-            boolean present_serverId = true;
-            list.add(present_serverId);
-            if (present_serverId)
-                list.add(serverId);
+            boolean present_serverIds = true;
+            list.add(present_serverIds);
+            if (present_serverIds)
+                list.add(serverIds);
             boolean present_username = true && (isSetUsername());
             list.add(present_username);
             if (present_username)
@@ -5001,12 +5306,12 @@ public class PlatformFromService {
                     return lastComparison;
                 }
             }
-            lastComparison = Boolean.valueOf(isSetServerId()).compareTo(other.isSetServerId());
+            lastComparison = Boolean.valueOf(isSetServerIds()).compareTo(other.isSetServerIds());
             if (lastComparison != 0) {
                 return lastComparison;
             }
-            if (isSetServerId()) {
-                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.serverId, other.serverId);
+            if (isSetServerIds()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.serverIds, other.serverIds);
                 if (lastComparison != 0) {
                     return lastComparison;
                 }
@@ -5055,8 +5360,8 @@ public class PlatformFromService {
             first = false;
             if (!first)
                 sb.append(", ");
-            sb.append("serverId:");
-            sb.append(this.serverId);
+            sb.append("serverIds:");
+            sb.append(this.serverIds);
             first = false;
             if (!first)
                 sb.append(", ");
@@ -5128,11 +5433,11 @@ public class PlatformFromService {
                                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                             }
                             break;
-                        case // SERVER_ID
+                        case // SERVER_IDS
                         2:
-                            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                                struct.serverId = iprot.readI64();
-                                struct.setServerIdIsSet(true);
+                            if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+                                struct.serverIds = iprot.readBool();
+                                struct.setServerIdsIsSet(true);
                             } else {
                                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                             }
@@ -5171,8 +5476,8 @@ public class PlatformFromService {
                 oprot.writeFieldBegin(FROM_ID_FIELD_DESC);
                 oprot.writeI32(struct.fromId);
                 oprot.writeFieldEnd();
-                oprot.writeFieldBegin(SERVER_ID_FIELD_DESC);
-                oprot.writeI64(struct.serverId);
+                oprot.writeFieldBegin(SERVER_IDS_FIELD_DESC);
+                oprot.writeBool(struct.serverIds);
                 oprot.writeFieldEnd();
                 if (struct.username != null) {
                     oprot.writeFieldBegin(USERNAME_FIELD_DESC);
@@ -5205,7 +5510,7 @@ public class PlatformFromService {
                 if (struct.isSetFromId()) {
                     optionals.set(0);
                 }
-                if (struct.isSetServerId()) {
+                if (struct.isSetServerIds()) {
                     optionals.set(1);
                 }
                 if (struct.isSetUsername()) {
@@ -5218,8 +5523,8 @@ public class PlatformFromService {
                 if (struct.isSetFromId()) {
                     oprot.writeI32(struct.fromId);
                 }
-                if (struct.isSetServerId()) {
-                    oprot.writeI64(struct.serverId);
+                if (struct.isSetServerIds()) {
+                    oprot.writeBool(struct.serverIds);
                 }
                 if (struct.isSetUsername()) {
                     oprot.writeString(struct.username);
@@ -5238,8 +5543,8 @@ public class PlatformFromService {
                     struct.setFromIdIsSet(true);
                 }
                 if (incoming.get(1)) {
-                    struct.serverId = iprot.readI64();
-                    struct.setServerIdIsSet(true);
+                    struct.serverIds = iprot.readBool();
+                    struct.setServerIdsIsSet(true);
                 }
                 if (incoming.get(2)) {
                     struct.username = iprot.readString();
@@ -5601,11 +5906,9 @@ public class PlatformFromService {
 
         private static final org.apache.thrift.protocol.TField FROM_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("fromId", org.apache.thrift.protocol.TType.I32, (short) 1);
 
-        private static final org.apache.thrift.protocol.TField SERVER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("serverId", org.apache.thrift.protocol.TType.I64, (short) 2);
+        private static final org.apache.thrift.protocol.TField USERNAME_FIELD_DESC = new org.apache.thrift.protocol.TField("username", org.apache.thrift.protocol.TType.STRING, (short) 2);
 
-        private static final org.apache.thrift.protocol.TField USERNAME_FIELD_DESC = new org.apache.thrift.protocol.TField("username", org.apache.thrift.protocol.TType.STRING, (short) 3);
-
-        private static final org.apache.thrift.protocol.TField PASSWORD_FIELD_DESC = new org.apache.thrift.protocol.TField("password", org.apache.thrift.protocol.TType.STRING, (short) 4);
+        private static final org.apache.thrift.protocol.TField PASSWORD_FIELD_DESC = new org.apache.thrift.protocol.TField("password", org.apache.thrift.protocol.TType.STRING, (short) 3);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
 
@@ -5618,9 +5921,6 @@ public class PlatformFromService {
         public int fromId;
 
         // required
-        public long serverId;
-
-        // required
         public String username;
 
         // required
@@ -5628,7 +5928,7 @@ public class PlatformFromService {
 
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 
-            FROM_ID((short) 1, "fromId"), SERVER_ID((short) 2, "serverId"), USERNAME((short) 3, "username"), PASSWORD((short) 4, "password");
+            FROM_ID((short) 1, "fromId"), USERNAME((short) 2, "username"), PASSWORD((short) 3, "password");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -5643,14 +5943,11 @@ public class PlatformFromService {
                     case // FROM_ID
                     1:
                         return FROM_ID;
-                    case // SERVER_ID
-                    2:
-                        return SERVER_ID;
                     case // USERNAME
-                    3:
+                    2:
                         return USERNAME;
                     case // PASSWORD
-                    4:
+                    3:
                         return PASSWORD;
                     default:
                         return null;
@@ -5689,8 +5986,6 @@ public class PlatformFromService {
         // isset id assignments
         private static final int __FROMID_ISSET_ID = 0;
 
-        private static final int __SERVERID_ISSET_ID = 1;
-
         private byte __isset_bitfield = 0;
 
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
@@ -5698,7 +5993,6 @@ public class PlatformFromService {
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.FROM_ID, new org.apache.thrift.meta_data.FieldMetaData("fromId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
-            tmpMap.put(_Fields.SERVER_ID, new org.apache.thrift.meta_data.FieldMetaData("serverId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
             tmpMap.put(_Fields.USERNAME, new org.apache.thrift.meta_data.FieldMetaData("username", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
             tmpMap.put(_Fields.PASSWORD, new org.apache.thrift.meta_data.FieldMetaData("password", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
             metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -5708,12 +6002,10 @@ public class PlatformFromService {
         public sign_args() {
         }
 
-        public sign_args(int fromId, long serverId, String username, String password) {
+        public sign_args(int fromId, String username, String password) {
             this();
             this.fromId = fromId;
             setFromIdIsSet(true);
-            this.serverId = serverId;
-            setServerIdIsSet(true);
             this.username = username;
             this.password = password;
         }
@@ -5721,7 +6013,6 @@ public class PlatformFromService {
         public sign_args(sign_args other) {
             __isset_bitfield = other.__isset_bitfield;
             this.fromId = other.fromId;
-            this.serverId = other.serverId;
             if (other.isSetUsername()) {
                 this.username = other.username;
             }
@@ -5738,8 +6029,6 @@ public class PlatformFromService {
         public void clear() {
             setFromIdIsSet(false);
             this.fromId = 0;
-            setServerIdIsSet(false);
-            this.serverId = 0;
             this.username = null;
             this.password = null;
         }
@@ -5764,28 +6053,6 @@ public class PlatformFromService {
 
         public void setFromIdIsSet(boolean value) {
             __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __FROMID_ISSET_ID, value);
-        }
-
-        public long getServerId() {
-            return this.serverId;
-        }
-
-        public sign_args setServerId(long serverId) {
-            this.serverId = serverId;
-            setServerIdIsSet(true);
-            return this;
-        }
-
-        public void unsetServerId() {
-            __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SERVERID_ISSET_ID);
-        }
-
-        public boolean isSetServerId() {
-            return EncodingUtils.testBit(__isset_bitfield, __SERVERID_ISSET_ID);
-        }
-
-        public void setServerIdIsSet(boolean value) {
-            __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SERVERID_ISSET_ID, value);
         }
 
         public String getUsername() {
@@ -5843,13 +6110,6 @@ public class PlatformFromService {
                         setFromId((Integer) value);
                     }
                     break;
-                case SERVER_ID:
-                    if (value == null) {
-                        unsetServerId();
-                    } else {
-                        setServerId((Long) value);
-                    }
-                    break;
                 case USERNAME:
                     if (value == null) {
                         unsetUsername();
@@ -5871,8 +6131,6 @@ public class PlatformFromService {
             switch(field) {
                 case FROM_ID:
                     return getFromId();
-                case SERVER_ID:
-                    return getServerId();
                 case USERNAME:
                     return getUsername();
                 case PASSWORD:
@@ -5888,8 +6146,6 @@ public class PlatformFromService {
             switch(field) {
                 case FROM_ID:
                     return isSetFromId();
-                case SERVER_ID:
-                    return isSetServerId();
                 case USERNAME:
                     return isSetUsername();
                 case PASSWORD:
@@ -5918,14 +6174,6 @@ public class PlatformFromService {
                 if (this.fromId != that.fromId)
                     return false;
             }
-            boolean this_present_serverId = true;
-            boolean that_present_serverId = true;
-            if (this_present_serverId || that_present_serverId) {
-                if (!(this_present_serverId && that_present_serverId))
-                    return false;
-                if (this.serverId != that.serverId)
-                    return false;
-            }
             boolean this_present_username = true && this.isSetUsername();
             boolean that_present_username = true && that.isSetUsername();
             if (this_present_username || that_present_username) {
@@ -5952,10 +6200,6 @@ public class PlatformFromService {
             list.add(present_fromId);
             if (present_fromId)
                 list.add(fromId);
-            boolean present_serverId = true;
-            list.add(present_serverId);
-            if (present_serverId)
-                list.add(serverId);
             boolean present_username = true && (isSetUsername());
             list.add(present_username);
             if (present_username)
@@ -5979,16 +6223,6 @@ public class PlatformFromService {
             }
             if (isSetFromId()) {
                 lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.fromId, other.fromId);
-                if (lastComparison != 0) {
-                    return lastComparison;
-                }
-            }
-            lastComparison = Boolean.valueOf(isSetServerId()).compareTo(other.isSetServerId());
-            if (lastComparison != 0) {
-                return lastComparison;
-            }
-            if (isSetServerId()) {
-                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.serverId, other.serverId);
                 if (lastComparison != 0) {
                     return lastComparison;
                 }
@@ -6034,11 +6268,6 @@ public class PlatformFromService {
             boolean first = true;
             sb.append("fromId:");
             sb.append(this.fromId);
-            first = false;
-            if (!first)
-                sb.append(", ");
-            sb.append("serverId:");
-            sb.append(this.serverId);
             first = false;
             if (!first)
                 sb.append(", ");
@@ -6110,17 +6339,8 @@ public class PlatformFromService {
                                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                             }
                             break;
-                        case // SERVER_ID
-                        2:
-                            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                                struct.serverId = iprot.readI64();
-                                struct.setServerIdIsSet(true);
-                            } else {
-                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-                            }
-                            break;
                         case // USERNAME
-                        3:
+                        2:
                             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
                                 struct.username = iprot.readString();
                                 struct.setUsernameIsSet(true);
@@ -6129,7 +6349,7 @@ public class PlatformFromService {
                             }
                             break;
                         case // PASSWORD
-                        4:
+                        3:
                             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
                                 struct.password = iprot.readString();
                                 struct.setPasswordIsSet(true);
@@ -6152,9 +6372,6 @@ public class PlatformFromService {
                 oprot.writeStructBegin(STRUCT_DESC);
                 oprot.writeFieldBegin(FROM_ID_FIELD_DESC);
                 oprot.writeI32(struct.fromId);
-                oprot.writeFieldEnd();
-                oprot.writeFieldBegin(SERVER_ID_FIELD_DESC);
-                oprot.writeI64(struct.serverId);
                 oprot.writeFieldEnd();
                 if (struct.username != null) {
                     oprot.writeFieldBegin(USERNAME_FIELD_DESC);
@@ -6187,21 +6404,15 @@ public class PlatformFromService {
                 if (struct.isSetFromId()) {
                     optionals.set(0);
                 }
-                if (struct.isSetServerId()) {
+                if (struct.isSetUsername()) {
                     optionals.set(1);
                 }
-                if (struct.isSetUsername()) {
+                if (struct.isSetPassword()) {
                     optionals.set(2);
                 }
-                if (struct.isSetPassword()) {
-                    optionals.set(3);
-                }
-                oprot.writeBitSet(optionals, 4);
+                oprot.writeBitSet(optionals, 3);
                 if (struct.isSetFromId()) {
                     oprot.writeI32(struct.fromId);
-                }
-                if (struct.isSetServerId()) {
-                    oprot.writeI64(struct.serverId);
                 }
                 if (struct.isSetUsername()) {
                     oprot.writeString(struct.username);
@@ -6214,20 +6425,16 @@ public class PlatformFromService {
             @Override
             public void read(org.apache.thrift.protocol.TProtocol prot, sign_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
-                BitSet incoming = iprot.readBitSet(4);
+                BitSet incoming = iprot.readBitSet(3);
                 if (incoming.get(0)) {
                     struct.fromId = iprot.readI32();
                     struct.setFromIdIsSet(true);
                 }
                 if (incoming.get(1)) {
-                    struct.serverId = iprot.readI64();
-                    struct.setServerIdIsSet(true);
-                }
-                if (incoming.get(2)) {
                     struct.username = iprot.readString();
                     struct.setUsernameIsSet(true);
                 }
-                if (incoming.get(3)) {
+                if (incoming.get(2)) {
                     struct.password = iprot.readString();
                     struct.setPasswordIsSet(true);
                 }
@@ -6581,11 +6788,13 @@ public class PlatformFromService {
 
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("password_args");
 
-        private static final org.apache.thrift.protocol.TField SESSION_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("sessionId", org.apache.thrift.protocol.TType.STRING, (short) 1);
+        private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I64, (short) 1);
 
-        private static final org.apache.thrift.protocol.TField OLD_PASSWORD_FIELD_DESC = new org.apache.thrift.protocol.TField("oldPassword", org.apache.thrift.protocol.TType.STRING, (short) 2);
+        private static final org.apache.thrift.protocol.TField SESSION_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("sessionId", org.apache.thrift.protocol.TType.STRING, (short) 2);
 
-        private static final org.apache.thrift.protocol.TField NEW_PASSWORD_FIELD_DESC = new org.apache.thrift.protocol.TField("newPassword", org.apache.thrift.protocol.TType.STRING, (short) 3);
+        private static final org.apache.thrift.protocol.TField OLD_PASSWORD_FIELD_DESC = new org.apache.thrift.protocol.TField("oldPassword", org.apache.thrift.protocol.TType.STRING, (short) 3);
+
+        private static final org.apache.thrift.protocol.TField NEW_PASSWORD_FIELD_DESC = new org.apache.thrift.protocol.TField("newPassword", org.apache.thrift.protocol.TType.STRING, (short) 4);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
 
@@ -6593,6 +6802,9 @@ public class PlatformFromService {
             schemes.put(StandardScheme.class, new password_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new password_argsTupleSchemeFactory());
         }
+
+        // required
+        public long userId;
 
         // required
         public String sessionId;
@@ -6605,7 +6817,7 @@ public class PlatformFromService {
 
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 
-            SESSION_ID((short) 1, "sessionId"), OLD_PASSWORD((short) 2, "oldPassword"), NEW_PASSWORD((short) 3, "newPassword");
+            USER_ID((short) 1, "userId"), SESSION_ID((short) 2, "sessionId"), OLD_PASSWORD((short) 3, "oldPassword"), NEW_PASSWORD((short) 4, "newPassword");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -6617,14 +6829,17 @@ public class PlatformFromService {
 
             public static _Fields findByThriftId(int fieldId) {
                 switch(fieldId) {
-                    case // SESSION_ID
+                    case // USER_ID
                     1:
+                        return USER_ID;
+                    case // SESSION_ID
+                    2:
                         return SESSION_ID;
                     case // OLD_PASSWORD
-                    2:
+                    3:
                         return OLD_PASSWORD;
                     case // NEW_PASSWORD
-                    3:
+                    4:
                         return NEW_PASSWORD;
                     default:
                         return null;
@@ -6661,10 +6876,15 @@ public class PlatformFromService {
         }
 
         // isset id assignments
+        private static final int __USERID_ISSET_ID = 0;
+
+        private byte __isset_bitfield = 0;
+
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
 
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
             tmpMap.put(_Fields.SESSION_ID, new org.apache.thrift.meta_data.FieldMetaData("sessionId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
             tmpMap.put(_Fields.OLD_PASSWORD, new org.apache.thrift.meta_data.FieldMetaData("oldPassword", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
             tmpMap.put(_Fields.NEW_PASSWORD, new org.apache.thrift.meta_data.FieldMetaData("newPassword", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
@@ -6675,14 +6895,18 @@ public class PlatformFromService {
         public password_args() {
         }
 
-        public password_args(String sessionId, String oldPassword, String newPassword) {
+        public password_args(long userId, String sessionId, String oldPassword, String newPassword) {
             this();
+            this.userId = userId;
+            setUserIdIsSet(true);
             this.sessionId = sessionId;
             this.oldPassword = oldPassword;
             this.newPassword = newPassword;
         }
 
         public password_args(password_args other) {
+            __isset_bitfield = other.__isset_bitfield;
+            this.userId = other.userId;
             if (other.isSetSessionId()) {
                 this.sessionId = other.sessionId;
             }
@@ -6700,9 +6924,34 @@ public class PlatformFromService {
 
         @Override
         public void clear() {
+            setUserIdIsSet(false);
+            this.userId = 0;
             this.sessionId = null;
             this.oldPassword = null;
             this.newPassword = null;
+        }
+
+        public long getUserId() {
+            return this.userId;
+        }
+
+        public password_args setUserId(long userId) {
+            this.userId = userId;
+            setUserIdIsSet(true);
+            return this;
+        }
+
+        public void unsetUserId() {
+            __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __USERID_ISSET_ID);
+        }
+
+        /** Returns true if field userId is set (has been assigned a value) and false otherwise */
+        public boolean isSetUserId() {
+            return EncodingUtils.testBit(__isset_bitfield, __USERID_ISSET_ID);
+        }
+
+        public void setUserIdIsSet(boolean value) {
+            __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __USERID_ISSET_ID, value);
         }
 
         public String getSessionId() {
@@ -6779,6 +7028,13 @@ public class PlatformFromService {
 
         public void setFieldValue(_Fields field, Object value) {
             switch(field) {
+                case USER_ID:
+                    if (value == null) {
+                        unsetUserId();
+                    } else {
+                        setUserId((Long) value);
+                    }
+                    break;
                 case SESSION_ID:
                     if (value == null) {
                         unsetSessionId();
@@ -6805,6 +7061,8 @@ public class PlatformFromService {
 
         public Object getFieldValue(_Fields field) {
             switch(field) {
+                case USER_ID:
+                    return getUserId();
                 case SESSION_ID:
                     return getSessionId();
                 case OLD_PASSWORD:
@@ -6820,6 +7078,8 @@ public class PlatformFromService {
                 throw new IllegalArgumentException();
             }
             switch(field) {
+                case USER_ID:
+                    return isSetUserId();
                 case SESSION_ID:
                     return isSetSessionId();
                 case OLD_PASSWORD:
@@ -6842,6 +7102,14 @@ public class PlatformFromService {
         public boolean equals(password_args that) {
             if (that == null)
                 return false;
+            boolean this_present_userId = true;
+            boolean that_present_userId = true;
+            if (this_present_userId || that_present_userId) {
+                if (!(this_present_userId && that_present_userId))
+                    return false;
+                if (this.userId != that.userId)
+                    return false;
+            }
             boolean this_present_sessionId = true && this.isSetSessionId();
             boolean that_present_sessionId = true && that.isSetSessionId();
             if (this_present_sessionId || that_present_sessionId) {
@@ -6872,6 +7140,10 @@ public class PlatformFromService {
         @Override
         public int hashCode() {
             List<Object> list = new ArrayList<Object>();
+            boolean present_userId = true;
+            list.add(present_userId);
+            if (present_userId)
+                list.add(userId);
             boolean present_sessionId = true && (isSetSessionId());
             list.add(present_sessionId);
             if (present_sessionId)
@@ -6893,6 +7165,16 @@ public class PlatformFromService {
                 return getClass().getName().compareTo(other.getClass().getName());
             }
             int lastComparison = 0;
+            lastComparison = Boolean.valueOf(isSetUserId()).compareTo(other.isSetUserId());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetUserId()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userId, other.userId);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
             lastComparison = Boolean.valueOf(isSetSessionId()).compareTo(other.isSetSessionId());
             if (lastComparison != 0) {
                 return lastComparison;
@@ -6942,6 +7224,11 @@ public class PlatformFromService {
         public String toString() {
             StringBuilder sb = new StringBuilder("password_args(");
             boolean first = true;
+            sb.append("userId:");
+            sb.append(this.userId);
+            first = false;
+            if (!first)
+                sb.append(", ");
             sb.append("sessionId:");
             if (this.sessionId == null) {
                 sb.append("null");
@@ -6984,6 +7271,8 @@ public class PlatformFromService {
 
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
+                // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+                __isset_bitfield = 0;
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
             } catch (org.apache.thrift.TException te) {
                 throw new java.io.IOException(te);
@@ -7008,8 +7297,17 @@ public class PlatformFromService {
                         break;
                     }
                     switch(schemeField.id) {
-                        case // SESSION_ID
+                        case // USER_ID
                         1:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                                struct.userId = iprot.readI64();
+                                struct.setUserIdIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        case // SESSION_ID
+                        2:
                             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
                                 struct.sessionId = iprot.readString();
                                 struct.setSessionIdIsSet(true);
@@ -7018,7 +7316,7 @@ public class PlatformFromService {
                             }
                             break;
                         case // OLD_PASSWORD
-                        2:
+                        3:
                             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
                                 struct.oldPassword = iprot.readString();
                                 struct.setOldPasswordIsSet(true);
@@ -7027,7 +7325,7 @@ public class PlatformFromService {
                             }
                             break;
                         case // NEW_PASSWORD
-                        3:
+                        4:
                             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
                                 struct.newPassword = iprot.readString();
                                 struct.setNewPasswordIsSet(true);
@@ -7048,6 +7346,9 @@ public class PlatformFromService {
             public void write(org.apache.thrift.protocol.TProtocol oprot, password_args struct) throws org.apache.thrift.TException {
                 struct.validate();
                 oprot.writeStructBegin(STRUCT_DESC);
+                oprot.writeFieldBegin(USER_ID_FIELD_DESC);
+                oprot.writeI64(struct.userId);
+                oprot.writeFieldEnd();
                 if (struct.sessionId != null) {
                     oprot.writeFieldBegin(SESSION_ID_FIELD_DESC);
                     oprot.writeString(struct.sessionId);
@@ -7081,16 +7382,22 @@ public class PlatformFromService {
             public void write(org.apache.thrift.protocol.TProtocol prot, password_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
-                if (struct.isSetSessionId()) {
+                if (struct.isSetUserId()) {
                     optionals.set(0);
                 }
-                if (struct.isSetOldPassword()) {
+                if (struct.isSetSessionId()) {
                     optionals.set(1);
                 }
-                if (struct.isSetNewPassword()) {
+                if (struct.isSetOldPassword()) {
                     optionals.set(2);
                 }
-                oprot.writeBitSet(optionals, 3);
+                if (struct.isSetNewPassword()) {
+                    optionals.set(3);
+                }
+                oprot.writeBitSet(optionals, 4);
+                if (struct.isSetUserId()) {
+                    oprot.writeI64(struct.userId);
+                }
                 if (struct.isSetSessionId()) {
                     oprot.writeString(struct.sessionId);
                 }
@@ -7105,16 +7412,20 @@ public class PlatformFromService {
             @Override
             public void read(org.apache.thrift.protocol.TProtocol prot, password_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
-                BitSet incoming = iprot.readBitSet(3);
+                BitSet incoming = iprot.readBitSet(4);
                 if (incoming.get(0)) {
+                    struct.userId = iprot.readI64();
+                    struct.setUserIdIsSet(true);
+                }
+                if (incoming.get(1)) {
                     struct.sessionId = iprot.readString();
                     struct.setSessionIdIsSet(true);
                 }
-                if (incoming.get(1)) {
+                if (incoming.get(2)) {
                     struct.oldPassword = iprot.readString();
                     struct.setOldPasswordIsSet(true);
                 }
-                if (incoming.get(2)) {
+                if (incoming.get(3)) {
                     struct.newPassword = iprot.readString();
                     struct.setNewPasswordIsSet(true);
                 }
@@ -7474,7 +7785,9 @@ public class PlatformFromService {
 
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("order_args");
 
-        private static final org.apache.thrift.protocol.TField INFO_FIELD_DESC = new org.apache.thrift.protocol.TField("info", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
+        private static final org.apache.thrift.protocol.TField FROM_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("fromId", org.apache.thrift.protocol.TType.I32, (short) 1);
+
+        private static final org.apache.thrift.protocol.TField INFO_FIELD_DESC = new org.apache.thrift.protocol.TField("info", org.apache.thrift.protocol.TType.STRUCT, (short) 2);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
 
@@ -7484,11 +7797,14 @@ public class PlatformFromService {
         }
 
         // required
+        public int fromId;
+
+        // required
         public DOrderInfo info;
 
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 
-            INFO((short) 1, "info");
+            FROM_ID((short) 1, "fromId"), INFO((short) 2, "info");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -7500,8 +7816,11 @@ public class PlatformFromService {
 
             public static _Fields findByThriftId(int fieldId) {
                 switch(fieldId) {
-                    case // INFO
+                    case // FROM_ID
                     1:
+                        return FROM_ID;
+                    case // INFO
+                    2:
                         return INFO;
                     default:
                         return null;
@@ -7538,10 +7857,15 @@ public class PlatformFromService {
         }
 
         // isset id assignments
+        private static final int __FROMID_ISSET_ID = 0;
+
+        private byte __isset_bitfield = 0;
+
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
 
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.FROM_ID, new org.apache.thrift.meta_data.FieldMetaData("fromId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
             tmpMap.put(_Fields.INFO, new org.apache.thrift.meta_data.FieldMetaData("info", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, DOrderInfo.class)));
             metaDataMap = Collections.unmodifiableMap(tmpMap);
             org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(order_args.class, metaDataMap);
@@ -7550,12 +7874,16 @@ public class PlatformFromService {
         public order_args() {
         }
 
-        public order_args(DOrderInfo info) {
+        public order_args(int fromId, DOrderInfo info) {
             this();
+            this.fromId = fromId;
+            setFromIdIsSet(true);
             this.info = info;
         }
 
         public order_args(order_args other) {
+            __isset_bitfield = other.__isset_bitfield;
+            this.fromId = other.fromId;
             if (other.isSetInfo()) {
                 this.info = new DOrderInfo(other.info);
             }
@@ -7567,7 +7895,31 @@ public class PlatformFromService {
 
         @Override
         public void clear() {
+            setFromIdIsSet(false);
+            this.fromId = 0;
             this.info = null;
+        }
+
+        public int getFromId() {
+            return this.fromId;
+        }
+
+        public order_args setFromId(int fromId) {
+            this.fromId = fromId;
+            setFromIdIsSet(true);
+            return this;
+        }
+
+        public void unsetFromId() {
+            __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __FROMID_ISSET_ID);
+        }
+
+        public boolean isSetFromId() {
+            return EncodingUtils.testBit(__isset_bitfield, __FROMID_ISSET_ID);
+        }
+
+        public void setFromIdIsSet(boolean value) {
+            __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __FROMID_ISSET_ID, value);
         }
 
         public DOrderInfo getInfo() {
@@ -7596,6 +7948,13 @@ public class PlatformFromService {
 
         public void setFieldValue(_Fields field, Object value) {
             switch(field) {
+                case FROM_ID:
+                    if (value == null) {
+                        unsetFromId();
+                    } else {
+                        setFromId((Integer) value);
+                    }
+                    break;
                 case INFO:
                     if (value == null) {
                         unsetInfo();
@@ -7608,6 +7967,8 @@ public class PlatformFromService {
 
         public Object getFieldValue(_Fields field) {
             switch(field) {
+                case FROM_ID:
+                    return getFromId();
                 case INFO:
                     return getInfo();
             }
@@ -7619,6 +7980,8 @@ public class PlatformFromService {
                 throw new IllegalArgumentException();
             }
             switch(field) {
+                case FROM_ID:
+                    return isSetFromId();
                 case INFO:
                     return isSetInfo();
             }
@@ -7637,6 +8000,14 @@ public class PlatformFromService {
         public boolean equals(order_args that) {
             if (that == null)
                 return false;
+            boolean this_present_fromId = true;
+            boolean that_present_fromId = true;
+            if (this_present_fromId || that_present_fromId) {
+                if (!(this_present_fromId && that_present_fromId))
+                    return false;
+                if (this.fromId != that.fromId)
+                    return false;
+            }
             boolean this_present_info = true && this.isSetInfo();
             boolean that_present_info = true && that.isSetInfo();
             if (this_present_info || that_present_info) {
@@ -7651,6 +8022,10 @@ public class PlatformFromService {
         @Override
         public int hashCode() {
             List<Object> list = new ArrayList<Object>();
+            boolean present_fromId = true;
+            list.add(present_fromId);
+            if (present_fromId)
+                list.add(fromId);
             boolean present_info = true && (isSetInfo());
             list.add(present_info);
             if (present_info)
@@ -7664,6 +8039,16 @@ public class PlatformFromService {
                 return getClass().getName().compareTo(other.getClass().getName());
             }
             int lastComparison = 0;
+            lastComparison = Boolean.valueOf(isSetFromId()).compareTo(other.isSetFromId());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetFromId()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.fromId, other.fromId);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
             lastComparison = Boolean.valueOf(isSetInfo()).compareTo(other.isSetInfo());
             if (lastComparison != 0) {
                 return lastComparison;
@@ -7693,6 +8078,11 @@ public class PlatformFromService {
         public String toString() {
             StringBuilder sb = new StringBuilder("order_args(");
             boolean first = true;
+            sb.append("fromId:");
+            sb.append(this.fromId);
+            first = false;
+            if (!first)
+                sb.append(", ");
             sb.append("info:");
             if (this.info == null) {
                 sb.append("null");
@@ -7721,6 +8111,8 @@ public class PlatformFromService {
 
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
+                // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+                __isset_bitfield = 0;
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
             } catch (org.apache.thrift.TException te) {
                 throw new java.io.IOException(te);
@@ -7745,8 +8137,17 @@ public class PlatformFromService {
                         break;
                     }
                     switch(schemeField.id) {
-                        case // INFO
+                        case // FROM_ID
                         1:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                                struct.fromId = iprot.readI32();
+                                struct.setFromIdIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        case // INFO
+                        2:
                             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
                                 struct.info = new DOrderInfo();
                                 struct.info.read(iprot);
@@ -7768,6 +8169,9 @@ public class PlatformFromService {
             public void write(org.apache.thrift.protocol.TProtocol oprot, order_args struct) throws org.apache.thrift.TException {
                 struct.validate();
                 oprot.writeStructBegin(STRUCT_DESC);
+                oprot.writeFieldBegin(FROM_ID_FIELD_DESC);
+                oprot.writeI32(struct.fromId);
+                oprot.writeFieldEnd();
                 if (struct.info != null) {
                     oprot.writeFieldBegin(INFO_FIELD_DESC);
                     struct.info.write(oprot);
@@ -7791,10 +8195,16 @@ public class PlatformFromService {
             public void write(org.apache.thrift.protocol.TProtocol prot, order_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
-                if (struct.isSetInfo()) {
+                if (struct.isSetFromId()) {
                     optionals.set(0);
                 }
-                oprot.writeBitSet(optionals, 1);
+                if (struct.isSetInfo()) {
+                    optionals.set(1);
+                }
+                oprot.writeBitSet(optionals, 2);
+                if (struct.isSetFromId()) {
+                    oprot.writeI32(struct.fromId);
+                }
                 if (struct.isSetInfo()) {
                     struct.info.write(oprot);
                 }
@@ -7803,8 +8213,12 @@ public class PlatformFromService {
             @Override
             public void read(org.apache.thrift.protocol.TProtocol prot, order_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
-                BitSet incoming = iprot.readBitSet(1);
+                BitSet incoming = iprot.readBitSet(2);
                 if (incoming.get(0)) {
+                    struct.fromId = iprot.readI32();
+                    struct.setFromIdIsSet(true);
+                }
+                if (incoming.get(1)) {
                     struct.info = new DOrderInfo();
                     struct.info.read(iprot);
                     struct.setInfoIsSet(true);
@@ -8159,7 +8573,9 @@ public class PlatformFromService {
 
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("validate_args");
 
-        private static final org.apache.thrift.protocol.TField VALIDATOR_FIELD_DESC = new org.apache.thrift.protocol.TField("validator", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
+        private static final org.apache.thrift.protocol.TField FROM_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("fromId", org.apache.thrift.protocol.TType.I32, (short) 1);
+
+        private static final org.apache.thrift.protocol.TField VALIDATOR_FIELD_DESC = new org.apache.thrift.protocol.TField("validator", org.apache.thrift.protocol.TType.STRUCT, (short) 2);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
 
@@ -8169,11 +8585,14 @@ public class PlatformFromService {
         }
 
         // required
+        public int fromId;
+
+        // required
         public DOrderValidator validator;
 
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 
-            VALIDATOR((short) 1, "validator");
+            FROM_ID((short) 1, "fromId"), VALIDATOR((short) 2, "validator");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -8185,8 +8604,11 @@ public class PlatformFromService {
 
             public static _Fields findByThriftId(int fieldId) {
                 switch(fieldId) {
-                    case // VALIDATOR
+                    case // FROM_ID
                     1:
+                        return FROM_ID;
+                    case // VALIDATOR
+                    2:
                         return VALIDATOR;
                     default:
                         return null;
@@ -8223,10 +8645,15 @@ public class PlatformFromService {
         }
 
         // isset id assignments
+        private static final int __FROMID_ISSET_ID = 0;
+
+        private byte __isset_bitfield = 0;
+
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
 
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.FROM_ID, new org.apache.thrift.meta_data.FieldMetaData("fromId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
             tmpMap.put(_Fields.VALIDATOR, new org.apache.thrift.meta_data.FieldMetaData("validator", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, DOrderValidator.class)));
             metaDataMap = Collections.unmodifiableMap(tmpMap);
             org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(validate_args.class, metaDataMap);
@@ -8235,12 +8662,16 @@ public class PlatformFromService {
         public validate_args() {
         }
 
-        public validate_args(DOrderValidator validator) {
+        public validate_args(int fromId, DOrderValidator validator) {
             this();
+            this.fromId = fromId;
+            setFromIdIsSet(true);
             this.validator = validator;
         }
 
         public validate_args(validate_args other) {
+            __isset_bitfield = other.__isset_bitfield;
+            this.fromId = other.fromId;
             if (other.isSetValidator()) {
                 this.validator = new DOrderValidator(other.validator);
             }
@@ -8252,7 +8683,31 @@ public class PlatformFromService {
 
         @Override
         public void clear() {
+            setFromIdIsSet(false);
+            this.fromId = 0;
             this.validator = null;
+        }
+
+        public int getFromId() {
+            return this.fromId;
+        }
+
+        public validate_args setFromId(int fromId) {
+            this.fromId = fromId;
+            setFromIdIsSet(true);
+            return this;
+        }
+
+        public void unsetFromId() {
+            __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __FROMID_ISSET_ID);
+        }
+
+        public boolean isSetFromId() {
+            return EncodingUtils.testBit(__isset_bitfield, __FROMID_ISSET_ID);
+        }
+
+        public void setFromIdIsSet(boolean value) {
+            __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __FROMID_ISSET_ID, value);
         }
 
         public DOrderValidator getValidator() {
@@ -8281,6 +8736,13 @@ public class PlatformFromService {
 
         public void setFieldValue(_Fields field, Object value) {
             switch(field) {
+                case FROM_ID:
+                    if (value == null) {
+                        unsetFromId();
+                    } else {
+                        setFromId((Integer) value);
+                    }
+                    break;
                 case VALIDATOR:
                     if (value == null) {
                         unsetValidator();
@@ -8293,6 +8755,8 @@ public class PlatformFromService {
 
         public Object getFieldValue(_Fields field) {
             switch(field) {
+                case FROM_ID:
+                    return getFromId();
                 case VALIDATOR:
                     return getValidator();
             }
@@ -8304,6 +8768,8 @@ public class PlatformFromService {
                 throw new IllegalArgumentException();
             }
             switch(field) {
+                case FROM_ID:
+                    return isSetFromId();
                 case VALIDATOR:
                     return isSetValidator();
             }
@@ -8322,6 +8788,14 @@ public class PlatformFromService {
         public boolean equals(validate_args that) {
             if (that == null)
                 return false;
+            boolean this_present_fromId = true;
+            boolean that_present_fromId = true;
+            if (this_present_fromId || that_present_fromId) {
+                if (!(this_present_fromId && that_present_fromId))
+                    return false;
+                if (this.fromId != that.fromId)
+                    return false;
+            }
             boolean this_present_validator = true && this.isSetValidator();
             boolean that_present_validator = true && that.isSetValidator();
             if (this_present_validator || that_present_validator) {
@@ -8336,6 +8810,10 @@ public class PlatformFromService {
         @Override
         public int hashCode() {
             List<Object> list = new ArrayList<Object>();
+            boolean present_fromId = true;
+            list.add(present_fromId);
+            if (present_fromId)
+                list.add(fromId);
             boolean present_validator = true && (isSetValidator());
             list.add(present_validator);
             if (present_validator)
@@ -8349,6 +8827,16 @@ public class PlatformFromService {
                 return getClass().getName().compareTo(other.getClass().getName());
             }
             int lastComparison = 0;
+            lastComparison = Boolean.valueOf(isSetFromId()).compareTo(other.isSetFromId());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetFromId()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.fromId, other.fromId);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
             lastComparison = Boolean.valueOf(isSetValidator()).compareTo(other.isSetValidator());
             if (lastComparison != 0) {
                 return lastComparison;
@@ -8378,6 +8866,11 @@ public class PlatformFromService {
         public String toString() {
             StringBuilder sb = new StringBuilder("validate_args(");
             boolean first = true;
+            sb.append("fromId:");
+            sb.append(this.fromId);
+            first = false;
+            if (!first)
+                sb.append(", ");
             sb.append("validator:");
             if (this.validator == null) {
                 sb.append("null");
@@ -8406,6 +8899,8 @@ public class PlatformFromService {
 
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
+                // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+                __isset_bitfield = 0;
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
             } catch (org.apache.thrift.TException te) {
                 throw new java.io.IOException(te);
@@ -8430,8 +8925,17 @@ public class PlatformFromService {
                         break;
                     }
                     switch(schemeField.id) {
-                        case // VALIDATOR
+                        case // FROM_ID
                         1:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                                struct.fromId = iprot.readI32();
+                                struct.setFromIdIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        case // VALIDATOR
+                        2:
                             if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
                                 struct.validator = new DOrderValidator();
                                 struct.validator.read(iprot);
@@ -8453,6 +8957,9 @@ public class PlatformFromService {
             public void write(org.apache.thrift.protocol.TProtocol oprot, validate_args struct) throws org.apache.thrift.TException {
                 struct.validate();
                 oprot.writeStructBegin(STRUCT_DESC);
+                oprot.writeFieldBegin(FROM_ID_FIELD_DESC);
+                oprot.writeI32(struct.fromId);
+                oprot.writeFieldEnd();
                 if (struct.validator != null) {
                     oprot.writeFieldBegin(VALIDATOR_FIELD_DESC);
                     struct.validator.write(oprot);
@@ -8476,10 +8983,16 @@ public class PlatformFromService {
             public void write(org.apache.thrift.protocol.TProtocol prot, validate_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
-                if (struct.isSetValidator()) {
+                if (struct.isSetFromId()) {
                     optionals.set(0);
                 }
-                oprot.writeBitSet(optionals, 1);
+                if (struct.isSetValidator()) {
+                    optionals.set(1);
+                }
+                oprot.writeBitSet(optionals, 2);
+                if (struct.isSetFromId()) {
+                    oprot.writeI32(struct.fromId);
+                }
                 if (struct.isSetValidator()) {
                     struct.validator.write(oprot);
                 }
@@ -8488,8 +9001,12 @@ public class PlatformFromService {
             @Override
             public void read(org.apache.thrift.protocol.TProtocol prot, validate_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
-                BitSet incoming = iprot.readBitSet(1);
+                BitSet incoming = iprot.readBitSet(2);
                 if (incoming.get(0)) {
+                    struct.fromId = iprot.readI32();
+                    struct.setFromIdIsSet(true);
+                }
+                if (incoming.get(1)) {
                     struct.validator = new DOrderValidator();
                     struct.validator.read(iprot);
                     struct.setValidatorIsSet(true);
@@ -8830,6 +9347,1873 @@ public class PlatformFromService {
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
                     struct.success = iprot.readBool();
+                    struct.setSuccessIsSet(true);
+                }
+            }
+        }
+    }
+
+    public static class loginUUID_args implements org.apache.thrift.TBase<loginUUID_args, loginUUID_args._Fields>, java.io.Serializable, Cloneable, Comparable<loginUUID_args> {
+
+        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("loginUUID_args");
+
+        private static final org.apache.thrift.protocol.TField FROM_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("fromId", org.apache.thrift.protocol.TType.I32, (short) 1);
+
+        private static final org.apache.thrift.protocol.TField SERVER_IDS_FIELD_DESC = new org.apache.thrift.protocol.TField("serverIds", org.apache.thrift.protocol.TType.BOOL, (short) 2);
+
+        private static final org.apache.thrift.protocol.TField UUID_FIELD_DESC = new org.apache.thrift.protocol.TField("uuid", org.apache.thrift.protocol.TType.STRING, (short) 3);
+
+        private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
+        static {
+            schemes.put(StandardScheme.class, new loginUUID_argsStandardSchemeFactory());
+            schemes.put(TupleScheme.class, new loginUUID_argsTupleSchemeFactory());
+        }
+
+        // required
+        public int fromId;
+
+        // required
+        public boolean serverIds;
+
+        // required
+        public String uuid;
+
+        public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+
+            FROM_ID((short) 1, "fromId"), SERVER_IDS((short) 2, "serverIds"), UUID((short) 3, "uuid");
+
+            private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+            static {
+                for (_Fields field : EnumSet.allOf(_Fields.class)) {
+                    byName.put(field.getFieldName(), field);
+                }
+            }
+
+            public static _Fields findByThriftId(int fieldId) {
+                switch(fieldId) {
+                    case // FROM_ID
+                    1:
+                        return FROM_ID;
+                    case // SERVER_IDS
+                    2:
+                        return SERVER_IDS;
+                    case // UUID
+                    3:
+                        return UUID;
+                    default:
+                        return null;
+                }
+            }
+
+            public static _Fields findByThriftIdOrThrow(int fieldId) {
+                _Fields fields = findByThriftId(fieldId);
+                if (fields == null)
+                    throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+                return fields;
+            }
+
+            public static _Fields findByName(String name) {
+                return byName.get(name);
+            }
+
+            private final short _thriftId;
+
+            private final String _fieldName;
+
+            _Fields(short thriftId, String fieldName) {
+                _thriftId = thriftId;
+                _fieldName = fieldName;
+            }
+
+            public short getThriftFieldId() {
+                return _thriftId;
+            }
+
+            public String getFieldName() {
+                return _fieldName;
+            }
+        }
+
+        // isset id assignments
+        private static final int __FROMID_ISSET_ID = 0;
+
+        private static final int __SERVERIDS_ISSET_ID = 1;
+
+        private byte __isset_bitfield = 0;
+
+        public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
+        static {
+            Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.FROM_ID, new org.apache.thrift.meta_data.FieldMetaData("fromId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+            tmpMap.put(_Fields.SERVER_IDS, new org.apache.thrift.meta_data.FieldMetaData("serverIds", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+            tmpMap.put(_Fields.UUID, new org.apache.thrift.meta_data.FieldMetaData("uuid", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+            metaDataMap = Collections.unmodifiableMap(tmpMap);
+            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(loginUUID_args.class, metaDataMap);
+        }
+
+        public loginUUID_args() {
+        }
+
+        public loginUUID_args(int fromId, boolean serverIds, String uuid) {
+            this();
+            this.fromId = fromId;
+            setFromIdIsSet(true);
+            this.serverIds = serverIds;
+            setServerIdsIsSet(true);
+            this.uuid = uuid;
+        }
+
+        public loginUUID_args(loginUUID_args other) {
+            __isset_bitfield = other.__isset_bitfield;
+            this.fromId = other.fromId;
+            this.serverIds = other.serverIds;
+            if (other.isSetUuid()) {
+                this.uuid = other.uuid;
+            }
+        }
+
+        public loginUUID_args deepCopy() {
+            return new loginUUID_args(this);
+        }
+
+        @Override
+        public void clear() {
+            setFromIdIsSet(false);
+            this.fromId = 0;
+            setServerIdsIsSet(false);
+            this.serverIds = false;
+            this.uuid = null;
+        }
+
+        public int getFromId() {
+            return this.fromId;
+        }
+
+        public loginUUID_args setFromId(int fromId) {
+            this.fromId = fromId;
+            setFromIdIsSet(true);
+            return this;
+        }
+
+        public void unsetFromId() {
+            __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __FROMID_ISSET_ID);
+        }
+
+        public boolean isSetFromId() {
+            return EncodingUtils.testBit(__isset_bitfield, __FROMID_ISSET_ID);
+        }
+
+        public void setFromIdIsSet(boolean value) {
+            __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __FROMID_ISSET_ID, value);
+        }
+
+        public boolean isServerIds() {
+            return this.serverIds;
+        }
+
+        public loginUUID_args setServerIds(boolean serverIds) {
+            this.serverIds = serverIds;
+            setServerIdsIsSet(true);
+            return this;
+        }
+
+        public void unsetServerIds() {
+            __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SERVERIDS_ISSET_ID);
+        }
+
+        public boolean isSetServerIds() {
+            return EncodingUtils.testBit(__isset_bitfield, __SERVERIDS_ISSET_ID);
+        }
+
+        public void setServerIdsIsSet(boolean value) {
+            __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SERVERIDS_ISSET_ID, value);
+        }
+
+        public String getUuid() {
+            return this.uuid;
+        }
+
+        public loginUUID_args setUuid(String uuid) {
+            this.uuid = uuid;
+            return this;
+        }
+
+        public void unsetUuid() {
+            this.uuid = null;
+        }
+
+        /** Returns true if field uuid is set (has been assigned a value) and false otherwise */
+        public boolean isSetUuid() {
+            return this.uuid != null;
+        }
+
+        public void setUuidIsSet(boolean value) {
+            if (!value) {
+                this.uuid = null;
+            }
+        }
+
+        public void setFieldValue(_Fields field, Object value) {
+            switch(field) {
+                case FROM_ID:
+                    if (value == null) {
+                        unsetFromId();
+                    } else {
+                        setFromId((Integer) value);
+                    }
+                    break;
+                case SERVER_IDS:
+                    if (value == null) {
+                        unsetServerIds();
+                    } else {
+                        setServerIds((Boolean) value);
+                    }
+                    break;
+                case UUID:
+                    if (value == null) {
+                        unsetUuid();
+                    } else {
+                        setUuid((String) value);
+                    }
+                    break;
+            }
+        }
+
+        public Object getFieldValue(_Fields field) {
+            switch(field) {
+                case FROM_ID:
+                    return getFromId();
+                case SERVER_IDS:
+                    return isServerIds();
+                case UUID:
+                    return getUuid();
+            }
+            throw new IllegalStateException();
+        }
+
+        public boolean isSet(_Fields field) {
+            if (field == null) {
+                throw new IllegalArgumentException();
+            }
+            switch(field) {
+                case FROM_ID:
+                    return isSetFromId();
+                case SERVER_IDS:
+                    return isSetServerIds();
+                case UUID:
+                    return isSetUuid();
+            }
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that == null)
+                return false;
+            if (that instanceof loginUUID_args)
+                return this.equals((loginUUID_args) that);
+            return false;
+        }
+
+        public boolean equals(loginUUID_args that) {
+            if (that == null)
+                return false;
+            boolean this_present_fromId = true;
+            boolean that_present_fromId = true;
+            if (this_present_fromId || that_present_fromId) {
+                if (!(this_present_fromId && that_present_fromId))
+                    return false;
+                if (this.fromId != that.fromId)
+                    return false;
+            }
+            boolean this_present_serverIds = true;
+            boolean that_present_serverIds = true;
+            if (this_present_serverIds || that_present_serverIds) {
+                if (!(this_present_serverIds && that_present_serverIds))
+                    return false;
+                if (this.serverIds != that.serverIds)
+                    return false;
+            }
+            boolean this_present_uuid = true && this.isSetUuid();
+            boolean that_present_uuid = true && that.isSetUuid();
+            if (this_present_uuid || that_present_uuid) {
+                if (!(this_present_uuid && that_present_uuid))
+                    return false;
+                if (!this.uuid.equals(that.uuid))
+                    return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            List<Object> list = new ArrayList<Object>();
+            boolean present_fromId = true;
+            list.add(present_fromId);
+            if (present_fromId)
+                list.add(fromId);
+            boolean present_serverIds = true;
+            list.add(present_serverIds);
+            if (present_serverIds)
+                list.add(serverIds);
+            boolean present_uuid = true && (isSetUuid());
+            list.add(present_uuid);
+            if (present_uuid)
+                list.add(uuid);
+            return list.hashCode();
+        }
+
+        @Override
+        public int compareTo(loginUUID_args other) {
+            if (!getClass().equals(other.getClass())) {
+                return getClass().getName().compareTo(other.getClass().getName());
+            }
+            int lastComparison = 0;
+            lastComparison = Boolean.valueOf(isSetFromId()).compareTo(other.isSetFromId());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetFromId()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.fromId, other.fromId);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            lastComparison = Boolean.valueOf(isSetServerIds()).compareTo(other.isSetServerIds());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetServerIds()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.serverIds, other.serverIds);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            lastComparison = Boolean.valueOf(isSetUuid()).compareTo(other.isSetUuid());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetUuid()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.uuid, other.uuid);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            return 0;
+        }
+
+        public _Fields fieldForId(int fieldId) {
+            return _Fields.findByThriftId(fieldId);
+        }
+
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+            schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+        }
+
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+            schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("loginUUID_args(");
+            boolean first = true;
+            sb.append("fromId:");
+            sb.append(this.fromId);
+            first = false;
+            if (!first)
+                sb.append(", ");
+            sb.append("serverIds:");
+            sb.append(this.serverIds);
+            first = false;
+            if (!first)
+                sb.append(", ");
+            sb.append("uuid:");
+            if (this.uuid == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.uuid);
+            }
+            first = false;
+            sb.append(")");
+            return sb.toString();
+        }
+
+        public void validate() throws org.apache.thrift.TException {
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+            try {
+                write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+            try {
+                // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+                __isset_bitfield = 0;
+                read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private static class loginUUID_argsStandardSchemeFactory implements SchemeFactory {
+
+            public loginUUID_argsStandardScheme getScheme() {
+                return new loginUUID_argsStandardScheme();
+            }
+        }
+
+        private static class loginUUID_argsStandardScheme extends StandardScheme<loginUUID_args> {
+
+            public void read(org.apache.thrift.protocol.TProtocol iprot, loginUUID_args struct) throws org.apache.thrift.TException {
+                org.apache.thrift.protocol.TField schemeField;
+                iprot.readStructBegin();
+                while (true) {
+                    schemeField = iprot.readFieldBegin();
+                    if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                        break;
+                    }
+                    switch(schemeField.id) {
+                        case // FROM_ID
+                        1:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                                struct.fromId = iprot.readI32();
+                                struct.setFromIdIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        case // SERVER_IDS
+                        2:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+                                struct.serverIds = iprot.readBool();
+                                struct.setServerIdsIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        case // UUID
+                        3:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                                struct.uuid = iprot.readString();
+                                struct.setUuidIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        default:
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    iprot.readFieldEnd();
+                }
+                iprot.readStructEnd();
+                // check for required fields of primitive type, which can't be checked in the validate method
+                struct.validate();
+            }
+
+            public void write(org.apache.thrift.protocol.TProtocol oprot, loginUUID_args struct) throws org.apache.thrift.TException {
+                struct.validate();
+                oprot.writeStructBegin(STRUCT_DESC);
+                oprot.writeFieldBegin(FROM_ID_FIELD_DESC);
+                oprot.writeI32(struct.fromId);
+                oprot.writeFieldEnd();
+                oprot.writeFieldBegin(SERVER_IDS_FIELD_DESC);
+                oprot.writeBool(struct.serverIds);
+                oprot.writeFieldEnd();
+                if (struct.uuid != null) {
+                    oprot.writeFieldBegin(UUID_FIELD_DESC);
+                    oprot.writeString(struct.uuid);
+                    oprot.writeFieldEnd();
+                }
+                oprot.writeFieldStop();
+                oprot.writeStructEnd();
+            }
+        }
+
+        private static class loginUUID_argsTupleSchemeFactory implements SchemeFactory {
+
+            public loginUUID_argsTupleScheme getScheme() {
+                return new loginUUID_argsTupleScheme();
+            }
+        }
+
+        private static class loginUUID_argsTupleScheme extends TupleScheme<loginUUID_args> {
+
+            @Override
+            public void write(org.apache.thrift.protocol.TProtocol prot, loginUUID_args struct) throws org.apache.thrift.TException {
+                TTupleProtocol oprot = (TTupleProtocol) prot;
+                BitSet optionals = new BitSet();
+                if (struct.isSetFromId()) {
+                    optionals.set(0);
+                }
+                if (struct.isSetServerIds()) {
+                    optionals.set(1);
+                }
+                if (struct.isSetUuid()) {
+                    optionals.set(2);
+                }
+                oprot.writeBitSet(optionals, 3);
+                if (struct.isSetFromId()) {
+                    oprot.writeI32(struct.fromId);
+                }
+                if (struct.isSetServerIds()) {
+                    oprot.writeBool(struct.serverIds);
+                }
+                if (struct.isSetUuid()) {
+                    oprot.writeString(struct.uuid);
+                }
+            }
+
+            @Override
+            public void read(org.apache.thrift.protocol.TProtocol prot, loginUUID_args struct) throws org.apache.thrift.TException {
+                TTupleProtocol iprot = (TTupleProtocol) prot;
+                BitSet incoming = iprot.readBitSet(3);
+                if (incoming.get(0)) {
+                    struct.fromId = iprot.readI32();
+                    struct.setFromIdIsSet(true);
+                }
+                if (incoming.get(1)) {
+                    struct.serverIds = iprot.readBool();
+                    struct.setServerIdsIsSet(true);
+                }
+                if (incoming.get(2)) {
+                    struct.uuid = iprot.readString();
+                    struct.setUuidIsSet(true);
+                }
+            }
+        }
+    }
+
+    public static class loginUUID_result implements org.apache.thrift.TBase<loginUUID_result, loginUUID_result._Fields>, java.io.Serializable, Cloneable, Comparable<loginUUID_result> {
+
+        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("loginUUID_result");
+
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
+
+        private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
+        static {
+            schemes.put(StandardScheme.class, new loginUUID_resultStandardSchemeFactory());
+            schemes.put(TupleScheme.class, new loginUUID_resultTupleSchemeFactory());
+        }
+
+        // required
+        public DIdentityResult success;
+
+        public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+
+            SUCCESS((short) 0, "success");
+
+            private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+            static {
+                for (_Fields field : EnumSet.allOf(_Fields.class)) {
+                    byName.put(field.getFieldName(), field);
+                }
+            }
+
+            public static _Fields findByThriftId(int fieldId) {
+                switch(fieldId) {
+                    case // SUCCESS
+                    0:
+                        return SUCCESS;
+                    default:
+                        return null;
+                }
+            }
+
+            public static _Fields findByThriftIdOrThrow(int fieldId) {
+                _Fields fields = findByThriftId(fieldId);
+                if (fields == null)
+                    throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+                return fields;
+            }
+
+            public static _Fields findByName(String name) {
+                return byName.get(name);
+            }
+
+            private final short _thriftId;
+
+            private final String _fieldName;
+
+            _Fields(short thriftId, String fieldName) {
+                _thriftId = thriftId;
+                _fieldName = fieldName;
+            }
+
+            public short getThriftFieldId() {
+                return _thriftId;
+            }
+
+            public String getFieldName() {
+                return _fieldName;
+            }
+        }
+
+        // isset id assignments
+        public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
+        static {
+            Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, DIdentityResult.class)));
+            metaDataMap = Collections.unmodifiableMap(tmpMap);
+            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(loginUUID_result.class, metaDataMap);
+        }
+
+        public loginUUID_result() {
+        }
+
+        public loginUUID_result(DIdentityResult success) {
+            this();
+            this.success = success;
+        }
+
+        public loginUUID_result(loginUUID_result other) {
+            if (other.isSetSuccess()) {
+                this.success = new DIdentityResult(other.success);
+            }
+        }
+
+        public loginUUID_result deepCopy() {
+            return new loginUUID_result(this);
+        }
+
+        @Override
+        public void clear() {
+            this.success = null;
+        }
+
+        public DIdentityResult getSuccess() {
+            return this.success;
+        }
+
+        public loginUUID_result setSuccess(DIdentityResult success) {
+            this.success = success;
+            return this;
+        }
+
+        public void unsetSuccess() {
+            this.success = null;
+        }
+
+        public boolean isSetSuccess() {
+            return this.success != null;
+        }
+
+        public void setSuccessIsSet(boolean value) {
+            if (!value) {
+                this.success = null;
+            }
+        }
+
+        public void setFieldValue(_Fields field, Object value) {
+            switch(field) {
+                case SUCCESS:
+                    if (value == null) {
+                        unsetSuccess();
+                    } else {
+                        setSuccess((DIdentityResult) value);
+                    }
+                    break;
+            }
+        }
+
+        public Object getFieldValue(_Fields field) {
+            switch(field) {
+                case SUCCESS:
+                    return getSuccess();
+            }
+            throw new IllegalStateException();
+        }
+
+        public boolean isSet(_Fields field) {
+            if (field == null) {
+                throw new IllegalArgumentException();
+            }
+            switch(field) {
+                case SUCCESS:
+                    return isSetSuccess();
+            }
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that == null)
+                return false;
+            if (that instanceof loginUUID_result)
+                return this.equals((loginUUID_result) that);
+            return false;
+        }
+
+        public boolean equals(loginUUID_result that) {
+            if (that == null)
+                return false;
+            boolean this_present_success = true && this.isSetSuccess();
+            boolean that_present_success = true && that.isSetSuccess();
+            if (this_present_success || that_present_success) {
+                if (!(this_present_success && that_present_success))
+                    return false;
+                if (!this.success.equals(that.success))
+                    return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            List<Object> list = new ArrayList<Object>();
+            boolean present_success = true && (isSetSuccess());
+            list.add(present_success);
+            if (present_success)
+                list.add(success);
+            return list.hashCode();
+        }
+
+        @Override
+        public int compareTo(loginUUID_result other) {
+            if (!getClass().equals(other.getClass())) {
+                return getClass().getName().compareTo(other.getClass().getName());
+            }
+            int lastComparison = 0;
+            lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetSuccess()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            return 0;
+        }
+
+        public _Fields fieldForId(int fieldId) {
+            return _Fields.findByThriftId(fieldId);
+        }
+
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+            schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+        }
+
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+            schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("loginUUID_result(");
+            boolean first = true;
+            sb.append("success:");
+            if (this.success == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.success);
+            }
+            first = false;
+            sb.append(")");
+            return sb.toString();
+        }
+
+        public void validate() throws org.apache.thrift.TException {
+            // check for sub-struct validity
+            if (success != null) {
+                success.validate();
+            }
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+            try {
+                write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+            try {
+                read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private static class loginUUID_resultStandardSchemeFactory implements SchemeFactory {
+
+            public loginUUID_resultStandardScheme getScheme() {
+                return new loginUUID_resultStandardScheme();
+            }
+        }
+
+        private static class loginUUID_resultStandardScheme extends StandardScheme<loginUUID_result> {
+
+            public void read(org.apache.thrift.protocol.TProtocol iprot, loginUUID_result struct) throws org.apache.thrift.TException {
+                org.apache.thrift.protocol.TField schemeField;
+                iprot.readStructBegin();
+                while (true) {
+                    schemeField = iprot.readFieldBegin();
+                    if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                        break;
+                    }
+                    switch(schemeField.id) {
+                        case // SUCCESS
+                        0:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                                struct.success = new DIdentityResult();
+                                struct.success.read(iprot);
+                                struct.setSuccessIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        default:
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    iprot.readFieldEnd();
+                }
+                iprot.readStructEnd();
+                // check for required fields of primitive type, which can't be checked in the validate method
+                struct.validate();
+            }
+
+            public void write(org.apache.thrift.protocol.TProtocol oprot, loginUUID_result struct) throws org.apache.thrift.TException {
+                struct.validate();
+                oprot.writeStructBegin(STRUCT_DESC);
+                if (struct.success != null) {
+                    oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+                    struct.success.write(oprot);
+                    oprot.writeFieldEnd();
+                }
+                oprot.writeFieldStop();
+                oprot.writeStructEnd();
+            }
+        }
+
+        private static class loginUUID_resultTupleSchemeFactory implements SchemeFactory {
+
+            public loginUUID_resultTupleScheme getScheme() {
+                return new loginUUID_resultTupleScheme();
+            }
+        }
+
+        private static class loginUUID_resultTupleScheme extends TupleScheme<loginUUID_result> {
+
+            @Override
+            public void write(org.apache.thrift.protocol.TProtocol prot, loginUUID_result struct) throws org.apache.thrift.TException {
+                TTupleProtocol oprot = (TTupleProtocol) prot;
+                BitSet optionals = new BitSet();
+                if (struct.isSetSuccess()) {
+                    optionals.set(0);
+                }
+                oprot.writeBitSet(optionals, 1);
+                if (struct.isSetSuccess()) {
+                    struct.success.write(oprot);
+                }
+            }
+
+            @Override
+            public void read(org.apache.thrift.protocol.TProtocol prot, loginUUID_result struct) throws org.apache.thrift.TException {
+                TTupleProtocol iprot = (TTupleProtocol) prot;
+                BitSet incoming = iprot.readBitSet(1);
+                if (incoming.get(0)) {
+                    struct.success = new DIdentityResult();
+                    struct.success.read(iprot);
+                    struct.setSuccessIsSet(true);
+                }
+            }
+        }
+    }
+
+    public static class signUUID_args implements org.apache.thrift.TBase<signUUID_args, signUUID_args._Fields>, java.io.Serializable, Cloneable, Comparable<signUUID_args> {
+
+        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("signUUID_args");
+
+        private static final org.apache.thrift.protocol.TField FROM_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("fromId", org.apache.thrift.protocol.TType.I32, (short) 1);
+
+        private static final org.apache.thrift.protocol.TField USERNAME_FIELD_DESC = new org.apache.thrift.protocol.TField("username", org.apache.thrift.protocol.TType.STRING, (short) 2);
+
+        private static final org.apache.thrift.protocol.TField PASSWORD_FIELD_DESC = new org.apache.thrift.protocol.TField("password", org.apache.thrift.protocol.TType.STRING, (short) 3);
+
+        private static final org.apache.thrift.protocol.TField UUID_FIELD_DESC = new org.apache.thrift.protocol.TField("uuid", org.apache.thrift.protocol.TType.STRING, (short) 4);
+
+        private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
+        static {
+            schemes.put(StandardScheme.class, new signUUID_argsStandardSchemeFactory());
+            schemes.put(TupleScheme.class, new signUUID_argsTupleSchemeFactory());
+        }
+
+        // required
+        public int fromId;
+
+        // required
+        public String username;
+
+        // required
+        public String password;
+
+        // required
+        public String uuid;
+
+        public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+
+            FROM_ID((short) 1, "fromId"), USERNAME((short) 2, "username"), PASSWORD((short) 3, "password"), UUID((short) 4, "uuid");
+
+            private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+            static {
+                for (_Fields field : EnumSet.allOf(_Fields.class)) {
+                    byName.put(field.getFieldName(), field);
+                }
+            }
+
+            public static _Fields findByThriftId(int fieldId) {
+                switch(fieldId) {
+                    case // FROM_ID
+                    1:
+                        return FROM_ID;
+                    case // USERNAME
+                    2:
+                        return USERNAME;
+                    case // PASSWORD
+                    3:
+                        return PASSWORD;
+                    case // UUID
+                    4:
+                        return UUID;
+                    default:
+                        return null;
+                }
+            }
+
+            public static _Fields findByThriftIdOrThrow(int fieldId) {
+                _Fields fields = findByThriftId(fieldId);
+                if (fields == null)
+                    throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+                return fields;
+            }
+
+            public static _Fields findByName(String name) {
+                return byName.get(name);
+            }
+
+            private final short _thriftId;
+
+            private final String _fieldName;
+
+            _Fields(short thriftId, String fieldName) {
+                _thriftId = thriftId;
+                _fieldName = fieldName;
+            }
+
+            public short getThriftFieldId() {
+                return _thriftId;
+            }
+
+            public String getFieldName() {
+                return _fieldName;
+            }
+        }
+
+        // isset id assignments
+        private static final int __FROMID_ISSET_ID = 0;
+
+        private byte __isset_bitfield = 0;
+
+        public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
+        static {
+            Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.FROM_ID, new org.apache.thrift.meta_data.FieldMetaData("fromId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+            tmpMap.put(_Fields.USERNAME, new org.apache.thrift.meta_data.FieldMetaData("username", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+            tmpMap.put(_Fields.PASSWORD, new org.apache.thrift.meta_data.FieldMetaData("password", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+            tmpMap.put(_Fields.UUID, new org.apache.thrift.meta_data.FieldMetaData("uuid", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+            metaDataMap = Collections.unmodifiableMap(tmpMap);
+            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(signUUID_args.class, metaDataMap);
+        }
+
+        public signUUID_args() {
+        }
+
+        public signUUID_args(int fromId, String username, String password, String uuid) {
+            this();
+            this.fromId = fromId;
+            setFromIdIsSet(true);
+            this.username = username;
+            this.password = password;
+            this.uuid = uuid;
+        }
+
+        public signUUID_args(signUUID_args other) {
+            __isset_bitfield = other.__isset_bitfield;
+            this.fromId = other.fromId;
+            if (other.isSetUsername()) {
+                this.username = other.username;
+            }
+            if (other.isSetPassword()) {
+                this.password = other.password;
+            }
+            if (other.isSetUuid()) {
+                this.uuid = other.uuid;
+            }
+        }
+
+        public signUUID_args deepCopy() {
+            return new signUUID_args(this);
+        }
+
+        @Override
+        public void clear() {
+            setFromIdIsSet(false);
+            this.fromId = 0;
+            this.username = null;
+            this.password = null;
+            this.uuid = null;
+        }
+
+        public int getFromId() {
+            return this.fromId;
+        }
+
+        public signUUID_args setFromId(int fromId) {
+            this.fromId = fromId;
+            setFromIdIsSet(true);
+            return this;
+        }
+
+        public void unsetFromId() {
+            __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __FROMID_ISSET_ID);
+        }
+
+        public boolean isSetFromId() {
+            return EncodingUtils.testBit(__isset_bitfield, __FROMID_ISSET_ID);
+        }
+
+        public void setFromIdIsSet(boolean value) {
+            __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __FROMID_ISSET_ID, value);
+        }
+
+        public String getUsername() {
+            return this.username;
+        }
+
+        public signUUID_args setUsername(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public void unsetUsername() {
+            this.username = null;
+        }
+
+        public boolean isSetUsername() {
+            return this.username != null;
+        }
+
+        public void setUsernameIsSet(boolean value) {
+            if (!value) {
+                this.username = null;
+            }
+        }
+
+        public String getPassword() {
+            return this.password;
+        }
+
+        public signUUID_args setPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public void unsetPassword() {
+            this.password = null;
+        }
+
+        public boolean isSetPassword() {
+            return this.password != null;
+        }
+
+        public void setPasswordIsSet(boolean value) {
+            if (!value) {
+                this.password = null;
+            }
+        }
+
+        public String getUuid() {
+            return this.uuid;
+        }
+
+        public signUUID_args setUuid(String uuid) {
+            this.uuid = uuid;
+            return this;
+        }
+
+        public void unsetUuid() {
+            this.uuid = null;
+        }
+
+        public boolean isSetUuid() {
+            return this.uuid != null;
+        }
+
+        public void setUuidIsSet(boolean value) {
+            if (!value) {
+                this.uuid = null;
+            }
+        }
+
+        public void setFieldValue(_Fields field, Object value) {
+            switch(field) {
+                case FROM_ID:
+                    if (value == null) {
+                        unsetFromId();
+                    } else {
+                        setFromId((Integer) value);
+                    }
+                    break;
+                case USERNAME:
+                    if (value == null) {
+                        unsetUsername();
+                    } else {
+                        setUsername((String) value);
+                    }
+                    break;
+                case PASSWORD:
+                    if (value == null) {
+                        unsetPassword();
+                    } else {
+                        setPassword((String) value);
+                    }
+                    break;
+                case UUID:
+                    if (value == null) {
+                        unsetUuid();
+                    } else {
+                        setUuid((String) value);
+                    }
+                    break;
+            }
+        }
+
+        public Object getFieldValue(_Fields field) {
+            switch(field) {
+                case FROM_ID:
+                    return getFromId();
+                case USERNAME:
+                    return getUsername();
+                case PASSWORD:
+                    return getPassword();
+                case UUID:
+                    return getUuid();
+            }
+            throw new IllegalStateException();
+        }
+
+        public boolean isSet(_Fields field) {
+            if (field == null) {
+                throw new IllegalArgumentException();
+            }
+            switch(field) {
+                case FROM_ID:
+                    return isSetFromId();
+                case USERNAME:
+                    return isSetUsername();
+                case PASSWORD:
+                    return isSetPassword();
+                case UUID:
+                    return isSetUuid();
+            }
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that == null)
+                return false;
+            if (that instanceof signUUID_args)
+                return this.equals((signUUID_args) that);
+            return false;
+        }
+
+        public boolean equals(signUUID_args that) {
+            if (that == null)
+                return false;
+            boolean this_present_fromId = true;
+            boolean that_present_fromId = true;
+            if (this_present_fromId || that_present_fromId) {
+                if (!(this_present_fromId && that_present_fromId))
+                    return false;
+                if (this.fromId != that.fromId)
+                    return false;
+            }
+            boolean this_present_username = true && this.isSetUsername();
+            boolean that_present_username = true && that.isSetUsername();
+            if (this_present_username || that_present_username) {
+                if (!(this_present_username && that_present_username))
+                    return false;
+                if (!this.username.equals(that.username))
+                    return false;
+            }
+            boolean this_present_password = true && this.isSetPassword();
+            boolean that_present_password = true && that.isSetPassword();
+            if (this_present_password || that_present_password) {
+                if (!(this_present_password && that_present_password))
+                    return false;
+                if (!this.password.equals(that.password))
+                    return false;
+            }
+            boolean this_present_uuid = true && this.isSetUuid();
+            boolean that_present_uuid = true && that.isSetUuid();
+            if (this_present_uuid || that_present_uuid) {
+                if (!(this_present_uuid && that_present_uuid))
+                    return false;
+                if (!this.uuid.equals(that.uuid))
+                    return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            List<Object> list = new ArrayList<Object>();
+            boolean present_fromId = true;
+            list.add(present_fromId);
+            if (present_fromId)
+                list.add(fromId);
+            boolean present_username = true && (isSetUsername());
+            list.add(present_username);
+            if (present_username)
+                list.add(username);
+            boolean present_password = true && (isSetPassword());
+            list.add(present_password);
+            if (present_password)
+                list.add(password);
+            boolean present_uuid = true && (isSetUuid());
+            list.add(present_uuid);
+            if (present_uuid)
+                list.add(uuid);
+            return list.hashCode();
+        }
+
+        @Override
+        public int compareTo(signUUID_args other) {
+            if (!getClass().equals(other.getClass())) {
+                return getClass().getName().compareTo(other.getClass().getName());
+            }
+            int lastComparison = 0;
+            lastComparison = Boolean.valueOf(isSetFromId()).compareTo(other.isSetFromId());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetFromId()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.fromId, other.fromId);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            lastComparison = Boolean.valueOf(isSetUsername()).compareTo(other.isSetUsername());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetUsername()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.username, other.username);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            lastComparison = Boolean.valueOf(isSetPassword()).compareTo(other.isSetPassword());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetPassword()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.password, other.password);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            lastComparison = Boolean.valueOf(isSetUuid()).compareTo(other.isSetUuid());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetUuid()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.uuid, other.uuid);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            return 0;
+        }
+
+        public _Fields fieldForId(int fieldId) {
+            return _Fields.findByThriftId(fieldId);
+        }
+
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+            schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+        }
+
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+            schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("signUUID_args(");
+            boolean first = true;
+            sb.append("fromId:");
+            sb.append(this.fromId);
+            first = false;
+            if (!first)
+                sb.append(", ");
+            sb.append("username:");
+            if (this.username == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.username);
+            }
+            first = false;
+            if (!first)
+                sb.append(", ");
+            sb.append("password:");
+            if (this.password == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.password);
+            }
+            first = false;
+            if (!first)
+                sb.append(", ");
+            sb.append("uuid:");
+            if (this.uuid == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.uuid);
+            }
+            first = false;
+            sb.append(")");
+            return sb.toString();
+        }
+
+        public void validate() throws org.apache.thrift.TException {
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+            try {
+                write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+            try {
+                // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+                __isset_bitfield = 0;
+                read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private static class signUUID_argsStandardSchemeFactory implements SchemeFactory {
+
+            public signUUID_argsStandardScheme getScheme() {
+                return new signUUID_argsStandardScheme();
+            }
+        }
+
+        private static class signUUID_argsStandardScheme extends StandardScheme<signUUID_args> {
+
+            public void read(org.apache.thrift.protocol.TProtocol iprot, signUUID_args struct) throws org.apache.thrift.TException {
+                org.apache.thrift.protocol.TField schemeField;
+                iprot.readStructBegin();
+                while (true) {
+                    schemeField = iprot.readFieldBegin();
+                    if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                        break;
+                    }
+                    switch(schemeField.id) {
+                        case // FROM_ID
+                        1:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                                struct.fromId = iprot.readI32();
+                                struct.setFromIdIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        case // USERNAME
+                        2:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                                struct.username = iprot.readString();
+                                struct.setUsernameIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        case // PASSWORD
+                        3:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                                struct.password = iprot.readString();
+                                struct.setPasswordIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        case // UUID
+                        4:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                                struct.uuid = iprot.readString();
+                                struct.setUuidIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        default:
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    iprot.readFieldEnd();
+                }
+                iprot.readStructEnd();
+                // check for required fields of primitive type, which can't be checked in the validate method
+                struct.validate();
+            }
+
+            public void write(org.apache.thrift.protocol.TProtocol oprot, signUUID_args struct) throws org.apache.thrift.TException {
+                struct.validate();
+                oprot.writeStructBegin(STRUCT_DESC);
+                oprot.writeFieldBegin(FROM_ID_FIELD_DESC);
+                oprot.writeI32(struct.fromId);
+                oprot.writeFieldEnd();
+                if (struct.username != null) {
+                    oprot.writeFieldBegin(USERNAME_FIELD_DESC);
+                    oprot.writeString(struct.username);
+                    oprot.writeFieldEnd();
+                }
+                if (struct.password != null) {
+                    oprot.writeFieldBegin(PASSWORD_FIELD_DESC);
+                    oprot.writeString(struct.password);
+                    oprot.writeFieldEnd();
+                }
+                if (struct.uuid != null) {
+                    oprot.writeFieldBegin(UUID_FIELD_DESC);
+                    oprot.writeString(struct.uuid);
+                    oprot.writeFieldEnd();
+                }
+                oprot.writeFieldStop();
+                oprot.writeStructEnd();
+            }
+        }
+
+        private static class signUUID_argsTupleSchemeFactory implements SchemeFactory {
+
+            public signUUID_argsTupleScheme getScheme() {
+                return new signUUID_argsTupleScheme();
+            }
+        }
+
+        private static class signUUID_argsTupleScheme extends TupleScheme<signUUID_args> {
+
+            @Override
+            public void write(org.apache.thrift.protocol.TProtocol prot, signUUID_args struct) throws org.apache.thrift.TException {
+                TTupleProtocol oprot = (TTupleProtocol) prot;
+                BitSet optionals = new BitSet();
+                if (struct.isSetFromId()) {
+                    optionals.set(0);
+                }
+                if (struct.isSetUsername()) {
+                    optionals.set(1);
+                }
+                if (struct.isSetPassword()) {
+                    optionals.set(2);
+                }
+                if (struct.isSetUuid()) {
+                    optionals.set(3);
+                }
+                oprot.writeBitSet(optionals, 4);
+                if (struct.isSetFromId()) {
+                    oprot.writeI32(struct.fromId);
+                }
+                if (struct.isSetUsername()) {
+                    oprot.writeString(struct.username);
+                }
+                if (struct.isSetPassword()) {
+                    oprot.writeString(struct.password);
+                }
+                if (struct.isSetUuid()) {
+                    oprot.writeString(struct.uuid);
+                }
+            }
+
+            @Override
+            public void read(org.apache.thrift.protocol.TProtocol prot, signUUID_args struct) throws org.apache.thrift.TException {
+                TTupleProtocol iprot = (TTupleProtocol) prot;
+                BitSet incoming = iprot.readBitSet(4);
+                if (incoming.get(0)) {
+                    struct.fromId = iprot.readI32();
+                    struct.setFromIdIsSet(true);
+                }
+                if (incoming.get(1)) {
+                    struct.username = iprot.readString();
+                    struct.setUsernameIsSet(true);
+                }
+                if (incoming.get(2)) {
+                    struct.password = iprot.readString();
+                    struct.setPasswordIsSet(true);
+                }
+                if (incoming.get(3)) {
+                    struct.uuid = iprot.readString();
+                    struct.setUuidIsSet(true);
+                }
+            }
+        }
+    }
+
+    public static class signUUID_result implements org.apache.thrift.TBase<signUUID_result, signUUID_result._Fields>, java.io.Serializable, Cloneable, Comparable<signUUID_result> {
+
+        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("signUUID_result");
+
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
+
+        private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
+        static {
+            schemes.put(StandardScheme.class, new signUUID_resultStandardSchemeFactory());
+            schemes.put(TupleScheme.class, new signUUID_resultTupleSchemeFactory());
+        }
+
+        // required
+        public DRegisterResult success;
+
+        public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+
+            SUCCESS((short) 0, "success");
+
+            private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+            static {
+                for (_Fields field : EnumSet.allOf(_Fields.class)) {
+                    byName.put(field.getFieldName(), field);
+                }
+            }
+
+            public static _Fields findByThriftId(int fieldId) {
+                switch(fieldId) {
+                    case // SUCCESS
+                    0:
+                        return SUCCESS;
+                    default:
+                        return null;
+                }
+            }
+
+            public static _Fields findByThriftIdOrThrow(int fieldId) {
+                _Fields fields = findByThriftId(fieldId);
+                if (fields == null)
+                    throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+                return fields;
+            }
+
+            public static _Fields findByName(String name) {
+                return byName.get(name);
+            }
+
+            private final short _thriftId;
+
+            private final String _fieldName;
+
+            _Fields(short thriftId, String fieldName) {
+                _thriftId = thriftId;
+                _fieldName = fieldName;
+            }
+
+            public short getThriftFieldId() {
+                return _thriftId;
+            }
+
+            public String getFieldName() {
+                return _fieldName;
+            }
+        }
+
+        // isset id assignments
+        public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
+        static {
+            Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, DRegisterResult.class)));
+            metaDataMap = Collections.unmodifiableMap(tmpMap);
+            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(signUUID_result.class, metaDataMap);
+        }
+
+        public signUUID_result() {
+        }
+
+        public signUUID_result(DRegisterResult success) {
+            this();
+            this.success = success;
+        }
+
+        public signUUID_result(signUUID_result other) {
+            if (other.isSetSuccess()) {
+                this.success = new DRegisterResult(other.success);
+            }
+        }
+
+        public signUUID_result deepCopy() {
+            return new signUUID_result(this);
+        }
+
+        @Override
+        public void clear() {
+            this.success = null;
+        }
+
+        public DRegisterResult getSuccess() {
+            return this.success;
+        }
+
+        public signUUID_result setSuccess(DRegisterResult success) {
+            this.success = success;
+            return this;
+        }
+
+        public void unsetSuccess() {
+            this.success = null;
+        }
+
+        public boolean isSetSuccess() {
+            return this.success != null;
+        }
+
+        public void setSuccessIsSet(boolean value) {
+            if (!value) {
+                this.success = null;
+            }
+        }
+
+        public void setFieldValue(_Fields field, Object value) {
+            switch(field) {
+                case SUCCESS:
+                    if (value == null) {
+                        unsetSuccess();
+                    } else {
+                        setSuccess((DRegisterResult) value);
+                    }
+                    break;
+            }
+        }
+
+        public Object getFieldValue(_Fields field) {
+            switch(field) {
+                case SUCCESS:
+                    return getSuccess();
+            }
+            throw new IllegalStateException();
+        }
+
+        public boolean isSet(_Fields field) {
+            if (field == null) {
+                throw new IllegalArgumentException();
+            }
+            switch(field) {
+                case SUCCESS:
+                    return isSetSuccess();
+            }
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that == null)
+                return false;
+            if (that instanceof signUUID_result)
+                return this.equals((signUUID_result) that);
+            return false;
+        }
+
+        public boolean equals(signUUID_result that) {
+            if (that == null)
+                return false;
+            boolean this_present_success = true && this.isSetSuccess();
+            boolean that_present_success = true && that.isSetSuccess();
+            if (this_present_success || that_present_success) {
+                if (!(this_present_success && that_present_success))
+                    return false;
+                if (!this.success.equals(that.success))
+                    return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            List<Object> list = new ArrayList<Object>();
+            boolean present_success = true && (isSetSuccess());
+            list.add(present_success);
+            if (present_success)
+                list.add(success);
+            return list.hashCode();
+        }
+
+        @Override
+        public int compareTo(signUUID_result other) {
+            if (!getClass().equals(other.getClass())) {
+                return getClass().getName().compareTo(other.getClass().getName());
+            }
+            int lastComparison = 0;
+            lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetSuccess()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            return 0;
+        }
+
+        public _Fields fieldForId(int fieldId) {
+            return _Fields.findByThriftId(fieldId);
+        }
+
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+            schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+        }
+
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+            schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("signUUID_result(");
+            boolean first = true;
+            sb.append("success:");
+            if (this.success == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.success);
+            }
+            first = false;
+            sb.append(")");
+            return sb.toString();
+        }
+
+        public void validate() throws org.apache.thrift.TException {
+            // check for sub-struct validity
+            if (success != null) {
+                success.validate();
+            }
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+            try {
+                write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+            try {
+                read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private static class signUUID_resultStandardSchemeFactory implements SchemeFactory {
+
+            public signUUID_resultStandardScheme getScheme() {
+                return new signUUID_resultStandardScheme();
+            }
+        }
+
+        private static class signUUID_resultStandardScheme extends StandardScheme<signUUID_result> {
+
+            public void read(org.apache.thrift.protocol.TProtocol iprot, signUUID_result struct) throws org.apache.thrift.TException {
+                org.apache.thrift.protocol.TField schemeField;
+                iprot.readStructBegin();
+                while (true) {
+                    schemeField = iprot.readFieldBegin();
+                    if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                        break;
+                    }
+                    switch(schemeField.id) {
+                        case // SUCCESS
+                        0:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                                struct.success = new DRegisterResult();
+                                struct.success.read(iprot);
+                                struct.setSuccessIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        default:
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    iprot.readFieldEnd();
+                }
+                iprot.readStructEnd();
+                // check for required fields of primitive type, which can't be checked in the validate method
+                struct.validate();
+            }
+
+            public void write(org.apache.thrift.protocol.TProtocol oprot, signUUID_result struct) throws org.apache.thrift.TException {
+                struct.validate();
+                oprot.writeStructBegin(STRUCT_DESC);
+                if (struct.success != null) {
+                    oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+                    struct.success.write(oprot);
+                    oprot.writeFieldEnd();
+                }
+                oprot.writeFieldStop();
+                oprot.writeStructEnd();
+            }
+        }
+
+        private static class signUUID_resultTupleSchemeFactory implements SchemeFactory {
+
+            public signUUID_resultTupleScheme getScheme() {
+                return new signUUID_resultTupleScheme();
+            }
+        }
+
+        private static class signUUID_resultTupleScheme extends TupleScheme<signUUID_result> {
+
+            @Override
+            public void write(org.apache.thrift.protocol.TProtocol prot, signUUID_result struct) throws org.apache.thrift.TException {
+                TTupleProtocol oprot = (TTupleProtocol) prot;
+                BitSet optionals = new BitSet();
+                if (struct.isSetSuccess()) {
+                    optionals.set(0);
+                }
+                oprot.writeBitSet(optionals, 1);
+                if (struct.isSetSuccess()) {
+                    struct.success.write(oprot);
+                }
+            }
+
+            @Override
+            public void read(org.apache.thrift.protocol.TProtocol prot, signUUID_result struct) throws org.apache.thrift.TException {
+                TTupleProtocol iprot = (TTupleProtocol) prot;
+                BitSet incoming = iprot.readBitSet(1);
+                if (incoming.get(0)) {
+                    struct.success = new DRegisterResult();
+                    struct.success.read(iprot);
                     struct.setSuccessIsSet(true);
                 }
             }

@@ -200,5 +200,4 @@ public class JPlatformUser extends JbBean implements JiUserBase {
         metaMap.put(key, value);
     }
 
-
 }

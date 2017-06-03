@@ -17,15 +17,12 @@ public class FileNameTest {
 //        System.out.println(HelperFileName.concat("/upload/", "/http://www.baidu.com/upload/"));
 
         System.out.println(HelperRandom.randHashId(this));
-
-
         System.out.println(HelperRandom.randSecondId(Long.MAX_VALUE, 16, 8));
-
-        System.out.println(HelperRandom.randSecondId(Long.MAX_VALUE, 16, 8, HelperRandom.FormatType.HEX_DIG));
-        System.out.println(HelperRandom.randSecondId(Long.MAX_VALUE, 16, 8, HelperRandom.FormatType.HEX_DIG));
+        System.out.println(HelperRandom.randSecondId(Long.MAX_VALUE, 16, 8, HelperRandom.FormatType.DIG_LETTER));
+        System.out.println(HelperRandom.randSecondId(Long.MAX_VALUE, 16, 8, HelperRandom.FormatType.DIG_LETTER));
 
         StringBuilder stringBuilder = new StringBuilder();
-        HelperRandom.appendFormat(stringBuilder, HelperRandom.FormatType.HEX_DIG, Integer.MAX_VALUE);
+        HelperRandom.appendFormat(stringBuilder, HelperRandom.FormatType.DIG_LETTER, Integer.MAX_VALUE);
         System.out.println(stringBuilder.toString());
 
 

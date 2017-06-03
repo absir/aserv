@@ -22,17 +22,17 @@ public class DSequence {
 
     public String getNextId() {
         StringBuilder stringBuilder = new StringBuilder();
-        HelperRandom.appendFormatLong(stringBuilder, HelperRandom.FormatType.HEX, System.currentTimeMillis());
-        HelperRandom.appendFormat(stringBuilder, HelperRandom.FormatType.HEX, nextSequence());
-        HelperRandom.randAppendFormat(stringBuilder, 8, HelperRandom.FormatType.HEX);
+        HelperRandom.appendFormatLong(stringBuilder, HelperRandom.FormatType.NUMBER, System.currentTimeMillis(), -1, 14);
+        HelperRandom.appendFormat(stringBuilder, HelperRandom.FormatType.NUMBER, nextSequence() % 1000, -1, 3);
+        HelperRandom.randAppendFormat(stringBuilder, 3, HelperRandom.FormatType.NUMBER);
         return stringBuilder.toString();
     }
 
-    public String getNextHexId() {
+    public String getNextDigLetterId() {
         StringBuilder stringBuilder = new StringBuilder();
-        HelperRandom.appendFormatLong(stringBuilder, HelperRandom.FormatType.HEX_DIG, System.currentTimeMillis());
-        HelperRandom.appendFormat(stringBuilder, HelperRandom.FormatType.HEX_DIG, nextSequence());
-        HelperRandom.randAppendFormat(stringBuilder, 5, HelperRandom.FormatType.HEX_DIG);
+        HelperRandom.appendFormatLong(stringBuilder, HelperRandom.FormatType.DIG_LETTER, System.currentTimeMillis(), -1, 9);
+        HelperRandom.appendFormat(stringBuilder, HelperRandom.FormatType.DIG_LETTER, nextSequence() % 1296, -1, 2);
+        HelperRandom.randAppendFormat(stringBuilder, 5, HelperRandom.FormatType.DIG_LETTER);
         return stringBuilder.toString();
     }
 

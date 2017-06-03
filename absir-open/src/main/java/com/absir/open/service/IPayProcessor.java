@@ -11,6 +11,8 @@ import com.absir.open.bean.JPayTrade;
 
 public interface IPayProcessor {
 
+    public void order(JPayTrade payTrade, boolean shortTradeId, String[] moreDatas);
+
     public Object process(JPayTrade payTrade) throws Exception;
 
 }

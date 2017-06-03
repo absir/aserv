@@ -62,7 +62,7 @@ public class ClusterService implements ISingle {
 
     public String getSecretKey() {
         if (secretKey == null) {
-            secretKey = HelperRandom.randSecondId(System.currentTimeMillis(), 3, hashCode(), HelperRandom.FormatType.HEX_DIG);
+            secretKey = HelperRandom.randSecondId(System.currentTimeMillis(), 3, hashCode(), HelperRandom.FormatType.DIG_LETTER);
         }
 
         return secretKey;

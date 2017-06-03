@@ -96,7 +96,7 @@ struct DIdentityResult {
     // 用户数据(透传)
     2: optional string userData;
     // 登陆SessionId
-    3: string sessionId;
+    3: optional string sessionId;
     // 服务记录
     4: optional list<i64> serverIds;
 }
@@ -120,6 +120,8 @@ struct DLoginResult {
     1: optional ELoginError error;
     // 授权结果
     2: optional DIdentityResult result;
+    // 用户编号
+    3: optional i64 userId;
 }
 
 // 注册错误
@@ -127,9 +129,11 @@ enum ERegisterError
 {
     // 成功
     success,
-    // 格式错误
-    validateError,
-    // 用户不存在
+    // 用户名错误
+    usernameError,
+    // 密码错误
+    passwordError,
+    // 用户已存在
     usernameExist,
     // 未知
     unkown,
@@ -141,6 +145,8 @@ struct DRegisterResult {
     1: optional ERegisterError error;
     // 授权结果
     2: optional DIdentityResult result;
+    // 用户编号
+    3: optional i64 userId;
 }
 
 // 修改密码
@@ -158,26 +164,30 @@ enum EPasswordResult
 
 // 下单信息
 struct DOrderInfo {
-    // 来源编号
-    1: optional i32 fromId;
+    // 准备参数
+    1: optional string prepare;
+    // 配置编号
+    2: optional i32 configureId;
     // 平台
-    2: optional string platform;
-    // 服务编号
-    3: optional i64 serverId;
+    3: optional string platform;
+    // 平台参数
+    4: optional string platformData;
+    // 商品编号
+    5: optional string goodsId;
+    // 商品数量
+    6: optional i32 goodsNumber;
+    // 金额
+    7: optional double amount;
+    // 用户编号
+    8: optional i64 userId;
+    // 服务区编号
+    9: optional i64 serverId;
     // 角色编号
-    4: i64 playerId;
-    // 编号
-    5: string id;
-    // 名称
-    6: string name;
-    // 描述
-    7: optional string desc;
-    // 价格
-    8: optional i32 price;
-    // 数量
-    9: optional i32 number;
-    // 下单参数
-    10: optional string orderData;
+    10: optional i64 playerId;
+    // 短订单编号
+    11: optional bool shortTradeId;
+    // 更多参数
+    12: optional list<string> moreDatas;
 }
 
 // 下单结果
@@ -190,24 +200,23 @@ struct DOrderResult {
 
 // 订单验证
 struct DOrderValidator {
-    // 来源编号
-    1: optional i32 fromId;
+    // 订单编号
+    1: i32 tradeId;
+    // 配置编号
+    2: optional i32 configureId;
     // 平台
-    2: optional string platform;
-    // 服务编号
-    3: optional i64 serverId;
-    // 角色编号
-    4: i64 playerId;
-    // 编号
-    5: string id;
-    // 数量
-    6: optional i32 number;
-    // 下单参数
-    7: optional string orderData;
-    // 票据
-    8: string receiptId;
+    3: optional string platform;
+    // 平台参数
+    4: optional string platformData;
+    // 交易号
+    5: optional string tradeNo;
+    // 交易票据
+    6: optional string tradeReceipt;
+    // 沙盒测试
+    7: optional bool sanbox;
+    // 更多参数
+    8: optional list<string> moreDatas;
 }
-
 
 service PlatformFromService {
 
@@ -221,21 +230,27 @@ service PlatformFromService {
     list<DServer> servers(1:i32 fromId, 2:bool review)
 
     // 授权
-    DIdentityResult identity(1:i32 fromId, 2:i64 serverId, 3:string identities)
+    DIdentityResult identity(1:i32 fromId, 2:bool serverIds, 3:string identity)
 
     // 登陆账号
-    DLoginResult login(1:i32 fromId, 2:i64 serverId, 3:string username, 4:string password)
+    DLoginResult login(1:i32 fromId, 2:bool serverIds, 3:string username, 4:string password)
+
+    // 游客登录
+    DIdentityResult loginUUID(1:i32 fromId, 2:bool serverIds, 3:string uuid)
 
     // 注册账号
-    DRegisterResult sign(1:i32 fromId, 2:i64 serverId, 3:string username, 4:string password)
+    DRegisterResult sign(1:i32 fromId, 2:string username, 3:string password)
+
+    // 注册账号(绑定游客)
+    DRegisterResult signUUID(1:i32 fromId, 2:string username, 3:string password, 4:string uuid)
 
     // 修改密码
-    EPasswordResult password(1:string sessionId, 2:string oldPassword, 3:string newPassword)
+    EPasswordResult password(1:i64 userId, 2:string sessionId, 3:string oldPassword, 4:string newPassword)
 
     // 下订单
-    DOrderResult order(1:DOrderInfo info)
+    DOrderResult order(1:i32 fromId, 2:DOrderInfo info)
 
     // 验证订单
-    bool validate(1:DOrderValidator validator)
+    bool validate(1:i32 fromId, 2:DOrderValidator validator)
 
 }

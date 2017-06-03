@@ -36,16 +36,22 @@ public class IdentityServiceLocal implements IdentityService {
     public static JiUserBase getUserBase(String identity, String address) {
         if (!KernelString.isEmpty(identity)) {
             String[] parameters = HelperString.split(identity, ',');
-            if (parameters.length > 0) {
-                IdentityService identityService = identityServiceMap.get(parameters[0]);
-                if (identityService != null) {
-                    JiUserBase user = identityService.getUserBase(parameters, address);
-                    if (user == null || user.isDisabled()) {
-                        return null;
-                    }
+            return getUserBaseParams(parameters, address);
+        }
 
-                    return user;
+        return null;
+    }
+
+    public static JiUserBase getUserBaseParams(String[] parameters, String address) {
+        if (parameters != null && parameters.length > 0) {
+            IdentityService identityService = identityServiceMap.get(parameters[0]);
+            if (identityService != null) {
+                JiUserBase user = identityService.getUserBase(parameters, address);
+                if (user == null || user.isDisabled()) {
+                    return null;
                 }
+
+                return user;
             }
         }
 

@@ -25,7 +25,8 @@ public class HelperRandom {
 
     private static final int SECEND_SIZE = 3;
 
-    private static final char[] HEX_DIG_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
+    //abcdefghijklmnopqrstuvwxyz
+    private static final char[] DIG_LETTER_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
     public static int nextInt(int max) {
         return RANDOM.nextInt(max);
@@ -208,35 +209,46 @@ public class HelperRandom {
 
     public static void appendFormat(StringBuilder stringBuilder, int offset, int size, char[] chars) {
         int length = chars.length;
-        size += offset;
-        for (; length < size; size--) {
-            stringBuilder.append('0');
-        }
+        if (length <= size) {
+            for (; length < size; size--) {
+                stringBuilder.append('0');
+            }
 
-        stringBuilder.append(chars, offset, size);
+            stringBuilder.append(chars);
+
+        } else {
+            if (offset != 0) {
+                int _off = length - size;
+                if (offset < 0 || _off < offset) {
+                    offset = _off;
+                }
+            }
+
+            stringBuilder.append(chars, offset, size);
+        }
     }
 
-    public static void appendFormat(StringBuilder stringBuilder, FormatType type, int i) {
+    public static void appendFormat(StringBuilder stringBuilder, IFormatType type, int i) {
         appendFormat(stringBuilder, type, i, 0, type.intLen());
     }
 
-    public static void appendFormat(StringBuilder stringBuilder, FormatType type, int i, int offset, int size) {
+    public static void appendFormat(StringBuilder stringBuilder, IFormatType type, int i, int offset, int size) {
         appendFormat(stringBuilder, offset, size, type.charsForInt(i));
     }
 
-    public static void appendFormatLong(StringBuilder stringBuilder, FormatType type, long l) {
+    public static void appendFormatLong(StringBuilder stringBuilder, IFormatType type, long l) {
         appendFormatLong(stringBuilder, type, l, 0, type.longLen());
     }
 
-    public static void appendFormatLong(StringBuilder stringBuilder, FormatType type, long l, int offset, int size) {
+    public static void appendFormatLong(StringBuilder stringBuilder, IFormatType type, long l, int offset, int size) {
         appendFormat(stringBuilder, offset, size, type.charsForLong(l));
     }
 
-    public static void appendFormatLongMd5(StringBuilder stringBuilder, FormatType type, long l, int size) {
+    public static void appendFormatLongMd5(StringBuilder stringBuilder, IFormatType type, long l, int size) {
         appendFormatLongMd5(stringBuilder, type, Long.toHexString(l).getBytes(), size);
     }
 
-    public static void appendFormatLongMd5(StringBuilder stringBuilder, FormatType type, byte[] bytes, int size) {
+    public static void appendFormatLongMd5(StringBuilder stringBuilder, IFormatType type, byte[] bytes, int size) {
         char[] md5 = HelperEncrypt.encryptionMD5Chars(bytes);
         if (size > type.longLen()) {
             if (md5[16] > '7') {
@@ -258,7 +270,7 @@ public class HelperRandom {
         randAppendFormat(stringBuilder, size, FormatType.HEX);
     }
 
-    public static void randAppendFormat(StringBuilder stringBuilder, int size, FormatType type) {
+    public static void randAppendFormat(StringBuilder stringBuilder, int size, IFormatType type) {
         while (size > 0) {
             char[] chars = size <= type.intLen() ? type.charsForInt(RANDOM.nextInt()) : type.charsForLong(RANDOM.nextLong());
             int length = chars.length;
@@ -295,7 +307,7 @@ public class HelperRandom {
         return randSecondBuilder(time, size, FormatType.HEX);
     }
 
-    public static StringBuilder randSecondBuilder(long time, int size, FormatType formatType) {
+    public static StringBuilder randSecondBuilder(long time, int size, IFormatType formatType) {
         StringBuilder stringBuilder = new StringBuilder();
         appendFormatLong(stringBuilder, formatType, time);
         randAppendFormat(stringBuilder, size, formatType);
@@ -306,7 +318,7 @@ public class HelperRandom {
         return randSecondId(time, size, id, FormatType.HEX);
     }
 
-    public static String randSecondId(long time, int size, int id, FormatType formatType) {
+    public static String randSecondId(long time, int size, int id, IFormatType formatType) {
         StringBuilder stringBuilder = randSecondBuilder(time, size, formatType);
         appendFormat(stringBuilder, formatType, id, 0, 8);
         return stringBuilder.toString();
@@ -363,7 +375,81 @@ public class HelperRandom {
         return ((time >> 16) | (time << 16));
     }
 
-    public enum FormatType {
+    public interface IFormatType {
+
+        public int intLen();
+
+        public char[] charsForInt(int i);
+
+        public int longLen();
+
+        public char[] charsForLong(long l);
+
+    }
+
+    public static IFormatType newFormatType(final char[] chars) {
+        final int charsLen = chars.length;
+        int len;
+        {
+            len = 0;
+            int i = Integer.MAX_VALUE;
+            while (i > 0) {
+                len++;
+                i /= charsLen;
+            }
+        }
+
+        final int intLen = len;
+
+        {
+            len = 0;
+            long l = Long.MAX_VALUE;
+            while (l > 0) {
+                len++;
+                l /= charsLen;
+            }
+        }
+
+        final int longLen = len;
+
+        return new IFormatType() {
+            @Override
+            public int intLen() {
+                return intLen;
+            }
+
+            @Override
+            public char[] charsForInt(int i) {
+                return charsForLong(i);
+            }
+
+            @Override
+            public int longLen() {
+                return longLen;
+            }
+
+            @Override
+            public char[] charsForLong(long l) {
+                char[] chars = new char[l >= Integer.MIN_VALUE && l <= Integer.MAX_VALUE ? intLen() : longLen()];
+                int i = 0;
+                int ci;
+                while (l != 0) {
+                    ci = (int) (l % charsLen);
+                    if (ci < 0) {
+                        ci = -ci;
+                    }
+
+                    chars[i] = DIG_LETTER_CHARS[ci];
+                    l /= charsLen;
+                    i++;
+                }
+
+                return Arrays.copyOfRange(chars, 0, i);
+            }
+        };
+    }
+
+    public enum FormatType implements IFormatType {
 
         NUMBER {
             @Override
@@ -407,50 +493,10 @@ public class HelperRandom {
             public char[] charsForLong(long l) {
                 return Long.toHexString(l).toCharArray();
             }
-        },
-
-        HEX_DIG {
-            @Override
-            public int intLen() {
-                return 6;
-            }
-
-            @Override
-            public char[] charsForInt(int i) {
-                return charsForLong(i);
-            }
-
-            @Override
-            public int longLen() {
-                return 11;
-            }
-
-            @Override
-            public char[] charsForLong(long l) {
-                if (l < 0) {
-                    l = -l;
-                }
-
-                int length = HEX_DIG_CHARS.length;
-                char[] chars = new char[l <= Integer.MAX_VALUE ? intLen() : longLen()];
-                int i = 0;
-                while (l > 0) {
-                    chars[i] = HEX_DIG_CHARS[(int) (l % length)];
-                    l /= length;
-                    i++;
-                }
-
-                return Arrays.copyOfRange(chars, 0, i);
-            }
         };
 
-        public abstract int intLen();
+        public static IFormatType DIG_LETTER = newFormatType(DIG_LETTER_CHARS);
 
-        public abstract char[] charsForInt(int i);
-
-        public abstract int longLen();
-
-        public abstract char[] charsForLong(long l);
     }
 
     public static class RandomPool<T> {
