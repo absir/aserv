@@ -216,7 +216,9 @@ public abstract class KernelString {
     }
 
     public static String transferred(String value) {
-        return '"' + value.replace("\"", "\\\"") + '"';
+        value = value.replace("\\", "\\\\");
+        value = value.replace("\"", "\\\"");
+        return '"' + value + '"';
     }
 
     public static String unTransferred(String value) {

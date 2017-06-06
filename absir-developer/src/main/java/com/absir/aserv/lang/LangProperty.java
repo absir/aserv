@@ -19,7 +19,7 @@ public class LangProperty<T> {
 
     protected Map<Integer, Object[]> langMapProperty;
 
-    public T getProperty(String value, KernelLang.GetTemplate<String, T> getTemplate) {
+    public T getProperty(String value, KernelLang.GetTemplate<T, String> getTemplate) {
         if (LangBundle.isI18n() && LangBundle.ME != null) {
             OnPut onPut = OnPut.get();
             if (onPut != null) {

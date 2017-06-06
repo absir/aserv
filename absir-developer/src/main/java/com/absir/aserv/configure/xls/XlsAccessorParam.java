@@ -85,7 +85,7 @@ public class XlsAccessorParam extends XlsAccessor {
             params = values;
         }
 
-        return KernelString.implode(params, ',');
+        return KernelString.implode(params, ';');
     }
 
     @Override

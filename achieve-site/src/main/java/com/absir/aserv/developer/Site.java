@@ -15,7 +15,7 @@ import jetbrick.template.JetTemplate;
  * Created by absir on 16/7/27.
  */
 @Bean
-public class Site implements KernelLang.GetTemplate<String, JetTemplate> {
+public class Site implements KernelLang.GetTemplate<JetTemplate, String> {
 
     public static final Site ME = BeanFactoryUtils.get(Site.class);
 

@@ -25,6 +25,9 @@ import java.util.Set;
 @Bean
 public class CrudDictSupply implements ICrudSupply {
 
+    protected static final String NAME_PRE = "JDict@";
+    protected static final int NAME_PRE_LENGTH = NAME_PRE.length();
+
     @Override
     public Set<Map.Entry<String, Class<?>>> getEntityNameMapClass() {
         return null;
@@ -40,10 +43,6 @@ public class CrudDictSupply implements ICrudSupply {
         return false;
     }
 
-    protected static final String NAME_PRE = "JDict@";
-
-    protected static final int NAME_PRE_LENGTH = NAME_PRE.length();
-
     @Override
     public Class<?> getEntityClass(String entityName) {
         if (entityName.startsWith(NAME_PRE) && EntityService.ME.getDictCache().getCacheValue(entityName.substring(NAME_PRE_LENGTH)) != null) {
@@ -51,19 +50,6 @@ public class CrudDictSupply implements ICrudSupply {
         }
 
         return null;
-    }
-
-    public static class DictBean extends JbBeanS {
-
-        private String name;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name == null ? "" : name;
-        }
     }
 
     @Override
@@ -135,5 +121,18 @@ public class CrudDictSupply implements ICrudSupply {
     @Override
     public void flush() {
 
+    }
+
+    public static class DictBean extends JbBeanS {
+
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name == null ? "" : name;
+        }
     }
 }

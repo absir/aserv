@@ -17,16 +17,15 @@ import javax.persistence.*;
 @Entity
 public class JAnnouncement extends JbPlatform {
 
+    @JaLang("公告列表")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @Embedded
+    public DAnnouncement announcement;
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("纪录编号")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @JaLang("公告列表")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
-    @Embedded
-    public DAnnouncement announcement;
 
     public Long getId() {
         return id;

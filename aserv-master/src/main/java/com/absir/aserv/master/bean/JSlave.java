@@ -15,6 +15,7 @@ import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JiOpen;
 import com.absir.orm.value.JaColum;
 import com.absir.validator.value.NotEmpty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -77,6 +78,16 @@ public class JSlave extends JbBase implements JiOpen {
     @JaLang("服务地址V6")
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     private String serverAddressV6;
+
+    @JaLang("服务端口")
+    @JsonIgnore
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private int serverPort;
+
+    @JaLang("服务代理端口")
+    @JsonIgnore
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private int serverProxyPort;
 
     @JaLang("强制开启")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -188,6 +199,22 @@ public class JSlave extends JbBase implements JiOpen {
 
     public void setServerAddressV6(String serverAddressV6) {
         this.serverAddressV6 = serverAddressV6;
+    }
+
+    public int getServerPort() {
+        return serverPort;
+    }
+
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
+    }
+
+    public int getServerProxyPort() {
+        return serverProxyPort;
+    }
+
+    public void setServerProxyPort(int serverProxyPort) {
+        this.serverProxyPort = serverProxyPort;
     }
 
     public boolean isForceOpen() {

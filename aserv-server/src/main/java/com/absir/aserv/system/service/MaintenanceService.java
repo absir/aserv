@@ -28,13 +28,8 @@ import java.util.List;
 @Bean
 public class MaintenanceService {
 
-    public interface IMaintenance {
-    }
-
     public static final MaintenanceService ME = BeanFactoryUtils.get(MaintenanceService.class);
-
     protected static final Logger LOGGER = LoggerFactory.getLogger(MaintenanceService.class);
-
     protected String[] maintenanceChmodXs;
 
     protected void chmodX(String filePath) throws IOException {
@@ -89,6 +84,9 @@ public class MaintenanceService {
 
             chmodX(maintenancePath + "/scripts");
         }
+    }
+
+    public interface IMaintenance {
     }
 
 }

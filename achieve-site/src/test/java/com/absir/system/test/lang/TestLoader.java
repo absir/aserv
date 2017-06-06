@@ -28,7 +28,6 @@ public class TestLoader extends AbstractTest {
         String str = "\">" + "${entity.";
 
 
-
     }
 
     public static abstract class TestAop {

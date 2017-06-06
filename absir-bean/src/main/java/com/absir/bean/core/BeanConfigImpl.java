@@ -456,7 +456,7 @@ public class BeanConfigImpl implements BeanConfig {
             Map<String, ParamsAnnotations> annotationsMap = new HashMap<String, ParamsAnnotations>();
             List<MatchParamsAnnotations> annotationsList = new ArrayList<MatchParamsAnnotations>();
             BeanConfig config = BeanFactoryUtils.getBeanConfig();
-            File annotationsFile = new File(config.getClassPath() + "annotations");
+            File annotationsFile = new File(BeanFactoryUtils.getBeanConfigClassPath() + "annotations");
             if (annotationsFile.exists()) {
                 Map<String, Object> properties = new LinkedHashMap<String, Object>();
                 BeanConfigImpl.readDirProperties(config, properties, annotationsFile, null);

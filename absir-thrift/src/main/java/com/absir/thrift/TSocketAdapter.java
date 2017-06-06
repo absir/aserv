@@ -14,20 +14,18 @@ import java.io.InputStream;
  */
 public class TSocketAdapter implements SocketAdapter.CallbackAdapter {
 
-    private SocketAdapter socketAdapter;
-
+    protected static String encryptKey = "absir.thrift";
     protected Object holdEncryptKey;
-
-    public SocketAdapter getSocketAdapter() {
-        return socketAdapter;
-    }
+    private SocketAdapter socketAdapter;
 
     public TSocketAdapter(SocketAdapter socketAdapter) {
         this.socketAdapter = socketAdapter;
         socketAdapter.setRegisterCallback(this);
     }
 
-    protected static String encryptKey = "absir.thrift";
+    public SocketAdapter getSocketAdapter() {
+        return socketAdapter;
+    }
 
     public String getEncryptKey() {
         return encryptKey;

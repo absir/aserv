@@ -52,7 +52,7 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
 
     // 全部在线服务
     public final Map<Long, S> SERVER_CONTEXT_MAP;
-
+    protected List<XlsField> xlsFields;
     private int Compo;
 
     /**
@@ -69,36 +69,6 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
                 .getContextMap(PLAYER_CONTEXT_CLASS);
         SERVER_CONTEXT_MAP = (Map<Long, S>) (Object) ContextUtils.getContextFactory()
                 .getContextMap(SERVER_CONTEXT_CLASS);
-    }
-
-    protected List<XlsField> xlsFields;
-
-    protected static class XlsField {
-
-        protected Class<? extends XlsBase> xlsType;
-
-        protected String workbook;
-
-        protected Field field;
-
-        protected int type;
-
-        protected void setXlsDao(Object obj, XlsDao xlsDao) throws Throwable {
-            if (type == 1) {
-                field.set(obj, xlsDao);
-
-            } else if (type == 2) {
-                CList list = new CList();
-                list.add(xlsDao.getAll());
-                field.set(obj, list);
-
-            } else if (type == 3) {
-                CMapList mapList = new CMapList();
-                mapList.addCollection(xlsDao.getAll());
-                field.set(obj, mapList);
-            }
-        }
-
     }
 
     /**
@@ -167,5 +137,33 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
     public abstract JbPlayer createPlayer();
 
     public abstract JbPlayerA createPlayerA();
+
+    protected static class XlsField {
+
+        protected Class<? extends XlsBase> xlsType;
+
+        protected String workbook;
+
+        protected Field field;
+
+        protected int type;
+
+        protected void setXlsDao(Object obj, XlsDao xlsDao) throws Throwable {
+            if (type == 1) {
+                field.set(obj, xlsDao);
+
+            } else if (type == 2) {
+                CList list = new CList();
+                list.add(xlsDao.getAll());
+                field.set(obj, list);
+
+            } else if (type == 3) {
+                CMapList mapList = new CMapList();
+                mapList.addCollection(xlsDao.getAll());
+                field.set(obj, mapList);
+            }
+        }
+
+    }
 
 }

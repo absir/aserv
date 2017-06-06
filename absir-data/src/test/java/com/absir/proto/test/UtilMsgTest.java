@@ -25,17 +25,6 @@ import java.util.Arrays;
 @RunWith(value = JUnit4.class)
 public class UtilMsgTest {
 
-    public enum TestEnum {
-
-        A,
-
-        B,
-
-        C,
-
-    }
-
-
     public void testMsg(boolean single, Object... args) throws IOException {
         if (single && args.length == 1) {
             Object arg = args[0];
@@ -145,6 +134,16 @@ public class UtilMsgTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public enum TestEnum {
+
+        A,
+
+        B,
+
+        C,
+
     }
 
     public static class TestPP {

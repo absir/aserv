@@ -375,18 +375,6 @@ public class HelperRandom {
         return ((time >> 16) | (time << 16));
     }
 
-    public interface IFormatType {
-
-        public int intLen();
-
-        public char[] charsForInt(int i);
-
-        public int longLen();
-
-        public char[] charsForLong(long l);
-
-    }
-
     public static IFormatType newFormatType(final char[] chars) {
         final int charsLen = chars.length;
         int len;
@@ -496,6 +484,18 @@ public class HelperRandom {
         };
 
         public static IFormatType DIG_LETTER = newFormatType(DIG_LETTER_CHARS);
+
+    }
+
+    public interface IFormatType {
+
+        public int intLen();
+
+        public char[] charsForInt(int i);
+
+        public int longLen();
+
+        public char[] charsForLong(long l);
 
     }
 

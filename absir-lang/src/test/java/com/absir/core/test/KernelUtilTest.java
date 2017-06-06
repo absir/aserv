@@ -13,6 +13,8 @@ public class KernelUtilTest {
 
     @Test
     public void test() {
+        System.out.println(KernelString.transferred("\\\\\"\""));
+        System.out.println(KernelString.unTransferred("\"\\\"\""));
         System.out.println(KernelString.capitalize("abc"));
         System.out.println(KernelString.capitalize("aBc"));
         //System.out.println(String.format("%dtest", 1, 2, 3));

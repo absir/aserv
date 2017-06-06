@@ -230,9 +230,14 @@ public class JSlaveServer extends JbBean implements ICrudBean {
             }
 
             if (port == 0) {
-                Integer portInteger = (Integer) BeanService.ME
-                        .selectQuerySingle("SELECT MAX(o.port) FROM JSlaveServer o WHERE o.slave.id = ?", slave.getId());
-                port = portInteger == null ? 18891 : (portInteger + 1);
+                if (slave.getServerPort() <= 0) {
+                    Integer portInteger = (Integer) BeanService.ME
+                            .selectQuerySingle("SELECT MAX(o.port) FROM JSlaveServer o WHERE o.slave.id = ?", slave.getId());
+                    port = portInteger == null ? 18891 : (portInteger + 1);
+
+                } else {
+                    port = slave.getServerPort();
+                }
             }
         }
     }

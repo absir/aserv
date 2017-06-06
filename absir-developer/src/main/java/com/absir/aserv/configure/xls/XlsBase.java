@@ -12,6 +12,7 @@ import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.core.base.Base;
 import com.absir.core.helper.HelperFile;
+import com.absir.core.kernel.KernelLang;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -25,9 +26,13 @@ public class XlsBase extends Base<Serializable> {
     public static final String XLS_DIR = "xls/";
 
     public static final String XLS_SUFFIX = ".xls";
-
+    private static KernelLang.GetTemplate2<HSSFWorkbook, XlsBase, String> readHssfWorkbook;
     @JaLang("编号")
     protected Serializable id;
+
+    public static void setReadHssfWorkbook(KernelLang.GetTemplate2<HSSFWorkbook, XlsBase, String> readHssfWorkbook) {
+        XlsBase.readHssfWorkbook = readHssfWorkbook;
+    }
 
     /**
      * 初始化
@@ -44,8 +49,17 @@ public class XlsBase extends Base<Serializable> {
     }
 
     protected HSSFWorkbook getHssfWorkbook(String workbook) throws IOException {
-        return new HSSFWorkbook(HelperFile.openInputStream(new File(BeanFactoryUtils.getBeanConfig().getClassPath() + XLS_DIR
-                + workbook + XLS_SUFFIX)));
+        HSSFWorkbook hssfWorkbook = null;
+        if (readHssfWorkbook != null) {
+            hssfWorkbook = readHssfWorkbook.getWith(this, workbook);
+        }
+
+        if (hssfWorkbook == null) {
+            return new HSSFWorkbook(HelperFile.openInputStream(new File(BeanFactoryUtils.getBeanConfigClassPath() + XLS_DIR
+                    + workbook + XLS_SUFFIX)));
+        }
+
+        return hssfWorkbook;
     }
 
     protected <T> T read(HSSFCell hssfCell, Class<T> toClass) {

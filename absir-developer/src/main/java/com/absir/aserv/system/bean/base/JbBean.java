@@ -19,7 +19,6 @@ import java.io.Serializable;
 @MappedSuperclass
 public class JbBean extends JbBase implements JiBean {
 
-    //@Protobuf(fieldType = FieldType.INT64, order = 1, required = false)
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("纪录编号")
     @Id

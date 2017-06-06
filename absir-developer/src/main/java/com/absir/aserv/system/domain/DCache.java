@@ -35,6 +35,8 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K>, Asy
     protected String reloadHsql;
     protected Map<Serializable, V> cacheMap;
     protected Runnable notifierRunnable;
+    protected Runnable reloadCacheRunnable;
+    private boolean isAddedEntityMerges;
 
     public DCache(String entityName) {
         this(null, null);
@@ -67,8 +69,6 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K>, Asy
         return cacheMap.get(id);
     }
 
-    private boolean isAddedEntityMerges;
-
     public void addEntityMerges() {
         if (isAddedEntityMerges) {
             return;
@@ -100,8 +100,6 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K>, Asy
             reloadListener.run();
         }
     }
-
-    protected Runnable reloadCacheRunnable;
 
     public void reloadCacheTransaction() {
         if (reloadCacheRunnable == null) {

@@ -10,5 +10,5 @@ package com.absir.aserv.game.value;
 public interface IExpValue<V> {
 
     public int getExp(V value);
-    
+
 }

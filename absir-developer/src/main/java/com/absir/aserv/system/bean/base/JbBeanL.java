@@ -16,7 +16,6 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class JbBeanL extends JbBase {
 
-    //@Protobuf(fieldType = FieldType.INT64, order = 1, required = false)
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("纪录编号")
     @Id

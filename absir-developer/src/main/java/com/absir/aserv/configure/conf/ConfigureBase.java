@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 public class ConfigureBase {
 
     protected File getConfigureFile() throws FileNotFoundException {
-        return new File(BeanFactoryUtils.getBeanConfig().getClassPath() + "conf/" + getClass().getSimpleName() + ".conf");
+        return new File(BeanFactoryUtils.getBeanConfigClassPath() + "conf/" + getClass().getSimpleName() + ".conf");
     }
+
 }

@@ -37,6 +37,9 @@ import java.util.List;
 @Configure
 public class EntityStatics {
 
+    @Value("suggest.max.results")
+    private static int suggestMaxResults = 20;
+
     public static String getPrimary(Object entity, String primary) {
         return DynaBinderUtils.getParamFromValue(UtilAccessor.get(entity, primary));
     }
@@ -200,9 +203,6 @@ public class EntityStatics {
 
         return entities;
     }
-
-    @Value("suggest.max.results")
-    private static int suggestMaxResults = 20;
 
     public static List suggestCondition(String entityName, JdbcCondition condition, IAttributes input) {
         if (condition == null || condition.getConditions().isEmpty()) {

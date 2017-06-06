@@ -410,12 +410,12 @@ public class Pag {
         return uploader == null || uploader.getExtensions() == null || uploader.getExtensions().length == 0 ? null : KernelString.implode(uploader.getExtensions(), ',');
     }
 
+    public static String json(Object obj) throws IOException {
+        return HelperJson.encode(obj);
+    }
+
     public static interface IPagLang {
 
         public String getPagLang(String transferredName);
-    }
-
-    public static String json(Object obj) throws IOException {
-        return HelperJson.encode(obj);
     }
 }

@@ -12,6 +12,17 @@ import tplatform.DServer;
 @RunWith(value = JUnit4.class)
 public class ThriftJson {
 
+    @Test
+    public void test() throws Exception {
+        DServer server = new DServer();
+        server.setSAddress("123");
+        System.out.println(HelperJson.encode(server));
+
+        TestBean test = new TestBean();
+        test.setName("123");
+        System.out.println(HelperJson.encode(test));
+    }
+
     public static class TestBean {
 
         protected long id;
@@ -34,17 +45,6 @@ public class ThriftJson {
         public void setName(String name) {
             this.name = name;
         }
-    }
-
-    @Test
-    public void test() throws Exception {
-        DServer server = new DServer();
-        server.setSAddress("123");
-        System.out.println(HelperJson.encode(server));
-
-        TestBean test = new TestBean();
-        test.setName("123");
-        System.out.println(HelperJson.encode(test));
     }
 
 }

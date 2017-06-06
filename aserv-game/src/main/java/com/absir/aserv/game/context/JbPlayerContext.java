@@ -35,34 +35,34 @@ import java.util.List;
 @Inject
 public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R> extends ContextBean<Long> {
 
+    protected static final long DIRTY_TIME = 1000;
     // 验证登录(加快断线重连验证)
     protected String sessionId;
-
     // 玩家基本数据
     @Embedded
     @Allow
     protected P player;
-
     // 玩家更多数据
     @Embedded
     @Allow
     protected A playerA;
-
     // 登录时间
     @JaEdit(editable = JeEditable.LOCKED, types = "dateTime")
     @Allow
     protected long loginTime;
-
     // 连接接收
     @JaLang(value = "连接", tag = "connect")
     @JsonIgnore
     @JaEdit(editable = JeEditable.LOCKED)
     protected R receiver;
-
     // 全部恢复
     @JsonSerialize(contentUsing = IBaseSerializer.class)
     @JaEdit(editable = JeEditable.DISABLE)
     protected transient List<Recovery> recoveries = new ArrayList<Recovery>();
+    protected boolean modifyDirty;
+    protected long writeMailTime;
+    private boolean asyncRunning;
+    private List<Runnable> asyncRunnables;
 
     public String getSessionId() {
         return sessionId;
@@ -197,10 +197,6 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         playerA.setOnlineDay(onlineDay);
     }
 
-    private boolean asyncRunning;
-
-    private List<Runnable> asyncRunnables;
-
     /**
      * 异步执行
      */
@@ -272,12 +268,6 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
     protected synchronized void asyncClear() {
         asyncRunnables = null;
     }
-
-    protected boolean modifyDirty;
-
-    protected static final long DIRTY_TIME = 1000;
-
-    protected long writeMailTime;
 
     protected void mailDirtyAt() {
         writeMailTime = ContextUtils.getContextTime() + DIRTY_TIME;

@@ -45,15 +45,12 @@ public class SlaveHandler implements IHandler, ISlave {
     public static final SlaveHandler ME = BeanFactoryUtils.get(SlaveHandler.class);
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(SlaveHandler.class);
-
-    private IMaster master;
-
     @Value("slave.upgrade.passTime")
     protected long passTime = 3600000;
-
     @Value("slave.upgrade.retryCount")
     protected int retryCount = 3;
-
+    protected SlaveUpgradeThread slaveUpgradeThread;
+    private IMaster master;
     @Value("slave.upgrade.maxCount")
     private int maxCount = 10;
 
@@ -102,93 +99,6 @@ public class SlaveHandler implements IHandler, ISlave {
 
         return null;
     }
-
-    protected class SlaveUpgradeThread extends Thread {
-
-        protected SlaveUpgrade slaveUpgrade;
-
-        protected boolean doUpgrade;
-
-        @Override
-        public void run() {
-            int i = 0;
-            while (!Thread.interrupted()) {
-                File upgradeFile = null;
-                File resourceFile = null;
-                String downloadName = null;
-                try {
-                    String slaveUpgradeDir = BeanFactoryUtils.getBeanConfig().getResourcePath() + "protected/slaveUpgrade/";
-                    File slaveUpgradeFile = new File(slaveUpgradeDir);
-                    if (slaveUpgradeFile.exists()) {
-                        if (slaveUpgradeFile.isDirectory()) {
-                            HelperFile.releaseCacheFiles(slaveUpgradeFile.listFiles(), maxCount);
-
-                        } else {
-                            slaveUpgradeFile.delete();
-                        }
-                    }
-
-                    if (!KernelString.isEmpty(slaveUpgrade.getUpgradeFile())) {
-                        upgradeFile = new File(slaveUpgradeDir + HelperFileName.getName(slaveUpgrade.getUpgradeFile()));
-                        if (!upgradeFile.exists()) {
-                            downloadName = upgradeFile.getName();
-                            master.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, false);
-                            HelperFile.write(upgradeFile, new UtilInputStream.ThreadInputStream(master.download(slaveUpgrade.getUpgradeFile())));
-                            master.upgradeStatues(EUpgradeStatus.DOWNLOAD_COMPLETE, downloadName, false);
-                            downloadName = null;
-                        }
-                    }
-
-                    if (!KernelString.isEmpty(slaveUpgrade.getResourceFile())) {
-                        resourceFile = new File(slaveUpgradeDir + HelperFileName.getName(slaveUpgrade.getResourceFile()));
-                        if (!resourceFile.exists()) {
-                            downloadName = resourceFile.getName();
-                            master.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, false);
-                            HelperFile.write(resourceFile, new UtilInputStream.ThreadInputStream(master.download(slaveUpgrade.getResourceFile())));
-                            master.upgradeStatues(EUpgradeStatus.DOWNLOAD_COMPLETE, downloadName, false);
-                            downloadName = null;
-                        }
-                    }
-
-                    synchronized (SlaveUpgradeThread.class) {
-                        if (slaveUpgradeThread.doUpgrade) {
-                            slaveUpgradeThread = null;
-                            ME.doSlaveUpgrade(slaveUpgrade, upgradeFile, resourceFile);
-                            break;
-                        }
-                    }
-
-                } catch (Throwable e) {
-                    LOGGER.error("SlaveUpgradeThread slaveUpgrade[" + i + "] stop", e);
-                    if (upgradeFile != null) {
-                        upgradeFile.delete();
-                    }
-
-                    if (resourceFile != null) {
-                        resourceFile.delete();
-                    }
-                }
-
-                if (downloadName != null) {
-                    master.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, true);
-                }
-
-                if (++i >= retryCount) {
-                    break;
-                }
-            }
-
-            synchronized (SlaveUpgradeThread.class) {
-                slaveUpgradeThread = null;
-            }
-        }
-
-        protected boolean equalsSlaveUpgrade(SlaveUpgrade upgrade) {
-            return KernelObject.equals(upgrade.getResourceFile(), slaveUpgrade.getResourceFile()) && KernelObject.equals(upgrade.getUpgradeFile(), slaveUpgrade.getUpgradeFile());
-        }
-    }
-
-    protected SlaveUpgradeThread slaveUpgradeThread;
 
     @JaTask("slaveUpgrade")
     protected void slaveUpgrade(SlaveUpgrade slaveUpgrade, boolean doUpgrade) throws IOException {
@@ -276,6 +186,91 @@ public class SlaveHandler implements IHandler, ISlave {
     }
 
     protected void doSlaveUpgradeRestart(SlaveUpgrade slaveUpgrade) {
+    }
+
+    protected class SlaveUpgradeThread extends Thread {
+
+        protected SlaveUpgrade slaveUpgrade;
+
+        protected boolean doUpgrade;
+
+        @Override
+        public void run() {
+            int i = 0;
+            while (!Thread.interrupted()) {
+                File upgradeFile = null;
+                File resourceFile = null;
+                String downloadName = null;
+                try {
+                    String slaveUpgradeDir = BeanFactoryUtils.getBeanConfig().getResourcePath() + "protected/slaveUpgrade/";
+                    File slaveUpgradeFile = new File(slaveUpgradeDir);
+                    if (slaveUpgradeFile.exists()) {
+                        if (slaveUpgradeFile.isDirectory()) {
+                            HelperFile.releaseCacheFiles(slaveUpgradeFile.listFiles(), maxCount);
+
+                        } else {
+                            slaveUpgradeFile.delete();
+                        }
+                    }
+
+                    if (!KernelString.isEmpty(slaveUpgrade.getUpgradeFile())) {
+                        upgradeFile = new File(slaveUpgradeDir + HelperFileName.getName(slaveUpgrade.getUpgradeFile()));
+                        if (!upgradeFile.exists()) {
+                            downloadName = upgradeFile.getName();
+                            master.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, false);
+                            HelperFile.write(upgradeFile, new UtilInputStream.ThreadInputStream(master.download(slaveUpgrade.getUpgradeFile())));
+                            master.upgradeStatues(EUpgradeStatus.DOWNLOAD_COMPLETE, downloadName, false);
+                            downloadName = null;
+                        }
+                    }
+
+                    if (!KernelString.isEmpty(slaveUpgrade.getResourceFile())) {
+                        resourceFile = new File(slaveUpgradeDir + HelperFileName.getName(slaveUpgrade.getResourceFile()));
+                        if (!resourceFile.exists()) {
+                            downloadName = resourceFile.getName();
+                            master.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, false);
+                            HelperFile.write(resourceFile, new UtilInputStream.ThreadInputStream(master.download(slaveUpgrade.getResourceFile())));
+                            master.upgradeStatues(EUpgradeStatus.DOWNLOAD_COMPLETE, downloadName, false);
+                            downloadName = null;
+                        }
+                    }
+
+                    synchronized (SlaveUpgradeThread.class) {
+                        if (slaveUpgradeThread.doUpgrade) {
+                            slaveUpgradeThread = null;
+                            ME.doSlaveUpgrade(slaveUpgrade, upgradeFile, resourceFile);
+                            break;
+                        }
+                    }
+
+                } catch (Throwable e) {
+                    LOGGER.error("SlaveUpgradeThread slaveUpgrade[" + i + "] stop", e);
+                    if (upgradeFile != null) {
+                        upgradeFile.delete();
+                    }
+
+                    if (resourceFile != null) {
+                        resourceFile.delete();
+                    }
+                }
+
+                if (downloadName != null) {
+                    master.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, true);
+                }
+
+                if (++i >= retryCount) {
+                    break;
+                }
+            }
+
+            synchronized (SlaveUpgradeThread.class) {
+                slaveUpgradeThread = null;
+            }
+        }
+
+        protected boolean equalsSlaveUpgrade(SlaveUpgrade upgrade) {
+            return KernelObject.equals(upgrade.getResourceFile(), slaveUpgrade.getResourceFile()) && KernelObject.equals(upgrade.getUpgradeFile(), slaveUpgrade.getUpgradeFile());
+        }
     }
 
 }

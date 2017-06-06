@@ -108,6 +108,7 @@ public class SocketAdapter {
     private int disconnectNumber;
 
     private List<Runnable> closeRunnables;
+    private long checkConnectTime;
 
     public static void printException(Throwable e) {
         Environment.throwable(e);
@@ -261,6 +262,10 @@ public class SocketAdapter {
         return bytes;
     }
 
+//    public static final void _debugInfo(String info) {
+//        System.out.println("[SOCKET.DEBUG.INFO]  " + info);
+//    }
+
     public static final void setVarintsLength(byte[] destination, int destionationIndex, int length) {
         if (length > VARINTS_1_LENGTH) {
             destination[destionationIndex] = (byte) ((length & 0x7F) | 0x80);
@@ -282,10 +287,6 @@ public class SocketAdapter {
             destination[destionationIndex] = (byte) (length & 0x7F);
         }
     }
-
-//    public static final void _debugInfo(String info) {
-//        System.out.println("[SOCKET.DEBUG.INFO]  " + info);
-//    }
 
     public void clearUriVarints() {
         if (uriVarints != null) {
@@ -528,8 +529,6 @@ public class SocketAdapter {
             }
         }
     }
-
-    private long checkConnectTime;
 
     public void checkConnect(long contextTime) {
         if (checkConnectTime != contextTime) {

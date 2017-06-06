@@ -28,8 +28,8 @@
             <param name="LevelMax" value="WARN"/>
         </filter>
         <!--<filter class="org.apache.log4j.varia.StringMatchFilter">-->
-            <!--<param name="StringToMatch" value="Positional parameter are considered deprecated"/>-->
-            <!--<param name="AcceptOnMatch" value="FALSE"/>-->
+        <!--<param name="StringToMatch" value="Positional parameter are considered deprecated"/>-->
+        <!--<param name="AcceptOnMatch" value="FALSE"/>-->
         <!--</filter>-->
     </appender>
 
@@ -58,6 +58,12 @@
     </logger>
     <logger name="org.hibernate">
         <level value="WARN"/>
+        <appender-ref ref="console"/>
+        <appender-ref ref="main"/>
+        <appender-ref ref="error"/>
+    </logger>
+    <logger name="org.hibernate.hql.internal.ast.HqlSqlWalker">
+        <level value="ERROR"/>
         <appender-ref ref="console"/>
         <appender-ref ref="main"/>
         <appender-ref ref="error"/>

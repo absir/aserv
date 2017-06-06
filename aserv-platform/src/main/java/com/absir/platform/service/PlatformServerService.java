@@ -63,46 +63,20 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
 
     protected List<PlatformServer> serverList;
 
-    public static class PlatformAnnouncement {
+    public static boolean isExcludeIds(String ids, String id) {
+        if (!KernelString.isEmpty(ids)) {
+            if (KernelString.patternInclude(ids, id)) {
+                return false;
+            }
 
-        protected JAnnouncement announcement;
-
-        protected DAnnouncement value;
-
-        public JbPlatform getPlatform() {
-            return announcement;
+            return true;
         }
 
-        public Object getValue() {
-            return value;
-        }
-
+        return false;
     }
 
-    public static class PlatformServer implements KernelList.Orderable {
-
-        protected JServer server;
-
-        protected DServer value;
-
-        protected DServer dServer;
-
-        protected long beginTime;
-
-        protected long passTime;
-
-        public JbPlatform getPlatform() {
-            return server;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        @Override
-        public int getOrder() {
-            return (int) (beginTime / 1000);
-        }
+    protected static String[] getMoreDatas(List<String> moreDatas) {
+        return moreDatas == null || moreDatas.size() == 0 ? null : (KernelCollection.toArray(moreDatas, String.class));
     }
 
     @Inject
@@ -313,18 +287,6 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         return BeanDao.get(BeanDao.getSession(), JPlatformFrom.class, (long) id);
     }
 
-    public static boolean isExcludeIds(String ids, String id) {
-        if (!KernelString.isEmpty(ids)) {
-            if (KernelString.patternInclude(ids, id)) {
-                return false;
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
     public boolean isMatchPlatform(JbPlatform platform, boolean review, DPlatformFrom platformFrom) {
         if (!platform.isOpen()) {
             return false;
@@ -420,12 +382,6 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         return servers;
     }
 
-    public interface IPlatformUserId {
-
-        public Long getPlatformUserId();
-
-    }
-
     protected String getPlatformFromChannel(JPlatformFrom platformFrom) {
         return platformFrom == null ? null : (platformFrom.getPlatform() + '@' + platformFrom.getChannel());
     }
@@ -508,10 +464,6 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         return signUUID(fromId, username, password, null);
     }
 
-    protected static String[] getMoreDatas(List<String> moreDatas) {
-        return moreDatas == null || moreDatas.size() == 0 ? null : (KernelCollection.toArray(moreDatas, String.class));
-    }
-
     @Override
     public DOrderResult order(int fromId, DOrderInfo info) throws TException {
         DOrderResult orderResult = new DOrderResult();
@@ -539,6 +491,54 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
 
         Object result = PayUtils.payStatus(payTrade, validator.getConfigureId(), validator.getPlatform(), validator.getPlatformData(), validator.getTradeNo(), validator.getTradeReceipt(), 0, validator.isSanbox(), getMoreDatas(validator.getMoreDatas()), JePayStatus.PAYING, null);
         return result != null;
+    }
+
+    public interface IPlatformUserId {
+
+        public Long getPlatformUserId();
+
+    }
+
+    public static class PlatformAnnouncement {
+
+        protected JAnnouncement announcement;
+
+        protected DAnnouncement value;
+
+        public JbPlatform getPlatform() {
+            return announcement;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+    }
+
+    public static class PlatformServer implements KernelList.Orderable {
+
+        protected JServer server;
+
+        protected DServer value;
+
+        protected DServer dServer;
+
+        protected long beginTime;
+
+        protected long passTime;
+
+        public JbPlatform getPlatform() {
+            return server;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        @Override
+        public int getOrder() {
+            return (int) (beginTime / 1000);
+        }
     }
 
 }

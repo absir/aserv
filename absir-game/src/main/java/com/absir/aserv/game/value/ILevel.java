@@ -11,8 +11,8 @@ public interface ILevel {
 
     public int getLevel();
 
-    public void levelUp(int level);
-
     public void setLevel(int level);
+
+    public void levelUp(int level);
 
 }

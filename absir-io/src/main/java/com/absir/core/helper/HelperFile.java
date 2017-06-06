@@ -31,6 +31,12 @@ public class HelperFile extends FileUtils {
     // 毫秒不记录 || 4231000 零参数适应性更强
     // 兼容JetTemplte MODIFIED 不能为0
     public static final long PRESERVE_FILE_MODIFIED_TIME = 4231 * 1000;
+    public static final Comparator<File> LastModifiedComparator = new Comparator<File>() {
+        @Override
+        public int compare(File o1, File o2) {
+            return (int) ((o1.lastModified() - o2.lastModified()) / 1000);
+        }
+    };
 
     public static long lastModified(File file) {
         if (file == null || !file.exists()) {
@@ -312,7 +318,7 @@ public class HelperFile extends FileUtils {
         }
     }
 
-    public static void deleteFileNoBreak(File file, KernelLang.GetTemplate<File, Boolean> deleteFilter) throws IOException {
+    public static void deleteFileNoBreak(File file, KernelLang.GetTemplate<Boolean, File> deleteFilter) throws IOException {
         if (deleteFilter != null && deleteFilter.getWith(file) == Boolean.TRUE) {
             return;
         }
@@ -329,13 +335,6 @@ public class HelperFile extends FileUtils {
         } catch (Exception e) {
         }
     }
-
-    public static final Comparator<File> LastModifiedComparator = new Comparator<File>() {
-        @Override
-        public int compare(File o1, File o2) {
-            return (int) ((o1.lastModified() - o2.lastModified()) / 1000);
-        }
-    };
 
     public static List<File> getFileList(File[] files) {
         List<File> fileList = new ArrayList<File>();

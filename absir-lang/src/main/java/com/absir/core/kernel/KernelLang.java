@@ -299,7 +299,12 @@ public class KernelLang {
 
     public static interface GetTemplate<T, K> {
 
-        K getWith(T template);
+        T getWith(K k);
+    }
+
+    public static interface GetTemplate2<T, K, K2> {
+
+        T getWith(K k, K2 k2);
     }
 
     public static class MatcherTypeReg implements IMatcherType {

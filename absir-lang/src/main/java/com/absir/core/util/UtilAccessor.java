@@ -382,11 +382,35 @@ public class UtilAccessor {
         public abstract Method getSetter();
 
         public Class<?> getType() {
-            return getField() == null ? getGetter() == null ? getSetter().getParameterTypes()[0] : getGetter().getReturnType() : getField().getType();
+            Class<?> type = null;
+            if (getGetter() != null) {
+                type = getGetter().getReturnType();
+            }
+
+            if (getSetter() != null) {
+                Class<?> t = getSetter().getParameterTypes()[0];
+                if (type == null || type.isAssignableFrom(t)) {
+                    type = t;
+                }
+            }
+
+            return type == null ? getField().getType() : type;
         }
 
         public Class<?> getDeclaringClass() {
-            return getField() == null ? getGetter() == null ? getSetter().getDeclaringClass() : getGetter().getDeclaringClass() : getField().getDeclaringClass();
+            Class<?> type = null;
+            if (getGetter() != null) {
+                type = getGetter().getDeclaringClass();
+            }
+
+            if (getSetter() != null) {
+                Class<?> t = getSetter().getDeclaringClass();
+                if (type == null || type.isAssignableFrom(t)) {
+                    type = t;
+                }
+            }
+
+            return type == null ? getField().getDeclaringClass() : type;
         }
 
         public <T extends Annotation> T getAnnotation(Class<T> annotationClass, boolean getter) {

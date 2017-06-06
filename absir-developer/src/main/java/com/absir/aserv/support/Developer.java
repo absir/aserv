@@ -71,7 +71,7 @@ public abstract class Developer {
     public static void doEntry(File file) {
         if (!RUMTIME_LISTENERS.isEmpty()) {
             String path = file.getPath();
-            path = HelperString.substringAfter(path, BeanFactoryUtils.getBeanConfig().getClassPath());
+            path = HelperString.substringAfter(path, BeanFactoryUtils.getBeanConfigClassPath());
             if (!KernelString.isEmpty(path)) {
                 doEntry(new ObjectEntry<String, File>(path, file));
             }
@@ -92,7 +92,7 @@ public abstract class Developer {
     }
 
     private static File getRuntimeFile(String runtimeName) {
-        return new File(BeanFactoryUtils.getBeanConfig().getClassPath() + RUNTIME_PATH + runtimeName);
+        return new File(BeanFactoryUtils.getBeanConfigClassPath() + RUNTIME_PATH + runtimeName);
     }
 
     public static Object getRuntime(String runtimeName) {

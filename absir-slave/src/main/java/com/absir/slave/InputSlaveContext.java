@@ -61,21 +61,6 @@ public class InputSlaveContext {
 
     protected List<SlaveRpcAdapter> slaveAdapterAdds;
 
-    protected class SlaveRpcAdapter extends RpcSocketAdapter<InputSlaveAdapter> {
-
-        protected int slaveIndex;
-
-        public SlaveRpcAdapter(InputSlaveAdapter adapter) {
-            super(adapter);
-        }
-
-        @Override
-        protected void resolverRpcData(RpcInterface.RpcAttribute attribute, RpcData rpcData) {
-            ME.resolverRpcData(attribute, rpcData, slaveIndex);
-        }
-
-    }
-
     public String getKey() {
         return key;
     }
@@ -195,6 +180,21 @@ public class InputSlaveContext {
     }
 
     protected void resolverRpcData(RpcInterface.RpcAttribute attribute, RpcData rpcData, int rpcIndex) {
+    }
+
+    protected class SlaveRpcAdapter extends RpcSocketAdapter<InputSlaveAdapter> {
+
+        protected int slaveIndex;
+
+        public SlaveRpcAdapter(InputSlaveAdapter adapter) {
+            super(adapter);
+        }
+
+        @Override
+        protected void resolverRpcData(RpcInterface.RpcAttribute attribute, RpcData rpcData) {
+            ME.resolverRpcData(attribute, rpcData, slaveIndex);
+        }
+
     }
 
 }

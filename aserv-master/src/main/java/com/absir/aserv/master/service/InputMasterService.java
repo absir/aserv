@@ -44,6 +44,10 @@ public class InputMasterService extends InputMasterContext {
             slave.setGroupId(params[1]);
         }
 
+        if (params.length > 2) {
+            slave.setStartTime(KernelDyna.to(params[2], long.class));
+        }
+
         if (params.length > 3) {
             slave.setVersion(params[3]);
         }
@@ -56,7 +60,9 @@ public class InputMasterService extends InputMasterContext {
             slave.setAppCode(params[5]);
         }
 
-        slave.setStartTime(KernelDyna.to(params[2], long.class));
+        if (params.length > 6) {
+            slave.setServerPort(KernelDyna.to(params[6], int.class));
+        }
 
         slave.setIp(socketChannel.socket().getInetAddress().getHostAddress());
         slave.setConnecting(true);

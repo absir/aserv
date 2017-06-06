@@ -229,7 +229,7 @@ public class PropertyUtils {
         }
 
         BeanConfig config = BeanFactoryUtils.getBeanConfig();
-        File propertiesFile = new File(config.getClassPath() + category + "/" + beanClass.getSimpleName() + ".properties");
+        File propertiesFile = new File(BeanFactoryUtils.getBeanConfigClassPath() + category + "/" + beanClass.getSimpleName() + ".properties");
         if (propertiesFile.exists()) {
             properties = new HashMap<String, Object>();
             BeanConfigImpl.readProperties(config, properties, propertiesFile, null);

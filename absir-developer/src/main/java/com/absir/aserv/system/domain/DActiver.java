@@ -45,6 +45,7 @@ public class DActiver<T extends JiActive> implements IEntityMerge<T> {
 
     //当前活动查询
     protected String onlineQueryString;
+    private boolean isAddedEntityMerges;
 
     public DActiver(String entityName) {
         if (entityName == null) {
@@ -202,8 +203,6 @@ public class DActiver<T extends JiActive> implements IEntityMerge<T> {
     public void merge(String entityName, T entity, MergeType mergeType, Object mergeEvent) {
         merge(entity, mergeType, mergeEvent);
     }
-
-    private boolean isAddedEntityMerges;
 
     public void addEntityMerges() {
         if (isAddedEntityMerges) {

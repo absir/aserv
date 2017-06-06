@@ -12,6 +12,7 @@ import com.absir.bean.basis.BeanDefine;
 import com.absir.bean.basis.BeanFactory;
 import com.absir.bean.basis.BeanScope;
 import com.absir.core.base.Environment;
+import com.absir.core.helper.HelperFileName;
 import com.absir.core.kernel.KernelList;
 import com.absir.core.kernel.KernelList.Orderable;
 
@@ -32,6 +33,11 @@ public class BeanFactoryUtils {
     public static BeanConfig getBeanConfig() {
         BeanFactory beanFactory = get();
         return beanFactory == null ? null : beanFactory.getBeanConfig();
+    }
+
+    public static String getBeanConfigClassPath() {
+        BeanConfig beanConfig = getBeanConfig();
+        return beanConfig == null ? HelperFileName.getClassPath(null) : beanConfig.getClassPath();
     }
 
     public static <T> T getBeanConfigValue(String expression, Class<T> toClass) {

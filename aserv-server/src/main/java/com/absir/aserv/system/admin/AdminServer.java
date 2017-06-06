@@ -120,20 +120,6 @@ public abstract class AdminServer {
         }
     }
 
-    public static class Route extends TransactionIntercepter implements IRoute {
-
-        @Inject(type = InjectType.Selectable)
-        private void setRoute(@Value(value = "admin.route") String route) {
-            AdminServer.route = route;
-        }
-
-        @Override
-        public void routeMapping(String name, Entry<Mapping, List<String>> mapping, Method method, List<String> parameterPathNames, List<String> mappings, List<InMethod> inMethods) {
-            RouteMapping.routeMapping(!KernelString.isEmpty(name) && name.equals("open") ? null : AdminServer.route, name, mapping, method, method.getName(), KernelString.implode(KernelArray.repeat('*', parameterPathNames.size()), '/'),
-                    KernelCollection.toArray(parameterPathNames, String.class), mappings, inMethods);
-        }
-    }
-
     /**
      * CRUDSupply统一入口
      */
@@ -161,6 +147,20 @@ public abstract class AdminServer {
 
         if (((InputRequest) input).getSession(EntityStatics.suggestKey(entityName)) == null) {
             throw new ServerException(ServerStatus.ON_DENIED);
+        }
+    }
+
+    public static class Route extends TransactionIntercepter implements IRoute {
+
+        @Inject(type = InjectType.Selectable)
+        private void setRoute(@Value(value = "admin.route") String route) {
+            AdminServer.route = route;
+        }
+
+        @Override
+        public void routeMapping(String name, Entry<Mapping, List<String>> mapping, Method method, List<String> parameterPathNames, List<String> mappings, List<InMethod> inMethods) {
+            RouteMapping.routeMapping(!KernelString.isEmpty(name) && name.equals("open") ? null : AdminServer.route, name, mapping, method, method.getName(), KernelString.implode(KernelArray.repeat('*', parameterPathNames.size()), '/'),
+                    KernelCollection.toArray(parameterPathNames, String.class), mappings, inMethods);
         }
     }
 }

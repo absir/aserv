@@ -54,13 +54,13 @@ import java.util.List;
 public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
 
     public static final MasterSyncService ME = BeanFactoryUtils.get(MasterSyncService.class);
-
+    public static final MasterRpcAdapter MASTER_RPC_ADAPTER = new MasterRpcAdapter(null);
+    public static final ISlave RpcDataSlave = MASTER_RPC_ADAPTER.getRpcInvoker(ISlave.class);
     protected static final Logger LOGGER = LoggerFactory.getLogger(MasterSyncService.class);
     @Value("master.sync.shared")
     private static boolean syncShared;
     @Value("master.sync.timeout")
     private int syncTimeout = 60000;
-
 
     public static <T extends JbServerTargets> void addSyncEntityServers(Class<T> entityClass) {
         L2CacheCollectionService.ME.addEntityMerges(entityClass, new IEntityMerge<T>() {
@@ -270,10 +270,6 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
 
         return false;
     }
-
-    public static final MasterRpcAdapter MASTER_RPC_ADAPTER = new MasterRpcAdapter(null);
-
-    public static final ISlave RpcDataSlave = MASTER_RPC_ADAPTER.getRpcInvoker(ISlave.class);
 
     // 添加RPC同步
     public void addSlaveSynchRpc(String slaveId, String mid, RpcData rpcData, boolean autoSynch) {
