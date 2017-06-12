@@ -12,9 +12,6 @@ public abstract class OBuffReverse<T extends OObject> extends OBuff<T> {
 
     /**
      * BUFF失去
-     *
-     * @param self
-     * @param result
      */
     public abstract void revert(T self, IResult result);
 }

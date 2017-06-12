@@ -26,7 +26,7 @@ public class XlsCellValue extends XlsCellBase {
     }
 
     @Override
-    public void wirteHssfCell(HSSFCell hssfCell) {
+    public void writeHssfCell(HSSFCell hssfCell) {
         hssfCell.setCellValue(value);
     }
 }

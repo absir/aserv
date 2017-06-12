@@ -8,6 +8,7 @@
 package com.absir.aserv.configure.xls;
 
 import com.absir.core.base.IBase;
+import com.absir.core.util.UtilAbsir;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 
 public class XlsCellObject extends XlsCellBase {
@@ -22,7 +23,7 @@ public class XlsCellObject extends XlsCellBase {
     }
 
     @Override
-    public void wirteHssfCell(HSSFCell hssfCell) {
+    public void writeHssfCell(HSSFCell hssfCell) {
         if (obj != null) {
             if (obj instanceof IBase) {
                 obj = ((IBase<?>) obj).getId();
@@ -31,6 +32,9 @@ public class XlsCellObject extends XlsCellBase {
             if (obj != null) {
                 if (obj.getClass() == Boolean.class) {
                     obj = (Boolean) obj ? "1" : "0";
+
+                } else if (obj.getClass() == Float.class) {
+                    obj = UtilAbsir.floatIntValue((Float) obj).toString();
                 }
 
                 xlsBase.write(hssfCell, obj.toString());

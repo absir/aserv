@@ -58,8 +58,6 @@ public class OReport {
 
     /**
      * 开始新战报
-     *
-     * @return the reportDetails
      */
     public void began(long time) {
         began = time;

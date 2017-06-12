@@ -76,7 +76,7 @@ public class XlsCell {
         return 0;
     }
 
-    public void wirteHssfCell(HSSFCell hssfCell) {
+    public void writeHssfCell(HSSFCell hssfCell) {
 
     }
 

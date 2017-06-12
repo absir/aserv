@@ -5,6 +5,7 @@ import com.absir.aserv.system.bean.value.JaIgnore;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.helper.HelperFile;
 import com.absir.core.kernel.*;
+import com.absir.core.util.UtilAbsir;
 import com.absir.core.util.UtilAccessor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -24,11 +25,14 @@ import java.util.*;
 public class CsvUtils {
 
     public static final byte[] BOM_BYTES = new byte[]{(byte) 239, (byte) 187, (byte) 191};
+
     public static final String BOM_STR = new String(BOM_BYTES);
+
     public static final char[] BOM_CAHRS = BOM_STR.toCharArray();
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(CsvUtils.class);
 
-    protected static void writeFields(final Class<?> xlsClass, final int pathCount, final String path, final Class<?> beanClass, final boolean[] firstCells, final Set<String> fields, final List<UtilAccessor.Accessor> fieldAccessors, final Writer writer, final boolean header, final ICsvWriteHandler writeHandler) {
+    protected static void writeFields(final Class<?> xlsClass, final int pathCount, final String fieldPath, final Class<?> beanClass, final boolean[] firstCells, final Set<String> fields, final List<UtilAccessor.Accessor> fieldAccessors, final Writer writer, final boolean header, final ICsvWriteHandler writeHandler) {
         KernelReflect.doWithDeclaredFields(beanClass, new KernelLang.CallbackBreak<Field>() {
 
             @Override
@@ -37,11 +41,11 @@ public class CsvUtils {
                     return;
                 }
 
-                UtilAccessor.Accessor accessor = KernelString.isEmpty(path) ? UtilAccessor.getAccessor(xlsClass, field) : UtilAccessor.getAccessorCls(xlsClass, path + field.getName());
+                UtilAccessor.Accessor accessor = KernelString.isEmpty(fieldPath) ? UtilAccessor.getAccessor(xlsClass, field) : UtilAccessor.getAccessorCls(xlsClass, fieldPath + field.getName());
                 if (accessor.getGetter() != null) {
                     Class<?> type = accessor.getType();
                     if (pathCount < 3 && !XlsBase.class.isAssignableFrom(type) && !XlsBase.class.isAssignableFrom(KernelClass.componentClass(type)) && KernelClass.isCustomClass(type)) {
-                        writeFields(xlsClass, pathCount + 1, KernelString.isEmpty(path) ? (field.getName() + '.') : (path + field.getName() + '.'), field.getType(), firstCells, null, fieldAccessors, writer, header, writeHandler);
+                        writeFields(xlsClass, pathCount + 1, KernelString.isEmpty(fieldPath) ? (field.getName() + '.') : (fieldPath + field.getName() + '.'), field.getType(), firstCells, null, fieldAccessors, writer, header, writeHandler);
 
                     } else {
                         fieldAccessors.add(accessor);
@@ -54,7 +58,7 @@ public class CsvUtils {
                                     writeHandler.writeSplit(writer);
                                 }
 
-                                writeHandler.writeField(writer, accessor, null);
+                                writeHandler.writeField(writer, fieldPath, accessor, null);
 
                             } catch (Exception e) {
                                 LOGGER.error("write header " + field, e);
@@ -131,7 +135,7 @@ public class CsvUtils {
                     }
                 }
 
-                writeHandler.writeField(writer, accessor.getAccessor(), idType);
+                writeHandler.writeField(writer, null, accessor.getAccessor(), idType);
             }
         }
 
@@ -184,6 +188,9 @@ public class CsvUtils {
                     } else if (value.getClass() == Boolean.class) {
                         value = value == Boolean.TRUE ? 1 : 0;
 
+                    } else if (value.getClass() == Float.class) {
+                        value = UtilAbsir.floatIntValue((Float) value);
+
                     } else {
                         Class<?> valueType = value.getClass();
                         if ((valueType.isArray() || Collection.class.isAssignableFrom(valueType)) && XlsBase.class.isAssignableFrom(KernelClass.componentClass(valueType))) {
@@ -231,7 +238,7 @@ public class CsvUtils {
 
         public void writeSplit(Writer writer) throws IOException;
 
-        public void writeField(Writer writer, UtilAccessor.Accessor accessor, Class<?> idType) throws IOException;
+        public void writeField(Writer writer, String fieldPath, UtilAccessor.Accessor accessor, Class<?> idType) throws IOException;
 
         public void writeValue(Writer writer, String value) throws IOException;
 
@@ -246,7 +253,7 @@ public class CsvUtils {
             }
 
             @Override
-            public void writeField(Writer writer, UtilAccessor.Accessor accessor, Class<?> idType) throws IOException {
+            public void writeField(Writer writer, String fieldPath, UtilAccessor.Accessor accessor, Class<?> idType) throws IOException {
                 Class<?> type = idType == null ? accessor.getType() : idType;
                 if (XlsBase.class.isAssignableFrom(type)) {
                     type = KernelClass.typeClass(type, XlsBean.ID_VARIABLE);
@@ -284,6 +291,11 @@ public class CsvUtils {
                     }
 
                     writer.append('#');
+                    if (!KernelString.isEmpty(fieldPath)) {
+                        writer.append(fieldPath.replace('.', '_'));
+                        writer.append('_');
+                    }
+
                     writer.append(accessor.getField().getName());
                 }
             }

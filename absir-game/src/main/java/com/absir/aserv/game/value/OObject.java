@@ -23,31 +23,44 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     // 治疗
     public static final String TREAT = "T";
+
     // 最大血量变化
     public static final String MAX_HP = "MH";
+
     // 死亡
     public static final String DIE = "DIE";
+
     // 添加BUFF
     public static final String ADD_BUFF = "AB";
+
     // 移除BUFF
     public static final String REMOVE_BUFF = "RB";
+
     // 冻结状态
     protected boolean frozen;
+
     // 无敌状态
     protected boolean invincible;
+
     // 目标卡牌
     @JsonSerialize(using = IBaseSerializer.class)
     protected T target;
+
     // 血量
     protected int hp;
+
     // 最大血量
     protected int maxHp;
+
     // 攻击力
     protected int atk;
+
     // BUFF状态
     protected Queue<OBuff> buffs;
+
     // 属性BUFF计算
     protected transient HashMap<String, float[]> attBuffs = null;
+
     // 对象编号
     private Serializable id;
 
@@ -116,9 +129,6 @@ public abstract class OObject<T extends OObject> implements JiBase {
 
     /**
      * 对象步进
-     *
-     * @param time
-     * @param result
      */
     public final void step(long time, IResult result) {
         if (frozen || died()) {

@@ -147,7 +147,7 @@ public abstract class XlsUtils {
         return getWorkbook(null, beanClass, null, KernelClass.newInstance(beanClass));
     }
 
-    public static HSSFWorkbook getWorkbook(List<? extends XlsBase> beans) {
+    public static HSSFWorkbook getWorkbook(Collection<? extends XlsBase> beans) {
         return getWorkbook(null, beans);
     }
 

@@ -14,10 +14,6 @@ public abstract class OSkill<T extends OObject> implements CloneTemplate<OSkill<
 
     /**
      * 释放技能
-     *
-     * @param self
-     * @param result
-     * @return
      */
     public final boolean cast(T self, IResult result) {
         if (isTrigger(self, result)) {
@@ -30,10 +26,6 @@ public abstract class OSkill<T extends OObject> implements CloneTemplate<OSkill<
 
     /**
      * 触发判断
-     *
-     * @param self
-     * @param result
-     * @return
      */
     public boolean isTrigger(T self, IResult result) {
         return result.getResult() == EResult.CONTINUE;
@@ -41,9 +33,6 @@ public abstract class OSkill<T extends OObject> implements CloneTemplate<OSkill<
 
     /**
      * 技能生效
-     *
-     * @param oCard
-     * @param oFight
      */
     public abstract void effect(T self, IResult result);
 

@@ -46,7 +46,7 @@ public class XlsCellMerged extends XlsCell {
         this.basicColumn = basicColumn;
     }
 
-    public void wirteHssfCell(HSSFCell hssfCell) {
-        xlsCell.wirteHssfCell(hssfCell);
+    public void writeHssfCell(HSSFCell hssfCell) {
+        xlsCell.writeHssfCell(hssfCell);
     }
 }

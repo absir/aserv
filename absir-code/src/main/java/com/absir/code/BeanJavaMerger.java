@@ -165,6 +165,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                         }
 
                     } else {
+                        fieldDeclaration.setType(fromFieldDeclaration.getType());
                         fieldDeclaration.setAnnotations(mergeAnnotationExpr(fromFieldDeclaration.getAnnotations(), fieldDeclaration.getAnnotations(), bodyDeclaration));
                         if (!enumReadable && isBeanField(fieldDeclaration, name)) {
                             //fieldDeclaration.setModifiers(Modifier.PROTECTED);

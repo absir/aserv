@@ -18,8 +18,6 @@ public abstract class OBuff<T extends OObject> extends Base<Integer> {
 
     /**
      * 获取ID
-     *
-     * @return
      */
     public Integer getId() {
         return id;
@@ -39,9 +37,6 @@ public abstract class OBuff<T extends OObject> extends Base<Integer> {
 
     /**
      * BUFF叠加
-     *
-     * @param buff
-     * @return
      */
     public int against(OBuff buff) {
         return getClass() == buff.getClass() ? 1 : 0;
@@ -49,19 +44,11 @@ public abstract class OBuff<T extends OObject> extends Base<Integer> {
 
     /**
      * BUFF生效
-     *
-     * @param self
-     * @param result
-     * @return
      */
     public abstract void effect(T self, IResult result);
 
     /**
      * BUFF持续
-     *
-     * @param self
-     * @param time
-     * @param result
      */
     public abstract void step(T self, long time, IResult result);
 

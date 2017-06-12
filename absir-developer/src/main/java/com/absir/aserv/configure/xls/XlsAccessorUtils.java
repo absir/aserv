@@ -463,7 +463,7 @@ public class XlsAccessorUtils {
     private static void writeHssfSheet(HSSFSheet hssfSheet, XlsCell xlsCell, int row, int column, int rowCount, int columnCount) {
         int basicRow = xlsCell.getBasicRow();
         if (basicRow > 0) {
-            xlsCell.wirteHssfCell(hssfSheet.getRow(row).getCell(column));
+            xlsCell.writeHssfCell(hssfSheet.getRow(row).getCell(column));
         }
 
         if (xlsCell.getChildren() == null) {

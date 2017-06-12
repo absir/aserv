@@ -79,4 +79,16 @@ public class UtilAbsir {
 
         throw e;
     }
+
+    public static Object floatIntValue(Float value) {
+        float f = value;
+        int i = (int) f;
+        if (f == (float) i) {
+            return i;
+
+        } else {
+            return value;
+        }
+    }
+
 }
