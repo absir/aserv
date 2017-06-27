@@ -7,7 +7,6 @@
  */
 package com.absir.aserv.game.api;
 
-import com.absir.aserv.game.bean.JbPlayer;
 import com.absir.aserv.game.context.AGameComponent;
 import com.absir.aserv.game.context.JbPlayerContext;
 import com.absir.aserv.game.context.PlayerService;
@@ -71,12 +70,11 @@ public class PlayerServer extends ApiServer {
             return false;
         }
 
-        JbPlayer player = playerContext.getPlayer();
-        if (player == null || player.getCreateTime() == 0) {
+        if (playerContext.isNoCharacter()) {
             throw new ServerException(ServerStatus.NO_LOGIN);
         }
 
-        if (player.getBanTime() > ContextUtils.getContextTime()) {
+        if (playerContext.isBanning()) {
             playerContext.writeBanMessage();
             throw new ServerException(ServerStatus.NO_LOGIN);
         }

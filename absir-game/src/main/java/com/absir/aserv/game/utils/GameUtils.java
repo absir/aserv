@@ -7,6 +7,8 @@
  */
 package com.absir.aserv.game.utils;
 
+import com.absir.aserv.game.battle.EResult;
+import com.absir.aserv.game.battle.IResult;
 import com.absir.aserv.game.value.*;
 
 import java.util.List;
@@ -29,11 +31,29 @@ public abstract class GameUtils {
 
     // 属性BUFF计算
     public static final int attBuff2(int att, int[] buffAtt) {
+        if (buffAtt == null) {
+            return att;
+        }
+
         return att * buffAtt[1] / 100 + buffAtt[0];
     }
 
     public static final int attBuff3(int att, int[] buffAtt) {
+        if (buffAtt == null) {
+            return att;
+        }
+
         return (att + buffAtt[2]) * buffAtt[1] / 100 + buffAtt[0];
+    }
+
+    // 属性BUFF提升
+    public void setBuffAttP(float[] buffs, float buffP) {
+        buffs[1] *= buffP;
+    }
+
+    // 属性BUFF回复
+    public void setBuffAttPR(float[] buffs, float buffP) {
+        buffs[1] /= buffP;
     }
 
     // 经验升级

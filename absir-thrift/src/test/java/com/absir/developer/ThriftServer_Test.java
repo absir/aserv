@@ -49,7 +49,7 @@ public class ThriftServer_Test extends ThriftService {
 
             @Override
             public TPlatformFrom setting2(TPlatformFrom platformFrom) throws TException {
-                push = getPushClient(PushService.Client.class, new PushService.Client.Factory(), ((InputSocket) OnPut.get().getInput()).getSocketAtt().getSelSession());
+                push = new PushService.Client(null, getPushProtocol(PushService.Client.class, ((InputSocket) OnPut.get().getInput()).getSocketAtt().getSelSession()));
                 push.setting(platformFrom);
                 System.out.println("invoke2 = " + HelperJson.encodeNull(platformFrom));
                 platformFrom.setChannel("ddddd2");

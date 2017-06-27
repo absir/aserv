@@ -72,6 +72,11 @@ public class BeanServiceBase implements BeanService, ICrudSupply {
     }
 
     @Override
+    public boolean exist(String entityName, Serializable id) {
+        return getSession().createQuery("SELECT o.id FROM O WHERE o.id = ?").setParameter(0, id).iterate().hasNext();
+    }
+
+    @Override
     public <T> T get(Class<T> entityClass, Serializable id) {
         return BeanDao.get(getSession(), entityClass, id);
     }

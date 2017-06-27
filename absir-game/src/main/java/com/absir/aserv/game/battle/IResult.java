@@ -5,13 +5,9 @@
  * <p/>
  * Create on 2013-11-5 上午9:44:46
  */
-package com.absir.aserv.game.value;
+package com.absir.aserv.game.battle;
 
 public interface IResult {
-
-    public boolean isDone();
-
-    public void setDone(boolean done);
 
     public EResult getResult();
 

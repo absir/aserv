@@ -61,7 +61,7 @@ public class InputMasterService extends InputMasterContext {
         }
 
         if (params.length > 6) {
-            slave.setServerPort(KernelDyna.to(params[6], int.class));
+            slave.setSlaveServerPort(KernelDyna.to(params[6], int.class));
         }
 
         slave.setIp(socketChannel.socket().getInetAddress().getHostAddress());

@@ -15,7 +15,9 @@ import java.io.InputStream;
 public class TSocketAdapter implements SocketAdapter.CallbackAdapter {
 
     protected static String encryptKey = "absir.thrift";
+
     protected Object holdEncryptKey;
+
     private SocketAdapter socketAdapter;
 
     public TSocketAdapter(SocketAdapter socketAdapter) {

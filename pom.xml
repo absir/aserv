@@ -52,8 +52,6 @@
         <module>aserv-master-slave</module>
         <module>aserv-platform</module>
         <module>absir-game</module>
-        <module>absir-card</module>
-        <module>absir-scene</module>
         <module>aserv-game</module>
         <module>absir-thrift</module>
     </modules>

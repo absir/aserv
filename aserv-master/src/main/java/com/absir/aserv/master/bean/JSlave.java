@@ -44,7 +44,6 @@ public class JSlave extends JbBase implements JiOpen {
     private String ip;
 
     @JaLang("组号")
-    @JaEdit(groups = {JaEdit.GROUP_LIST})
     private String groupId;
 
     @JaLang("版本")
@@ -71,31 +70,26 @@ public class JSlave extends JbBase implements JiOpen {
     @JaEdit(groups = JaEdit.GROUP_LIST, types = "dateTime")
     private long lastConnectTime;
 
+    @JaLang("服务代理端口")
+    @JsonIgnore
+    @JaEdit(groups = {JaEdit.GROUP_LIST, JaEdit.GROUP_SUGGEST})
+    private int slaveServerPort;
+
+    @JaLang("通讯密钥")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
+    private String slaveKey;
+
     @JaLang("服务地址")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
+    @JaEdit(groups = {JaEdit.GROUP_LIST, JaEdit.GROUP_SUGGEST})
     private String serverAddress;
 
     @JaLang("服务地址V6")
-    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     private String serverAddressV6;
 
     @JaLang("服务端口")
     @JsonIgnore
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private int serverPort;
-
-    @JaLang("服务代理端口")
-    @JsonIgnore
-    @JaEdit(groups = JaEdit.GROUP_LIST)
-    private int serverProxyPort;
-
-    @JaLang("强制开启")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
-    private boolean forceOpen;
-
-    @JaLang("通讯密钥")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
-    private String slaveKey;
 
     public String getId() {
         return id;
@@ -185,6 +179,22 @@ public class JSlave extends JbBase implements JiOpen {
         this.lastConnectTime = lastConnectTime;
     }
 
+    public int getSlaveServerPort() {
+        return slaveServerPort;
+    }
+
+    public void setSlaveServerPort(int slaveServerPort) {
+        this.slaveServerPort = slaveServerPort;
+    }
+
+    public String getSlaveKey() {
+        return slaveKey;
+    }
+
+    public void setSlaveKey(String slaveKey) {
+        this.slaveKey = slaveKey;
+    }
+
     public String getServerAddress() {
         return serverAddress;
     }
@@ -207,30 +217,6 @@ public class JSlave extends JbBase implements JiOpen {
 
     public void setServerPort(int serverPort) {
         this.serverPort = serverPort;
-    }
-
-    public int getServerProxyPort() {
-        return serverProxyPort;
-    }
-
-    public void setServerProxyPort(int serverProxyPort) {
-        this.serverProxyPort = serverProxyPort;
-    }
-
-    public boolean isForceOpen() {
-        return forceOpen;
-    }
-
-    public void setForceOpen(boolean forceOpen) {
-        this.forceOpen = forceOpen;
-    }
-
-    public String getSlaveKey() {
-        return slaveKey;
-    }
-
-    public void setSlaveKey(String slaveKey) {
-        this.slaveKey = slaveKey;
     }
 
 }

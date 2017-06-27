@@ -20,15 +20,16 @@ import javax.persistence.Id;
 @Entity
 public class JServer extends JbPlatform {
 
-    @JaLang("服务列表")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
-    @JaEdit(types = "subtable")
-    public DServer[] servers;
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("纪录编号")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @JaLang("服务列表")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @JaEdit(types = "subtable")
+    public DServer[] servers;
 
     public Long getId() {
         return id;

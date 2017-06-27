@@ -503,28 +503,33 @@ public class SocketAdapter {
             return;
         }
 
-        if (socket == null && callbackConnect != null) {
-            synchronized (this) {
-                try {
-                    tryConnecting = true;
-                    if (socket == null) {
-                        if (isRetryConnectMax()) {
-                            disconnect(null);
-
-                        } else {
-                            retryConnect++;
-                            callbackConnect.doWith(this, 0, null);
-                            if (socket == null) {
-                                addDisconnectNumber();
+        if (socket == null) {
+            if (callbackConnect == null) {
+                addDisconnectNumber();
+                
+            } else {
+                synchronized (this) {
+                    try {
+                        tryConnecting = true;
+                        if (socket == null) {
+                            if (isRetryConnectMax()) {
+                                disconnect(null);
 
                             } else {
-                                waiteAccept();
+                                retryConnect++;
+                                callbackConnect.doWith(this, 0, null);
+                                if (socket == null) {
+                                    addDisconnectNumber();
+
+                                } else {
+                                    waiteAccept();
+                                }
                             }
                         }
-                    }
 
-                } finally {
-                    tryConnecting = false;
+                    } finally {
+                        tryConnecting = false;
+                    }
                 }
             }
         }

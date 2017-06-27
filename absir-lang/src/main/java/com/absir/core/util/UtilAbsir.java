@@ -67,6 +67,19 @@ public class UtilAbsir {
         return e;
     }
 
+    public static <T> T forCauseClassThrowable(Throwable e, Class<T> causeClass) {
+        while (e != null) {
+            if (causeClass.isAssignableFrom(e.getClass())) {
+                return (T) e;
+
+            } else {
+                e = e.getCause();
+            }
+        }
+
+        return null;
+    }
+
     public static void throwNoRuntimeType(RuntimeException e, Class<? extends Throwable> runtimeType) {
         Throwable throwable = e;
         while (throwable != null) {

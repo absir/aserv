@@ -35,34 +35,42 @@ import java.util.List;
 @Inject
 public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R> extends ContextBean<Long> {
 
-    protected static final long DIRTY_TIME = 1000;
     // 验证登录(加快断线重连验证)
     protected String sessionId;
+
     // 玩家基本数据
     @Embedded
     @Allow
     protected P player;
+
     // 玩家更多数据
     @Embedded
     @Allow
     protected A playerA;
+
     // 登录时间
     @JaEdit(editable = JeEditable.LOCKED, types = "dateTime")
     @Allow
     protected long loginTime;
+
     // 连接接收
     @JaLang(value = "连接", tag = "connect")
     @JsonIgnore
     @JaEdit(editable = JeEditable.LOCKED)
-    protected R receiver;
+    private R receiver;
+
     // 全部恢复
     @JsonSerialize(contentUsing = IBaseSerializer.class)
     @JaEdit(editable = JeEditable.DISABLE)
     protected transient List<Recovery> recoveries = new ArrayList<Recovery>();
+
     protected boolean modifyDirty;
+
     protected long writeMailTime;
-    private boolean asyncRunning;
-    private List<Runnable> asyncRunnables;
+
+    private boolean receiverRunning;
+
+    private List<ReceiverRunnable<R>> receiverRunnables;
 
     public String getSessionId() {
         return sessionId;
@@ -72,8 +80,8 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         this.sessionId = sessionId;
     }
 
-    public boolean validateSessionId(String sessionId) {
-        return KernelObject.equals(this.sessionId, sessionId);
+    public boolean validateSessionId(long serverId, String sessionId) {
+        return player.getServerId() == serverId && KernelObject.equals(this.sessionId, sessionId);
     }
 
     /**
@@ -94,10 +102,20 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         return loginTime;
     }
 
+    // 是否未创建角色
+    public boolean isNoCharacter() {
+        return player.getCreateTime() == 0;
+    }
+
+    // 账号是否被封
+    public boolean isBanning() {
+        return player.getBanTime() > ContextUtils.getContextTime();
+    }
+
     /**
      * 获取玩家当前连接
      */
-    protected R getReceiver() {
+    public R getReceiver() {
         return receiver;
     }
 
@@ -106,12 +124,106 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
      */
     public synchronized void setReceiver(R r) {
         if (r != receiver) {
+            asyncWriteClear();
             if (r != null && receiver != null) {
-                writeKickMessage();
+                writeKickMessage(receiver);
             }
 
             receiver = r;
         }
+    }
+
+    public static abstract class ReceiverRunnable<R> {
+
+        protected abstract void write(R receiver) throws Throwable;
+    }
+
+    protected void doReceiverRunnable(ReceiverRunnable<R> receiverRunnable, R receiver) throws Throwable {
+        receiverRunnable.write(receiver);
+    }
+
+    /**
+     * 异步执行
+     */
+    public synchronized void asyncWrite(final ReceiverRunnable<R> receiverRunnable) {
+        if (receiverRunning) {
+            if (receiverRunnables == null) {
+                receiverRunnables = new ArrayList<ReceiverRunnable<R>>();
+            }
+
+            receiverRunnables.add(receiverRunnable);
+            return;
+        }
+
+        try {
+            receiverRunning = true;
+            ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        R _receiver = receiver;
+                        if (_receiver != null) {
+                            try {
+                                doReceiverRunnable(receiverRunnable, _receiver);
+
+                            } catch (Throwable e) {
+                                writeThrow(_receiver, e);
+                            }
+                        }
+
+                        while (true) {
+                            List<ReceiverRunnable<R>> runnables = null;
+                            synchronized (JbPlayerContext.this) {
+                                _receiver = receiver;
+                                runnables = receiverRunnables;
+                                receiverRunnables = null;
+                            }
+
+                            if (runnables == null) {
+                                synchronized (this) {
+                                    receiverRunning = false;
+                                }
+
+                                break;
+                            }
+
+                            if (_receiver != null) {
+                                for (ReceiverRunnable runnable : runnables) {
+                                    if (_receiver != receiver) {
+                                        break;
+                                    }
+
+                                    try {
+                                        doReceiverRunnable(runnable, _receiver);
+
+                                    } catch (Throwable e) {
+                                        writeThrow(_receiver, e);
+                                    }
+                                }
+                            }
+                        }
+
+                    } finally {
+                        synchronized (JbPlayerContext.this) {
+                            if (receiverRunning) {
+                                receiverRunning = false;
+                                if (receiverRunnables != null) {
+                                    asyncWrite(null);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+        } catch (Throwable e) {
+            asyncWriteClear();
+            receiverRunning = false;
+        }
+    }
+
+    protected synchronized void asyncWriteClear() {
+        receiverRunnables = null;
     }
 
     @Override
@@ -158,7 +270,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
     protected void load() {
         Session session = BeanDao.getSession();
         long id = getId();
-        player = (P) session.get(AGameComponent.ME.PLAYERA_CLASS, getId());
+        player = (P) session.get(AGameComponent.ME.PLAYER_CLASS, getId());
         if (player == null) {
             throw new ServerException(ServerStatus.NO_LOGIN);
         }
@@ -197,80 +309,8 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         playerA.setOnlineDay(onlineDay);
     }
 
-    /**
-     * 异步执行
-     */
-    public synchronized void async(final Runnable asyncRunnable) {
-        if (asyncRunning) {
-            if (asyncRunnables == null) {
-                asyncRunnables = new ArrayList<Runnable>();
-            }
-
-            asyncRunnables.add(asyncRunnable);
-            return;
-        }
-
-        asyncRunning = true;
-        try {
-            ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (asyncRunnable != null) {
-                            asyncRunnable.run();
-                        }
-
-                        R _receiver = null;
-                        while (true) {
-                            List<Runnable> runnables = null;
-                            synchronized (JbPlayerContext.this) {
-                                runnables = asyncRunnables;
-                                asyncRunnables = null;
-                                _receiver = receiver;
-                            }
-
-                            if (runnables == null) {
-                                synchronized (this) {
-                                    asyncRunning = false;
-                                }
-
-                                break;
-                            }
-
-                            for (Runnable runnable : runnables) {
-                                if (_receiver != receiver) {
-                                    break;
-                                }
-
-                                runnable.run();
-                            }
-                        }
-
-                    } finally {
-                        synchronized (JbPlayerContext.this) {
-                            if (asyncRunning) {
-                                asyncRunning = false;
-                                if (asyncRunnables != null) {
-                                    async(null);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-        } catch (Throwable e) {
-            asyncClear();
-            asyncRunning = false;
-        }
-    }
-
-    protected synchronized void asyncClear() {
-        asyncRunnables = null;
-    }
-
     protected void mailDirtyAt() {
-        writeMailTime = ContextUtils.getContextTime() + DIRTY_TIME;
+        writeMailTime = ContextUtils.getContextTime() + 3000;
     }
 
     @Override
@@ -287,22 +327,12 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
 
         if (modifyDirty) {
             modifyDirty = false;
-            async(new Runnable() {
-                @Override
-                public void run() {
-                    writeModifyMessage();
-                }
-            });
+            writeModifyMessage();
         }
 
         if (writeMailTime != 0 && writeMailTime < contextTime) {
             writeMailTime = 0;
-            async(new Runnable() {
-                @Override
-                public void run() {
-                    writeMailMessage();
-                }
-            });
+            writeMailMessage();
         }
 
         return false;
@@ -339,14 +369,14 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
     }
 
     /*
-     * 关闭连接
+     * 写入出错
      */
-    public abstract void writeThrow(Throwable e);
+    public abstract void writeThrow(R receiver, Throwable e);
 
     /**
-     * 写入登录消息
+     * 写入踢出消息
      */
-    public abstract void writeKickMessage();
+    public abstract void writeKickMessage(R receiver);
 
     /**
      * 写入封禁消息

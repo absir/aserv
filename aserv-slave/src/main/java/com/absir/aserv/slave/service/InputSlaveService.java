@@ -22,7 +22,7 @@ import com.absir.slave.InputSlaveContext;
 public class InputSlaveService extends InputSlaveContext {
 
     @Inject(type = InjectType.Selectable)
-    private static ISlaveServerPort slaveServerPort;
+    private ISlaveServerPort slaveServerPort;
 
     @Override
     public byte[] registerData(InputSlaveAdapter adapter, byte[] buffer) {
@@ -30,7 +30,7 @@ public class InputSlaveService extends InputSlaveContext {
         String registerKey = HelperEncrypt.encryptionMD5(adapter.getKey(), buffer) + ',' + group + ',' + ServerEnvironment.getStartTime() + ',' +
                 InitBeanFactory.ME.getVersion() + ',' + InitBeanFactory.ME.getAppRoute() + ',' + InitBeanFactory.ME.getAppCode();
         if (slaveServerPort != null) {
-            registerKey += ',' + slaveServerPort.getServerPort();
+            registerKey += "," + slaveServerPort.getServerPort();
         }
 
         return adapter.sendDataBytes(registerKey.getBytes(), false, false, 0, null);

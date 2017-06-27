@@ -136,15 +136,13 @@ public class SocketServer {
         return globalSelSessionMap.get(socketChannel);
     }
 
-    public static void sessionClose(SelSession selSession) throws Throwable {
-        sessionClose(selSession, selSession.getSocketChannel());
-    }
+    protected static void sessionClose(SelSession selSession, SocketChannel socketChannel) throws Throwable {
+        if (socketChannel != null) {
+            try {
+                socketChannel.close();
 
-    public static void sessionClose(SelSession selSession, SocketChannel socketChannel) throws Throwable {
-        try {
-            socketChannel.close();
-
-        } catch (Exception e) {
+            } catch (Exception e) {
+            }
         }
 
         if (selSession != null) {
@@ -205,11 +203,23 @@ public class SocketServer {
     }
 
     public static void close(SocketChannel socketChannel) {
+        close(null, socketChannel);
+    }
+
+    public static void close(SelSession selSession, SocketChannel socketChannel) {
+        if (socketChannel == null) {
+            if (selSession == null) {
+                return;
+            }
+
+            socketChannel = selSession.getSocketChannel();
+        }
+
         try {
             if (globalSelSessionMap != null && socketChannel.isRegistered()) {
-                SelSession selSession = globalSelSessionMap.remove(socketChannel);
-                if (selSession != null) {
-                    sessionClose(selSession, socketChannel);
+                SelSession session = globalSelSessionMap.remove(socketChannel);
+                if (selSession == null) {
+                    selSession = session;
                 }
             }
 
@@ -218,25 +228,14 @@ public class SocketServer {
         } catch (Throwable e) {
         }
 
+        try {
+            sessionClose(selSession, socketChannel);
+
+        } catch (Throwable throwable) {
+        }
+
         if (closeDebug) {
             new Exception().printStackTrace();
-        }
-    }
-
-    public static void close(SelSession selSession, SocketChannel socketChannel) {
-        if (selSession == null) {
-            close(socketChannel);
-
-        } else {
-            try {
-                sessionClose(selSession, socketChannel);
-
-            } catch (Throwable e) {
-            }
-
-            if (closeDebug) {
-                new Exception().printStackTrace();
-            }
         }
     }
 
@@ -470,8 +469,7 @@ public class SocketServer {
                                 key.cancel();
                                 try {
                                     if (socketBuffer != null) {
-                                        globalSelSessionMap.remove(socketChannel);
-                                        sessionClose(selSession, socketChannel);
+                                        close(selSession, socketChannel);
                                     }
 
                                 } catch (Throwable e) {

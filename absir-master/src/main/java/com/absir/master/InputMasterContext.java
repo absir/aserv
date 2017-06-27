@@ -84,8 +84,6 @@ public class InputMasterContext {
 
     /**
      * 开始服务
-     *
-     * @throws IOException
      */
     @Started
     protected void started() throws IOException {

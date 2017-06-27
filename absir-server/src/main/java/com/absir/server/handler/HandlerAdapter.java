@@ -7,6 +7,7 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.client.rpc.RpcInterface;
 import com.absir.core.kernel.KernelReflect;
+import com.absir.core.kernel.KernelString;
 import com.absir.server.value.Close;
 import com.absir.server.value.Handler;
 
@@ -83,6 +84,10 @@ public class HandlerAdapter {
         if (handlerType.handlerMethodMap != null && !handlerType.handlerMethodMap.isEmpty()) {
             IHandlerRoute route = handler instanceof IHandlerRoute ? (IHandlerRoute) handler : null;
             String rpcName = RpcInterface.getRpcName(null, beanType);
+            if (KernelString.isEmpty(rpcName)) {
+                rpcName = beanType.getSimpleName();
+            }
+
             for (HandlerType.HandlerMethod handlerMethod : handlerType.handlerMethodMap.values()) {
                 String uri = route == null ? RpcInterface.getRpcUri(rpcName, handlerMethod.method) : route.getHandlerUri(rpcName, handlerMethod.method);
                 if (map.containsKey(uri)) {

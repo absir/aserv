@@ -1,6 +1,7 @@
 package com.absir.platform.service;
 
 import com.absir.aserv.configure.JConfigureUtils;
+import com.absir.aserv.master.bean.JSlave;
 import com.absir.aserv.master.bean.JSlaveServer;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.value.IUser;
@@ -18,6 +19,7 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Started;
+import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelCollection;
@@ -167,6 +169,7 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
     }
 
     @Async(notifier = true)
+    @Transaction(readOnly = true)
     protected void reloadServers() {
         List<PlatformServer> list = new ArrayList<PlatformServer>();
         try {
@@ -180,10 +183,9 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
                         DServer dServer = dServers[last];
                         JSlaveServer slaveServer = BeanService.ME.get(JSlaveServer.class, dServer.getId());
                         if (slaveServer != null) {
-                            DServer value = createDServer(dServer);
                             PlatformServer platformServer = new PlatformServer();
                             platformServer.server = server;
-                            platformServer.value = value;
+                            platformServer.value = createDServer(dServer);
                             platformServer.dServer = dServer;
                             setDServer(platformServer, slaveServer);
                             list.add(platformServer);
@@ -193,7 +195,7 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
             }
 
             serverList = list;
-            //KernelList.sortOrderable(serverList);
+            KernelList.sortOrderableDesc(serverList);
 
         } catch (ConcurrentModificationException e) {
             Environment.throwable(e);
@@ -208,12 +210,20 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
     protected void setDServer(PlatformServer platformServer, JSlaveServer slaveServer) {
         platformServer.beginTime = slaveServer.getBeginTime();
         platformServer.passTime = slaveServer.getPassTime();
+        platformServer.closed = slaveServer.isClosed();
         DServer value = platformServer.value;
         DServer dServer = platformServer.dServer;
         value.setName(KernelString.isEmpty(dServer.getName()) ? slaveServer.getName() : dServer.getName());
         value.setSAddress(KernelString.isEmpty(dServer.getSAddress()) ? slaveServer.getServerAddress() : dServer.getSAddress());
         value.setsAddressV6(KernelString.isEmpty(dServer.getsAddressV6()) ? slaveServer.getServerAddressV6() : dServer.getSAddressV6());
-        value.setPort(dServer.getPort() == 0 ? slaveServer.getPort() : dServer.getPort());
+        JSlave slave = slaveServer.getSlave();
+        if (slave == null || slave.getSlaveServerPort() <= 0) {
+            value.setPort(dServer.getPort() == 0 ? slaveServer.getPort() : dServer.getPort());
+
+        } else {
+            value.setPort(slave.getSlaveServerPort());
+        }
+
         value.setDAddress(KernelString.isEmpty(dServer.getDAddress()) ? slaveServer.getResourceUrl() : dServer.getDAddress());
         value.setStatus(slaveServer.isClosed() ? EServerStatus.maintain : value.getStatus());
     }
@@ -372,11 +382,28 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
     @Override
     public List<DServer> servers(int fromId, boolean review) throws TException {
         DPlatformFrom platformFrom = ME.getPlatformFromId(fromId);
+        long contextTime = ContextUtils.getContextTime();
         List<DServer> servers = new ArrayList<DServer>(serverList.size());
+        PlatformServer lastMatchClosedServer = null;
         for (PlatformServer server : serverList) {
             if (isMatchPlatform(server.getPlatform(), review, platformFrom)) {
+                if (server.closed || server.beginTime < contextTime) {
+                    if (server.beginTime - contextTime > 60000) {
+                        lastMatchClosedServer = server;
+                        continue;
+                    }
+
+                    server.value.setStatus(EServerStatus.wait);
+                }
+
                 servers.add(server.value);
             }
+        }
+
+        if (servers.isEmpty() && lastMatchClosedServer != null) {
+            PlatformServer server = lastMatchClosedServer;
+            server.value.setStatus(EServerStatus.wait);
+            servers.add(server.value);
         }
 
         return servers;
@@ -526,6 +553,8 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         protected long beginTime;
 
         protected long passTime;
+
+        protected boolean closed;
 
         public JbPlatform getPlatform() {
             return server;

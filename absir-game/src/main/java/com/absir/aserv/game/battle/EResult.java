@@ -5,7 +5,7 @@
  * <p/>
  * Create on 2013-10-17 下午7:14:39
  */
-package com.absir.aserv.game.value;
+package com.absir.aserv.game.battle;
 
 import com.absir.aserv.system.bean.value.JaLang;
 
@@ -23,14 +23,18 @@ public enum EResult {
     @JaLang("战斗失败")
     LOSS,;
 
-    public static EResult getReverse(EResult eFight) {
-        if (eFight == VICTORY) {
-            eFight = LOSS;
+    public static boolean isDone(EResult result) {
+        return result == EResult.DONE;
+    }
 
-        } else if (eFight == LOSS) {
-            eFight = VICTORY;
+    public static EResult reverse(EResult result) {
+        if (result == VICTORY) {
+            result = LOSS;
+
+        } else if (result == LOSS) {
+            result = VICTORY;
         }
 
-        return eFight;
+        return result;
     }
 }

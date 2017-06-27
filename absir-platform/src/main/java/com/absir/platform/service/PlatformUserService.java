@@ -218,4 +218,13 @@ public class PlatformUserService {
 
         return null;
     }
+
+    public JPlatformUser loginValidateSessionId(Long id, String sessionId) {
+        JPlatformUser platformUser = id == null ? null : BeanService.ME.get(JPlatformUser.class, id);
+        if (platformUser != null && KernelObject.equals(platformUser.getSessionId(), sessionId)) {
+            return platformUser;
+        }
+
+        return null;
+    }
 }

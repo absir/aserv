@@ -120,7 +120,7 @@ public abstract class PlayerService {
     public Long openPlayerId(Long serverId, Long userId) {
         Long playerId = openPlayerId(serverId, userId);
         if (playerId == null) {
-            JbPlayer player = AGameComponent.ME.createPlayer();
+            JbPlayer player = AGameComponent.ME.createPlayer(serverId);
             player.setCreateTime(ContextUtils.getContextTime());
             player.setServerId(serverId);
             player.setUserId(userId);
@@ -257,7 +257,7 @@ public abstract class PlayerService {
             platformUser.setServerId(serverId);
         }
 
-        JbPlayer player = AGameComponent.ME.createPlayer();
+        JbPlayer player = AGameComponent.ME.createPlayer(serverId);
         player.setServerId(serverId);
         player.setUserId(userBase.getUserId());
         player.setName(name);

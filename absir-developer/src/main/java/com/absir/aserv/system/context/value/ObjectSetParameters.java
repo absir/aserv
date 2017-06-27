@@ -34,9 +34,13 @@ public class ObjectSetParameters {
     }
 
     public void setParameters(String[] parameters) {
+        if (parameters == null || parameters.length == 0) {
+            return;
+        }
+
         List<Field> fields = getFields();
         int size = fields.size();
-        int length = parameters == null ? 0 : parameters.length;
+        int length = parameters.length;
         if (size > length) {
             size = length;
         }
@@ -59,6 +63,10 @@ public class ObjectSetParameters {
     }
 
     public void setParameterCollection(Collection<Object> parameters) {
+        if (parameters == null || parameters.isEmpty()) {
+            return;
+        }
+
         List<Field> fields = getFields();
         int size = fields.size();
         int i = 0;

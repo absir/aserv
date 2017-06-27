@@ -25,11 +25,17 @@ import java.util.*;
 public class TSocketAdapterReceiver implements SocketAdapter.CallbackAdapter {
 
     public static final int PUSH_CALLBACK_INDEX = 8;
+
     public static final int DICT_CALLBACK_INDEX = 9;
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(TSocketAdapterReceiver.class);
+
     protected Map<String, KernelLang.ObjectEntry<Object, ProcessFunction>> nameMapIFaceProcessFunction;
+
     protected TSocketAdapterProtocol adapterProtocol;
+
     protected SocketAdapter socketAdapter;
+
     private Map<Integer, List<TProtocolTimeout>> callbackIndexMapProtocol = new HashMap<Integer, List<TProtocolTimeout>>();
 
     public static String getServiceName(Class<?> ifaceType) {

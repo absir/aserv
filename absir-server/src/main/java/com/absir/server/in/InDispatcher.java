@@ -36,8 +36,10 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
 
     @Inject
     static HandlerInvoker handlerInvoker;
+
     @Inject
     private static RouteAdapter routeAdapter;
+
     @Inject
     private static HandlerAdapter handlerAdapter;
 

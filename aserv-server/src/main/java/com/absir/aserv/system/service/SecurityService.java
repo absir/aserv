@@ -48,7 +48,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 @Configure
-public abstract class SecurityService implements ISecurityService, ISecurity, IEntityMerge<JiUserBase>, IAfterInvoker<SecurityContext> {
+public abstract class SecurityService implements ISecurityService, ISecurity, IAfterInvoker<SecurityContext> {
 
     public static final String USER_NO_LOGIN = LangCodeUtils.get("用户没有登录", SecurityService.class);
 
@@ -512,9 +512,8 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
         return false;
     }
 
-    @Transaction
-    @Override
-    public void merge(String entityName, JiUserBase entity, MergeType mergeType, Object mergeEvent) {
+    @Transaction(readOnly = true)
+    public void mergeUserBase(String entityName, JiUserBase entity, IEntityMerge.MergeType mergeType, Object mergeEvent) {
         if (getFactorySecurityContextClass() != null) {
             Iterator<String> iterator = QueryDaoUtils.createQueryArray(BeanDao.getSession(),
                     "SELECT o.id FROM JSession o WHERE o.userId = ? AND o.passTime > ?", entity.getUserId(),
@@ -522,7 +521,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IE
             while (iterator.hasNext()) {
                 SecurityContext securityContext = ContextUtils.findContext(SecurityContext.class, iterator.next());
                 if (securityContext != null) {
-                    if (mergeType == MergeType.UPDATE) {
+                    if (mergeType == IEntityMerge.MergeType.UPDATE) {
                         securityContext.setUser(entity);
 
                     } else {

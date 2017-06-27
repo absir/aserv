@@ -85,7 +85,12 @@ public class CsvUtils {
         }
 
         final Writer writer = new OutputStreamWriter(outputStream, KernelCharset.UTF8);
-        Object first = bases.iterator().next();
+        Iterator<?> iterator = bases.iterator();
+        Object first = iterator.hasNext() ? iterator.next() : null;
+        if (first == null) {
+            return;
+        }
+
         final Class<?> xlsClass = beanClass == null ? first.getClass() : beanClass;
         XlsBase xlsBase = first instanceof XlsBase ? (XlsBase) first : XlsUtils.XLS_BASE;
         XlsAccessorContext accessorContext = new XlsAccessorContext(xlsClass, xlsBase);

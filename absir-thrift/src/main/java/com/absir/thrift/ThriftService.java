@@ -26,7 +26,6 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.TException;
 import org.apache.thrift.TServiceClient;
-import org.apache.thrift.TServiceClientFactory;
 import org.apache.thrift.protocol.TMessage;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
@@ -55,26 +54,38 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
     protected static final Logger LOGGER = LoggerFactory.getLogger(ThriftService.class);
 
     protected static final TypeVariable BASE_VARIABLE = TBaseProcessor.class.getTypeParameters()[0];
+
     protected TMultiplexedProcessorProxy processorProxy;
+
     protected SocketServer server;
+
     @Value("thrift.host")
     //"localhost"
     protected String thriftHost;
+
     @Value("thrift.port")
     protected int thriftPort = getDefaultThriftPort();
+
     @Value("thrift.accept.timeout")
     protected long thriftAcceptTimeout = 30000;
+
     @Value("thrift.idle.timeout")
     protected long thriftIdleTimeout = 30000;
+
     @Value("thrift.backlog")
     protected int backlog = 50;
+
     @Value("thrift.bufferSize")
     protected int bufferSize = 1024;
+
     @Value("thrift.receiveBufferSize")
     protected int receiveBufferSize = 2048;
+
     @Value("thrift.sendBufferSize")
     protected int sendBufferSize = 2048;
+
     protected Map<Class, String> classMapServiceName;
+
     @Value("thrift.encryptKey")
     protected String encryptKey = "absir.thrift";
 
@@ -303,7 +314,7 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
         }
     }
 
-    public <T extends TServiceClient> T getPushClient(Class<T> clientType, TServiceClientFactory<T> factory, SelSession selSession) {
+    public TPushProtocol getPushProtocol(Class<? extends TServiceClient> clientType, SelSession selSession) {
         if (classMapServiceName == null) {
             synchronized (this) {
                 if (classMapServiceName == null) {
@@ -320,7 +331,7 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
         }
 
         TPushProtocol pushProtocol = new TPushProtocol(new TAdapterTransport<SelSession>(selSession), serviceName);
-        T client = factory.getClient(null, pushProtocol);
+        //T client = factory.getClient(null, pushProtocol);
         if (parentName != null) {
             //Processor URI_DICT_FLAG
             synchronized (this) {
@@ -343,10 +354,10 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
             }
         }
 
-        return client;
+        return pushProtocol;
     }
 
-    protected class TPushProtocol extends TAdapterProtocol<SelSession> {
+    public class TPushProtocol extends TAdapterProtocol<SelSession> {
 
         public TPushProtocol(TAdapterTransport<SelSession> adapterTransport, String serviceName) {
             super(adapterTransport, serviceName);

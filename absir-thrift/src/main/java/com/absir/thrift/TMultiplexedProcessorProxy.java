@@ -60,12 +60,26 @@ public class TMultiplexedProcessorProxy implements TProcessor {
             } else {
                 IFaceProxy faceProxy = faceProcessProxy.faceProxy;
                 OnPut onPut = faceProxy == null ? null : OnPut.get();
-                Object iface = onPut == null ? faceProcessProxy.iface : faceProxy.getServer(onPut);
+                Object context = onPut == null ? faceProcessProxy.iface : faceProxy.getContext(onPut);
+                Object iface = faceProxy.getIFace(onPut, context);
                 if (iface == null) {
                     throw new TException("IFace is null!? " + message.name);
                 }
 
-                faceProcessProxy.processFunction.process(message.seqid, iprot, oprot, iface);
+                Throwable ex = null;
+                try {
+                    faceProcessProxy.processFunction.process(message.seqid, iprot, oprot, iface);
+
+                } catch (Throwable e) {
+                    ex = e;
+                    throw (e instanceof TException ? (TException) e : new TException(e));
+
+                } finally {
+                    if (faceProxy != null) {
+                        faceProxy.doFinally(onPut, context, ex);
+                    }
+                }
+
                 return true;
             }
         }
@@ -74,7 +88,8 @@ public class TMultiplexedProcessorProxy implements TProcessor {
     public void process(TMultiplexedProcessorProxy.IFaceProcessProxy faceProcessProxy, Input input, ThriftService service) throws IOException, TException {
         IFaceProxy faceProxy = faceProcessProxy.faceProxy;
         OnPut onPut = faceProxy == null ? null : OnPut.get();
-        Object iface = onPut == null ? faceProcessProxy.iface : faceProxy.getServer(onPut);
+        Object context = onPut == null ? null : faceProxy.getContext(onPut);
+        Object iface = faceProxy == null ? faceProcessProxy.iface : faceProxy.getIFace(onPut, context);
         if (iface == null) {
             throw new TException("IFace is null!? " + input.getUri());
         }
@@ -95,7 +110,20 @@ public class TMultiplexedProcessorProxy implements TProcessor {
         }
 
         TTransport outTransport = new TIOStreamTransport(outputStream);
-        faceProcessProxy.processFunction.process(0, new TCompactProtocol(inTransport), new TInputOutProtocol(outTransport), iface);
+        Throwable ex = null;
+        try {
+            faceProcessProxy.processFunction.process(0, new TCompactProtocol(inTransport), new TInputOutProtocol(outTransport), iface);
+
+        } catch (Throwable e) {
+            ex = e;
+            throw (e instanceof TException ? (TException) e : new TException(e));
+
+        } finally {
+            if (faceProxy != null) {
+                faceProxy.doFinally(onPut, context, ex);
+            }
+        }
+
         if (byteArrayOutputStream != null) {
             input.write(inputSocket == null ? byteArrayOutputStream.toByteArray() : service.encrypt(inputSocket.getSocketAtt().getSelSession(), 1, byteArrayOutputStream));
         }

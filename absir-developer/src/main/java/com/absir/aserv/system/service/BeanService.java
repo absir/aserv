@@ -23,6 +23,8 @@ import com.absir.orm.transaction.TransactionUtils;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -89,6 +91,9 @@ public interface BeanService {
             return COMPARATOR_ID.compare(rhs, lhs);
         }
     };
+
+    @Transaction(readOnly = true)
+    public boolean exist(String entityName, Serializable id);
 
     @Transaction(readOnly = true)
     public <T> T get(Class<T> entityClass, Serializable id);
@@ -182,6 +187,8 @@ public interface BeanService {
 
     public static class MERGE {
 
+        protected static final Logger LOGGER = LoggerFactory.getLogger(MERGE.class);
+
         public static Object merge(Object entity, Serializable id, CallbackTemplate<Object> merge) {
             if (entity instanceof IMergeService) {
                 return ((IMergeService) entity).merge(merge, id);
@@ -200,6 +207,7 @@ public interface BeanService {
 
                     } catch (Exception e) {
                         ex = e;
+                        LOGGER.error("merge " + entity + "[" + id + "] error", e);
 
                     } finally {
                         transactionContext.closeCurrent(ex, null);
