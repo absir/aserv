@@ -288,6 +288,14 @@ public class SocketAdapter {
         }
     }
 
+    public void copyStatusAdapter(SocketAdapter adapter) {
+        if (adapter != null) {
+            varintsServerTime = adapter.varintsServerTime;
+            uriVarints = adapter.uriVarints;
+            varintsUri = adapter.varintsUri;
+        }
+    }
+
     public void clearUriVarints() {
         if (uriVarints != null) {
             uriVarints.clear();
@@ -506,7 +514,7 @@ public class SocketAdapter {
         if (socket == null) {
             if (callbackConnect == null) {
                 addDisconnectNumber();
-                
+
             } else {
                 synchronized (this) {
                     try {
