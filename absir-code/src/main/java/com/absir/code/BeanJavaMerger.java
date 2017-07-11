@@ -514,6 +514,10 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
         return method;
     }
 
+    protected Expression getMergeDirtyAssignExpression(String name) {
+        return new AssignExpr(new NameExpr("_clone." + name), new NameExpr(name), AssignExpr.Operator.assign);
+    }
+
     protected MethodDeclaration getMergeDirty(TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap) {
         MethodDeclaration method = new MethodDeclaration();
         method.setName("mergeDirty");
@@ -543,7 +547,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
             List<Statement> thenStmts = new ArrayList<Statement>();
             thenStmt.setStmts(thenStmts);
             thenStmts.add(new ExpressionStmt(
-                    new AssignExpr(new NameExpr("_clone." + name), new NameExpr(name), AssignExpr.Operator.assign)));
+                    getMergeDirtyAssignExpression(name)));
             // if(isDirty(0)) { _clone.a = a }
             Statement ifStms = new IfStmt(new NameExpr("isDirtyI(" + index + ")"), thenStmt, null);
             bodyStms.add(ifStms);

@@ -154,7 +154,7 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
 
             } else if (type == 2) {
                 CList list = new CList();
-                list.add(xlsDao.getAll());
+                list.addAll(xlsDao.getAll());
                 field.set(obj, list);
 
             } else if (type == 3) {

@@ -7,15 +7,14 @@
  */
 package com.absir.code;
 
+import com.absir.core.kernel.KernelString;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
-import com.github.javaparser.ast.expr.AnnotationExpr;
-import com.github.javaparser.ast.expr.MarkerAnnotationExpr;
-import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 import java.util.ArrayList;
@@ -83,5 +82,12 @@ public class ThriftJavaMerger extends BeanJavaMerger {
                 }
             }
         }
+    }
+
+    @Override
+    protected Expression getMergeDirtyAssignExpression(String name) {
+        List<Expression> args = new ArrayList<Expression>();
+        args.add(new NameExpr(name));
+        return new MethodCallExpr(new NameExpr("_clone"), "set" + KernelString.capitalize(name), args);
     }
 }

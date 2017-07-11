@@ -10,6 +10,8 @@ package com.absir.code;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.expr.AssignExpr;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
@@ -31,6 +33,10 @@ public class ThriftCodecJavaMerger extends ThriftJavaMerger {
 
     @Override
     protected void processBodyDeclaration(BodyDeclaration bodyDeclaration, String declarationAsString) {
+    }
+
+    protected Expression getMergeDirtyAssignExpression(String name) {
+        return new AssignExpr(new NameExpr("_clone." + name), new NameExpr(name), AssignExpr.Operator.assign);
     }
 
 }
