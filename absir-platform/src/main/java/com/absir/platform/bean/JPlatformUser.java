@@ -9,7 +9,7 @@ package com.absir.platform.bean;
 
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
-import com.absir.aserv.system.bean.base.JbBeanLI;
+import com.absir.aserv.system.bean.base.JbBeanAL;
 import com.absir.aserv.system.bean.base.JbUserRole;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.proxy.JiUserRole;
@@ -31,7 +31,7 @@ import java.util.Map;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
-public class JPlatformUser extends JbBeanLI implements JiUserBase {
+public class JPlatformUser extends JbBeanAL implements JiUserBase {
 
     @JaLang("平台")
     @JaEdit(groups = {JaEdit.GROUP_SUGGEST})

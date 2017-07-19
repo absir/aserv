@@ -1391,6 +1391,7 @@ public class SocketAdapter {
                         clearTimeout(true);
                     }
 
+                    lastTime = contextTime;
                     if (!addTimeouts.isEmpty()) {
                         synchronized (this) {
                             callbackTimeouts.addAll(addTimeouts);

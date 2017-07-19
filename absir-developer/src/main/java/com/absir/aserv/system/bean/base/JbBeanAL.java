@@ -7,12 +7,14 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 
 /**
  * Created by absir on 19/7/17.
  */
-public class JbBeanLI extends JbBase implements JiBean {
+@MappedSuperclass
+public class JbBeanAL extends JbBase implements JiBean {
 
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("纪录编号")

@@ -261,6 +261,8 @@ public abstract class PlayerService {
         player.setServerId(serverId);
         player.setUserId(userBase.getUserId());
         player.setName(name);
+        player.setPlatform(platformUser.getPlatform());
+        player.setUsername(platformUser.getUsername());
         Session session = BeanDao.getSession();
         session.persist(player);
         platformUser.setPlayerId(player.getId());
