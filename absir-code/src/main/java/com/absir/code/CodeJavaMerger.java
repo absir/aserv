@@ -148,6 +148,33 @@ public abstract class CodeJavaMerger {
         }
 
         TypeDeclaration toType = null;
+        if (toCompilationUnit != null) {
+            for (TypeDeclaration type : toCompilationUnit.getTypes()) {
+                if (type.getName().equals(className)) {
+                    toType = type;
+                    break;
+                }
+            }
+
+            if (toType != null) {
+                boolean foundOverride = false;
+                List<AnnotationExpr> annotationExprs = toType.getAnnotations();
+                if (annotationExprs != null) {
+                    for (AnnotationExpr annotationExpr : annotationExprs) {
+                        if (annotationExpr.getName().toString().equals("AOverride")) {
+                            foundOverride = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!foundOverride) {
+                    toCompilationUnit = null;
+                    toType = null;
+                }
+            }
+        }
+
         if (toCompilationUnit == null) {
             toCompilationUnit = fromCompilationUnit;
             toType = fromType;

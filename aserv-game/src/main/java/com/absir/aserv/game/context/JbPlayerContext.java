@@ -229,6 +229,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
     @Override
     protected void initialize() {
         PlayerService.ME.load(this);
+        loadDone();
         loginTime = ContextUtils.getContextTime();
         checkOnlineDay();
 
@@ -291,6 +292,10 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
      * 载入更多数据
      */
     protected abstract void load(Session session, boolean newPlayerA);
+
+    // 载入数据完成
+    protected abstract void loadDone();
+
 
     /**
      * 检测在线天数
@@ -438,7 +443,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         /**
          * 设置恢复属性值
          */
-        protected abstract boolean setRecoveryValue(int value);
+        protected abstract boolean setRecoveryNumber(int number);
 
         /**
          * 开启恢复
@@ -471,7 +476,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
                     recoveryTime += step * recoveryInterval;
                     // 恢复间隔计算恢复数值
                     int recoveryNumber = getRecoveryNumber();
-                    int newRecoveryNumber = recoveryNumber + step;
+                    int newRecoveryNumber = recoveryNumber + step * getRecoveryValue();
                     // 比较最大恢复数值
                     int maxRecoveryNumber = getMaxRecoveryNumber();
                     if (newRecoveryNumber > maxRecoveryNumber) {
@@ -483,7 +488,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
                         synchronized (JbPlayerContext.this) {
                             // 计算实际恢复
                             if (newRecoveryNumber > getRecoveryNumber()) {
-                                if (setRecoveryValue(newRecoveryNumber)) {
+                                if (setRecoveryNumber(newRecoveryNumber)) {
                                     recoveryTime = 0;
                                 }
 

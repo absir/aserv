@@ -80,8 +80,8 @@ public abstract class ContextUtils implements IBeanDefineEager {
         return contextFactory.getContextTime();
     }
 
-    public static int getShortTime() {
-        return contextFactory.getShortTime();
+    public static int getContextShortTime() {
+        return contextFactory.getContextShortTime();
     }
 
     public static ThreadPoolExecutor getThreadPoolExecutor() {

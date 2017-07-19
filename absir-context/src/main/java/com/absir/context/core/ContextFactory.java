@@ -35,7 +35,7 @@ public class ContextFactory {
 
     private long contextTime = forContextTime();
 
-    private int shortTime = (int) (contextTime / 1000);
+    private int contextShortTime = (int) (contextTime / 1000);
 
     private Queue<ContextBase> contextBases = new ConcurrentLinkedQueue<ContextBase>();
 
@@ -72,6 +72,7 @@ public class ContextFactory {
         @Override
         public void run() {
             contextTime = forContextTime();
+            contextShortTime = (int) (contextTime / 1000);
             Iterator<ContextBase> contextBaseIterator = contextBases.iterator();
             while (contextBaseIterator.hasNext()) {
                 final ContextBase contextBase = contextBaseIterator.next();
@@ -175,8 +176,8 @@ public class ContextFactory {
         return contextTime;
     }
 
-    public int getShortTime() {
-        return shortTime;
+    public int getContextShortTime() {
+        return contextShortTime;
     }
 
     public ThreadPoolExecutor getThreadPoolExecutor() {
