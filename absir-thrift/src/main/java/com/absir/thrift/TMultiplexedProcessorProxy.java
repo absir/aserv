@@ -5,10 +5,7 @@ import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
 import com.absir.server.socket.InputSocket;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.thrift.ProcessFunction;
-import org.apache.thrift.TBaseProcessor;
-import org.apache.thrift.TException;
-import org.apache.thrift.TProcessor;
+import org.apache.thrift.*;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TMessage;
 import org.apache.thrift.protocol.TProtocol;
@@ -72,10 +69,14 @@ public class TMultiplexedProcessorProxy implements TProcessor {
 
                 } catch (Throwable e) {
                     ex = e;
-                    throw (e instanceof TException ? (TException) e : new TException(e));
 
                 } finally {
-                    if (faceProxy != null) {
+                    if (faceProxy == null) {
+                        if (ex != null) {
+                            throw (ex instanceof TException ? (TException) ex : new TException(ex));
+                        }
+
+                    } else {
                         faceProxy.doFinally(onPut, context, ex);
                     }
                 }
@@ -111,16 +112,34 @@ public class TMultiplexedProcessorProxy implements TProcessor {
 
         TTransport outTransport = new TIOStreamTransport(outputStream);
         Throwable ex = null;
+        TInputOutProtocol tInputOutProtocol = new TInputOutProtocol(outTransport);
         try {
-            faceProcessProxy.processFunction.process(0, new TCompactProtocol(inTransport), new TInputOutProtocol(outTransport), iface);
+            faceProcessProxy.processFunction.process(0, new TCompactProtocol(inTransport), tInputOutProtocol, iface);
 
         } catch (Throwable e) {
             ex = e;
-            throw (e instanceof TException ? (TException) e : new TException(e));
 
         } finally {
-            if (faceProxy != null) {
-                faceProxy.doFinally(onPut, context, ex);
+            try {
+                if (faceProxy != null) {
+                    faceProxy.doFinally(onPut, context, ex);
+                    ex = null;
+                }
+
+            } catch (Throwable e) {
+                ex = e;
+
+            } finally {
+                if (ex != null) {
+                    TApplicationException tException = ex instanceof TApplicationException ? (TApplicationException) ex : new TApplicationException(ex.getMessage());
+                    if (byteArrayOutputStream != null) {
+                        byteArrayOutputStream.reset();
+                        tException.write(tInputOutProtocol);
+                        input.write(inputSocket == null ? byteArrayOutputStream.toByteArray() : service.encrypt(inputSocket.getSocketAtt().getSelSession(), 1, byteArrayOutputStream));
+                    }
+
+                    throw tException;
+                }
             }
         }
 
