@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-INIT_LOCK="_asit_lock"
+INIT_LOCK="_asite_lock"
 APT_UPDATE="apt-get update"
 APT_INSTALL="apt-get install"
 _MY_CONF="my.cnf"

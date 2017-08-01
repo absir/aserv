@@ -145,10 +145,16 @@ public class HelperFile extends FileUtils {
     public static boolean copyFileOverWrite(File srcFile, File destFile, boolean overWrite, boolean preserveFileDate)
             throws IOException {
         if (destFile.exists() && !overWrite) {
-            return false;
+            if (!preserveFileDate || destFile.lastModified() != PRESERVE_FILE_MODIFIED_TIME) {
+                return false;
+            }
         }
 
         copyFile(srcFile, destFile, preserveFileDate);
+        if (preserveFileDate) {
+            destFile.setLastModified(PRESERVE_FILE_MODIFIED_TIME);
+        }
+
         return true;
     }
 
@@ -264,11 +270,14 @@ public class HelperFile extends FileUtils {
                 filename = KernelString.leftSubString(filename, entryLength);
                 if (!jarEntry.isDirectory()) {
                     File destFile = new File(destPath + filename);
-                    if ((overWrite || !destFile.exists()) && (filter == null || filter.accept(destFile))) {
+                    if ((overWrite || !destFile.exists() || (preserveFileDate && destFile.lastModified() == PRESERVE_FILE_MODIFIED_TIME)) && (filter == null || filter.accept(destFile))) {
                         InputStream inputStream = null;
                         try {
                             inputStream = jarFile.getInputStream(jarEntry);
                             HelperFile.copyInputStreamToFile(inputStream, destFile);
+                            if (preserveFileDate) {
+                                destFile.setLastModified(PRESERVE_FILE_MODIFIED_TIME);
+                            }
 
                         } finally {
                             if (inputStream != null) {

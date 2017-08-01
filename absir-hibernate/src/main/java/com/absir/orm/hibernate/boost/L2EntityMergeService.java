@@ -37,7 +37,7 @@ import java.util.Map.Entry;
 @Bean
 @Base
 public class L2EntityMergeService
-        implements IEventService, PostInsertEventListener, PostUpdateEventListener, PostDeleteEventListener {
+        implements IEventService, PostInsertEventListener, PostUpdateEventListener, PostDeleteEventListener, PostCommitInsertEventListener, PostCommitUpdateEventListener, PostCommitDeleteEventListener {
 
     public static final L2EntityMergeService ME = BeanFactoryUtils.get(L2EntityMergeService.class);
 
@@ -188,5 +188,17 @@ public class L2EntityMergeService
                 entityMerge.merge(entityName, null, MergeType.RELOAD, null);
             }
         }
+    }
+
+    @Override
+    public void onPostInsertCommitFailed(PostInsertEvent postInsertEvent) {
+    }
+
+    @Override
+    public void onPostUpdateCommitFailed(PostUpdateEvent postUpdateEvent) {
+    }
+
+    @Override
+    public void onPostDeleteCommitFailed(PostDeleteEvent postDeleteEvent) {
     }
 }

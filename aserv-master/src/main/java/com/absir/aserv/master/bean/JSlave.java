@@ -55,7 +55,7 @@ public class JSlave extends JbBase implements JiOpen {
     private String path;
 
     @JaLang("应用")
-    @JaColum(indexs = @Index(columnList = "app"))
+    @JaColum(indexs = @Index(columnList = "appCode"))
     private String appCode;
 
     @JaLang("启动时间")
