@@ -37,6 +37,7 @@ public class EntityModel implements IModel {
         addReferencedMap(JaEdit.GROUP_SUGGEST, JaEdit.GROUP_LIST);
         addReferencedMap(JaEdit.GROUP_SUGGEST, JaEdit.GROUP_SEARCH);
         addReferencedMap(JaEdit.GROUP_LIST, JaEdit.GROUP_SEARCH);
+        addReferencedMap(JaEdit.GROUP_SUGGEST, JaEdit.GROUP_SUG);
     }
 
     // private boolean filter;

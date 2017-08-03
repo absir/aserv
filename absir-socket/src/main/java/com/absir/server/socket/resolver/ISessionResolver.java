@@ -16,6 +16,8 @@ public interface ISessionResolver {
 
     public long acceptTimeout(SocketChannel socketChannel) throws Throwable;
 
+    public boolean allowBuffLength(SelSession selSession, int buffLength);
+
     public void idle(SocketChannel socketChannel, SelSession selSession, long contextTime);
 
     public void register(SocketChannel socketChannel, SelSession selSession) throws Throwable;

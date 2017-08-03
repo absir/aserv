@@ -21,16 +21,20 @@ import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.helper.HelperCondition;
 import com.absir.aserv.system.service.BeanService;
+import com.absir.context.schedule.value.Schedule;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelDyna;
+import com.absir.core.util.UtilAbsir;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class BeanServiceBase implements BeanService, ICrudSupply {
@@ -427,4 +431,54 @@ public class BeanServiceBase implements BeanService, ICrudSupply {
             session.flush();
         }
     }
+
+    private ConcurrentHashMap<String, WeakReference<Object>> nameIdMapEntity;
+
+    private Map<Object, Object> nameIdMapToken;
+
+    public <T> T getEntityShare(Class<T> entityClass, Serializable id) {
+        if (nameIdMapEntity == null) {
+            synchronized (BeanServiceBase.class) {
+                if (nameIdMapEntity == null) {
+                    nameIdMapEntity = new ConcurrentHashMap<String, WeakReference<Object>>();
+                    nameIdMapToken = new HashMap<Object, Object>();
+                }
+            }
+        }
+
+        String identity = entityClass + "@" + id;
+        WeakReference<Object> entityRef = nameIdMapEntity.get(identity);
+        Object entity = entityRef == null ? null : entityRef.get();
+        if (entity == null) {
+            synchronized (UtilAbsir.getToken(identity, nameIdMapToken)) {
+                try {
+                    entity = ME.get(entityClass, id);
+                    if (entity == null) {
+                        return null;
+                    }
+
+                    entityRef = new WeakReference<Object>(entity);
+                    nameIdMapEntity.put(identity, entityRef);
+
+                } finally {
+                    UtilAbsir.clearToken(identity, nameIdMapToken);
+                }
+            }
+        }
+
+        return (T) entity;
+    }
+
+    @Schedule(fixedDelay = 3600000, initialDelay = 3600000)
+    protected void clearEntityShare() {
+        if (nameIdMapEntity != null) {
+            Iterator<Entry<String, WeakReference<Object>>> iterator = nameIdMapEntity.entrySet().iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().getValue().get() == null) {
+                    iterator.remove();
+                }
+            }
+        }
+    }
+
 }

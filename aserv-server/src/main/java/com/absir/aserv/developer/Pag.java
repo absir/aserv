@@ -163,29 +163,66 @@ public class Pag {
         return MenuContextUtils.getMenuBeans(name);
     }
 
+    public static void _include(String include) throws IOException {
+        _include(include, include);
+    }
+
+    public static void _include(String include, String includeGen) throws IOException {
+        _include(include, includeGen, null);
+    }
+
+    public static void _include(String include, String includeGen, String entityAtt) throws IOException {
+        Input input = OnPut.get().getInput();
+        Object[] renders = ServerDiyView.getRenders(OnPut.get().getInput());
+        try {
+            IRender.ME.include(includeGen, renders);
+            return;
+
+        } catch (Exception e) {
+            if (!ServerDiyView.ME.isDeveloperNotExist(e, input)) {
+                if (e instanceof IOException) {
+                    throw (IOException) e;
+                }
+
+                throw new IOException(e);
+            }
+
+            if (entityAtt != null) {
+                Object entity = input.getModel().get(entityAtt);
+                if (entity != null) {
+
+                }
+            }
+
+            RenderUtils.generate(include, includeGen);
+        }
+
+        IRender.ME.include(includeGen, renders);
+    }
+
     public static String include(String include) throws IOException {
         return getInclude(include, ServerDiyView.getRenders(OnPut.get().getInput()));
     }
 
-    public static String include(String generate, String include) throws IOException {
-        return getIncludeGen(generate, include, ServerDiyView.getRenders(OnPut.get().getInput()));
+    public static String include(String include, String includeGen) throws IOException {
+        return getIncludeGen(include, includeGen, ServerDiyView.getRenders(OnPut.get().getInput()));
     }
 
     public static String getInclude(String include, Object... renders) throws IOException {
         return getIncludeGen(include, include, renders);
     }
 
-    public static String getIncludeGen(String generate, String include, Object... renders) throws IOException {
-        RenderUtils.generate(generate, include, renders);
-        return IRender.ME.include(generate);
+    public static String getIncludeGen(String include, String includeGen, Object... renders) throws IOException {
+        RenderUtils.generate(include, includeGen, renders);
+        return IRender.ME.include(include);
     }
 
-    public static void includeGen(String generate) throws IOException {
-        includeGen(generate, generate);
+    public static void includeGen(String include) throws IOException {
+        includeGen(include, include);
     }
 
-    public static void includeGen(String generate, String include) throws IOException {
-        RenderUtils.generate(generate, include, ServerDiyView.getRenders(OnPut.get().getInput()));
+    public static void includeGen(String include, String includeGen) throws IOException {
+        RenderUtils.generate(include, includeGen, ServerDiyView.getRenders(OnPut.get().getInput()));
     }
 
     public static String transferred(String str) {

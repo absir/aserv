@@ -11,6 +11,7 @@ import com.absir.aserv.developer.Pag.IPagLang;
 import com.absir.aserv.system.server.ServerDiyView;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Value;
+import com.absir.server.in.Input;
 import com.absir.servlet.InputRequest;
 import jetbrick.io.resource.ResourceNotFoundException;
 import jetbrick.template.JetTemplate;
@@ -51,7 +52,7 @@ public class WebJetbrickView extends ServerDiyView implements IPagLang {
     }
 
     @Override
-    protected boolean isNotExist(Exception e, InputRequest input) {
+    protected boolean isNotExist(Exception e, Input input) {
         return e.getClass() == ResourceNotFoundException.class || e.getMessage().startsWith("include file not found");
     }
 

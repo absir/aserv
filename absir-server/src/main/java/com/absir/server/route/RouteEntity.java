@@ -16,12 +16,18 @@ public abstract class RouteEntity {
     RouteEntry routeEntry;
 
     public Object getRoute() {
+        if (route == null) {
+            route = getRouteBean();
+        }
+
         return route;
     }
 
     public RouteEntry getRouteEntry() {
         return routeEntry;
     }
+
+    protected abstract Object getRouteBean();
 
     public abstract Class<?> getRouteType();
 

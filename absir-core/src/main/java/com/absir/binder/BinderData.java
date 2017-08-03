@@ -31,11 +31,17 @@ import java.util.Map.Entry;
 public class BinderData extends DynaBinder {
 
     protected static final String FAIL_INSTANCE = LangCodeUtils.get("初始化失败", BinderData.class);
+
     protected static final String FAIL_CONVERT = LangCodeUtils.get("转化类型失败", BinderData.class);
+
     protected static final String FAIL_BINDER = LangCodeUtils.get("绑定值失败", BinderData.class);
+
     protected static BinderSupply binderSupply = BeanFactoryUtils.get(BinderSupply.class);
+
     protected static ValidatorSupply validatorSupply = BeanFactoryUtils.get(ValidatorSupply.class);
+
     protected ILangMessage langMessage;
+
     protected BinderResult binderResult = new BinderResult();
 
     public ILangMessage getLangMessage() {

@@ -37,7 +37,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Configure
 public class DeveloperUtils {
@@ -56,7 +58,7 @@ public class DeveloperUtils {
 
     private static Map<String, Object> Generator_Map_Token = new HashMap<String, Object>();
 
-    private static Set<Object> Generator_Tokens = new HashSet<Object>();
+    //private static Set<Object> Generator_Tokens = new HashSet<Object>();
 
     private static String getSuffix() {
         IRenderSuffix renderSuffix = BeanFactoryUtils.get(IRenderSuffix.class);
@@ -112,9 +114,19 @@ public class DeveloperUtils {
     }
 
     public static void setEntityModel(String entityName, Class<?> entityClass, HttpServletRequest request) {
+        _setEntityModel(entityName, entityClass, request);
+    }
+
+    public static EntityModel _setEntityModel(String entityName, Class<?> entityClass, HttpServletRequest request) {
         JoEntity joEntity = new JoEntity(entityName, entityClass, true);
         request.setAttribute("joEntity", joEntity);
-        request.setAttribute("entityModel", ModelFactory.getModelEntity((JoEntity) joEntity));
+        EntityModel entityModel = ModelFactory.getModelEntity(joEntity);
+        request.setAttribute("entityModel", entityModel);
+        return entityModel;
+    }
+
+    public static EntityModel getEntityModel(JoEntity joEntity) {
+        return ModelFactory.getModelEntity(joEntity);
     }
 
     public static void generate(String filePath, String includePath, ServletRequest request, Object... renders) throws IOException {
@@ -175,9 +187,9 @@ public class DeveloperUtils {
             Object token = UtilAbsir.getToken(filePath, Generator_Map_Token);
             try {
                 synchronized (token) {
-                    if (!Generator_Tokens.add(token)) {
-                        return;
-                    }
+//                    if (!Generator_Tokens.add(token)) {
+//                        return;
+//                    }
 
                     final DeveloperGenerator generator = DeveloperGenerator.pushDeveloperGenerator(request);
                     try {
@@ -243,7 +255,10 @@ public class DeveloperUtils {
                             try {
                                 generator.setTag(null);
                                 outputStream = new ByteArrayOutputStream();
-                                request.setAttribute("entityModel", entityModel);
+                                if (entityModel != null) {
+                                    request.setAttribute("entityModel", entityModel);
+                                }
+
                                 IRender.ME.rend(outputStream, includePath, renders);
                                 String dev = IRender.ME.dev(UtilContext.getCurrentTime());
                                 if (!KernelString.isEmpty(dev)) {
@@ -283,9 +298,9 @@ public class DeveloperUtils {
                 }
 
             } finally {
-                synchronized (token) {
-                    Generator_Tokens.remove(token);
-                }
+//                synchronized (token) {
+//                    Generator_Tokens.remove(token);
+//                }
 
                 clearToken(filePath);
             }

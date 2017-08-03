@@ -436,7 +436,7 @@ public class SocketServer {
                                         byte[] array = buffer.array();
                                         int position = 0;
                                         while (position < length) {
-                                            position = socketBufferResolver.readByteBuffer(socketBuffer, array, position, length);
+                                            position = socketBufferResolver.readByteBuffer(selSession, socketBuffer, array, position, length);
                                             if (socketBuffer.getBuff() != null && socketBuffer.getLength() <= socketBuffer.getBuffLengthIndex()) {
                                                 //SocketAdapter._debugInfo("SocketServer readByteBuffer  <= " + Arrays.toString(socketBuffer.getBuff()));
                                                 if (socketBuffer.getId() == null) {

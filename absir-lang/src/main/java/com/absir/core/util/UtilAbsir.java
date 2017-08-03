@@ -34,7 +34,8 @@ public class UtilAbsir {
             synchronized (tokenMap) {
                 token = tokenMap.get(id);
                 if (token == null) {
-                    token = new Object();
+                    //token = new Object();
+                    token = id;
                     ((Map) tokenMap).put(id, token);
                 }
             }
@@ -102,6 +103,10 @@ public class UtilAbsir {
         } else {
             return value;
         }
+    }
+
+    public static void throwRuntimeException(Exception e) {
+        throw e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
     }
 
 }

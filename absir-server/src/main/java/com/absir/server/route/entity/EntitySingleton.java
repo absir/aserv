@@ -19,6 +19,11 @@ public class EntitySingleton extends RouteEntity {
     }
 
     @Override
+    protected Object getRouteBean() {
+        return beanObject;
+    }
+
+    @Override
     public Class<?> getRouteType() {
         return beanObject.getClass();
     }

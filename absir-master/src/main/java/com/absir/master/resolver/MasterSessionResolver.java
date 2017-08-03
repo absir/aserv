@@ -9,6 +9,8 @@ package com.absir.master.resolver;
 
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
+import com.absir.bean.inject.value.Value;
+import com.absir.server.socket.SelSession;
 import com.absir.server.socket.resolver.IBufferResolver;
 import com.absir.server.socket.resolver.IServerResolver;
 import com.absir.server.socket.resolver.SocketSessionResolver;
@@ -16,6 +18,14 @@ import com.absir.server.socket.resolver.SocketSessionResolver;
 @Base
 @Bean
 public class MasterSessionResolver extends SocketSessionResolver {
+
+    @Value("master.buff.max")
+    protected long maxBuffLength = 204800;
+
+    @Override
+    public boolean allowBuffLength(SelSession selSession, int buffLength) {
+        return buffLength < maxBuffLength;
+    }
 
     @Override
     public IBufferResolver getBufferResolver() {

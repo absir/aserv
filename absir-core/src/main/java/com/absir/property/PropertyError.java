@@ -7,6 +7,8 @@
  */
 package com.absir.property;
 
+import com.absir.core.kernel.KernelString;
+
 public class PropertyError {
 
     private String propertyPath;
@@ -41,6 +43,6 @@ public class PropertyError {
 
     @Override
     public String toString() {
-        return "Error[" + propertyPath + "]:" + errorMessage + "=" + errorObject;
+        return "Error[" + propertyPath + "]:" + errorMessage + "=" + (errorObject == null || errorObject instanceof Object[] ? errorObject : ('[' + KernelString.implode((Object[]) errorObject, ',') + ']'));
     }
 }

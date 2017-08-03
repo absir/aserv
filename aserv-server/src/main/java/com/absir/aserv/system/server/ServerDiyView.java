@@ -20,6 +20,7 @@ import com.absir.bean.inject.value.Value;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.base.Environment;
 import com.absir.core.helper.HelperFile;
+import com.absir.core.kernel.KernelString;
 import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
@@ -80,7 +81,14 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
         }
     }
 
+    @Value("view.response.contentType")
+    protected String responseContentType = "text/html;charset=utf-8";
+
     public void render(String view, InputRequest input) throws Exception {
+        if (!KernelString.isEmpty(responseContentType)) {
+            input.getResponse().setContentType(responseContentType);
+        }
+
         HttpServletRequest request = input.getRequest();
         request.setAttribute("INPUT", input);
         request.setAttribute("TIME", ContextUtils.getContextTime());
@@ -135,10 +143,10 @@ public abstract class ServerDiyView extends ReturnedResolverView implements IRen
         return false;
     }
 
-    protected abstract boolean isNotExist(Exception e, InputRequest input);
+    protected abstract boolean isNotExist(Exception e, Input input);
 
-    public boolean isDeveloperNotExist(Exception e, InputRequest inputRequest) {
-        return isDeveloper(e) || isNotExist(e, inputRequest);
+    public boolean isDeveloperNotExist(Exception e, Input input) {
+        return isDeveloper(e) || isNotExist(e, input);
     }
 
     public String getDiyRestore(String view) throws IOException {

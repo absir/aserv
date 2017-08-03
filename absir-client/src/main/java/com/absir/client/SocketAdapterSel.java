@@ -192,6 +192,10 @@ public class SocketAdapterSel extends SocketAdapter {
                 int streamIndexLen = getVarintsLength(streamIndex);
                 //if (streamIndexLen > 0) {
                 int offLen = offset + streamIndexLen;
+//                if (offLen > length) {
+//                    return;
+//                }
+
                 // 写入流信息
                 NextOutputStream outputStream = getPipedStream().getOutputStream(streamIndex);
                 if (outputStream != null) {

@@ -61,7 +61,7 @@ public abstract class MenuContextUtils {
     }
 
     /**
-     * @param cite 获取别名菜单
+     * 别名获取菜单
      */
     public static List<OMenuBean> getMenuBeans(String cite) {
         return getMenuBeans(cite, SecurityServiceUtils.getUserBase());
@@ -83,9 +83,12 @@ public abstract class MenuContextUtils {
     /**
      * 添加权限菜单
      */
-    public static void addMenuBeanRoot(MenuBeanRoot menuBeanRoot, String entityName, Class<?> entityClass,
-                                       String menuName, String menuIcon, int order, String ref, String url, String name, String suffix,
-                                       String option, MaMenu[] parent, MaMenu menu) {
+    public static void addMenuBeanRootUrl(MenuBeanRoot menuBeanRoot, Class<?> entityClass,
+                                          String menuName, String menuIcon, int order, String ref, String url, MaMenu[] parent, MaMenu menu) {
+        if (KernelString.isEmpty(url)) {
+            return;
+        }
+
         int length = parent == null ? 0 : parent.length;
         int index = length - 2;
         menuBeanRoot = menuBeanRoot.getChildrenRoot(index >= 0 ? parent[index] : null, menuName, menuIcon);
@@ -95,30 +98,11 @@ public abstract class MenuContextUtils {
             menuBeanRoot = menuBeanRoot.getChildrenRoot(parent[index], null, null);
         }
 
-        if (KernelString.isEmpty(url)) {
-            menuBeanRoot = menuBeanRoot.getChildrenRoot(name, order, ref, url,
-                    KernelString.isEmpty(ref) ? null : "MENU", menuIcon);
-
-        } else {
-            entityCaption = KernelString.isEmpty(name) ? entityCaption
-                    : LangBundleImpl.ME.getunLang(name, MenuBeanRoot.TAG);
-            option = LangBundleImpl.ME.getunLang(option, MenuBeanRoot.TAG);
-            menuBeanRoot.getChildrenRoot(menu, entityCaption, suffix, 0, entityName,
-                    "entity/" + option + "/" + entityName, "ENTITY", menuIcon);
-        }
+        menuBeanRoot.getChildrenRoot(menu.value(), order, ref, url, KernelString.isEmpty(ref) ? null : "MENU", menuIcon);
     }
 
     /**
      * 添加实体菜单
-     *
-     * @param menuBeanRoot
-     * @param entityName
-     * @param entityClass
-     * @param menuName
-     * @param menuIcon
-     * @param suffix
-     * @param option
-     * @param entityNames
      */
     public static void addMenuBeanRoot(MenuBeanRoot menuBeanRoot, final String entityName, Class<?> entityClass,
                                        String menuName, String menuIcon, String suffix, String option, List<String> entityNames) {

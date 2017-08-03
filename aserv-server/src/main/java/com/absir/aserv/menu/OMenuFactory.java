@@ -17,7 +17,6 @@ import com.absir.aserv.system.bean.JMenuPermission;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
-import com.absir.aserv.system.helper.HelperLang;
 import com.absir.aserv.system.service.AuthService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.bean.basis.Basis;
@@ -150,16 +149,26 @@ public class OMenuFactory extends AopMethodDefineAbstract<MenuAopInterceptor, St
                 }
             }
 
-            int offset = 0;
-            int length = routeMatcher.getMapping().length;
-            if (route != null) {
-                offset = route.length();
+            String uri;
+            if (route == null) {
+                uri = new String(routeMatcher.getMapping(), ContextUtils.getCharset());
+
+            } else {
+                byte[] mapping = routeMatcher.getMapping();
+                int length = mapping.length;
+                int offset = route.length();
+                if (mapping.length > offset) {
+                    if (mapping[offset] == '/') {
+                        offset++;
+                    }
+                }
+
                 length -= offset;
+                uri = new String(routeMatcher.getMapping(), offset, length, ContextUtils.getCharset());
             }
 
             Class<?> entityClass = AopProxyUtils.getBeanType(routeObject);
-            MenuContextUtils.addMenuBeanRoot(menuBeanRoot, null, entityClass, LangBundleImpl.ME.getunLang("功能管理", MenuBeanRoot.TAG), "briefcase", 1, ref, '/' + new String(routeMatcher.getMapping(),
-                    offset, length, ContextUtils.getCharset()), HelperLang.getMethodCaption(method, entityClass), null, null, maFactory.parent(), maFactory.menu());
+            MenuContextUtils.addMenuBeanRootUrl(menuBeanRoot, entityClass, LangBundleImpl.ME.getunLang("功能管理", MenuBeanRoot.TAG), "briefcase", 1, ref, uri, maFactory.parent(), maFactory.menu());
         }
     }
 

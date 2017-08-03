@@ -101,11 +101,12 @@ public abstract class AdminServer {
         Throwable throwable = UtilAbsir.forCauseThrowable(e);
         model.put("e", throwable);
         if (throwable instanceof ConstraintViolationException) {
+            String message = throwable.getCause().getMessage();
             model.put("message", throwable.getCause().getMessage());
 
         } else {
             if (throwable.getClass() == ServerException.class) {
-                model.put("message", ((ServerException) throwable).getServerStatus());
+                model.put("message", ((ServerException) throwable).getServerStatus() + " : " + onPut.getInput().getBinderDataErrors());
 
             } else {
                 throw e;

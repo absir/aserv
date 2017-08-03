@@ -2,7 +2,10 @@ package com.absir.master;
 
 import com.absir.server.socket.SocketServerContext;
 
+import java.io.Serializable;
 import java.nio.channels.SocketChannel;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by absir on 2016/11/10.
@@ -30,7 +33,7 @@ public class MasterChannelContext extends SocketServerContext.ChannelContext {
 
     public MasterRpcAdapter getMasterRpcAdapter() {
         if (masterRpcAdapter == null) {
-            masterRpcAdapter = InputMasterContext.ME.getMasterRpcAdapter(id);
+            masterRpcAdapter = initMasterRpcAdapter(id);
         }
 
         masterRpcAdapter.getSocketAdapter().channel = channel;
@@ -39,5 +42,30 @@ public class MasterChannelContext extends SocketServerContext.ChannelContext {
 
     public MasterChannelAdapter getMasterChannelAdapter() {
         return getMasterRpcAdapter().getSocketAdapter();
+    }
+
+    private static Map<Serializable, MasterRpcAdapter> masterChannelMapAdapter;
+
+    protected static MasterRpcAdapter initMasterRpcAdapter(Serializable id) {
+        if (masterChannelMapAdapter == null) {
+            synchronized (MasterChannelContext.class) {
+                if (masterChannelMapAdapter == null) {
+                    masterChannelMapAdapter = new HashMap<Serializable, MasterRpcAdapter>();
+                }
+            }
+        }
+
+        MasterRpcAdapter adapter = masterChannelMapAdapter.get(id);
+        if (adapter == null) {
+            synchronized (masterChannelMapAdapter) {
+                adapter = masterChannelMapAdapter.get(id);
+                if (adapter == null) {
+                    adapter = InputMasterContext.ME.createMasterRpcAdapter(id);
+                    masterChannelMapAdapter.put(id, adapter);
+                }
+            }
+        }
+
+        return adapter;
     }
 }

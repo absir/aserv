@@ -129,6 +129,11 @@ public class SocketSessionResolver implements ISessionResolver {
     }
 
     @Override
+    public boolean allowBuffLength(SelSession selSession, int buffLength) {
+        return buffLength < SocketBufferResolver.bufferMax;
+    }
+
+    @Override
     public void idle(final SocketChannel socketChannel, final SelSession selSession, final long contextTime) {
         selSession.retainIdleTimeout();
         UtilContext.getThreadPoolExecutor().execute(new Runnable() {

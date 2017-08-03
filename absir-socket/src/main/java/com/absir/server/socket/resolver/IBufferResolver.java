@@ -20,7 +20,7 @@ public interface IBufferResolver {
 
     public SocketBuffer createSocketBuff();
 
-    public int readByteBuffer(SocketBuffer socketBuffer, byte[] buffer, int position, int length);
+    public int readByteBuffer(SelSession selSession, SocketBuffer socketBuffer, byte[] buffer, int position, int length);
 
     public void readByteBufferDone(SocketBuffer socketBuffer);
 

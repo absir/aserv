@@ -29,6 +29,7 @@ import java.nio.channels.SocketChannel;
 public class SocketBufferResolver implements IBufferResolver {
 
     protected static long bufferMax = 10240;
+
     protected boolean varints = true;
 
     public static long getBufferMax() {
@@ -120,8 +121,12 @@ public class SocketBufferResolver implements IBufferResolver {
         return new SocketBuffer();
     }
 
+    protected boolean isAllowBuffLength(SelSession selSession, SocketBuffer socketBuffer, int buffLength) {
+        return selSession == null || socketBuffer.getId() == null ? buffLength < bufferMax : selSession.getSocketServer().getSocketSessionResolver().allowBuffLength(selSession, buffLength);
+    }
+
     @Override
-    public int readByteBuffer(SocketBuffer socketBuffer, byte[] buffer, int position, int length) {
+    public int readByteBuffer(SelSession selSession, SocketBuffer socketBuffer, byte[] buffer, int position, int length) {
         for (; position < length; position++) {
             if (socketBuffer.getBuff() == null) {
                 int lengthIndex = socketBuffer.getLengthIndex();
@@ -143,7 +148,7 @@ public class SocketBufferResolver implements IBufferResolver {
                 socketBuffer.setLength(buffLength);
                 socketBuffer.setLengthIndex(++lengthIndex);
                 if (lengthIndex == 4 || (b & 0x80) == 0) {
-                    if (buffLength >= 0 && buffLength < bufferMax) {
+                    if (buffLength >= 0 && isAllowBuffLength(selSession, socketBuffer, buffLength)) {
                         socketBuffer.setBuffLengthIndex(0);
                         socketBuffer.setBuff(buffLength == 0 ? KernelLang.NULL_BYTES : new byte[buffLength]);
 
@@ -197,6 +202,10 @@ public class SocketBufferResolver implements IBufferResolver {
             final int streamIndexLen = SocketAdapter.getVarintsLength(streamIndex);
             final int offset = 1;
             final int offLen = offset + streamIndexLen;
+//            if (offLen > length) {
+//                return false;
+//            }
+
             //没有POST_FLAG只管写入，有POST_FLAG才需要创建
             if ((flag & SocketAdapter.POST_FLAG) == 0) {
                 final UtilPipedStream.NextOutputStream stream = socketBuffer.getPipedStream().getOutputStream(streamIndex);

@@ -21,6 +21,11 @@ public class EntityMutil extends RouteEntity {
     }
 
     @Override
+    protected Object getRouteBean() {
+        return beanDefine.getBeanObject(BeanFactoryUtils.get());
+    }
+
+    @Override
     public Class<?> getRouteType() {
         return beanDefine.getBeanType();
     }

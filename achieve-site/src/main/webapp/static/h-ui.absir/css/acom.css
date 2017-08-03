@@ -26,3 +26,4 @@ input.required{background: url("../images/required.png") right center no-repeat}
 .ab_span{position: relative}
 .ab_span .ab_span_l{width: 49.5%; position: absolute; left: 0}
 .ab_span .ab_span_r{width: 49.5%; position: absolute; right: 0}
+.ab_err {color: #f00}

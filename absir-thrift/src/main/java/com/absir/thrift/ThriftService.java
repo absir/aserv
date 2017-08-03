@@ -18,10 +18,7 @@ import com.absir.server.socket.InputSocket;
 import com.absir.server.socket.SelSession;
 import com.absir.server.socket.SocketBuffer;
 import com.absir.server.socket.SocketServer;
-import com.absir.server.socket.resolver.IBufferResolver;
-import com.absir.server.socket.resolver.ISessionResolver;
-import com.absir.server.socket.resolver.InputBufferResolver;
-import com.absir.server.socket.resolver.SocketSessionResolver;
+import com.absir.server.socket.resolver.*;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.TException;
@@ -133,6 +130,11 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
     @Override
     public long acceptTimeout(SocketChannel socketChannel) throws Throwable {
         return thriftAcceptTimeout;
+    }
+
+    @Override
+    public boolean allowBuffLength(SelSession selSession, int buffLength) {
+        return buffLength < SocketBufferResolver.getBufferMax();
     }
 
     @Override

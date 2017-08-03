@@ -15,7 +15,6 @@ import com.absir.core.dyna.DynaBinder;
 import com.absir.core.helper.HelperFile;
 import com.absir.core.helper.HelperFileName;
 import com.absir.core.helper.HelperIO;
-import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelLang.BreakException;
@@ -38,12 +37,19 @@ import java.util.Map.Entry;
 public class BeanConfigImpl implements BeanConfig {
 
     protected static Map<String, ParamsAnnotations> nameMapParamsAnnotations;
+
     protected static List<MatchParamsAnnotations> matchParamsAnnotationsList;
+
     protected boolean outEnvironmentDenied = true;
+
     private BeanConfig beanConfig;
+
     private String classPath;
+
     private String resourcePath;
+
     private Environment environment = Environment.getEnvironment();
+
     private Map<String, Object> configMap = new HashMap<String, Object>();
 
     public BeanConfigImpl(IBeanConfigProvider beanConfigProvider) {
@@ -944,7 +950,7 @@ public class BeanConfigImpl implements BeanConfig {
 
         protected Map<String, String[]> nameMapParams;
 
-        protected Map<Class<? extends Annotation>, Object> classMapAnnotation;
+        protected Map<Class, Object> classMapAnnotation;
 
         protected boolean matchFind;
 
@@ -953,15 +959,15 @@ public class BeanConfigImpl implements BeanConfig {
                 return null;
             }
 
-            Object annotation = nameMapParams == null ? null : nameMapParams.get(cls);
+            Object annotation = classMapAnnotation == null ? null : classMapAnnotation.get(cls);
             if (annotation == null) {
-                Map<String, String[]> mapParams = nameMapParams;
-                if (mapParams != null) {
-                    String[] params = mapParams.remove(KernelClass.getClassSharedSimpleName(cls));
-                    if (params != null) {
+                String[] params = nameMapParams.remove(cls.getName());
+                if (params != null) {
+                    if (classMapAnnotation == null) {
+                        classMapAnnotation = new HashMap<Class, Object>();
                         annotation = UtilAnnotation.newInstance(cls, params, 1);
-                        if (mapParams.isEmpty()) {
-                            nameMapParams = null;
+                        if (annotation != null) {
+                            classMapAnnotation.put(cls, annotation);
                         }
                     }
                 }
@@ -971,7 +977,7 @@ public class BeanConfigImpl implements BeanConfig {
         }
 
         public boolean findAnnotation(Class<? extends Annotation> cls) {
-            return classMapAnnotation.containsKey(cls) || nameMapParams.containsKey(KernelClass.getClassSharedSimpleName(cls));
+            return (classMapAnnotation != null && classMapAnnotation.containsKey(cls)) || (nameMapParams != null && nameMapParams.containsKey(cls.getName()));
         }
     }
 

@@ -19,6 +19,7 @@ import com.absir.context.lang.LangBundle;
 import com.absir.core.base.Environment;
 import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelDyna;
+import com.absir.property.PropertyError;
 import com.absir.server.on.OnPut;
 import com.absir.server.route.RouteAction;
 import com.absir.server.route.RouteEntry;
@@ -203,6 +204,31 @@ public abstract class Input extends Bean<Serializable> implements IAttributes, I
         }
 
         return binderData;
+    }
+
+    public String getBinderDataErrors() {
+        if (binderData == null) {
+            return null;
+        }
+
+        BinderResult binderResult = binderData.getBinderResult();
+        if (binderResult.hashErrors()) {
+            StringBuilder stringBuilder = null;
+            for (PropertyError error : binderResult.getPropertyErrors()) {
+                if (stringBuilder == null) {
+                    stringBuilder = new StringBuilder();
+
+                } else {
+                    stringBuilder.append(" , ");
+                }
+
+                stringBuilder.append(error.toString());
+            }
+
+            return stringBuilder == null ? "" : stringBuilder.toString();
+        }
+
+        return "";
     }
 
     protected Locale getLocaled() {

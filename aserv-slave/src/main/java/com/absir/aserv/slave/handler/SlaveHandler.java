@@ -45,12 +45,17 @@ public class SlaveHandler implements IHandler, ISlave {
     public static final SlaveHandler ME = BeanFactoryUtils.get(SlaveHandler.class);
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(SlaveHandler.class);
+
     @Value("slave.upgrade.passTime")
     protected long passTime = 3600000;
+
     @Value("slave.upgrade.retryCount")
     protected int retryCount = 3;
+
     protected SlaveUpgradeThread slaveUpgradeThread;
+
     private IMaster master;
+
     @Value("slave.upgrade.maxCount")
     private int maxCount = 10;
 

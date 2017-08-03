@@ -83,11 +83,6 @@ public class MenuBeanService implements Comparator<MenuBeanRoot> {
 
     /**
      * 获取深度菜单
-     *
-     * @param cite
-     * @param user
-     * @param depth
-     * @return
      */
     @Transaction(readOnly = true)
     public List<OMenuBean> getMenuBeans(String cite, JiUserBase user, int depth) {
@@ -135,8 +130,6 @@ public class MenuBeanService implements Comparator<MenuBeanRoot> {
 
     /**
      * 添加实体权限
-     *
-     * @param entityNames
      */
     @Transaction
     public void addEntityPermission(List<String> entityNames) {
@@ -169,11 +162,6 @@ public class MenuBeanService implements Comparator<MenuBeanRoot> {
 
     /**
      * 添加链接菜单
-     *
-     * @param menuBeanRoot
-     * @param cite
-     * @param name
-     * @param urlType
      */
     @Transaction
     public void addMenuBeanRoot(MenuBeanRoot menuBeanRoot, String cite, String name, MeUrlType urlType) {
@@ -194,10 +182,6 @@ public class MenuBeanService implements Comparator<MenuBeanRoot> {
 
     /**
      * 迭代添加链接菜单
-     *
-     * @param menuBeanRoot
-     * @param parent
-     * @param urlType
      */
     private void addMenuBeanRoot(Session session, MenuBeanRoot menuBeanRoot, JMenu parent, MeUrlType urlType) {
         if (menuBeanRoot.getChildren() == null) {

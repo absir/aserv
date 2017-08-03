@@ -7,6 +7,7 @@
  */
 package com.absir.aserv.support.web;
 
+import com.absir.aserv.crud.CrudUtils;
 import com.absir.aserv.developer.Pag;
 import com.absir.aserv.developer.Scenario;
 import com.absir.aserv.facade.DMessage;
@@ -119,6 +120,7 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
             getVariableResolverBean().importPackage(EntityStatics.class.getPackage().getName());
             getVariableResolverBean().importPackage(DMessage.class.getPackage().getName());
             getVariableResolverBean().importPackage("com.absir.aserv.system.service.utils");
+            getVariableResolverBean().importClass(CrudUtils.class.getName());
         }
 
         return engine;
@@ -287,6 +289,11 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
         ctx.getValueStack().setLocal("bodyContent", ctx.getBodyContent());
         file = PathUtils.getRelativePath(ctx.getInterpretContext().getTemplate().getName(), file);
         ctx.getInterpretContext().doIncludeCall(file, parameters, null);
+    }
+
+    @BaTag
+    public static void preDef(JetTagContext ctx, String name) {
+        ctx.getValueStack().setLocal(name, new TagWrapper(ctx));
     }
 
     @BaTag

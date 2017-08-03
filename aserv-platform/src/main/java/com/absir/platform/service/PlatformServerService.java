@@ -293,8 +293,8 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
     }
 
     @Transaction(readOnly = true)
-    public JPlatformFrom getPlatformFromId(int id) {
-        return BeanDao.get(BeanDao.getSession(), JPlatformFrom.class, (long) id);
+    public JPlatformFrom getPlatformFromId(long id) {
+        return BeanDao.get(BeanDao.getSession(), JPlatformFrom.class, id);
     }
 
     public boolean isMatchPlatform(JbPlatform platform, boolean review, DPlatformFrom platformFrom) {

@@ -167,7 +167,7 @@ public abstract class XlsUtils {
         return getWorkbook(beanName, (Class<T>) xlsBase.getClass(), beans, xlsBase);
     }
 
-    public static HSSFWorkbook getWorkbook(Collection<Object> beans, XlsBase xlsBase) {
+    public static HSSFWorkbook getWorkbook(Collection<?> beans, XlsBase xlsBase) {
         return getWorkbook(null, beans, xlsBase);
     }
 

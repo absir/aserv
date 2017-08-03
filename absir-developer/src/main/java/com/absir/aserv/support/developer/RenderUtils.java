@@ -36,9 +36,9 @@ public class RenderUtils {
         }
     }
 
-    public static void generate(String include, String generate, Object... renders) throws IOException {
+    public static void generate(String include, String includeGen, Object... renders) throws IOException {
         if (IDeveloper.ME != null) {
-            IDeveloper.ME.generate(IRender.ME.getFullPath(include, renders), IRender.ME.getFullPath(generate, renders), renders);
+            IDeveloper.ME.generate(IRender.ME.getFullPath(include, renders), IRender.ME.getFullPath(includeGen, renders), renders);
         }
     }
 
@@ -48,8 +48,8 @@ public class RenderUtils {
         }
     }
 
-    public static void include(String include, String generate, Object... renders) throws IOException {
-        generate(include, generate, renders);
+    public static void include(String include, String includeGen, Object... renders) throws IOException {
+        generate(include, includeGen, renders);
         IRender.ME.include(include, renders);
     }
 
