@@ -36,7 +36,7 @@ public class MasterChannelContext extends SocketServerContext.ChannelContext {
             masterRpcAdapter = initMasterRpcAdapter(id);
         }
 
-        masterRpcAdapter.getSocketAdapter().channel = channel;
+        masterRpcAdapter.getSocketAdapter().setChannel(channel);
         return masterRpcAdapter;
     }
 

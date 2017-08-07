@@ -287,6 +287,11 @@ public class KernelLang {
         void doWith(T template);
     }
 
+    public static interface CallbackTemplate2<T, K> {
+
+        void doWith(T template, K k);
+    }
+
     public static interface CallbackBreak<T> {
 
         void doWith(T template) throws BreakException;

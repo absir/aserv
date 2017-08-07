@@ -58,24 +58,36 @@ public class SocketAdapter {
     public static final int MS_CALLBACK_INDEX = 1;
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(SocketAdapter.class);
-    protected static Map<Integer, String> indexMapUri;
-    protected static Map<String, Integer> uriMapIndex;
-    protected static int uriIndex;
+
+    private static Map<Integer, String> indexMapUri;
+
+    private static Map<String, Integer> uriMapIndex;
+
+    private static int uriIndex;
+
     private static TimeoutThread timeoutThread;
-    protected boolean registered;
+
+    private boolean registered;
+
     protected boolean receiveStarted;
-    protected int lengthIndex;
-    protected int buffLength;
-    protected byte[] buff;
-    protected int buffLengthIndex;
+
+    private int lengthIndex;
+
+    private int buffLength;
+
+    private byte[] buff;
+
+    private int buffLengthIndex;
+
     protected Socket receiveSocket;
+
     protected int maxDisconnectCount = 2;
 
-    protected long varintsServerTime;
+    private long varintsServerTime;
 
-    protected Map<String, Integer> uriVarints;
+    private Map<String, Integer> uriVarints;
 
-    protected Map<Integer, String> varintsUri;
+    private Map<Integer, String> varintsUri;
 
     private LinkedList<RegisteredRunnable> registeredRunnables = new LinkedList<RegisteredRunnable>();
 
@@ -108,6 +120,7 @@ public class SocketAdapter {
     private int disconnectNumber;
 
     private List<Runnable> closeRunnables;
+
     private long checkConnectTime;
 
     public static void printException(Throwable e) {
@@ -418,6 +431,8 @@ public class SocketAdapter {
             varintsServerTime = serverTime;
             clearUriVarints();
         }
+
+        lastedRegister();
     }
 
     public LinkedList<RegisteredRunnable> getRegisteredRunnables() {
@@ -811,7 +826,6 @@ public class SocketAdapter {
             acceptSocket = socket;
             if (acceptCallback != null) {
                 acceptCallback.doWith(this, 0, buffer);
-                lastedRegister();
                 return;
             }
         }
@@ -822,7 +836,6 @@ public class SocketAdapter {
                 registerCallback.doWith(this, 0, buffer);
             }
 
-            lastedRegister();
             return;
         }
 
@@ -1041,9 +1054,22 @@ public class SocketAdapter {
         return false;
     }
 
-    protected RegisteredRunnable registerSendData(final byte[] buffer) {
+    protected boolean sendDataTimeout(byte[] buffer, CallbackTimeout callbackTimeout) {
+        Object sendHolder = getSendHolder();
+        if (sendData(buffer)) {
+            if (callbackTimeout != null) {
+                callbackTimeout.sendHolder = sendHolder;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    protected RegisteredRunnable registerSendData(final byte[] buffer, final CallbackTimeout callbackTimeout) {
         connect();
-        if (registered && sendData(buffer)) {
+        if (registered && sendDataTimeout(buffer, callbackTimeout)) {
             return null;
         }
 
@@ -1051,11 +1077,10 @@ public class SocketAdapter {
 
             @Override
             public void doRun() {
-                failed = !sendData(buffer);
+                failed = !sendDataTimeout(buffer, callbackTimeout);
             }
         };
         addRegisterRunnable(runnable);
-        afterRegisterRunnable();
         return runnable;
     }
 
@@ -1122,7 +1147,7 @@ public class SocketAdapter {
             callbackTimeout = putReceiveCallbacks(callbackIndex, timeout, callbackAdapter);
         }
 
-        RegisteredRunnable registeredRunnable = registerSendData(data);
+        RegisteredRunnable registeredRunnable = registerSendData(data, callbackTimeout);
         if (callbackTimeout != null) {
             callbackTimeout.setRegisteredRunnable(registeredRunnable);
         }
@@ -1140,14 +1165,14 @@ public class SocketAdapter {
 
         connect();
         try {
-            if (!(registered && sendData(adapterDataBytes.getSendDataBytes(this)))) {
+            if (!(registered && sendDataTimeout(adapterDataBytes.getSendDataBytes(this), callbackTimeout))) {
                 final CallbackTimeout sendCallbackTimeout = callbackTimeout;
                 RegisteredRunnable runnable = new RegisteredRunnable() {
 
                     @Override
                     public void doRun() {
                         try {
-                            failed = !sendData(adapterDataBytes.getSendDataBytes(SocketAdapter.this));
+                            failed = !sendDataTimeout(adapterDataBytes.getSendDataBytes(SocketAdapter.this), sendCallbackTimeout);
 
                         } catch (IOException e) {
                             if (sendCallbackTimeout != null) {
@@ -1160,7 +1185,7 @@ public class SocketAdapter {
                 };
 
                 addRegisterRunnable(runnable);
-                afterRegisterRunnable();
+                //afterRegisterRunnable();
                 if (callbackTimeout != null) {
                     callbackTimeout.setRegisteredRunnable(runnable);
                 }
@@ -1232,6 +1257,11 @@ public class SocketAdapter {
         }
     }
 
+    // 发送数据成功，接收断开判断依据
+    public Object getSendHolder() {
+        return socket;
+    }
+
     public static interface CallbackAdapter {
 
         public void doWith(SocketAdapter adapter, int offset, byte[] buffer);
@@ -1277,6 +1307,8 @@ public class SocketAdapter {
 
         public int callbackIndex;
 
+        public Object sendHolder;
+
         public void setRegisteredRunnable(RegisteredRunnable runnable) {
             registeredRunnable = runnable;
             if (socketAdapter == null) {
@@ -1302,6 +1334,10 @@ public class SocketAdapter {
                     if (!adapter.isConnecting() || adapter.getDisconnectCount(disconnectNumber) > adapter.getMaxDisconnectCount()) {
                         return true;
                     }
+                }
+
+                if (sendHolder != null && sendHolder != adapter.getSendHolder()) {
+                    return true;
                 }
             }
 

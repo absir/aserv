@@ -7,6 +7,7 @@
  */
 package com.absir.sockser;
 
+import com.absir.aserv.system.domain.DActiver;
 import com.absir.aserv.system.service.ActiveService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -47,6 +48,13 @@ public class SockserService extends ActiveService<JiServer, SocketSer> {
     @Override
     protected boolean isClosed(SocketSer activeContext) {
         return activeContext.isClosed();
+    }
+
+    @Override
+    protected void started() {
+        activer = new DActiver<JiServer>("SELECT o FROM JServer o WHERE o.beginTime > ? ORDER BY o.beginTime", "SELECT o FROM JServer o WHERE o.beginTime <= ? AND o.passTime >= ? AND o.closed = false");
+        activer.setEntityName("JServer");
+        super.started();
     }
 
     @Override

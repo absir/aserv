@@ -393,7 +393,7 @@ public class SocketAdapterSel extends SocketAdapter {
                 }
             };
 
-            if (registered && sendData(buffer)) {
+            if (isRegistered() && sendDataTimeout(buffer, callbackTimeout)) {
                 sended = 1;
                 UtilContext.getThreadPoolExecutor().execute(postRunnable);
                 sended = 2;
