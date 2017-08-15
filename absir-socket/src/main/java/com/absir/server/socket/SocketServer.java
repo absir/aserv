@@ -26,6 +26,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -202,6 +203,15 @@ public class SocketServer {
         SocketServer.closeDebug = closeDebug;
     }
 
+    public static void closeSelector(Selector selector) {
+        try {
+            selector.close();
+
+        } catch (Throwable e) {
+            LOGGER.error("Close selector error.", e);
+        }
+    }
+
     public static void close(SocketChannel socketChannel) {
         close(null, socketChannel);
     }
@@ -226,12 +236,14 @@ public class SocketServer {
             socketChannel.close();
 
         } catch (Throwable e) {
+            LOGGER.error("Close socketChannel error.", e);
         }
 
         try {
             sessionClose(selSession, socketChannel);
 
-        } catch (Throwable throwable) {
+        } catch (Throwable e) {
+            LOGGER.error("Close sessionClose error.", e);
         }
 
         if (closeDebug) {
@@ -326,6 +338,12 @@ public class SocketServer {
         return socketSessionResolver;
     }
 
+    private static final long __JVMBUG_CHECK = 10;
+
+    private static final long __JVMBUG_PERIOD = 1000;
+
+    private static final int __JVMBUG_THRESHHOLD = 512;
+
     /**
      * 开始服务
      *
@@ -374,9 +392,38 @@ public class SocketServer {
             public void run() {
                 Selector selector = serverSelector;
                 ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+                int _jvmBugs = 0;
+                long _jvmSelectStart = 0;
                 while (selector == serverSelector && !Thread.interrupted() && Environment.isActive()) {
                     try {
-                        selector.select();
+                        if (_jvmBugs > __JVMBUG_CHECK) {
+                            _jvmSelectStart = System.currentTimeMillis();
+                        }
+
+                        if (selector.select() == 0) {
+                            if (_jvmBugs > __JVMBUG_CHECK) {
+                                _jvmSelectStart = System.currentTimeMillis() - _jvmSelectStart;
+                                if (_jvmSelectStart > __JVMBUG_THRESHHOLD) {
+                                    _jvmBugs = 0;
+                                }
+                            }
+
+                            if (++_jvmBugs > __JVMBUG_PERIOD) {
+                                synchronized (SocketServer.this) {
+                                    if (selector == serverSelector) {
+                                        rebuildSelector();
+                                        selector = serverSelector;
+                                        selector.selectNow();
+                                        _jvmBugs = 0;
+                                        continue;
+                                    }
+                                }
+                            }
+
+                        } else {
+                            _jvmBugs = 0;
+                        }
+
                         Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
                         while (iterator.hasNext()) {
                             SelectionKey key = iterator.next();
@@ -489,12 +536,7 @@ public class SocketServer {
                     }
                 }
 
-                try {
-                    selector.close();
-
-                } catch (Throwable e) {
-                }
-
+                closeSelector(selector);
                 close();
             }
 
@@ -503,17 +545,55 @@ public class SocketServer {
         return true;
     }
 
+    private synchronized void rebuildSelector() {
+        if (serverSelector != null) {
+            Selector newSelector = null;
+            try {
+                newSelector = Selector.open();
+
+            } catch (IOException e) {
+                LOGGER.error("Fail open a new register", e);
+            }
+
+            while (true) {
+                try {
+                    for (SelectionKey key : serverSelector.keys()) {
+                        try {
+                            if (key.channel().keyFor(newSelector) != null) {
+                                continue;
+                            }
+
+                            int interestOps = key.interestOps();
+                            key.cancel();
+                            key.channel().register(newSelector, interestOps, key.attachment());
+
+                        } catch (Exception e) {
+                            LOGGER.error("Fail to register a channel to newSelector", e);
+                            SocketChannel socketChannel = (SocketChannel) key.channel();
+                            key.cancel();
+                            close(socketChannel);
+                        }
+                    }
+
+                } catch (ConcurrentModificationException e) {
+                    continue;
+                }
+
+                break;
+            }
+
+            closeSelector(serverSelector);
+            serverSelector = newSelector;
+        }
+    }
+
     /**
      * 关闭服务
      */
     public synchronized void close() {
         if (serverSocketChannel != null) {
             if (serverSelector != null) {
-                try {
-                    serverSelector.close();
-                } catch (Throwable e) {
-                }
-
+                closeSelector(serverSelector);
                 serverSelector = null;
             }
 
@@ -523,6 +603,7 @@ public class SocketServer {
                 serverSocketChannel.close();
 
             } catch (Throwable e) {
+                LOGGER.error("Close serverSocketChannel error.", e);
             }
 
             serverSocketChannel = null;

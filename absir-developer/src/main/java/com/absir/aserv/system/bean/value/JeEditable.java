@@ -15,7 +15,7 @@ public enum JeEditable {
     ENABLE,
 
     /**
-     * 不显示(不安全,可以透传;建议用lockable或者group屏蔽)
+     * 不显示(不安全,可以透传;可以用lockable或者group屏蔽)
      */
     DISABLE,
 

@@ -22,12 +22,16 @@ public abstract class JbServerContext<SA> extends ContextBean<Long> {
     @Override
     protected void initialize() {
         ServerService.ME.load(this);
+        loadDone();
     }
 
     /**
      * 载入数据
      */
     protected abstract void load();
+
+    // 载入数据完成
+    protected abstract void loadDone();
 
     @Override
     public void unInitialize() {

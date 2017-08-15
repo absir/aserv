@@ -1,0 +1,13 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+#set(node = nodes.get(0))
+${ScriptNode::appendNode(node.parent(), input, 0)}
+${node.remove()}
+
+${input.attr('type', 'hidden')}
+#set(value = field.getMetas().get("value"))
+#if(value != null)
+    ${input.attr('value', value.toString())}
+#end

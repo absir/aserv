@@ -26,6 +26,8 @@ import com.absir.server.exception.ServerStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Embedded;
 import java.util.ArrayList;
@@ -34,6 +36,8 @@ import java.util.List;
 @SuppressWarnings({"rawtypes"})
 @Inject
 public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R> extends ContextBean<Long> {
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(JbPlayerContext.class);
 
     // 验证登录(加快断线重连验证)
     protected String sessionId;

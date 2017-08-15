@@ -27,6 +27,7 @@ import com.absir.bean.basis.Base;
 import com.absir.binder.BinderData;
 import com.absir.binder.BinderResult;
 import com.absir.client.helper.HelperJson;
+import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
@@ -268,7 +269,7 @@ public class Admin_entity extends AdminServer {
         if (!KernelString.isEmpty(submitOption)) {
             if (entity instanceof ICrudSubmit) {
                 ICrudSubmit submit = (ICrudSubmit<?>) entity;
-                Enum<?> option = (Enum<?>) binderData.bind(submitOption, null, submit.classForOption());
+                Enum<?> option = (Enum<?>) binderData.bind(submitOption, null, KernelClass.type(entity.getClass(), ICrudSubmit.TYPE_VARIABLE));
                 if (option != null) {
                     String tpl = submit.submitOption(option, model);
                     return KernelString.isEmpty(tpl) ? "admin/entity/save.option" : tpl;

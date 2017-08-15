@@ -29,23 +29,32 @@ public class JEmailConfigure extends JConfigureBase implements ICrudBean, ICrudS
 
     @JaLang("发送服务器")
     private String smtp = "smtp.qq.com";
+
     @JaLang("端口")
     private int port = 25;
+
     @JaLang("安全连接")
     private boolean starttls;
+
     @JaLang(value = "发送名", tag = "fromName")
     private String from;
+
     @JaLang("匿名")
     private boolean anyone;
+
     @JaLang("用户名")
     private String username;
+
     @JaLang("密码")
     @JaEdit(types = "passwordType")
     private String password;
+
     @JaLang("测试邮箱")
     private String testMail;
+
     @JaLang("测试主题")
     private String testSubject;
+
     @Length(max = 1024)
     @JaLang("测试内容")
     @JaEdit(types = "text")
@@ -134,11 +143,6 @@ public class JEmailConfigure extends JConfigureBase implements ICrudBean, ICrudS
     @Override
     public void processCrud(Crud crud, CrudHandler handler, Input input) {
         EmailServiceUtils.ME.clearSession();
-    }
-
-    @Override
-    public Class<MailSubmit> classForOption() {
-        return MailSubmit.class;
     }
 
     @Override

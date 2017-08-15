@@ -52,8 +52,8 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
 
     // 全部在线服务
     public final Map<Long, S> SERVER_CONTEXT_MAP;
+
     protected List<XlsField> xlsFields;
-    private int Compo;
 
     /**
      * 初始化

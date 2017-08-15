@@ -169,11 +169,6 @@ public class JShowForm extends JbBean implements ICrudSubmit<JShowForm.DemoOpiti
     public List<JShowMapped> showMappeds;
 
     @Override
-    public Class<DemoOpition> classForOption() {
-        return DemoOpition.class;
-    }
-
-    @Override
     public String submitOption(DemoOpition option, InModel model) {
         model.put("message", option);
         return null;

@@ -7,6 +7,13 @@ import java.util.ArrayList;
  */
 public class CList<T> extends ArrayList<T> {
 
+    public CList(int initialCapacity) {
+        super(initialCapacity);
+    }
+
+    public CList() {
+    }
+
     @Override
     public T get(int index) {
         int size = size();
