@@ -168,6 +168,27 @@ public abstract class GameUtils {
         levelExpCxt.setExp(obj, number);
     }
 
+    public static <T, V> void modifyExpNumberValue(int number, V value, T obj, ILevelExpCxt<T> levelExpCxt, List<? extends IExpValue<V>> iExpValues, int maxLevel) {
+        number += levelExpCxt.getExp(obj);
+        if (number < 0) {
+            number = 0;
+
+        } else {
+            int level = levelExpCxt.getLevel(obj);
+            while (level < maxLevel) {
+                if (number < iExpValues.get(level).getExp(value)) {
+                    break;
+                }
+
+                levelExpCxt.levelUp(obj, ++level);
+            }
+
+            levelExpCxt.setLevel(obj, level);
+        }
+
+        levelExpCxt.setExp(obj, number);
+    }
+
     // 反转战斗结果
     public static void revert(IResult result) {
         if (result.getResult() == EResult.VICTORY) {
