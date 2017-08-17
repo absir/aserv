@@ -545,7 +545,7 @@ public class SocketAdapter {
                                     addDisconnectNumber();
 
                                 } else {
-                                    waiteAccept();
+                                    waitAccept();
                                 }
                             }
                         }
@@ -661,7 +661,7 @@ public class SocketAdapter {
     /**
      * 等待连接
      */
-    public void waiteAccept() {
+    public void waitAccept() {
         lastedBeat();
     }
 
