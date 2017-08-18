@@ -39,12 +39,12 @@ public class HandlerInvoker {
 
     protected int throwable(OnPut onPut, HandlerType handlerType, HandlerType.HandlerMethod handlerMethod, Object[] args, Throwable e) {
         if (args == null) {
-            //LOGGER.error("handlerInvoker[" + handlerType.type + "] read " + handlerMethod.method + " param error", e);
+            LOGGER.error("handlerInvoker[" + handlerType.type + "] read " + handlerMethod.method + " param error", e);
             return RpcFactory.RPC_CODE.PARAM_ERROR.ordinal();
         }
 
-        //LOGGER.error("handlerInvoker[" + handlerType.type + "] invoker " + handlerMethod.method + " param error", e);
         if (e != null) {
+            LOGGER.error("handlerInvoker[" + handlerType.type + "] invoker " + handlerMethod.method + " error", e);
             onPut.setReturnThrowable(e);
             Class<?>[] exceptionTypes = handlerMethod.exceptionTypes;
             if (exceptionTypes.length > 0) {

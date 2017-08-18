@@ -7,7 +7,6 @@
  */
 package com.absir.aserv.game.battle;
 
-import com.absir.aserv.game.utils.GameUtils;
 import com.absir.aserv.system.bean.dto.IBaseSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -124,7 +123,7 @@ public abstract class OObject<O extends OObject, R extends IResult> {
         }
 
         if (target == null) {
-            result.setResult(EResult.VICTORY);
+            result.setResult(isAttacker() ? EResult.VICTORY : EResult.LOSS);
         }
     }
 
@@ -176,21 +175,17 @@ public abstract class OObject<O extends OObject, R extends IResult> {
             if (result.getResult() == EResult.CONTINUE) {
                 // 从对面阵营 寻找目标；判断胜利
                 forTargetResult(result, true);
-                if (target != null) {
-                    target.forTargetResult(result, true);
-
-                } else {
-                    GameUtils.revert(result);
+                if (result.getResult() == EResult.CONTINUE) {
+                    if (target != null) {
+                        // 对面阵营判断胜利
+                        target.forTargetResult(result, true);
+                    }
                 }
             }
 
             if (result.getResult() == EResult.CONTINUE) {
                 // 死亡BUFF
                 damageDieBuff(from, atk, damage, damageFrom, result);
-
-            } else {
-                // 反转战斗结果
-                GameUtils.revert(result);
             }
         }
 
@@ -258,6 +253,8 @@ public abstract class OObject<O extends OObject, R extends IResult> {
 
     protected void treatReBoundBuff(O from, boolean dead, int treat, int tHp, Object treatFrom, R result) {
     }
+
+    protected abstract boolean isAttacker();
 
     // 寻找目标
     protected abstract O findTarget(boolean invincible);
