@@ -429,6 +429,10 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
         return method;
     }
 
+    protected Expression getCloneAssignExpression(String name, Expression from) {
+        return new AssignExpr(new NameExpr("_clone." + name), from == null ? new NameExpr(name) : from, AssignExpr.Operator.assign);
+    }
+
     protected MethodDeclaration getCloneDepth(TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap) {
         MethodDeclaration method = new MethodDeclaration();
         method.setName("cloneDepth");
@@ -461,13 +465,13 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                     stmts.add(stmt);
                 }
 
-                stmts.add(new ExpressionStmt(new AssignExpr(new NameExpr("_clone." + name),
-                        new MethodCallExpr(new NameExpr("_nextDepth < 0 ? " + name + " : " + name), "cloneDepth", args),
-                        AssignExpr.Operator.assign)));
+                stmts.add(new ExpressionStmt(
+                        getCloneAssignExpression(name, new MethodCallExpr(new NameExpr("_nextDepth < 0 ? " + name + " : " + name), "cloneDepth", args))
+                ));
 
             } else {
                 stmts.add(new ExpressionStmt(
-                        new AssignExpr(new NameExpr("_clone." + name), new NameExpr(name), AssignExpr.Operator.assign)));
+                        getCloneAssignExpression(name, null)));
             }
         }
 
@@ -514,10 +518,6 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
         return method;
     }
 
-    protected Expression getMergeDirtyAssignExpression(String name) {
-        return new AssignExpr(new NameExpr("_clone." + name), new NameExpr(name), AssignExpr.Operator.assign);
-    }
-
     protected MethodDeclaration getMergeDirty(TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap) {
         MethodDeclaration method = new MethodDeclaration();
         method.setName("mergeDirty");
@@ -547,7 +547,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
             List<Statement> thenStmts = new ArrayList<Statement>();
             thenStmt.setStmts(thenStmts);
             thenStmts.add(new ExpressionStmt(
-                    getMergeDirtyAssignExpression(name)));
+                    getCloneAssignExpression(name, null)));
             // if(isDirty(0)) { _clone.a = a }
             Statement ifStms = new IfStmt(new NameExpr("isDirtyI(" + index + ")"), thenStmt, null);
             bodyStms.add(ifStms);

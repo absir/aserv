@@ -85,9 +85,9 @@ public class ThriftJavaMerger extends BeanJavaMerger {
     }
 
     @Override
-    protected Expression getMergeDirtyAssignExpression(String name) {
+    protected Expression getCloneAssignExpression(String name, Expression from) {
         List<Expression> args = new ArrayList<Expression>();
-        args.add(new NameExpr(name));
+        args.add(from == null ? new NameExpr(name) : from);
         return new MethodCallExpr(new NameExpr("_clone"), "set" + KernelString.capitalize(name), args);
     }
 }

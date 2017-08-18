@@ -35,8 +35,9 @@ public class ThriftCodecJavaMerger extends ThriftJavaMerger {
     protected void processBodyDeclaration(BodyDeclaration bodyDeclaration, String declarationAsString) {
     }
 
-    protected Expression getMergeDirtyAssignExpression(String name) {
-        return new AssignExpr(new NameExpr("_clone." + name), new NameExpr(name), AssignExpr.Operator.assign);
+    @Override
+    protected Expression getCloneAssignExpression(String name, Expression from) {
+        return new AssignExpr(new NameExpr("_clone." + name), from == null ? new NameExpr(name) : from, AssignExpr.Operator.assign);
     }
 
 }
