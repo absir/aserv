@@ -26,6 +26,8 @@ import com.absir.orm.value.JaConfig;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.internal.SessionFactoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Entity;
 import java.io.File;
@@ -40,13 +42,16 @@ import java.util.Properties;
 @Bean
 public class SessionFactoryScanner implements IBeanDefineSupply, IBeanDefineScanner {
 
+    protected static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryScanner.class);
+
     private List<Class<?>> entityClasses = new ArrayList<Class<?>>();
 
     @Inject
-    private void setSessionFactoryBoost(SessionFactoryBoost sessionFactoryBoost) {
+    protected void setSessionFactoryBoost(SessionFactoryBoost sessionFactoryBoost) {
         BeanFactory beanFactory = BeanFactoryUtils.get();
         ConfigurationBoost.sessionFactoryBoost = sessionFactoryBoost;
         File hibernate = new File(beanFactory.getBeanConfig().getClassPath() + "hibernate");
+        LOGGER.info("scan hibernate.cfg.xml at " + hibernate);
         if (hibernate.exists() && hibernate.isDirectory()) {
             final List<String> names = new ArrayList<String>();
             File[] configFiles = hibernate.listFiles(new FilenameFilter() {

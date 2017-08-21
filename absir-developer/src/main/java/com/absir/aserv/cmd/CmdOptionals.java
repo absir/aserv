@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 @SuppressWarnings("unchecked")
-public class CmdOptionials {
+public class CmdOptionals {
 
-    private Opitional<?> opitional;
+    private Optional<?> optional;
 
-    private Map<String, Opitional<?>> keyMapOpitional = new LinkedHashMap<String, Opitional<?>>();
+    private Map<String, Optional<?>> keyMapOpitional = new LinkedHashMap<String, Optional<?>>();
 
     private File optionialStoredFile;
 
@@ -34,7 +34,7 @@ public class CmdOptionials {
             return false;
         }
 
-        if (opitional == null || argCmd.charAt(0) == '-') {
+        if (optional == null || argCmd.charAt(0) == '-') {
             if (argCmd.charAt(0) == '-') {
                 if (length == 1) {
                     return false;
@@ -43,21 +43,21 @@ public class CmdOptionials {
                 argCmd = argCmd.substring(1);
             }
 
-            Opitional<?> opitional = keyMapOpitional.get(argCmd);
-            if (opitional == null) {
-                this.opitional = null;
+            Optional<?> optional = keyMapOpitional.get(argCmd);
+            if (optional == null) {
+                this.optional = null;
                 return false;
             }
 
-            if (opitional instanceof OpitionalValue) {
-                OpitionalValue<Object> opitionalValue = (OpitionalValue<Object>) opitional;
+            if (optional instanceof OptionalValue) {
+                OptionalValue<Object> opitionalValue = (OptionalValue<Object>) optional;
                 opitionalValue.setValue(opitionalValue.activeValue);
-                this.opitional = opitionalValue;
+                this.optional = opitionalValue;
             }
 
         } else {
-            opitional.setOpitionalValue(KernelString.unTransferred(argCmd));
-            opitional = null;
+            optional.setOpitionalValue(KernelString.unTransferred(argCmd));
+            optional = null;
         }
 
         return true;
@@ -71,11 +71,11 @@ public class CmdOptionials {
         if (storedFile.exists()) {
             Map<String, Object> optionalMap = new HashMap<String, Object>();
             BeanConfigImpl.readProperties(BeanFactoryUtils.getBeanConfig(), optionalMap, storedFile, null);
-            Opitional<?> opitional;
+            Optional<?> optional;
             for (Entry<String, Object> entry : optionalMap.entrySet()) {
-                opitional = keyMapOpitional.get(entry.getKey());
-                if (opitional != null && !opitional.isModified() && opitional.isStored()) {
-                    opitional.setOpitionalValue(entry.getValue());
+                optional = keyMapOpitional.get(entry.getKey());
+                if (optional != null && !optional.isModified() && optional.isStored()) {
+                    optional.setOpitionalValue(entry.getValue());
                 }
             }
         }
@@ -88,14 +88,14 @@ public class CmdOptionials {
      */
     public void saveOptionialStoredFile() throws Throwable {
         if (optionialStoredFile != null) {
-            Opitional<?> opitional;
+            Optional<?> optional;
             StringBuilder stringBuilder = new StringBuilder();
-            for (Entry<String, Opitional<?>> entry : keyMapOpitional.entrySet()) {
-                opitional = entry.getValue();
-                if (opitional.isStored() && opitional.isModified()) {
+            for (Entry<String, Optional<?>> entry : keyMapOpitional.entrySet()) {
+                optional = entry.getValue();
+                if (optional.isStored() && optional.isModified()) {
                     stringBuilder.append(entry.getKey());
                     stringBuilder.append('=');
-                    stringBuilder.append(DynaBinder.to(opitional.getValue(), String.class));
+                    stringBuilder.append(DynaBinder.to(optional.getValue(), String.class));
                     stringBuilder.append("\r\n");
                 }
             }
@@ -104,28 +104,28 @@ public class CmdOptionials {
         }
     }
 
-    public <T> Opitional<T> putOpitional(String key, Class<? extends T> optionalClass, T defaultValue) {
+    public <T> Optional<T> putOpitional(String key, Class<? extends T> optionalClass, T defaultValue) {
         return putOpitional(key, optionalClass, defaultValue, true);
     }
 
-    public <T> Opitional<T> putOpitional(String key, Class<? extends T> optionalClass, T defaultValue, boolean stored) {
-        Opitional<T> opitional = new Opitional<T>(optionalClass, defaultValue, stored);
-        keyMapOpitional.put(key, opitional);
-        return opitional;
+    public <T> Optional<T> putOpitional(String key, Class<? extends T> optionalClass, T defaultValue, boolean stored) {
+        Optional<T> optional = new Optional<T>(optionalClass, defaultValue, stored);
+        keyMapOpitional.put(key, optional);
+        return optional;
     }
 
-    public <T> OpitionalValue<T> putOpitionalValue(String key, Class<? extends T> optionalClass, T defaultValue, T activeValue) {
+    public <T> OptionalValue<T> putOpitionalValue(String key, Class<? extends T> optionalClass, T defaultValue, T activeValue) {
         return putOpitionalValue(key, optionalClass, defaultValue, activeValue, false);
     }
 
-    public <T> OpitionalValue<T> putOpitionalValue(String key, Class<? extends T> optionalClass, T defaultValue, T activeValue,
-                                                   boolean stored) {
-        OpitionalValue<T> opitionalValue = new OpitionalValue<T>(optionalClass, defaultValue, stored, activeValue);
+    public <T> OptionalValue<T> putOpitionalValue(String key, Class<? extends T> optionalClass, T defaultValue, T activeValue,
+                                                  boolean stored) {
+        OptionalValue<T> opitionalValue = new OptionalValue<T>(optionalClass, defaultValue, stored, activeValue);
         keyMapOpitional.put(key, opitionalValue);
         return opitionalValue;
     }
 
-    public static class Opitional<T> {
+    public static class Optional<T> {
 
         protected Class<? extends T> type;
 
@@ -135,7 +135,7 @@ public class CmdOptionials {
 
         protected boolean modified;
 
-        protected Opitional(Class<? extends T> optionalClass, T defaultValue, boolean stored) {
+        protected Optional(Class<? extends T> optionalClass, T defaultValue, boolean stored) {
             this.type = optionalClass;
             this.value = defaultValue;
             this.stored = stored;
@@ -175,11 +175,11 @@ public class CmdOptionials {
         }
     }
 
-    public static class OpitionalValue<T> extends Opitional<T> {
+    public static class OptionalValue<T> extends Optional<T> {
 
         private T activeValue;
 
-        protected OpitionalValue(Class<? extends T> optionalClass, T defaultValue, boolean stored, T activeValue) {
+        protected OptionalValue(Class<? extends T> optionalClass, T defaultValue, boolean stored, T activeValue) {
             super(optionalClass, defaultValue, stored);
             this.activeValue = activeValue;
         }

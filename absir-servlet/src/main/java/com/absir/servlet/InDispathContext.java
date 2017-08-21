@@ -36,7 +36,7 @@ public class InDispathContext extends InDispathFilter {
             contextName = "root";
         }
 
-        beanProviderContext.scan(HelperFileName.getClassPath(InDispathContext.class), getContextResourcePath() + "/../../webResources/" + contextName, null, null, filterConfig.getServletContext());
+        beanProviderContext.scan(HelperFileName.getClassPath(null), getContextResourcePath() + "/../../webResources/" + contextName, null, null, filterConfig.getServletContext());
         logger = LoggerFactory.getLogger(InDispathContext.class);
         logger.info("start beanFactory from " + this);
         beanProviderContext.started();

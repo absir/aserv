@@ -32,7 +32,36 @@ public class BeanFactoryStopping {
         FACTORY_STOPPINGS.add(beanFactoryStopping);
     }
 
+    private static boolean addShutdown;
+
+    private static boolean stopping = false;
+
+    public static void addShutdownHook() {
+        synchronized (BeanFactoryStopping.class) {
+            if (addShutdown) {
+                return;
+            }
+
+            addShutdown = true;
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                stoppingAll();
+            }
+        });
+    }
+
     public static void stoppingAll() {
+        synchronized (BeanFactoryStopping.class) {
+            if (stopping) {
+                return;
+            }
+
+            stopping = true;
+        }
+
         if (!FACTORY_STOPPINGS.isEmpty()) {
             for (BeanFactoryStopping FACTORY_STOPPING : FACTORY_STOPPINGS) {
                 BeanFactory beanFactory = FACTORY_STOPPING.beanFactory;

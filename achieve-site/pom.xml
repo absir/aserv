@@ -103,6 +103,11 @@
                     </httpConnector>
                     <webAppConfig>
                         <contextPath>/</contextPath>
+                        <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
+                            <resourcesAsCSV>
+                                ./${build.directory}/${build.finalName}
+                            </resourcesAsCSV>
+                        </baseResource>
                     </webAppConfig>
                 </configuration>
                 <executions>
