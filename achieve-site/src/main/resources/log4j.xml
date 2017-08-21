@@ -7,6 +7,8 @@
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%-5p: %c - %m%n"/>
         </layout>
+        <filter class="com.absir.context.log4j.EnvFilter">
+        </filter>
         <!--<filter class="org.apache.log4j.varia.LevelRangeFilter">-->
         <!--<param name="LevelMin" value="FATAL"/>-->
         <!--<param name="LevelMax" value="INFO"/>-->

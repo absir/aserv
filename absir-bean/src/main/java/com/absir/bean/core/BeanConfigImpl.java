@@ -650,6 +650,15 @@ public class BeanConfigImpl implements BeanConfig {
 
             @Override
             public void doWith(String template) {
+                if (template.equals("-D_AB_EVN")) {
+                    String env = System.getProperty("_AB_EVN");
+                    if (KernelString.isEmpty(env)) {
+                        return;
+                    }
+
+                    template = env;
+                }
+
                 try {
                     Environment env = Environment.valueOf(template.toUpperCase());
                     if (env != null) {

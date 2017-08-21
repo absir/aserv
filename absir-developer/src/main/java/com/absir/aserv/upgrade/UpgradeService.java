@@ -45,15 +45,20 @@ public class UpgradeService {
     public static final UpgradeService ME = BeanFactoryUtils.get(UpgradeService.class);
 
     public static final String NO_APP_CODE = LangCodeUtils.get("应用不存在", UpgradeService.class);
+
     public static final String NOT_VALIDATOR = LangCodeUtils.get("升级文件验证失败", UpgradeService.class);
+
     public static final String IO_EXCEPTION = LangCodeUtils.get("文件异常", UpgradeService.class);
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(UpgradeService.class);
+
     protected static final String incrementalUpgrade = "incrementalUpgrade";
     @Value(value = "upgrade.config")
     private String upgradeConfig = "WEB-INF/classes/config.properties";
+
     @Value(value = "upgrade.destination", defaultValue = "${classPath}../../")
     private String upgradeDestination;
+
     @Value(value = "upgrade.restart")
     private String restartCommand;
 
