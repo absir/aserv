@@ -171,6 +171,7 @@ public class UpgradeService {
             upgradeRM(configMap);
             String value = BeanConfigImpl.getMapValue(configMap, "upgrade.restart", null, String.class);
             restartCommand = BeanFactoryUtils.getBeanConfig().getExpression(value);
+            return true;
         }
 
         LOGGER.warn("upgrade.fail => " + upgradeFile);
@@ -179,6 +180,11 @@ public class UpgradeService {
 
     @Async(notifier = true, thread = true)
     public void restartUpgrade(File file) throws IOException {
+        if (!file.exists()) {
+            LOGGER.error("restartUpgrade not found upgrade file : " + file);
+            return;
+        }
+
         Object stopDone = stop();
         upgrade(file);
         start(stopDone);
@@ -191,8 +197,7 @@ public class UpgradeService {
         Object stopDone = null;
         try {
             HelperFile.write(upgradeFile, inputStream);
-            stopDone = stop();
-            upgrade(upgradeFile);
+            UpgradeService.ME.restartUpgrade(upgradeFile);
 
         } finally {
             HelperFile.deleteQuietly(upgradeFile);

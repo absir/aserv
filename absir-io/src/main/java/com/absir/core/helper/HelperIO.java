@@ -96,15 +96,27 @@ public class HelperIO extends IOUtils {
                     HelperIO.copy(inputStream, outStream);
                 }
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 success = false;
             }
 
-            InputStream inputStream = process.getErrorStream();
-            if (inputStream != null) {
-                if (HelperIO.copy(inputStream, errorStream) > 0) {
+            try {
+                InputStream inputStream = process.getErrorStream();
+                if (inputStream != null) {
+                    if (HelperIO.copy(inputStream, errorStream) > 0) {
+                        success = false;
+                    }
+                }
+
+            } catch (Exception e) {
+            }
+
+            try {
+                if (process.waitFor() != 0) {
                     success = false;
                 }
+
+            } catch (InterruptedException e) {
             }
 
         } finally {

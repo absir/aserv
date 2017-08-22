@@ -14,15 +14,15 @@ start(){
             exit
         fi
 
-        if [ !-d "work"];then
+        if [ ! -d "work" ];then
             mkdir "work"
         fi
 
-        EVN=$2
+        EVN=$1
         if [ ! $EVN ];then
             EVN="PRODUCT"
         else
-            EVN=$(echo $EVN | tr '[a-z]' '[A-Z]')     
+            EVN=$(echo $EVN | tr '[a-z]' '[A-Z]')
         fi
 
         evnDebug=0
@@ -41,8 +41,9 @@ start(){
 
         command="java $JAVA_OPTS -D_AB_ENV=$EVN -jar $JETTY_HOME/start.jar"
         if [ $evnDebug -le 0 ];then
-            rm -f nohup.out
-            command="nohup $command &"
+            rm -f nohup.1.out
+            mv nohup.out nohup.1.out
+            command="nohup $command > nohup.out &"
         fi
         printf "$command\r\n"
         eval $command
@@ -76,7 +77,7 @@ stop(){
 
 case "$1" in
     start)
-start
+start $2
 ;;
 stop)
 stop

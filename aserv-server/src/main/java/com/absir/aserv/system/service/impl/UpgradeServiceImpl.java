@@ -97,7 +97,7 @@ public class UpgradeServiceImpl extends UpgradeService {
     public void upgradeFile(long adapterTime, String filePath) {
         if (ServerEnvironment.getStartTime() == adapterTime) {
             try {
-                UpgradeService.ME.restartUpgrade(UploadCrudFactory.ME.getProtectedStream(filePath));
+                UpgradeService.ME.restartUpgrade(UploadCrudFactory.ME.getUploadFile(filePath));
 
             } catch (Exception e) {
                 LOGGER.error("upgradeFile error " + filePath, e);
