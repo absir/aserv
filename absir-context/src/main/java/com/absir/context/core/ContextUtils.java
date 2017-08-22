@@ -12,6 +12,9 @@ import com.absir.bean.basis.Configure;
 import com.absir.bean.config.IBeanDefineEager;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
+import com.absir.bean.inject.value.InjectOrder;
+import com.absir.bean.inject.value.Started;
+import com.absir.bean.inject.value.Stopping;
 import com.absir.context.schedule.ScheduleFactory;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.dyna.DynaConvert;
@@ -102,5 +105,23 @@ public abstract class ContextUtils implements IBeanDefineEager {
         }
 
         return null;
+    }
+
+    private static int startedCount;
+
+    public static int getStartedCount() {
+        return startedCount;
+    }
+
+    @InjectOrder(Integer.MAX_VALUE)
+    @Started
+    protected static void started() {
+        System.out.println("ContextUtils.started startedCount at " + (++startedCount));
+    }
+
+    @InjectOrder(Integer.MIN_VALUE)
+    @Stopping
+    protected static void stopping() {
+        System.out.println("ContextUtils.stopping startedCount at " + (--startedCount));
     }
 }

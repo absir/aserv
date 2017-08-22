@@ -44,6 +44,7 @@ public class RouteAdapter implements IBeanFactoryStarted {
             return compare;
         }
     };
+
     public static final Comparator<RouteMatcher> ROUTE_MATCHER_COMPARATOR = new Comparator<RouteMatcher>() {
 
         @Override
@@ -59,6 +60,7 @@ public class RouteAdapter implements IBeanFactoryStarted {
         }
 
     };
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(RouteAdapter.class);
     private static int varintsMapUriIndex;
     private static Map<Integer, String> varintsMapUri;

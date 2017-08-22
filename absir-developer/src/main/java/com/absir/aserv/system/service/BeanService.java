@@ -48,7 +48,9 @@ public interface BeanService {
 
         @Override
         public int compare(JiOrdinal lhs, JiOrdinal rhs) {
-            return lhs.getOrdinal() - rhs.getOrdinal();
+            int lord = lhs.getOrdinal();
+            int rord = rhs.getOrdinal();
+            return lord < rord ? -1 : rord == rord ? 0 : 1;
         }
     };
 
@@ -68,16 +70,7 @@ public interface BeanService {
             if (order == 0) {
                 long lid = KernelDyna.to(((IBase) lhs).getId(), long.class);
                 long rid = KernelDyna.to(((IBase) rhs).getId(), long.class);
-                lid -= rid;
-                if (lid > Integer.MAX_VALUE) {
-                    return Integer.MAX_VALUE;
-                }
-
-                if (lid < Integer.MIN_VALUE) {
-                    return Integer.MIN_VALUE;
-                }
-
-                return (int) lid;
+                return lid < rid ? -1 : lid == rid ? 0 : 1;
             }
 
             return order;

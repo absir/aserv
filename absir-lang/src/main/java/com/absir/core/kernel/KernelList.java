@@ -21,7 +21,9 @@ public abstract class KernelList {
 
         @Override
         public int compare(Orderable lhs, Orderable rhs) {
-            return lhs.getOrder() - rhs.getOrder();
+            int lord = lhs.getOrder();
+            int rord = rhs.getOrder();
+            return lord < rord ? -1 : rord == rord ? 0 : 1;
         }
     };
 
@@ -29,7 +31,7 @@ public abstract class KernelList {
 
         @Override
         public int compare(Orderable lhs, Orderable rhs) {
-            return rhs.getOrder() - lhs.getOrder();
+            return COMPARATOR.compare(rhs, lhs);
         }
     };
 
@@ -37,7 +39,9 @@ public abstract class KernelList {
 
         @Override
         public int compare(Object lhs, Object rhs) {
-            return getOrder(lhs) - getOrder(rhs);
+            int lord = getOrder(lhs);
+            int rord = getOrder(rhs);
+            return lord < rord ? -1 : rord == rord ? 0 : 1;
         }
     };
 

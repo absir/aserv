@@ -204,8 +204,10 @@ public class SocketAdapterSel extends SocketAdapter {
                         return;
 
                     } catch (Throwable e) {
-                        Environment.throwable(e);
-                        UtilPipedStream.closeCloseable(outputStream);
+                        if (!outputStream.isClosed()) {
+                            Environment.throwable(e);
+                            UtilPipedStream.closeCloseable(outputStream);
+                        }
                     }
                 }
 

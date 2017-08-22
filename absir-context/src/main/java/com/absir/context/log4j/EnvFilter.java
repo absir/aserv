@@ -1,38 +1,28 @@
 package com.absir.context.log4j;
 
-import com.absir.bean.inject.value.InjectOrder;
-import com.absir.bean.inject.value.Started;
+import com.absir.context.core.ContextUtils;
 import com.absir.core.base.Environment;
 import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by absir on 21/8/17.
  */
 public class EnvFilter extends Filter {
 
-    private static int allStarted;
+    private int started;
 
-    @InjectOrder()
-    @Started
-    protected static void Started() {
-        LoggerFactory.getLogger(EnvFilter.class).info("EnvFilter.allStarted = " + (++allStarted));
+    public int getStarted() {
+        return started;
     }
 
-    private int start;
-
-    public int getStart() {
-        return start;
-    }
-
-    public void setStart(int start) {
-        this.start = start;
+    public void setStarted(int started) {
+        this.started = started;
     }
 
     @Override
     public int decide(LoggingEvent loggingEvent) {
-        return allStarted > start && Environment.getEnvironment().ordinal() - Environment.DEBUG.ordinal() > 0 ? -1 : 0;
+        return ContextUtils.getStartedCount() > started && Environment.getEnvironment().ordinal() - Environment.DEBUG.ordinal() > 0 ? -1 : 0;
     }
 
 }

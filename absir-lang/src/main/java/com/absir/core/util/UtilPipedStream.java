@@ -215,6 +215,11 @@ public class UtilPipedStream implements IStep {
         }
 
         @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            outInputStream.write(b, off, len);
+        }
+
+        @Override
         public void close() throws IOException {
             outInputStream.close();
         }
@@ -231,6 +236,10 @@ public class UtilPipedStream implements IStep {
         protected int in = 0;
 
         protected int out = 0;
+
+        public boolean isClosed() {
+            return closed;
+        }
 
         public OutInputStream() {
             initPipe(DEFAULT_PIPE_SIZE);
@@ -253,7 +262,7 @@ public class UtilPipedStream implements IStep {
                 throw new IOException("Block stream closed");
             }
 
-            if (availableNIO() + len >= buffer.length) {
+            if (available() + len >= buffer.length) {
                 flush();
                 try {
                     wait(1000);
@@ -261,7 +270,7 @@ public class UtilPipedStream implements IStep {
                 } catch (InterruptedException e) {
                 }
 
-                if (availableNIO() + len >= buffer.length) {
+                if (available() + len >= buffer.length) {
                     throw new IOException("Block not enough buffer write");
                 }
             }
@@ -275,28 +284,48 @@ public class UtilPipedStream implements IStep {
                     in = 0;
                 }
             }
+
+            flush();
         }
 
         public synchronized void write(byte[] b, int off, int len) throws IOException {
-            checkWrite(len);
-            synchronized (buffer) {
-                int last = in + len;
-                if (last <= buffer.length) {
-                    System.arraycopy(b, off, buffer, in, len);
-                    in += len;
-                    if (in >= buffer.length) {
-                        in = 0;
-                    }
-
-                } else {
-                    int l = buffer.length - in;
-                    System.arraycopy(b, off, buffer, in, l);
-                    in = len - l;
-                    System.arraycopy(b, off + l, buffer, 0, in);
+            int allLen = len;
+            while (true) {
+                checkWrite(1);
+                len = buffer.length - available();
+                if (len > allLen) {
+                    len = allLen;
                 }
-            }
 
-            flush();
+                synchronized (buffer) {
+                    int last = in + len;
+                    if (last <= buffer.length) {
+                        System.arraycopy(b, off, buffer, in, len);
+                        in += len;
+                        if (in > buffer.length) {
+                            in = 0;
+                        }
+
+                    } else {
+                        int l = buffer.length - in;
+                        if (l > 0) {
+                            System.arraycopy(b, off, buffer, in, l);
+                        }
+
+                        in = len - l;
+                        System.arraycopy(b, off + l, buffer, 0, in);
+                    }
+                }
+
+                flush();
+
+                allLen -= len;
+                if (allLen <= 0) {
+                    break;
+                }
+
+                off += len;
+            }
         }
 
         public final void flush() {
@@ -305,21 +334,21 @@ public class UtilPipedStream implements IStep {
             }
         }
 
-        public int available() {
-            if (readSpace()) {
-                return 0;
-            }
-
-            return availableNIO();
-        }
-
-        protected final int availableNIO() {
+        public final int available() {
             int av = in - out;
             if (av < 0) {
                 av += buffer.length;
             }
 
             return av;
+        }
+
+        protected int availableIO() {
+            if (readSpace()) {
+                return 0;
+            }
+
+            return available();
         }
 
         private final boolean readSpace() {
@@ -335,6 +364,7 @@ public class UtilPipedStream implements IStep {
                 }
 
             } catch (InterruptedException e) {
+                Environment.throwable(e);
             }
 
             return false;
@@ -346,28 +376,42 @@ public class UtilPipedStream implements IStep {
                 return -1;
             }
 
+            int b;
             synchronized (buffer) {
                 if (in == out) {
                     return -1;
                 }
 
-                int b = buffer[out];
+                b = buffer[out];
                 if (++out >= buffer.length) {
                     out = 0;
                 }
-
-                return b;
             }
+
+            synchronized (this) {
+                notifyAll();
+            }
+
+            return b;
         }
 
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
+            if (b == null) {
+                throw new NullPointerException();
+            } else if (off < 0 || len < 0 || len > b.length - off) {
+                throw new IndexOutOfBoundsException();
+            } else if (len == 0) {
+                return 0;
+            }
+
             if (readSpace()) {
                 return -1;
             }
 
+            int av;
             synchronized (buffer) {
-                int av = in - out;
+                av = in - out;
                 if (av == 0) {
                     return -1;
                 }
@@ -379,8 +423,11 @@ public class UtilPipedStream implements IStep {
 
                     System.arraycopy(buffer, out, b, off, av);
                     out += av;
-                    if (out >= buffer.length) {
+                    if (out == in) {
+                        out = 0;
                         in = 0;
+
+                    } else if (out >= buffer.length) {
                         out = 0;
                     }
 
@@ -396,9 +443,13 @@ public class UtilPipedStream implements IStep {
                         out = 0;
                     }
                 }
-
-                return av;
             }
+
+            synchronized (this) {
+                notifyAll();
+            }
+
+            return av;
         }
 
         @Override

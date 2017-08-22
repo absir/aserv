@@ -99,7 +99,7 @@
                 <configuration>
                     <scanIntervalSeconds>10</scanIntervalSeconds>
                     <httpConnector>
-                        <port>8787</port>
+                        <port>8080</port>
                     </httpConnector>
                     <webAppConfig>
                         <contextPath>/</contextPath>
@@ -110,25 +110,25 @@
                         </baseResource>
                     </webAppConfig>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>start-jetty</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <scanIntervalSeconds>0</scanIntervalSeconds>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>stop-jetty</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <!--<executions>-->
+                <!--<execution>-->
+                <!--<id>start-jetty</id>-->
+                <!--<phase>pre-integration-test</phase>-->
+                <!--<goals>-->
+                <!--<goal>run</goal>-->
+                <!--</goals>-->
+                <!--<configuration>-->
+                <!--<scanIntervalSeconds>0</scanIntervalSeconds>-->
+                <!--</configuration>-->
+                <!--</execution>-->
+                <!--<execution>-->
+                <!--<id>stop-jetty</id>-->
+                <!--<phase>post-integration-test</phase>-->
+                <!--<goals>-->
+                <!--<goal>stop</goal>-->
+                <!--</goals>-->
+                <!--</execution>-->
+                <!--</executions>-->
             </plugin>
         </plugins>
     </build>

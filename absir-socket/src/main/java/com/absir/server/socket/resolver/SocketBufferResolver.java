@@ -206,39 +206,41 @@ public class SocketBufferResolver implements IBufferResolver {
 //                return false;
 //            }
 
-            //没有POST_FLAG只管写入，有POST_FLAG才需要创建
-            if ((flag & SocketAdapter.POST_FLAG) == 0) {
-                final UtilPipedStream.NextOutputStream stream = socketBuffer.getPipedStream().getOutputStream(streamIndex);
-                if (stream != null) {
-                    try {
-                        stream.write(buffer, offLen, buffer.length - offLen);
-                        return true;
+            if (streamMax > 0) {
+                //没有POST_FLAG只管写入，有POST_FLAG才需要创建
+                if ((flag & SocketAdapter.POST_FLAG) == 0) {
+                    final UtilPipedStream.NextOutputStream stream = socketBuffer.getPipedStream().getOutputStream(streamIndex);
+                    if (stream != null) {
+                        try {
+                            stream.write(buffer, offLen, buffer.length - offLen);
+                            return true;
 
-                    } catch (Throwable e) {
-                        Environment.throwable(e);
-                        UtilPipedStream.closeCloseable(stream);
+                        } catch (Throwable e) {
+                            Environment.throwable(e);
+                            UtilPipedStream.closeCloseable(stream);
+                        }
                     }
-                }
 
-            } else {
-                UtilPipedStream pipedStream = socketBuffer.getPipedStream();
-                if (streamIndex > 0 && pipedStream.getSize() < streamMax) {
-                    final UtilPipedStream.NextOutputStream outputStream = pipedStream.createNextOutputStream(streamIndex);
-                    try {
-                        //SocketAdapter._debugInfo("SocketBufferResolver STREAM_FLAG open " + streamIndex);
-                        UtilContext.getThreadPoolExecutor().execute(new Runnable() {
+                } else {
+                    UtilPipedStream pipedStream = socketBuffer.getPipedStream();
+                    if (streamIndex > 0 && pipedStream.getSize() < streamMax) {
+                        final UtilPipedStream.NextOutputStream outputStream = pipedStream.createNextOutputStream(streamIndex);
+                        try {
+                            //SocketAdapter._debugInfo("SocketBufferResolver STREAM_FLAG open " + streamIndex);
+                            UtilContext.getThreadPoolExecutor().execute(new Runnable() {
 
-                            @Override
-                            public void run() {
-                                serverDispatch.doDispatch(selSession, socketChannel, socketBuffer.getId(), buffer, flag, offLen, socketBuffer, outputStream, currentTime);
-                            }
-                        });
+                                @Override
+                                public void run() {
+                                    serverDispatch.doDispatch(selSession, socketChannel, socketBuffer.getId(), buffer, flag, offLen, socketBuffer, outputStream, currentTime);
+                                }
+                            });
 
-                        return true;
+                            return true;
 
-                    } catch (Throwable e) {
-                        Environment.throwable(e);
-                        UtilPipedStream.closeCloseable(outputStream);
+                        } catch (Throwable e) {
+                            Environment.throwable(e);
+                            UtilPipedStream.closeCloseable(outputStream);
+                        }
                     }
                 }
             }

@@ -95,6 +95,9 @@ public class SlaveHandler implements IHandler, ISlave {
                     if (slaveUpgrade.getBeginTime() > ContextUtils.getContextTime()) {
                         slaveUpgrade(slaveUpgrade, false);
                         TaskService.ME.addPanel(null, "slaveUpgrade", slaveUpgrade.getBeginTime(), slaveUpgrade.getBeginTime() + passTime, retryCount, slaveUpgrade, true);
+
+                    } else {
+                        slaveUpgrade(slaveUpgrade, true);
                     }
                 }
 
@@ -107,7 +110,7 @@ public class SlaveHandler implements IHandler, ISlave {
 
     @JaTask("slaveUpgrade")
     protected void slaveUpgrade(SlaveUpgrade slaveUpgrade, boolean doUpgrade) throws IOException {
-        if (slaveUpgrade != null && slaveUpgrade.getActionTime() <= ServerEnvironment.getStartTime()) {
+        if (slaveUpgrade == null && slaveUpgrade.getActionTime() <= ServerEnvironment.getStartTime()) {
             return;
         }
 
