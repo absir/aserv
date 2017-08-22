@@ -89,12 +89,12 @@ public class SlaveHandler implements IHandler, ISlave {
             try {
                 if (slaveUpgrade == null) {
                     TaskService.ME.removePanel("slaveUpgrade");
-                    slaveUpgrade(slaveUpgrade, false);
+                    slaveUpgrade(null, false);
 
                 } else {
                     if (slaveUpgrade.getBeginTime() > ContextUtils.getContextTime()) {
                         slaveUpgrade(slaveUpgrade, false);
-                        TaskService.ME.addPanel(null, "slaveUpgrade", slaveUpgrade.getBeginTime(), slaveUpgrade.getBeginTime() + passTime, retryCount, slaveUpgrade, true);
+                        TaskService.ME.addPanel(null, "slaveUpgrade", slaveUpgrade.getBeginTime(), slaveUpgrade.getBeginTime() + passTime, 1, slaveUpgrade, true);
 
                     } else {
                         slaveUpgrade(slaveUpgrade, true);
@@ -110,7 +110,7 @@ public class SlaveHandler implements IHandler, ISlave {
 
     @JaTask("slaveUpgrade")
     protected void slaveUpgrade(SlaveUpgrade slaveUpgrade, boolean doUpgrade) throws IOException {
-        if (slaveUpgrade == null && slaveUpgrade.getActionTime() <= ServerEnvironment.getStartTime()) {
+        if (slaveUpgrade != null && slaveUpgrade.getActionTime() <= ServerEnvironment.getStartTime()) {
             return;
         }
 
@@ -205,7 +205,7 @@ public class SlaveHandler implements IHandler, ISlave {
         @Override
         public void run() {
             int i = 0;
-            while (!Thread.interrupted()) {
+            while (this == slaveUpgradeThread && !Thread.interrupted()) {
                 File upgradeFile = null;
                 File resourceFile = null;
                 String downloadName = null;
@@ -227,6 +227,8 @@ public class SlaveHandler implements IHandler, ISlave {
                             downloadName = upgradeFile.getName();
                             master.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, false);
                             HelperFile.write(upgradeFile, new UtilInputStream.ThreadInputStream(master.download(slaveUpgrade.getUpgradeFile())));
+                            System.out.println("upgradeFile = " + upgradeFile + " : " + upgradeFile.exists());
+                            System.out.println(HelperFile.readFileToByteArray(upgradeFile).length);
                             master.upgradeStatues(EUpgradeStatus.DOWNLOAD_COMPLETE, downloadName, false);
                             downloadName = null;
                         }
@@ -244,7 +246,7 @@ public class SlaveHandler implements IHandler, ISlave {
                     }
 
                     synchronized (SlaveUpgradeThread.class) {
-                        if (slaveUpgradeThread.doUpgrade) {
+                        if (doUpgrade && this == slaveUpgradeThread) {
                             slaveUpgradeThread = null;
                             ME.doSlaveUpgrade(slaveUpgrade, upgradeFile, resourceFile);
                             break;
@@ -252,7 +254,10 @@ public class SlaveHandler implements IHandler, ISlave {
                     }
 
                 } catch (Throwable e) {
-                    LOGGER.error("SlaveUpgradeThread slaveUpgrade[" + i + "] stop", e);
+                    if (!Thread.interrupted()) {
+                        LOGGER.error("SlaveUpgradeThread slaveUpgrade[" + i + "] stop", e);
+                    }
+
                     if (upgradeFile != null) {
                         upgradeFile.delete();
                     }
@@ -272,7 +277,9 @@ public class SlaveHandler implements IHandler, ISlave {
             }
 
             synchronized (SlaveUpgradeThread.class) {
-                slaveUpgradeThread = null;
+                if (this == slaveUpgradeThread) {
+                    slaveUpgradeThread = null;
+                }
             }
         }
 

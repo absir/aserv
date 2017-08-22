@@ -367,7 +367,7 @@ public class SocketBufferResolver implements IBufferResolver {
                         int offLen = 3 + streamIndexLen;
                         SocketAdapter.setVarintsLength(sendBuffer, 3, streamIndex);
                         int length = sendBuffer.length - offLen;
-                        int len;
+                        int len = 0;
                         try {
                             while ((len = inputStream.read(sendBuffer, offLen, length)) > 0) {
                                 len += offLen - 2;

@@ -233,7 +233,7 @@ public abstract class InputSocket extends Input {
         if (outputStream == null && !UtilContext.isWarnIdlePool()) {
             SelSession selSession = socketAtt.getSelSession();
             if (selSession != null) {
-                UtilPipedStream.OutInputStream inputStream = new UtilPipedStream.OutInputStream();
+                UtilPipedStream.OutInputStream inputStream = new UtilPipedStream.OutInputStreamTimeout(30);
                 outputStream = new UtilPipedStream.WrapOutStream(inputStream);
                 if (!getSocketBufferResolver().writeByteBuffer(selSession, socketChannel, writeFlag(flag), socketAtt.getCallbackIndex(), KernelLang.NULL_BYTES, 0, 0, inputStream, outputStream)) {
                     UtilPipedStream.closeCloseable(outputStream);

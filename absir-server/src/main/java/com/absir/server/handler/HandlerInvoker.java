@@ -4,8 +4,6 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.inject.InjectBeanUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.client.rpc.RpcFactory;
-import com.absir.core.helper.HelperIO;
-import com.absir.core.kernel.KernelLang;
 import com.absir.core.util.UtilAbsir;
 import com.absir.data.format.IFormat;
 import com.absir.data.helper.HelperDataFormat;
@@ -143,15 +141,7 @@ public class HandlerInvoker {
                 }
 
                 Object returnValue = handlerMethod.method.invoke(handler, args);
-                if (returnValue != null && handlerMethod.method.getReturnType() == InputStream.class) {
-                    // 返回流处理
-                    input.readyOutputStream();
-                    HelperIO.copy((InputStream) returnValue, input.getOutputStream());
-                    onPut.setReturnValue(KernelLang.NULL_BYTES);
-
-                } else {
-                    onPut.setReturnValue(returnValue);
-                }
+                onPut.setReturnValue(returnValue);
 
             } catch (Throwable e) {
                 return throwable(onPut, handlerType, handlerMethod, args, e);

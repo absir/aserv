@@ -10,6 +10,7 @@ package com.absir.server.in;
 import com.absir.bean.basis.Configure;
 import com.absir.bean.inject.value.Inject;
 import com.absir.core.base.Environment;
+import com.absir.core.helper.HelperIO;
 import com.absir.core.kernel.KernelByte;
 import com.absir.core.util.UtilAbsir;
 import com.absir.data.format.IFormat;
@@ -173,6 +174,12 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
     public void resolverHandler(OnPut onPut, Input input, int code) throws IOException {
         Object returned = onPut.getReturned();
         if (returned != null && returned instanceof IFormat) {
+            Object returnValue = onPut.getReturnValue();
+            boolean returnStream = returnValue != null && returnValue instanceof InputStream;
+            if (returnStream) {
+                input.readyOutputStream();
+            }
+
             IFormat format = (IFormat) returned;
             if (input.setCode(code)) {
                 OutputStream outputStream = input.getOutputStream();
@@ -180,7 +187,12 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
                     input.write(format.writeAsBytes(onPut.getReturnValue()));
 
                 } else {
-                    format.write(outputStream, onPut.getReturnValue());
+                    if (returnStream) {
+                        HelperIO.copy((InputStream) returnValue, outputStream);
+
+                    } else {
+                        format.write(outputStream, onPut.getReturnValue());
+                    }
                 }
 
             } else {
@@ -191,8 +203,14 @@ public abstract class InDispatcher<T, R> implements IDispatcher<T> {
                     outputStream = byteArrayOutputStream;
                 }
 
-                outputStream.write(KernelByte.getVarintsLengthBytes(code));
-                format.write(outputStream, onPut.getReturnValue());
+                if (returnStream) {
+                    HelperIO.copy((InputStream) returnValue, outputStream);
+
+                } else {
+                    outputStream.write(KernelByte.getVarintsLengthBytes(code));
+                    format.write(outputStream, onPut.getReturnValue());
+                }
+
                 if (byteArrayOutputStream != null) {
                     input.write(byteArrayOutputStream.toByteArray());
                 }

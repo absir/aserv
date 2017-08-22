@@ -26,13 +26,13 @@ public class UtilPipedStreamTest {
     public void test() throws InterruptedException, IOException {
         testNextStream();
         //testPipeStream();
-        Thread.sleep(100000);
+        //Thread.sleep(1000);
     }
 
     protected void testNextStream() {
-        UtilPipedStream pipedStream = new UtilPipedStream(100000);
-        final UtilPipedStream.NextOutputStream outputStream = pipedStream.createNextOutputStream(1);
-
+        //UtilPipedStream pipedStream = new UtilPipedStream(100000);
+        //final UtilPipedStream.NextOutputStream outputStream = pipedStream.createNextOutputStream(1);
+        final UtilPipedStream.OutInputStream outputStream = new UtilPipedStream.OutInputStream(3);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -57,15 +57,10 @@ public class UtilPipedStreamTest {
         }).start();
 
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < 100; i++) {
-            stringBuilder.append("UtilPipedStream.NextOutputStream[" + i + "]");
-        }
-
         PrintWriter writer = new PrintWriter(new UtilPipedStream.WrapOutStream(outputStream));
         for (int i = 0; i < 10; i++) {
-            writer.println(i + " start");
+            stringBuilder.append(i);
             writer.println(i + " => " + stringBuilder);
-            writer.println(i + " end");
             writer.flush();
         }
 

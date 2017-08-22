@@ -211,12 +211,12 @@ public class UtilPipedStream implements IStep {
 
         @Override
         public void write(int b) throws IOException {
-            outInputStream.write(b);
+            outInputStream.receive(b);
         }
 
         @Override
         public void write(byte[] b, int off, int len) throws IOException {
-            outInputStream.write(b, off, len);
+            outInputStream.receive(b, off, len);
         }
 
         @Override
@@ -233,7 +233,7 @@ public class UtilPipedStream implements IStep {
 
         protected byte buffer[];
 
-        protected int in = 0;
+        protected int in = -1;
 
         protected int out = 0;
 
@@ -257,146 +257,109 @@ public class UtilPipedStream implements IStep {
             buffer = new byte[pipeSize];
         }
 
-        private final void checkWrite(int len) throws IOException {
-            if (closed) {
-                throw new IOException("Block stream closed");
+        protected synchronized void receive(int b) throws IOException {
+            checkStateForReceive(0);
+            if (in == out)
+                awaitSpace();
+            if (in < 0) {
+                in = 0;
+                out = 0;
             }
-
-            if (available() + len >= buffer.length) {
-                flush();
-                try {
-                    wait(1000);
-
-                } catch (InterruptedException e) {
-                }
-
-                if (available() + len >= buffer.length) {
-                    throw new IOException("Block not enough buffer write");
-                }
+            buffer[in++] = (byte) (b & 0xFF);
+            if (in >= buffer.length) {
+                in = 0;
             }
         }
 
-        public synchronized void write(int b) throws IOException {
-            checkWrite(1);
-            synchronized (buffer) {
-                buffer[in] = (byte) (b & 0xFF);
-                if (++in >= buffer.length) {
+        protected synchronized void receive(byte b[], int off, int len) throws IOException {
+            checkStateForReceive(0);
+            int bytesToTransfer = len;
+            while (bytesToTransfer > 0) {
+                if (in == out)
+                    awaitSpace();
+                int nextTransferAmount = 0;
+                if (out < in) {
+                    nextTransferAmount = buffer.length - in;
+                } else if (in < out) {
+                    if (in == -1) {
+                        in = out = 0;
+                        nextTransferAmount = buffer.length - in;
+                    } else {
+                        nextTransferAmount = out - in;
+                    }
+                }
+                if (nextTransferAmount > bytesToTransfer)
+                    nextTransferAmount = bytesToTransfer;
+                assert (nextTransferAmount > 0);
+                System.arraycopy(b, off, buffer, in, nextTransferAmount);
+                bytesToTransfer -= nextTransferAmount;
+                off += nextTransferAmount;
+                in += nextTransferAmount;
+                if (in >= buffer.length) {
                     in = 0;
                 }
             }
-
-            flush();
         }
 
-        public synchronized void write(byte[] b, int off, int len) throws IOException {
-            int allLen = len;
-            while (true) {
-                checkWrite(1);
-                len = buffer.length - available();
-                if (len > allLen) {
-                    len = allLen;
+        protected void checkStateForReceive(int i) throws IOException {
+            if (closed) {
+                throw new IOException("OutInputStream is closed");
+            }
+
+            if (i > 0) {
+                throw new IOException("OutInputStream not enough buffer write");
+            }
+        }
+
+        private void awaitSpace() throws IOException {
+            int i = 0;
+            while (in == out) {
+                checkStateForReceive(i++);
+
+            /* full: kick any waiting readers */
+                notifyAll();
+                try {
+                    wait(1000);
+                } catch (InterruptedException ex) {
+                    throw new java.io.InterruptedIOException();
                 }
-
-                synchronized (buffer) {
-                    int last = in + len;
-                    if (last <= buffer.length) {
-                        System.arraycopy(b, off, buffer, in, len);
-                        in += len;
-                        if (in > buffer.length) {
-                            in = 0;
-                        }
-
-                    } else {
-                        int l = buffer.length - in;
-                        if (l > 0) {
-                            System.arraycopy(b, off, buffer, in, l);
-                        }
-
-                        in = len - l;
-                        System.arraycopy(b, off + l, buffer, 0, in);
-                    }
-                }
-
-                flush();
-
-                allLen -= len;
-                if (allLen <= 0) {
-                    break;
-                }
-
-                off += len;
             }
         }
 
-        public final void flush() {
-            synchronized (buffer) {
-                buffer.notifyAll();
-            }
+        protected synchronized void receivedLast() {
+            notifyAll();
         }
 
-        public final int available() {
-            int av = in - out;
-            if (av < 0) {
-                av += buffer.length;
-            }
+        public synchronized int read() throws IOException {
 
-            return av;
-        }
-
-        protected int availableIO() {
-            if (readSpace()) {
-                return 0;
-            }
-
-            return available();
-        }
-
-        private final boolean readSpace() {
-            try {
-                while (in == out) {
-                    if (closed) {
-                        return true;
-                    }
-
-                    synchronized (buffer) {
-                        buffer.wait(1000);
-                    }
-                }
-
-            } catch (InterruptedException e) {
-                Environment.throwable(e);
-            }
-
-            return false;
-        }
-
-        @Override
-        public int read() throws IOException {
-            if (readSpace()) {
-                return -1;
-            }
-
-            int b;
-            synchronized (buffer) {
-                if (in == out) {
+            int trials = 2;
+            while (in < 0) {
+                if (closed) {
+                /* closed by writer, return EOF */
                     return -1;
                 }
 
-                b = buffer[out];
-                if (++out >= buffer.length) {
-                    out = 0;
+            /* might be a writer waiting */
+                notifyAll();
+                try {
+                    wait(1000);
+                } catch (InterruptedException ex) {
+                    throw new java.io.InterruptedIOException();
                 }
             }
-
-            synchronized (this) {
-                notifyAll();
+            int ret = buffer[out++] & 0xFF;
+            if (out >= buffer.length) {
+                out = 0;
+            }
+            if (in == out) {
+            /* now empty */
+                in = -1;
             }
 
-            return b;
+            return ret;
         }
 
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
+        public synchronized int read(byte b[], int off, int len) throws IOException {
             if (b == null) {
                 throw new NullPointerException();
             } else if (off < 0 || len < 0 || len > b.length - off) {
@@ -405,51 +368,52 @@ public class UtilPipedStream implements IStep {
                 return 0;
             }
 
-            if (readSpace()) {
+        /* possibly wait on the first character */
+            int c = read();
+            if (c < 0) {
                 return -1;
             }
+            b[off] = (byte) c;
+            int rlen = 1;
+            while ((in >= 0) && (len > 1)) {
 
-            int av;
-            synchronized (buffer) {
-                av = in - out;
-                if (av == 0) {
-                    return -1;
-                }
+                int available;
 
-                if (av > 0) {
-                    if (av > len) {
-                        av = len;
-                    }
-
-                    System.arraycopy(buffer, out, b, off, av);
-                    out += av;
-                    if (out == in) {
-                        out = 0;
-                        in = 0;
-
-                    } else if (out >= buffer.length) {
-                        out = 0;
-                    }
-
+                if (in > out) {
+                    available = Math.min((buffer.length - out), (in - out));
                 } else {
-                    av = buffer.length - out;
-                    if (av > len) {
-                        av = len;
-                    }
+                    available = buffer.length - out;
+                }
 
-                    System.arraycopy(buffer, out, b, off, av);
-                    out += av;
-                    if (out >= buffer.length) {
-                        out = 0;
-                    }
+                // A byte is read beforehand outside the loop
+                if (available > (len - 1)) {
+                    available = len - 1;
+                }
+                System.arraycopy(buffer, out, b, off + rlen, available);
+                out += available;
+                rlen += available;
+                len -= available;
+
+                if (out >= buffer.length) {
+                    out = 0;
+                }
+                if (in == out) {
+                /* now empty */
+                    in = -1;
                 }
             }
+            return rlen;
+        }
 
-            synchronized (this) {
-                notifyAll();
-            }
-
-            return av;
+        public synchronized int available() throws IOException {
+            if (in < 0)
+                return 0;
+            else if (in == out)
+                return buffer.length;
+            else if (in > out)
+                return in - out;
+            else
+                return in + buffer.length - out;
         }
 
         @Override
@@ -457,8 +421,28 @@ public class UtilPipedStream implements IStep {
             if (!closed) {
                 synchronized (this) {
                     closed = true;
-                    flush();
+                    notifyAll();
                 }
+            }
+        }
+    }
+
+    public static class OutInputStreamTimeout extends OutInputStream {
+
+        private int timeout;
+
+        public OutInputStreamTimeout(int timeout) {
+            this.timeout = timeout;
+        }
+
+        @Override
+        protected void checkStateForReceive(int i) throws IOException {
+            if (closed) {
+                throw new IOException("OutInputStream is closed");
+            }
+
+            if (i > timeout) {
+                throw new IOException("OutInputStream not enough buffer write");
             }
         }
     }
@@ -476,12 +460,12 @@ public class UtilPipedStream implements IStep {
         }
 
         public void write(int b) throws IOException {
-            super.write(b);
+            super.receive(b);
             retainAt();
         }
 
         public void write(byte[] b, int off, int len) throws IOException {
-            super.write(b, off, len);
+            super.receive(b, off, len);
             retainAt();
         }
 
