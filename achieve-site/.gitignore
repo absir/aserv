@@ -12,3 +12,4 @@ out
 *.log
 projects
 webResources
+jettyDeploy.gz

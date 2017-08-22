@@ -1,4 +1,0 @@
-CREATE DATABASE asite DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-CREATE USER 'absir'@'localhost' IDENTIFIED BY 'absir';
-#GRANT privileges ON databasename.tablename TO 'absir'@'localhost';
-GRANT ALL ON *.* TO 'absir'@'localhost';
