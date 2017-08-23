@@ -16,10 +16,6 @@ jetty=1
 esac
 
 if [ $maven -gt 0 ];then
-	cd $currentDir/../achieve-game-master-slave
-	mvn clean install
-
-	cd $currentDir
 
 	#更新版本信息
 	sed -i -e 's/version=\([^.]*\).*/version=\1.'$(date +%g.%m%d.%H%M)'/g' src/main/resources/config.properties

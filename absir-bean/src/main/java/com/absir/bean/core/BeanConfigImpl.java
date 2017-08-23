@@ -796,6 +796,7 @@ public class BeanConfigImpl implements BeanConfig {
 
     public void setEnvironment(Environment environment) {
         this.environment = environment;
+        configMap.put("environment", environment);
         Environment.setEnvironment(environment);
     }
 

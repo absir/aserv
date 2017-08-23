@@ -24,7 +24,7 @@ import java.io.IOException;
 public class UpgradeServiceImpl extends UpgradeService {
 
     @Override
-    public Object stop() throws IOException {
+    protected Object stop() throws IOException {
         Object context = InDispathContext.getServletContext();
         if (context != null) {
             context = KernelObject.declaredGet(context, "context");
@@ -55,7 +55,7 @@ public class UpgradeServiceImpl extends UpgradeService {
     }
 
     @Override
-    public void start(Object stopDone) throws IOException {
+    protected void start(Object stopDone) throws IOException {
         super.start(stopDone);
         boolean noCommand = KernelString.isEmpty(getRestartCommand());
         while (true) {
@@ -63,9 +63,6 @@ public class UpgradeServiceImpl extends UpgradeService {
                 // tomcat reload
                 if (noCommand) {
                     KernelObject.declaredSend(stopDone, "start");
-
-                } else {
-                    KernelObject.declaredSend(stopDone, "stop");
                 }
 
                 break;
@@ -79,9 +76,6 @@ public class UpgradeServiceImpl extends UpgradeService {
                     // tomcat reload
                     if (noCommand) {
                         KernelObject.declaredSend(context, "reload");
-
-                    } else {
-                        KernelObject.declaredSend(context, "stop");
                     }
 
                     break;

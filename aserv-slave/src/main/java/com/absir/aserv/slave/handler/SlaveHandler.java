@@ -227,8 +227,6 @@ public class SlaveHandler implements IHandler, ISlave {
                             downloadName = upgradeFile.getName();
                             master.upgradeStatues(EUpgradeStatus.DOWNLOADING, downloadName, false);
                             HelperFile.write(upgradeFile, new UtilInputStream.ThreadInputStream(master.download(slaveUpgrade.getUpgradeFile())));
-                            System.out.println("upgradeFile = " + upgradeFile + " : " + upgradeFile.exists());
-                            System.out.println(HelperFile.readFileToByteArray(upgradeFile).length);
                             master.upgradeStatues(EUpgradeStatus.DOWNLOAD_COMPLETE, downloadName, false);
                             downloadName = null;
                         }

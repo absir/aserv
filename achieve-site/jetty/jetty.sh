@@ -32,14 +32,15 @@ start(){
             evnDebug=1
         fi
 
+        _JAVA_OPTS_=""
         if [ $evnDebug -le 0 ];then
-            JAVA_OPTS="$JAVA_OPTS -Xms1024m -Xmx6096m -XX:PermSize=256m -XX:MaxPermSize=512m"
+            _JAVA_OPTS_="$_JAVA_OPTS -Xms1024m -Xmx6096m -XX:PermSize=256m -XX:MaxPermSize=512m"
         else
-            JAVA_OPTS="$JAVA_OPTS -Xms128m -Xmx512m -XX:PermSize=64m -XX:MaxPermSize=128m"
-            JAVA_OPTS="$JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,address=18787,suspend=n,server=y"
+            _JAVA_OPTS_="$_JAVA_OPTS -Xms128m -Xmx512m -XX:PermSize=64m -XX:MaxPermSize=128m"
+            _JAVA_OPTS_="$_JAVA_OPTS_ -Xdebug -Xrunjdwp:transport=dt_socket,address=18080,suspend=n,server=y"
         fi
 
-        command="java $JAVA_OPTS -D_AB_ENV=$EVN -jar $JETTY_HOME/start.jar"
+        command="java $_JAVA_OPTS_ -D_AB_ENV=$EVN -jar $JETTY_HOME/start.jar"
         if [ $evnDebug -le 0 ];then
             rm -f nohup.1.out
             mv nohup.out nohup.1.out
@@ -84,7 +85,7 @@ stop
 ;;
 restart)
 stop
-start
+start $2
 ;;
 *)
 echo "not found command for $1"

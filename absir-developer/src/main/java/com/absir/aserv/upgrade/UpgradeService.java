@@ -81,17 +81,18 @@ public class UpgradeService {
         }
     }
 
-    public void start(Object stopDone) throws IOException {
-        BeanFactoryStopping.stoppingAll();
-        restartCommand();
+    protected void start(Object stopDone) throws IOException {
     }
 
-    public Object stop() throws IOException {
+    protected Object stop() throws IOException {
+        BeanFactoryStopping.stoppingAll();
         return null;
     }
 
     @Async(notifier = true, thread = true)
     public void restart() throws IOException {
+        BeanFactoryStopping.stoppingAll();
+        restartCommand();
         Object stopDone = stop();
         start(stopDone);
     }
@@ -157,9 +158,9 @@ public class UpgradeService {
         }
     }
 
-    protected boolean upgrade(File upgradeFile) throws IOException {
+    protected boolean upgrade(File upgradeFile, String appCode) throws IOException {
         Map<String, Object> configMap = getVersionMap(upgradeFile);
-        if (configMap != null && validateAppCode(configMap, InitBeanFactory.ME.getAppCode())) {
+        if (configMap != null && validateAppCode(configMap, appCode)) {
             if (configMap.get(incrementalUpgrade) != Boolean.TRUE) {
                 //不是增量更新
                 String classPath = BeanFactoryUtils.getBeanConfig().getClassPath();
@@ -185,8 +186,11 @@ public class UpgradeService {
             return;
         }
 
+        String appCode = InitBeanFactory.ME.getAppCode();
+        BeanFactoryStopping.stoppingAll();
+        upgrade(file, appCode);
+        restartCommand();
         Object stopDone = stop();
-        upgrade(file);
         start(stopDone);
     }
 
