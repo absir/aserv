@@ -19,6 +19,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 @SuppressWarnings({"unchecked"})
 public class XlsBase extends Base<Serializable> {
@@ -62,7 +63,7 @@ public class XlsBase extends Base<Serializable> {
         return hssfWorkbook;
     }
 
-    protected <T> T read(HSSFCell hssfCell, Class<T> toClass) {
+    protected <T> T read(HSSFCell hssfCell, Field field, Class<T> toClass) {
         Object value = XlsAccessorUtils.getCellObject(hssfCell);
         if (XlsBase.class.isAssignableFrom(toClass)) {
             return (T) XlsUtils.findXlsBean((Class<? extends XlsBase>) toClass, value);

@@ -1,23 +1,18 @@
-package com.absir.developer;
+package com.absir.tools;
 
 import com.absir.code.ThriftJavaMerger;
 import com.absir.core.helper.HelperFileName;
 import com.absir.core.helper.HelperIO;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import java.io.File;
 
 /**
  * Created by absir on 2016/12/6.
  */
-@RunWith(value = JUnit4.class)
 public class GenerateThriftPlatform {
 
-    @Test
-    public void test() throws Exception {
-        String classPath = HelperFileName.getClassPath(getClass());
+    public static void main(String[] args) throws Exception {
+        String classPath = HelperFileName.getClassPath(null);
         System.out.println(classPath);
         HelperIO.execute("pwd");
         HelperIO.execute("rm -rf ./target/test-classes/thrift/gen-java");

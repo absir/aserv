@@ -189,7 +189,7 @@ public class XlsAccessorBean extends XlsAccessor {
                 }
             }
 
-            return xlsBase.read((HSSFCell) cell, beanClass);
+            return xlsBase.read((HSSFCell) cell, getField(), beanClass);
 
         } else {
             Object bean = KernelClass.newInstance(beanClass);

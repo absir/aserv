@@ -158,6 +158,9 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
         });
     }
 
+    @DataQuery("SELECT o.slave.id FROM JSlaveServer o WHERE o.id = :p0")
+    public abstract String getSlaveId(long serverId);
+
     @DataQuery("SELECT o.slave.id FROM JSlaveServer o WHERE o.id IN (:p0)")
     public abstract String[] getSlaveIds(long[] serverIds);
 

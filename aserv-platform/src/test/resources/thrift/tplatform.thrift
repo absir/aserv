@@ -201,7 +201,7 @@ struct DOrderResult {
 // 订单验证
 struct DOrderValidator {
     // 订单编号
-    1: i32 tradeId;
+    1: string tradeId;
     // 配置编号
     2: optional i32 configureId;
     // 平台

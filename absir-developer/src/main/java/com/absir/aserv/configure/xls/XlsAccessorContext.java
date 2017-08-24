@@ -79,7 +79,7 @@ public class XlsAccessorContext extends XlsAccessorBean {
         Serializable id = null;
         if (isXlsBean) {
             if (accessors != null && accessors.size() > 0) {
-                id = xlsBase.read(((List<HSSFCell>) cell).get(0), idType);
+                id = xlsBase.read(((List<HSSFCell>) cell).get(0), getField(), idType);
                 bean = xlsDao == null ? null : xlsDao.get(id);
             }
 

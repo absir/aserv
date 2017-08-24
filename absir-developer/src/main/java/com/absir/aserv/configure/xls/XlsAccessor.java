@@ -62,7 +62,7 @@ public class XlsAccessor {
             }
         }
 
-        accessor.set(obj, xlsBase.read(hssfCell, field.getType()));
+        accessor.set(obj, xlsBase.read(hssfCell, getField(), field.getType()));
     }
 
     public XlsCell getHeader() {

@@ -44,7 +44,7 @@ public class XlsAccessorEnum extends XlsAccessor {
                 }
             }
 
-            String value = xlsBase.read(hssfCell, String.class);
+            String value = xlsBase.read(hssfCell, getField(), String.class);
             int index = KernelArray.index(values, value);
             Object key = index < 0 ? value : keys == null ? index : keys[index];
             getAccessor().set(obj, DynaBinder.INSTANCE.bind(key, null, getField().getGenericType()));
