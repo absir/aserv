@@ -7,10 +7,12 @@
  */
 package com.absir.aserv.game.context;
 
+import com.absir.aserv.game.bean.JbServerA;
+import com.absir.aserv.game.service.GameService;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.context.core.ContextBean;
 
-public abstract class JbServerContext<SA> extends ContextBean<Long> {
+public abstract class JbServerContext<SA extends JbServerA> extends ContextBean<Long> {
 
     @JaLang("服务区")
     protected SA serverA;
@@ -23,6 +25,23 @@ public abstract class JbServerContext<SA> extends ContextBean<Long> {
     protected void initialize() {
         ServerService.ME.load(this);
         loadDone();
+        checkOnlineDay();
+    }
+
+    /**
+     * 检测游戏天数
+     */
+    public synchronized void checkOnlineDay() {
+        if (serverA.getGameDay() != GameService.getGameDay()) {
+            updateGameDay(GameService.getGameDay());
+        }
+    }
+
+    /**
+     * 更新游戏天数
+     */
+    public void updateGameDay(int gameDay) {
+        serverA.setGameDay(gameDay);
     }
 
     /**

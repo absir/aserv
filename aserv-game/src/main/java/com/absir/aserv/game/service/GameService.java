@@ -10,6 +10,7 @@ package com.absir.aserv.game.service;
 import com.absir.aserv.configure.JConfigureUtils;
 import com.absir.aserv.game.context.AGameComponent;
 import com.absir.aserv.game.context.JbPlayerContext;
+import com.absir.aserv.game.context.JbServerContext;
 import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -91,31 +92,56 @@ public class GameService {
     protected void started() {
         if (gameDayUpdated) {
             gameDayUpdated = false;
-            ME.updateOnlines();
+            ME.updateServerGameDay();
         }
     }
 
     /**
-     * 更新玩家在线天数
+     * 更新服务器在线天数
      */
     @Async(notifier = true)
     @Schedule(cron = "0 0 0 * * *")
-    protected void updateOnlines() {
+    protected void updateServerGameDay() {
+        updateOnlineServerContext();
         updateGameDay();
-        updateOnlineContexts();
+        checkOnlinePlayerContexts();
     }
 
     /**
-     * 更新玩家天数数据
+     * 更新服务器天数数据
      */
-    protected void updateOnlineContexts() {
+    protected void updateOnlineServerContext() {
+        if (AGameComponent.ME.SERVER_CONTEXT_MAP == null) {
+            return;
+        }
+
+        int gameDay = getGameDay() + 1;
+        for (JbServerContext serverContext : (Collection<JbServerContext>) AGameComponent.ME.SERVER_CONTEXT_MAP
+                .values()) {
+            try {
+                serverContext.updateGameDay(gameDay);
+
+            } catch (Exception e) {
+                LOGGER.error("updateOnlineServerContext", e);
+            }
+        }
+    }
+
+    /**
+     * 检测更新玩家天数数据
+     */
+    protected void checkOnlinePlayerContexts() {
+        if (AGameComponent.ME.PLAYER_CONTEXT_MAP == null) {
+            return;
+        }
+
         for (JbPlayerContext playerContext : (Collection<JbPlayerContext>) AGameComponent.ME.PLAYER_CONTEXT_MAP
                 .values()) {
             try {
                 playerContext.checkOnlineDay();
 
             } catch (Exception e) {
-                LOGGER.error("updateOnlineContexts", e);
+                LOGGER.error("checkOnlinePlayerContexts", e);
             }
         }
     }
