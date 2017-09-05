@@ -8,22 +8,46 @@ joEntity : joEntity,
 entity : 'suggest'
 }, 'suggests')
 
+#set(ajax = field.metas.ajax != null)
+
 #tag layout_block("shtml")
+#if(ajax)
+\${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
+#end
 \#set(selected = ${iselect ? ('Pag::value(' + inputval + ')') : ('EntityStatics::getPrimary(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
 #if(field.isNullable())
 <option value="">${Pag::getLang('未选择')}</option>
 #end
 \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get("suggest")}', INPUT))
 \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
+#if(ajax)
+\#if(selected==value)
+<option value="\${value}" selected>
+    ${suggests}
+</option>
+\#end
+#else
 <option value="\${value}" \${selected==value ? 'selected' : ''}>
+#end
 ${suggests}
 </option>
 \#end
 
 #end
 
+#if(ajax)
+    #set(ajaxurl = "${SITE_ROUTE}admin/open/suggest/" + joEntity.getEntityName())
+    #if(field.getMetas().get("suggest") != null)
+        #set(ajaxurl = ajaxurl + '?@param=' + field.getMetas().get("suggest"))
+    #end
+    ${input.attr('ajaxurl', ajaxurl)}
+    #if(field.isNullable())
+        ${input.attr('selectnullable', '1')}
+    #end
+#end
+
 ${input.tagName('select')}
 ${input.removeAttr('value')}
 ${input.removeAttr('type')}
-${input.attr('ab_toggle', 'multiselect')}
+${input.attr('ab_toggle', 'ajaxselect')}
 ${input.appendChild(ScriptNode::node(shtml)).voidValue()}

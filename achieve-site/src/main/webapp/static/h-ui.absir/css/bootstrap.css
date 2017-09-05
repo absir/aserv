@@ -116,9 +116,11 @@
 }
 
 .form-control {
-    height: 20px;
-    padding: 4px 6px;
+    height: 29px;
+    line-height: 17px !important;
+    padding: 6px 12px;
     border: solid 1px #ddd;
+    box-sizing: border-box;
 }
 
 @media screen and (max-width: 480px) {
@@ -131,4 +133,38 @@
     .btn {
         height: auto;
     }
+}
+
+.caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 4px solid;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent
+}
+
+.dropup .dropdown-menu {
+    top: auto;
+    bottom: 100%;
+    margin-bottom: 1px;
+}
+
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus,
+.dropdown-menu > .selected > a, .dropdown-menu > .selected > a:hover, .dropdown-menu > .selected > a:focus {
+    color: #fff;
+    text-decoration: none;
+    background-color: #428bca;
+    outline: 0
+}
+
+.dropdown-header {
+    display: block;
+    padding: 3px 20px;
+    font-size: 12px;
+    line-height: 1.42857143;
+    color: #777;
+    white-space: nowrap
 }

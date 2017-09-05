@@ -3912,7 +3912,7 @@ SVGRenderer.prototype = {
 
 	/**
 	 * Take a color and return it if it's a string, make it a gradient if it's a
-	 * gradient configuration object. Prior to Highstock, an array was used to define
+	 * gradient configuration object. Prior to Highcharts, an array was used to define
 	 * a linear gradient with pixel positions relative to the SVG. In newer versions
 	 * we change the coordinates to apply relative to the shape, using coordinates
 	 * 0-1 within the shape. To preserve backwards compatibility, linearGradient
@@ -7561,7 +7561,7 @@ Axis.prototype = {
 			axis.beforeSetTickPositions();
 		}
 		
-		// hook for extensions, used in Highstock ordinal axes
+		// hook for extensions, used in Highcharts ordinal axes
 		if (axis.postProcessTickInterval) {
 			axis.tickInterval = axis.postProcessTickInterval(axis.tickInterval);
 		}
@@ -12112,7 +12112,7 @@ Chart.prototype = {
 
 		// Run an event after axes and series are initialized, but before render. At this stage,
 		// the series data is indexed and cached in the xData and yData arrays, so we can access
-		// those before rendering. Used in Highstock. 
+		// those before rendering. Used in Highcharts. 
 		fireEvent(chart, 'beforeRender'); 
 
 		// depends on inverted and on margins being set
@@ -13709,7 +13709,7 @@ Series.prototype = {
 				yAxis.translate(yBottom, 0, 1, 0, 1) :
 				null;
 				
-			// general hook, used for Highstock compare mode
+			// general hook, used for Highcharts compare mode
 			if (hasModifyValue) {
 				yValue = series.modifyValue(yValue, point);
 			}

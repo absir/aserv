@@ -186,8 +186,10 @@ struct DOrderInfo {
     10: optional i64 playerId;
     // 短订单编号
     11: optional bool shortTradeId;
+    // 订单参数
+    12: optional i32 tradeData;
     // 更多参数
-    12: optional list<string> moreDatas;
+    13: optional list<string> moreDatas;
 }
 
 // 下单结果

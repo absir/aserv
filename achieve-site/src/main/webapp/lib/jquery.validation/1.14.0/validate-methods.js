@@ -1,5 +1,7 @@
 /*****************************************************************
-                  jQuery Validate扩展验证方法  (linjq)       
+ * jQuery Validate扩展验证方法  (linjq)    
+ * Modified by guojunhui
+ * Date modified:01/01/2017  
 *****************************************************************/
 $(function(){
     // 判断整数value是否等于0 
@@ -108,13 +110,13 @@ $(function(){
     jQuery.validator.addMethod("isMobile", function(value, element) {    
       var length = value.length;    
       return this.optional(element) || (length == 11 && /^(((13[0-9]{1})|(15[0-35-9]{1})|(17[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value));    
-    }, "请正确填写您的手机号码。");
+    }, "手机号码格式不正确。");
 
     // 电话号码验证    
     jQuery.validator.addMethod("isPhone", function(value, element) {    
       var tel = /^(\d{3,4}-?)?\d{7,9}$/g;    
       return this.optional(element) || (tel.test(value));    
-    }, "请正确填写您的电话号码。");
+    }, "电话号码格式不正确");
 
     // 联系电话(手机/电话皆可)验证   
     jQuery.validator.addMethod("isTel", function(value,element) {   
@@ -122,34 +124,34 @@ $(function(){
         var mobile = /^(((13[0-9]{1})|(15[0-35-9]{1})|(17[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
         var tel = /^(\d{3,4}-?)?\d{7,9}$/g;       
         return this.optional(element) || tel.test(value) || (length==11 && mobile.test(value));   
-    }, "请正确填写您的联系方式"); 
+    }, "请输入正确手机号码或电话号码"); 
  
      // 匹配qq      
     jQuery.validator.addMethod("isQq", function(value, element) {       
          return this.optional(element) || /^[1-9]\d{4,12}$/;       
-    }, "匹配QQ");   
+    }, "QQ号码不合法");   
  
      // 邮政编码验证    
     jQuery.validator.addMethod("isZipCode", function(value, element) {    
       var zip = /^[0-9]{6}$/;    
       return this.optional(element) || (zip.test(value));    
-    }, "请正确填写您的邮政编码。");  
+    }, "邮政编码不正确");  
     
-    // 匹配密码，以字母开头，长度在6-12之间，只能包含字符、数字和下划线。      
+    // 匹配密码，以字母开头，长度在6-16之间，只能包含字符、数字和下划线。      
     jQuery.validator.addMethod("isPwd", function(value, element) {       
-         return this.optional(element) || /^[a-zA-Z]\\w{6,12}$/.test(value);       
+         return this.optional(element) || /^[a-zA-Z]\\w{6,16}$/.test(value);       
     }, "以字母开头，长度在6-12之间，只能包含字符、数字和下划线。");  
     
     // 身份证号码验证
     jQuery.validator.addMethod("isIdCardNo", function(value, element) { 
       //var idCard = /^(\d{6})()?(\d{4})(\d{2})(\d{2})(\d{3})(\w)$/;   
       return this.optional(element) || isIdCardNo(value);    
-    }, "请输入正确的身份证号码。"); 
+    }, "身份证号码不正确"); 
 
     // IP地址验证   
     jQuery.validator.addMethod("ip", function(value, element) {    
       return this.optional(element) || /^(([1-9]|([1-9]\d)|(1\d\d)|(2([0-4]\d|5[0-5])))\.)(([1-9]|([1-9]\d)|(1\d\d)|(2([0-4]\d|5[0-5])))\.){2}([1-9]|([1-9]\d)|(1\d\d)|(2([0-4]\d|5[0-5])))$/.test(value);    
-    }, "请填写正确的IP地址。");
+    }, "请填写正确的IP地址");
    
     // 字符验证，只能包含中文、英文、数字、下划线等字符。    
     jQuery.validator.addMethod("stringCheck", function(value, element) {       
@@ -159,12 +161,12 @@ $(function(){
     // 匹配english  
     jQuery.validator.addMethod("isEnglish", function(value, element) {       
          return this.optional(element) || /^[A-Za-z]+$/.test(value);       
-    }, "匹配english");   
+    }, "必须输入英文");   
     
     // 匹配汉字  
     jQuery.validator.addMethod("isChinese", function(value, element) {       
          return this.optional(element) || /^[\u4e00-\u9fa5]+$/.test(value);       
-    }, "匹配汉字");   
+    }, "只能输入汉字");   
     
     // 匹配中文(包括汉字和字符) 
     jQuery.validator.addMethod("isChineseChar", function(value, element) {       
@@ -181,6 +183,12 @@ $(function(){
          var reg = RegExp(/[(\ )(\`)(\~)(\!)(\@)(\#)(\$)(\%)(\^)(\&)(\*)(\()(\))(\+)(\=)(\|)(\{)(\})(\')(\:)(\;)(\')(',)(\[)(\])(\.)(\<)(\>)(\/)(\?)(\~)(\！)(\@)(\#)(\￥)(\%)(\…)(\&)(\*)(\（)(\）)(\—)(\+)(\|)(\{)(\})(\【)(\】)(\‘)(\；)(\：)(\”)(\“)(\’)(\。)(\，)(\、)(\？)]+/);   
          return this.optional(element) || !reg.test(value);       
     }, "含有中英文特殊字符");
+	
+	//车牌号校验
+	jQuery.validator.addMethod("isPlateNo", function(value, element) {
+		var reg = /^[\u4e00-\u9fa5]{1}[A-Z]{1}[A-Z_0-9]{5}$/;
+		return this.optional(element) || (tel.test(value)); 
+	},"请输入正确车牌号");
 });
 //身份证号码的验证规则
 function isIdCardNo(num){ 
@@ -217,12 +225,4 @@ function isIdCardNo(num){
 		return false;
 	}
 　　 return true; 
-} 
-//车牌号校验
-function isPlateNo(plateNo){
-    var re = /^[\u4e00-\u9fa5]{1}[A-Z]{1}[A-Z_0-9]{5}$/;
-    if(re.test(plateNo)){
-        return true;
-    }
-    return false;
 }

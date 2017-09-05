@@ -20,4 +20,6 @@ public class CList<T> extends ArrayList<T> {
         return size == 0 ? null : index < 0 ? super.get(0) : index < size ? super.get(index) : super.get(size - 1);
     }
 
+    public Object userData;
+
 }

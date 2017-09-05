@@ -8,21 +8,42 @@ joEntity : joEntity,
 entity : 'suggest'
 }, 'suggests')
 
+#set(ajax = field.metas.ajax != null)
+
 #tag layout_block("shtml")
+#if(ajax)
+\${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
+#end
 \#set(selected = ${iselects ? ('Pag::params(' + inputval + ', true)') : ('EntityStatics::getPrimaries(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
 \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get("suggest")}', INPUT))
 \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
-<option value="\${value}" \${Pag::isParams(selected, value) ? 'selected' : ''}>
-${suggests}
+#if(ajax)
+\#if(Pag::isParams(selected, value))
+<option value="\${value}" selected>
+    ${suggests}
 </option>
 \#end
+#else
+<option value="\${value}" \${Pag::isParams(selected, value) ? 'selected' : ''}>
+    ${suggests}
+</option>
+#end
+\#end
 
+#end
+
+#if(ajax)
+    #set(ajaxurl = "${SITE_ROUTE}admin/open/suggest/" + joEntity.getEntityName())
+    #if(field.getMetas().get("suggest") != null)
+        #set(ajaxurl = ajaxurl + '?@param=' + field.getMetas().get("suggest"))
+    #end
+    ${input.attr('ajaxurl', ajaxurl)}
 #end
 
 ${input.tagName('select')}
 ${input.attr('multiple', 'true')}
 ##${input.attr('multiple', 'multiple')}
-${input.attr('ab_toggle', 'multiselect')}
+${input.attr('ab_toggle', 'ajaxselect')}
 ${input.addClass('ab_ah')}
 ${input.attr('size', field.metas.size ?! '3')}
 ${input.removeAttr('value')}

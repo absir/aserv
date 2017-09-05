@@ -58,6 +58,12 @@ public class GameService {
         return gameDay;
     }
 
+    // 是否是周末
+    public static boolean isWeekDay() {
+        int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        return day == 0 || day >= 6;
+    }
+
     /**
      * 更新在线天数
      */

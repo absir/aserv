@@ -7,6 +7,7 @@ import com.absir.aserv.menu.value.MaPermission;
 import com.absir.aserv.system.bean.value.JeRoleLevel;
 import com.absir.aserv.system.crud.RichCrudFactory;
 import com.absir.aserv.system.crud.UploadCrudFactory;
+import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.security.SecurityContext;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.SecurityService;
@@ -49,8 +50,15 @@ public class admin_open extends AdminServer {
     public void suggest(String entityName, Input input) {
         ICrudSupply crudSupply = getCrudSupply(entityName, input);
         suggest(entityName, crudSupply, input);
+        JdbcCondition condition = null;
+        String param = input.getParam("@param");
+        if (!KernelString.isEmpty(param)) {
+            condition = new JdbcCondition();
+            condition.addConditions(HelperString.split(param, "=&"));
+        }
+
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
-        input.getModel().put("entities", EntityStatics.suggestCondition(entityName, InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), null, null, input), input));
+        input.getModel().put("entities", EntityStatics.suggestCondition(entityName, InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), null, condition, input), input));
     }
 
     public void lookup(String entityName, Input input) {
@@ -64,11 +72,19 @@ public class admin_open extends AdminServer {
     public void lookup(String entityName, @Binder JdbcPage jdbcPage, Input input) {
         ICrudSupply crudSupply = getCrudSupply(entityName, input);
         suggest(entityName, crudSupply, input);
+        JdbcCondition condition = null;
+        String param = input.getParam("@param");
+        if (!KernelString.isEmpty(param)) {
+            condition = new JdbcCondition();
+            condition.addConditions(HelperString.split(param, "=&"));
+        }
+
         JdbcCondition jdbcCondition = AccessServiceUtils.suggestCondition(entityName, SecurityService.ME.getUserBase(input),
-                InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), null, null, input));
+                InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), null, condition, input));
         jdbcPage = InputServiceUtils.getJdbcPage(entityName, jdbcPage, input);
         InModel model = input.getModel();
         model.put("page", jdbcPage);
+
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
         model.put("entities", crudSupply.list(entityName, jdbcCondition, InputServiceUtils.getOrderQueue(entityName, input), jdbcPage));
     }

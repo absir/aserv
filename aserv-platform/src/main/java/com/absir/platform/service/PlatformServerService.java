@@ -497,6 +497,8 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         JPlatformFrom platformFrom = ME.getPlatformFromId(fromId);
         String[] moreDatas = getMoreDatas(info.getMoreDatas());
         JPayTrade payTrade = PayUtils.createTrade(info.getConfigureId(), info.getPlatform(), info.getPlatformData(), getPlatformFromChannel(platformFrom), info.getGoodsId(), info.getGoodsNumber(), (float) info.getAmount(), info.getUserId(), info.getServerId(), info.getPlayerId(), info.isShortTradeId(), moreDatas);
+        // 透传TradeData
+        payTrade.setTradeData(info.getTradeData());
         try {
             orderResult.setTradeData(PayUtils.orderTrade(payTrade, info.getPrepare(), moreDatas));
 

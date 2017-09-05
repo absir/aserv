@@ -682,23 +682,48 @@ $(function () {
             }
         };
 
-        abToggles['multiselect'] = function ($this) {
-            $parent = $this.parent();
-            if ($parent.hasClass('multiselect-native-select')) {
-                $this.insertBefore($parent);
-                $parent.remove();
-                $this.removeData('multiselect');
-            }
-
-            $this.multiselect({
-                selectAllText: ab_lang_map.selectAllText,
-                nonSelectedText: ab_lang_map.nonSelectedText,
-                nSelectedText: ab_lang_map.nSelectedText,
-                allSelectedText: ab_lang_map.allSelectedText,
-                enableFiltering: true,
-                includeSelectAllOption: true,
+        abToggles['ajaxselect'] = function ($this) {
+            $this.selectpicker({
+                liveSearch: true
             });
-        };
+            var ajaxurl = $this.attr('ajaxurl')
+            if (ajaxurl) {
+                var nullable = $this.attr('selectnullable')
+                var options = {
+                    ajax: {
+                        url: ajaxurl,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            '!suggest': '{{{q}}}'
+                        }
+                    },
+                    log: 3,
+                    preprocessData: function (data) {
+                        var array = []
+                        if (nullable) {
+                            array.push({
+                                text: '未选择',
+                                value: ' ',
+                                disable: 'false',
+                            });
+                        }
+
+                        for (var key in data) {
+                            array.push({
+                                text: data[key],
+                                value: key,
+                            });
+                        }
+
+                        return array;
+                    }
+                }
+
+                $this.ajaxSelectPicker(options);
+                $this.trigger('change');
+            }
+        }
 
     }
 );
