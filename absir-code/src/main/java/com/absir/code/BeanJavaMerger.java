@@ -100,7 +100,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
 
     @Override
     public void mergeCompilationUnit(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
-                                     TypeDeclaration fromType, TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap, Map<String, BodyDeclaration> declarationMap) {
+                                     TypeDeclaration fromType, TypeDeclaration toType, TypeDeclaration defineType, Map<String, FieldDeclaration> fromFieldMap, Map<String, BodyDeclaration> declarationMap) {
         boolean enumReadable = false;
         boolean isBean = false;
         int dirtyM = 0;
@@ -115,7 +115,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                     typeDeclaration.setImplements(implementsList);
                 }
 
-                List<AnnotationExpr> annotationExprs = toType.getAnnotations();
+                List<AnnotationExpr> annotationExprs = defineType.getAnnotations();
                 if (annotationExprs != null) {
                     for (AnnotationExpr annotationExpr : annotationExprs) {
                         String name = annotationExpr.getName().toString();
@@ -138,10 +138,26 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                         typeDeclaration.setExtends(extendsList);
                     }
                 }
+
+                if (defineType != toType) {
+                    toType.setAnnotations(mergeAnnotationExpr(fromType.getAnnotations(), defineType.getAnnotations(), typeDeclaration));
+                }
             }
 
         } else if (fromType instanceof EnumDeclaration) {
             enumReadable = true;
+        }
+
+        Map<String, FieldDeclaration> defineFieldDeclarationMap = null;
+        if (defineType != toType) {
+            defineFieldDeclarationMap = new HashMap<String, FieldDeclaration>();
+            for (BodyDeclaration bodyDeclaration : defineType.getMembers()) {
+                if (bodyDeclaration instanceof FieldDeclaration) {
+                    FieldDeclaration fieldDeclaration = (FieldDeclaration) bodyDeclaration;
+                    String name = fieldDeclaration.getVariables().get(0).getId().toString();
+                    defineFieldDeclarationMap.put(name, fieldDeclaration);
+                }
+            }
         }
 
         Map<String, FieldDeclaration> toFieldMap = new HashMap<String, FieldDeclaration>();
@@ -167,7 +183,8 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                     } else {
                         fieldDeclaration.setModifiers(Modifier.PROTECTED);
                         fieldDeclaration.setType(fromFieldDeclaration.getType());
-                        fieldDeclaration.setAnnotations(mergeAnnotationExpr(fromFieldDeclaration.getAnnotations(), fieldDeclaration.getAnnotations(), bodyDeclaration));
+                        FieldDeclaration defineFieldDeclaration = defineFieldDeclarationMap == null ? null : defineFieldDeclarationMap.remove(name);
+                        fieldDeclaration.setAnnotations(mergeAnnotationExpr(fromFieldDeclaration.getAnnotations(), defineFieldDeclaration == null ? fieldDeclaration.getAnnotations() : defineFieldDeclaration.getAnnotations(), bodyDeclaration));
                         if (!enumReadable && isBeanField(fieldDeclaration, name)) {
                             //fieldDeclaration.setModifiers(Modifier.PROTECTED);
                             fromFieldMap.put(name, fromFieldDeclaration);

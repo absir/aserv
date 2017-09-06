@@ -148,6 +148,7 @@ public abstract class CodeJavaMerger {
         }
 
         TypeDeclaration toType = null;
+        TypeDeclaration defineType = null;
         if (toCompilationUnit != null) {
             for (TypeDeclaration type : toCompilationUnit.getTypes()) {
                 if (type.getName().equals(className)) {
@@ -157,6 +158,7 @@ public abstract class CodeJavaMerger {
             }
 
             if (toType != null) {
+                defineType = toType;
                 boolean foundOverride = false;
                 List<AnnotationExpr> annotationExprs = toType.getAnnotations();
                 if (annotationExprs != null) {
@@ -181,6 +183,10 @@ public abstract class CodeJavaMerger {
             toType.setName(className);
         }
 
+        if (defineType == null) {
+            defineType = toType;
+        }
+
         if (toType == null) {
             for (TypeDeclaration type : toCompilationUnit.getTypes()) {
                 if (type.getName().equals(className)) {
@@ -195,7 +201,7 @@ public abstract class CodeJavaMerger {
             }
         }
 
-        mergeFormTypeToType(className, fromCompilationUnit, toCompilationUnit, fromType, toType);
+        mergeFormTypeToType(className, fromCompilationUnit, toCompilationUnit, fromType, toType, defineType);
         for (TypeDeclaration from : fromCompilationUnit.getTypes()) {
             if (from.getName().equals(fromClassName)) {
                 continue;
@@ -223,14 +229,14 @@ public abstract class CodeJavaMerger {
                 toCompilationUnit.getTypes().add(fromType);
             }
 
-            mergeFormTypeToType(className, fromCompilationUnit, toCompilationUnit, from, _to);
+            mergeFormTypeToType(className, fromCompilationUnit, toCompilationUnit, from, _to, _to);
         }
 
         HelperFile.write(toFile, toCompilationUnit.toString());
     }
 
     protected void mergeFormTypeToType(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
-                                       TypeDeclaration fromType, TypeDeclaration toType) {
+                                       TypeDeclaration fromType, TypeDeclaration toType, TypeDeclaration defineType) {
         Map<String, FieldDeclaration> fromFieldMap = new LinkedHashMap<String, FieldDeclaration>();
         Map<String, BodyDeclaration> declarationMap = new LinkedHashMap<String, BodyDeclaration>();
         int initializerIndex = 0;
@@ -282,7 +288,7 @@ public abstract class CodeJavaMerger {
                         toType.getMembers().add(toBodyDeclarationType);
                     }
 
-                    mergeFormTypeToType(null, fromCompilationUnit, toCompilationUnit, bodyDeclarationType, toBodyDeclarationType);
+                    mergeFormTypeToType(null, fromCompilationUnit, toCompilationUnit, bodyDeclarationType, toBodyDeclarationType, toBodyDeclarationType);
                 }
 
             } else if (bodyDeclaration instanceof InitializerDeclaration) {
@@ -290,9 +296,9 @@ public abstract class CodeJavaMerger {
             }
         }
 
-        mergeCompilationUnit(className, fromCompilationUnit, toCompilationUnit, fromType, toType, fromFieldMap, declarationMap);
+        mergeCompilationUnit(className, fromCompilationUnit, toCompilationUnit, fromType, toType, defineType, fromFieldMap, declarationMap);
     }
 
     public abstract void mergeCompilationUnit(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
-                                              TypeDeclaration fromType, TypeDeclaration toType, Map<String, FieldDeclaration> fromFieldMap, Map<String, BodyDeclaration> declarationMap);
+                                              TypeDeclaration fromType, TypeDeclaration toType, TypeDeclaration defineType, Map<String, FieldDeclaration> fromFieldMap, Map<String, BodyDeclaration> declarationMap);
 }
