@@ -119,16 +119,55 @@ $(function () {
             $.fn.ab_toggle_fun(ui);
         }
 
+        if ($.validator) {
+            var _staticRules = $.validator.staticRules;
+            $.validator.staticRules = function (element) {
+                var rules = $._data(element, 'ab_validate_rules');
+                if (rules) {
+                    return $.extend(_staticRules(element), rules);
+                }
+
+                return _staticRules(element);
+            }
+            $.validator.prototype.idOrName = function (element) {
+                return this.groups[element.name] || ( this.checkable(element) ? element.name : element.id || element.name ) || $(element).attr('iname');
+            }
+            $.validator.prototype.elements = function () {
+                var validator = this,
+                    rulesCache = {};
+
+                // select all valid inputs inside the form (no submit or reset buttons)
+                return $(this.currentForm)
+                    .find("input, select, textarea")
+                    .not(":submit, :reset, :image, :disabled, :hidden")
+                    .not(this.settings.ignore)
+                    .filter(function () {
+                        var name = this.name || $(this).attr('iname');
+                        if (!name && validator.settings.debug && window.console) {
+                            console.error("%o has no name assigned", this);
+                        }
+
+                        // select only the first element for each name, and only those with rules specified
+                        if (name in rulesCache || !validator.objectLength($(this).rules())) {
+                            return false;
+                        }
+
+                        rulesCache[name] = true;
+                        return true;
+                    });
+            }
+        }
+
         var abToggles = {};
         $.fn.ab_toggles = abToggles;
         var abValidates = {};
         $.fn.ab_validates = abValidates;
         if ($.validator) {
-            $.validator.addMethod('ab_validate', function (value, element, param) {
+            $.validator.addMethod('ab_validate_func', function (value, element, param) {
                 if (param && param.length > 1) {
-                    var validate = param[0];
-                    if (validate && typeof validate == 'function') {
-                        return this.optional(element) || validate(value, element);
+                    var func = param[0];
+                    if (func && typeof func == 'function') {
+                        return this.optional(element) || func(value, element);
                     }
                 }
 
@@ -363,13 +402,16 @@ $(function () {
                     var $input = $(this);
                     var validate = abValidates[$input.attr('ab_validate')];
                     if (validate) {
-                        var name = $input.attr('name');
+                        var name = $input.attr('name') || $input.attr('iname');
                         if (name) {
-                            var param = validate($this, $input, name);
-                            if (param) {
-                                rules[name] = {
-                                    ab_validate: param
-                                };
+                            var func = validate($this, $input, name);
+                            if (func) {
+                                $._data($input[0], 'ab_validate_rules', {
+                                    ab_validate_func: func
+                                })
+                                //rules[name] = {
+                                //    ab_validate_func: func
+                                //};
                             }
                         }
 
@@ -624,7 +666,8 @@ $(function () {
         abValidates['confirm'] = function ($form, $input, name) {
             var confirm = $input.attr('confirm');
             if (confirm) {
-                var $confirm = $('[name="' + confirm + '"]', $form);
+                confirm = confirm[0] == '$' ? confirm.substring(1) : ('[name="' + confirm + '"]');
+                var $confirm = $(confirm, $form);
                 if ($confirm && $confirm.length) {
                     var error = $input.attr('error');
                     if (!error) {
@@ -722,6 +765,51 @@ $(function () {
 
                 $this.ajaxSelectPicker(options);
                 $this.trigger('change');
+            }
+        }
+
+        abToggles['iencrypt'] = function ($this) {
+            var iencrypt = ab_com['iencrypt'];
+            if (!iencrypt) {
+                return;
+            }
+
+            var name = $this.attr('name');
+            if (name) {
+                $form = $this.closest("form");
+                if ($form && $form.length) {
+                    var $iencrypt = $("[name='@iencrypt']", $form);
+                    if (!$iencrypt || !$iencrypt.length) {
+                        $this.before('<input type="hidden" name="@iencrypt" value="1"/>');
+                    }
+
+                    $this.after('<input type="hidden" name="' + name + '"/>');
+                    $iencrypt = $this.next();
+                    $this.removeAttr('name');
+                    var encryptFunc = function () {
+                        var value = $this.val();
+                        if (value) {
+                            var encrypt = new JSEncrypt();
+                            encrypt.setPublicKey(iencrypt);
+                            $iencrypt.val(encrypt.encrypt(value));
+
+                        } else {
+                            $iencrypt.val('');
+                        }
+
+                        return true;
+                    }
+
+                    var events = $._data($form[0], 'events');
+                    var submit = events ? events.submit : undefined;
+                    if (submit && submit.length) {
+                        $form.submit(encryptFunc);
+                        submit.unshift(submit.pop());
+
+                    } else {
+                        $form.submit(encryptFunc);
+                    }
+                }
             }
         }
 

@@ -23,6 +23,7 @@ import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.system.helper.HelperLang;
 import com.absir.aserv.system.helper.HelperLong;
 import com.absir.aserv.system.server.ServerDiyView;
+import com.absir.aserv.system.service.SecurityService;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
 import com.absir.client.helper.HelperJson;
@@ -42,6 +43,7 @@ import com.absir.servlet.InDispathFilter;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -449,6 +451,10 @@ public class Pag {
 
     public static String json(Object obj) throws IOException {
         return HelperJson.encode(obj);
+    }
+
+    public static String iencrypt(HttpServletRequest request) throws NoSuchAlgorithmException {
+        return SecurityService.ME.getIEncryptKey(request, true);
     }
 
     public static interface IPagLang {

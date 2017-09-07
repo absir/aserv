@@ -2,7 +2,6 @@
  * Created by absir on 16/6/26.
  */
 
-
 function ab_humanTime(time, max) {
     if (time < (max || 1000)) {
         return time + 's';
@@ -303,6 +302,7 @@ function ab_ajaxCallbackBefore(json, $form, $tForm, callback) {
 
             var v = $tForm.data('validator') || $tForm.validator();
             if (v) {
+                v.successList = [];
                 v.showErrors(data.errors);
             }
         }
@@ -538,3 +538,15 @@ $(function () {
         }
     }
 });
+
+function ab_encrypt(str, key) {
+    str = encodeURI(str);
+    var sLen = strlen(str);
+    var kLen = strlen(key);
+    var code = '';
+    for (i = 0; i < sLen; i++) {
+        code += str [$] ^ key [i % kLen];
+    }
+
+    return window.btoa(code);
+}

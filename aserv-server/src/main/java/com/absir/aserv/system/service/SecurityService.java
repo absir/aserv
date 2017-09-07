@@ -33,6 +33,7 @@ import com.absir.bean.inject.value.Value;
 import com.absir.bean.lang.LangCodeUtils;
 import com.absir.context.core.ContextDaemon;
 import com.absir.context.core.ContextUtils;
+import com.absir.core.kernel.KernelCharset;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.transaction.value.Transaction;
@@ -41,11 +42,22 @@ import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.IAfterInvoker;
 import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
+import com.absir.servlet.InputRequest;
+import org.apache.commons.codec.binary.Base64;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.security.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+
+import static java.security.KeyPairGenerator.getInstance;
 
 @Configure
 public abstract class SecurityService implements ISecurityService, ISecurity, IAfterInvoker<SecurityContext> {
@@ -249,6 +261,11 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IA
 
             } else {
                 input.getFacade().setSession(securityManager.getSessionKey(), securityContext.getId());
+            }
+
+            if (input instanceof InputRequest) {
+                HttpServletRequest request = ((InputRequest) input).getRequest();
+                clearIEncryptKey(request);
             }
 
             return securityContext;
@@ -535,6 +552,78 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IA
     @Override
     public void afterInvoker(SecurityContext obj) {
         obj.unInitialize();
+    }
+
+    public static final String KEY_ALGORITHM = "RSA";
+
+    public static final String SESSION_RSA_PUBLIC = "@_RSA_PUBLIC";
+
+    public static final String SESSION_RSA_PRIVATE = "@_RSA_PRIVATE";
+
+    public void clearIEncryptKey(Input input) {
+        if (input instanceof InputRequest) {
+            clearIEncryptKey(((InputRequest) input).getRequest());
+        }
+    }
+
+    public void clearIEncryptKey(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.removeAttribute(SESSION_RSA_PUBLIC);
+            session.removeAttribute(SESSION_RSA_PRIVATE);
+        }
+    }
+
+    public String getIEncryptKey(HttpServletRequest request, boolean force) throws NoSuchAlgorithmException {
+        HttpSession session = request.getSession(force);
+        if (session == null) {
+            return null;
+        }
+
+        Object publicKey = session.getAttribute(SESSION_RSA_PUBLIC);
+        if (publicKey == null) {
+            synchronized (session) {
+                publicKey = session.getAttribute(SESSION_RSA_PUBLIC);
+                if (publicKey == null) {
+                    KeyPairGenerator keyPairGen = getInstance(KEY_ALGORITHM);
+                    keyPairGen.initialize(1024);
+                    KeyPair keyPair = keyPairGen.generateKeyPair();
+
+                    publicKey = Base64.encodeBase64String(keyPair.getPublic().getEncoded());
+                    session.setAttribute(SESSION_RSA_PUBLIC, publicKey);
+                    session.setAttribute(SESSION_RSA_PRIVATE, keyPair.getPrivate());
+                }
+            }
+        }
+
+        return publicKey.toString();
+    }
+
+    public String getIEncryptValue(Input input, String value) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        if (input instanceof InputRequest) {
+            return getIEncryptValue(((InputRequest) input).getRequest(), value);
+        }
+
+        return value;
+    }
+
+    public String getIEncryptValue(HttpServletRequest request, String value) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        if (!KernelString.isEmpty(value) && request.getParameter("@iencrypt") != null) {
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                Object privateKey = session.getAttribute(SESSION_RSA_PRIVATE);
+                if (privateKey != null && privateKey instanceof PrivateKey) {
+                    // KEY_ALGORITHM 指定的加密算法
+                    KeyFactory keyFactory = KeyFactory.getInstance(KEY_ALGORITHM);
+                    // 对数据解密
+                    Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+                    cipher.init(Cipher.DECRYPT_MODE, (Key) privateKey);
+                    value = new String(cipher.doFinal(Base64.decodeBase64(value)), KernelCharset.getDefault());
+                }
+            }
+        }
+
+        return value;
     }
 
 }

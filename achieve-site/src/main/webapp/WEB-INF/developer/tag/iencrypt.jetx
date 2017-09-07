@@ -1,0 +1,4 @@
+<script type="text/javascript" src="\${SITE_STATIC}/../lib/jsencrypt/jsencrypt.min.js"></script>
+<script type="text/javascript">
+    ab_com['iencrypt'] = "\${Pag::iencrypt(request)}"
+</script>

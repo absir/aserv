@@ -37,9 +37,6 @@ public class Admin_login extends AdminServer {
 
     /**
      * 登录界面
-     *
-     * @param input
-     * @return
      */
     public String route(Input input) {
         input.getModel().put("remember", remember);
@@ -52,9 +49,6 @@ public class Admin_login extends AdminServer {
 
     /**
      * AJAX登录
-     *
-     * @param input
-     * @return
      */
     public String ajax(Input input) {
         input.getModel().put("remember", remember);
@@ -63,10 +57,6 @@ public class Admin_login extends AdminServer {
 
     /**
      * 注销登录
-     *
-     * @param input
-     * @return
-     * @throws Exception
      */
     public void out(Input input) throws Exception {
         SecurityService.ME.logout("admin", input);
@@ -75,13 +65,6 @@ public class Admin_login extends AdminServer {
 
     /**
      * 登录处理
-     *
-     * @param username
-     * @param password
-     * @param remember
-     * @param input
-     * @return
-     * @throws Exception
      */
     @Mapping(method = InMethod.POST)
     public String route(@Param String username, @Param String password, @Param @Nullable long remember, Input input) throws Exception {
@@ -92,6 +75,7 @@ public class Admin_login extends AdminServer {
                 throw new ServerException(ServerStatus.NO_VERIFY);
             }
 
+            password = SecurityService.ME.getIEncryptValue(input, password);
             SecurityService.ME.login(username, password, remember, JeRoleLevel.ROLE_ADMIN.ordinal(), "admin", input);
 
         } catch (ServerException e) {

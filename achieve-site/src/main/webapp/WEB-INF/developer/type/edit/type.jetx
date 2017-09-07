@@ -41,3 +41,8 @@ import = "com.absir.aserv.system.bean.value.JeEditable"
 #if(input_ext)
     ${ScriptNode::attr(input, input_ext)}
 #end
+
+#if(field.metas.iencrypt)
+    ${input.attr('ab_toggle', 'iencrypt')}
+    ${input.attr('iname', input.attr('name'))}
+#end

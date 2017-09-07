@@ -19,13 +19,14 @@
             <div class="row cl">
                 <label class="form-label col-xs-3"><i class="Hui-iconfont hidden-xs">&#xe60d;</i></label>
                 <div class="formControls col-xs-8">
-                    <input id="" name="username" type="text" placeholder="账户" class="input-text size-L">
+                    <input name="username" type="text" placeholder="账户" class="input-text size-L">
                 </div>
             </div>
             <div class="row cl">
                 <label class="form-label col-xs-3"><i class="Hui-iconfont hidden-xs">&#xe60e;</i></label>
                 <div class="formControls col-xs-8">
-                    <input id="" name="password" type="password" placeholder="密码" class="input-text size-L">
+                    <input ab_toggle="iencrypt" name="password" type="password" placeholder="密码"
+                           class="input-text size-L">
                 </div>
             </div>
             <div class="row cl">
@@ -60,3 +61,6 @@
     Absir Studio</a> V\${APP_VERSION}
 </div>
 \#end
+
+<script type="text/javascript" src="\${SITE_STATIC}/h-ui.absir/js/aui.js"></script>
+#include('/WEB-INF/developer/tag/iencrypt.jetx')

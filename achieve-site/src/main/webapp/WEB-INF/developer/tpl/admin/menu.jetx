@@ -4,7 +4,7 @@
         <dt class="ab_large">
             <i class="Hui-iconfont ab_icon icon-\${adminBean.icon}"></i>
             \${adminBean.name}
-            <i class="Hui-iconfont menu_dropdown-arrow"></i>
+            <i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
         </dt>
         <dd>
             <ul class="Huifold">
