@@ -28,7 +28,7 @@ public class JbSlaveTargets extends JbBean {
 
     @JaLang("应用")
     @NotEmpty
-    @JaEdit(groups = JaEdit.GROUP_SUG, listColType = 1, metas = "{\"input_ext\": \"ab_toggles='linkage' linkage='slaveIds' select='${SITE_ROUTE}admin/open/suggest/JSlave?appCode%20%3D=$val'\"}")
+    @JaEdit(groups = JaEdit.GROUP_SUG, listColType = 1, metas = "{\"input_ext\": \"ab_toggles='linkage' linkage='slaveIds' select='${SITE_ROUTE}admin/open/suggest/JSlave?appCode=$val'\"}")
     @JaName("JSlaveAppCode")
     public String appCode;
 

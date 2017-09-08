@@ -9,9 +9,10 @@ entity : 'suggest'
 }, 'suggests')
 
 #set(ajax = field.metas.ajax != null)
+#set(linkage = field.metas.linkage != null)
 
 #tag layout_block("shtml")
-#if(ajax)
+#if(ajax || linkage)
 \${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
 #end
 \#set(selected = ${iselect ? ('Pag::value(' + inputval + ')') : ('EntityStatics::getPrimary(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
@@ -35,6 +36,11 @@ ${suggests}
 
 #end
 
+${input.tagName('select')}
+${input.removeAttr('value')}
+${input.removeAttr('type')}
+${input.attr('ab_toggle', 'ajaxselect')}
+
 #if(ajax)
     #set(ajaxurl = "${SITE_ROUTE}admin/open/suggest/" + joEntity.getEntityName())
     #if(field.getMetas().get("suggest") != null)
@@ -46,8 +52,14 @@ ${suggests}
     #end
 #end
 
-${input.tagName('select')}
-${input.removeAttr('value')}
-${input.removeAttr('type')}
-${input.attr('ab_toggle', 'ajaxselect')}
+#if(linkage)
+    ${input.attr('ab_toggles', 'linkage')}
+    ${input.attr('linkage', field.metas.linkage)}
+    ${input.attr('select',
+        "${SITE_ROUTE}admin/open/suggest/"+joEntity.getEntityName()+"?"+(field.metas.linkparent ?! "parent")+"=$val")}
+#end
+
 ${input.appendChild(ScriptNode::node(shtml)).voidValue()}
+
+
+

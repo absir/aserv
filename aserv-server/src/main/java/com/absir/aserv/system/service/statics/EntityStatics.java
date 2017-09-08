@@ -21,6 +21,7 @@ import com.absir.bean.inject.value.Value;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelCharset;
 import com.absir.core.kernel.KernelCollection;
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAccessor;
 import com.absir.core.util.UtilRuntime;
@@ -194,7 +195,12 @@ public class EntityStatics {
             JdbcCondition condition = null;
             if (!KernelString.isEmpty(param)) {
                 condition = new JdbcCondition();
-                condition.addConditions(HelperString.split(param, "=&"));
+                if (param.length() > 1 && param.charAt(0) == '$') {
+                    condition.addConditions(new Object[]{param.substring(1), KernelLang.NULL_OBJECT});
+
+                } else {
+                    condition.addConditions(HelperString.split(param, "=&"));
+                }
             }
 
             entities = CrudServiceUtils.list(entityName, AccessServiceUtils.suggestCondition(entityName, condition), null, 0, 0);

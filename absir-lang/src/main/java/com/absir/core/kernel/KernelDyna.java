@@ -266,6 +266,8 @@ public abstract class KernelDyna {
         return stringTo(str, toClass);
     }
 
+    public static final boolean[] DYNAS_NULL = new boolean[]{};
+
     public static <T> T stringTo(String str, Class<T> toClass, boolean[] dynas) {
         if (toClass == byte.class) {
             return (T) toByte(str);
@@ -323,6 +325,10 @@ public abstract class KernelDyna {
 
         } else if (toClass.isEnum()) {
             return (T) toEnum(str, (Class<? extends Enum>) toClass);
+        }
+
+        if (dynas == DYNAS_NULL) {
+            return (T) KernelLang.NULL_OBJECT;
         }
 
         if (dynas != null && dynas.length > 0) {

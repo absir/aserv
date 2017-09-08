@@ -12,6 +12,7 @@ import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JaName;
 import com.absir.core.kernel.KernelLang;
+import com.absir.validator.value.NotEmpty;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
@@ -39,6 +40,7 @@ public class JbServerTargets extends JbBean {
 
     private transient String[] lastGroupIds;
 
+    @NotEmpty
     @JaLang("备注")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String mark;

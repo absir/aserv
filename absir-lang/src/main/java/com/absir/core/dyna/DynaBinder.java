@@ -163,10 +163,12 @@ public class DynaBinder {
     protected <T> T bindTo(Object obj, String name, Class<T> toClass) {
         T toObject = null;
         if (obj instanceof String) {
-            boolean[] dynas = new boolean[]{true};
-            toObject = KernelDyna.stringTo((String) obj, toClass, dynas);
-            if (dynas[0]) {
-                return toObject;
+            toObject = KernelDyna.stringTo((String) obj, toClass, KernelDyna.DYNAS_NULL);
+            if (toObject == KernelLang.NULL_OBJECT) {
+                toObject = null;
+
+            } else if (toObject == null) {
+                return null;
             }
 
         } else if (KernelClass.isBasicClass(obj.getClass())) {
@@ -194,7 +196,14 @@ public class DynaBinder {
             }
 
             if (toObject == null) {
-                toObject = bindConvert(obj, name, toClass);
+                toObject = bindConvert(obj, name, toClass, KernelDyna.DYNAS_NULL);
+                if (toObject == KernelLang.NULL_OBJECT) {
+                    toObject = null;
+
+                } else if (toObject == null) {
+                    return null;
+                }
+
                 if (toObject == null) {
                     if (CharSequence.class.isAssignableFrom(toClass)) {
                         return (T) obj.toString();
@@ -208,14 +217,14 @@ public class DynaBinder {
         return toObject;
     }
 
-    protected <T> T bindConvert(Object obj, String name, Class<T> toClass) {
-        return bindConvert(obj, name, toClass, converts, new BreakException[1]);
+    protected <T> T bindConvert(Object obj, String name, Class<T> toClass, boolean[] dynas) {
+        return bindConvert(obj, name, toClass, converts, dynas);
     }
 
     protected <T> T bindConvert(Object obj, String name, Class<T> toClass, List<? extends DynaConvert> converts,
-                                BreakException[] breakExceptions) {
+                                boolean[] dynas) {
         T toObject = null;
-        BreakException breakException = breakExceptions[0];
+        BreakException breakException = null;
         for (DynaConvert convert : converts) {
             try {
                 toObject = (T) convert.to(obj, name, toClass, breakException);
@@ -231,7 +240,16 @@ public class DynaBinder {
             }
         }
 
-        breakExceptions[0] = breakException;
+        if (breakException == null) {
+            if (dynas == KernelDyna.DYNAS_NULL) {
+                return (T) KernelLang.NULL_OBJECT;
+            }
+
+            if (dynas != null && dynas.length > 0) {
+                dynas[0] = !dynas[0];
+            }
+        }
+
         return toObject;
     }
 

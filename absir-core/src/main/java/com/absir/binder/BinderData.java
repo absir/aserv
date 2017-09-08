@@ -126,8 +126,15 @@ public class BinderData extends DynaBinder {
     }
 
     @Override
-    protected <T> T bindConvert(Object obj, String name, Class<T> toClass) {
-        return bindConvert(obj, name, toClass, DynaBinder.INSTANCE.getConverts(), new BreakException[1]);
+    protected <T> T bindConvert(Object obj, String name, Class<T> toClass, boolean[] dynas) {
+        if (converts != null && !converts.isEmpty()) {
+            Object toObject = bindConvert(obj, name, toClass, converts, dynas);
+            if (toObject != null) {
+                return (T) toObject;
+            }
+        }
+
+        return bindConvert(obj, name, toClass, DynaBinder.INSTANCE.getConverts(), dynas);
     }
 
     @Override
