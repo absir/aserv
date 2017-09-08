@@ -257,7 +257,7 @@ public class Admin_entity extends AdminServer {
 
         binderData.mapBind(dataMap, entity);
         JoEntity joEntity = (JoEntity) input.getAttribute("joEntity");
-        CrudContextUtils.crud(create ? Crud.CREATE : Crud.UPDATE, true, crudRecord, joEntity, entity, user, filter, binderResult, input);
+        boolean crudCreate = CrudContextUtils.crud(create ? Crud.CREATE : Crud.UPDATE, true, crudRecord, joEntity, entity, user, filter, binderResult, input);
         InModel model = input.getModel();
         model.put("entity", entity);
         if (binderResult.hashErrors()) {
@@ -277,7 +277,7 @@ public class Admin_entity extends AdminServer {
             }
         }
 
-        crudSupply.mergeEntity(entityName, entity, id == null);
+        crudSupply.mergeEntity(entityName, entity, crudCreate);
         if (create) {
             //crudSupply.flush();
             model.put("create", true);

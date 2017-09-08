@@ -211,6 +211,10 @@ public class JSlaveServer extends JbBean implements ICrudBean {
 
     @Override
     public void processCrud(Crud crud, CrudHandler handler, Input input) {
+        if (!handler.isPersist()) {
+            return;
+        }
+
         if (crud == Crud.CREATE && slave != null) {
             if (KernelString.isEmpty(serverAddress)) {
                 serverAddress = slave.getServerAddress();

@@ -129,7 +129,11 @@ public class JUpgrade extends JbBean implements ICrudBean {
 
     @Override
     public void processCrud(JaCrud.Crud crud, CrudHandler handler, Input input) {
-        if (handler.isPersist() && crud != JaCrud.Crud.DELETE) {
+        if (!handler.isPersist()) {
+            return;
+        }
+
+        if (crud != JaCrud.Crud.DELETE) {
             PropertyErrors errors = handler.getErrors();
             if (errors != null) {
                 Map<String, Object> versionMap = null;

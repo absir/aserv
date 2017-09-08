@@ -142,7 +142,9 @@ public class JEmailConfigure extends JConfigureBase implements ICrudBean, ICrudS
 
     @Override
     public void processCrud(Crud crud, CrudHandler handler, Input input) {
-        EmailServiceUtils.ME.clearSession();
+        if (handler.isPersist()) {
+            EmailServiceUtils.ME.clearSession();
+        }
     }
 
     @Override

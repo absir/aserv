@@ -19,7 +19,7 @@ ${Pag::captionLang(entry.value)}
 ${input.tagName('select')}
 ${input.removeAttr('value')}
 ${input.removeAttr('type')}
-${input.attr('ab_toggle', 'multiselect')}
+${input.attr('ab_toggle', 'ajaxselect')}
 ${input.appendChild(ScriptNode::node(shtml)).voidValue()}
 ${input.attr('multiple', 'true')}
 ${request.setAttribute('input', null)}

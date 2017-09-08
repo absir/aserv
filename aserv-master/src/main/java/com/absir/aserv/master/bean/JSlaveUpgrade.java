@@ -92,7 +92,11 @@ public class JSlaveUpgrade extends JbSlaveTargets implements ICrudBean {
 
     @Override
     public void processCrud(Crud crud, CrudHandler handler, Input input) {
-        if (crud != Crud.DELETE && handler.isPersist()) {
+        if (!handler.isPersist()) {
+            return;
+        }
+
+        if (crud != Crud.DELETE) {
             PropertyErrors errors = handler.getErrors();
             if (errors != null && slaveUpgrade != null) {
                 try {

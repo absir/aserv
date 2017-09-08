@@ -115,11 +115,11 @@ public abstract class CrudUtils {
         return record;
     }
 
-    public static void crud(JaCrud.Crud crud, boolean persist, Map<String, Object> crudRecord, JoEntity joEntity, Object entity,
-                            PropertyFilter filter, final JiUserBase user) {
+    public static boolean crud(JaCrud.Crud crud, boolean persist, Map<String, Object> crudRecord, JoEntity joEntity, Object entity,
+                               PropertyFilter filter, final JiUserBase user) {
         CrudEntity crudEntity = getCrudEntity(joEntity);
         if (crudEntity == null) {
-            return;
+            return crud == Crud.CREATE;
         }
 
         if (filter == null) {
@@ -148,6 +148,8 @@ public abstract class CrudUtils {
         if (entity instanceof ICrudBean) {
             ((ICrudBean) entity).processCrud(crud, crudInvoker, null);
         }
+
+        return crudInvoker.doCreate();
     }
 
     protected static void crud(Object entity, CrudEntity crudEntity, CrudInvoker crudInvoker) {

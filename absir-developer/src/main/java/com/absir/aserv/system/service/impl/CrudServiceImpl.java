@@ -61,8 +61,8 @@ public class CrudServiceImpl implements CrudService {
             return null;
         }
 
-        crudSupply.deleteEntity(entityName, entity);
         CrudUtils.crud(Crud.DELETE, true, null, new JoEntity(entityName, entity.getClass()), entity, null, user);
+        crudSupply.deleteEntity(entityName, entity);
         return entity;
     }
 
@@ -76,8 +76,8 @@ public class CrudServiceImpl implements CrudService {
                     joEntity = new JoEntity(entityName, entity.getClass());
                 }
 
-                crudSupply.deleteEntity(entityName, entity);
                 CrudUtils.crud(Crud.DELETE, true, null, new JoEntity(entityName, entity.getClass()), entity, null, user);
+                crudSupply.deleteEntity(entityName, entity);
             }
         }
 
