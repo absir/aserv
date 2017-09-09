@@ -41,6 +41,13 @@ public enum JeVotePermission {
         protected JeVote voteFor(JPermission permission) {
             return permission.getDeletable();
         }
+    },
+
+    SUGGESTABLE {
+        @Override
+        protected JeVote voteFor(JPermission permission) {
+            return permission.getSuggestable();
+        }
     };
 
     public static JeVotePermission forPermission(JePermission permission) {

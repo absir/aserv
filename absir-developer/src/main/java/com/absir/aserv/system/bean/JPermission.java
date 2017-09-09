@@ -30,6 +30,9 @@ public class JPermission implements Serializable {
     @JaLang("删除")
     private JeVote deletable;
 
+    @JaLang("提示")
+    private JeVote suggestable;
+
     @JaLang(value = "允许字段", tag = "allowFields")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     private String[] allows;
@@ -68,6 +71,14 @@ public class JPermission implements Serializable {
 
     public void setDeletable(JeVote deletable) {
         this.deletable = deletable;
+    }
+
+    public JeVote getSuggestable() {
+        return suggestable;
+    }
+
+    public void setSuggestable(JeVote suggestable) {
+        this.suggestable = suggestable;
     }
 
     public String[] getAllows() {

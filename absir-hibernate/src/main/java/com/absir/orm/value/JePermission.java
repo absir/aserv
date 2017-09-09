@@ -29,7 +29,12 @@ public enum JePermission implements EnumInteger {
     /**
      * 删除授权
      */
-    DELETE(0X08),;
+    DELETE(0X08),
+
+    /*
+     * 关联提示
+     */
+    SUGGEST(0X10),;
 
     private int value;
 

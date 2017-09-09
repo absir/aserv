@@ -35,6 +35,8 @@ import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
+import com.absir.orm.hibernate.SessionFactoryUtils;
+import com.absir.orm.value.JePermission;
 import com.absir.orm.value.JoEntity;
 import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
@@ -451,6 +453,10 @@ public class Pag {
 
     public static String json(Object obj) throws IOException {
         return HelperJson.encode(obj);
+    }
+
+    public static boolean suggest(String entityName) {
+        return SessionFactoryUtils.entityPermission(entityName, JePermission.SUGGEST);
     }
 
     public static String iencrypt(HttpServletRequest request) throws NoSuchAlgorithmException {

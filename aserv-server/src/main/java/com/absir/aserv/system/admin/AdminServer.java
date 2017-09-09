@@ -17,6 +17,7 @@ import com.absir.aserv.system.server.ServerResolverRedirect;
 import com.absir.aserv.system.service.CrudService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.aserv.system.service.statics.EntityStatics;
+import com.absir.aserv.system.service.utils.AuthServiceUtils;
 import com.absir.aserv.transaction.TransactionIntercepter;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.InjectType;
@@ -26,6 +27,8 @@ import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAbsir;
+import com.absir.orm.hibernate.SessionFactoryUtils;
+import com.absir.orm.value.JePermission;
 import com.absir.orm.value.JoEntity;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
@@ -142,6 +145,10 @@ public abstract class AdminServer {
      * 选择授权
      */
     protected void suggest(String entityName, ICrudSupply crudSupply, Input input) {
+        if (SessionFactoryUtils.entityPermission(entityName, JePermission.SUGGEST) || AuthServiceUtils.suggestPermission(entityName, SecurityService.ME.getUserBase(input))) {
+            return;
+        }
+
         if (crudSupply instanceof CrudSupply || !(input instanceof InputRequest)) {
             throw new ServerException(ServerStatus.IN_404);
         }

@@ -41,6 +41,13 @@ public abstract class AuthServiceUtils {
         return AuthService.ME.permission(entityName, user, JeVotePermission.INSERTABLE);
     }
 
+    /*
+     * 提示权限
+     */
+    public static boolean suggestPermission(String entityName, JiUserBase user) {
+        return AuthService.ME.permission(entityName, user, JeVotePermission.SUGGESTABLE);
+    }
+
     /**
      * 删除权限
      */

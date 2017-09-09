@@ -12,7 +12,9 @@ entity : 'suggest'
 
 #tag layout_block("shtml")
 #if(ajax)
-\${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
+    #if(!Pag::suggest(joEntity.getEntityName()))
+    \${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
+    #end
 #end
 \#set(selected = ${iselects ? ('Pag::params(' + inputval + ', true)') : ('EntityStatics::getPrimaries(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
 \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get("suggest")}', INPUT))

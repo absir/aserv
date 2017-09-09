@@ -13,7 +13,9 @@ entity : 'suggest'
 
 #tag layout_block("shtml")
 #if(ajax || linkage)
-\${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
+    #if(!Pag::suggest(joEntity.getEntityName()))
+    \${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
+    #end
 #end
 \#set(selected = ${iselect ? ('Pag::value(' + inputval + ')') : ('EntityStatics::getPrimary(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
 #if(field.isNullable())

@@ -726,10 +726,14 @@ $(function () {
         };
 
         abToggles['ajaxselect'] = function ($this) {
+            if ($this.data('selectpicker')) {
+                $this.selectpicker('refresh');
+                return;
+            }
+
             $this.selectpicker({
                 liveSearch: true,
             });
-            $this.selectpicker('refresh');
             var ajaxurl = $this.attr('ajaxurl')
             if (ajaxurl) {
                 var nullable = $this.attr('selectnullable')
