@@ -171,6 +171,7 @@ public abstract class CodeJavaMerger {
                 }
 
                 if (!foundOverride) {
+                    fromCompilationUnit.setImports(toCompilationUnit.getImports());
                     toCompilationUnit = null;
                     toType = null;
                 }

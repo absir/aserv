@@ -51,6 +51,10 @@ public class UtilContext {
         }
     };
 
+    public static final int shortTimeFor(long time) {
+        return (int) (time / 1000);
+    }
+
     protected static Calendar computeCalendar() {
         final Runnable runnable = new Runnable() {
 

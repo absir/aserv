@@ -68,4 +68,8 @@ public class JbServerTargetsO extends JbServerTargets implements JiActive {
         this.passTime = passTime;
     }
 
+    public long openGetId() {
+        return getId();
+    }
+
 }

@@ -11,11 +11,12 @@ import com.absir.aserv.slave.bean.base.JbServerTargets;
 import com.absir.aserv.slave.domain.OTargetsActivity;
 import com.absir.aserv.system.bean.value.JiActive;
 import com.absir.aserv.system.service.ActiveService.ActiveServiceData;
+import com.absir.bean.inject.value.Inject;
 import com.absir.core.kernel.KernelLang.ObjectEntry;
 
 public abstract class ActiveServiceTargets<T extends JiActive, K> extends ActiveServiceData<T, ObjectEntry<T, K>> {
 
-    private OTargetsActivity<ObjectEntry<T, K>> targetsActivity = new OTargetsActivity<ObjectEntry<T, K>>();
+    private OTargetsActivity<ObjectEntry<T, K>> targetsActivity;
 
     public JbServerTargets getBeanLTargets(T active) {
         return (JbServerTargets) active;
@@ -23,6 +24,11 @@ public abstract class ActiveServiceTargets<T extends JiActive, K> extends Active
 
     public ObjectEntry<T, K> getSingleEntry(long serverId) {
         return targetsActivity.getSingleActivity(serverId);
+    }
+
+    @Inject
+    protected void initService() {
+        targetsActivity = new OTargetsActivity<ObjectEntry<T, K>>();
     }
 
     @Override
