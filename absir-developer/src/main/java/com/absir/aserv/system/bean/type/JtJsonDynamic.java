@@ -7,7 +7,9 @@
  */
 package com.absir.aserv.system.bean.type;
 
+import com.absir.aserv.system.bean.value.JaStrict;
 import com.absir.client.helper.HelperJson;
+import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelReflect;
@@ -31,6 +33,8 @@ public class JtJsonDynamic implements UserType, DynamicParameterizedType, Serial
 
     private Type dynamicType;
 
+    private boolean strict;
+
     @Override
     public void setParameterValues(Properties parameters) {
         Class<?> entityClass = KernelClass.forName(parameters.getProperty(ENTITY));
@@ -38,6 +42,7 @@ public class JtJsonDynamic implements UserType, DynamicParameterizedType, Serial
             Field field = KernelReflect.declaredField(entityClass, parameters.getProperty(PROPERTY));
             if (field != null) {
                 dynamicType = field.getGenericType();
+                strict = field.getAnnotation(JaStrict.class) != null;
                 return;
             }
         }
@@ -77,7 +82,17 @@ public class JtJsonDynamic implements UserType, DynamicParameterizedType, Serial
             return null;
         }
 
-        return HelperJson.decodeNull(value, dynamicType);
+        try {
+            return HelperJson.decode(value, dynamicType);
+
+        } catch (IOException e) {
+            if (strict) {
+                throw new HibernateException(e);
+            }
+
+            Environment.throwable(e);
+            return null;
+        }
     }
 
     @Override
@@ -90,6 +105,11 @@ public class JtJsonDynamic implements UserType, DynamicParameterizedType, Serial
                 st.setString(index, HelperJson.encode(value));
 
             } catch (IOException e) {
+                if (strict) {
+                    throw new HibernateException(e);
+                }
+
+                Environment.throwable(e);
                 st.setString(index, "");
             }
         }

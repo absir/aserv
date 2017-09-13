@@ -7,6 +7,8 @@
  */
 package com.absir.aserv.system.bean.type;
 
+import com.absir.aserv.system.bean.value.JaStrict;
+import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelReflect;
@@ -31,6 +33,8 @@ public class JtPackDynamic implements UserType, DynamicParameterizedType, Serial
 
     private Type dynamicType;
 
+    private boolean strict;
+
     @Override
     public void setParameterValues(Properties parameters) {
         Class<?> entityClass = KernelClass.forName(parameters.getProperty(ENTITY));
@@ -38,6 +42,7 @@ public class JtPackDynamic implements UserType, DynamicParameterizedType, Serial
             Field field = KernelReflect.declaredField(entityClass, parameters.getProperty(PROPERTY));
             if (field != null) {
                 dynamicType = field.getGenericType();
+                strict = field.getAnnotation(JaStrict.class) != null;
                 return;
             }
         }
@@ -81,7 +86,12 @@ public class JtPackDynamic implements UserType, DynamicParameterizedType, Serial
             return HelperDataFormat.PACK.read(value, dynamicType);
 
         } catch (IOException e) {
-            throw new HibernateException(e);
+            if (strict) {
+                throw new HibernateException(e);
+            }
+
+            Environment.throwable(e);
+            return null;
         }
     }
 
@@ -95,7 +105,12 @@ public class JtPackDynamic implements UserType, DynamicParameterizedType, Serial
                 st.setBytes(index, HelperDataFormat.PACK.writeAsBytes(value));
 
             } catch (IOException e) {
-                throw new HibernateException(e);
+                if (strict) {
+                    throw new HibernateException(e);
+                }
+
+                Environment.throwable(e);
+                st.setBytes(index, null);
             }
         }
     }

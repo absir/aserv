@@ -7,6 +7,8 @@
  */
 package com.absir.aserv.system.bean.type;
 
+import com.absir.aserv.system.bean.value.JaStrict;
+import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelReflect;
@@ -31,6 +33,8 @@ public class JtThriftDynamic implements UserType, DynamicParameterizedType, Seri
 
     private Type dynamicType;
 
+    private boolean strict;
+
     @Override
     public void setParameterValues(Properties parameters) {
         try {
@@ -39,6 +43,7 @@ public class JtThriftDynamic implements UserType, DynamicParameterizedType, Seri
                 Field field = KernelReflect.declaredField(entityClass, parameters.getProperty(PROPERTY));
                 if (field != null) {
                     dynamicType = field.getGenericType();
+                    strict = field.getAnnotation(JaStrict.class) != null;
                     return;
                 }
             }
@@ -88,7 +93,12 @@ public class JtThriftDynamic implements UserType, DynamicParameterizedType, Seri
             return ThriftBaseSerializer.deserializeBytes(value, (Class<TBase>) dynamicType);
 
         } catch (Throwable e) {
-            throw new HibernateException(e);
+            if (strict) {
+                throw new HibernateException(e);
+            }
+
+            Environment.throwable(e);
+            return null;
         }
     }
 
@@ -102,7 +112,12 @@ public class JtThriftDynamic implements UserType, DynamicParameterizedType, Seri
                 st.setBytes(index, ThriftBaseSerializer.serializerBytes((TBase) value));
 
             } catch (Throwable e) {
-                throw new HibernateException(e);
+                if (strict) {
+                    throw new HibernateException(e);
+                }
+
+                Environment.throwable(e);
+                st.setBytes(index, null);
             }
         }
     }
