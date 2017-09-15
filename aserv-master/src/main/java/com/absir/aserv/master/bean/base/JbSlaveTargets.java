@@ -42,6 +42,7 @@ public class JbSlaveTargets extends JbBean {
     private transient String[] lastSlaveIds;
 
     @JaLang("全部节点")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean allSlaveIds;
 
     private transient int lastAllSlaveIds;

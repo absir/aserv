@@ -31,6 +31,7 @@ public class JbServerTargets extends JbBean {
     private transient long[] lastServerIds;
 
     @JaLang("全部服务")
+    @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean allServerIds;
 
     private transient int lastAllServerIds;
