@@ -12,11 +12,21 @@ public class JbServerA extends JbBeanL {
 
     private int gameDay;
 
+    private int gameWeek;
+
     public int getGameDay() {
         return gameDay;
     }
 
     public void setGameDay(int gameDay) {
         this.gameDay = gameDay;
+    }
+
+    public int getGameWeek() {
+        return gameWeek;
+    }
+
+    public void setGameWeek(int gameWeek) {
+        this.gameWeek = gameWeek;
     }
 }

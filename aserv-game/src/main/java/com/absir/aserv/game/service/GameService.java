@@ -44,6 +44,8 @@ public class GameService {
 
     private static int gameDay;
 
+    private static int gameWeek;
+
     private boolean gameDayUpdated;
 
     public static Calendar getCalendar() {
@@ -58,6 +60,10 @@ public class GameService {
         return gameDay;
     }
 
+    public static int getGameWeek() {
+        return gameWeek;
+    }
+
     // 是否是周末
     public static boolean isWeekDay() {
         int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
@@ -67,17 +73,27 @@ public class GameService {
     /**
      * 更新在线天数
      */
-    protected static boolean updateGameDay() {
+    protected final boolean updateGameDay() {
         long time = ContextUtils.getContextTime();
         int day = (int) ((time + timeZoneRawOffset) / UtilAbsir.DAY_TIME);
         if (day != gameDay) {
             gameDay = day;
             calendar.setTimeInMillis(time);
             JConfigureUtils.setOption(UPDATE_ONLINE_DAY, gameDay);
+            int week = calendar.get(Calendar.WEEK_OF_YEAR);
+            boolean updateWeek = week != gameWeek;
+            if (updateWeek) {
+                gameWeek = week;
+            }
+
+            updateGameDayWeek(false, true, updateWeek);
             return true;
         }
 
         return false;
+    }
+
+    protected void updateGameDayWeek(boolean init, boolean updateDay, boolean updateWeek) {
     }
 
     /**
@@ -88,7 +104,11 @@ public class GameService {
         calendar = UtilContext.getCurrentCalendar();
         timeZoneRawOffset = calendar.getTimeZone().getRawOffset();
         gameDay = JConfigureUtils.getOption(UPDATE_ONLINE_DAY, int.class);
+        gameWeek = calendar.get(Calendar.WEEK_OF_YEAR);
         gameDayUpdated = updateGameDay();
+        if (!gameDayUpdated) {
+            updateGameDayWeek(true, false, false);
+        }
     }
 
     /**

@@ -13,6 +13,7 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.*;
 import com.absir.context.bean.IContext;
 import com.absir.core.kernel.KernelClass;
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.util.UtilAbsir;
 import com.absir.core.util.UtilAtom;
 import com.absir.core.util.UtilContext;
@@ -216,41 +217,16 @@ public class ContextFactory {
     }
 
     protected void setThreadPoolExecutor(int corePoolSize, int maximumPoolSize, int keepAliveTime) {
+        // 执行错误处理
+        UtilContext.setExecutorUncaughtExceptionHandler(new KernelLang.CallbackTemplate2<Runnable, Throwable>() {
+            @Override
+            public void doWith(Runnable template, Throwable throwable) {
+                LOGGER.error("executorUncaughtExceptionHandler => " + template, throwable);
+            }
+        });
         // 请求处理线程池
-        threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MILLISECONDS,
+        threadPoolExecutor = new UtilContext.ThreadPoolExecutorCatchT(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<Runnable>(corePoolSize));
-
-        //监听调试异常线程池
-//        threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MILLISECONDS,
-//                new ArrayBlockingQueue<Runnable>(corePoolSize)) {
-//            @Override
-//            public void execute(final Runnable command) {
-//                final UtilDump.TimeoutException exception = UtilDump.addTimeoutException(30000);
-//                Runnable runnable = new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            command.run();
-//
-//                        } finally {
-//                            exception.complete();
-//                        }
-//                    }
-//                };
-//
-//                boolean start = false;
-//                try {
-//                    super.execute(runnable);
-//                    start = true;
-//
-//                } finally {
-//                    if (!start) {
-//                        exception.fail();
-//                    }
-//                }
-//            }
-//        };
-
         UtilContext.setThreadPoolExecutor(threadPoolExecutor);
     }
 
@@ -259,7 +235,7 @@ public class ContextFactory {
     protected void injectRejectExecutor(@Value(value = "context.rejectPoolSize", defaultValue = "16") int corePoolSize,
                                         @Value(value = "context.rejectMaximumPoolSize", defaultValue = "32") int maximumPoolSize,
                                         @Value(value = "context.rejectKeepAliveTime", defaultValue = "90000") int keepAliveTime) {
-        UtilContext.setRejectThreadPoolExecutor(new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime,
+        UtilContext.setRejectThreadPoolExecutor(new UtilContext.ThreadPoolExecutorCatchT(corePoolSize, maximumPoolSize, keepAliveTime,
                 TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()));
     }
 

@@ -40,8 +40,17 @@ public abstract class JbServerContext<SA extends JbServerA> extends ContextBean<
     /**
      * 更新游戏天数
      */
-    public void updateGameDay(int gameDay) {
+    public final void updateGameDay(int gameDay) {
         serverA.setGameDay(gameDay);
+        boolean updateWeek = serverA.getGameWeek() != GameService.getGameWeek();
+        if (updateWeek) {
+            serverA.setGameWeek(GameService.getGameWeek());
+        }
+
+        updateGameDayWeek(updateWeek);
+    }
+
+    public void updateGameDayWeek(boolean updateWeek) {
     }
 
     /**

@@ -69,7 +69,7 @@ public class JbServerTargetsO extends JbServerTargets implements JiActive {
     }
 
     public long openGetId() {
-        return getId();
+        return beginTime;
     }
 
 }

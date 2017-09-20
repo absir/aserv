@@ -8,6 +8,7 @@
 package com.absir.core.util;
 
 import com.absir.core.base.Environment;
+import com.absir.core.kernel.KernelLang;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -160,7 +161,7 @@ public class UtilContext {
 
     public static ThreadPoolExecutor getThreadPoolExecutor() {
         if (threadPoolExecutor == null) {
-            setThreadPoolExecutor(new ThreadPoolExecutor(32, 128, 90000, TimeUnit.MILLISECONDS,
+            setThreadPoolExecutor(new ThreadPoolExecutorCatchT(32, 128, 90000, TimeUnit.MILLISECONDS,
                     new ArrayBlockingQueue<Runnable>(32), rejectedExecutionHandler));
         }
 
@@ -221,10 +222,50 @@ public class UtilContext {
         }
     }
 
+    private static KernelLang.CallbackTemplate2<Runnable, Throwable> executorUncaughtExceptionHandler;
+
+    public static void setExecutorUncaughtExceptionHandler(KernelLang.CallbackTemplate2<Runnable, Throwable> uncaughtExceptionHandler) {
+        if (executorUncaughtExceptionHandler != null) {
+            throw new RuntimeException("executorUncaughtExceptionHandler exist");
+        }
+
+        executorUncaughtExceptionHandler = uncaughtExceptionHandler;
+    }
+
+    public static class ThreadPoolExecutorCatchT extends ThreadPoolExecutor {
+
+        public ThreadPoolExecutorCatchT(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
+            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
+        }
+
+        public ThreadPoolExecutorCatchT(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory) {
+            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
+        }
+
+        public ThreadPoolExecutorCatchT(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, RejectedExecutionHandler handler) {
+            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);
+        }
+
+        public ThreadPoolExecutorCatchT(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
+            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
+        }
+
+        @Override
+        protected void afterExecute(Runnable r, Throwable t) {
+            super.afterExecute(r, t);
+            if (executorUncaughtExceptionHandler == null) {
+                Environment.throwable(t);
+
+            } else {
+                executorUncaughtExceptionHandler.doWith(r, t);
+            }
+        }
+    }
+
     protected static ThreadPoolExecutor getRejectThreadPoolExecutor() {
         if (rejectedThreadPoolExecutor == null) {
             setRejectThreadPoolExecutor(
-                    new ThreadPoolExecutor(8, 64, 90000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()));
+                    new ThreadPoolExecutorCatchT(8, 64, 90000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>()));
         }
 
         return rejectedThreadPoolExecutor;
