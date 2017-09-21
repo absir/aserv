@@ -27,7 +27,9 @@ public class XlsBase extends Base<Serializable> {
     public static final String XLS_DIR = "xls/";
 
     public static final String XLS_SUFFIX = ".xls";
+
     private static KernelLang.GetTemplate2<HSSFWorkbook, XlsBase, String> readHssfWorkbook;
+
     @JaLang("编号")
     protected Serializable id;
 
