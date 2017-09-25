@@ -116,8 +116,8 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
 
         for (XlsField xlsField : xlsFields) {
             XlsDao xlsDao = XlsUtils.getReloadXlsDao(xlsField.xlsType);
-            LOGGER.info("loaded " + xlsField.workbook + " => " + xlsField.xlsType + ", size = " + xlsDao.getAll().size());
             try {
+                LOGGER.info("loaded " + xlsField.workbook + " => " + xlsField.xlsType + ", size = " + xlsDao.getAll().size());
                 xlsField.setXlsDao(this, xlsDao);
 
             } catch (Throwable e) {

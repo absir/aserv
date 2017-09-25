@@ -253,11 +253,13 @@ public class UtilContext {
         @Override
         protected void afterExecute(Runnable r, Throwable t) {
             super.afterExecute(r, t);
-            if (executorUncaughtExceptionHandler == null) {
-                Environment.throwable(t);
+            if (t != null) {
+                if (executorUncaughtExceptionHandler == null) {
+                    Environment.throwable(t);
 
-            } else {
-                executorUncaughtExceptionHandler.doWith(r, t);
+                } else {
+                    executorUncaughtExceptionHandler.doWith(r, t);
+                }
             }
         }
     }

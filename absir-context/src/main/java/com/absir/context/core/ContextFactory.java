@@ -221,7 +221,9 @@ public class ContextFactory {
         UtilContext.setExecutorUncaughtExceptionHandler(new KernelLang.CallbackTemplate2<Runnable, Throwable>() {
             @Override
             public void doWith(Runnable template, Throwable throwable) {
-                LOGGER.error("executorUncaughtExceptionHandler => " + template, throwable);
+                if (throwable != null) {
+                    LOGGER.error("executorUncaughtExceptionHandler => " + template, throwable);
+                }
             }
         });
         // 请求处理线程池
