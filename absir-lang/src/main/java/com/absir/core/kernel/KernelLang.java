@@ -180,21 +180,21 @@ public class KernelLang {
 
     public static enum MatcherType implements IMatcherType {
 
-        NORMAL {
+        EQUALS {
             @Override
             public boolean matchString(String match, String string) {
                 return string.equals(match);
             }
         },
 
-        LEFT {
+        STARTS_WITH {
             @Override
             public boolean matchString(String match, String string) {
                 return string.startsWith(match);
             }
         },
 
-        RIGHT {
+        ENDS_WITH {
             @Override
             public boolean matchString(String match, String string) {
                 return string.endsWith(match);
@@ -225,14 +225,14 @@ public class KernelLang {
                             }
 
                         } else {
-                            matchEntry.setValue(MatcherType.LEFT);
+                            matchEntry.setValue(MatcherType.ENDS_WITH);
                             matchEntry.setKey(match.substring(1, last + 1));
                         }
                     }
 
                 } else if (match.charAt(last) == '*') {
                     if (last > 0) {
-                        matchEntry.setValue(MatcherType.RIGHT);
+                        matchEntry.setValue(MatcherType.STARTS_WITH);
                         matchEntry.setKey(match.substring(0, last));
                     }
 
@@ -248,7 +248,7 @@ public class KernelLang {
                         }
                     }
 
-                    matchEntry.setValue(MatcherType.NORMAL);
+                    matchEntry.setValue(MatcherType.EQUALS);
                     matchEntry.setKey(match);
                 }
             }

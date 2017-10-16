@@ -89,9 +89,15 @@ public abstract class ORanker<R, O> {
 
             } else {
                 if (iI >= 0) {
-                    R rank = rankings.remove(hI);
-                    rankings.add(iI, rank);
-                    ranks = null;
+                    if (iI == hI) {
+                        setScore(rankings.get(hI), score);
+                        
+                    } else {
+                        R rank = rankings.remove(hI);
+                        setScore(rank, score);
+                        rankings.add(iI, rank);
+                        ranks = null;
+                    }
                 }
             }
         }

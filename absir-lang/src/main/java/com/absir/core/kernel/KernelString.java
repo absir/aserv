@@ -518,14 +518,10 @@ public abstract class KernelString {
     public static boolean patternInclude(String string, String pattern) {
         int pos = patternOf(string, pattern);
         if (pos >= 0) {
-            if (pos > 0 && string.charAt(0) == '^') {
-                return false;
-            }
-
-            return true;
+            return string.charAt(0) == '^' ? false : true;
         }
 
-        return false;
+        return string.charAt(0) == '^' ? true : false;
     }
 
     public static String hiddenString(int start, int end, String string) {

@@ -24,9 +24,9 @@ public class CmdOptionals {
 
     private Optional<?> optional;
 
-    private Map<String, Optional<?>> keyMapOpitional = new LinkedHashMap<String, Optional<?>>();
+    private Map<String, Optional<?>> keyMapOptional = new LinkedHashMap<String, Optional<?>>();
 
-    private File optionialStoredFile;
+    private File optionalStoredFile;
 
     public boolean processArgCmd(String argCmd) {
         int length = argCmd.length();
@@ -43,29 +43,29 @@ public class CmdOptionals {
                 argCmd = argCmd.substring(1);
             }
 
-            Optional<?> optional = keyMapOpitional.get(argCmd);
+            Optional<?> optional = keyMapOptional.get(argCmd);
             if (optional == null) {
                 this.optional = null;
                 return false;
             }
 
             if (optional instanceof OptionalValue) {
-                OptionalValue<Object> opitionalValue = (OptionalValue<Object>) optional;
-                opitionalValue.setValue(opitionalValue.activeValue);
-                this.optional = opitionalValue;
+                OptionalValue<Object> optionalValue = (OptionalValue<Object>) optional;
+                optionalValue.setValue(optionalValue.activeValue);
+                this.optional = optionalValue;
             }
 
         } else {
-            optional.setOpitionalValue(KernelString.unTransferred(argCmd));
+            optional.setOptionalValue(KernelString.unTransferred(argCmd));
             optional = null;
         }
 
         return true;
     }
 
-    public void loadOptionialStoredFile(File storedFile) {
-        if (optionialStoredFile == null) {
-            optionialStoredFile = storedFile;
+    public void loadOptionalStoredFile(File storedFile) {
+        if (optionalStoredFile == null) {
+            optionalStoredFile = storedFile;
         }
 
         if (storedFile.exists()) {
@@ -73,9 +73,9 @@ public class CmdOptionals {
             BeanConfigImpl.readProperties(BeanFactoryUtils.getBeanConfig(), optionalMap, storedFile, null);
             Optional<?> optional;
             for (Entry<String, Object> entry : optionalMap.entrySet()) {
-                optional = keyMapOpitional.get(entry.getKey());
+                optional = keyMapOptional.get(entry.getKey());
                 if (optional != null && !optional.isModified() && optional.isStored()) {
-                    optional.setOpitionalValue(entry.getValue());
+                    optional.setOptionalValue(entry.getValue());
                 }
             }
         }
@@ -86,11 +86,11 @@ public class CmdOptionals {
      *
      * @throws Throwable
      */
-    public void saveOptionialStoredFile() throws Throwable {
-        if (optionialStoredFile != null) {
+    public void saveOptionalStoredFile() throws Throwable {
+        if (optionalStoredFile != null) {
             Optional<?> optional;
             StringBuilder stringBuilder = new StringBuilder();
-            for (Entry<String, Optional<?>> entry : keyMapOpitional.entrySet()) {
+            for (Entry<String, Optional<?>> entry : keyMapOptional.entrySet()) {
                 optional = entry.getValue();
                 if (optional.isStored() && optional.isModified()) {
                     stringBuilder.append(entry.getKey());
@@ -100,29 +100,29 @@ public class CmdOptionals {
                 }
             }
 
-            HelperFile.writeStringToFile(optionialStoredFile, stringBuilder.toString());
+            HelperFile.writeStringToFile(optionalStoredFile, stringBuilder.toString());
         }
     }
 
-    public <T> Optional<T> putOpitional(String key, Class<? extends T> optionalClass, T defaultValue) {
-        return putOpitional(key, optionalClass, defaultValue, true);
+    public <T> Optional<T> putOptional(String key, Class<? extends T> optionalClass, T defaultValue) {
+        return putOptional(key, optionalClass, defaultValue, true);
     }
 
-    public <T> Optional<T> putOpitional(String key, Class<? extends T> optionalClass, T defaultValue, boolean stored) {
+    public <T> Optional<T> putOptional(String key, Class<? extends T> optionalClass, T defaultValue, boolean stored) {
         Optional<T> optional = new Optional<T>(optionalClass, defaultValue, stored);
-        keyMapOpitional.put(key, optional);
+        keyMapOptional.put(key, optional);
         return optional;
     }
 
-    public <T> OptionalValue<T> putOpitionalValue(String key, Class<? extends T> optionalClass, T defaultValue, T activeValue) {
-        return putOpitionalValue(key, optionalClass, defaultValue, activeValue, false);
+    public <T> OptionalValue<T> putOptionalValue(String key, Class<? extends T> optionalClass, T defaultValue, T activeValue) {
+        return putOptionalValue(key, optionalClass, defaultValue, activeValue, false);
     }
 
-    public <T> OptionalValue<T> putOpitionalValue(String key, Class<? extends T> optionalClass, T defaultValue, T activeValue,
-                                                  boolean stored) {
-        OptionalValue<T> opitionalValue = new OptionalValue<T>(optionalClass, defaultValue, stored, activeValue);
-        keyMapOpitional.put(key, opitionalValue);
-        return opitionalValue;
+    public <T> OptionalValue<T> putOptionalValue(String key, Class<? extends T> optionalClass, T defaultValue, T activeValue,
+                                                 boolean stored) {
+        OptionalValue<T> optionalValue = new OptionalValue<T>(optionalClass, defaultValue, stored, activeValue);
+        keyMapOptional.put(key, optionalValue);
+        return optionalValue;
     }
 
     public static class Optional<T> {
@@ -169,9 +169,9 @@ public class CmdOptionals {
             this.modified = modified;
         }
 
-        public void setOpitionalValue(Object opitionalValue) {
+        public void setOptionalValue(Object optionalValue) {
             modified = true;
-            value = DynaBinder.to(opitionalValue, type);
+            value = DynaBinder.to(optionalValue, type);
         }
     }
 
@@ -185,9 +185,9 @@ public class CmdOptionals {
         }
 
         @Override
-        public void setOpitionalValue(Object opitionalValue) {
+        public void setOptionalValue(Object optionalValue) {
             modified = true;
-            value = opitionalValue == null ? activeValue : DynaBinder.to(opitionalValue, type);
+            value = optionalValue == null ? activeValue : DynaBinder.to(optionalValue, type);
         }
     }
 }

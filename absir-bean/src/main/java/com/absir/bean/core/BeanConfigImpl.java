@@ -138,6 +138,40 @@ public class BeanConfigImpl implements BeanConfig {
         return false;
     }
 
+    public static Object readNameTemplate(BeanConfig beanConfig, String name, String template, char chr, Map<String, Object> configMap) {
+        if (chr != 0) {
+            Object old;
+            switch (chr) {
+                case '.':
+                    old = DynaBinder.to(configMap.get(name), String.class);
+                    if (old != null) {
+                        return old + template;
+                    }
+
+                    break;
+                case '#':
+                    old = DynaBinder.to(configMap.get(name), String.class);
+                    if (old != null) {
+                        return old + "\r\n" + template;
+                    }
+
+                    break;
+                case '+':
+                    old = DynaBinder.to(configMap.get(name), List.class);
+                    if (old != null) {
+                        ((List) old).add(template);
+                        return old;
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return template;
+    }
+
     public static void readProperties(final BeanConfig beanConfig, final Map<String, Object> configMap,
                                       InputStream inputStream, final Map<String, CallbackTemplate<String>> beanConfigTemplates) {
         try {
@@ -156,7 +190,7 @@ public class BeanConfigImpl implements BeanConfig {
 
                     char chr = template.charAt(0);
                     if (blockBuilder == null) {
-                        if (chr == '#') {
+                        if (chr == '#' || chr == ';') {
                             return;
 
                         } else if (chr == '{' && length == 2 && template.charAt(1) == '"') {
@@ -222,7 +256,7 @@ public class BeanConfigImpl implements BeanConfig {
                                 blockAppending = 0;
                             }
 
-                            configMap.put(name, template);
+                            configMap.put(name, readNameTemplate(null, name, template, chr, configMap));
 
                         } else {
                             name = name.trim();
@@ -268,38 +302,7 @@ public class BeanConfigImpl implements BeanConfig {
                                         ? beanConfigTemplates == null ? null : beanConfigTemplates.get(name) : null;
                                 if (callbackTemplate == null) {
                                     if (beanConfig == null || beanConfig.isOutEnvironmentDenied()) {
-                                        Object value = template;
-                                        if (chr != 0) {
-                                            Object old;
-                                            switch (chr) {
-                                                case '.':
-                                                    old = DynaBinder.to(configMap.get(name), String.class);
-                                                    if (old != null) {
-                                                        value = old + template;
-                                                    }
-
-                                                    break;
-                                                case '#':
-                                                    old = DynaBinder.to(configMap.get(name), String.class);
-                                                    if (old != null) {
-                                                        value = old + "\r\n" + template;
-                                                    }
-
-                                                    break;
-                                                case '+':
-                                                    old = DynaBinder.to(configMap.get(name), List.class);
-                                                    if (old != null) {
-                                                        ((List) old).add(template);
-                                                        value = old;
-                                                    }
-
-                                                    break;
-                                                default:
-                                                    break;
-                                            }
-                                        }
-
-                                        configMap.put(name, value);
+                                        configMap.put(name, readNameTemplate(beanConfig, name, template, chr, configMap));
                                     }
 
                                 } else {
@@ -470,7 +473,7 @@ public class BeanConfigImpl implements BeanConfig {
                     ParamsAnnotations annotations = BeanConfigImpl.getParamsAnnotations(properties, name);
                     if (annotations != null) {
                         Entry<String, KernelLang.IMatcherType> matcherEntry = KernelLang.MatcherType.getMatchEntry(name);
-                        if (matcherEntry.getValue() == MatcherType.NORMAL) {
+                        if (matcherEntry.getValue() == MatcherType.EQUALS) {
                             annotationsMap.put(matcherEntry.getKey(), annotations);
 
                         } else {

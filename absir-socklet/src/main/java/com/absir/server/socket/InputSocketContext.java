@@ -172,7 +172,7 @@ public class InputSocketContext {
                         receiveBufferSize, sendBufferSize, bufferResolver, sessionResolver);
 
             } catch (Exception e) {
-                LOGGER.error("start opition server", e);
+                LOGGER.error("start optional server", e);
             }
         }
     }
