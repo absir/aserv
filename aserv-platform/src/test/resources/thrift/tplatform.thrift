@@ -24,19 +24,20 @@ struct DPlatformFromSetting {
 
 // 来源设置
 struct DFromSetting {
-    1: optional bool auth;
     // 标题
-    2: optional string title = "";
+    1: optional string title = "";
     // 消息
-    3: optional string message = "";
-    // 强制更新
-    4: optional bool forceUpgrade;
+    2: optional string content = "";
+    // 类型
+    3: optional i32 type;
     // 打开地址
-    5: optional string openUrl = "";
+    4: optional string openUrl = "";
+    // 最小资源版本
+    5: optional string minVersion = "";
+    // 服务地址
+    6: optional string serverUrl = "";
     // CDN地址
-    6: optional string cdnUrl = "";
-    // 其他地址
-    7: optional string otherUrl = "";
+    7: optional string cdnUrl = "";
 }
 
 // 公告

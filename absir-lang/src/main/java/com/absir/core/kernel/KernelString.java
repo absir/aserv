@@ -516,6 +516,10 @@ public abstract class KernelString {
     }
 
     public static boolean patternInclude(String string, String pattern) {
+        if (isEmpty(string)) {
+            return false;
+        }
+
         int pos = patternOf(string, pattern);
         if (pos >= 0) {
             return string.charAt(0) == '^' ? false : true;
