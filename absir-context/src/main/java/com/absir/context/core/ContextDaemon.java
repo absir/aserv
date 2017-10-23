@@ -59,8 +59,6 @@ public class ContextDaemon implements Runnable {
         thread.setDaemon(true);
         thread.setName("ContextDaemon");
         thread.start();
-
-
     }
 
     public boolean isDeveloper(String daemon) {
