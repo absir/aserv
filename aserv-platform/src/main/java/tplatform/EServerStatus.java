@@ -6,13 +6,17 @@
  */
 package tplatform;
 
-import java.util.Map;
-import java.util.HashMap;
-import org.apache.thrift.TEnum;
+import com.absir.aserv.system.bean.value.JaLang;
 
 public enum EServerStatus implements org.apache.thrift.TEnum {
 
-    wait(0), open(1), maintain(2), full(3), review(4), test(5);
+    @JaLang("待开")
+    wait(0), @JaLang("开放")
+    open(1), @JaLang("维护")
+    maintain(2), @JaLang("爆满")
+    full(3), @JaLang("审核")
+    review(4), @JaLang("测试")
+    test(5);
 
     private final int value;
 

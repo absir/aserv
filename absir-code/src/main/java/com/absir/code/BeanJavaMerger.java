@@ -149,13 +149,22 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
         }
 
         Map<String, FieldDeclaration> defineFieldDeclarationMap = null;
+        Map<String, EnumConstantDeclaration> defineEnumConstantDeclarationMap = null;
         if (defineType != toType) {
-            defineFieldDeclarationMap = new HashMap<String, FieldDeclaration>();
-            for (BodyDeclaration bodyDeclaration : defineType.getMembers()) {
-                if (bodyDeclaration instanceof FieldDeclaration) {
-                    FieldDeclaration fieldDeclaration = (FieldDeclaration) bodyDeclaration;
-                    String name = fieldDeclaration.getVariables().get(0).getId().toString();
-                    defineFieldDeclarationMap.put(name, fieldDeclaration);
+            if (enumReadable) {
+                defineEnumConstantDeclarationMap = new HashMap<String, EnumConstantDeclaration>();
+                for (EnumConstantDeclaration enumConstantDeclaration : ((EnumDeclaration) defineType).getEntries()) {
+                    defineEnumConstantDeclarationMap.put(enumConstantDeclaration.getName(), enumConstantDeclaration);
+                }
+
+            } else {
+                defineFieldDeclarationMap = new HashMap<String, FieldDeclaration>();
+                for (BodyDeclaration bodyDeclaration : defineType.getMembers()) {
+                    if (bodyDeclaration instanceof FieldDeclaration) {
+                        FieldDeclaration fieldDeclaration = (FieldDeclaration) bodyDeclaration;
+                        String name = fieldDeclaration.getVariables().get(0).getId().toString();
+                        defineFieldDeclarationMap.put(name, fieldDeclaration);
+                    }
                 }
             }
         }
@@ -217,6 +226,11 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
             EnumDeclaration toEnum = (EnumDeclaration) toType;
             Map<String, EnumConstantDeclaration> nameMapEnum = new LinkedHashMap<String, EnumConstantDeclaration>();
             for (EnumConstantDeclaration declaration : fromEnum.getEntries()) {
+                EnumConstantDeclaration defineDeclaration = defineEnumConstantDeclarationMap == null ? null : defineEnumConstantDeclarationMap.remove(declaration.getName());
+                if (defineDeclaration != null) {
+                    declaration.setAnnotations(mergeAnnotationExpr(declaration.getAnnotations(), defineDeclaration.getAnnotations(), declaration));
+                }
+
                 nameMapEnum.put(declaration.getName(), declaration);
             }
 
