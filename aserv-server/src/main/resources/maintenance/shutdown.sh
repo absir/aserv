@@ -3,7 +3,7 @@ parentDir=`pwd`
 cd `dirname $0`
 currentDir=`pwd`
 
-cd '../../daemon/'
+cd '../daemon/'
 echo > shutdown
 sleep 5
 
