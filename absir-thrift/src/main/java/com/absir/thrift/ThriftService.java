@@ -119,7 +119,7 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
     protected void startServer() throws IOException {
         if (thriftPort > 0) {
             server = new SocketServer();
-            startThriftServer(thriftPort, InetAddress.getByName(thriftHost), server);
+            startThriftServer(thriftPort, KernelString.isEmpty(thriftHost) ? null : InetAddress.getByName(thriftHost), server);
         }
     }
 

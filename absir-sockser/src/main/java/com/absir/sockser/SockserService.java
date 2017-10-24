@@ -14,6 +14,7 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Stopping;
 import com.absir.core.kernel.KernelObject;
+import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.server.socket.InputSocketContext;
 import org.slf4j.Logger;
@@ -74,7 +75,7 @@ public class SockserService extends ActiveService<JiServer, SocketSer> {
         JiServer active = ser.getServer();
         InputSocketContext context = InputSocketContext.ME;
         ser.start(InputSocketContext.getAcceptTimeout(), InputSocketContext.getIdleTimeout(), active.getPort(),
-                context.getBacklog(), InetAddress.getByName(active.getIp()), context.getBufferSize(),
+                context.getBacklog(), KernelString.isEmpty(active.getIp()) ? null : InetAddress.getByName(active.getIp()), context.getBufferSize(),
                 context.getReceiveBufferSize(), context.getBufferSize(), context.getBufferResolver(),
                 context.getSessionResolver());
     }

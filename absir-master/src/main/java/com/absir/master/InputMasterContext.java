@@ -11,6 +11,7 @@ import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.*;
 import com.absir.core.kernel.KernelDyna;
+import com.absir.core.kernel.KernelString;
 import com.absir.master.resolver.MasterBufferResolver;
 import com.absir.master.resolver.MasterSessionResolver;
 import com.absir.server.socket.SocketServer;
@@ -85,7 +86,7 @@ public class InputMasterContext {
     protected void started() throws IOException {
         socketServer = createSocketServer();
         sessionResolver.setSessionFilters(hosts, excludes);
-        socketServer.start(acceptTimeout, idleTimeout, port, backlog, InetAddress.getByName(ip), bufferSize,
+        socketServer.start(acceptTimeout, idleTimeout, port, backlog, KernelString.isEmpty(ip) ? null : InetAddress.getByName(ip), bufferSize,
                 receiveBufferSize, sendBufferSize, MasterBufferResolver.ME, getSessionResolver());
     }
 

@@ -10,6 +10,7 @@ package com.absir.server.socket;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.*;
+import com.absir.core.kernel.KernelString;
 import com.absir.server.socket.resolver.InputBufferResolver;
 import com.absir.server.socket.resolver.InputSessionResolver;
 import com.absir.server.socket.resolver.SocketServerResolver;
@@ -168,7 +169,7 @@ public class InputSocketContext {
         if (open) {
             socketServer = new SocketServer();
             try {
-                socketServer.start(acceptTimeout, idleTimeout, port, backlog, InetAddress.getByName(ip), bufferSize,
+                socketServer.start(acceptTimeout, idleTimeout, port, backlog, KernelString.isEmpty(ip) ? null : InetAddress.getByName(ip), bufferSize,
                         receiveBufferSize, sendBufferSize, bufferResolver, sessionResolver);
 
             } catch (Exception e) {
