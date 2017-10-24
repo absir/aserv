@@ -26,7 +26,7 @@ public class HelperLang {
     }
 
     public static String getLangCaption(String lang, String tag, String name, String cls, boolean simple) {
-        if (lang == null) {
+        if (KernelString.isEmpty(lang)) {
             lang = name;
         }
 
@@ -73,7 +73,7 @@ public class HelperLang {
             }
         }
 
-        return lang;
+        return KernelString.isEmpty(lang) ? name : lang;
     }
 
     public static String getLangCaption(JaLang lang, String name, Class<?> cls) {
