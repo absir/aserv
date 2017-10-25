@@ -1311,7 +1311,7 @@ public class SocketAdapter {
 
         public void setRegisteredRunnable(RegisteredRunnable runnable) {
             registeredRunnable = runnable;
-            if (socketAdapter == null) {
+            if (socketAdapter == null && runnable != null) {
                 runnable.timeout();
             }
         }
