@@ -20,7 +20,6 @@ import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.AuthService;
 import com.absir.aserv.system.service.CrudService;
-import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
@@ -127,8 +126,8 @@ public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, Object inputBody) {
         Session session = BeanDao.getSession();
+        Object id = CrudUtils.identifier(handler, entity);
         String entityName = handler.getCrudEntity().getJoEntity().getEntityName();
-        Object id = CrudServiceUtils.identifier(entityName, entity, handler.doCreate());
         String assocId = getAssocId(entityName, id);
         if (handler.getCrud() == Crud.DELETE) {
             // 解除关联关系

@@ -58,7 +58,7 @@ ${input.attr('ab_toggle', 'ajaxselect')}
     ${input.attr('ab_toggles', 'linkage')}
     ${input.attr('linkage', field.metas.linkage)}
     ${input.attr('select',
-        "${SITE_ROUTE}admin/open/suggest/"+joEntity.getEntityName()+"?"+(field.metas.linkparent ?! "parent")+"=$val")}
+        "${SITE_ROUTE}admin/open/suggest/"+joEntity.getEntityName()+"?"+(field.metas.linkParent ?! "parent")+"=$val")}
 #end
 
 ${input.appendChild(ScriptNode::node(shtml)).voidValue()}

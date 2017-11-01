@@ -28,6 +28,6 @@ public @interface Rpc {
     boolean async() default false;
 
     // 调用失败，再统一走rpcData处理
-    boolean rpcData() default false;
+    int rpcData() default -1;
 
 }

@@ -28,22 +28,6 @@ public abstract class CrudServiceUtils {
         return crudSupply == null ? null : crudSupply.getEntityClass(entityName);
     }
 
-    public static Object identifier(String entityName, Object entity, boolean create) {
-        ICrudSupply crudSupply = CrudService.ME.getCrudSupply(entityName);
-        if (crudSupply != null) {
-            Object identifier = create ? null : crudSupply.getIdentifier(entityName, entity);
-            if (identifier == null) {
-                crudSupply.mergeEntity(entityName, entity, create);
-                //crudSupply.flush();
-                return crudSupply.getIdentifier(entityName, entity);
-            }
-
-            return identifier;
-        }
-
-        return null;
-    }
-
     public static Object find(String entityName, Object id, JdbcCondition jdbcCondition) {
         return find(CrudService.ME.getCrudSupply(entityName), entityName, id, jdbcCondition);
     }

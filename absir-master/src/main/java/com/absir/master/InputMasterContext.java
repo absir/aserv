@@ -10,6 +10,8 @@ package com.absir.master;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.*;
+import com.absir.client.rpc.RpcData;
+import com.absir.client.rpc.RpcInterface;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
 import com.absir.master.resolver.MasterBufferResolver;
@@ -122,18 +124,21 @@ public class InputMasterContext {
         return channelContext == null ? null : channelContext.slaveKey;
     }
 
-    public SocketChannel getSlaveSocketChannel(Serializable id) {
+    public SocketChannel getSlaveSocketChannel(String id) {
         MasterChannelContext channelContext = serverContext.getChannelContexts().get(id);
         return channelContext == null ? null : channelContext.getChannel();
     }
 
-    protected MasterRpcAdapter createMasterRpcAdapter(Serializable id) {
-        return new MasterRpcAdapter(new MasterChannelAdapter());
+    protected MasterRpcAdapter createMasterRpcAdapter(String id) {
+        return new MasterRpcAdapter(new MasterChannelAdapter(id));
     }
 
-    public MasterRpcAdapter getMasterRpcAdapter(Serializable id) {
+    public MasterRpcAdapter getMasterRpcAdapter(String id) {
         MasterChannelContext channelContext = serverContext.getChannelContexts().get(id);
         return channelContext == null ? null : channelContext.getMasterRpcAdapter();
+    }
+
+    protected void resolverRpcData(RpcInterface.RpcAttribute attribute, RpcData rpcData, MasterChannelAdapter masterChannelAdapter) {
     }
 
 }

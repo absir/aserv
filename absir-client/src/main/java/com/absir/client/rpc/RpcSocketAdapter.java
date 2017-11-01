@@ -153,7 +153,7 @@ public class RpcSocketAdapter<T extends SocketAdapter> extends RpcAdapter {
             byte[] buffer = (byte[]) returns[0];
             int offset = (Integer) returns[1];
             int code = buffer == null ? RpcFactory.RPC_CODE.RPC_ERROR.ordinal() : SocketAdapter.getVarints(buffer, offset, buffer.length);
-            if (attribute != null && attribute.rpcData && !attribute.sendStream) {
+            if (attribute != null && attribute.rpcData >= 0 && !attribute.sendStream) {
                 //rpcData resolver
                 if (code != RpcFactory.RPC_CODE.RPC_SUCCESS.ordinal()) {
                     RpcData rpcData = new RpcData();

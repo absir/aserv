@@ -20,7 +20,7 @@ public interface IMaster {
     public InputStream download(String filePath) throws IOException;
 
     @JaLang("升级状态")
-    @Rpc(rpcData = true)
+    @Rpc(rpcData = 0)
     public void upgradeStatues(EUpgradeStatus status, String param, boolean failed);
 
 }

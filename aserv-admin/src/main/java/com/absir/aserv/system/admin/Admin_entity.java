@@ -142,12 +142,12 @@ public class Admin_entity extends AdminServer {
                     if (!XlsAccessorUtils.isHead(workbook, crudSupply.getEntityClass(entityName))) {
                         model.put("xls", 2);
 
-                    } else {
-                        List<?> entities = XlsUtils.getXlsList(workbook, null, crudSupply.getEntityClass(entityName),
-                                XlsUtils.XLS_BASE, false);
-                        if (entities.size() > 0) {
-                            KernelObject.clone(entities.get(0), entity);
-                        }
+                    }
+
+                    List<?> entities = XlsUtils.getXlsList(workbook, null, crudSupply.getEntityClass(entityName),
+                            XlsUtils.XLS_BASE, false);
+                    if (entities.size() > 0) {
+                        KernelObject.clone(entities.get(0), entity);
                     }
 
                 } catch (Exception e) {

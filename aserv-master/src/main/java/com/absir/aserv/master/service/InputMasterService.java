@@ -13,9 +13,12 @@ import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.inject.value.Bean;
+import com.absir.client.rpc.RpcData;
+import com.absir.client.rpc.RpcInterface;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.master.InputMasterContext;
+import com.absir.master.MasterChannelAdapter;
 import com.absir.master.MasterChannelContext;
 import com.absir.orm.transaction.value.Transaction;
 import org.hibernate.Session;
@@ -98,4 +101,8 @@ public class InputMasterService extends InputMasterContext {
         return context;
     }
 
+    @Override
+    protected void resolverRpcData(RpcInterface.RpcAttribute attribute, RpcData rpcData, MasterChannelAdapter masterChannelAdapter) {
+        MasterSyncService.ME.addSlaveSynchRpc(masterChannelAdapter.getSlaveId(), rpcData.getEid(attribute), rpcData, false);
+    }
 }

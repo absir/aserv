@@ -46,7 +46,7 @@ public class MasterChannelContext extends SocketServerContext.ChannelContext {
 
     private static Map<Serializable, MasterRpcAdapter> masterChannelMapAdapter;
 
-    protected static MasterRpcAdapter initMasterRpcAdapter(Serializable id) {
+    protected static MasterRpcAdapter initMasterRpcAdapter(String id) {
         if (masterChannelMapAdapter == null) {
             synchronized (MasterChannelContext.class) {
                 if (masterChannelMapAdapter == null) {

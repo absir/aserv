@@ -25,7 +25,6 @@ import com.absir.aserv.system.crud.BeanCrudFactory;
 import com.absir.aserv.system.helper.HelperBase;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.CrudService;
-import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanConfigImpl;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -923,8 +922,7 @@ public class LangBundleImpl extends LangBundle implements ILangCode {
         public void initId(Object entity, CrudHandler crudHandler) {
             if (id == null) {
                 if (nameId == null) {
-                    Object oid = crudHandler == null ? ((IBase) entity).getId() : CrudServiceUtils.identifier(crudHandler
-                            .getCrudEntity().getJoEntity().getEntityName(), entity, crudHandler.doCreate());
+                    Object oid = crudHandler == null ? ((IBase) entity).getId() : CrudUtils.identifier(crudHandler, entity);
                     if (oid != null) {
                         id = DynaBinderUtils.to(oid, String.class);
                         relateId = id;

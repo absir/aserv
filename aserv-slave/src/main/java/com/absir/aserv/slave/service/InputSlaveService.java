@@ -14,6 +14,8 @@ import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.InjectType;
 import com.absir.client.ServerEnvironment;
 import com.absir.client.helper.HelperEncrypt;
+import com.absir.client.rpc.RpcData;
+import com.absir.client.rpc.RpcInterface;
 import com.absir.slave.InputSlaveAdapter;
 import com.absir.slave.InputSlaveContext;
 
@@ -34,6 +36,11 @@ public class InputSlaveService extends InputSlaveContext {
         }
 
         return adapter.sendDataBytes(registerKey.getBytes(), false, false, 0, null);
+    }
+
+    @Override
+    protected void resolverRpcData(RpcInterface.RpcAttribute attribute, RpcData rpcData, int rpcIndex) {
+        SlaverSyncService.ME.addMasterSynchRpcIndex(rpcIndex, rpcData.getEid(attribute), rpcData);
     }
 
     public interface ISlaveServerPort {

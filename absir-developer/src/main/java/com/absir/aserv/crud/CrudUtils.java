@@ -48,6 +48,35 @@ public abstract class CrudUtils {
 
     private static Map<Class<? extends Enum>, Map<String, String>> enumMapMetaMap = new HashMap<Class<? extends Enum>, Map<String, String>>();
 
+    public static void persist(CrudHandler crudHandler, Object entity) {
+        String entityName = crudHandler.getCrudEntity().getJoEntity().getEntityName();
+        boolean create = crudHandler.getCrud() == Crud.CREATE;
+        if (create && !crudHandler.created) {
+            ICrudSupply crudSupply = CrudService.ME.getCrudSupply(entityName);
+            if (crudSupply != null) {
+                crudSupply.mergeEntity(entityName, entity, create);
+            }
+
+            crudHandler.created = true;
+        }
+    }
+
+    public static Object identifier(CrudHandler crudHandler, Object entity) {
+        String entityName = crudHandler.getCrudEntity().getJoEntity().getEntityName();
+        ICrudSupply crudSupply = CrudService.ME.getCrudSupply(entityName);
+        if (crudSupply != null) {
+            boolean create = crudHandler.getCrud() == Crud.CREATE;
+            if (create && !crudHandler.created) {
+                crudSupply.mergeEntity(entityName, entity, create);
+                crudHandler.created = true;
+            }
+
+            return crudSupply.getIdentifier(entityName, entity);
+        }
+
+        return null;
+    }
+
     public static JoEntity newJoEntity(String entityName, Class<?> entityClass) {
         if (entityName == null) {
             while (AopProxy.class.isAssignableFrom(entityClass) || HibernateProxy.class.isAssignableFrom(entityClass)) {

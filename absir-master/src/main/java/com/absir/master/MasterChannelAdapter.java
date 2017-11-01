@@ -16,7 +16,17 @@ import java.nio.channels.SocketChannel;
  */
 public class MasterChannelAdapter extends SocketAdapterSel {
 
+    private String slaveId;
+
     private SocketChannel channel;
+
+    public MasterChannelAdapter(String slaveId) {
+        this.slaveId = slaveId;
+    }
+
+    public String getSlaveId() {
+        return slaveId;
+    }
 
     @Override
     public Object getSendHolder() {

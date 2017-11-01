@@ -141,7 +141,7 @@ public class RpcInterface {
             attribute.timeout = rpc.timeout();
             attribute.sendStream = rpc.sendStream();
             attribute.async = rpc == null ? false : rpc.async();
-            attribute.rpcData = rpc == null ? false : rpc.rpcData();
+            attribute.rpcData = rpc == null ? -1 : rpc.rpcData();
             return attribute;
         }
 
@@ -166,7 +166,7 @@ public class RpcInterface {
             attribute.sendStream = true;
             attribute.sendInputStream = streamIndex >= 0;
             attribute.async = rpcAttribute == null ? false : rpcAttribute.async;
-            attribute.rpcData = rpcAttribute == null ? false : rpcAttribute.rpcData;
+            attribute.rpcData = rpcAttribute == null ? -1 : rpcAttribute.rpcData;
             rpcAttribute = attribute;
         }
 
@@ -187,7 +187,7 @@ public class RpcInterface {
 
         protected boolean async;
 
-        protected boolean rpcData;
+        protected int rpcData;
 
     }
 
