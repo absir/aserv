@@ -50,7 +50,7 @@ public class FriendService {
     }
 
     @Transaction(readOnly = true)
-    public List<Long> getFollowPlayerId(Long playerId, int maxResults) {
+    public List<Long> getFollowPlayerIds(Long playerId, int maxResults) {
         Query query = QueryDaoUtils.createQueryArray(BeanDao.getSession(), "SELECT o.id.mid FROM JFriend o WHERE o.id.eid = ?", playerId);
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
@@ -60,7 +60,7 @@ public class FriendService {
     }
 
     @Transaction(readOnly = true)
-    public List<Long> getBeFollowedPlayerId(Long playerId, JdbcPage jdbcPage) {
+    public List<Long> getBeFollowedPlayerIds(Long playerId, JdbcPage jdbcPage) {
         return QueryDaoUtils.selectQuery(BeanDao.getSession(), "JFriend", "o.id.eid", new Object[]{"o.id.mid", playerId}, jdbcPage);
     }
 

@@ -166,4 +166,25 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
 
     }
 
+    // 在线玩家
+    public <T extends JbPlayer> T onlinePlayer(T player) {
+        P playerContext = findPlayerContext(player.getId());
+        return playerContext == null ? player : (T) playerContext.getPlayer();
+    }
+
+    public <T extends JbPlayer> List<T> onlinePlayers(List<T> players) {
+        int size = players.size();
+        T player;
+        T onlinePlayer;
+        for (int i = 0; i < size; i++) {
+            player = players.get(i);
+            onlinePlayer = onlinePlayer(player);
+            if (player != onlinePlayer) {
+                players.set(i, onlinePlayer);
+            }
+        }
+
+        return players;
+    }
+
 }
