@@ -224,7 +224,7 @@ struct DOrderValidator {
 service PlatformFromService {
 
 	// 来源设置
-    DPlatformFromSetting setting(1:DPlatformFrom platformFrom)
+    DPlatformFromSetting setting(1:DPlatformFrom platformFrom, 2:string versionName)
 
     // 公告列表
     list<DAnnouncement> announcements(1:i32 fromId, 2:bool review)

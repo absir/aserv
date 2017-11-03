@@ -38,8 +38,8 @@ public class JPlatformConfigure extends JConfigureBase {
         this.mappingMap = mappingMap;
     }
 
-    public boolean isReview(String packageName, double versionCode) {
-        return reviewMap == null || reviewMap.isEmpty() ? false : reviewMap.get(packageName + '@' + versionCode) == Boolean.TRUE;
+    public boolean isReview(String packageName, String versionName) {
+        return reviewMap == null || reviewMap.isEmpty() ? false : reviewMap.get(packageName + '@' + versionName) == Boolean.TRUE;
     }
 
 }

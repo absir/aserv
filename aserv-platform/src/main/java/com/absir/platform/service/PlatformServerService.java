@@ -348,8 +348,8 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
     }
 
     @Override
-    public DPlatformFromSetting setting(DPlatformFrom platformFrom) throws TException {
-        boolean review = CONFIGURE.isReview(platformFrom.getPackageName(), platformFrom.getVersionDouble());
+    public DPlatformFromSetting setting(DPlatformFrom platformFrom, String versionName) throws TException {
+        boolean review = CONFIGURE.isReview(platformFrom.getPackageName(), versionName);
         DFromSetting fromSetting = null;
         for (JSetting setting : settingList) {
             if (isMatchPlatform(setting, review, platformFrom)) {
