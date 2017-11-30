@@ -47,13 +47,8 @@ public abstract class GameUtils {
     }
 
     // 属性BUFF提升
-    public void setBuffAttP(float[] buffs, float buffP) {
-        buffs[1] *= buffP;
-    }
-
-    // 属性BUFF回复
-    public void setBuffAttPR(float[] buffs, float buffP) {
-        buffs[1] /= buffP;
+    public void setBuffAttP(int[] buffs, int buffP) {
+        buffs[1] += buffP;
     }
 
     // 经验升级

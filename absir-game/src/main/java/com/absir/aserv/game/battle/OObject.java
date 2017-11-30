@@ -10,6 +10,8 @@ package com.absir.aserv.game.battle;
 import com.absir.aserv.system.bean.dto.IBaseSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.util.HashMap;
+
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class OObject<O extends OObject, R extends IResult> {
 
@@ -28,6 +30,9 @@ public abstract class OObject<O extends OObject, R extends IResult> {
     // 目标卡牌
     @JsonSerialize(using = IBaseSerializer.class)
     protected O target;
+
+    // BUFF字典
+    private transient HashMap<Object, Object> buffDict;
 
     public boolean isFrozen() {
         return frozen;
@@ -71,6 +76,81 @@ public abstract class OObject<O extends OObject, R extends IResult> {
 
     public void setTarget(O target) {
         this.target = target;
+    }
+
+    // 获取BUFF状态
+    public final Object getBuffStatus(Object name) {
+        if (buffDict == null) {
+            return 0;
+        }
+
+        return buffDict.get(name);
+    }
+
+    // 设置BUFF状态
+    public final void setBuffStatus(Object name, Object status) {
+        if (buffDict == null) {
+            synchronized (this) {
+                if (buffDict == null) {
+                    buffDict = new HashMap<Object, Object>();
+                }
+            }
+        }
+
+        synchronized (buffDict) {
+            buffDict.put(name, status);
+        }
+    }
+
+    // 获取属性BUFF
+    public final int[] getAttBuffs(Object name) {
+        if (buffDict == null) {
+            synchronized (this) {
+                if (buffDict == null) {
+                    buffDict = new HashMap<Object, Object>();
+                }
+            }
+        }
+
+        Object buffs = buffDict.get(name);
+        if (buffs == null) {
+            synchronized (buffDict) {
+                buffs = buffDict.get(name);
+                if (buffs == null) {
+                    buffs = newAttBuff();
+                    buffDict.put(name, buffs);
+                }
+            }
+        }
+
+        return (int[]) buffs;
+    }
+
+    protected int[] newAttBuff() {
+        return new int[]{0, 100};
+    }
+
+    // 计算属性BUFF
+    public int getAttBuffs(int base, int[] buffs) {
+        if (buffs[1] != 100) {
+            base = base * buffs[1] / 100;
+        }
+
+        return base + buffs[0];
+    }
+
+    // 属性BUFF增加
+    public int getAttBuff(Object name, int base, int buff) {
+        int[] buffs = getAttBuffs(name);
+        buffs[0] += buff;
+        return getAttBuffs(base, buffs);
+    }
+
+    // 属性BUFF提升
+    public int getAttBuffP(Object name, int base, int buffP) {
+        int[] buffs = getAttBuffs(name);
+        buffs[1] += buffP;
+        return getAttBuffs(base, buffs);
     }
 
     // 角色是否死亡
@@ -164,14 +244,14 @@ public abstract class OObject<O extends OObject, R extends IResult> {
         }
 
         // 伤害战报
-        addReportDamage(atk, damage);
+        addReportDamage(atk, damage, damageFrom);
         // 伤害反弹BUFF
         damageReBoundBuff(from, atk, damage, damageFrom, result);
 
         // 检测死亡
         if (died()) {
             // 死亡战报执行
-            addReportDie(result);
+            addReportDie(from, result);
             if (result.getResult() == EResult.CONTINUE) {
                 // 从对面阵营 寻找目标；判断胜利
                 forTargetResult(result, true);
@@ -254,10 +334,10 @@ public abstract class OObject<O extends OObject, R extends IResult> {
     protected void treatReBoundBuff(O from, boolean dead, int treat, int tHp, Object treatFrom, R result) {
     }
 
-    protected abstract boolean isAttacker();
+    public abstract boolean isAttacker();
 
     // 寻找目标
-    protected abstract O findTarget(boolean invincible);
+    public abstract O findTarget(boolean invincible);
 
     // 是否可以攻击
     public abstract boolean atk();
@@ -267,9 +347,9 @@ public abstract class OObject<O extends OObject, R extends IResult> {
 
     protected abstract void addReportMaxHp(int mHp);
 
-    protected abstract void addReportDamage(int atk, int damage);
+    protected abstract void addReportDamage(int atk, int damage, Object damageFrom);
 
-    protected abstract void addReportDie(R result);
+    protected abstract void addReportDie(O from, R result);
 
     protected abstract void addReportTreat(boolean dead, int treat, int tHp);
 }
