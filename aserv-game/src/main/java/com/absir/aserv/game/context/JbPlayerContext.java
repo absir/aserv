@@ -128,12 +128,15 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
      */
     public synchronized void setReceiver(R r) {
         if (r != receiver) {
-            asyncWriteClear();
-            if (r != null && receiver != null) {
-                writeKickMessage(receiver);
-            }
+            try {
+                asyncWriteClear();
+                if (r != null && receiver != null) {
+                    writeKickMessage(receiver);
+                }
 
-            receiver = r;
+            } finally {
+                receiver = r;
+            }
         }
     }
 

@@ -25,7 +25,7 @@ public class FriendService {
     public static final FriendService ME = BeanFactoryUtils.get(FriendService.class);
 
     public boolean follow(Long playerId, Long targetPlayerId) {
-        if (playerId == targetPlayerId) {
+        if (playerId == null || targetPlayerId == null || playerId <= 0 || targetPlayerId <= 0 || playerId.equals(targetPlayerId)) {
             return false;
         }
 
