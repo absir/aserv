@@ -63,6 +63,7 @@ public class MasterChannelAdapter extends SocketAdapterSel {
                 SocketNIO.writeTimeout(socketChannel, ByteBuffer.wrap(buffer, offset, length));
             }
 
+            lastedBeat();
             return true;
 
         } catch (IOException e) {

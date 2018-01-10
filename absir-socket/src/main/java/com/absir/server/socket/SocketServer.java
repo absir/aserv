@@ -494,6 +494,7 @@ public class SocketServer {
                                                     }
 
                                                 } else {
+                                                    selSession.retainIdleTimeout();
                                                     socketSessionResolver.receiveByteBuffer(socketChannel, selSession);
                                                 }
 

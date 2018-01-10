@@ -1042,6 +1042,7 @@ public class SocketAdapter {
             try {
                 //_debugInfo("SocketAdapter sendDataReal  => " + Arrays.toString(buffer));
                 sendSocket.getOutputStream().write(buffer);
+                lastedBeat();
                 return true;
 
             } catch (Exception e) {

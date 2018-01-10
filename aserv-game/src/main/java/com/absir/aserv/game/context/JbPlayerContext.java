@@ -127,10 +127,10 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
      * 设置当前玩家连接和在线状态
      */
     public synchronized void setReceiver(R r) {
-        if (r != receiver) {
+        if (receiver != r) {
             try {
                 asyncWriteClear();
-                if (r != null && receiver != null) {
+                if (receiver != null && r != null) {
                     writeKickMessage(receiver);
                 }
 

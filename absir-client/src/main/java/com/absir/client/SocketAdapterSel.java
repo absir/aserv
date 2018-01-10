@@ -163,6 +163,7 @@ public class SocketAdapterSel extends SocketAdapter {
                             SocketNIO.writeTimeout(socketChannel, byteBuffer);
                         }
 
+                        lastedBeat();
                         return true;
 
                     } catch (Throwable e) {
