@@ -9,31 +9,32 @@ mvn archetype:create-from-project
 
 cd target/generated-sources/archetype
 
-rm -rf src/main/resources/archetype-resources/*.iml
-rm -rf src/main/resources/archetype-resources/*.sh
-rm -rf src/main/resources/archetype-resources/read.ME
-rm -rf src/main/resources/archetype-resources/.idea
-rm -rf src/main/resources/archetype-resources/*.ico
-rm -rf src/main/resources/archetype-resources/*.png
+archetypeRM(){
+    command="rm -rf src/main/resources/archetype-resources/$1"
+    $command
+    command="rm -rf target/classes/archetype-resources/$1"
+    $command
+}
 
-rm -rf src/main/resources/archetype-resources/src/main/webapp/static
-rm -rf src/main/resources/archetype-resources/src/main/webapp/lib
+archetypeRM *.iml
+archetypeRM *.sh
+archetypeRM .idea
+#archetypeRM .ico
+#archetypeRM .png
 
-rm -rf src/main/resources/archetype-resources/src/main/webapp/admin
-rm -rf src/main/resources/archetype-resources/src/main/webapp/WEB-INF/developer
-rm -rf src/main/resources/archetype-resources/src/main/webapp/WEB-INF/tpl
+archetypeRM src/main/webapp/static
+archetypeRM src/main/webapp/lib
 
-rm -rf target/classes/archetype-resources/*.iml
-rm -rf target/classes/archetype-resources/*.sh
-rm -rf target/classes/archetype-resources/read.ME
-rm -rf target/classes/archetype-resources/.idea
+archetypeRM src/main/webapp/admin
+archetypeRM src/main/webapp/WEB-INF/developer
+archetypeRM src/main/webapp/WEB-INF/tpl
 
-rm -rf target/classes/archetype-resources/src/main/webapp/static
-rm -rf target/classes/archetype-resources/src/main/webapp/lib
+archetypeRM jetty/webapps
+archetypeRM jetty/work
+archetypeRM jetty/*.out
+archetypeRM jetty/*.log
 
-rm -rf target/classes/archetype-resources/src/main/webapp/admin
-rm -rf target/classes/archetype-resources/src/main/webapp/WEB-INF/developer
-rm -rf target/classes/archetype-resources/src/main/webapp/WEB-INF/tpl
+archetypeRM webResources
 
 rm -rf **/.idea
 
