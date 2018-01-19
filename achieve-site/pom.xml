@@ -35,18 +35,6 @@
             <artifactId>absir-developerImpl</artifactId>
             <version>${com.absir.version}</version>
         </dependency>
-        <!--BEGIN master platform dependency-->
-        <dependency>
-            <groupId>com.absir</groupId>
-            <artifactId>aserv-master</artifactId>
-            <version>${com.absir.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.absir</groupId>
-            <artifactId>aserv-platform</artifactId>
-            <version>${com.absir.version}</version>
-        </dependency>
-        <!--END master platform dependency-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

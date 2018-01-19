@@ -1,4 +1,4 @@
-package com.absir.aserv.system.bean;
+package com.absir.aserv.app.bean;
 
 import com.absir.aserv.system.bean.base.JbBean;
 import com.absir.aserv.system.bean.value.JaEdit;

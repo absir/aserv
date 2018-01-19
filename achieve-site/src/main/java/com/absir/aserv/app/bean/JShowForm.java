@@ -1,4 +1,4 @@
-package com.absir.aserv.system.bean;
+package com.absir.aserv.app.bean;
 
 import com.absir.aserv.crud.ICrudSubmit;
 import com.absir.aserv.menu.value.MaEntity;
