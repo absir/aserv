@@ -75,11 +75,6 @@ public class BinderRequest extends BinderData {
     }
 
     @Override
-    protected String[] splitString(String str) {
-        return StringUtils.split(str, ",;\r\n");
-    }
-
-    @Override
     protected <T> T bindArray(Object obj, String name, Class<T> toClass, Type toType) {
         if (obj.getClass() == String[].class) {
             String[] params = (String[]) obj;
@@ -113,7 +108,7 @@ public class BinderRequest extends BinderData {
                 }
 
                 parameterPath = getBinderResult().getPropertyPath();
-                T returnValue = super.bindArray(StringUtils.split(params[0], ','), name, toClass, toType);
+                T returnValue = super.bindArray(StringUtils.split(params[0], ",;\r\n"), name, toClass, toType);
                 parameterPath = null;
                 return returnValue;
             }
