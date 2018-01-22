@@ -310,6 +310,9 @@ public class Pag {
         if (obj != null) {
             if (obj.getClass().isArray()) {
                 return KernelString.implode(DynaBinder.to(obj, Object[].class), ',');
+
+            } else if (obj instanceof Collection) {
+                return KernelString.implode((Collection) obj, ',');
             }
         }
 
@@ -320,6 +323,9 @@ public class Pag {
         if (obj != null) {
             if (obj.getClass().isArray()) {
                 return KernelString.implode(DynaBinder.to(obj, Object[].class), "\r\n");
+
+            } else if (obj instanceof Collection) {
+                return KernelString.implode((Collection) obj, "\r\n");
             }
         }
 
