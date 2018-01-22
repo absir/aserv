@@ -433,6 +433,10 @@ public abstract class KernelClass {
                         if (name.equals(var.getName())) {
                             type = typeArguments[i];
                             if (type instanceof TypeVariable) {
+                                if (type == typeVariable) {
+                                    return null;
+                                }
+
                                 return type(root, (TypeVariable) type);
                             }
                         }
