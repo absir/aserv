@@ -7,6 +7,7 @@
  */
 package com.absir.core.kernel;
 
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -143,6 +144,9 @@ public abstract class KernelDyna {
 
         } else if (Enum.class.isAssignableFrom(toClass)) {
             return (T) toEnum(num, (Class<? extends Enum>) toClass);
+
+        } else if (toClass == BigInteger.class) {
+            return (T) BigInteger.valueOf(num.longValue());
         }
 
         return null;
@@ -175,6 +179,9 @@ public abstract class KernelDyna {
 
         } else if (toClass.isAssignableFrom(String.class)) {
             return (T) toString(date);
+
+        } else if (toClass == BigInteger.class) {
+            return (T) BigInteger.valueOf(date.getTime());
         }
 
         return null;
@@ -207,6 +214,9 @@ public abstract class KernelDyna {
 
         } else if (toClass.isAssignableFrom(String.class)) {
             return (T) toString(em);
+
+        } else if (toClass == BigInteger.class) {
+            return (T) BigInteger.valueOf(em.ordinal());
         }
 
         return null;
@@ -325,6 +335,9 @@ public abstract class KernelDyna {
 
         } else if (toClass.isEnum()) {
             return (T) toEnum(str, (Class<? extends Enum>) toClass);
+
+        } else if (toClass == BigInteger.class) {
+            return (T) toBigInteger(str, null);
         }
 
         if (dynas == DYNAS_NULL) {
@@ -523,6 +536,15 @@ public abstract class KernelDyna {
 
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public static BigInteger toBigInteger(String str, BigInteger defaultValue) {
+        try {
+            return new BigInteger(str);
+
+        } catch (Exception e) {
+            return defaultValue;
         }
     }
 }
