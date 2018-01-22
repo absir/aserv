@@ -434,7 +434,7 @@ public abstract class KernelClass {
                             type = typeArguments[i];
                             if (type instanceof TypeVariable) {
                                 if (type == typeVariable) {
-                                    return null;
+                                    return root;
                                 }
 
                                 return type(root, (TypeVariable) type);

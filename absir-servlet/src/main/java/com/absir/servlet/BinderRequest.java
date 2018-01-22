@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 
@@ -86,7 +87,7 @@ public class BinderRequest extends BinderData {
                 Class<?> valueClass = null;
                 if (toType instanceof Class) {
                     valueClass = (Class<?>) toType;
-                    if (KernelClass.isBasicClass(valueClass)) {
+                    if (KernelClass.isBasicClass(valueClass) || valueClass == BigInteger.class) {
                         Object value = KernelDyna.stringNull(params[0], toClass);
                         if (value != null) {
                             ArrayAccessor accessor = KernelArray.forComponentType(valueClass);
@@ -129,7 +130,7 @@ public class BinderRequest extends BinderData {
                 Class<?> valueClass = null;
                 if (toType instanceof Class) {
                     valueClass = (Class<?>) toType;
-                    if (KernelClass.isBasicClass(valueClass)) {
+                    if (KernelClass.isBasicClass(valueClass) || valueClass == BigInteger.class) {
                         Object value = KernelDyna.stringNull(params[0], toClass);
                         if (value != null) {
                             toObject = toCollection(toClass, toObject);
