@@ -309,7 +309,17 @@ public class Pag {
     public static String paramsValue(Object obj) {
         if (obj != null) {
             if (obj.getClass().isArray()) {
-                return KernelString.implode(DynaBinder.to(obj, Object[].class), ",");
+                return KernelString.implode(DynaBinder.to(obj, Object[].class), ',');
+            }
+        }
+
+        return value(obj);
+    }
+
+    public static String paramsTextValue(Object obj) {
+        if (obj != null) {
+            if (obj.getClass().isArray()) {
+                return KernelString.implode(DynaBinder.to(obj, Object[].class), "\r\n");
             }
         }
 

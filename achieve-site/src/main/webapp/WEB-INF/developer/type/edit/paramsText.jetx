@@ -1,0 +1,11 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+${input.attr('value', "${Pag::paramsTextValue(" + inputval + ")}")}
+
+${input.tagName('textarea')}
+${input.removeClass('input-text')}
+${input.addClass('textarea')}
+${ScriptNode::append(input, input.attr('value')).voidValue()}
+${input.removeAttr('value')}

@@ -334,6 +334,10 @@ public class DynaBinder {
         return bind(obj, name, field.getGenericType(), toObject);
     }
 
+    protected String[] splitString(String str) {
+        return str.split(",");
+    }
+
     protected <T> T bindArray(Object obj, String name, Class<T> toClass, Type toType) {
         ArrayAccessor array = KernelArray.forClass(toClass);
         if (obj instanceof Collection) {
@@ -363,7 +367,7 @@ public class DynaBinder {
 
         } else {
             if (obj.getClass() == String.class) {
-                return to(((String) obj).split(","), name, toClass);
+                return to(splitString((String) obj), name, toClass);
             }
 
             Object toObject = array.newInstance(1);

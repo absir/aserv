@@ -75,6 +75,11 @@ public class BinderRequest extends BinderData {
     }
 
     @Override
+    protected String[] splitString(String str) {
+        return StringUtils.split(str, ",;\r\n");
+    }
+
+    @Override
     protected <T> T bindArray(Object obj, String name, Class<T> toClass, Type toType) {
         if (obj.getClass() == String[].class) {
             String[] params = (String[]) obj;
