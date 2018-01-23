@@ -18,6 +18,7 @@ import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.service.EmailService;
 import com.absir.aserv.system.service.utils.EmailServiceUtils;
+import com.absir.core.base.Environment;
 import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
 import com.absir.validator.value.Length;
@@ -154,7 +155,7 @@ public class JEmailConfigure extends JConfigureBase implements ICrudBean, ICrudS
                 EmailService.ME.sendMimeMessage(EmailService.ME.createMimeMessage(testMail), testSubject, testContent, true);
 
             } catch (MessagingException e) {
-                e.printStackTrace();
+                Environment.throwable(e);
                 model.put("icon", 2);
                 model.put("message", ICrudSubmit.SEND_FAIL);
             }

@@ -10,6 +10,8 @@ package com.absir.aserv.crud;
 import com.absir.aop.AopProxy;
 import com.absir.aserv.crud.CrudHandler.CrudInvoker;
 import com.absir.aserv.crud.value.ICrudBean;
+import com.absir.aserv.crud.value.JaCondition;
+import com.absir.aserv.crud.value.JaConditionElement;
 import com.absir.aserv.support.Developer;
 import com.absir.aserv.support.developer.DModel;
 import com.absir.aserv.support.developer.IDeveloper;
@@ -26,11 +28,13 @@ import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
+import com.absir.core.kernel.KernelReflect;
 import com.absir.core.util.UtilAccessor;
 import com.absir.core.util.UtilAccessor.Accessor;
 import com.absir.core.util.UtilRuntime;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.value.JoEntity;
+import com.absir.property.PropertyUtils;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.*;
@@ -47,6 +51,8 @@ public abstract class CrudUtils {
     private static final Map<String, String[]> Jo_Entity_Map_Crud_Fields = new HashMap<String, String[]>();
 
     private static Map<Class<? extends Enum>, Map<String, String>> enumMapMetaMap = new HashMap<Class<? extends Enum>, Map<String, String>>();
+
+    private static Map<Class<? extends Enum>, Map<String, CaptionCondition>> enumMapCaptionCondition = new HashMap<Class<? extends Enum>, Map<String, CaptionCondition>>();
 
     public static void persist(CrudHandler crudHandler, Object entity) {
         String entityName = crudHandler.getCrudEntity().getJoEntity().getEntityName();
@@ -291,6 +297,68 @@ public abstract class CrudUtils {
         }
 
         return enumMap;
+    }
+
+    public static class CaptionCondition {
+
+        protected String caption;
+
+        protected String condition;
+
+        protected List<CaptionCondition> list;
+
+        public String getCaption() {
+            return caption;
+        }
+
+        public String getCondition() {
+            return condition;
+        }
+
+        public List<CaptionCondition> getList() {
+            return list;
+        }
+    }
+
+    public static Map<String, CaptionCondition> getEnumCaptionCondition(Class<? extends Enum> enumClass) {
+        Map<String, CaptionCondition> enumMap = enumMapCaptionCondition.get(enumClass);
+        if (enumMap == null) {
+            synchronized (enumClass) {
+                enumMap = enumMapCaptionCondition.get(enumClass);
+                if (enumMap == null) {
+                    enumMap = new LinkedHashMap<String, CaptionCondition>();
+                    Enum<?>[] enums = enumClass.getEnumConstants();
+                    for (Enum<?> enumerate : enums) {
+                        enumMap.put(enumerate.name(), getCaptionCondition(HelperLang.getEnumCaption(enumerate), enumerate.name(), enumClass, PropertyUtils.getFieldAnnotation(enumerate.getClass(), KernelReflect.declaredField(enumerate.getClass(), enumerate.name()), JaCondition.class)));
+                    }
+
+                    enumMapCaptionCondition.put(enumClass, enumMap);
+                }
+            }
+        }
+
+        return enumMap;
+    }
+
+    public static CaptionCondition getCaptionCondition(String caption, String name, Class<?> cls, JaCondition jaCondition) {
+        CaptionCondition captionCondition = new CaptionCondition();
+        captionCondition.caption = caption;
+        if (jaCondition != null) {
+            captionCondition.condition = jaCondition.value();
+            if (jaCondition.list() != null && jaCondition.list().length > 0) {
+                captionCondition.list = new ArrayList<CaptionCondition>();
+                for (JaConditionElement element : jaCondition.list()) {
+                    CaptionCondition condition = new CaptionCondition();
+                    condition.caption = HelperLang.getLangCaption(element.lang(), name, cls);
+                    condition.condition = element.value();
+                    captionCondition.list.add(condition);
+                }
+
+                captionCondition.list.add(captionCondition);
+            }
+        }
+
+        return captionCondition;
     }
 
     public static String[] getGroupFields(JoEntity joEntity, String group) {

@@ -248,7 +248,7 @@ function ab_ajaxCallbackBefore(json, $form, $tForm, callback) {
         var data = $.parseJSON(json);
         var url = data.url;
         if (url !== undefined && url !== '' && url !== 0) {
-            if (!url || url === 1) {
+            if (!url || url === 1 || url === '1') {
                 url = location.href;
             }
 

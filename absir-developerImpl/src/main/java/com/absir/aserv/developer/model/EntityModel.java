@@ -68,7 +68,7 @@ public class EntityModel implements IModel {
 
     private IField crudField;
 
-    private Map<String, String> submitOptionMap;
+    private Map<String, CrudUtils.CaptionCondition> submitOptionMap;
 
     private static void addReferencedMap(String from, String... tos) {
         Set<String> set = REFERENCED_MAP.get(from);
@@ -93,7 +93,7 @@ public class EntityModel implements IModel {
             if (ICrudSubmit.class.isAssignableFrom(entityClass)) {
                 Class<? extends Enum> enumClass = KernelClass.typeClass(entityClass, TYPE_VARIABLE);
                 if (enumClass != null) {
-                    submitOptionMap = CrudUtils.getEnumMetaMap(enumClass);
+                    submitOptionMap = CrudUtils.getEnumCaptionCondition(enumClass);
                 }
             }
 
@@ -105,7 +105,7 @@ public class EntityModel implements IModel {
         }
     }
 
-    public Map<String, String> getSubmitOptionMap() {
+    public Map<String, CrudUtils.CaptionCondition> getSubmitOptionMap() {
         return submitOptionMap;
     }
 

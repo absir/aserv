@@ -13,6 +13,6 @@ public interface ICrudSubmit<T extends Enum> {
 
     public static final TypeVariable TYPE_VARIABLE = ICrudSubmit.class.getTypeParameters()[0];
 
-    public String submitOption(T option, InModel model);
+    public String submitOption(T option, InModel model) throws Throwable;
 
 }
