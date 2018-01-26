@@ -137,7 +137,7 @@ public abstract class KernelDyna {
             return (T) (Object) (char) num.byteValue();
 
         } else if (toClass == Date.class) {
-            return (T) new Date(num.longValue());
+            return (T) new Date(num.getClass() == Integer.class ? num.longValue() * 1000 : num.longValue());
 
         } else if (toClass.isAssignableFrom(String.class)) {
             return (T) num.toString();
@@ -160,7 +160,7 @@ public abstract class KernelDyna {
             return (T) (Object) ((Long) date.getTime()).shortValue();
 
         } else if (toClass == Integer.class || toClass == int.class) {
-            return (T) (Object) ((Long) date.getTime()).intValue();
+            return (T) (Object) ((int) (date.getTime() / 1000));
 
         } else if (toClass == Long.class || toClass == long.class) {
             return (T) (Object) date.getTime();
