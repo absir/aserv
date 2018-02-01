@@ -17,7 +17,7 @@ public class JdbcPage {
 
     private int pageIndex;
 
-    private int pageSize = PAGE_SIZE;
+    private int pageSize;
 
     private int pageCount;
 
@@ -32,6 +32,10 @@ public class JdbcPage {
     }
 
     public int getPageSize() {
+        if (pageSize == 0) {
+            pageSize = PAGE_SIZE;
+        }
+
         if (pageSize < MIN_PAGE_SIZE) {
             pageSize = MIN_PAGE_SIZE;
 
@@ -44,6 +48,12 @@ public class JdbcPage {
 
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public void setDefaultPageSize(int pageSize) {
+        if (pageSize == 0) {
+            this.pageSize = pageSize;
+        }
     }
 
     public int getPageCount() {
