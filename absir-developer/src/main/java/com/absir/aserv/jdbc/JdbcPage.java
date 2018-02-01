@@ -50,9 +50,9 @@ public class JdbcPage {
         this.pageSize = pageSize;
     }
 
-    public void setDefaultPageSize(int _pageSize) {
+    public void setPageSizeDefault(int pageSizeDefault) {
         if (pageSize == 0) {
-            pageSize = _pageSize;
+            pageSize = pageSizeDefault;
         }
     }
 
@@ -79,6 +79,10 @@ public class JdbcPage {
         }
 
         this.totalCount = totalCount;
+    }
+
+    public void setTotalCountLong(long totalCountLong) {
+        setTotalCount((int) totalCountLong);
     }
 
     public int getFirstResult() {
