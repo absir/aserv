@@ -50,9 +50,9 @@ public class JdbcPage {
         this.pageSize = pageSize;
     }
 
-    public void setDefaultPageSize(int pageSize) {
+    public void setDefaultPageSize(int _pageSize) {
         if (pageSize == 0) {
-            this.pageSize = pageSize;
+            pageSize = _pageSize;
         }
     }
 
