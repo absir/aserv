@@ -29,13 +29,21 @@ import java.util.Map;
 public abstract class DCache<K extends IBase, V> implements IEntityMerge<K>, AsyncRunnableNotifier.INotifierProxy {
 
     public static final TypeVariable<?> TYPE_VARIABLE = DCache.class.getTypeParameters()[0];
+
     public Runnable reloadListener;
+
     protected Class<K> entityClass;
+
     protected String entityName;
+
     protected String reloadHsql;
+
     protected Map<Serializable, V> cacheMap;
+
     protected Runnable notifierRunnable;
+
     protected Runnable reloadCacheRunnable;
+
     private boolean isAddedEntityMerges;
 
     public DCache(String entityName) {
@@ -74,6 +82,7 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K>, Asy
             return;
         }
 
+        isAddedEntityMerges = true;
         L2EntityMergeService.ME.addEntityMerges(entityName, entityClass, this);
     }
 

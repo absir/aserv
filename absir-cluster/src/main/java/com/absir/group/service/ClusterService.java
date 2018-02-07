@@ -97,6 +97,7 @@ public class ClusterService implements ISingle {
                     }
 
                 } catch (InterruptedException e) {
+
                 }
             }
         });

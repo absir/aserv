@@ -167,6 +167,9 @@ public class HelperDataFormat {
                 if (type == InputStream.class) {
                     objects[i] = inputStream;
 
+                } else if (type == JsonParser.class) {
+                    objects[i] = parser;
+
                 } else {
                     objects[i] = type == null ? mapper.reader().readValue(parser) : mapper.readValue(parser, mapper.constructType(type));
                 }

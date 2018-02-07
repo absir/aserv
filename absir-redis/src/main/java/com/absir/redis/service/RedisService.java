@@ -10,10 +10,10 @@ import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelLang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.BinaryJedisPubSub;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.JedisPubSub;
 
 import java.net.URI;
 import java.util.*;
@@ -45,9 +45,9 @@ public class RedisService {
 
     private Jedis listeningJedis;
 
-    private List<KernelLang.CallbackTemplate<String>> subRestarts;
+    private List<KernelLang.CallbackTemplate<byte[]>> subRestarts;
 
-    private Map<String, List<KernelLang.CallbackTemplate<String>>> subMap;
+    private Map<byte[], List<KernelLang.CallbackTemplate<byte[]>>> subMap;
 
     private boolean started;
 
@@ -111,26 +111,26 @@ public class RedisService {
         return listeningJedis;
     }
 
-    public void addPubSub(String channel, KernelLang.CallbackTemplate<String> callback) {
+    public void addPubSub(byte[] channel, KernelLang.CallbackTemplate<byte[]> callback) {
         if (started) {
             throw new RuntimeException("please addPubSub before startListening");
         }
 
         if (channel == null) {
             if (subRestarts == null) {
-                subRestarts = new ArrayList<KernelLang.CallbackTemplate<String>>();
+                subRestarts = new ArrayList<KernelLang.CallbackTemplate<byte[]>>();
             }
 
             subRestarts.add(callback);
 
         } else {
             if (subMap == null) {
-                subMap = new HashMap<String, List<KernelLang.CallbackTemplate<String>>>();
+                subMap = new HashMap<byte[], List<KernelLang.CallbackTemplate<byte[]>>>();
             }
 
-            List<KernelLang.CallbackTemplate<String>> callbacks = subMap.get(channel);
+            List<KernelLang.CallbackTemplate<byte[]>> callbacks = subMap.get(channel);
             if (callbacks == null) {
-                callbacks = new ArrayList<KernelLang.CallbackTemplate<String>>();
+                callbacks = new ArrayList<KernelLang.CallbackTemplate<byte[]>>();
                 subMap.put(channel, callbacks);
             }
 
@@ -146,10 +146,10 @@ public class RedisService {
             new Thread() {
                 @Override
                 public void run() {
-                    String[] channels = KernelCollection.toArray(subMap.keySet(), String.class);
-                    JedisPubSub pubSub = new JedisPubSub() {
+                    byte[][] channels = KernelCollection.toArray(subMap.keySet(), byte[].class);
+                    final BinaryJedisPubSub pubSub = new BinaryJedisPubSub() {
                         @Override
-                        public void onMessage(String channel, String message) {
+                        public void onMessage(byte[] channel, byte[] message) {
                             pubSub(channel, message);
                         }
                     };
@@ -179,10 +179,10 @@ public class RedisService {
         }
     }
 
-    protected void pubSub(String channel, String message) {
-        List<KernelLang.CallbackTemplate<String>> callbacks = channel == null ? subRestarts : subMap.get(channel);
+    protected void pubSub(byte[] channel, byte[] message) {
+        List<KernelLang.CallbackTemplate<byte[]>> callbacks = channel == null ? subRestarts : subMap.get(channel);
         if (callbacks != null) {
-            for (KernelLang.CallbackTemplate<String> callback : callbacks) {
+            for (KernelLang.CallbackTemplate<byte[]> callback : callbacks) {
                 try {
                     callback.doWith(message);
 

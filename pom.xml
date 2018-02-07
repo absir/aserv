@@ -55,6 +55,8 @@
         <module>aserv-game</module>
         <module>absir-thrift</module>
         <module>absir-redis</module>
+        <module>absir-cluster</module>
+        <module>absir-consistent</module>
     </modules>
     <dependencies>
         <dependency>
