@@ -54,6 +54,7 @@
         <module>absir-game</module>
         <module>aserv-game</module>
         <module>absir-thrift</module>
+        <module>absir-redis</module>
     </modules>
     <dependencies>
         <dependency>

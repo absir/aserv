@@ -42,12 +42,17 @@ public class HelperDataFormat {
     public static final JsonFormat JSON = new JsonFormat(JSON_MAPPER, JSON_FACTORY);
 
     public static final MessagePackFactory PACK_FACTORY = new MessagePackFactory();
-    public static final DataDeserializationContext PACK_DESERIALIZATION_CONTEXT = new PackDeserializationContext(
-            BeanDeserializerFactory.instance);
+
+    public static final DataDeserializationContext PACK_DESERIALIZATION_CONTEXT = new PackDeserializationContext(BeanDeserializerFactory.instance);
+
     public static final ObjectMapper PACK_MAPPER = new ObjectMapper(PACK_FACTORY, null, PACK_DESERIALIZATION_CONTEXT);
+
     public static final JsonFormat PACK = new JsonFormat(PACK_MAPPER, PACK_FACTORY);
+
     private static boolean tProto = true;
+
     private static boolean tBase = true;
+
     public static final JsonDeserializerResolver PACK_DESERIALIZER_RESOLVER = new JsonDeserializerResolver() {
 
         @Override

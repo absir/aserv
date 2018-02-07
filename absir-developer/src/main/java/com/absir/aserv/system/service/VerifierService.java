@@ -59,6 +59,7 @@ public class VerifierService extends ContextService {
     private long clearBeforeDelay = UtilAbsir.DAY_TIME;
 
     private Map<String, CrudEntity> nameMapCrudEntity;
+
     private UtilLinked<PassVerifier> passVerifierUtilLinked;
 
     public static JVerifier createVerifier(String id, String tag, String value, int intValue, long lifeTime) {
@@ -218,14 +219,14 @@ public class VerifierService extends ContextService {
     }
 
     @Transaction
-    public void passOperation(long passTime, JVerifier verifier, boolean cuarantee) {
+    public void passOperation(long passTime, JVerifier verifier, boolean guarantee) {
         try {
             Session session = BeanDao.getSession();
             QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.passTime = ? WHERE o.id = ? AND o.passTime = ?", passTime, verifier.getId(), verifier.getPassTime()).executeUpdate();
             //session.flush();
 
         } catch (Exception e) {
-            if (cuarantee) {
+            if (guarantee) {
                 if (passVerifierUtilLinked == null) {
                     synchronized (this) {
                         if (passVerifierUtilLinked == null) {

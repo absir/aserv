@@ -49,4 +49,5 @@ public class JVerifier extends JbVerifier {
     public void setIntValue(int intValue) {
         this.intValue = intValue;
     }
+    
 }

@@ -40,7 +40,6 @@ public class JNode extends JbBean {
     @JaEdit(groups = JaEdit.GROUP_SUGGEST)
     private String secretKey;
 
-
     public String getName() {
         return name;
     }
