@@ -9,13 +9,10 @@ package com.absir.aserv.configure;
 
 import com.absir.aserv.crud.CrudSupply;
 import com.absir.aserv.menu.value.MaSupply;
-import com.absir.aserv.system.bean.JConfigure;
-import com.absir.aserv.system.dao.BeanDao;
 import com.absir.bean.basis.Basis;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.orm.transaction.value.Transaction;
-import org.hibernate.Session;
 
 @SuppressWarnings("unchecked")
 @Bean
@@ -42,19 +39,16 @@ public class JConfigureSupply extends CrudSupply<JConfigureBase> {
         Class<? extends JConfigureBase> configureClass = getEntityClass(entityName);
         JConfigureBase configureEntity = JConfigureUtils.findConfigure(configureClass);
         if (configureEntity != null) {
-            JConfigureUtils.cloneConfigureBase((JConfigureBase) entity, configureEntity);
+            JConfigureUtils.cloneConfigureBase(configure, configureEntity);
         }
     }
 
     @Transaction
     @Override
     public void deleteEntity(String entityName, Object entity) {
-        Session session = BeanDao.getSession();
         JConfigureBase configureBase = (JConfigureBase) entity;
         if (configureBase.isDeleteClear()) {
-            for (JConfigure configure : configureBase.fieldMapConfigure.values()) {
-                session.delete(session.merge(configure));
-            }
+            configureBase.delete();
         }
     }
 }

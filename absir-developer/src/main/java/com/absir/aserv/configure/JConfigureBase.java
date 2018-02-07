@@ -7,24 +7,23 @@
  */
 package com.absir.aserv.configure;
 
-import com.absir.aserv.dyna.DynaBinderUtils;
 import com.absir.aserv.system.bean.JConfigure;
+import com.absir.aserv.system.bean.JEmbedSS;
 import com.absir.aserv.system.service.BeanService;
+import com.absir.client.helper.HelperJson;
 import com.absir.core.base.IBase;
-import com.absir.core.kernel.KernelReflect;
-import com.absir.orm.hibernate.SessionFactoryUtils;
+import com.absir.core.kernel.KernelClass;
+import com.absir.core.kernel.KernelString;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class JConfigureBase implements IBase<Serializable> {
 
-    protected transient Map<Field, JConfigure> fieldMapConfigure = new HashMap<Field, JConfigure>();
+    @JsonIgnore
+    protected transient JConfigure jConfigure;
+
+    @JsonIgnore
     private transient boolean deleteClear;
 
     @Override
@@ -46,34 +45,33 @@ public class JConfigureBase implements IBase<Serializable> {
         return getClass().getName() + "@" + getId();
     }
 
-    protected String get(Field field) {
-        return DynaBinderUtils.to(KernelReflect.get(this, field), String.class);
-    }
-
-    protected Object set(String value, Field field) {
-        Class<? extends Serializable> identifierType = SessionFactoryUtils.getIdentifierType(null, field.getType(), SessionFactoryUtils.get().getSessionFactory());
-        if (identifierType == null) {
-            return DynaBinderUtils.to(value, field.getGenericType());
-
-        } else {
-            return BeanService.ME.get(field.getType(), DynaBinderUtils.to(value, identifierType));
+    protected void loadInit() {
+        jConfigure = (JConfigure) BeanService.ME.selectQuerySingle("SELECT o FROM JConfigure o WHERE o.id.eid = ? AND o.id.mid = ?", getIdentifier(), "");
+        if (jConfigure != null && !KernelString.isEmpty(jConfigure.getValue())) {
+            HelperJson.decodeForUpdating(jConfigure.getValue(), this);
         }
     }
 
-    protected String getFieldKey(String fieldName, Locale locale) {
-        return fieldName + '@' + locale;
+    protected void copyFrom(JConfigureBase from) {
+        HelperJson.decodeForUpdating(HelperJson.encodeNull(from), this);
     }
 
-    public final void merge() {
-        for (Entry<Field, JConfigure> entry : fieldMapConfigure.entrySet()) {
-            JConfigure configure = entry.getValue();
-            configure.setValue(get(entry.getKey()));
+    public void merge() {
+        if (jConfigure == null) {
+            jConfigure = new JConfigure();
+            jConfigure.setId(new JEmbedSS(getIdentifier(), ""));
         }
 
-        mergeConfigures(fieldMapConfigure.values());
+        jConfigure.setValue(HelperJson.encodeNull(this));
+        BeanService.ME.merge(jConfigure);
     }
 
-    protected void mergeConfigures(Collection<JConfigure> configures) {
-        BeanService.ME.mergers(configures);
+    protected void delete() {
+        if (jConfigure != null) {
+            jConfigure.setValue(null);
+            BeanService.ME.delete(jConfigure);
+        }
+
+        copyFrom(KernelClass.newInstance(getClass()));
     }
 }

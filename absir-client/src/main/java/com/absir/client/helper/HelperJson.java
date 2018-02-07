@@ -133,6 +133,16 @@ public class HelperJson {
         return decodeNull(string, Map.class);
     }
 
+    public static void decodeForUpdating(String string, Object toData) {
+        ObjectReader reader = OBJECT_MAPPER.readerForUpdating(toData);
+        try {
+            reader.readValue(string);
+
+        } catch (Exception e) {
+            Environment.throwable(e);
+        }
+    }
+
     public static byte[] encodeBase64(byte[] bytes) {
         return Base64.encodeBase64(bytes);
     }
