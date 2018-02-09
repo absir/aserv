@@ -7,6 +7,7 @@
  */
 package com.absir.aserv.configure;
 
+import com.absir.aserv.consistent.ConsistentUtils;
 import com.absir.aserv.system.bean.JConfigure;
 import com.absir.aserv.system.bean.JEmbedSS;
 import com.absir.aserv.system.service.BeanService;
@@ -64,6 +65,7 @@ public class JConfigureBase implements IBase<Serializable> {
 
         jConfigure.setValue(HelperJson.encodeNull(this));
         BeanService.ME.merge(jConfigure);
+        ConsistentUtils.pubConfigure(this);
     }
 
     protected void delete() {
@@ -73,5 +75,6 @@ public class JConfigureBase implements IBase<Serializable> {
         }
 
         copyFrom(KernelClass.newInstance(getClass()));
+        ConsistentUtils.pubConfigure(this);
     }
 }

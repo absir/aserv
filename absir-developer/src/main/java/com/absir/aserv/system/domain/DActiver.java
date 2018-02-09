@@ -7,6 +7,7 @@
  */
 package com.absir.aserv.system.domain;
 
+import com.absir.aserv.consistent.ConsistentUtils;
 import com.absir.aserv.system.bean.value.JiActive;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
@@ -16,7 +17,6 @@ import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.hibernate.boost.IEntityMerge;
-import com.absir.orm.hibernate.boost.L2EntityMergeService;
 import org.hibernate.Session;
 import org.hibernate.event.spi.PostUpdateEvent;
 
@@ -215,6 +215,6 @@ public class DActiver<T extends JiActive> implements IEntityMerge<T> {
         }
 
         isAddedEntityMerges = true;
-        L2EntityMergeService.ME.addEntityMerges(entityName, null, this);
+        ConsistentUtils.addEntityMerges(entityName, null, this);
     }
 }

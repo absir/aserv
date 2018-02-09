@@ -24,6 +24,7 @@ import com.absir.bean.lang.ILangMessage;
 import com.absir.bean.lang.LangCodeUtils;
 import com.absir.binder.BinderData;
 import com.absir.context.core.ContextUtils;
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelMap;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
@@ -94,9 +95,9 @@ public class PortalService {
 
         } else {
             model.put("icon", 2);
-            model.put("message", input.getLang(sendTime == -2 ? Site.CLOUD_NOT_SEND : sendTime == -1 ? Site.SEND_FAIL : Site.SEND_IDLE));
-            if (sendTime > 0) {
-                model.put("idleTime", sendTime / 1000);
+            model.put("message", input.getLang(sendTime == 2 ? Site.CLOUD_NOT_SEND : sendTime == 1 ? Site.SEND_FAIL : Site.SEND_IDLE));
+            if (sendTime < 0) {
+                model.put("idleTime", -sendTime / 1000);
             }
         }
 
@@ -143,8 +144,8 @@ public class PortalService {
     }
 
     /*
-    * 获取验证等级
-    */
+     * 获取验证等级
+     */
     public static int getVerifyLevel(int level, JUser user) {
         if (level == 3 && KernelString.isEmpty(user.getMobile())) {
             level = 2;
@@ -189,51 +190,47 @@ public class PortalService {
     /*
      * -2 系统不支持 -1 发送失败 0 发送成功>0 已经发送了
      */
-    @Transaction
-    public long sendMessageCode(String mobile, String tag, String content, long idleTime, String operation, ILangMessage langMessage) {
+    public long sendMessageCode(final String mobile, final String tag, final String content, long idleTime, final String operation, final ILangMessage langMessage) {
         if (!Pag.CONFIGURE.hasMessage()) {
-            return -2;
+            return 2;
         }
 
-        Session session = BeanDao.getSession();
-        String id = mobile + "@Code";
-        JVerifier verifier = VerifierService.getOperationVerifier(session, id, idleTime, true);
-        if (verifier == null) {
-            return VerifierService.getOperationIdleTime(session, verifier, id);
-        }
+        final String id = mobile + "@Code";
+        return VerifierService.ME.setVerifierWith(id, true, idleTime, true, new KernelLang.GetTemplate<Boolean, VerifierService.VerifierMerge>() {
+            @Override
+            public Boolean getWith(VerifierService.VerifierMerge verifierMerge) {
+                String code = randomCode();
+                String sContent = MessageFormat.format(content, Pag.CONFIGURE.getSiteName(), langMessage == null ? operation : langMessage.getLangMessage(operation), code);
+                if (!IMessageService.ME.sendMessage(sContent, mobile)) {
+                    return Boolean.TRUE;
+                }
 
-        String code = randomCode();
-        VerifierService.doneOperation(session, verifier, tag, code, 1);
-        content = MessageFormat.format(content, Pag.CONFIGURE.getSiteName(), langMessage == null ? operation : langMessage.getLangMessage(operation), code);
-        if (!IMessageService.ME.sendMessage(content, mobile)) {
-            return -1;
-        }
-
-        return 0;
+                verifierMerge.set(id, tag, code, 0);
+                return null;
+            }
+        });
     }
 
-    @Transaction
-    public long sendEmailCode(String email, String tag, String subject, String content, long idleTime, String operation, ILangMessage langMessage) {
+    public long sendEmailCode(final String email, final String tag, final String subject, final String content, long idleTime, final String operation, final ILangMessage langMessage) {
         if (!Pag.CONFIGURE.hasEmail()) {
-            return -2;
+            return 2;
         }
 
-        Session session = BeanDao.getSession();
-        String id = email + "@Code";
-        JVerifier verifier = VerifierService.getOperationVerifier(session, id, idleTime, true);
-        if (verifier == null) {
-            return VerifierService.getOperationIdleTime(session, verifier, id);
-        }
+        final String id = email + "@Code";
+        return VerifierService.ME.setVerifierWith(id, true, idleTime, true, new KernelLang.GetTemplate<Boolean, VerifierService.VerifierMerge>() {
+            @Override
+            public Boolean getWith(VerifierService.VerifierMerge verifierMerge) {
+                String code = randomCode();
+                String sSubject = MessageFormat.format(subject, Pag.CONFIGURE.getSiteName());
+                String sContent = MessageFormat.format(content, Pag.CONFIGURE.getSiteName(), langMessage == null ? operation : langMessage.getLangMessage(operation), code);
+                if (!IEmailService.ME.sendMail(sSubject, sContent, true, email)) {
+                    return Boolean.TRUE;
+                }
 
-        String code = randomCode();
-        VerifierService.doneOperation(session, verifier, tag, code, 1);
-        subject = MessageFormat.format(subject, Pag.CONFIGURE.getSiteName());
-        content = MessageFormat.format(content, Pag.CONFIGURE.getSiteName(), langMessage == null ? operation : langMessage.getLangMessage(operation), code);
-        if (!IEmailService.ME.sendMail(subject, content, true, email)) {
-            return -1;
-        }
-
-        return 0;
+                verifierMerge.set(id, tag, code, 0);
+                return null;
+            }
+        });
     }
 
     /*
@@ -274,9 +271,17 @@ public class PortalService {
         return verifyId(emailOrMobile + "@Code", tag, code, level, delete);
     }
 
-    public boolean setOperationVerify(String address, String tag, Input input) {
+    public boolean couldOperationError(String address, String tag, Input input) {
+        if (address == null && input != null) {
+            address = input.getAddress();
+        }
+
         JSiteConfigure.OperationVerify verify = Pag.CONFIGURE.getOperationVerify(tag);
-        if (VerifierService.isOperationCount(input.getAddress(), verify == null ? "" : verify.tag, verify == null ? Pag.CONFIGURE.getOperationVerifyCount() : verify.maxCount)) {
+        if (verify != null && !KernelString.isEmpty(verify.tag)) {
+            tag = verify.tag;
+        }
+
+        if (!VerifierService.couldOperation(VerifierService.getVerifierId(address, tag), verify == null ? Pag.CONFIGURE.getOperationVerifyCount() : verify.maxCount)) {
             if (input != null) {
                 input.getModel().put("verify", true);
             }
@@ -287,12 +292,19 @@ public class PortalService {
         return false;
     }
 
-    public boolean doneOperationVerify(String address, String tag, Input input) {
+    public boolean doOperationIncrError(String address, String tag, boolean unique, Input input) {
+        if (address == null && input != null) {
+            address = input.getAddress();
+        }
+
         JSiteConfigure.OperationVerify verify = Pag.CONFIGURE.getOperationVerify(tag);
-        tag = verify == null ? "" : verify.tag;
+        if (verify != null && !KernelString.isEmpty(verify.tag)) {
+            tag = verify.tag;
+        }
+
         long idleTime = verify == null ? Pag.CONFIGURE.getOperationVerifyTime() : verify.idleTime;
-        int maxCount = verify == null ? Pag.CONFIGURE.getOperationVerifyCount() : verify.maxCount;
-        if (VerifierService.isOperationCount(input.getAddress(), tag, maxCount)) {
+        int maxTimes = verify == null ? Pag.CONFIGURE.getOperationVerifyCount() : verify.maxCount;
+        if (!VerifierService.doOperationIncr(VerifierService.getVerifierId(address, tag), unique, idleTime, maxTimes)) {
             if (input != null) {
                 if (!Asset_verify.verifyInput(input)) {
                     InvokerResolverErrors.onError("verifyCode", Site.VERIFY_ERROR, null, null);
@@ -302,7 +314,7 @@ public class PortalService {
             return true;
         }
 
-        return VerifierService.doneOperationCount(address, tag, idleTime, maxCount);
+        return false;
     }
 
     public void sendRegisterCode(int type, Input input) {
@@ -397,7 +409,7 @@ public class PortalService {
 
         FRegister register = binderData.bind(input.getParamMap(), null, FRegister.class);
         InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
-        ME.doneOperationVerify(input.getAddress(), PASSWORD_TAG, input);
+        ME.doOperationIncrError(input.getAddress(), PASSWORD_TAG, true, input);
 
         if (!PasswordCrudFactory.getPasswordEncrypt(oldPassword, user.getSalt(), user.getSaltCount()).equals(user.getPassword())) {
             InvokerResolverErrors.onError("oldPassword", Site.PASSWORD_ERROR, null, null);
@@ -427,12 +439,12 @@ public class PortalService {
         long idleTime;
         long sendTime;
         if (type == 2) {
-            ME.doneOperationVerify(input.getAddress(), EMAIL_TAG, input);
+            ME.doOperationIncrError(input.getAddress(), EMAIL_TAG, true, input);
             idleTime = Pag.CONFIGURE.getEmailIdleTime();
             sendTime = ME.sendEmailCode(emailOrMobile, tag, Site.TPL.getCodeEmailSubject(), Site.TPL.getCodeEmail(), idleTime, operation, input);
 
         } else {
-            ME.doneOperationVerify(input.getAddress(), MESSAGE_TAG, input);
+            ME.doOperationIncrError(input.getAddress(), MESSAGE_TAG, true, input);
             idleTime = Pag.CONFIGURE.getMessageIdleTime();
             sendTime = ME.sendMessageCode(emailOrMobile, tag, Site.TPL.getCodeMessage(), idleTime, operation, input);
         }
@@ -468,10 +480,10 @@ public class PortalService {
     /**
      * 设置用户验证
      */
-    public JVerifier setVerifyUser(Long userId, String tag, int level) {
-        JVerifier verifier = VerifierService.createVerifier("verifyUser@" + userId, tag, randomCode(), level, 600000);
-        BeanService.ME.merge(verifier);
-        return verifier;
+    public String setVerifyUser(Long userId, String tag, int level) {
+        String code = randomCode();
+        VerifierService.ME.setVerifier("verifyUser@" + userId, false, 600000, tag, code, level, 0);
+        return code;
     }
 
     public void sendVerifyCode(JUser user, int level, String tag, int type, Input input) {
@@ -519,7 +531,7 @@ public class PortalService {
 
         InModel model = input.getModel();
         model.put("ok", 1);
-        model.put("verifies", KernelMap.newMap("_verifyUser", ME.setVerifyUser(user.getId(), tag, level).getValue()));
+        model.put("verifies", KernelMap.newMap("_verifyUser", ME.setVerifyUser(user.getId(), tag, level)));
     }
 
     public void username(JUser user, String username, Input input) {

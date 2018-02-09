@@ -1,5 +1,6 @@
 package com.absir.aserv.configure;
 
+import com.absir.aserv.consistent.ConsistentUtils;
 import com.absir.aserv.dyna.DynaBinderUtils;
 import com.absir.aserv.system.bean.JConfigure;
 import com.absir.aserv.system.bean.JEmbedSS;
@@ -38,25 +39,35 @@ public class JConfigureOpt extends JConfigureBase {
 
     @Override
     protected void loadInit() {
-        fieldMapConfigure = new HashMap<Field, JConfigure>();
         String identifier = getIdentifier();
         Map<String, JConfigure> configureMap = new HashMap<String, JConfigure>();
         for (JConfigure configure : (List<JConfigure>) BeanService.ME.list("JConfigure", null, 0, 0, "o.id.eid", identifier)) {
             configureMap.put(configure.getId().getMid(), configure);
         }
 
-        for (Field field : HelperAccessor.getFields(getClass())) {
-            JConfigure configure = configureMap.get(field.getName());
-            if (configure == null) {
-                configure = new JConfigure();
-                configure.setId(new JEmbedSS(identifier, field.getName()));
-                configure.setValue(get(field));
+        if (fieldMapConfigure == null) {
+            fieldMapConfigure = new HashMap<Field, JConfigure>();
+            for (Field field : HelperAccessor.getFields(getClass())) {
+                JConfigure configure = configureMap.get(field.getName());
+                if (configure == null) {
+                    configure = new JConfigure();
+                    configure.setId(new JEmbedSS(identifier, field.getName()));
+                    configure.setValue(get(field));
 
-            } else {
-                KernelObject.declaredSetter(this, field, set(configure.getValue(), field));
+                } else {
+                    KernelObject.declaredSetter(this, field, set(configure.getValue(), field));
+                }
+
+                fieldMapConfigure.put(field, configure);
             }
 
-            fieldMapConfigure.put(field, configure);
+        } else {
+            for (Field field : fieldMapConfigure.keySet()) {
+                JConfigure configure = configureMap.get(field.getName());
+                if (configure != null) {
+                    KernelObject.declaredSetter(this, field, set(configure.getValue(), field));
+                }
+            }
         }
     }
 
@@ -77,8 +88,10 @@ public class JConfigureOpt extends JConfigureBase {
         for (Map.Entry<Field, JConfigure> entry : fieldMapConfigure.entrySet()) {
             JConfigure jConfigure = entry.getValue();
             jConfigure.setValue(get(entry.getKey()));
-            BeanService.ME.merge(jConfigure);
         }
+
+        BeanService.ME.mergers(fieldMapConfigure.values());
+        ConsistentUtils.pubConfigure(this);
     }
 
     @Override
@@ -88,6 +101,7 @@ public class JConfigureOpt extends JConfigureBase {
         }
 
         copyFrom(KernelClass.newInstance(getClass()));
+        ConsistentUtils.pubConfigure(this);
     }
 
 }

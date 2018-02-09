@@ -62,10 +62,15 @@ public class RouteAdapter implements IBeanFactoryStarted {
     };
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(RouteAdapter.class);
+
     private static int varintsMapUriIndex;
+
     private static Map<Integer, String> varintsMapUri;
+
     private static Map<String, Integer> uriMapVarints;
+
     private boolean started;
+
     private List<RouteMatcher> routeMatchers = new ArrayList<RouteMatcher>();
 
     // URI 字典压缩

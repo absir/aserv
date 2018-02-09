@@ -5,7 +5,6 @@ import com.absir.aserv.system.bean.JVerifier;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.helper.HelperRandom;
-import com.absir.aserv.system.service.VerifierService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
@@ -207,6 +206,6 @@ public class ClusterService implements ISingle {
     }
 
     public void exitSingle(JVerifier verifier) {
-        VerifierService.ME.passOperation(ContextUtils.getContextTime(), verifier, true);
+        //VerifierService.ME.passOperation(ContextUtils.getContextTime(), verifier, true);
     }
 }

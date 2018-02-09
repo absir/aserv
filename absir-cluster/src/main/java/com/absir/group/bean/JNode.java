@@ -6,13 +6,18 @@ import com.absir.aserv.system.bean.base.JbBean;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.orm.value.JaColum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 
 /**
  * Created by absir on 16/8/19.
  */
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @MaEntity(parent = {@MaMenu("集群管理")}, name = "节点")
 @Entity
 public class JNode extends JbBean {

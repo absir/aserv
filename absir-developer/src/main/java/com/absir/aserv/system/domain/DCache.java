@@ -7,6 +7,7 @@
  */
 package com.absir.aserv.system.domain;
 
+import com.absir.aserv.consistent.ConsistentUtils;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.service.BeanService;
@@ -15,7 +16,6 @@ import com.absir.core.base.IBase;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.boost.IEntityMerge;
-import com.absir.orm.hibernate.boost.L2EntityMergeService;
 import com.absir.orm.transaction.TransactionContext;
 import org.hibernate.Session;
 
@@ -83,7 +83,7 @@ public abstract class DCache<K extends IBase, V> implements IEntityMerge<K>, Asy
         }
 
         isAddedEntityMerges = true;
-        L2EntityMergeService.ME.addEntityMerges(entityName, entityClass, this);
+        ConsistentUtils.addEntityMerges(entityName, entityClass, this);
     }
 
     protected String genReloadHsql() {

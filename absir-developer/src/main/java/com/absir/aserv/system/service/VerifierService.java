@@ -11,10 +11,9 @@ import com.absir.aserv.crud.CrudEntity;
 import com.absir.aserv.crud.CrudUtils;
 import com.absir.aserv.system.bean.JVerifier;
 import com.absir.aserv.system.bean.proxy.IPassClear;
-import com.absir.aserv.system.bean.value.JaCrud.Crud;
+import com.absir.aserv.system.bean.value.JaCrud;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
-import com.absir.aserv.system.helper.HelperRandom;
 import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -24,6 +23,10 @@ import com.absir.bean.inject.value.Value;
 import com.absir.context.core.ContextService;
 import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.cron.CronFixDelayRunnable;
+import com.absir.context.schedule.value.Schedule;
+import com.absir.core.base.Environment;
+import com.absir.core.kernel.KernelLang;
+import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAbsir;
 import com.absir.core.util.UtilLinked;
@@ -32,7 +35,6 @@ import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.orm.value.JoEntity;
 import org.hibernate.LockMode;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -41,7 +43,6 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 @SuppressWarnings("unchecked")
 @Base
@@ -62,234 +63,88 @@ public class VerifierService extends ContextService {
 
     private UtilLinked<PassVerifier> passVerifierUtilLinked;
 
-    public static JVerifier createVerifier(String id, String tag, String value, int intValue, long lifeTime) {
-        JVerifier verifier = new JVerifier();
-        verifier.setId(id);
-        verifier.setTag(tag);
-        verifier.setValue(value);
-        verifier.setIntValue(intValue);
-        if (lifeTime > 0) {
-            verifier.setPassTime(ContextUtils.getContextTime() + lifeTime);
-        }
+    protected static class PassVerifier {
 
-        return verifier;
-    }
+        protected boolean db;
 
-    public static JVerifier getOperationVerifier(Session session, String id, long idleTime, boolean unique) {
-        if (idleTime < 1000) {
-            idleTime = 1000;
-        }
+        protected long uPassTime;
 
-        JVerifier verifier = BeanDao.loadReal(session, JVerifier.class, id, unique ? LockMode.NONE : LockMode.PESSIMISTIC_WRITE);
-        long contextTime = ContextUtils.getContextTime();
-        if (verifier != null) {
-            if (verifier.getPassTime() > contextTime) {
-                if (unique) {
-                    return null;
-                }
-            }
+        protected String id;
 
-            QueryDaoUtils.createQueryArray(session, "DELETE FROM JVerifier o WHERE o.id = ? AND o.passTime = ?", verifier.getId(), verifier.getPassTime()).executeUpdate();
-            session.clear();
-        }
+        protected long passTime;
 
-        verifier = new JVerifier();
-        verifier.setId(id);
-        verifier.setPassTime(contextTime + idleTime);
-        try {
-            session.persist(verifier);
-            session.flush();
-
-        } catch (RuntimeException e) {
-            SessionFactoryUtils.throwNoConstraintViolationException(e);
-            session.clear();
-            if (unique) {
-                return null;
-            }
-
-            verifier = BeanDao.loadReal(session, JVerifier.class, id, LockMode.PESSIMISTIC_WRITE);
-        }
-
-        return verifier;
-    }
-
-    public static long getOperationIdleTime(Session session, JVerifier verifier, String id) {
-        if (verifier != null) {
-            return 0;
-        }
-
-        verifier = session.get(JVerifier.class, id);
-        long passTime = verifier.getPassTime() - ContextUtils.getContextTime();
-        return passTime < 1 ? 1 : passTime;
-    }
-
-    public static void doneOperation(Session session, JVerifier verifier, String tag, String value, int intValue) {
-        QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.tag = ?, o.value = ?, o.intValue = ? WHERE o.id = ? AND o.passTime = ?", tag, value, intValue, verifier.getId(), verifier.getPassTime()).executeUpdate();
-    }
-
-    public static boolean isOperationCount(String id, int maxCount) {
-        if (maxCount <= -1) {
-            return false;
-        }
-
-        if (maxCount == 0 || id == null) {
-            return true;
-        }
-
-        JVerifier verifier = BeanService.ME.get(JVerifier.class, id);
-        return verifier == null || verifier.getPassTime() <= ContextUtils.getContextTime() ? false : true;
-    }
-
-    public static boolean isOperationCount(String address, String tag, int maxCount) {
-        return isOperationCount(KernelString.isEmpty(address) ? null : (address + '@' + tag), maxCount);
-    }
-
-    public static boolean doneOperationCount(String id, long idleTime, int maxCount) {
-        if (maxCount <= -1) {
-            return false;
-        }
-
-        if (maxCount == 0 || id == null) {
-            return true;
-        }
-
-        return VerifierService.ME.doneOperationCount(id, idleTime).getIntValue() > maxCount;
-    }
-
-    public static boolean doneOperationCount(String address, String tag, long idleTime, int maxCount) {
-        return doneOperationCount(KernelString.isEmpty(address) ? null : (address + '@' + tag), idleTime, maxCount);
-    }
-
-    public String randVerifierId(Object dist) {
-        return HelperRandom.randHashId(dist);
-    }
-
-    /**
-     * 添加验证
-     */
-    @Transaction
-    public JVerifier persistVerifier(Object dist, String tag, String value, long lifeTime) {
-        JVerifier verifier = createVerifier(randVerifierId(dist), tag, value, 0, lifeTime);
-        BeanDao.getSession().persist(verifier);
-        return verifier;
-    }
-
-    @Transaction
-    public JVerifier mergeVerifier(String id, String tag, String value, long lifeTime) {
-        JVerifier verifier = createVerifier(id, tag, value, 0, lifeTime);
-        BeanDao.getSession().merge(verifier);
-        return verifier;
-    }
-
-    protected Iterator<JVerifier> iteratorVerifier(String id, String tag) {
-        Query query = BeanDao.getSession()
-                .createQuery("SELECT o FROM JVerifier o WHERE o.id = ? AND o.passTime > ? AND o.tag = ?");
-        query.setMaxResults(1);
-        query.setParameter(0, id);
-        query.setParameter(1, ContextUtils.getContextTime());
-        query.setParameter(2, tag);
-        return query.iterate();
-    }
-
-    /**
-     * 查找验证
-     */
-    @Transaction(readOnly = true)
-    public JVerifier findVerifier(String id, String tag) {
-        Iterator<JVerifier> iterator = iteratorVerifier(id, tag);
-        return iterator.hasNext() ? iterator.next() : null;
-    }
-
-    @Transaction(readOnly = true)
-    public boolean hasVerifier(String id, String tag) {
-        return iteratorVerifier(id, tag).hasNext();
     }
 
     protected void setNameMapCrudEntity(Map<String, CrudEntity> nameMapCrudEntity) {
         this.nameMapCrudEntity = nameMapCrudEntity;
     }
 
-    @Transaction
-    public JVerifier doneOperationCount(String id, long idleTime) {
-        Session session = BeanDao.getSession();
-        JVerifier verifier = getOperationVerifier(session, id, idleTime, false);
-        verifier.setIntValue(verifier.getIntValue() + 1);
-        session.merge(verifier);
-        return verifier;
-    }
-
-    @Transaction
-    public void passOperation(long passTime, JVerifier verifier, boolean guarantee) {
-        try {
-            Session session = BeanDao.getSession();
-            QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.passTime = ? WHERE o.id = ? AND o.passTime = ?", passTime, verifier.getId(), verifier.getPassTime()).executeUpdate();
-            //session.flush();
-
-        } catch (Exception e) {
-            if (guarantee) {
-                if (passVerifierUtilLinked == null) {
-                    synchronized (this) {
-                        if (passVerifierUtilLinked == null) {
-                            passVerifierUtilLinked = new UtilLinked<PassVerifier>();
-                        }
-                    }
-                }
-
-                PassVerifier passVerifier = new PassVerifier();
-                passVerifier.passTime = passTime;
-                passVerifier.verifier = verifier;
-                passVerifierUtilLinked.add(passVerifier);
-            }
-
-            return;
-        }
-
-        verifier.setPassTime(passTime);
-    }
-
     @Override
     public void step(long contextTime) {
-        if (passVerifierUtilLinked != null) {
-            passVerifierUtilLinked.syncAdds();
-            if (!passVerifierUtilLinked.getList().isEmpty()) {
-                ME.clearPassVerifier();
-            }
-        }
     }
 
+    @Schedule(fixedDelay = 10000)
     @Async(notifier = true)
     @Transaction
     protected void clearPassVerifier() {
+        if (passVerifierUtilLinked == null) {
+            return;
+        }
+
+        passVerifierUtilLinked.syncAdds();
+        if (!passVerifierUtilLinked.getList().isEmpty()) {
+            return;
+        }
+
         Session session = BeanDao.getSession();
         Iterator<PassVerifier> iterator = passVerifierUtilLinked.iterator();
         while (iterator.hasNext()) {
             PassVerifier passVerifier = iterator.next();
-            long passTime = passVerifier.passTime;
-            JVerifier verifier = passVerifier.verifier;
             try {
-                QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.passTime = ? WHERE o.id = ? AND o.passTime = ?", passTime, verifier.getId(), verifier.getPassTime()).executeUpdate();
+                doPassVerifier(session, passVerifier.db, passVerifier.uPassTime, passVerifier.id, passVerifier.passTime);
                 iterator.remove();
 
             } catch (Exception e) {
+                Environment.throwable(e);
                 return;
             }
+        }
+    }
 
-            verifier.setPassTime(passTime);
+    protected void doPassVerifier(Session session, boolean db, long uPassTime, String id, long passTime) {
+        if (uPassTime > 0) {
+            if (passTime <= 0) {
+                QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.passTime = ? WHERE o.id = ?", uPassTime, id).executeUpdate();
+
+            } else {
+                QueryDaoUtils.createQueryArray(session, "UPDATE JVerifier o SET o.passTime = ? WHERE o.id = ? AND o.passTime = ?", uPassTime, id, passTime).executeUpdate();
+            }
+
+            session.clear();
+
+        } else {
+            if (passTime <= 0) {
+                QueryDaoUtils.createQueryArray(session, "DELETE FROM JVerifier o WHERE o.id = ?", id).executeUpdate();
+                session.clear();
+
+            } else {
+                dbDeleteVerifier(session, id, passTime);
+            }
         }
     }
 
     /**
-     * 处理过期对象
+     * 开启服务
      */
     @Started
-    protected void initVerifierNames() {
+    protected void startService() {
         SessionFactoryBean sessionFactoryBean = SessionFactoryUtils.get();
         SessionFactory sessionFactory = sessionFactoryBean.getSessionFactory();
         if (sessionFactory != null) {
             final Map<String, CrudEntity> nameMapCrudEntity = new HashMap<String, CrudEntity>();
-            for (Entry<String, Entry<Class<?>, SessionFactory>> entry : sessionFactoryBean
+            for (Map.Entry<String, Map.Entry<Class<?>, SessionFactory>> entry : sessionFactoryBean
                     .getJpaEntityNameMapEntityClassFactory().entrySet()) {
-                Entry<Class<?>, SessionFactory> value = entry.getValue();
+                Map.Entry<Class<?>, SessionFactory> value = entry.getValue();
                 if (value.getValue() == sessionFactory && IPassClear.class.isAssignableFrom(value.getClass())) {
                     JoEntity joEntity = new JoEntity(entry.getKey(), entry.getValue().getKey());
                     nameMapCrudEntity.put(entry.getKey(), CrudUtils.getCrudEntity(joEntity));
@@ -324,7 +179,7 @@ public class VerifierService extends ContextService {
         // 清理一天前的
         long passTime = ContextUtils.getContextTime() - clearBeforeDelay;
         Session session = BeanDao.getSession();
-        for (Entry<String, CrudEntity> entry : nameMapCrudEntity.entrySet()) {
+        for (Map.Entry<String, CrudEntity> entry : nameMapCrudEntity.entrySet()) {
             try {
                 if (entry.getValue() != null) {
                     Iterator<Object> iterator = QueryDaoUtils.createQueryArray(session,
@@ -333,7 +188,7 @@ public class VerifierService extends ContextService {
                     while (iterator.hasNext()) {
                         Object entity = iterator.next();
                         try {
-                            CrudUtils.crud(Crud.DELETE, true, null, entry.getValue().getJoEntity(), entity, null, null);
+                            CrudUtils.crud(JaCrud.Crud.DELETE, true, null, entry.getValue().getJoEntity(), entity, null, null);
 
                         } catch (Exception e) {
                             LOGGER.error("clear expired verifier " + entry.getKey() + " crud " + entity + " error", e);
@@ -353,13 +208,264 @@ public class VerifierService extends ContextService {
         }
     }
 
-    protected static class PassVerifier {
-
-        protected long passTime;
-
-        protected JVerifier verifier;
-
+    protected void dbDeleteVerifier(Session session, String id, Long passTime) {
+        QueryDaoUtils.createQueryArray(session, "DELETE FROM JVerifier o WHERE o.id = ? AND o.passTime = ?", id, passTime).executeUpdate();
+        session.clear();
     }
 
+    //* < 0 idleTime; > 0 passTime; 0 incr >= incrMax
+    public long setVerifier(String id, boolean unique, long lifeTime, String tag, String value, int intValue, int incrMax) {
+        return ME.dbSetVerifier(id, unique, lifeTime, tag, value, intValue, incrMax);
+    }
+
+    @Transaction
+    public long dbSetVerifier(String id, boolean unique, long lifeTime, String tag, String value, int intValue, int incrMax) {
+        Session session = BeanDao.getSession();
+        if (lifeTime < 1000) {
+            lifeTime = 1000;
+        }
+
+        boolean incr = incrMax > 0;
+        JVerifier verifier;
+        long contextTime = ContextUtils.getContextTime();
+        if (unique) {
+            verifier = BeanDao.loadReal(session, JVerifier.class, id, LockMode.PESSIMISTIC_WRITE);
+            if (verifier != null) {
+                if (verifier.getPassTime() > contextTime) {
+                    if (incr) {
+                        if (verifier.getIntValue() >= incrMax) {
+                            return 0;
+                        }
+
+                    } else {
+                        return contextTime - verifier.getPassTime();
+                    }
+
+                } else {
+                    verifier.setIntValue(0);
+                }
+
+                verifier.setPassTime(contextTime + lifeTime);
+                verifier.setTag(tag);
+                verifier.setValue(value);
+                if (incr) {
+                    verifier.setIntValue(verifier.getIntValue() + 1);
+
+                } else {
+                    verifier.setIntValue(intValue);
+                }
+
+                session.merge(verifier);
+                return verifier.getPassTime();
+            }
+
+            verifier = new JVerifier();
+            verifier.setId(id);
+            verifier.setPassTime(contextTime + lifeTime);
+            verifier.setTag(tag);
+            verifier.setValue(value);
+            if (incr) {
+                verifier.setIntValue(1);
+
+            } else {
+                verifier.setIntValue(intValue);
+            }
+
+            try {
+                session.persist(verifier);
+                session.flush();
+
+            } catch (RuntimeException e) {
+                SessionFactoryUtils.throwNoConstraintViolationException(e);
+                session.clear();
+                if (unique) {
+                    return -lifeTime;
+                }
+            }
+
+        } else {
+            verifier = incr ? BeanDao.loadReal(session, JVerifier.class, id, LockMode.NONE) : null;
+            if (verifier == null) {
+                verifier = new JVerifier();
+                verifier.setId(id);
+
+            } else if (incr && verifier.getIntValue() >= incrMax) {
+                return 0;
+            }
+
+            verifier.setPassTime(contextTime + lifeTime);
+            verifier.setTag(tag);
+            verifier.setValue(value);
+            if (incr) {
+                verifier.setIntValue(verifier.getIntValue() + 1);
+
+            } else {
+                verifier.setIntValue(intValue);
+            }
+
+            session.merge(verifier);
+            session.flush();
+        }
+
+        return verifier.getPassTime();
+    }
+
+    public long setVerifierWith(String id, boolean unique, long lifeTime, boolean errDelete, KernelLang.GetTemplate<Boolean, VerifierMerge> withDel) {
+        return ME.dbSetVerifierWith(id, unique, lifeTime, errDelete, withDel);
+    }
+
+    @Transaction
+    public long dbSetVerifierWith(String id, boolean unique, long lifeTime, boolean errDelete, KernelLang.GetTemplate<Boolean, VerifierMerge> withDel) {
+        long passTime = dbSetVerifier(id, unique, lifeTime, null, null, 0, 0);
+        if (passTime > 0) {
+            if (unique && errDelete) {
+                try {
+                    if (withDel.getWith(MERGE) == Boolean.TRUE) {
+                        passTime = 1;
+
+                    } else {
+                        errDelete = false;
+                        passTime = 0;
+                    }
+
+                } finally {
+                    if (errDelete) {
+                        dbDeleteVerifier(BeanDao.getSession(), id, passTime);
+                    }
+                }
+
+            } else {
+                if (withDel.getWith(MERGE) == Boolean.TRUE) {
+                    passTime = 1;
+
+                } else {
+                    passTime = 0;
+                }
+            }
+        }
+
+        return passTime;
+    }
+
+    public interface VerifierMerge {
+
+        public boolean set(String id, String tag, String value, int intValue);
+    }
+
+    protected static final VerifierMerge MERGE = new VerifierMerge() {
+        @Override
+        public boolean set(String id, String tag, String value, int intValue) {
+            return ME.setVerifierMerge(id, tag, value, intValue);
+        }
+    };
+
+    protected boolean setVerifierMerge(String id, String tag, String value, int intValue) {
+        return ME.dbSetVerifierMerge(id, tag, value, intValue);
+    }
+
+    protected boolean dbSetVerifierMerge(String id, String tag, String value, int intValue) {
+        Session session = BeanDao.getSession();
+        JVerifier verifier = session.get(JVerifier.class, id);
+        if (verifier == null) {
+            verifier = new JVerifier();
+            verifier.setId(id);
+        }
+
+        verifier.setTag(tag);
+        verifier.setValue(value);
+        verifier.setIntValue(intValue);
+        session.merge(verifier);
+        session.flush();
+        return true;
+    }
+
+    public boolean passVerifier(long uPassTime, String id, long passTime, boolean guarantee) {
+        return ME.dbPassVerifier(uPassTime, id, passTime, guarantee);
+    }
+
+    @Transaction
+    protected boolean dbPassVerifier(long uPassTime, String id, long passTime, boolean guarantee) {
+        Session session = BeanDao.getSession();
+        try {
+            doPassVerifier(session, true, uPassTime, id, passTime);
+            return true;
+
+        } catch (Throwable e) {
+            if (guarantee) {
+                if (passVerifierUtilLinked == null) {
+                    synchronized (this) {
+                        if (passVerifierUtilLinked == null) {
+                            passVerifierUtilLinked = new UtilLinked<PassVerifier>();
+                        }
+                    }
+                }
+
+                PassVerifier passVerifier = new PassVerifier();
+                passVerifier.db = true;
+                passVerifier.uPassTime = uPassTime;
+                passVerifier.id = id;
+                passVerifier.passTime = passTime;
+                passVerifierUtilLinked.add(passVerifier);
+            }
+
+            Environment.throwable(e);
+        }
+
+        return false;
+    }
+
+    //* 0正常 -1验证码不存在 -2验证码过期 -3验证码错误 -4 等级太低
+    public int validateVerifier(String id, String tag, String value, int intValue, int level, boolean delete) {
+        return ME.dbValidateVerifier(id, tag, value, intValue, level, delete);
+    }
+
+    @Transaction(readOnly = true)
+    public int dbValidateVerifier(String id, String tag, String value, int intValue, int level, boolean delete) {
+        Session session = BeanDao.getSession();
+        JVerifier verifier = BeanDao.get(session, JVerifier.class, id);
+        if (verifier == null) {
+            return -1;
+        }
+
+        if (verifier.getPassTime() <= ContextUtils.getContextTime()) {
+            return -2;
+        }
+
+        if ((tag != null && !KernelObject.equals(tag, verifier.getTag()))
+                || (value != null && !KernelObject.equals(value, verifier.getValue()))
+                || (intValue != 0 && intValue != verifier.getIntValue())) {
+            return -3;
+        }
+
+        if (level != 0 && verifier.getIntValue() < level) {
+            return -4;
+        }
+
+        if (delete) {
+            session.delete(verifier);
+        }
+
+        return 0;
+    }
+
+    public static String getVerifierId(String address, String tag) {
+        return KernelString.isEmpty(address) ? tag : (address + '@' + tag);
+    }
+
+    public static boolean couldOperation(String id, int maxTimes) {
+        if (maxTimes < 0) {
+            return false;
+        }
+
+        if (maxTimes == 0 || id == null) {
+            return true;
+        }
+
+        return ME.validateVerifier(id, null, null, 0, maxTimes, false) == -4;
+    }
+
+    public static boolean doOperationIncr(String id, boolean unique, long idleTime, int maxTimes) {
+        return ME.setVerifier(id, unique, idleTime, null, null, 0, maxTimes) > 0;
+    }
 
 }

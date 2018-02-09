@@ -47,13 +47,13 @@ public class portal_user extends PortalServer {
             ServerResolverRedirect.redirect(KernelString.isEmpty(redirect) ? (MenuContextUtils.getSiteRoute() + "user/center") : redirect, false, input);
         }
 
-        PortalService.ME.setOperationVerify(input.getAddress(), PortalService.LOGIN_TAG, input);
+        PortalService.ME.couldOperationError(input.getAddress(), PortalService.LOGIN_TAG, input);
         return "user/login";
     }
 
     @Mapping(method = InMethod.POST)
     public String login(@Param String username, @Param String password, @Param long remember, Input input) throws Exception {
-        PortalService.ME.doneOperationVerify(input.getAddress(), PortalService.LOGIN_TAG, input);
+        PortalService.ME.doOperationIncrError(input.getAddress(), PortalService.LOGIN_TAG, false, input);
         InModel model = input.getModel();
         try {
             SecurityContext securityContext = SecurityService.ME.login(username, password, remember, JeRoleLevel.ROLE_USER.ordinal(), SECURITY_NAME, input);
@@ -121,7 +121,7 @@ public class portal_user extends PortalServer {
 
         model.put("type", type);
         if (type != 1) {
-            PortalService.ME.setOperationVerify(input.getAddress(), type == 2 ? PortalService.EMAIL_TAG : PortalService.MESSAGE_TAG, input);
+            PortalService.ME.couldOperationError(input.getAddress(), type == 2 ? PortalService.EMAIL_TAG : PortalService.MESSAGE_TAG, input);
         }
 
         return "user/register";
@@ -151,8 +151,6 @@ public class portal_user extends PortalServer {
             return "success";
         }
 
-        PortalService.ME.setOperationVerify(input.getAddress(), PortalService.PASSWORD_TAG, input);
-        input.getModel().put("message", input.getLangMessage(Site.MODIFY_SUCCESS));
         return "user/password";
     }
 
