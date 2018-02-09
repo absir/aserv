@@ -2,10 +2,8 @@ package com.absir.aserv.system.service;
 
 import com.absir.aserv.developer.Pag;
 import com.absir.aserv.developer.Site;
-import com.absir.aserv.menu.MenuContextUtils;
 import com.absir.aserv.system.asset.Asset_verify;
 import com.absir.aserv.system.bean.JUser;
-import com.absir.aserv.system.bean.JVerifier;
 import com.absir.aserv.system.bean.form.FEmailCode;
 import com.absir.aserv.system.bean.form.FMobileCode;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
@@ -14,7 +12,6 @@ import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JeUserType;
 import com.absir.aserv.system.configure.JSiteConfigure;
 import com.absir.aserv.system.crud.PasswordCrudFactory;
-import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.JUserDao;
 import com.absir.aserv.system.helper.HelperRandom;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
@@ -25,8 +22,6 @@ import com.absir.bean.lang.LangCodeUtils;
 import com.absir.binder.BinderData;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelLang;
-import com.absir.core.kernel.KernelMap;
-import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.transaction.value.Transaction;
@@ -40,8 +35,6 @@ import com.absir.validator.value.Confirm;
 import com.absir.validator.value.Length;
 import com.absir.validator.value.NotEmpty;
 import com.absir.validator.value.Regex;
-import org.hibernate.LockMode;
-import org.hibernate.Session;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -181,7 +174,7 @@ public class PortalService {
         return JUserDao.ME.findByRefUsername(name);
     }
 
-    public String randomCode() {
+    protected String randomCode() {
         StringBuilder stringBuilder = new StringBuilder();
         HelperRandom.appendFormat(stringBuilder, HelperRandom.FormatType.NUMBER, HelperRandom.nextInt(999999), 0, 6);
         return stringBuilder.toString();
@@ -233,45 +226,11 @@ public class PortalService {
         });
     }
 
-    /*
-     * -1验证码不存在 -2验证码过期 -3验证码错误 -4 等级太低 0正常
-     */
-    @Transaction(readOnly = true)
-    public int verifyId(String id, String tag, String code, int level, boolean delete) {
-        Session session = BeanDao.getSession();
-        JVerifier verifier = BeanDao.loadReal(session, JVerifier.class, id, LockMode.PESSIMISTIC_WRITE);
-        if (verifier == null || !KernelObject.equals(verifier.getTag(), tag)) {
-            return -1;
-        }
-
-        long contextTime = ContextUtils.getContextTime();
-        if (verifier.getPassTime() != 0 && verifier.getPassTime() < contextTime) {
-            return -2;
-        }
-
-        if (!KernelObject.equals(verifier.getValue(), code)) {
-            return -3;
-        }
-
-        if (level > 0) {
-            if (verifier.getIntValue() < level) {
-                return -4;
-            }
-        }
-
-        if (delete) {
-            BeanService.ME.delete(verifier);
-        }
-
-        return 0;
+    public int verifyEmailOrMobile(String emailOrMobile, String tag, String code, boolean delete) {
+        return VerifierService.ME.validateVerifier(emailOrMobile + "@Code", tag, code, 0, 0, delete);
     }
 
-    @Transaction(readOnly = true)
-    public int verifyEmailOrMobile(String emailOrMobile, String tag, String code, int level, boolean delete) {
-        return verifyId(emailOrMobile + "@Code", tag, code, level, delete);
-    }
-
-    public boolean couldOperationError(String address, String tag, Input input) {
+    public boolean couldOperationVerify(String address, String tag, Input input) {
         if (address == null && input != null) {
             address = input.getAddress();
         }
@@ -323,8 +282,9 @@ public class PortalService {
             throw new ServerException(ServerStatus.ON_DENIED);
         }
 
-        String emailOrMobile = ME.getEmailOrMobile(type, input);
-        if (type == 2) {
+        boolean email = type == 2;
+        String emailOrMobile = ME.getEmailOrMobile(email, input);
+        if (email) {
             if (ME.findUser(emailOrMobile, type) != null) {
                 InvokerResolverErrors.onError("email", Site.EMAIL_REGISTERED, null, null);
             }
@@ -335,7 +295,7 @@ public class PortalService {
             }
         }
 
-        ME.sendEmailOrMobileCode(type, emailOrMobile, REGISTER_TAG, Site.REGISTER_OPERATION, input);
+        ME.sendEmailOrMobileCode(email, emailOrMobile, REGISTER_TAG, Site.REGISTER_OPERATION, input);
     }
 
     public void register(int type, String securityName, Input input) {
@@ -358,7 +318,7 @@ public class PortalService {
         } else if (type == 2) {
             FEmailCode emailCode = binderData.bind(input.getParamMap(), null, FEmailCode.class);
             InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
-            if (ME.verifyEmailOrMobile(emailCode.email, REGISTER_TAG, emailCode.code, 0, true) != 0) {
+            if (ME.verifyEmailOrMobile(emailCode.email, REGISTER_TAG, emailCode.code, true) != 0) {
                 InvokerResolverErrors.onError("code", Site.VERIFY_ERROR, null, null);
             }
 
@@ -367,7 +327,7 @@ public class PortalService {
         } else {
             FMobileCode mobileCode = binderData.bind(input.getParamMap(), null, FMobileCode.class);
             InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
-            if (ME.verifyEmailOrMobile(mobileCode.mobile, REGISTER_TAG, mobileCode.code, 0, true) != 0) {
+            if (ME.verifyEmailOrMobile(mobileCode.mobile, REGISTER_TAG, mobileCode.code, true) != 0) {
                 InvokerResolverErrors.onError("code", Site.VERIFY_ERROR, null, null);
             }
 
@@ -419,11 +379,11 @@ public class PortalService {
         CrudServiceUtils.merge("JUser", null, user, false, null, null);
     }
 
-    public String getEmailOrMobile(int type, Input input) {
+    public String getEmailOrMobile(boolean email, Input input) {
         BinderData binderData = input.getBinderData();
         binderData.getBinderResult().setValidation(true);
         binderData.getBinderResult().getPropertyFilter().exclude("code");
-        if (type == 2) {
+        if (email) {
             FEmailCode emailCode = binderData.bind(input.getParamMap(), null, FEmailCode.class);
             InvokerResolverErrors.checkError(binderData.getBinderResult(), null);
             return emailCode.email;
@@ -435,10 +395,10 @@ public class PortalService {
         }
     }
 
-    public void sendEmailOrMobileCode(int type, String emailOrMobile, String tag, String operation, Input input) {
+    public void sendEmailOrMobileCode(boolean email, String emailOrMobile, String tag, String operation, Input input) {
         long idleTime;
         long sendTime;
-        if (type == 2) {
+        if (email) {
             ME.doOperationIncrError(input.getAddress(), EMAIL_TAG, true, input);
             idleTime = Pag.CONFIGURE.getEmailIdleTime();
             sendTime = ME.sendEmailCode(emailOrMobile, tag, Site.TPL.getCodeEmailSubject(), Site.TPL.getCodeEmail(), idleTime, operation, input);
@@ -452,41 +412,16 @@ public class PortalService {
         resolverIdleTime(idleTime, sendTime, input);
     }
 
-    /**
-     * 需要用户登录
-     */
-    public JUser verifyUser(Input input) {
-        JiUserBase userBase = SecurityService.ME.getUserBase(input);
-        if (userBase == null || !(userBase instanceof JUser)) {
-            ME.throwExceptionMessage(Site.LOGIN_FAILURE, true, input);
+    public boolean sendVerifyCode(JUser user, int type, int level, boolean strict, String tag, Input input) {
+        int vLevel = getVerifyLevel(level, user);
+        if (strict && vLevel < level) {
+            return false;
         }
 
-        return (JUser) userBase;
-    }
-
-    /**
-     * 需要用户验证确认
-     */
-    public void verifyUser(int level, String tag, Input input) {
-        JUser user = verifyUser(input);
-        String verifyUser = input.getParam("_verifyUser");
-        if (KernelString.isEmpty(verifyUser) || ME.verifyId("verifyUser@" + user.getId(), tag, verifyUser, level, true) != 0) {
-            InModel model = input.getModel();
-            model.put("verifyUrl", MenuContextUtils.getSiteRoute() + "user/verify/" + level + "?tag=" + tag);
-            throw new ServerException(ServerStatus.ON_SUCCESS);
+        if (type < level) {
+            InvokerResolverErrors.onError("type", Site.COULD_NOT_USE, null, null);
         }
-    }
 
-    /**
-     * 设置用户验证
-     */
-    public String setVerifyUser(Long userId, String tag, int level) {
-        String code = randomCode();
-        VerifierService.ME.setVerifier("verifyUser@" + userId, false, 600000, tag, code, level, 0);
-        return code;
-    }
-
-    public void sendVerifyCode(JUser user, int level, String tag, int type, Input input) {
         if (type == 3 && (!Pag.CONFIGURE.hasMessage() || KernelString.isEmpty(user.getMobile()))) {
             InvokerResolverErrors.onError("type", Site.COULD_NOT_USE, null, null);
 
@@ -497,41 +432,21 @@ public class PortalService {
             InvokerResolverErrors.onError("type", Site.COULD_NOT_USE, null, null);
         }
 
-        level = getVerifyLevel(level, user);
-        if (type < level) {
-            InvokerResolverErrors.onError("type", Site.COULD_NOT_USE, null, null);
-        }
-
-        sendEmailOrMobileCode(type, type == 2 ? user.getEmail() : user.getMobile(), tag, getOperation(tag, input), input);
+        boolean email = type == 2;
+        sendEmailOrMobileCode(email, email ? user.getEmail() : user.getMobile(), tag, getOperation(tag, input), input);
+        return false;
     }
 
     /**
-     * 验证操作验证
+     * 需要用户登录
      */
-    public void verifyLevel(JUser user, int level, String tag, int type, String value, Input input) {
-        if (KernelString.isEmpty(value)) {
-            InvokerResolverErrors.onError("value", ValidatorNotEmpty.NOT_EMPTY, null, null);
+    public JUser verifyUser(Input input) {
+        JiUserBase userBase = SecurityService.ME.getUserBase(input);
+        if (userBase == null || !(userBase instanceof JUser)) {
+            ME.throwExceptionMessage(Site.LOGIN_FAILURE, true, input);
         }
 
-        if (type == 1) {
-            if (!Asset_verify.verifyInput(input)) {
-                InvokerResolverErrors.onError("verifyCode", Site.VERIFY_ERROR, null, null);
-            }
-
-            if (!PasswordCrudFactory.getPasswordEncrypt(value, user.getSalt(), user.getSaltCount()).equals(user.getPassword())) {
-                InvokerResolverErrors.onError("value", Site.PASSWORD_ERROR, null, null);
-            }
-
-        } else {
-            String emailOrMobile = type == 2 ? user.getEmail() : user.getMobile();
-            if (ME.verifyEmailOrMobile(emailOrMobile, tag, value, 0, false) != 0) {
-                InvokerResolverErrors.onError("code", Site.VERIFY_ERROR, null, null);
-            }
-        }
-
-        InModel model = input.getModel();
-        model.put("ok", 1);
-        model.put("verifies", KernelMap.newMap("_verifyUser", ME.setVerifyUser(user.getId(), tag, level)));
+        return (JUser) userBase;
     }
 
     public void username(JUser user, String username, Input input) {
@@ -547,14 +462,6 @@ public class PortalService {
             SessionFactoryUtils.throwNoConstraintViolationException(e);
             InvokerResolverErrors.onError("username", Site.USERNAME_REGISTERED, null, null);
         }
-    }
-
-    public void sendOperationCode(int type, int level, String tag, Input input) {
-        JUser user = verifyUser(input);
-        level = getVerifyLevel(level, user);
-        String emailOrMobile = ME.getEmailOrMobile(type, input);
-        verifyUser(level, tag, input);
-        ME.sendEmailOrMobileCode(type, emailOrMobile, REGISTER_TAG, Site.REGISTER_OPERATION, input);
     }
 
     public static class FUsername {

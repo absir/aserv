@@ -20,9 +20,7 @@ import com.absir.aserv.system.security.SecurityContext;
 import com.absir.aserv.system.server.ServerResolverRedirect;
 import com.absir.aserv.system.service.PortalService;
 import com.absir.aserv.system.service.SecurityService;
-import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.context.core.ContextUtils;
-import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
@@ -47,7 +45,7 @@ public class portal_user extends PortalServer {
             ServerResolverRedirect.redirect(KernelString.isEmpty(redirect) ? (MenuContextUtils.getSiteRoute() + "user/center") : redirect, false, input);
         }
 
-        PortalService.ME.couldOperationError(input.getAddress(), PortalService.LOGIN_TAG, input);
+        PortalService.ME.couldOperationVerify(input.getAddress(), PortalService.LOGIN_TAG, input);
         return "user/login";
     }
 
@@ -121,7 +119,7 @@ public class portal_user extends PortalServer {
 
         model.put("type", type);
         if (type != 1) {
-            PortalService.ME.couldOperationError(input.getAddress(), type == 2 ? PortalService.EMAIL_TAG : PortalService.MESSAGE_TAG, input);
+            PortalService.ME.couldOperationVerify(input.getAddress(), type == 2 ? PortalService.EMAIL_TAG : PortalService.MESSAGE_TAG, input);
         }
 
         return "user/register";
@@ -151,58 +149,20 @@ public class portal_user extends PortalServer {
             return "success";
         }
 
+        PortalService.ME.couldOperationVerify(input.getAddress(), PortalService.PASSWORD_TAG, input);
         return "user/password";
-    }
-
-    /*
-     * 绑定用户名
-     */
-    @Errors
-    public String username(@Validate PortalService.FUsername username, Input input) {
-        JUser user = PortalService.ME.verifyUser(input);
-        PortalService.ME.username(user, username.username, input);
-        return "success";
-    }
-
-    /*
-     * 发送操作验证码
-     */
-    @Mapping(method = InMethod.POST)
-    public String verifyCode(int level, @Param String tag, @Param int type, Input input) throws Exception {
-        JUser user = PortalService.ME.verifyUser(input);
-        PortalService.ME.sendVerifyCode(user, level, tag, type, input);
-        return "success";
-    }
-
-    /*
-     * 验证用户可否操作
-     */
-    public String verify(int level, @Param String tag, Input input) throws Exception {
-        JUser user = PortalService.ME.verifyUser(input);
-        if (input.getMethod() == InMethod.POST) {
-            PortalService.ME.verifyLevel(user, level, tag, KernelDyna.to(input.getParam("type"), int.class), input.getParam("value"), input);
-            return "success";
-        }
-
-        level = PortalService.getVerifyLevel(level, user);
-        InModel model = input.getModel();
-        model.put("level", level);
-        model.put("tag", tag);
-        model.put("operation", PortalService.getOperation(tag, input));
-        model.put("email", Pag.CONFIGURE.hasEmail() && !KernelString.isEmpty(user.getEmail()));
-        model.put("message", Pag.CONFIGURE.hasMessage() && !KernelString.isEmpty(user.getMobile()));
-        return "user/verify";
     }
 
     /**
      * 发送绑定验证码
      */
     public String bindCode(@Param int type, Input input) {
+        JUser user = PortalService.ME.verifyUser(input);
         if (type < 2 || type > 3) {
             throw new ServerException(ServerStatus.ON_DENIED);
         }
 
-        PortalService.ME.sendOperationCode(type, type, type == 2 ? PortalService.BIND_EMAIL_TAG : PortalService.BIND_MOBILE_TAG, input);
+        PortalService.ME.sendVerifyCode(user, type, type, false, type == 2 ? PortalService.BIND_EMAIL_TAG : PortalService.BIND_MOBILE_TAG, input);
         return "success";
     }
 
@@ -211,14 +171,11 @@ public class portal_user extends PortalServer {
      */
     @Errors
     public void email(@Validate FEmailCode emailCode, Input input) {
-        if (!Pag.CONFIGURE.hasMessage()) {
+        if (!Pag.CONFIGURE.hasEmail()) {
             throw new ServerException(ServerStatus.ON_DENIED);
         }
 
-        JUser user = PortalService.ME.verifyUser(input);
-        PortalService.ME.verifyEmailOrMobile(emailCode.email, PortalService.BIND_EMAIL_TAG, emailCode.code, 2, true);
-        user.setEmail(emailCode.email);
-        CrudServiceUtils.merge("JUser", null, user, true, null, null);
+        throw new ServerException(ServerStatus.ON_DENIED);
     }
 
     /*
@@ -230,10 +187,7 @@ public class portal_user extends PortalServer {
             throw new ServerException(ServerStatus.ON_DENIED);
         }
 
-        JUser user = PortalService.ME.verifyUser(input);
-        PortalService.ME.verifyEmailOrMobile(mobileCode.mobile, PortalService.BIND_MOBILE_TAG, mobileCode.code, 3, true);
-        user.setMobile(mobileCode.mobile);
-        CrudServiceUtils.merge("JUser", null, user, true, null, null);
+        throw new ServerException(ServerStatus.ON_DENIED);
     }
 
 }
