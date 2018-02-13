@@ -133,7 +133,7 @@ public class ServerResolverBody extends ReturnedResolverBody implements Paramete
             BinderName binderName = (BinderName) parameter;
             BinderData binderData = onPut.getBinderData();
             binderData.getBinderResult().setGroup(binderName.group());
-            binderData.getBinderResult().setValidation(binderName.validation());
+            binderData.getBinderResult().setValidateType(binderName.validation() ? binderName.validateType() : null);
             String name = binderName.name();
             return binderData.bind(KernelString.isEmpty(name) || !(bodyObject instanceof Map) ? bodyObject : ((Map<?, ?>) bodyObject).get(name), beanName, parameterType);
 

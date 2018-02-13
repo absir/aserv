@@ -12,6 +12,7 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.binder.BinderData;
 import com.absir.binder.BinderResult;
 import com.absir.binder.BinderUtils;
+import com.absir.binder.EValidateType;
 import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelString;
 import com.absir.server.in.Input;
@@ -60,17 +61,17 @@ public class ParameterResolverBinder implements ParameterResolver<Binder> {
 
     @Override
     public final Object getParameterValue(OnPut onPut, Binder parameter, Class<?> parameterType, String beanName, RouteMethod routeMethod) {
-        return getParameterValue(onPut, parameter.value(), parameter.group(), false, parameterType, beanName, routeMethod);
+        return getParameterValue(onPut, parameter.value(), parameter.group(), null, parameterType, beanName, routeMethod);
     }
 
-    public Object getParameterValue(OnPut onPut, String name, int group, boolean validation, Class<?> parameterType, String beanName, RouteMethod routeMethod) {
+    public Object getParameterValue(OnPut onPut, String name, int group, EValidateType validateType, Class<?> parameterType, String beanName, RouteMethod routeMethod) {
         Input input = onPut.getInput();
         Map<String, Object> propertyMap = getPropertyMap(input);
         BinderData binderData = onPut.getBinderData();
         binderData.setLangMessage(input);
         BinderResult binderResult = binderData.getBinderResult();
         binderResult.setGroup(group);
-        binderResult.setValidation(validation);
+        binderResult.setValidateType(validateType);
         return binderData.bind(KernelString.isEmpty(name) ? propertyMap : propertyMap.get(name), beanName, parameterType);
     }
 }

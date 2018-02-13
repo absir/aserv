@@ -7,6 +7,8 @@
  */
 package com.absir.server.value;
 
+import com.absir.binder.EValidateType;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -19,5 +21,7 @@ public @interface Validate {
     String value() default "";
 
     int group() default 0;
+
+    EValidateType type() default EValidateType.GROUP;
 
 }

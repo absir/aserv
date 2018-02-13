@@ -30,6 +30,6 @@ public class ParameterResolverValidate implements ParameterResolver<Validate> {
 
     @Override
     public Object getParameterValue(OnPut onPut, Validate parameter, Class<?> parameterType, String beanName, RouteMethod routeMethod) {
-        return parameterResolverBinder.getParameterValue(onPut, parameter.value(), parameter.group(), true, parameterType, beanName, routeMethod);
+        return parameterResolverBinder.getParameterValue(onPut, parameter.value(), parameter.group(), parameter.type(), parameterType, beanName, routeMethod);
     }
 }

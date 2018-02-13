@@ -14,7 +14,7 @@ public class BinderResult extends PropertyErrors {
 
     private PropertyFilter propertyFilter;
 
-    private boolean validation;
+    private EValidateType validateType;
 
     public int getGroup() {
         return getPropertyFilter().getGroup();
@@ -44,12 +44,20 @@ public class BinderResult extends PropertyErrors {
         this.propertyFilter = propertyFilter;
     }
 
+    public EValidateType getValidateType() {
+        return validateType;
+    }
+
+    public void setValidateType(EValidateType validateType) {
+        this.validateType = validateType;
+    }
+
     public boolean isValidation() {
-        return validation;
+        return validateType != null;
     }
 
     public void setValidation(boolean validation) {
-        this.validation = validation;
+        validateType = validation ? EValidateType.BINDING : null;
     }
 
     public void ready() {

@@ -166,31 +166,48 @@ public class BinderData extends DynaBinder {
                 for (Entry<String, PropertyData> entry : propertyDatas.entrySet()) {
                     PropertyData propertyData = entry.getValue();
                     Property property = propertyData.getProperty();
-                    if (property.getAllow() <= 0 && property.allow(binderResult.getGroup())) {
-                        String name = entry.getKey();
-                        Object value = map.get(name);
-                        if (value == null) {
-                            if (!map.containsKey(name)) {
-                                continue;
+                    int bindingStep = 0;
+                    if (property.allow(binderResult.getGroup())) {
+                        if (property.getAllow() <= 0) {
+                            String name = entry.getKey();
+                            Object value = map.get(name);
+                            if (value != null || map.containsKey(name)) {
+                                bindingStep = 1;
+                                binderResult.setPropertyPath(propertyPrefix + name);
+                                if (binderResult.allowPropertyPath()) {
+                                    bindingStep = 2;
+                                    bindValue(value, propertyData, property, toObject);
+                                    if (toObject instanceof IBinder) {
+                                        value = map.get(name + ":");
+                                        if (value == null) {
+                                            ((IBinder) toObject).bind(name, value, propertyData, this);
+                                        }
+                                    }
+                                } else if (binderResult.getValidateType() == EValidateType.GROUP) {
+                                    continue;
+                                }
                             }
                         }
 
-                        binderResult.setPropertyPath(propertyPrefix + name);
-                        if (!binderResult.allowPropertyPath()) {
-                            continue;
-                        }
+                    } else if (binderResult.getValidateType() == EValidateType.GROUP) {
+                        continue;
+                    }
 
-                        bindValue(value, propertyData, property, toObject);
-                        if (toObject instanceof IBinder) {
-                            value = map.get(name + ":");
-                            if (value == null) {
-                                ((IBinder) toObject).bind(name, value, propertyData, this);
+                    if (binderResult.isValidation() && binderResult.getValidateType() != EValidateType.BINDING) {
+                        if (bindingStep < 1) {
+                            binderResult.setPropertyPath(propertyPrefix + entry.getKey());
+                            if (binderResult.getValidateType() == EValidateType.GROUP) {
+                                if (!binderResult.allowPropertyPath()) {
+                                    continue;
+                                }
                             }
                         }
+
+                        validateValue(property.getAccessor().get(toObject), propertyData, property, toObject);
                     }
                 }
 
-                if (toObject instanceof IValidator) {
+                if (binderResult.isValidation() && toObject instanceof IValidator) {
                     ((IValidator) toObject).validatorResult(propertyPath, binderResult, langMessage);
                 }
 
@@ -256,21 +273,25 @@ public class BinderData extends DynaBinder {
         }
 
         if (binderResult.isValidation()) {
-            List<Validator> validators = validatorSupply.getPropertyObject(propertyData);
-            if (validators != null) {
-                if (value == null) {
-                    int last = binderResult.getPropertyErrors().size() - 1;
-                    if (last >= 0 && binderResult.getPropertyErrors().get(last).getPropertyPath() == binderResult.getPropertyPath()) {
-                        return;
-                    }
-                }
+            validateValue(value, propertyData, property, toObject);
+        }
+    }
 
-                for (Validator validator : validators) {
-                    String errorMessage = validator.validate(value, langMessage);
-                    if (errorMessage != null) {
-                        addPropertyError(errorMessage, value);
-                        break;
-                    }
+    protected void validateValue(Object value, PropertyData propertyData, Property property, Object toObject) {
+        List<Validator> validators = validatorSupply.getPropertyObject(propertyData);
+        if (validators != null) {
+            if (value == null) {
+                int last = binderResult.getPropertyErrors().size() - 1;
+                if (last >= 0 && binderResult.getPropertyErrors().get(last).getPropertyPath() == binderResult.getPropertyPath()) {
+                    return;
+                }
+            }
+
+            for (Validator validator : validators) {
+                String errorMessage = validator.validate(value, langMessage);
+                if (errorMessage != null) {
+                    addPropertyError(errorMessage, value);
+                    break;
                 }
             }
         }
