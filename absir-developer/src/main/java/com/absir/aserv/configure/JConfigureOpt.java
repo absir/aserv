@@ -39,6 +39,7 @@ public class JConfigureOpt extends JConfigureBase {
 
     @Override
     protected void loadInit() {
+        loaded = true;
         String identifier = getIdentifier();
         Map<String, JConfigure> configureMap = new HashMap<String, JConfigure>();
         for (JConfigure configure : (List<JConfigure>) BeanService.ME.list("JConfigure", null, 0, 0, "o.id.eid", identifier)) {
@@ -91,6 +92,10 @@ public class JConfigureOpt extends JConfigureBase {
         }
 
         BeanService.ME.mergers(fieldMapConfigure.values());
+        if (!loaded) {
+            JConfigureUtils.reloadConfigure(getClass());
+        }
+
         ConsistentUtils.pubConfigure(this);
     }
 
@@ -100,7 +105,10 @@ public class JConfigureOpt extends JConfigureBase {
             BeanService.ME.delete(configure);
         }
 
-        copyFrom(KernelClass.newInstance(getClass()));
+        if (loaded) {
+            copyFrom(KernelClass.newInstance(getClass()));
+        }
+
         ConsistentUtils.pubConfigure(this);
     }
 

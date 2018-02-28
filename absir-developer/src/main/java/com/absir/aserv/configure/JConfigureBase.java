@@ -22,6 +22,9 @@ import java.io.Serializable;
 public class JConfigureBase implements IBase<Serializable> {
 
     @JsonIgnore
+    protected transient boolean loaded;
+
+    @JsonIgnore
     protected transient JConfigure jConfigure;
 
     @JsonIgnore
@@ -47,6 +50,7 @@ public class JConfigureBase implements IBase<Serializable> {
     }
 
     protected void loadInit() {
+        loaded = true;
         jConfigure = (JConfigure) BeanService.ME.selectQuerySingle("SELECT o FROM JConfigure o WHERE o.id.eid = ? AND o.id.mid = ?", getIdentifier(), "");
         if (jConfigure != null && !KernelString.isEmpty(jConfigure.getValue())) {
             HelperJson.decodeForUpdating(jConfigure.getValue(), this);
@@ -65,6 +69,10 @@ public class JConfigureBase implements IBase<Serializable> {
 
         jConfigure.setValue(HelperJson.encodeNull(this));
         BeanService.ME.merge(jConfigure);
+        if (!loaded) {
+            JConfigureUtils.reloadConfigure(getClass());
+        }
+
         ConsistentUtils.pubConfigure(this);
     }
 
@@ -74,7 +82,10 @@ public class JConfigureBase implements IBase<Serializable> {
             BeanService.ME.delete(jConfigure);
         }
 
-        copyFrom(KernelClass.newInstance(getClass()));
+        if (loaded) {
+            copyFrom(KernelClass.newInstance(getClass()));
+        }
+
         ConsistentUtils.pubConfigure(this);
     }
 }
