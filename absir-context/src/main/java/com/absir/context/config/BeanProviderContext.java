@@ -18,6 +18,7 @@ import com.absir.bean.inject.InjectInvoker;
 import com.absir.core.base.Environment;
 import com.absir.core.helper.HelperFileName;
 import com.absir.core.kernel.KernelArray;
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelLang.CallbackTemplate;
 import com.absir.core.kernel.KernelLang.ObjectEntry;
 import com.absir.core.kernel.KernelReflect;
@@ -47,7 +48,7 @@ public class BeanProviderContext extends BeanFactoryProvider {
                                           List<BeanDefine> beanDefines, Map<String, Boolean> contextFilenames,
                                           Map<String, List<Entry<String, InjectInvoker>>> beanNameMapAtInjectInvokers) {
         if (contextFilenames != null) {
-            if (contextFilenames.get(filename) == Boolean.TRUE) {
+            if (KernelLang.isBoolean(contextFilenames.get(filename))) {
                 return;
             }
 

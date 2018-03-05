@@ -32,11 +32,11 @@ public class XlsAccessorMap extends XlsAccessorBean {
         this.keyClass = keyClass;
         this.beanClass = beanClass;
         XaReferenced xaReferenced = field.getAnnotation(XaReferenced.class);
-        if (!xlsBase.is(keyClass) && (xaReferenced == null || xaReferenced.key())) {
+        if (!xlsBase.is(keyClass) && (xaReferenced == null || !xaReferenced.key())) {
             keyAccessors = getXlsAccessors(keyClass, xlsBase, context);
         }
 
-        if (!xlsBase.is(beanClass) && (xaReferenced == null || xaReferenced.value())) {
+        if (!xlsBase.is(beanClass) && (xaReferenced == null || !xaReferenced.value())) {
             accessors = getXlsAccessors(beanClass, xlsBase, context);
         }
     }

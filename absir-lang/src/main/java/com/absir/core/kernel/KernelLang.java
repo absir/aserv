@@ -28,7 +28,9 @@ public class KernelLang {
     public static final String[] NULL_STRINGS = new String[]{};
 
     public static final Class[] NULL_CLASSES = new Class[]{};
+
     public static final NullListSet NULL_LIST_SET = new NullListSet();
+
     public static final Map<Object, Object> NULL_MAP = new Map() {
 
         @Override
@@ -89,6 +91,7 @@ public class KernelLang {
             return NULL_LIST_SET;
         }
     };
+
     public static final ListIterator NULL_LIST_ITERATOR = new ListIterator() {
 
         @Override
@@ -133,6 +136,15 @@ public class KernelLang {
         public void set(Object e) {
         }
     };
+
+    public static boolean isBoolean(Boolean bool) {
+        return bool != null && bool.booleanValue();
+    }
+
+    public static boolean isBooleanObj(Object boolObj) {
+        return boolObj != null && isBoolean(KernelDyna.to(boolObj, Boolean.class));
+    }
+
     public static final char[] REG_CHARS = new char[]{'*', '{', '(', '['};
 
     public static Object[] getOptimizeObjects(Object[] ary) {

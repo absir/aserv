@@ -320,7 +320,7 @@ public class VerifierService extends ContextService {
         if (passTime > 0) {
             if (unique && errDelete) {
                 try {
-                    if (withDel.getWith(MERGE) == Boolean.TRUE) {
+                    if (KernelLang.isBoolean(withDel.getWith(MERGE))) {
                         passTime = 1;
 
                     } else {
@@ -335,7 +335,7 @@ public class VerifierService extends ContextService {
                 }
 
             } else {
-                if (withDel.getWith(MERGE) == Boolean.TRUE) {
+                if (KernelLang.isBoolean(withDel.getWith(MERGE))) {
                     passTime = 1;
 
                 } else {

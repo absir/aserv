@@ -23,6 +23,7 @@ import com.absir.context.config.BeanFactoryStopping;
 import com.absir.core.helper.HelperFile;
 import com.absir.core.helper.HelperFileName;
 import com.absir.core.helper.HelperIO;
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
 import org.slf4j.Logger;
@@ -53,6 +54,7 @@ public class UpgradeService {
     protected static final Logger LOGGER = LoggerFactory.getLogger(UpgradeService.class);
 
     protected static final String incrementalUpgrade = "incrementalUpgrade";
+
     @Value(value = "upgrade.config")
     private String upgradeConfig = "WEB-INF/classes/config.properties";
 
@@ -161,7 +163,7 @@ public class UpgradeService {
     protected boolean upgrade(File upgradeFile, String appCode) throws IOException {
         Map<String, Object> configMap = getVersionMap(upgradeFile);
         if (configMap != null && validateAppCode(configMap, appCode)) {
-            if (configMap.get(incrementalUpgrade) != Boolean.TRUE) {
+            if (!KernelLang.isBooleanObj(configMap.get(incrementalUpgrade))) {
                 //不是增量更新
                 String classPath = BeanFactoryUtils.getBeanConfig().getClassPath();
                 HelperFile.deleteFileNoBreak(new File(classPath), null);

@@ -328,7 +328,7 @@ public class HelperFile extends FileUtils {
     }
 
     public static void deleteFileNoBreak(File file, KernelLang.GetTemplate<Boolean, File> deleteFilter) throws IOException {
-        if (deleteFilter != null && deleteFilter.getWith(file) == Boolean.TRUE) {
+        if (deleteFilter != null && KernelLang.isBoolean(deleteFilter.getWith(file))) {
             return;
         }
 

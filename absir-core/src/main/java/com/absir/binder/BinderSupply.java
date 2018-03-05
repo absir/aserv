@@ -26,7 +26,7 @@ public class BinderSupply extends PropertySupply<BinderObject, Binder> {
         return BinderIgnore.class;
     }
 
-    public Object bindValue(PropertyData propertyData, Object value, Class<?> toType, DynaBinder dynaBinder, Object toValue) {
+    public Object bindValue(PropertyData propertyData, Object value, Class<?> toType, DynaBinder dynaBinder, Object toObject) {
         if (value != null) {
             Property property = propertyData.getProperty();
             String beanName = property.getBeanName();
@@ -46,10 +46,10 @@ public class BinderSupply extends PropertySupply<BinderObject, Binder> {
 
             if (dynaBinder != null) {
                 if (toType == null) {
-                    value = property.getGenericType() == null ? dynaBinder.bind(value, beanName, property.getType(), toValue) : dynaBinder.bind(value, beanName, property.getGenericType(), toValue);
+                    value = property.getGenericType() == null ? dynaBinder.bind(value, beanName, property.getType(), null) : dynaBinder.bind(value, beanName, property.getGenericType(), null);
 
                 } else {
-                    value = dynaBinder.bind(value, beanName, toType, toValue);
+                    value = dynaBinder.bind(value, beanName, toType, null);
                 }
             }
         }

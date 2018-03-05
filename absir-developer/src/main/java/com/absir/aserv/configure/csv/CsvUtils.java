@@ -191,7 +191,7 @@ public class CsvUtils {
                         value = ((Enum) value).ordinal();
 
                     } else if (value.getClass() == Boolean.class) {
-                        value = value == Boolean.TRUE ? 1 : 0;
+                        value = KernelLang.isBoolean((Boolean) value) ? 1 : 0;
 
                     } else if (value.getClass() == Float.class) {
                         value = UtilAbsir.floatIntValue((Float) value);

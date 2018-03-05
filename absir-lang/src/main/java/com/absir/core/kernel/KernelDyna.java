@@ -23,6 +23,8 @@ public abstract class KernelDyna {
 
     public static final Integer INTEGER_ZERO = Integer.valueOf((int) 0);
 
+    public static final Integer INTEGER_ONE = Integer.valueOf((int) 1);
+
     public static final Long LONG_ZERO = Long.valueOf((long) 0);
 
     public static final Float FLOAT_ZERO = Float.valueOf((float) 0);
@@ -34,11 +36,17 @@ public abstract class KernelDyna {
     public static final Character CHARACTER_ZERO = Character.valueOf((char) 0);
 
     public static final Date DATE_ZERO = new Date((long) 0);
+
     protected static final char[] DATE_CHARS = "-: /".toCharArray();
+
     private static final Map<String, DateFormat> dateFormatMap = new HashMap<String, DateFormat>();
+
     public static final DateFormat DATE_FORMAT = getSimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     public static final DateFormat DATE_FORMAT_DAY = getSimpleDateFormat("yyyy-MM-dd");
+
     public static final DateFormat DATE_FORMAT_TIME = getSimpleDateFormat("HH:mm:ss");
+
     public static final DateFormat[] DATE_FORMAT_ARRAY = new DateFormat[]{DATE_FORMAT, DATE_FORMAT_DAY, DATE_FORMAT_TIME, DateFormat.getDateTimeInstance(),
             DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG), DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM),
             getSimpleDateFormat("EEE MMM d hh:mm:ss a z yyyy"), getSimpleDateFormat("EEE MMM d HH:mm:ss z yyyy"), getSimpleDateFormat("MM/dd/yy hh:mm:ss a"), getSimpleDateFormat("MM/dd/yy")};
@@ -75,8 +83,12 @@ public abstract class KernelDyna {
         } else if (obj instanceof Enum) {
             return enumTo((Enum) obj, toClass);
 
+        } else if (obj instanceof Boolean) {
+            return boolTo((Boolean) obj, toClass);
+
         } else if (obj instanceof String) {
             return stringTo((String) obj, toClass);
+
         }
 
         return nullTo(toClass);
@@ -220,6 +232,14 @@ public abstract class KernelDyna {
         }
 
         return null;
+    }
+
+    public static <T> T boolTo(Boolean bool, Class<T> toClass) {
+        if (toClass == boolean.class) {
+            return (T) (Object) (KernelLang.isBoolean(bool) ? Boolean.TRUE : Boolean.FALSE);
+        }
+
+        return numberTo(KernelLang.isBoolean(bool) ? INTEGER_ONE : INTEGER_ZERO, toClass);
     }
 
     public static String toString(Date date) {

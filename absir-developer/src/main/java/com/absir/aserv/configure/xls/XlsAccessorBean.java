@@ -43,7 +43,7 @@ public class XlsAccessorBean extends XlsAccessor {
         this(field, cls, beanClass);
         if (!xlsBase.is(beanClass) && context != null) {
             XaReferenced xaReferenced = field.getAnnotation(XaReferenced.class);
-            if (xaReferenced == null || xaReferenced.value()) {
+            if (xaReferenced == null || !xaReferenced.value()) {
                 accessors = context.getClassAccessors(beanClass);
                 if (accessors == null && !context.isReferenceAccessors(beanClass)) {
                     accessors = getXlsAccessors(beanClass, xlsBase, context);

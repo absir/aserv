@@ -263,7 +263,7 @@ public class BinderData extends DynaBinder {
     }
 
     protected void bindValue(Object value, PropertyData propertyData, Property property, Object toObject) {
-        value = binderSupply.bindValue(propertyData, value, null, this, property.getAccessor().get(toObject));
+        value = binderSupply.bindValue(propertyData, value, null, this, toObject);
         try {
             property.getAccessor().set(toObject, value);
 

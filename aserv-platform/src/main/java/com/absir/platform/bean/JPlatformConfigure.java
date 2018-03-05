@@ -4,6 +4,7 @@ import com.absir.aserv.configure.JConfigureBase;
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.value.JaLang;
+import com.absir.core.kernel.KernelLang;
 import org.hibernate.annotations.Type;
 
 import java.util.Map;
@@ -39,7 +40,7 @@ public class JPlatformConfigure extends JConfigureBase {
     }
 
     public boolean isReview(String packageName, String versionName) {
-        return reviewMap == null || reviewMap.isEmpty() ? false : reviewMap.get(packageName + '@' + versionName) == Boolean.TRUE;
+        return reviewMap == null || reviewMap.isEmpty() ? false : KernelLang.isBoolean(reviewMap.get(packageName + '@' + versionName));
     }
 
 }
