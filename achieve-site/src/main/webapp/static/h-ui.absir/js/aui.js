@@ -101,7 +101,9 @@ function ab_reloadSelect(data, $select) {
         opts += '<option value="' + k + '">' + data[k] + '</option>';
     }
 
+    var val = $select.val();
     $select.html(opts);
+    $select.val(val);
     ab_init($select.parent());
 }
 
@@ -130,7 +132,7 @@ $(function () {
                 return _staticRules(element);
             }
             $.validator.prototype.idOrName = function (element) {
-                return this.groups[element.name] || ( this.checkable(element) ? element.name : element.id || element.name ) || $(element).attr('iname');
+                return this.groups[element.name] || (this.checkable(element) ? element.name : element.id || element.name) || $(element).attr('iname');
             }
             $.validator.prototype.elements = function () {
                 var validator = this,
