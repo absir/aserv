@@ -24,6 +24,10 @@ public abstract class JbServerContext<SA extends JbServerA> extends ContextBean<
     @Override
     protected void initialize() {
         ServerService.ME.load(this);
+        if (AGameComponent.ME.SERVER_CONTEXT_INIT_CALLS.hasCalls()) {
+            AGameComponent.ME.SERVER_CONTEXT_INIT_CALLS.doCalls(this);
+        }
+
         loadDone();
         checkOnlineDay();
     }
@@ -37,20 +41,21 @@ public abstract class JbServerContext<SA extends JbServerA> extends ContextBean<
         }
     }
 
+    protected boolean updateWeek;
+
     /**
      * 更新游戏天数
      */
-    public final void updateGameDay(int gameDay) {
+    public void updateGameDay(int gameDay) {
         serverA.setGameDay(gameDay);
-        boolean updateWeek = serverA.getGameWeek() != GameService.getGameWeek();
+        updateWeek = serverA.getGameWeek() != GameService.getGameWeek();
         if (updateWeek) {
             serverA.setGameWeek(GameService.getGameWeek());
         }
 
-        updateGameDayWeek(updateWeek);
-    }
-
-    public void updateGameDayWeek(boolean updateWeek) {
+        if (AGameComponent.ME.SERVER_CONTEXT_UPDATE_DAY_CALLS.hasCalls()) {
+            AGameComponent.ME.SERVER_CONTEXT_UPDATE_DAY_CALLS.doCalls(this);
+        }
     }
 
     /**
@@ -63,6 +68,10 @@ public abstract class JbServerContext<SA extends JbServerA> extends ContextBean<
 
     @Override
     public void unInitialize() {
+        if (AGameComponent.ME.SERVER_CONTEXT_UNINIT_CALLS.hasCalls()) {
+            AGameComponent.ME.SERVER_CONTEXT_UNINIT_CALLS.doCalls(this);
+        }
+
         ServerService.ME.save(this);
     }
 
@@ -73,7 +82,15 @@ public abstract class JbServerContext<SA extends JbServerA> extends ContextBean<
 
     @Override
     public boolean stepDone(long contextTime) {
-        return retainAt >= 0 && super.stepDone(contextTime);
+        if (retainAt >= 0 && super.stepDone(contextTime)) {
+            return true;
+        }
+
+        if (AGameComponent.ME.SERVER_CONTEXT_STEP_CALLS.hasCalls()) {
+            AGameComponent.ME.SERVER_CONTEXT_STEP_CALLS.doCalls(this);
+        }
+
+        return false;
     }
 
 }

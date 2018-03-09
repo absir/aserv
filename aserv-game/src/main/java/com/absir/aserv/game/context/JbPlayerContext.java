@@ -264,6 +264,10 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
     @Override
     protected void initialize() {
         PlayerService.ME.load(this);
+        if (AGameComponent.ME.PLAYER_CONTEXT_INIT_CALLS.hasCalls()) {
+            AGameComponent.ME.PLAYER_CONTEXT_INIT_CALLS.doCalls(this);
+        }
+
         loadDone();
         loginTime = ContextUtils.getContextTime();
         checkOnlineDay();
@@ -341,12 +345,22 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         }
     }
 
+    protected int passDay;
+
     /**
      * 更新在线天数
      */
     public void updatePlayerDay(int onlineDay) {
+        int passDay = GameService.getGameDay() - playerA.getGameDay();
+        if (passDay < 1) {
+            passDay = 1;
+        }
+
         playerA.setGameDay(GameService.getGameDay());
         playerA.setOnlineDay(onlineDay);
+        if (AGameComponent.ME.PLAYER_CONTEXT_UPDATE_DAY_CALLS.hasCalls()) {
+            AGameComponent.ME.PLAYER_CONTEXT_UPDATE_DAY_CALLS.doCalls(this);
+        }
     }
 
     protected void mailDirtyAt() {
@@ -357,6 +371,10 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
     public boolean stepDone(long contextTime) {
         if (super.stepDone(contextTime)) {
             return true;
+        }
+
+        if (AGameComponent.ME.PLAYER_CONTEXT_STEP_CALLS.hasCalls()) {
+            AGameComponent.ME.PLAYER_CONTEXT_STEP_CALLS.doCalls(this);
         }
 
         for (Recovery recovery : recoveries) {
@@ -379,7 +397,20 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
     }
 
     @Override
+    public boolean unInitializeDone() {
+        if (AGameComponent.ME.PLAYER_CONTEXT_UNINIT_UNDONE_CALLS.hasCalls()) {
+            return !AGameComponent.ME.PLAYER_CONTEXT_UNINIT_UNDONE_CALLS.doCalls(this);
+        }
+
+        return false;
+    }
+
+    @Override
     public void unInitialize() {
+        if (AGameComponent.ME.PLAYER_CONTEXT_UNINIT_CALLS.hasCalls()) {
+            AGameComponent.ME.PLAYER_CONTEXT_UNINIT_CALLS.doCalls(this);
+        }
+
         long[] recoveryTimes = playerA.getRecoveryTimes();
         if (recoveryTimes == null || recoveryTimes.length != recoveries.size()) {
             recoveryTimes = new long[recoveries.size()];
