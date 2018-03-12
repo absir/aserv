@@ -367,6 +367,8 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         writeMailTime = ContextUtils.getContextTime() + 3000;
     }
 
+    private int[] callSteps = AGameComponent.ME.PLAYER_CONTEXT_STEP_CALLS.createCallSteps();
+
     @Override
     public boolean stepDone(long contextTime) {
         if (super.stepDone(contextTime)) {
@@ -374,7 +376,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         }
 
         if (AGameComponent.ME.PLAYER_CONTEXT_STEP_CALLS.hasCalls()) {
-            AGameComponent.ME.PLAYER_CONTEXT_STEP_CALLS.doCalls(this);
+            AGameComponent.ME.PLAYER_CONTEXT_STEP_CALLS.doCallStep(this, callSteps);
         }
 
         for (Recovery recovery : recoveries) {

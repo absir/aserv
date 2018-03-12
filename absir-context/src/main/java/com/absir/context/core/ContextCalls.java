@@ -1,5 +1,6 @@
 package com.absir.context.core;
 
+import com.absir.context.core.value.JaStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,24 +15,25 @@ public class ContextCalls<T> {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(ContextCalls.class);
 
-    private List<Method> methods;
+    protected List<Method> methods;
 
-    private Logger logger;
+    protected Logger logger;
 
     public static <T> ContextCalls<T>[] ContextCallsArray(Class<T> contextClass, Logger logger, Class<? extends Annotation>... annotationClasses) {
         int length = annotationClasses.length;
         ContextCalls<T>[] calls = new ContextCalls[length];
         for (int i = 0; i < length; i++) {
-            calls[i] = new ContextCalls<T>();
+            calls[i] = annotationClasses[i] == JaStep.class ? new ContextCallsStep<T>() : new ContextCalls<T>();
         }
 
+        Annotation annotation;
         for (Method method : contextClass.getDeclaredMethods()) {
             for (int i = 0; i < length; i++) {
-                if (method.getAnnotation(annotationClasses[i]) != null) {
-                    calls[i].initMethod(method);
+                annotation = method.getAnnotation(annotationClasses[i]);
+                if (annotation != null) {
+                    calls[i].initMethod(method, annotation);
                 }
             }
-
         }
 
         for (int i = 0; i < length; i++) {
@@ -41,11 +43,11 @@ public class ContextCalls<T> {
         return calls;
     }
 
-    private ContextCalls() {
+    protected ContextCalls() {
 
     }
 
-    private void initMethod(Method method) {
+    protected void initMethod(Method method, Annotation annotation) {
         if (methods == null) {
             methods = new ArrayList<Method>();
         }
@@ -54,7 +56,7 @@ public class ContextCalls<T> {
         methods.add(method);
     }
 
-    private void initLogger(Logger logger) {
+    protected void initLogger(Logger logger) {
         if (methods != null) {
             methods = Collections.unmodifiableList(methods);
         }
@@ -63,9 +65,11 @@ public class ContextCalls<T> {
     }
 
     public ContextCalls(Class<T> contextClass, Class<? extends Annotation> annotationClass, Logger logger) {
+        Annotation annotation;
         for (Method method : contextClass.getDeclaredMethods()) {
-            if (method.getAnnotation(annotationClass) != null) {
-                initMethod(method);
+            annotation = method.getAnnotation(annotationClass);
+            if (annotation != null) {
+                initMethod(method, annotation);
             }
         }
 
@@ -79,19 +83,19 @@ public class ContextCalls<T> {
     public boolean doCalls(T target, Object... params) {
         boolean rTrue = false;
         if (methods != null) {
-            for (Method methods : methods) {
+            for (Method method : methods) {
                 try {
-                    if (methods.getReturnType() == boolean.class) {
-                        if ((Boolean) methods.invoke(target, params)) {
+                    if (method.getReturnType() == boolean.class) {
+                        if ((Boolean) method.invoke(target, params)) {
                             rTrue = true;
                         }
 
                     } else {
-                        methods.invoke(target, params);
+                        method.invoke(target, params);
                     }
 
                 } catch (Throwable e) {
-                    logger.error("ContextCalls do error at " + methods + " : " + Arrays.toString(params), e);
+                    logger.error("ContextCalls do error at " + method + " : " + Arrays.toString(params), e);
                 }
             }
         }

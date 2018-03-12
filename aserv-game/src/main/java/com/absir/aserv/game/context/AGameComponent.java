@@ -18,6 +18,7 @@ import com.absir.aserv.system.context.value.CMapList;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
 import com.absir.context.core.ContextCalls;
+import com.absir.context.core.ContextCallsStep;
 import com.absir.context.core.ContextUtils;
 import com.absir.context.core.value.*;
 import com.absir.core.kernel.KernelClass;
@@ -45,7 +46,7 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
 
     protected final ContextCalls<P> PLAYER_CONTEXT_INIT_CALLS;
 
-    protected final ContextCalls<P> PLAYER_CONTEXT_STEP_CALLS;
+    protected final ContextCallsStep<P> PLAYER_CONTEXT_STEP_CALLS;
 
     protected final ContextCalls<P> PLAYER_CONTEXT_UPDATE_DAY_CALLS;
 
@@ -57,7 +58,7 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
 
     protected final ContextCalls<S> SERVER_CONTEXT_INIT_CALLS;
 
-    protected final ContextCalls<S> SERVER_CONTEXT_STEP_CALLS;
+    protected final ContextCallsStep<S> SERVER_CONTEXT_STEP_CALLS;
 
     protected final ContextCalls<S> SERVER_CONTEXT_UPDATE_DAY_CALLS;
 
@@ -83,14 +84,14 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
         PLAYER_CONTEXT_CLASS = args[0];
         ContextCalls<P>[] pCalls = ContextCalls.ContextCallsArray(PLAYER_CONTEXT_CLASS, LOGGER, JaInit.class, JaStep.class, JaUpdateDay.class, JaUnitUnDone.class, JaUnit.class);
         PLAYER_CONTEXT_INIT_CALLS = pCalls[0];
-        PLAYER_CONTEXT_STEP_CALLS = pCalls[1];
+        PLAYER_CONTEXT_STEP_CALLS = (ContextCallsStep<P>) pCalls[1];
         PLAYER_CONTEXT_UPDATE_DAY_CALLS = pCalls[2];
         PLAYER_CONTEXT_UNINIT_UNDONE_CALLS = pCalls[3];
         PLAYER_CONTEXT_UNINIT_CALLS = pCalls[4];
         SERVER_CONTEXT_CLASS = args[1];
         ContextCalls<S>[] sCalls = ContextCalls.ContextCallsArray(SERVER_CONTEXT_CLASS, LOGGER, JaInit.class, JaStep.class, JaUpdateDay.class, JaUnit.class);
         SERVER_CONTEXT_INIT_CALLS = sCalls[0];
-        SERVER_CONTEXT_STEP_CALLS = sCalls[1];
+        SERVER_CONTEXT_STEP_CALLS = (ContextCallsStep<S>) sCalls[1];
         SERVER_CONTEXT_UPDATE_DAY_CALLS = sCalls[2];
         SERVER_CONTEXT_UNINIT_CALLS = sCalls[3];
         args = KernelClass.argumentClasses(PLAYER_CONTEXT_CLASS);
