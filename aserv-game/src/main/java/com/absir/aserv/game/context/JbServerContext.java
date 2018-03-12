@@ -80,6 +80,8 @@ public abstract class JbServerContext<SA extends JbServerA> extends ContextBean<
      */
     protected abstract void save();
 
+    private int[] callSteps = AGameComponent.ME.SERVER_CONTEXT_STEP_CALLS.createCallSteps();
+
     @Override
     public boolean stepDone(long contextTime) {
         if (retainAt >= 0 && super.stepDone(contextTime)) {
@@ -87,7 +89,7 @@ public abstract class JbServerContext<SA extends JbServerA> extends ContextBean<
         }
 
         if (AGameComponent.ME.SERVER_CONTEXT_STEP_CALLS.hasCalls()) {
-            AGameComponent.ME.SERVER_CONTEXT_STEP_CALLS.doCalls(this);
+            AGameComponent.ME.SERVER_CONTEXT_STEP_CALLS.doCallStep(this, callSteps);
         }
 
         return false;
