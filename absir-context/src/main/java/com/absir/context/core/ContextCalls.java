@@ -1,6 +1,9 @@
 package com.absir.context.core;
 
+import com.absir.bean.core.BeanConfigImpl;
 import com.absir.context.core.value.JaStep;
+import com.absir.core.kernel.KernelLang;
+import com.absir.core.kernel.KernelReflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,22 +22,27 @@ public class ContextCalls<T> {
 
     protected Logger logger;
 
-    public static <T> ContextCalls<T>[] ContextCallsArray(Class<T> contextClass, Logger logger, Class<? extends Annotation>... annotationClasses) {
-        int length = annotationClasses.length;
-        ContextCalls<T>[] calls = new ContextCalls[length];
+    public static <T> ContextCalls<T>[] ContextCallsArray(final Class<T> contextClass, Logger logger, final Class<? extends Annotation>... annotationClasses) {
+        final int length = annotationClasses.length;
+        final ContextCalls<T>[] calls = new ContextCalls[length];
         for (int i = 0; i < length; i++) {
             calls[i] = annotationClasses[i] == JaStep.class ? new ContextCallsStep<T>() : new ContextCalls<T>();
         }
 
-        Annotation annotation;
-        for (Method method : contextClass.getDeclaredMethods()) {
-            for (int i = 0; i < length; i++) {
-                annotation = method.getAnnotation(annotationClasses[i]);
-                if (annotation != null) {
-                    calls[i].initMethod(method, annotation);
+        KernelReflect.doWithDeclaredMethods(contextClass, new KernelLang.CallbackBreak<Method>() {
+
+            Annotation annotation;
+
+            @Override
+            public void doWith(Method method) throws KernelLang.BreakException {
+                for (int i = 0; i < length; i++) {
+                    annotation = method.getAnnotation(annotationClasses[i]);
+                    if (annotation != null) {
+                        calls[i].initMethod(contextClass, method, annotation);
+                    }
                 }
             }
-        }
+        });
 
         for (int i = 0; i < length; i++) {
             calls[i].initLogger(logger);
@@ -44,16 +52,40 @@ public class ContextCalls<T> {
     }
 
     protected ContextCalls() {
-
     }
 
-    protected void initMethod(Method method, Annotation annotation) {
-        if (methods == null) {
-            methods = new ArrayList<Method>();
+    public ContextCalls(final Class<T> contextClass, final Class<? extends Annotation> annotationClass, Logger logger) {
+        KernelReflect.doWithDeclaredMethods(contextClass, new KernelLang.CallbackBreak<Method>() {
+
+            Annotation annotation;
+
+            @Override
+            public void doWith(Method method) throws KernelLang.BreakException {
+                annotation = method.getAnnotation(annotationClass);
+                if (annotation != null) {
+                    initMethod(contextClass, method, annotation);
+                }
+            }
+        });
+
+        initLogger(logger);
+    }
+
+    protected boolean initMethod(Class<T> contextClass, Method method, Annotation annotation) {
+        Method realMethod = KernelReflect.realMethod(contextClass, method);
+        if (realMethod == null && realMethod.getAnnotation(BeanConfigImpl.NoConfigure.class) != null) {
+            return false;
         }
 
-        method.setAccessible(true);
-        methods.add(method);
+        if (methods == null) {
+            methods = new ArrayList<Method>();
+
+        } else if (methods.contains(realMethod)) {
+            return false;
+        }
+
+        methods.add(realMethod);
+        return true;
     }
 
     protected void initLogger(Logger logger) {
@@ -62,18 +94,6 @@ public class ContextCalls<T> {
         }
 
         this.logger = logger == null ? LOGGER : logger;
-    }
-
-    public ContextCalls(Class<T> contextClass, Class<? extends Annotation> annotationClass, Logger logger) {
-        Annotation annotation;
-        for (Method method : contextClass.getDeclaredMethods()) {
-            annotation = method.getAnnotation(annotationClass);
-            if (annotation != null) {
-                initMethod(method, annotation);
-            }
-        }
-
-        initLogger(logger);
     }
 
     public boolean hasCalls() {

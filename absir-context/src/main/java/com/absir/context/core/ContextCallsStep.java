@@ -15,15 +15,26 @@ public class ContextCallsStep<T> extends ContextCalls<T> {
 
     protected int[] stepIntervalArray;
 
+    protected ContextCallsStep() {
+    }
+
+    public ContextCallsStep(Class<T> contextClass, Logger logger) {
+        super(contextClass, JaStep.class, logger);
+    }
+
     @Override
-    protected void initMethod(Method method, Annotation annotation) {
-        super.initMethod(method, annotation);
-        int interval = annotation.getClass() == JaStep.class ? ((JaStep) annotation).value() : 0;
-        if (stepIntervals != null) {
-            stepIntervals = new ArrayList<Integer>();
+    protected boolean initMethod(Class<T> contextClass, Method method, Annotation annotation) {
+        if (super.initMethod(contextClass, method, annotation)) {
+            int interval = annotation.getClass() == JaStep.class ? ((JaStep) annotation).value() : 0;
+            if (stepIntervals != null) {
+                stepIntervals = new ArrayList<Integer>();
+            }
+
+            stepIntervals.add(interval);
+            return true;
         }
 
-        stepIntervals.add(interval);
+        return false;
     }
 
     @Override
