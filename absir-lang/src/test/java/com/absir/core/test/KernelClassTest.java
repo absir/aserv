@@ -30,7 +30,6 @@ public class KernelClassTest {
             System.out.println("本机名称是：" + localname);
             System.out.println("本机的ip是 ：" + localip);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
