@@ -287,8 +287,11 @@ public class EntityField extends DBField {
             editorName = editorObject.getValueClass() == null ? null : SessionFactoryUtils.getEntityNameNull(editorObject.getValueClass());
         }
 
-        valueEntityName = editorName == null ? entityName : editorName;
         if (Map.class.isAssignableFrom(property.getType())) {
+            if (!KernelString.isEmpty(editorName)) {
+                valueEntityName = editorName;
+            }
+
             editorName = editorObject.getKeyName();
             if (KernelString.isEmpty(editorName)) {
                 editorName = editorObject.getKeyClass() == null ? null : SessionFactoryUtils.getEntityNameNull(editorObject.getKeyClass());
@@ -299,6 +302,7 @@ public class EntityField extends DBField {
             }
 
         } else {
+            valueEntityName = KernelString.isEmpty(editorName) ? entityName : editorName;
             entityName = valueEntityName;
         }
 

@@ -273,8 +273,8 @@ ${ScriptNode::html(element) + "\r\n"}
                 <td><input ${identifier} type="text" class="ab_td_input" value="\${entity${map_value}}"></td>
             #end
             #set(nodes = ScriptNode::append(element, node))
-            ${DeveloperUtils::includeExist("subtable", map_value ? field.getValueField().getTypes() : field.getTypes(),
-            request)}
+            #set(field = map_value ? field.getValueField() : field)
+            ${DeveloperUtils::includeExist("subtable", field.getTypes(), request)}
         #end
 
         #else
