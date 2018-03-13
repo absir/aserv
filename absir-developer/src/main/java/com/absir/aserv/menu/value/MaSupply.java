@@ -18,6 +18,8 @@ public @interface MaSupply {
 
     String folder() default "内容管理";
 
+    String group() default "";
+
     String name() default "列表";
 
     String method() default "list";

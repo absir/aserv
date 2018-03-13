@@ -105,31 +105,33 @@ public abstract class MenuContextUtils {
      * 添加实体菜单
      */
     public static void addMenuBeanRoot(MenuBeanRoot menuBeanRoot, final String entityName, Class<?> entityClass,
-                                       String menuName, String menuIcon, String suffix, String option, List<String> entityNames) {
+                                       String menuName, String menuGroup, String menuIcon, String suffix, String option, List<String> entityNames) {
         String entityCaption = null;
         MaEntity maEntity = KernelClass.fetchAnnotation(entityClass, MaEntity.class);
         if (maEntity != null && !maEntity.closed()) {
-            entityCaption = HelperLang.getTypeCaption(entityClass);
+
             int index = maEntity.parent().length - 2;
-            menuBeanRoot = menuBeanRoot.getChildrenRoot(index >= 0 ? maEntity.parent()[index] : null, menuName,
-                    index >= 0 ? null : menuIcon);
-            menuBeanRoot = menuBeanRoot.getChildrenRoot(++index >= 0 ? maEntity.parent()[index] : null, entityCaption,
-                    null);
+            menuBeanRoot = menuBeanRoot.getChildrenRoot(index >= 0 ? maEntity.parent()[index] : null, menuName, index >= 0 ? null : menuIcon);
+            menuBeanRoot = menuBeanRoot.getChildrenRoot(++index >= 0 ? maEntity.parent()[index] : null, menuGroup, null);
+            if (menuBeanRoot.getMenuBean().getName() == menuGroup) {
+                menuBeanRoot.getMenuBean().setOrdinal(-1);
+            }
+
             while (++index < maEntity.parent().length) {
                 menuBeanRoot = menuBeanRoot.getChildrenRoot(maEntity.parent()[index], null, null);
             }
 
-            entityCaption = KernelString.isEmpty(maEntity.name()) ? entityCaption
-                    : LangBundleImpl.ME.getunLang(maEntity.name(), MenuBeanRoot.TAG);
+            entityCaption = HelperLang.getTypeCaption(entityClass);
+            entityCaption = KernelString.isEmpty(maEntity.name()) ? entityCaption : LangBundleImpl.ME.getunLang(maEntity.name(), MenuBeanRoot.TAG);
             option = LangBundleImpl.ME.getunLang(option, MenuBeanRoot.TAG);
-            menuBeanRoot.getChildrenRoot(maEntity.value(), entityCaption, suffix, 0, entityName,
-                    "entity/" + option + "/" + entityName, "ENTITY", null);
+            menuBeanRoot.getChildrenRoot(maEntity.value(), entityCaption, suffix, 0, entityName, "entity/" + option + "/" + entityName, "ENTITY", null);
         }
 
         // 添加实体权限控制
         if (entityNames != null && (maEntity != null || BeanConfigImpl.findTypeAnnotation(entityClass, JaEntity.class))) {
             if (entityCaption == null) {
                 entityCaption = HelperLang.getTypeCaption(entityClass);
+                entityCaption = KernelString.isEmpty(maEntity.name()) ? entityCaption : LangBundleImpl.ME.getunLang(maEntity.name(), MenuBeanRoot.TAG);
             }
 
             entityNames.add(entityName);
@@ -200,6 +202,9 @@ public abstract class MenuContextUtils {
 
                 });
 
+                String menuName = null;
+                String menuGroup = null;
+                String suffix = null;
                 // 权限实体收集
                 List<String> entityNames = new ArrayList<String>();
                 // 实体CRUD菜单
@@ -208,9 +213,13 @@ public abstract class MenuContextUtils {
                         .getJpaEntityNameMapEntityClassFactory().entrySet()) {
                     Class<?> entityClass = entry.getValue().getKey();
                     if (entityClasses.add(entityClass)) {
-                        addMenuBeanRoot(menuBeanRoot, entry.getKey(), entityClass,
-                                LangBundleImpl.ME.getunLang("内容管理", MenuBeanRoot.TAG), "reorder",
-                                LangBundleImpl.ME.getunLang("列表", MenuBeanRoot.TAG), "list", entityNames);
+                        if (menuName == null) {
+                            menuName = LangBundleImpl.ME.getunLang("内容管理", MenuBeanRoot.TAG);
+                            menuGroup = LangBundleImpl.ME.getunLang("内容管理", MenuBeanRoot.TAG);
+                            suffix = LangBundleImpl.ME.getunLang("列表", MenuBeanRoot.TAG);
+                        }
+
+                        addMenuBeanRoot(menuBeanRoot, entry.getKey(), entityClass, menuName, menuGroup, "reorder", suffix, "list", entityNames);
                     }
                 }
 
@@ -219,10 +228,16 @@ public abstract class MenuContextUtils {
                     Set<Entry<String, Class<?>>> entityNameMapClass = crudSupply.getEntityNameMapClass();
                     if (entityNameMapClass != null) {
                         MaSupply maSupply = KernelClass.fetchAnnotation(crudSupply.getClass(), MaSupply.class);
+                        menuName = LangBundleImpl.ME.getunLang(maSupply.folder(), MenuBeanRoot.TAG);
+                        menuGroup = LangBundleImpl.ME.getunLang(maSupply.group(), MenuBeanRoot.TAG);
+                        if (KernelString.isEmpty(menuGroup)) {
+                            menuGroup = menuName;
+                        }
+
+                        suffix = LangBundleImpl.ME.getunLang(maSupply.name(), MenuBeanRoot.TAG);
                         if (maSupply != null) {
                             for (Entry<String, Class<?>> entry : entityNameMapClass) {
-                                addMenuBeanRoot(menuBeanRoot, entry.getKey(), entry.getValue(), maSupply.folder(),
-                                        maSupply.icon(), maSupply.name(), maSupply.method(), entityNames);
+                                addMenuBeanRoot(menuBeanRoot, entry.getKey(), entry.getValue(), menuName, menuGroup, maSupply.icon(), suffix, maSupply.method(), entityNames);
                             }
                         }
                     }
@@ -232,8 +247,7 @@ public abstract class MenuContextUtils {
                 menuBeanService.addEntityPermission(entityNames);
 
                 // 添加后台菜单
-                menuBeanService.addMenuBeanRoot(menuBeanRoot, "admin",
-                        LangBundleImpl.ME.getunLang("后台菜单", MenuBeanRoot.TAG), MeUrlType.ADMIN);
+                menuBeanService.addMenuBeanRoot(menuBeanRoot, "admin", LangBundleImpl.ME.getunLang("后台菜单", MenuBeanRoot.TAG), MeUrlType.ADMIN);
             }
         }
     }
