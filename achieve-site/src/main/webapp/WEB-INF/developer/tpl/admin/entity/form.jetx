@@ -248,7 +248,9 @@ ${ScriptNode::html(element) + "\r\n"}
                 #if(field.getCrudField().getKeyJoEntity() == null || field.getCrudField().getKeyJoEntity().getEntityName() != null)
                 ##map.key为简单类型
                     #tag scriptEcho()
-                    <th>${field.getMetas().containsKey("key") ? field.getMetas().get("key") : Pag::getLang("键值")}</th>
+                    <th>${field.getMetas().containsKey("langKey") ? Pag::getLang(field.getMetas().get("langKey")) :
+                        Pag::getLang("键值")}
+                    </th>
                 #end
                 #set(identifier = 'name="' + field.getName() + '[@!for_key@]"')
                 #if(!generator.append(identifier, element)) {
@@ -267,7 +269,9 @@ ${ScriptNode::html(element) + "\r\n"}
             ##map或array为简单类型
                 #set(map_value = archetype_key ? '.value' : '')
                 #tag scriptEcho()
-                <th>${Pag::getLang("内容")}</th>
+                <th>${field.getMetas().containsKey("langValue") ? Pag::getLang(field.getMetas().get("langValue")) :
+                    Pag::getLang("内容")}
+                </th>
             #end
             #set(identifier = 'name="' + field.getName() + (map_value ? "[@!!for_key@]" : "[${for_index}]") + '"')
             #if(!generator.append(identifier, element))
@@ -276,7 +280,8 @@ ${ScriptNode::html(element) + "\r\n"}
             #end
             #set(nodes = ScriptNode::append(element, node))
             #set(archetype_valueField = archetype_key)
-            ${DeveloperUtils::includeExist("subtable", archetype_valueField ? field.getValueField().getTypes() : field.getTypes(), request)}
+            ${DeveloperUtils::includeExist("subtable", archetype_valueField ? field.getValueField().getTypes() :
+            field.getTypes(), request)}
             #set(archetype_valueField = false)
         #end
 
