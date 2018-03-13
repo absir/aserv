@@ -75,11 +75,18 @@ public class EditorObject implements PropertyObject<EditorObject> {
     }
 
     public void setMeta(String name, String value) {
-        if (metas == null) {
-            metas = new HashMap<Object, Object>();
-        }
+        if (value == null) {
+            if (metas != null) {
+                metas.remove(name);
+            }
 
-        metas.put(name, value);
+        } else {
+            if (metas == null) {
+                metas = new HashMap<Object, Object>();
+            }
+
+            metas.put(name, value);
+        }
     }
 
     public JaEdit getEdit() {

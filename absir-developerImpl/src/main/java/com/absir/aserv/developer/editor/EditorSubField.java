@@ -25,7 +25,7 @@ public class EditorSubField extends PropertyResolverAbstract<EditorObject, JaSub
         String lang = annotation.value();
         lang = LangCodeUtils.get(lang, EditorSubField.class);
         propertyObject.setMeta("subField", lang);
-        String caption = annotation.capition();
+        String caption = annotation.caption();
         propertyObject.setMeta("subFieldLang", KernelString.isEmpty(caption) ? lang : caption);
         return propertyObject;
     }

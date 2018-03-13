@@ -55,7 +55,11 @@ public class EntityField extends DBField {
 
     protected boolean embedd;
 
-    public EntityField(String name, Property property, EditorObject editorObject, JoEntity joEntity) {
+    public EntityField(String name, Property property, EditorObject editorObject, JoEntity joEntity, IField fromField) {
+        if (fromField != null) {
+            KernelObject.copy(fromField.getMetas(), metas);
+        }
+
         // set properties
         crudField.setName(name);
         include = property.getInclude();
@@ -160,7 +164,7 @@ public class EntityField extends DBField {
                     referenceCrudKey = true;
                 }
 
-                EntityField valueField = new EntityField(crudField.getName(), property, null, null);
+                EntityField valueField = new EntityField(crudField.getName(), property, null, null, null);
                 valueField.crudField.setType(componentClasses[1]);
                 this.valueField = valueField;
                 if (!valueField.typeFieldType(componentClasses[1]) && KernelClass.isCustomClass(componentClasses[1])) {
@@ -408,7 +412,7 @@ public class EntityField extends DBField {
         }
     }
 
-    public static void addEntityFieldScope(String name, JoEntity joEntity, Collection<IField> fieldScope, EntityModel entityModel) {
+    public static void addEntityFieldScope(String name, JoEntity joEntity, Collection<IField> fieldScope, EntityModel entityModel, IField fromField) {
         String identifierName = null;
         String entityName = joEntity.getEntityName();
         if (entityName == null) {
@@ -439,7 +443,7 @@ public class EntityField extends DBField {
             EntityField entityField = null;
             boolean primary = false;
             if (entityModel != null && (property.getAccessor().getAnnotation(Id.class, true) != null || (identifierName != null && identifierName.equals(fieldName)))) {
-                entityField = new EntityField(fieldName, property, editorObject, joEntity);
+                entityField = new EntityField(fieldName, property, editorObject, joEntity, fromField);
                 if ((entityField.getType() == Object.class || entityField.getType() == Serializable.class) && IBase.class.isAssignableFrom(joEntity.getEntityClass()) && fieldName.equals("id")) {
                     entityField.getCrudField().setType(KernelClass.typeClass(joEntity.getEntityClass(), IBase.ID_VARIABLE));
                 }
@@ -448,7 +452,7 @@ public class EntityField extends DBField {
                 entityModel.setPrimary(entityField);
 
             } else if (!isMappedByField(property, editorObject)) {
-                entityField = new EntityField(fieldName, property, editorObject, joEntity);
+                entityField = new EntityField(fieldName, property, editorObject, joEntity, fromField);
             }
 
             if (entityModel != null) {
@@ -609,7 +613,7 @@ public class EntityField extends DBField {
         }
 
         if (embedd && editable != JeEditable.LOCKED) {
-            addEntityFieldScope(crudField.getName(), crudField.getJoEntity(), fieldScope, entityModel);
+            addEntityFieldScope(crudField.getName(), crudField.getJoEntity(), fieldScope, entityModel, this);
 
         } else {
             fieldScope.add(this);

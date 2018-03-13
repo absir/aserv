@@ -116,7 +116,7 @@ public class ModelFactory {
             entityModel.addJaCrud(jaCrud);
         }
 
-        EntityField.addEntityFieldScope(null, joEntity, entityModel.getFields(), entityModel);
+        EntityField.addEntityFieldScope(null, joEntity, entityModel.getFields(), entityModel, null);
         entityModel.addComplete();
         return entityModel;
     }

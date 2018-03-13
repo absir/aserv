@@ -58,7 +58,7 @@ public class UtilSchelduerTest {
         schelduer.stopNow();
     }
 
-    protected NextRunnable createNextRunnable(final long nextTime, final String capition) {
+    protected NextRunnable createNextRunnable(final long nextTime, final String caption) {
         return new NextRunnable() {
 
             @Override
@@ -77,7 +77,7 @@ public class UtilSchelduerTest {
 
             @Override
             public void run(Date date) {
-                System.out.println(capition + " => " + System.currentTimeMillis());
+                System.out.println(caption + " => " + System.currentTimeMillis());
             }
         };
     }

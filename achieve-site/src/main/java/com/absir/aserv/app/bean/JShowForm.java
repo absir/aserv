@@ -6,10 +6,7 @@ import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.JUser;
 import com.absir.aserv.system.bean.JUserRole;
 import com.absir.aserv.system.bean.base.JbBean;
-import com.absir.aserv.system.bean.value.JaEdit;
-import com.absir.aserv.system.bean.value.JaLang;
-import com.absir.aserv.system.bean.value.JaSubField;
-import com.absir.aserv.system.bean.value.JeEditable;
+import com.absir.aserv.system.bean.value.*;
 import com.absir.orm.value.JaClasses;
 import com.absir.server.in.InModel;
 import com.absir.validator.value.*;
@@ -108,7 +105,12 @@ public class JShowForm extends JbBean implements ICrudSubmit<JShowForm.DemoOpiti
     @JaEdit(types = "subtable")
     public List<JShowMapped> mappeds;
 
-    @JaSubField(value = "extend2", capition = "扩展数据2")
+    @JaSubField(value = "扩展数据E")
+    @JaEmbedd
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    public Element element;
+
+    @JaSubField(value = "extend2", caption = "扩展数据2")
     @JaLang("扩展编辑器2")
     @JaEdit(types = "html")
     public String html2;

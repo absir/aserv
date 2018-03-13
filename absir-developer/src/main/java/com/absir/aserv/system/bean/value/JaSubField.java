@@ -18,5 +18,5 @@ public @interface JaSubField {
 
     String value();
 
-    String capition() default "";
+    String caption() default "";
 }
