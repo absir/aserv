@@ -3,6 +3,8 @@ package com.absir.aserv.app.bean;
 import com.absir.aserv.crud.ICrudSubmit;
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
+import com.absir.aserv.system.bean.JUser;
+import com.absir.aserv.system.bean.JUserRole;
 import com.absir.aserv.system.bean.base.JbBean;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
@@ -146,6 +148,21 @@ public class JShowForm extends JbBean implements ICrudSubmit<JShowForm.DemoOpiti
     @JaLang("扩展复杂键值字典")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     public Map<Element, Element> metaMap4;
+
+    @JaLang("复杂键值字典KeyName")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @JaClasses(key = JUser.class)
+    public Map<Long, Long> metaMap5;
+
+    @JaLang("复杂键值字典ValueName")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @JaClasses(value = JUserRole.class)
+    public Map<Long, Long> metaMap6;
+
+    @JaLang("复杂键值字典AllName")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @JaClasses(key = JUser.class, value = JUserRole.class)
+    public Map<Long, Long> metaMap7;
 
     @JaLang("Enum选择")
     @NotEmpty

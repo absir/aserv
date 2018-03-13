@@ -19,7 +19,6 @@ import com.absir.aserv.support.developer.JCrud;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaEmbedd;
-import com.absir.aserv.system.bean.value.JaName;
 import com.absir.aserv.system.bean.value.JeEditable;
 import com.absir.aserv.system.crud.BeanCrudFactory;
 import com.absir.aserv.system.helper.HelperLang;
@@ -35,7 +34,9 @@ import com.absir.core.util.UtilAccessor.Accessor;
 import com.absir.core.util.UtilAnnotation;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.hibernate.boost.EntityAssoc.EntityAssocEntity;
-import com.absir.orm.value.*;
+import com.absir.orm.value.JiAssoc;
+import com.absir.orm.value.JiRelation;
+import com.absir.orm.value.JoEntity;
 import com.absir.property.Property;
 import com.absir.property.PropertyData;
 import com.absir.validator.Validator;
@@ -232,78 +233,30 @@ public class EntityField extends DBField {
             }
         }
 
+        String valueName = editorObject.getValueName();
+        if (KernelString.isEmpty(valueName)) {
+            valueName = SessionFactoryUtils.getEntityNameNull(editorObject.getValueClass());
+        }
+
         // set JaName JaNames JaClasses
-        JaName jaName = property.getAccessor().getAnnotation(JaName.class, true);
-        if (jaName != null) {
-            if (!KernelString.isEmpty(jaName.value())) {
-                entityName = jaName.value();
-            }
-
-        } else {
-            JaNames jaNames = property.getAccessor().getAnnotation(JaNames.class, true);
-            if (jaNames != null) {
-                if (!KernelString.isEmpty(jaNames.key())) {
-                    entityName = jaNames.key();
-                }
-
-                if (!KernelString.isEmpty(jaNames.value())) {
-                    valueEntityName = jaNames.value();
-                }
-            }
-        }
-
-        Class<?> entityClass = null;
-        Class<?> valueEntityClass = null;
-        JaClasses jaClasses = property.getAccessor().getAnnotation(JaClasses.class, true);
-        if (jaClasses != null) {
-            if (jaClasses.key() != void.class) {
-                entityClass = jaClasses.key();
-                if (entityName == null) {
-                    entityName = SessionFactoryUtils.getEntityNameNull(entityClass);
-                }
-            }
-
-            if (jaClasses.value() != void.class) {
-                valueEntityClass = jaClasses.value();
-                if (valueEntityName == null) {
-                    valueEntityName = SessionFactoryUtils.getEntityNameNull(valueEntityClass);
-                }
-            }
-        }
-
-        if (mapped) {
-            if (crudField.getKeyJoEntity() == null && !KernelString.isEmpty(entityName)) {
-                crudField.setKeyJoEntity(new JoEntity(entityName, null));
-            }
-
-            if (crudField.getJoEntity() == null && !KernelString.isEmpty(valueEntityName)) {
-                crudField.setJoEntity(new JoEntity(valueEntityName, null));
-            }
-        }
-
-        // set editorName
-        String editorName = editorObject.getValueName();
-        if (KernelString.isEmpty(editorName)) {
-            editorName = editorObject.getValueClass() == null ? null : SessionFactoryUtils.getEntityNameNull(editorObject.getValueClass());
-        }
-
         if (Map.class.isAssignableFrom(property.getType())) {
-            if (!KernelString.isEmpty(editorName)) {
-                valueEntityName = editorName;
+            String keyName = editorObject.getKeyName();
+            if (KernelString.isEmpty(keyName)) {
+                keyName = SessionFactoryUtils.getEntityNameNull(editorObject.getKeyClass());
             }
 
-            editorName = editorObject.getKeyName();
-            if (KernelString.isEmpty(editorName)) {
-                editorName = editorObject.getKeyClass() == null ? null : SessionFactoryUtils.getEntityNameNull(editorObject.getKeyClass());
+            if (!KernelString.isEmpty(keyName)) {
+                entityName = keyName;
             }
 
-            if (editorName != null) {
-                entityName = editorName;
+            if (!KernelString.isEmpty(valueName)) {
+                valueEntityName = valueName;
             }
 
         } else {
-            valueEntityName = KernelString.isEmpty(editorName) ? entityName : editorName;
-            entityName = valueEntityName;
+            if (!KernelString.isEmpty(valueName)) {
+                entityName = valueEntityName;
+            }
         }
 
         if (crudField.getJoEntity() == null || fieldType != componentClasses[0]) {
@@ -322,7 +275,7 @@ public class EntityField extends DBField {
                 }
 
                 if (crudField.getKeyJoEntity() == null) {
-                    crudField.setKeyJoEntity(new JoEntity(entityName, entityClass));
+                    crudField.setKeyJoEntity(new JoEntity(entityName, null));
                 }
             }
 
@@ -333,7 +286,7 @@ public class EntityField extends DBField {
                 }
 
                 if (crudField.getJoEntity() == null) {
-                    crudField.setJoEntity(new JoEntity(valueEntityName, valueEntityClass));
+                    crudField.setJoEntity(new JoEntity(valueEntityName, null));
                 }
             }
 
@@ -345,7 +298,7 @@ public class EntityField extends DBField {
                 }
 
                 if (crudField.getJoEntity() == null) {
-                    crudField.setJoEntity(new JoEntity(entityName, entityClass));
+                    crudField.setJoEntity(new JoEntity(entityName, null));
                 }
             }
         }

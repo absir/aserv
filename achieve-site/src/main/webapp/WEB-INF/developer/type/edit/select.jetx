@@ -2,37 +2,39 @@
 import = "org.jsoup.nodes.*"
 )
 
-#set(joEntity = archetype_key ? field.getCrudField().getKeyJoEntity() : field.getCrudField().getJoEntity())
-#include('../suggest.jetx', {
-joEntity : joEntity,
-entity : 'suggest'
-}, 'suggests')
+#set(joEntity = archetype_keyJoEntity ? field.getCrudField().getKeyJoEntity() : field.getCrudField().getJoEntity())
+#if(joEntity != null)
 
-#set(ajax = field.metas.ajax != null)
-#set(linkage = field.metas.linkage != null)
+    #include('../suggest.jetx', {
+    joEntity : joEntity,
+    entity : 'suggest'
+    }, 'suggests')
+
+    #set(ajax = field.metas.ajax != null)
+    #set(linkage = field.metas.linkage != null)
 
 #tag layout_block("shtml")
-#if(ajax || linkage)
-    #if(!Pag::suggest(joEntity.getEntityName()))
-    \${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
+    #if(ajax || linkage)
+        #if(!Pag::suggest(joEntity.getEntityName()))
+        \${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
+        #end
     #end
-#end
 \#set(selected = ${iselect ? ('Pag::value(' + inputval + ')') : ('EntityStatics::getPrimary(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
-#if(field.isNullable())
-<option value="">${Pag::getLang('未选择')}</option>
-#end
+    #if(field.isNullable())
+    <option value="">${Pag::getLang('未选择')}</option>
+    #end
 \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get("suggest")}', INPUT))
 \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
-#if(ajax)
-\#if(selected==value)
-<option value="\${value}" selected>
+    #if(ajax)
+    \#if(selected==value)
+    <option value="\${value}" selected>
+        ${suggests}
+    </option>
+    \#end
+    #else
+    <option value="\${value}" \${selected==value ? 'selected' : ''}>
+    #end
     ${suggests}
-</option>
-\#end
-#else
-<option value="\${value}" \${selected==value ? 'selected' : ''}>
-#end
-${suggests}
 </option>
 \#end
 
@@ -63,5 +65,4 @@ ${input.attr('ab_toggle', 'ajaxselect')}
 
 ${input.appendChild(ScriptNode::node(shtml)).voidValue()}
 
-
-
+#end

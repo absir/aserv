@@ -131,7 +131,6 @@ public abstract class MenuContextUtils {
         if (entityNames != null && (maEntity != null || BeanConfigImpl.findTypeAnnotation(entityClass, JaEntity.class))) {
             if (entityCaption == null) {
                 entityCaption = HelperLang.getTypeCaption(entityClass);
-                entityCaption = KernelString.isEmpty(maEntity.name()) ? entityCaption : LangBundleImpl.ME.getunLang(maEntity.name(), MenuBeanRoot.TAG);
             }
 
             entityNames.add(entityName);

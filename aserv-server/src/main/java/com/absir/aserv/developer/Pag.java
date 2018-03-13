@@ -90,6 +90,10 @@ public class Pag {
         return BeanFactoryUtils.getEnvironment().compareTo(Environment.DEBUG) <= 0;
     }
 
+    public static void println(Object value) {
+        System.out.println(value);
+    }
+
     public static Input getInput() {
         OnPut onPut = OnPut.get();
         return onPut == null ? null : onPut.getInput();

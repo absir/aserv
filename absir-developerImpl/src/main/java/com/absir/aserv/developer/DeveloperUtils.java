@@ -335,10 +335,12 @@ public class DeveloperUtils {
             }
 
             RenderUtils.includeExist(relativePath + option + "/base" + suffix, renders);
-            for (String type : types) {
-                if (RenderUtils.includeExist(relativePath + option + "/" + type + suffix, renders)) {
-                    request.setAttribute(relativePath + option, type);
-                    break;
+            if (types != null) {
+                for (String type : types) {
+                    if (RenderUtils.includeExist(relativePath + option + "/" + type + suffix, renders)) {
+                        request.setAttribute(relativePath + option, type);
+                        break;
+                    }
                 }
             }
 

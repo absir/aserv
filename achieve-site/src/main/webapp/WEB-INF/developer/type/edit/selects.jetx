@@ -2,34 +2,36 @@
 import = "org.jsoup.nodes.*"
 )
 
-#set(joEntity = archetype_key ? field.getCrudField().getKeyJoEntity() : field.getCrudField().getJoEntity())
-#include('../suggest.jetx', {
-joEntity : joEntity,
-entity : 'suggest'
-}, 'suggests')
+#set(joEntity = archetype_keyJoEntity ? field.getCrudField().getKeyJoEntity() : field.getCrudField().getJoEntity())
+#if(joEntity != null)
 
-#set(ajax = field.metas.ajax != null)
+    #include('../suggest.jetx', {
+    joEntity : joEntity,
+    entity : 'suggest'
+    }, 'suggests')
+
+    #set(ajax = field.metas.ajax != null)
 
 #tag layout_block("shtml")
-#if(ajax)
-    #if(!Pag::suggest(joEntity.getEntityName()))
-    \${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
+    #if(ajax)
+        #if(!Pag::suggest(joEntity.getEntityName()))
+        \${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
+        #end
     #end
-#end
 \#set(selected = ${iselects ? ('Pag::params(' + inputval + ', true)') : ('EntityStatics::getPrimaries(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
 \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get("suggest")}', INPUT))
 \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
-#if(ajax)
-\#if(Pag::isParams(selected, value))
-<option value="\${value}" selected>
-    ${suggests}
-</option>
-\#end
-#else
-<option value="\${value}" \${Pag::isParams(selected, value) ? 'selected' : ''}>
-    ${suggests}
-</option>
-#end
+    #if(ajax)
+    \#if(Pag::isParams(selected, value))
+    <option value="\${value}" selected>
+        ${suggests}
+    </option>
+    \#end
+    #else
+    <option value="\${value}" \${Pag::isParams(selected, value) ? 'selected' : ''}>
+        ${suggests}
+    </option>
+    #end
 \#end
 
 #end
@@ -51,3 +53,5 @@ ${input.attr('size', field.metas.size ?! '3')}
 ${input.removeAttr('value')}
 ${input.removeAttr('type')}
 ${input.appendChild(ScriptNode::node(shtml)).voidValue()}
+
+#end
