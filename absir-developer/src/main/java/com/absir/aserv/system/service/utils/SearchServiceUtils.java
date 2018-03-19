@@ -160,8 +160,11 @@ public abstract class SearchServiceUtils {
                 return;
             }
 
-            if (metas.length == 2 && SessionFactoryUtils.getEntityFieldMetas((String) metas[1], null) == null) {
-                return;
+            if (metas.length == 2) {
+                fieldMetas = SessionFactoryUtils.getEntityFieldMetas((String) metas[1], (Class<?>) metas[0]);
+                if (fieldMetas == null) {
+                    return;
+                }
             }
 
             if (i == last) {
@@ -171,7 +174,7 @@ public abstract class SearchServiceUtils {
                 }
 
                 metasCondition.add(expression);
-                metasCondition.add(propertyName);
+                metasCondition.add(propertyExpression);
                 metasCondition.add(metas);
                 metasCondition.add(propertyValue);
                 break;

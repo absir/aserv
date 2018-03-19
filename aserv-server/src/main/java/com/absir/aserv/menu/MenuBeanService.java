@@ -149,6 +149,7 @@ public class MenuBeanService implements Comparator<MenuBeanRoot> {
                     permission.setUpdatable(JeVote.ALLOW);
                     permission.setInsertable(JeVote.ALLOW);
                     permission.setDeletable(JeVote.ALLOW);
+                    permission.setSuggestable(JeVote.ALLOW);
                     permission.setAllows(new String[]{"*"});
                     permissions = new HashMap<Long, JPermission>();
                     permissions.put(1L, permission);

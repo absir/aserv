@@ -396,4 +396,8 @@ ${ScriptNode::html(element) + "\r\n"}
 #end
 ##-->
 #end
+
+##编辑全部字段结束
+${DeveloperUtils::includeExistName("edit", entityModel.getJoEntity().getEntityName() + '_', request)}
+
 ${Scenario::pop(request).voidValue()}

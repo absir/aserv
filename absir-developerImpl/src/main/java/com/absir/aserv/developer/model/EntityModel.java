@@ -23,6 +23,7 @@ import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelList;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAnnotation;
+import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.value.JoEntity;
 
 import java.lang.reflect.TypeVariable;
@@ -31,6 +32,7 @@ import java.util.*;
 public class EntityModel implements IModel {
 
     protected static final TypeVariable<?> TYPE_VARIABLE = ICrudSubmit.class.getTypeParameters()[0];
+
     private static final Map<String, Set<String>> REFERENCED_MAP = new HashMap<String, Set<String>>();
 
     static {
@@ -228,6 +230,40 @@ public class EntityModel implements IModel {
         addGroupField(group, field, true);
     }
 
+    protected boolean isCloudSearchField(IField field) {
+        Map<String, Object[]> fieldMetas = SessionFactoryUtils.getEntityFieldMetas(joEntity.getEntityName(), joEntity.getEntityClass());
+        if (fieldMetas == null) {
+            return false;
+        }
+
+        String[] propertyNames = field.getName().split("\\.");
+        int last = propertyNames.length - 1;
+        int i = 0;
+        while (true) {
+            // just realize aop locale there
+            String propertyName = propertyNames[i];
+            Object[] metas = fieldMetas.get(propertyName);
+            if (metas == null) {
+                return false;
+            }
+
+            if (i++ >= last) {
+                return true;
+            }
+
+            if (metas.length == 2) {
+                fieldMetas = SessionFactoryUtils.getEntityFieldMetas((String) metas[1], (Class<?>) metas[0]);
+                if (fieldMetas == null) {
+                    return false;
+                }
+
+                continue;
+            }
+
+            return false;
+        }
+    }
+
     protected void addGroupField(String group, IField field, boolean reference) {
         if (field != null) {
             if (field.getListColType() == 0 && group.equals(JaEdit.GROUP_SUGGEST)) {
@@ -249,6 +285,12 @@ public class EntityModel implements IModel {
             Set<String> set = REFERENCED_MAP.get(group);
             if (set != null) {
                 for (String r : set) {
+                    if (field != null) {
+                        if (r == JaEdit.GROUP_SEARCH && !isCloudSearchField(field)) {
+                            continue;
+                        }
+                    }
+
                     addGroupField(r, field, false);
                 }
             }

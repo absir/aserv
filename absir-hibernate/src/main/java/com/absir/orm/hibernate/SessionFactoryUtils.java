@@ -28,10 +28,7 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.metadata.ClassMetadata;
 
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -488,6 +485,11 @@ public abstract class SessionFactoryUtils {
                                             ms = new Object[2];
                                             ms[0] = type;
                                             ms[1] = referencedEntityName;
+
+                                        } else if (template.getAnnotation(Embedded.class) != null || type.getAnnotation(Embeddable.class) != null) {
+                                            ms = new Object[2];
+                                            ms[0] = type;
+                                            //ms[1] = type.getSimpleName();
                                         }
                                     }
                                 }
