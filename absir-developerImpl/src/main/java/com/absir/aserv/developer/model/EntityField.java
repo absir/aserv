@@ -259,7 +259,7 @@ public class EntityField extends DBField {
 
         } else {
             if (!KernelString.isEmpty(valueName)) {
-                entityName = valueEntityName;
+                entityName = valueName;
             }
         }
 
