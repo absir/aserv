@@ -26,7 +26,7 @@ import javax.persistence.Id;
 @Entity
 public class JMenuPermission extends JbBase {
 
-    @JaLang(value = "标识", tag = "identifie")
+    @JaLang(value = "标识", tag = "identifier")
     @Id
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST})
     private String id;

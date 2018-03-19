@@ -26,7 +26,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public class JMenuCite extends JbBase {
 
-    @JaLang(value = "标识", tag = "identifie")
+    @JaLang(value = "标识", tag = "identifier")
     @Id
     @NotEmpty
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_LIST})
