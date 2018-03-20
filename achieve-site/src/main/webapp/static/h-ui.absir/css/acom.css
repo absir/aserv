@@ -6,10 +6,14 @@ html{overflow:-moz-scrollbars-vertical}
 .ab_ah{height: auto}
 .ab_m0{margin: 0}
 .ab_p0{padding: 0}
+td.ab_p0{padding: 0 8px}
 .ab__mt5{margin-bottom: -5px}
 .ab_normal{font-size: 14px; font-weight: normal; font-style: normal}
 .ab_large{font-size: 108%}
+.ab_td_icon{font-size: 18px; cursor: pointer}
 .ab_icon{font-family: "FontAwesome" !important}
+.ab_icon_success{color: #468847}
+.ab_icon_error{color: #b94a48}
 .ab_check{zoom: 1.3; margin-top: 4px !important}
 td .ab_check{zoom: 1}
 .ab_sel_select, tr.ab_sel_select td{background:#f5fafe !important}

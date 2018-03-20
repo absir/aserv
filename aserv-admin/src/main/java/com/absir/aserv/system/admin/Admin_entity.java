@@ -32,6 +32,7 @@ import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.util.UtilAccessor;
 import com.absir.orm.value.JoEntity;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
@@ -268,6 +269,12 @@ public class Admin_entity extends AdminServer {
 
         String submitOption = input.getParam("!submitOption");
         if (!KernelString.isEmpty(submitOption)) {
+            if (filter != null && !filter.isMatch('@' + submitOption)) {
+                JLog.log("admin", "save/" + (id == null ? entityName : (entityName + "/" + id)), input.getAddress(),
+                        user == null ? null : user.getUsername(), false);
+                return "admin/entity/save.denied";
+            }
+
             if (entity instanceof ICrudSubmit) {
                 ICrudSubmit submit = (ICrudSubmit<?>) entity;
                 Enum<?> option = (Enum<?>) binderData.bind(submitOption, null, KernelClass.type(entity.getClass(), ICrudSubmit.TYPE_VARIABLE));
@@ -297,6 +304,20 @@ public class Admin_entity extends AdminServer {
         JLog.log("admin", "save/" + id == null ? entityName : (entityName + "/" + id), input.getAddress(), user == null ? null
                 : user.getUsername(), true);
         return "admin/entity/save";
+    }
+
+    @Body
+    public Object saveAjax(String entityName, Object id, Input input) throws IOException {
+        List<String> binderPaths = new ArrayList<String>();
+        input.getBinderData().setBinderPaths(binderPaths);
+        save(entityName, id, input);
+        Object entity = input.getModel().get("entity");
+        Map<String, Object> data = new HashMap<String, Object>();
+        for (String binderPath : binderPaths) {
+            data.put(binderPath, UtilAccessor.get(entity, binderPath));
+        }
+
+        return data;
     }
 
     /**

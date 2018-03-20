@@ -1,0 +1,13 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+#tag layout_block("node")
+<div class="divider"></div>
+<div id="ab_tabDiv" class="HuiTab mt-20">
+    <div class="tabBar cl mb-20">
+    </div>
+</div>
+#end
+
+#set(nodes = ScriptNode::append(element, node))

@@ -183,8 +183,8 @@ function ab_isHasFrame() {
 function ab_ajax(url, callback, complete, dt) {
     var opts = url.constructor == Object ? url : {"url": url};
     callback = callback || function (data, dt) {
-            return ab_ajaxCallback(data, undefined, undefined, undefined, dt);
-        }
+        return ab_ajaxCallback(data, undefined, undefined, undefined, dt);
+    }
     opts.success = complete ? function (data) {
         if (dt) {
             data = callback(data, dt);
@@ -395,7 +395,7 @@ function ab_ajaxCallbackBefore(json, $form, $tForm, callback) {
 function ab_ajaxCallbackData(data, dt) {
     if (data) {
         var icon = data.icon;
-        if (dt && (!icon || icon === 1)) {
+        if (icon === -1 || (dt && (icon === undefined || icon === 1))) {
             return data;
         }
 

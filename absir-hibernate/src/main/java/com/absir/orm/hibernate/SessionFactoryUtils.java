@@ -479,7 +479,7 @@ public abstract class SessionFactoryUtils {
                                         }
 
                                     } else {
-                                        String referencedEntityName = getJpaEntityName(
+                                        String referencedEntityName = jpaEntityName == null ? null : getJpaEntityName(
                                                 getReferencedEntityName(jpaEntityName, template));
                                         if (referencedEntityName != null) {
                                             ms = new Object[2];

@@ -5,7 +5,12 @@ import = "org.jsoup.nodes.*"
 ${input.tagName('textarea')}
 ${input.removeClass('input-text')}
 ${input.addClass('textarea')}
-${ScriptNode::append(input, input.attr('value')).voidValue()}
+#if(field.getMetas().get('params'))
+    ${ScriptNode::append(input, "${Pag::paramsValue(" + inputval + ")}").voidValue()}
+#else
+    ${ScriptNode::append(input, input.attr('value')).voidValue()}
+#end
+
 ${input.removeAttr('value')}
 
 #set(validators = field.getMetas().get("validators"))
@@ -13,6 +18,7 @@ ${input.removeAttr('value')}
     #set(maxlength = validators.get('maxlength'))
     #if(maxlength)
         ${input.attr('onKeyUp', 'textarealength(this,' + maxlength + ')')}
-        ${input.after('<p class="textarea-numberbar"><em class="textarea-length">0</em>/' + maxlength + '</p>').voidValue()}
+        ${input.after(
+            '<p class="textarea-numberbar"><em class="textarea-length">0</em>/' + maxlength + '</p>').voidValue()}
     #end
 #end

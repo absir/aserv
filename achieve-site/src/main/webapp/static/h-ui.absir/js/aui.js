@@ -820,5 +820,41 @@ $(function () {
             }
         }
 
+        abToggles['ajaxOpen'] = function ($this) {
+            var url = $this.attr('url');
+            var name = $this.attr('name');
+            if (url && name) {
+                $this.bind('click', function () {
+                    ab_ajax(url + '?' + name + '=' + ($this.hasClass('ab_icon_success') ? 0 : 1), null, function (data) {
+                        if (data[name]) {
+                            $this.addClass('ab_icon_success');
+                            $this.removeClass('ab_icon_error');
+                            $this.html('&#xe6e1;');
+
+                        } else {
+                            $this.addClass('ab_icon_error');
+                            $this.removeClass('ab_icon_success');
+                            $this.html('&#xe6dd;');
+                        }
+                    }, 1);
+                    return false;
+                });
+            }
+        }
+
+        abToggles['ajaxReview'] = function ($this) {
+            var url = $this.attr('url');
+            var name = $this.attr('name');
+            if (url && name) {
+                $this.bind('click', function () {
+                    ab_ajax(url + '?' + name + '=1', null, function (data) {
+                        if (data[name]) {
+                            $this.parent().html('');
+                        }
+                    }, 1);
+                    return false;
+                });
+            }
+        }
     }
 );

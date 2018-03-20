@@ -44,6 +44,8 @@ public class BinderData extends DynaBinder {
 
     protected BinderResult binderResult = new BinderResult();
 
+    protected List<String> binderPaths;
+
     public ILangMessage getLangMessage() {
         return langMessage;
     }
@@ -63,6 +65,14 @@ public class BinderData extends DynaBinder {
 
     public void setBinderResult(BinderResult binderResult) {
         this.binderResult = binderResult;
+    }
+
+    public List<String> getBinderPaths() {
+        return binderPaths;
+    }
+
+    public void setBinderPaths(List<String> binderPaths) {
+        this.binderPaths = binderPaths;
     }
 
     @Override
@@ -183,6 +193,7 @@ public class BinderData extends DynaBinder {
                                             ((IBinder) toObject).bind(name, value, propertyData, this);
                                         }
                                     }
+
                                 } else if (binderResult.getValidateType() == EValidateType.GROUP) {
                                     continue;
                                 }
@@ -263,6 +274,10 @@ public class BinderData extends DynaBinder {
     }
 
     protected void bindValue(Object value, PropertyData propertyData, Property property, Object toObject) {
+        if (binderPaths != null) {
+            binderPaths.add(binderResult.getPropertyPath());
+        }
+        
         value = binderSupply.bindValue(propertyData, value, null, this, toObject);
         try {
             property.getAccessor().set(toObject, value);

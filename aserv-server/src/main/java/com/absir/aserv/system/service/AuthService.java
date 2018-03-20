@@ -20,14 +20,11 @@ import com.absir.aserv.system.helper.HelperArray;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
+import com.absir.core.kernel.KernelString;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.orm.value.JoEntity;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 @Bean
 public class AuthService {
@@ -237,110 +234,84 @@ public class AuthService {
             throw new ServerException(ServerStatus.ON_DENIED);
         }
 
-        String[] fields = CrudUtils.getGroupFields(joEntity, "option");
-        Map<String, JeVote> fieldVotes = null;
-        if (fields == null || fields.length == 0) {
-            // 无过滤字段
-            if (!permission(joEntity.getEntityName(), user, votePermission)) {
-                throw new ServerException(ServerStatus.ON_DENIED);
-            }
+        JMaMenu maMenu = BeanDao.get(BeanDao.getSession(), JMaMenu.class, joEntity.getEntityName());
+        if (maMenu == null || maMenu.getPermissions() == null) {
+            throw new ServerException(ServerStatus.ON_DENIED);
+        }
+
+        PropertyFilter filter = new PropertyFilter();
+        if (user == null) {
+            // 匿名用户
+            permissionFilter(maMenu, -1L, filter);
 
         } else {
-            JMaMenu maMenu = BeanDao.get(BeanDao.getSession(), JMaMenu.class, joEntity.getEntityName());
-            if (maMenu == null || maMenu.getPermissions() == null) {
-                throw new ServerException(ServerStatus.ON_DENIED);
-            }
-
-            // 字段投票器
-            fieldVotes = new HashMap<String, JeVote>();
-            for (String field : fields) {
-                fieldVotes.put(field, null);
-            }
-
-            // 匿名用户
-            if (user == null) {
-                permissionFilter(maMenu, -1L, fieldVotes);
-                return permissionFilter(fieldVotes);
-            }
-
             // 开发者用户
             if (user.isDeveloper()) {
                 return null;
             }
 
             // 所有用户
-            permissionFilter(maMenu, 0L, fieldVotes);
+            permissionFilter(maMenu, 0L, filter);
 
             // 用户角色
             for (JiUserRole userRole : user.userRoles()) {
-                permissionFilter(maMenu, userRole.getId(), fieldVotes);
+                permissionFilter(maMenu, userRole.getId(), filter);
             }
         }
 
-        // 锁定字段
-        String[] lockeds = CrudUtils.getGroupFields(joEntity, "locked");
-        if (lockeds == null || lockeds.length == 0) {
-            if (fieldVotes == null) {
-                return null;
-            }
-
-        } else {
-            if (fieldVotes == null) {
-                fieldVotes = new HashMap<String, JeVote>();
-            }
-
-            for (String locked : lockeds) {
-                fieldVotes.put(locked, null);
+        if (!filter.containExclude("*") && !filter.containInclude("*")) {
+            // 锁定字段
+            String[] lockeds = CrudUtils.getGroupFields(joEntity, "locked");
+            if (lockeds != null && lockeds.length > 0) {
+                for (String field : lockeds) {
+                    filter.exclude(field);
+                }
             }
         }
 
-        return permissionFilter(fieldVotes);
+        return filter;
     }
 
-    private void permissionFilter(JMaMenu maMenu, Long roleId, Map<String, JeVote> fieldVotes) {
+    protected void permissionFilter(JMaMenu maMenu, Long roleId, PropertyFilter filter) {
+        if (filter.containExclude("*")) {
+            return;
+        }
+
         JPermission permission = maMenu.getPermissions().get(roleId);
         if (permission != null) {
             if (permission.getForbiddens() != null) {
                 for (String field : permission.getForbiddens()) {
-                    if ("*".equals(field)) {
-                        for (Entry<String, JeVote> entry : fieldVotes.entrySet()) {
-                            entry.setValue(JeVote.FORBID);
+                    if (!KernelString.isEmpty(field)) {
+                        if ("*".equals(field)) {
+                            filter.clearExcludes();
+                            filter.clearIncludes();
+                            filter.exclude("*");
+                            return;
                         }
 
-                    } else {
-                        fieldVotes.put(field, JeVote.FORBID);
+                        filter.exclude(field);
                     }
                 }
+            }
+
+            if (filter.containInclude("*")) {
+                return;
             }
 
             if (permission.getAllows() != null) {
                 for (String field : permission.getAllows()) {
-                    if ("*".equals(field)) {
-                        for (Entry<String, JeVote> entry : fieldVotes.entrySet()) {
-                            if (entry.getValue() == null) {
-                                entry.setValue(JeVote.ALLOW);
-                            }
+                    if (!KernelString.isEmpty(field)) {
+                        if ("*".equals(field)) {
+                            filter.clearIncludes();
+                            filter.include("*");
+                            break;
                         }
 
-                    } else {
-                        if (fieldVotes.get(field) == null) {
-                            fieldVotes.put(field, JeVote.ALLOW);
-                        }
+                        filter.include(field);
                     }
                 }
             }
         }
     }
 
-    private PropertyFilter permissionFilter(Map<String, JeVote> fieldVotes) {
-        PropertyFilter propertyFilter = new PropertyFilter();
-        for (Entry<String, JeVote> entry : fieldVotes.entrySet()) {
-            JeVote jeVote = entry.getValue();
-            if (jeVote == null || jeVote == JeVote.FORBID) {
-                propertyFilter.exclude(entry.getKey());
-            }
-        }
-
-        return propertyFilter;
-    }
 }

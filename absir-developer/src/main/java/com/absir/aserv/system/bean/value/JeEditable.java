@@ -9,6 +9,11 @@ package com.absir.aserv.system.bean.value;
 
 public enum JeEditable {
 
+    /*
+     * 默认的(继承)
+     */
+    DEFAULT,
+
     /**
      * 可编辑
      */
@@ -23,11 +28,6 @@ public enum JeEditable {
      * 锁定的(不安全)
      */
     LOCKED,
-
-    /**
-     * 可配置的
-     */
-    OPTIONAL,
 
     /**
      * 锁定显示(安全)

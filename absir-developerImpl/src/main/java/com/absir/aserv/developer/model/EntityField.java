@@ -367,8 +367,19 @@ public class EntityField extends DBField {
         }
 
         // set edit
-        if (editorObject.getEdit() != null) {
+        if (editorObject.getEdit() == null) {
+            if (fromField != null) {
+                editable = fromField.getEditable();
+            }
+
+        } else {
             UtilAnnotation.copy(editorObject.getEdit(), this);
+            if (editable == JeEditable.DEFAULT) {
+                if (fromField != null) {
+                    editable = fromField.getEditable();
+                }
+            }
+
             if (editorObject.getEdit().types().length > 0) {
                 types.addAll(0, KernelArray.toList(editorObject.getEdit().types()));
             }
@@ -386,6 +397,10 @@ public class EntityField extends DBField {
             if (metasObject != null) {
                 KernelObject.copy(metasObject, metas);
             }
+        }
+
+        if (editable == JeEditable.DEFAULT) {
+            editable = JeEditable.ENABLE;
         }
 
         // set metas
@@ -480,9 +495,6 @@ public class EntityField extends DBField {
                     if (entityField.getEditable() == JeEditable.ENABLE) {
                         //entityModel.addGroupField("editable", entityField);
 
-                    } else if (entityField.getEditable() == JeEditable.OPTIONAL) {
-                        entityModel.addGroupField("optional", entityField);
-
                     } else if (entityField.getEditable() == JeEditable.LOCKED) {
 
                     } else if (entityField.getEditable() == JeEditable.LOCKABLE) {
@@ -569,6 +581,9 @@ public class EntityField extends DBField {
     protected boolean typeFieldType(Class<?> fieldType) {
         if (Boolean.class.isAssignableFrom(fieldType) || boolean.class.isAssignableFrom(fieldType)) {
             types.add("option");
+            if (getName().equals("open") && !getMetas().containsKey("option")) {
+                getMetas().put("option", 1);
+            }
 
         } else if (Enum.class.isAssignableFrom(fieldType)) {
             types.add("enum");
@@ -612,7 +627,8 @@ public class EntityField extends DBField {
             }
         }
 
-        if (embedd && editable != JeEditable.LOCKED) {
+        //&& editable != JeEditable.LOCKED
+        if (embedd) {
             addEntityFieldScope(crudField.getName(), crudField.getJoEntity(), fieldScope, entityModel, this);
 
         } else {

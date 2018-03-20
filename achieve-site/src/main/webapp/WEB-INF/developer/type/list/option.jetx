@@ -1,0 +1,33 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+#if(Scenario::requestName(request, 'list') && field.getMetas().get('option'))
+
+    ${node.empty().voidValue()}
+
+#tag layout_block("shtml")
+
+\#if(${field.getName()}_Auth == null)
+\#set(${field.getName()}_Auth = update && (filter == null || filter.isMatchPath('${field.getName()}')))
+\#end
+
+\#if(${field.getName()}_Auth)
+
+\#if(${nodeval})
+<i class="Hui-iconfont ab_td_icon ab_icon_success" ab_toggle="ajaxOpen" name="${field.getName()}"
+   url="\${ADMIN_ROUTE}entity/saveAjax/${entityName}/\${id}">&#xe6e1;</i>
+\#else
+<i class="Hui-iconfont ab_td_icon ab_icon_error" ab_toggle="ajaxOpen" name="${field.getName()}"
+   url="\${ADMIN_ROUTE}entity/saveAjax/${entityName}/\${id}">&#xe6dd;</i>
+\#end
+
+\#else
+\${${nodeval}}
+\#end
+
+#end
+
+${node.appendChild(ScriptNode::node(shtml)).voidValue()}
+
+#end

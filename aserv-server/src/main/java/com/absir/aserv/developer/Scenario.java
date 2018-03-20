@@ -8,10 +8,13 @@
 package com.absir.aserv.developer;
 
 import com.absir.bean.inject.value.Inject;
+import com.absir.core.kernel.KernelObject;
 import com.absir.orm.value.JoEntity;
 
 import javax.servlet.ServletRequest;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 @SuppressWarnings("unchecked")
 @Inject
@@ -81,21 +84,7 @@ public class Scenario {
     }
 
     public static boolean requestName(ServletRequest request, String name) {
-        Object names = request.getAttribute(SCENARIO_NAMES);
-        Set<Object> scenarioNames = null;
-        if (names == null || !(names instanceof Set)) {
-            scenarioNames = new HashSet<Object>();
-            request.setAttribute(SCENARIO_NAMES, scenarioNames);
-
-        } else {
-            if (((Set<Object>) names).contains(name)) {
-                return false;
-            }
-
-            scenarioNames = (Set<Object>) names;
-        }
-
-        scenarioNames.add(name);
-        return true;
+        return KernelObject.equals(get(request), name);
     }
+
 }

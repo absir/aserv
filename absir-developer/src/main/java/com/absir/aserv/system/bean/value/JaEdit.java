@@ -29,7 +29,7 @@ public @interface JaEdit {
     /**
      * 是否支持编辑
      */
-    JeEditable editable() default JeEditable.ENABLE;
+    JeEditable editable() default JeEditable.DEFAULT;
 
     /**
      * 字段所属组列表

@@ -63,10 +63,12 @@
                             \#if(entity.${_capConditionStr})
                         #end
                     #end
+                    \#if(filter == null || filter.isMatch('${options.key}'))
                     <button type="button" class="btn btn-default radius mb-5"
                             onclick="ab_submitOption('${options.key}', this)">
                         ${Pag::getCaptionLang(_capCondition.caption)}
                     </button>
+                    \#end
                     #if(_capConditionIn)
                         \#end
                     #end

@@ -1,0 +1,34 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+#if(Scenario::requestName(request, 'list'))
+
+    ${node.empty().voidValue()}
+
+#tag layout_block("shtml")
+
+\#if(${field.getName()}_Auth == null)
+\#set(${field.getName()}_Auth = update && (filter == null || filter.isMatchPath('${field.getName()}')))
+\#end
+
+\#if(${field.getName()}_Auth)
+
+\#if(${nodeval})
+##\${${nodeval}}
+\#else
+<input class="btn radius btn-warning size-S" type="button" value="${Pag::getLang('确认')}"
+       ab_toggle="ajaxReview" name="${field.getName()}"
+       url="\${ADMIN_ROUTE}entity/saveAjax/${entityName}/\${id}">
+\#end
+
+\#else
+\${${nodeval}}
+\#end
+
+#end
+
+${node.addClass('ab_p0')}
+${node.appendChild(ScriptNode::node(shtml)).voidValue()}
+
+#end

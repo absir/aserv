@@ -10,6 +10,7 @@ package com.absir.aserv.master.bean.base;
 import com.absir.aserv.system.bean.base.JbBean;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
+import com.absir.aserv.system.bean.value.JaModel;
 import com.absir.aserv.system.bean.value.JaName;
 import com.absir.core.kernel.KernelLang;
 import com.absir.validator.value.NotEmpty;
@@ -18,6 +19,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
+@JaModel(desc = true)
 @MappedSuperclass
 public class JbServerTargets extends JbBean {
 

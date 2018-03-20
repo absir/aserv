@@ -636,6 +636,22 @@ public class KernelLang {
         public Map<String, Entry<String, IMatcherType>> getExcludes() {
             return excludes;
         }
+
+        public boolean containInclude(String propertyPath) {
+            return includes != null && includes.containsKey(propertyPath);
+        }
+
+        public boolean containExclude(String propertyPath) {
+            return excludes != null && excludes.containsKey(propertyPath);
+        }
+
+        public void clearIncludes() {
+            includes = null;
+        }
+
+        public void clearExcludes() {
+            excludes = null;
+        }
     }
 
     public static final class NullListSet implements List, Set {
