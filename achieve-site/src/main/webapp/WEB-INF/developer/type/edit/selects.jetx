@@ -54,4 +54,8 @@ ${input.removeAttr('value')}
 ${input.removeAttr('type')}
 ${input.appendChild(ScriptNode::node(shtml)).voidValue()}
 
+#if(Scenario::requestName(request, 'edit'))
+    ${input.before(ScriptNode::node('<input type="hidden" name="'+input.attr('name')+'">')).voidValue()}
+#end
+
 #end

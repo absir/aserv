@@ -34,13 +34,13 @@ public class AuthService {
     /**
      * 菜单权限
      *
-     * @param url
+     * @param ref
      * @param user
      * @return
      */
     @Transaction(readOnly = true)
-    public boolean menuPermission(String url, JiUserBase user) {
-        JMenuPermission menuPermission = BeanDao.get(BeanDao.getSession(), JMenuPermission.class, url);
+    public boolean menuPermission(String ref, JiUserBase user) {
+        JMenuPermission menuPermission = BeanDao.get(BeanDao.getSession(), JMenuPermission.class, ref);
         if (menuPermission == null) {
             return false;
         }
@@ -75,7 +75,7 @@ public class AuthService {
 
             // 用户角色
             for (JiUserRole userRole : user.userRoles()) {
-                if (HelperArray.contains(menuPermission.getAllowIds(), userRole.getId())) {
+                if (HelperArray.contains(menuPermission.getForbidIds(), userRole.getId())) {
                     return false;
                 }
             }

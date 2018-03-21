@@ -23,6 +23,7 @@ import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.system.helper.HelperLang;
 import com.absir.aserv.system.helper.HelperLong;
 import com.absir.aserv.system.server.ServerDiyView;
+import com.absir.aserv.system.service.AuthService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
@@ -59,6 +60,8 @@ public class Pag {
     private static final String NAME_TAG = Pag.class.getName() + "@NAME_TAG";
 
     private static final String NAME_TAGS = Pag.class.getName() + "@NAME_TAGS";
+
+    public static final AuthService AUTH = AuthService.ME;
 
     private static Map<String, Object> forEntity;
 
