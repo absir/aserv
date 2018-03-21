@@ -9,9 +9,7 @@ package com.absir.aserv.system.bean.base;
 
 import com.absir.aserv.system.bean.proxy.JiUser;
 import com.absir.aserv.system.bean.value.JaCrud;
-import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
-import com.absir.aserv.system.bean.value.JeEditable;
 
 import javax.persistence.MappedSuperclass;
 
@@ -19,7 +17,6 @@ import javax.persistence.MappedSuperclass;
 public class JbStragety extends JbAssoc implements JiUser {
 
     @JaLang("关联用户")
-    @JaEdit(editable = JeEditable.OPTIONAL)
     @JaCrud(value = "userIdCrudFactory", cruds = JaCrud.Crud.CREATE)
     private Long userId;
 

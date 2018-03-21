@@ -28,7 +28,7 @@ public abstract class QueryDaoUtils {
 
     public static final String COUNT_ALIAS = "COUNT(" + JdbcAlias.ALIAS + ")";
 
-    public static final boolean QUERY_CACHEABLE = true;
+    public static final boolean QUERY_CACHEABLE = false;
 
     public static String tableAlias(String table) {
         return table + ' ' + JdbcAlias.ALIAS;

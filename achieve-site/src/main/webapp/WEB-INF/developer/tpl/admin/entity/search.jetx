@@ -6,7 +6,7 @@ ${Scenario::set("search", request)}
 #tag script()
 ##<!--table header
 #set(element = document.appendElement("tr"))
-#for(field : entityModel.getGroupFields("search"))
+#for(field : _allFields ? entityModel.getFields() : entityModel.getGroupFields("search"))
 ##显示搜索内容
 #if(entityModel.getPrimary() != field)
     #set(identifier = 'name="' + field.getName() + '"')

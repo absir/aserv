@@ -74,7 +74,7 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
 
     @JaLang("密码")
     @Prop(include = 1)
-    @JaEdit(editable = JeEditable.OPTIONAL, types = "password")
+    @JaEdit(types = "password")
     @JaCrud(cruds = {Crud.CREATE, Crud.UPDATE}, factory = PasswordCrudFactory.class)
     @Column(columnDefinition = "char(32)")
     private String password;
