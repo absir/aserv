@@ -282,6 +282,10 @@ public class Admin_entity extends AdminServer {
                     String tpl = null;
                     try {
                         tpl = submit.submitOption(option, model);
+                        if (model.containsKey(ICrudSubmit.MERGE_CODE)) {
+                            crudSupply.mergeEntity(entityName, entity, crudCreate);
+                            model.put("url", 1);
+                        }
 
                     } catch (Throwable e) {
                         Environment.throwable(e);
@@ -318,6 +322,12 @@ public class Admin_entity extends AdminServer {
         }
 
         return data;
+    }
+
+    @Body
+    public Object saveAjaxSubmit(String entityName, Object id, String name, Input input) throws IOException {
+        save(entityName, id, input);
+        return input.getModel().get(ICrudSubmit.AJAX_CODE);
     }
 
     /**

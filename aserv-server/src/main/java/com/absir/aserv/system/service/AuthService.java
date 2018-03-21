@@ -259,7 +259,7 @@ public class AuthService {
             }
         }
 
-        if (!filter.containExclude("*") && !filter.containInclude("*")) {
+        if (!filter.containExclude("*")) {
             // 锁定字段
             String[] lockeds = CrudUtils.getGroupFields(joEntity, "locked");
             if (lockeds != null && lockeds.length > 0) {

@@ -8,18 +8,28 @@ import = "org.jsoup.nodes.*"
 
 #tag layout_block("shtml")
 
-\#if(${field.getName()}_Auth == null)
-\#set(${field.getName()}_Auth = update && (filter == null || filter.isMatchPath('${field.getName()}')))
+    #set(submit = field.getMetas().get('submit'))
+    #set(submit = KernelString.isEmpty(submit) ? null : submit)
+    #set(authName = submit == null ? field.getName() : submit)
+    #set(authFiterName = submit == null ? authName : ('@' + authName))
+
+\#if(${authName}_Auth == null)
+\#set(${authName}_Auth = update && (filter == null || filter.isMatchPath('${authFiterName}')))
 \#end
 
-\#if(${field.getName()}_Auth)
+\#if(${authName}_Auth)
 
 \#if(${nodeval})
 ##\${${nodeval}}
 \#else
 <input class="btn radius btn-warning size-S" type="button" value="${Pag::getLang('确认')}"
-       ab_toggle="ajaxReview" name="${field.getName()}"
-       url="\${ADMIN_ROUTE}entity/saveAjax/${entityName}/\${id}">
+    #if(submit == null)
+       name="${field.getName()}"
+       url="\${ADMIN_ROUTE}entity/saveAjax/${entityName}/\${id}"
+    #else
+       url="\${ADMIN_ROUTE}entity/saveAjaxSubmit/${entityName}/\${id}/${field.getName()}?!submitOption=${submit}"
+    #end
+       ab_toggle="ajaxReview">
 \#end
 
 \#else

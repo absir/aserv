@@ -845,10 +845,10 @@ $(function () {
         abToggles['ajaxReview'] = function ($this) {
             var url = $this.attr('url');
             var name = $this.attr('name');
-            if (url && name) {
+            if (url) {
                 $this.bind('click', function () {
-                    ab_ajax(url + '?' + name + '=1', null, function (data) {
-                        if (data[name]) {
+                    ab_ajax(name ? (url + '?' + name + '=1') : url, null, function (data) {
+                        if (name ? data[name] : data) {
                             $this.parent().html('');
                         }
                     }, 1);

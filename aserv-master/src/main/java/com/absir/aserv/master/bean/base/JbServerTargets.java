@@ -48,13 +48,21 @@ public class JbServerTargets extends JbBean {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String mark;
 
+    public boolean notRequireSync() {
+        return false;
+    }
+
+    public final boolean noLastServerSelected() {
+        return (lastServerIds == null || lastServerIds.length == 0) && lastAllServerIds != 1 && (lastGroupIds == null || lastGroupIds.length == 0);
+    }
+
     public long[] getServerIds() {
         return serverIds;
     }
 
     public final void setServerIds(long[] serverIds) {
         if (lastServerIds == null) {
-            lastServerIds = this.serverIds;
+            lastServerIds = serverIds == null ? KernelLang.NULL_LONGS : this.serverIds;
         }
 
         this.serverIds = serverIds;

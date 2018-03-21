@@ -74,6 +74,11 @@ public abstract class MasterSyncService implements IEntityMerge<JSlaveServer> {
             public void merge(String entityName, T entity,
                               com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType, Object mergeEvent) {
                 if (!syncShared && mergeType == MergeType.UPDATE && !entity.isAllServerIds()) {
+                    // 不需要同步条件
+                    if (entity.notRequireSync() && (mergeType == MergeType.INSERT || entity.noLastServerSelected())) {
+                        return;
+                    }
+
                     // syncShared分库状态，更新目标，数据同步
                     long[] lastServerIds = entity.getLastServerIds();
                     String[] lastGroupIds = entity.getLastGroupIds();

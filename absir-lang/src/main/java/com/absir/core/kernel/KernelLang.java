@@ -25,6 +25,10 @@ public class KernelLang {
 
     public static final String NULL_STRING = "";
 
+    public static final int[] NULL_INTS = new int[]{};
+
+    public static final long[] NULL_LONGS = new long[]{};
+
     public static final String[] NULL_STRINGS = new String[]{};
 
     public static final Class[] NULL_CLASSES = new Class[]{};
