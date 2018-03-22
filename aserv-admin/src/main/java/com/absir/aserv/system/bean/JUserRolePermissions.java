@@ -2,6 +2,7 @@ package com.absir.aserv.system.bean;
 
 import com.absir.aserv.system.bean.base.JbBeanL;
 import com.absir.aserv.system.bean.value.JaEdit;
+import com.absir.aserv.system.bean.value.JaEmbedd;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JeEditable;
 import org.hibernate.annotations.Type;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-public class JRolePermissions extends JbBeanL {
+public class JUserRolePermissions extends JbBeanL {
 
     @JaLang("角色名称")
     @Transient
@@ -26,18 +27,23 @@ public class JRolePermissions extends JbBeanL {
 
     public static class DPermission {
 
-        @JaLang("编号")
+        public int depth;
+
+        public JMenu menu;
+
         public String id;
 
-        @JaLang("实体权限")
-        JPermission permission;
+        @JaEmbedd
+        public JPermission permission;
 
-        @JaLang("授权")
         public boolean authorize;
+
     }
 
     @JaLang("权限编辑")
-    private transient List<DPermission> permissions;
+    @Transient
+    //@JaEdit(editable = JeEditable.ENABLE)
+    private List<DPermission> permissions;
 
     public String getRolename() {
         return rolename;

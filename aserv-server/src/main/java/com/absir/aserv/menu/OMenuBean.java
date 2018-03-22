@@ -8,11 +8,13 @@
 package com.absir.aserv.menu;
 
 import com.absir.aserv.menu.value.MeUrlType;
+import com.absir.core.kernel.KernelList;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class OMenuBean implements IMenuBean {
+public class OMenuBean implements IMenuBean, KernelList.Orderable {
 
     private IMenuBean menuBean;
 
@@ -22,6 +24,10 @@ public class OMenuBean implements IMenuBean {
 
     public OMenuBean(IMenuBean menuBean) {
         this.menuBean = menuBean;
+    }
+
+    public IMenuBean getMenuBean() {
+        return menuBean;
     }
 
     @Override
@@ -62,6 +68,14 @@ public class OMenuBean implements IMenuBean {
         this.children = children;
     }
 
+    public void addChild(OMenuBean menuBean) {
+        if (children == null) {
+            children = new ArrayList<OMenuBean>();
+        }
+
+        ((List<OMenuBean>) children).add(menuBean);
+    }
+
     public String getBaseUrl() {
         return menuBean.getUrl();
     }
@@ -69,5 +83,17 @@ public class OMenuBean implements IMenuBean {
     @Override
     public String getIcon() {
         return menuBean.getIcon();
+    }
+
+    public static void sortMenus(Collection<? extends OMenuBean> menuBeans) {
+        if (menuBeans != null) {
+            if (menuBeans instanceof List) {
+                KernelList.sortOrderable((List<OMenuBean>) menuBeans);
+            }
+
+            for (OMenuBean menuBean : menuBeans) {
+                sortMenus(menuBean.getChildren());
+            }
+        }
     }
 }

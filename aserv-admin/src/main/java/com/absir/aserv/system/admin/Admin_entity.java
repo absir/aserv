@@ -14,14 +14,14 @@ import com.absir.aserv.developer.Pag;
 import com.absir.aserv.dyna.DynaBinderUtils;
 import com.absir.aserv.jdbc.JdbcPage;
 import com.absir.aserv.system.bean.JLog;
-import com.absir.aserv.system.bean.JRolePermissions;
+import com.absir.aserv.system.bean.JUserRolePermissions;
 import com.absir.aserv.system.bean.base.JbUserRole;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.EntityService;
-import com.absir.aserv.system.service.RolePermissionsService;
+import com.absir.aserv.system.service.UserRolePermissionsService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.aserv.system.service.utils.AccessServiceUtils;
 import com.absir.aserv.system.service.utils.AuthServiceUtils;
@@ -55,6 +55,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.absir.aserv.menu.MenuContextUtils.getAdminRoute;
 
 @SuppressWarnings("unchecked")
 @Base
@@ -306,7 +308,9 @@ public class Admin_entity extends AdminServer {
         if (create) {
             //crudSupply.flush();
             model.put("create", true);
-            model.put("id", crudSupply.getIdentifier(entityName, entity));
+            id = crudSupply.getIdentifier(entityName, entity);
+            model.put("id", id);
+            model.put("url", getAdminRoute() + "entity/edit/" + entityName + "/" + id);
         }
 
         JLog.log("admin", "save/" + id == null ? entityName : (entityName + "/" + id), input.getAddress(), user == null ? null
@@ -515,16 +519,17 @@ public class Admin_entity extends AdminServer {
             throw new ServerException(ServerStatus.ON_DENIED);
         }
 
+        InModel inModel = input.getModel();
         if (input.getMethod() == InMethod.POST) {
             Map<String, Object> propertyMap = ParameterResolverBinder.getPropertyMap(input);
             BinderData binderData = input.getBinderData();
-            JRolePermissions rolePermissions = binderData.bind(propertyMap, null, JRolePermissions.class);
-            RolePermissionsService.ME.saveRolePermissions(rolePermissions);
+            JUserRolePermissions rolePermissions = binderData.bind(propertyMap, null, JUserRolePermissions.class);
+            UserRolePermissionsService.ME.saveUserRolePermissions(rolePermissions);
+            inModel.put("icon", 1);
             return "admin/entity/save";
 
         } else {
-            Object entity = RolePermissionsService.ME.getRolePermissions(userRole);
-            InModel inModel = input.getModel();
+            Object entity = UserRolePermissionsService.ME.getUserRolePermissions(userRole);
             inModel.put("entity", entity);
             return "admin/entity/permissions";
         }

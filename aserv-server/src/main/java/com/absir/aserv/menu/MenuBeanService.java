@@ -14,7 +14,6 @@ import com.absir.aserv.system.bean.JMenu;
 import com.absir.aserv.system.bean.JMenuCite;
 import com.absir.aserv.system.bean.JPermission;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
-import com.absir.aserv.system.bean.value.JeVote;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.service.AuthService;
@@ -144,15 +143,8 @@ public class MenuBeanService implements Comparator<MenuBeanRoot> {
                 maMenu.setId(entityName);
                 maMenu.setCaption(entityNames.get(i + 1));
                 if (permissions == null) {
-                    JPermission permission = new JPermission();
-                    permission.setSelectable(JeVote.ALLOW);
-                    permission.setUpdatable(JeVote.ALLOW);
-                    permission.setInsertable(JeVote.ALLOW);
-                    permission.setDeletable(JeVote.ALLOW);
-                    permission.setSuggestable(JeVote.ALLOW);
-                    permission.setAllows(new String[]{"*"});
                     permissions = new HashMap<Long, JPermission>();
-                    permissions.put(1L, permission);
+                    permissions.put(1L, JPermission.getPermissionDefault());
                 }
 
                 maMenu.setPermissions(permissions);
@@ -213,4 +205,5 @@ public class MenuBeanService implements Comparator<MenuBeanRoot> {
     public int compare(MenuBeanRoot o1, MenuBeanRoot o2) {
         return KernelUtil.compareVersion(o1.getMenuBean().getName(), o2.getMenuBean().getName());
     }
+
 }

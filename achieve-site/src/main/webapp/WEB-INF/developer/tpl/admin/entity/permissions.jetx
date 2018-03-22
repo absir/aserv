@@ -4,15 +4,110 @@
 #set(page_title= Pag::getLang('角色权限'))
 
 <div class="text-c mt-20">
-    <form ab_toggle="reset" class="ab_pageForm ab__mt5" method="get">
+    <form ab_toggle="form" ab_toggle="reset" class="ab_pageForm ab__mt5" method="post">
         <div class="page-container form">
-            ${DeveloperUtils::setEntityModel(null, JRolePermissions::class,
+            <div class="row cl">
+                <div class="ml-10 mr-10 ab__mt5">
+                    <button type="reset" class="btn btn-default radius mb-5">
+                        ${Pag::getLang("重置")}
+                    </button>
+                    <button type="submit" class="btn btn-primary radius mb-5">
+                        <i class="Hui-iconfont">&#xe632;</i>${Pag::getLang("保存")}
+                    </button>
+                </div>
+            </div>
+
+            ${DeveloperUtils::setEntityModel(null, JUserRolePermissions::class,
             request)}
             #include("/WEB-INF/developer/tpl/admin/entity/form.jetx")
 
+            <div class="divider"></div>
+            <div id="ab_tabDiv" class="HuiTab mt-20">
+                <div class="tabBar cl mb-20">
+                    <span class="li_permissions current">${Pag::getLang('权限编辑')}</span>
+                </div>
+                <div class="tab-content">
+                    <div class="tabCon ab_active" style="display: block;">
+                        \#set(entities = entity.permissions) <input name="!subtables" type="hidden"
+                                                                    value="permissions"/>
+                        <table class="table table-bordered table-hover table-striped itemDetail" width="100%"
+                               addButton="添加纪录">
+                            <thead>
+                            <tr>
+                                <th>${Pag::getLang('授权')}</th>
+                                <th>${Pag::getLang('菜单')}</th>
+                                <th>${Pag::getLang('查看')}</th>
+                                <th>${Pag::getLang('编辑')}</th>
+                                <th>${Pag::getLang('创建')}</th>
+                                <th>${Pag::getLang('删除')}</th>
+                                <th>${Pag::getLang('提示')}</th>
+                                <th>${Pag::getLang('允许字段')}</th>
+                                <th>${Pag::getLang('禁用字段')}</th>
+                            </tr>
+                            </thead>
+                            \#for(entity : entities)
+                            \#if(entity)
+                            <tr depth="\${entity.depth}">
+                                \#if(entity.id)
+                                <input type="hidden" name="permissions[\${for.index}].id" value="\${entity.id}">
+                                \#end
+                                <td>
+                                    <input type="checkbox" class="ab_td_input ab_check"
+                                           value="\${entity.authorize}" \${entity.authorize ? 'checked' : ''}
+                                    ab_toggle="check"/>
+                                    <input type="hidden" name="permissions[\${for.index}].authorize"
+                                           value="\${entity.authorize ? 1 : 0}"/>
+                                </td>
+                                <td><label>\${Pag::treeName(entity.depth, entity.menu.name)}</label></td>
+                                \#if(entity.permission)
+                                #for(name : ['selectable','updatable','insertable','deletable','suggestable'])
+                                <td>
+                                    <select name="permissions[\${for.index}].permission.${name}" class="ab_td_input"
+                                            ab_toggle="ajaxselect">
+                                        \#set(selected = Pag::value(entity.permission.${name}))
+                                        <option value="">${Pag::getLang('未选择')}</option>
+                                        <option value="NONE" \${selected=='NONE' ?
+                                        'selected' : ''}>
+                                        ${Pag::getLang('默认')}
+                                        </option>
+                                        <option value="ALLOW" \${selected=='ALLOW' ?
+                                        'selected' : ''}>
+                                        ${Pag::getLang('允许')}
+                                        </option>
+                                        <option value="FORBID" \${selected=='FORBID' ?
+                                        'selected' : ''}>
+                                        ${Pag::getLang('禁止')}
+                                        </option>
+                                    </select>
+                                </td>
+                            #end
+                                <td>
+                                    <input name="permissions[\${for.index}].permission.allows" type="text" class="ab_td_input"
+                                           value="\${Pag::paramsValue(entity.permission.allows)}"/>
+                                </td>
+                                <td>
+                                    <input name="permissions[\${for.index}].permission.forbiddens" type="text" class="ab_td_input"
+                                           value="\${Pag::paramsValue(entity.permission.forbiddens)}"/>
+                                </td>
+
+                                \#else
+                                <td colspan="7">
+                                    \#if(entity.id)
+                                    <label>${Pag::getLang('全部权限')}</label>
+                                    \#end
+                                </td>
+                                \#end
+                            </tr>
+                            \#end
+                            \#end
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </form>
 </div>
-
 #end
 \#end
+
+<script type="text/javascript" src="\${SITE_STATIC}/../lib/jquery/jquery.form.min.js"></script>

@@ -96,4 +96,15 @@ public class JPermission implements Serializable {
     public void setForbiddens(String[] forbiddens) {
         this.forbiddens = forbiddens;
     }
+
+    public static JPermission getPermissionDefault() {
+        JPermission permission = new JPermission();
+        permission.selectable = JeVote.ALLOW;
+        permission.updatable = JeVote.ALLOW;
+        permission.insertable = JeVote.ALLOW;
+        permission.deletable = JeVote.ALLOW;
+        permission.suggestable = JeVote.ALLOW;
+        permission.setAllows(new String[]{"*"});
+        return permission;
+    }
 }

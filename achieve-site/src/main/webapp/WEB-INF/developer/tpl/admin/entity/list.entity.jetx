@@ -117,6 +117,7 @@
     </span>
 </div>
 
+##page-container
 <div class="mt-20">
     <table class="table table-border table-bordered table-hover table-bg table-striped ab_sel_grp ab_page_table"
            ab_toggle="tableForm" pageSize="\${page.pageSize}" pageIndex="\${page.pageIndex}"

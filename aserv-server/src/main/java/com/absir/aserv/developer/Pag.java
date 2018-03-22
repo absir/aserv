@@ -96,6 +96,24 @@ public class Pag {
         }
     }
 
+    public static String treeName(int depth, Object name) {
+        if (depth <= 0) {
+            return String.valueOf(name);
+        }
+
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 1; i < depth; i++) {
+            //stringBuilder.append('─');
+            stringBuilder.append('　');
+        }
+
+        stringBuilder.append('└');
+        stringBuilder.append(name);
+        return stringBuilder.toString();
+    }
+
     public static boolean isDebug() {
         return BeanFactoryUtils.getEnvironment().compareTo(Environment.DEBUG) <= 0;
     }

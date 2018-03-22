@@ -4,8 +4,9 @@ import = "org.jsoup.nodes.*"
 
 #tag layout_block("node")
 \#if(entity.id && Pag::rolePermissions(USER))
-<a type="button" class="btn btn-default radius mb-5" href="\${ADMIN_ROUTE}entity/permissions/\${entity.id}">
-    ${Pag::getLang('权限管理')}
+<a type="button" class="btn btn-default radius mb-5" href="javascript:;"
+   onclick="ab_openHref('\${ADMIN_ROUTE}entity/permissions/\${entity.id}', '${Pag::getLang("权限管理")}')">
+${Pag::getLang('权限管理')}
 </a>
 \#end
 #end
