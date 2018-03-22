@@ -53,6 +53,11 @@ function ab_getUP(name) {
     return r != null ? unescape(r[2]) : null;
 }
 
+function ab_groupDiv($node, div) {
+    var group = $node.attr('groupDiv');
+    return $node.closest(group || div || 'div');
+}
+
 function ab_group($node, toggle) {
     var tog = $node.attr(toggle);
     if (tog) {

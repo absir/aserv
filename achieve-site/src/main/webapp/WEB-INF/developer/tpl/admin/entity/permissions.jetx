@@ -28,8 +28,8 @@
                 </div>
                 <div class="tab-content">
                     <div class="tabCon ab_active" style="display: block;">
-                        \#set(entities = entity.permissions) <input name="!subtables" type="hidden"
-                                                                    value="permissions"/>
+                        \#set(entities = entity.permissions)
+                        <input name="!subtables" type="hidden" value="permissions"/>
                         <table class="table table-bordered table-hover table-striped itemDetail" width="100%"
                                addButton="添加纪录">
                             <thead>
@@ -47,12 +47,12 @@
                             </thead>
                             \#for(entity : entities)
                             \#if(entity)
-                            <tr depth="\${entity.depth}">
+                            <tr>
                                 \#if(entity.id)
                                 <input type="hidden" name="permissions[\${for.index}].id" value="\${entity.id}">
                                 \#end
                                 <td>
-                                    <input type="checkbox" class="ab_td_input ab_check"
+                                    <input ab_toggle="checkDepth" type="checkbox" depth="\${entity.depth}" class="ab_td_input ab_check"
                                            value="\${entity.authorize}" \${entity.authorize ? 'checked' : ''}
                                     ab_toggle="check"/>
                                     <input type="hidden" name="permissions[\${for.index}].authorize"
@@ -82,11 +82,13 @@
                                 </td>
                             #end
                                 <td>
-                                    <input name="permissions[\${for.index}].permission.allows" type="text" class="ab_td_input"
+                                    <input name="permissions[\${for.index}].permission.allows" type="text"
+                                           class="ab_td_input"
                                            value="\${Pag::paramsValue(entity.permission.allows)}"/>
                                 </td>
                                 <td>
-                                    <input name="permissions[\${for.index}].permission.forbiddens" type="text" class="ab_td_input"
+                                    <input name="permissions[\${for.index}].permission.forbiddens" type="text"
+                                           class="ab_td_input"
                                            value="\${Pag::paramsValue(entity.permission.forbiddens)}"/>
                                 </td>
 

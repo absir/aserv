@@ -856,5 +856,34 @@ $(function () {
                 });
             }
         }
+
+        abToggles['checkDepth'] = function ($this) {
+            var depth = $this.attr('depth');
+            if (depth) {
+                var $group = ab_groupDiv($this, 'div,table');
+                if ($group) {
+                    $this.change(function () {
+                        var found = 0;
+                        var checked = $this.prop('checked');
+                        $("[type='checkbox'][depth]", $group).each(function () {
+                            if (found === 0) {
+                                if ($this[0] === this) {
+                                    found = 1;
+                                }
+
+                            } else {
+                                var $self = $(this);
+                                if ($self.attr('depth') > depth) {
+                                    $self.prop('checked', checked);
+
+                                } else {
+                                    return false;
+                                }
+                            }
+                        });
+                    });
+                }
+            }
+        }
     }
 );
