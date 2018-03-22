@@ -34,11 +34,11 @@ public class JPermission implements Serializable {
     private JeVote suggestable;
 
     @JaLang(value = "允许字段", tag = "allowFields")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonArray")
     private String[] allows;
 
     @JaLang(value = "禁用字段", tag = "fobidFields")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonArray")
     private String[] forbiddens;
 
     public JeVote getSelectable() {

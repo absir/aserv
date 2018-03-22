@@ -36,7 +36,7 @@ public class JbSlaveTargets extends JbBean {
     @JaName("JSlave")
     @JaEdit(groups = JaEdit.GROUP_LIST, suggest = true, metas = "{\"suggest\":\"appCode=NONE\"}")
     @Column(length = 10240)
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonArray")
     private String[] slaveIds;
 
     private transient String[] lastSlaveIds;

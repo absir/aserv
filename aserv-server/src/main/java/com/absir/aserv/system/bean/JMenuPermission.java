@@ -38,13 +38,13 @@ public class JMenuPermission extends JbBase {
     @JaLang(value = "授权角色", tag = "allowUserRoles")
     @JaName(value = "JUserRole")
     @JaEdit(groups = JaEdit.GROUP_LIST)
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonArray")
     private long allowIds[];
 
     @JaLang(value = "禁用角色", tag = "forbidUserRoles")
     @JaName(value = "JUserRole")
     @JaEdit(groups = JaEdit.GROUP_LIST)
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonArray")
     private long forbidIds[];
 
     public String getId() {

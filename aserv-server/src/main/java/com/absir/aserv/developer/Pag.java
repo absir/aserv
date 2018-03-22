@@ -18,6 +18,8 @@ import com.absir.aserv.support.developer.IDeveloper;
 import com.absir.aserv.support.developer.IRender;
 import com.absir.aserv.support.developer.RenderUtils;
 import com.absir.aserv.system.asset.Asset_verify;
+import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.aserv.system.bean.value.JeVotePermission;
 import com.absir.aserv.system.configure.JSiteConfigure;
 import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.system.helper.HelperLang;
@@ -62,6 +64,11 @@ public class Pag {
     private static final String NAME_TAGS = Pag.class.getName() + "@NAME_TAGS";
 
     public static final AuthService AUTH = AuthService.ME;
+
+    public static boolean rolePermissions(JiUserBase user) {
+        return AUTH.permissions("JMenuPermission", user, JeVotePermission.INSERTABLE, JeVotePermission.UPDATEABLE, JeVotePermission.DELETEABLE)
+                && AUTH.permissions("JMaMenu", user, JeVotePermission.INSERTABLE, JeVotePermission.UPDATEABLE, JeVotePermission.DELETEABLE);
+    }
 
     private static Map<String, Object> forEntity;
 

@@ -8,6 +8,7 @@
 package com.absir.aserv.menu;
 
 import com.absir.aop.*;
+import com.absir.aserv.init.InitBeanFactory;
 import com.absir.aserv.lang.LangBundleImpl;
 import com.absir.aserv.menu.OMenuFactory.MenuAopInterceptor;
 import com.absir.aserv.menu.value.MaFactory;
@@ -112,7 +113,7 @@ public class OMenuFactory extends AopMethodDefineAbstract<MenuAopInterceptor, St
     @Transaction
     @Started
     protected void initPermissions() {
-        if (permissions != null) {
+        if (permissions != null && InitBeanFactory.ME.isDevelopOrVersionChange()) {
             Session session = BeanDao.getSession();
             for (Entry<String, String> entry : permissions.entrySet()) {
                 String ref = entry.getKey();

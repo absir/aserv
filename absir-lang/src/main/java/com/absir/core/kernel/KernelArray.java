@@ -416,4 +416,105 @@ public abstract class KernelArray {
             Array.set(array, index, value);
         }
     }
+
+    private static Map<Class<?>, Object> clsMapNullArray;
+
+    public static Object nullArray(Class<?> componentClass) {
+        if (clsMapNullArray == null) {
+            synchronized (KernelArray.class) {
+                if (clsMapNullArray == null) {
+                    clsMapNullArray.put(byte.class, KernelLang.NULL_BYTES);
+                    clsMapNullArray.put(int.class, KernelLang.NULL_INTS);
+                    clsMapNullArray.put(long.class, KernelLang.NULL_LONGS);
+                    clsMapNullArray.put(String.class, KernelLang.NULL_STRINGS);
+                    clsMapNullArray.put(Class.class, KernelLang.NULL_CLASSES);
+                }
+            }
+        }
+
+        Object array = clsMapNullArray.get(componentClass);
+        if (array == null) {
+            ArrayAccessor accessor = forComponentType(componentClass);
+            array = accessor.newInstance(0);
+            clsMapNullArray.put(componentClass, array);
+        }
+
+        return array;
+    }
+
+    public static String serializer(String start, Object array) {
+        ArrayAccessor accessor = array == null ? null : forClass(array.getClass());
+        if (accessor == null) {
+            return null;
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+        if (start != null) {
+            stringBuilder.append(start);
+        }
+
+        int length = Array.getLength(array);
+        for (int i = 0; i < length; i++) {
+            if (i > 0) {
+                stringBuilder.append(',');
+            }
+
+            stringBuilder.append(accessor.get(array, i));
+        }
+
+        return stringBuilder.toString();
+    }
+
+    public static Object deserialize(String start, String params, Class<?> componentClass) {
+        if (params == null) {
+            return null;
+        }
+
+        int pos = 0;
+        int length = params.length();
+        if (start != null && start.length() > 0) {
+            if (length == 0) {
+                return null;
+            }
+
+            if (params.startsWith(start)) {
+                pos = start.length();
+                if (pos >= length) {
+                    if (componentClass == int.class) {
+                        return KernelLang.NULL_INTS;
+
+                    } else if (componentClass == long.class) {
+                        return KernelLang.NULL_LONGS;
+
+                    } else if (componentClass == String.class) {
+                        return KernelLang.NULL_STRINGS;
+                    }
+
+                    return nullArray(componentClass);
+                }
+            }
+        }
+
+        List<String> list = new ArrayList<String>();
+        int nPos;
+        while (true) {
+            nPos = params.indexOf(',', pos);
+            if (nPos <= pos) {
+                list.add(params.substring(pos));
+                break;
+            }
+
+            list.add(params.substring(pos, nPos));
+            pos = nPos + 1;
+        }
+
+        ArrayAccessor accessor = forComponentType(componentClass);
+        int size = list.size();
+        Object array = accessor.newInstance(size);
+        for (int i = 0; i < size; i++) {
+            accessor.set(array, i, KernelDyna.to(list.get(i), componentClass));
+        }
+
+        return array;
+    }
 }

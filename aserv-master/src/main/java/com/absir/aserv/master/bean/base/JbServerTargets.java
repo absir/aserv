@@ -27,7 +27,7 @@ public class JbServerTargets extends JbBean {
     @JaName("JSlaveServer")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     @Column(length = 10240)
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonArray")
     private long[] serverIds;
 
     private transient long[] lastServerIds;

@@ -21,7 +21,7 @@ public class JbServerTargets extends JbBeanL {
     @JaLang("目标服务")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     @Column(length = 10240)
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonArray")
     private long[] serverIds;
 
     @JaLang("全部服务")

@@ -101,7 +101,7 @@ public class JPayTrade extends JbBase {
     private boolean sandbox;
 
     @JaLang(value = "更多数据")
-    @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonArray")
     private String[] moreDatas;
 
     public String getId() {

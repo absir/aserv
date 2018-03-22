@@ -3,11 +3,11 @@ import = "org.jsoup.nodes.*"
 )
 
 #tag layout_block("node")
-<div class="divider"></div>
-<div id="ab_tabDiv" class="HuiTab mt-20">
-    <div class="tabBar cl mb-20">
-    </div>
-</div>
+\#if(entity.id && Pag::rolePermissions(USER))
+<a type="button" class="btn btn-default radius mb-5" href="\${ADMIN_ROUTE}entity/permissions/\${entity.id}">
+    ${Pag::getLang('权限管理')}
+</a>
+\#end
 #end
 
-#set(nodes = ScriptNode::append(element, node))
+${request.setAttribute('edit_form_buttons', node)}

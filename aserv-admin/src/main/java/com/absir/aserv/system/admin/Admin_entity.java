@@ -10,14 +10,18 @@ package com.absir.aserv.system.admin;
 import com.absir.aserv.configure.xls.XlsAccessorUtils;
 import com.absir.aserv.configure.xls.XlsUtils;
 import com.absir.aserv.crud.*;
+import com.absir.aserv.developer.Pag;
 import com.absir.aserv.dyna.DynaBinderUtils;
 import com.absir.aserv.jdbc.JdbcPage;
 import com.absir.aserv.system.bean.JLog;
+import com.absir.aserv.system.bean.JRolePermissions;
+import com.absir.aserv.system.bean.base.JbUserRole;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.EntityService;
+import com.absir.aserv.system.service.RolePermissionsService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.aserv.system.service.utils.AccessServiceUtils;
 import com.absir.aserv.system.service.utils.AuthServiceUtils;
@@ -495,6 +499,35 @@ public class Admin_entity extends AdminServer {
     public String mapped(String entityName, String id, String field, Input input) {
         edit(entityName, id, null, input);
         return "admin/entity/mapped/" + entityName + '.' + field;
+    }
+
+    /*
+     * 角色权限（快速设置）
+     */
+    public String permissions(Long roleId, Input input) {
+        JbUserRole userRole = (JbUserRole) BeanService.ME.get("JUserRole", roleId);
+        if (userRole == null) {
+            throw new ServerException(ServerStatus.IN_404);
+        }
+
+        JiUserBase user = SecurityService.ME.getUserBase(input);
+        if (!Pag.rolePermissions(user)) {
+            throw new ServerException(ServerStatus.ON_DENIED);
+        }
+
+        if (input.getMethod() == InMethod.POST) {
+            Map<String, Object> propertyMap = ParameterResolverBinder.getPropertyMap(input);
+            BinderData binderData = input.getBinderData();
+            JRolePermissions rolePermissions = binderData.bind(propertyMap, null, JRolePermissions.class);
+            RolePermissionsService.ME.saveRolePermissions(rolePermissions);
+            return "admin/entity/save";
+
+        } else {
+            Object entity = RolePermissionsService.ME.getRolePermissions(userRole);
+            InModel inModel = input.getModel();
+            inModel.put("entity", entity);
+            return "admin/entity/permissions";
+        }
     }
 
 }
