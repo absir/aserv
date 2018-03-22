@@ -5,14 +5,31 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.lang.reflect.Array;
+
 @RunWith(value = JUnit4.class)
 public class KernelArrayTest {
 
+    boolean just = false;
+
     @Test
     public void test() {
+        testArray(",", new String[]{"", ""});
+        if (just) {
+            return;
+        }
+
         testArray(null, new int[]{2, 3, 4});
         testArray(",", new int[]{2, 3, 4});
         testArray("&^&", new int[]{});
+
+        testArray("", new int[]{});
+
+        testArray("", new String[]{""});
+        testArray("", new String[]{"", ""});
+
+        testArray(",", new String[]{""});
+        testArray(",", new String[]{"", ""});
 
         testArray("&^&", null);
 
@@ -27,8 +44,8 @@ public class KernelArrayTest {
 
     public void testArray(String start, Object array) {
         String params = KernelArray.serializer(start, array);
-        System.out.println(array + " => " + params);
+        System.out.println((array == null ? null : Array.getLength(array)) + " => " + params);
         array = KernelArray.deserialize(start, params, array == null ? int.class : array.getClass().getComponentType());
-        System.out.println(params + " <= " + array);
+        System.out.println(params + " <= " + (array == null ? null : Array.getLength(array)));
     }
 }

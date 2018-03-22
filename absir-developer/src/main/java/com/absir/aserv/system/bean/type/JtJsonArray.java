@@ -30,7 +30,7 @@ import java.util.Properties;
 public class JtJsonArray implements UserType, DynamicParameterizedType, Serializable {
 
     private Class<?> dynamicType;
-
+    
     private boolean strict;
 
     @Override
@@ -86,7 +86,7 @@ public class JtJsonArray implements UserType, DynamicParameterizedType, Serializ
         }
 
         try {
-            return KernelArray.deserialize(",", value, dynamicType.getComponentType());
+            return KernelArray.deserialize(null, value, dynamicType.getComponentType());
 
         } catch (Throwable e) {
             if (strict) {
@@ -106,7 +106,7 @@ public class JtJsonArray implements UserType, DynamicParameterizedType, Serializ
 
         } else {
             try {
-                st.setString(index, KernelArray.serializer(",", value));
+                st.setString(index, KernelArray.serializer(null, value));
 
             } catch (Throwable e) {
                 if (strict) {

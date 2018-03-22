@@ -448,12 +448,16 @@ public abstract class KernelArray {
             return null;
         }
 
+        int length = Array.getLength(array);
+        if (length == 0) {
+            return "";
+        }
+
         StringBuilder stringBuilder = new StringBuilder();
         if (start != null) {
             stringBuilder.append(start);
         }
 
-        int length = Array.getLength(array);
         for (int i = 0; i < length; i++) {
             if (i > 0) {
                 stringBuilder.append(',');
@@ -470,28 +474,25 @@ public abstract class KernelArray {
             return null;
         }
 
-        int pos = 0;
         int length = params.length();
-        if (start != null && start.length() > 0) {
-            if (length == 0) {
-                return null;
+        if (length == 0) {
+            if (componentClass == int.class) {
+                return KernelLang.NULL_INTS;
+
+            } else if (componentClass == long.class) {
+                return KernelLang.NULL_LONGS;
+
+            } else if (componentClass == String.class) {
+                return KernelLang.NULL_STRINGS;
             }
 
+            return nullArray(componentClass);
+        }
+
+        int pos = 0;
+        if (start != null && start.length() > 0) {
             if (params.startsWith(start)) {
                 pos = start.length();
-                if (pos >= length) {
-                    if (componentClass == int.class) {
-                        return KernelLang.NULL_INTS;
-
-                    } else if (componentClass == long.class) {
-                        return KernelLang.NULL_LONGS;
-
-                    } else if (componentClass == String.class) {
-                        return KernelLang.NULL_STRINGS;
-                    }
-
-                    return nullArray(componentClass);
-                }
             }
         }
 
@@ -499,7 +500,7 @@ public abstract class KernelArray {
         int nPos;
         while (true) {
             nPos = params.indexOf(',', pos);
-            if (nPos <= pos) {
+            if (nPos < pos) {
                 list.add(params.substring(pos));
                 break;
             }

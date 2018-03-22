@@ -23,6 +23,13 @@ public class HelperJsonTest {
 
         testArray(names);
 
+        int[] ints = new int[1000];
+        for (int i = 0; i < names.length; i++) {
+            ints[i] = i;
+        }
+
+        testArray(ints);
+
         //testArray(new long[]{1, 2, 3});
     }
 
