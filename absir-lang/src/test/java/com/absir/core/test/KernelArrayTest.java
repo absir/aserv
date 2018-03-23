@@ -47,6 +47,8 @@ public class KernelArrayTest {
 
         testArray("", new int[]{});
 
+        testArray("", new String[]{});
+
         testArray("", new String[]{""});
         testArray("", new String[]{"", ""});
 
@@ -68,7 +70,7 @@ public class KernelArrayTest {
         String params = KernelArray.serializer(start, array);
         System.out.println((array == null ? null : Array.getLength(array)) + " => " + params);
         Object newArray = KernelArray.deserialize(start, params, array == null ? int.class : array.getClass().getComponentType());
-        System.out.println(params + " <= " + (array == null ? null : Array.getLength(array)));
+        System.out.println(params + " <= " + (array == null ? null : Array.getLength(newArray)));
 
         if (!KernelObject.equals(params, KernelArray.serializer(start, newArray))) {
             System.err.println("testArray  fail at " + params);
