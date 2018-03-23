@@ -57,7 +57,7 @@ public class JUpgrade extends JbBean implements ICrudBean {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String descriptor;
 
-    @JaLang("修改时间")
+    @JaLang("创建时间")
     @JaEdit(editable = JeEditable.LOCKED, types = "dateTime", groups = JaEdit.GROUP_LIST)
     @JaCrud(value = "dateCrudFactory", cruds = {JaCrud.Crud.CREATE}, factory = DateCrudFactory.class)
     private long createTime;
