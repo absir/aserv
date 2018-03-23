@@ -1,5 +1,5 @@
 {
-"url": "${url ?! 1}",
+"url": "\${url ?! 1}",
 "message": "\${message ?! ${Pag::getLang("操作成功", false)}}",
 "icon": \${icon ?! 1}
 }
