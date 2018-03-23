@@ -291,7 +291,7 @@ $(function () {
                 if (aPage.form) {
                     var clickHandler = function (e) {
                         var evt = e.data;
-                        console.log(evt);
+                        //console.log(evt);
                         var pageIndex = aPage.pageIndex;
                         if (evt === "previous") {
                             pageIndex--;

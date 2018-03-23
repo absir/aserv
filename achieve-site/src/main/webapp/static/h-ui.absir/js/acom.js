@@ -447,11 +447,39 @@ function ab_ajaxSubmit($form, callback, $tForm) {
         callback(data, $form, $tForm, callback);
     }
 
-    $form.ajaxSubmit({
+    var lid;
+    var opts = {
         //iframe: true,
-        success: _callback,
-        error: _callback
-    });
+        beforeSubmit: function () {
+            lid = layer.load();
+            return true;
+        },
+        success: function (data) {
+            layer.close(lid);
+            _callback(data);
+        },
+        error: function (data) {
+            layer.close(lid);
+            _callback(data);
+        },
+        xhr: function () {
+            var xhr = $.ajaxSettings.xhr();
+            if (xhr.upload) {
+                var layer = $('#layui-layer' + lid);
+                if (layer) {
+                    var pText = $('label', layer.append('<div class="text-c"><label>0%</label></div>'));
+                    xhr.upload.addEventListener("progress", function (evt) {
+                        var p = Math.floor(100 * evt.loaded / evt.total);
+                        pText.html(p + '%');
+                    }, false);
+                }
+            }
+
+            return xhr;
+        }
+    };
+
+    $form.ajaxSubmit(opts);
 };
 
 function ab_submit($form, att, value, attrs) {
