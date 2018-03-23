@@ -7,6 +7,8 @@
  */
 package com.absir.core.kernel;
 
+import com.absir.core.dyna.DynaBinder;
+
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -198,6 +200,9 @@ public abstract class KernelArray {
 
         } else if (componentType == Object.class) {
             return EnumArrayAccessor.Object;
+
+        } else if (componentType == String.class) {
+            return EnumArrayAccessor.StringAcc;
         }
 
         return new ComponentArrayAsscessor(componentType);
@@ -245,6 +250,40 @@ public abstract class KernelArray {
             public void set(Object array, int index, Object value) {
                 Array.setByte(array, index, (Byte) value);
             }
+
+            @Override
+            public void join(final StringBuilder stringBuilder, Object array, char separator) {
+                byte[] oArray = (byte[]) array;
+                int length = oArray.length;
+                for (int i = 0; i < length; i++) {
+                    if (i > 0) {
+                        stringBuilder.append(separator);
+                    }
+
+                    stringBuilder.append(oArray[i]);
+                }
+            }
+
+            @Override
+            public Object split(String string, char separator, int start) {
+                int size = KernelString.countChar(string, separator, start) + 1;
+                byte[] array = new byte[size];
+                int nPos;
+                size = 0;
+                while (true) {
+                    nPos = string.indexOf(',', start);
+                    if (nPos < start) {
+                        array[size] = start < string.length() ? (byte) string.charAt(start) : (byte) 0;
+                        break;
+                    }
+
+                    array[size] = start < nPos ? (byte) string.charAt(start) : (byte) 0;
+                    size++;
+                    start = nPos + 1;
+                }
+
+                return array;
+            }
         },
 
         Short {
@@ -261,6 +300,50 @@ public abstract class KernelArray {
             @Override
             public void set(Object array, int index, Object value) {
                 Array.setShort(array, index, (Short) value);
+            }
+
+            @Override
+            public void join(final StringBuilder stringBuilder, Object array, char separator) {
+                short[] oArray = (short[]) array;
+                int length = oArray.length;
+                for (int i = 0; i < length; i++) {
+                    if (i > 0) {
+                        stringBuilder.append(separator);
+                    }
+
+                    stringBuilder.append(oArray[i]);
+                }
+            }
+
+            @Override
+            public Object split(String string, char separator, int start) {
+                int size = KernelString.countChar(string, separator, start) + 1;
+                short[] array = new short[size];
+                int nPos;
+                size = 0;
+                while (true) {
+                    nPos = string.indexOf(',', start);
+                    if (nPos < start) {
+                        try {
+                            array[size] = java.lang.Short.parseShort(string.substring(start));
+
+                        } catch (Exception e) {
+                        }
+
+                        break;
+                    }
+
+                    try {
+                        array[size] = java.lang.Short.parseShort(string.substring(start, nPos));
+
+                    } catch (Exception e) {
+                    }
+
+                    size++;
+                    start = nPos + 1;
+                }
+
+                return array;
             }
         },
 
@@ -279,6 +362,50 @@ public abstract class KernelArray {
             public void set(Object array, int index, Object value) {
                 Array.setInt(array, index, (Integer) value);
             }
+
+            @Override
+            public void join(final StringBuilder stringBuilder, Object array, char separator) {
+                int[] oArray = (int[]) array;
+                int length = oArray.length;
+                for (int i = 0; i < length; i++) {
+                    if (i > 0) {
+                        stringBuilder.append(separator);
+                    }
+
+                    stringBuilder.append(oArray[i]);
+                }
+            }
+
+            @Override
+            public Object split(String string, char separator, int start) {
+                int size = KernelString.countChar(string, separator, start) + 1;
+                int[] array = new int[size];
+                int nPos;
+                size = 0;
+                while (true) {
+                    nPos = string.indexOf(',', start);
+                    if (nPos < start) {
+                        try {
+                            array[size] = java.lang.Integer.parseInt(string.substring(start));
+
+                        } catch (Exception e) {
+                        }
+
+                        break;
+                    }
+
+                    try {
+                        array[size] = java.lang.Integer.parseInt(string.substring(start, nPos));
+
+                    } catch (Exception e) {
+                    }
+
+                    size++;
+                    start = nPos + 1;
+                }
+
+                return array;
+            }
         },
 
         Long {
@@ -295,6 +422,50 @@ public abstract class KernelArray {
             @Override
             public void set(Object array, int index, Object value) {
                 Array.setLong(array, index, (Long) value);
+            }
+
+            @Override
+            public void join(final StringBuilder stringBuilder, Object array, char separator) {
+                long[] oArray = (long[]) array;
+                int length = oArray.length;
+                for (int i = 0; i < length; i++) {
+                    if (i > 0) {
+                        stringBuilder.append(separator);
+                    }
+
+                    stringBuilder.append(oArray[i]);
+                }
+            }
+
+            @Override
+            public Object split(String string, char separator, int start) {
+                int size = KernelString.countChar(string, separator, start) + 1;
+                long[] array = new long[size];
+                int nPos;
+                size = 0;
+                while (true) {
+                    nPos = string.indexOf(',', start);
+                    if (nPos < start) {
+                        try {
+                            array[size] = java.lang.Long.parseLong(string.substring(start));
+
+                        } catch (Exception e) {
+                        }
+
+                        break;
+                    }
+
+                    try {
+                        array[size] = java.lang.Long.parseLong(string.substring(start, nPos));
+
+                    } catch (Exception e) {
+                    }
+
+                    size++;
+                    start = nPos + 1;
+                }
+
+                return array;
             }
         },
 
@@ -313,6 +484,50 @@ public abstract class KernelArray {
             public void set(Object array, int index, Object object) {
                 Array.setFloat(array, index, (Float) object);
             }
+
+            @Override
+            public void join(final StringBuilder stringBuilder, Object array, char separator) {
+                float[] oArray = (float[]) array;
+                int length = oArray.length;
+                for (int i = 0; i < length; i++) {
+                    if (i > 0) {
+                        stringBuilder.append(separator);
+                    }
+
+                    stringBuilder.append(oArray[i]);
+                }
+            }
+
+            @Override
+            public Object split(String string, char separator, int start) {
+                int size = KernelString.countChar(string, separator, start) + 1;
+                float[] array = new float[size];
+                int nPos;
+                size = 0;
+                while (true) {
+                    nPos = string.indexOf(',', start);
+                    if (nPos < start) {
+                        try {
+                            array[size] = java.lang.Float.parseFloat(string.substring(start));
+
+                        } catch (Exception e) {
+                        }
+
+                        break;
+                    }
+
+                    try {
+                        array[size] = java.lang.Float.parseFloat(string.substring(start, nPos));
+
+                    } catch (Exception e) {
+                    }
+
+                    size++;
+                    start = nPos + 1;
+                }
+
+                return array;
+            }
         },
 
         Double {
@@ -329,6 +544,50 @@ public abstract class KernelArray {
             @Override
             public void set(Object array, int index, Object value) {
                 Array.setDouble(array, index, (Double) value);
+            }
+
+            @Override
+            public void join(final StringBuilder stringBuilder, Object array, char separator) {
+                double[] oArray = (double[]) array;
+                int length = oArray.length;
+                for (int i = 0; i < length; i++) {
+                    if (i > 0) {
+                        stringBuilder.append(separator);
+                    }
+
+                    stringBuilder.append(oArray[i]);
+                }
+            }
+
+            @Override
+            public Object split(String string, char separator, int start) {
+                int size = KernelString.countChar(string, separator, start) + 1;
+                double[] array = new double[size];
+                int nPos;
+                size = 0;
+                while (true) {
+                    nPos = string.indexOf(',', start);
+                    if (nPos < start) {
+                        try {
+                            array[size] = java.lang.Double.parseDouble(string.substring(start));
+
+                        } catch (Exception e) {
+                        }
+
+                        break;
+                    }
+
+                    try {
+                        array[size] = java.lang.Double.parseDouble(string.substring(start, nPos));
+
+                    } catch (Exception e) {
+                    }
+
+                    size++;
+                    start = nPos + 1;
+                }
+
+                return array;
             }
         },
 
@@ -347,6 +606,64 @@ public abstract class KernelArray {
             public void set(Object array, int index, Object value) {
                 Array.setBoolean(array, index, (Boolean) value);
             }
+
+            @Override
+            public void join(final StringBuilder stringBuilder, Object array, char separator) {
+                boolean[] oArray = (boolean[]) array;
+                int length = oArray.length;
+                for (int i = 0; i < length; i++) {
+                    if (i > 0) {
+                        stringBuilder.append(separator);
+                    }
+
+                    stringBuilder.append(oArray[i] ? '1' : '0');
+                }
+            }
+
+            @Override
+            public Object split(String string, char separator, int start) {
+                int size = KernelString.countChar(string, separator, start) + 1;
+                boolean[] array = new boolean[size];
+                int nPos;
+                size = 0;
+                while (true) {
+                    nPos = string.indexOf(',', start);
+                    if (nPos < start) {
+                        String str = string.substring(start);
+                        try {
+                            array[size] = java.lang.Integer.parseInt(str) != 0;
+
+                        } catch (Exception e) {
+                            try {
+                                array[size] = java.lang.Boolean.parseBoolean(str);
+
+                            } catch (Exception ex) {
+
+                            }
+                        }
+
+                        break;
+                    }
+
+                    String str = string.substring(start, nPos);
+                    try {
+                        array[size] = java.lang.Integer.parseInt(str) != 0;
+
+                    } catch (Exception e) {
+                        try {
+                            array[size] = java.lang.Boolean.parseBoolean(str);
+
+                        } catch (Exception ex) {
+
+                        }
+                    }
+
+                    size++;
+                    start = nPos + 1;
+                }
+
+                return array;
+            }
         },
 
         Character {
@@ -363,6 +680,40 @@ public abstract class KernelArray {
             @Override
             public void set(Object array, int index, Object value) {
                 Array.setChar(array, index, (Character) value);
+            }
+
+            @Override
+            public void join(final StringBuilder stringBuilder, Object array, char separator) {
+                char[] oArray = (char[]) array;
+                int length = oArray.length;
+                for (int i = 0; i < length; i++) {
+                    if (i > 0) {
+                        stringBuilder.append(separator);
+                    }
+
+                    stringBuilder.append(oArray[i]);
+                }
+            }
+
+            @Override
+            public Object split(String string, char separator, int start) {
+                int size = KernelString.countChar(string, separator, start) + 1;
+                char[] array = new char[size];
+                int nPos;
+                size = 0;
+                while (true) {
+                    nPos = string.indexOf(',', start);
+                    if (nPos < start) {
+                        array[size] = start < string.length() ? string.charAt(start) : (char) 0;
+                        break;
+                    }
+
+                    array[size] = start < nPos ? string.charAt(start) : (char) 0;
+                    size++;
+                    start = nPos + 1;
+                }
+
+                return array;
             }
         },
 
@@ -381,7 +732,82 @@ public abstract class KernelArray {
             public void set(Object array, int index, Object value) {
                 Array.set(array, index, value);
             }
-        };
+
+            public void join(final StringBuilder stringBuilder, Object array, char separator) {
+                Object[] oArray = (Object[]) array;
+                int length = oArray.length;
+                Object o;
+                for (int i = 0; i < length; i++) {
+                    if (i > 0) {
+                        stringBuilder.append(separator);
+                    }
+
+                    o = oArray[i];
+                    if (o != null) {
+                        stringBuilder.append(o);
+                    }
+                }
+            }
+
+            @Override
+            public Object split(String string, char separator, int start) {
+                return StringAcc.split(string, separator, start);
+            }
+        },
+
+        StringAcc {
+            @Override
+            public Object newInstance(int length) {
+                return new String[length];
+            }
+
+            @Override
+            public Object get(Object array, int index) {
+                return Array.get(array, index);
+            }
+
+            @Override
+            public void set(Object array, int index, Object value) {
+                Array.set(array, index, value);
+            }
+
+            public void join(final StringBuilder stringBuilder, Object array, char separator) {
+                String[] sArray = (String[]) array;
+                int length = sArray.length;
+                String s;
+                for (int i = 0; i < length; i++) {
+                    if (i > 0) {
+                        stringBuilder.append(separator);
+                    }
+
+                    s = sArray[i];
+                    if (s != null) {
+                        stringBuilder.append(s);
+                    }
+                }
+            }
+
+            @Override
+            public Object split(String string, char separator, int start) {
+                int size = KernelString.countChar(string, separator, start) + 1;
+                String[] array = new String[size];
+                int nPos;
+                size = 0;
+                while (true) {
+                    nPos = string.indexOf(',', start);
+                    if (nPos < start) {
+                        array[size] = string.substring(start);
+                        break;
+                    }
+
+                    array[size] = string.substring(start, nPos);
+                    size++;
+                    start = nPos + 1;
+                }
+
+                return array;
+            }
+        }
     }
 
     public static interface ArrayAccessor {
@@ -391,6 +817,10 @@ public abstract class KernelArray {
         public Object get(Object array, int index) throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
 
         public void set(Object array, int index, Object value) throws IllegalArgumentException, ArrayIndexOutOfBoundsException;
+
+        public void join(final StringBuilder stringBuilder, Object array, char separator);
+
+        public Object split(String string, char separator, int start);
     }
 
     public static class ComponentArrayAsscessor implements ArrayAccessor {
@@ -414,6 +844,31 @@ public abstract class KernelArray {
         @Override
         public void set(Object array, int index, Object value) {
             Array.set(array, index, value);
+        }
+
+        public void join(final StringBuilder stringBuilder, Object array, char separator) {
+            EnumArrayAccessor.Object.join(stringBuilder, array, separator);
+        }
+
+        @Override
+        public Object split(String string, char separator, int start) {
+            int size = KernelString.countChar(string, separator, start) + 1;
+            Object[] array = (Object[]) newInstance(size);
+            int nPos;
+            size = 0;
+            while (true) {
+                nPos = string.indexOf(',', start);
+                if (nPos < start) {
+                    array[size] = DynaBinder.to(string.substring(start), componentType);
+                    break;
+                }
+
+                array[size] = DynaBinder.to(string.substring(start, nPos), componentType);
+                size++;
+                start = nPos + 1;
+            }
+
+            return array;
         }
     }
 
@@ -443,8 +898,7 @@ public abstract class KernelArray {
     }
 
     public static String serializer(String start, Object array) {
-        ArrayAccessor accessor = array == null ? null : forClass(array.getClass());
-        if (accessor == null) {
+        if (array == null || !array.getClass().isArray()) {
             return null;
         }
 
@@ -453,19 +907,13 @@ public abstract class KernelArray {
             return "";
         }
 
-        StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder stringBuilder = new StringBuilder(length * 16);
         if (start != null) {
             stringBuilder.append(start);
         }
 
-        for (int i = 0; i < length; i++) {
-            if (i > 0) {
-                stringBuilder.append(',');
-            }
-
-            stringBuilder.append(accessor.get(array, i));
-        }
-
+        ArrayAccessor accessor = forComponentType(array.getClass().getComponentType());
+        accessor.join(stringBuilder, array, ',');
         return stringBuilder.toString();
     }
 
@@ -496,26 +944,7 @@ public abstract class KernelArray {
             }
         }
 
-        List<String> list = new ArrayList<String>();
-        int nPos;
-        while (true) {
-            nPos = params.indexOf(',', pos);
-            if (nPos < pos) {
-                list.add(params.substring(pos));
-                break;
-            }
-
-            list.add(params.substring(pos, nPos));
-            pos = nPos + 1;
-        }
-
         ArrayAccessor accessor = forComponentType(componentClass);
-        int size = list.size();
-        Object array = accessor.newInstance(size);
-        for (int i = 0; i < size; i++) {
-            accessor.set(array, i, KernelDyna.to(list.get(i), componentClass));
-        }
-
-        return array;
+        return accessor.split(params, ',', pos);
     }
 }

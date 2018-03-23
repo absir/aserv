@@ -718,4 +718,14 @@ public abstract class KernelString {
 
         public Object glue(StringBuilder builder, Object glue, int index, Object value, Object target);
     }
+
+    public static int countChar(String str, char chr, int start) {
+        int count = 0;
+        while ((start = str.indexOf(chr, start)) >= 0) {
+            count++;
+            start++;
+        }
+
+        return count;
+    }
 }

@@ -30,7 +30,7 @@ import java.util.Properties;
 public class JtJsonArray implements UserType, DynamicParameterizedType, Serializable {
 
     private Class<?> dynamicType;
-    
+
     private boolean strict;
 
     @Override
