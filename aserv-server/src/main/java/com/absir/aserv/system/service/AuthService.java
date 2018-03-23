@@ -31,6 +31,10 @@ public class AuthService {
 
     public final static AuthService ME = BeanFactoryUtils.get(AuthService.class);
 
+    public static final Long ANYONE_ROLE_ID = -2L;
+
+    public static final Long LOGIN_ROLE_ID = -1L;
+
     /**
      * 菜单权限
      *
@@ -48,13 +52,13 @@ public class AuthService {
         if (user == null) {
             // 匿名用户
             if (menuPermission.getForbidIds() != null) {
-                if (HelperArray.contains(menuPermission.getForbidIds(), -1L)) {
+                if (HelperArray.contains(menuPermission.getForbidIds(), ANYONE_ROLE_ID)) {
                     return false;
                 }
             }
 
             if (menuPermission.getAllowIds() != null) {
-                if (HelperArray.contains(menuPermission.getAllowIds(), -1L)) {
+                if (HelperArray.contains(menuPermission.getAllowIds(), ANYONE_ROLE_ID)) {
                     return true;
                 }
             }
@@ -69,7 +73,7 @@ public class AuthService {
 
         if (menuPermission.getForbidIds() != null) {
             // 所有用户
-            if (HelperArray.contains(menuPermission.getForbidIds(), 0L)) {
+            if (HelperArray.contains(menuPermission.getForbidIds(), LOGIN_ROLE_ID)) {
                 return false;
             }
 
@@ -83,7 +87,7 @@ public class AuthService {
 
         if (menuPermission.getAllowIds() != null) {
             // 所有用户
-            if (HelperArray.contains(menuPermission.getAllowIds(), 0L)) {
+            if (HelperArray.contains(menuPermission.getAllowIds(), LOGIN_ROLE_ID)) {
                 return true;
             }
 
@@ -114,7 +118,7 @@ public class AuthService {
 
         // 匿名用户
         if (user == null) {
-            JeVote jeVote = votePermission.getJeVote(maMenu.getPermissions().get(-1L));
+            JeVote jeVote = votePermission.getJeVote(maMenu.getPermissions().get(ANYONE_ROLE_ID));
             if (jeVote == JeVote.FORBID) {
                 return false;
             }
@@ -145,7 +149,7 @@ public class AuthService {
     private boolean permission(JMaMenu maMenu, JiUserBase user, JeVotePermission votePermission) {
         boolean allow = false;
         // 所有用户
-        JPermission permission = maMenu.getPermissions().get(0L);
+        JPermission permission = maMenu.getPermissions().get(LOGIN_ROLE_ID);
         if (permission != null) {
             JeVote jeVote = votePermission.getJeVote(permission);
             if (jeVote == JeVote.FORBID) {
@@ -191,7 +195,7 @@ public class AuthService {
         // 匿名用户
         if (user == null) {
             for (JeVotePermission votePermission : votePermissions) {
-                JeVote jeVote = votePermission.getJeVote(maMenu.getPermissions().get(-1L));
+                JeVote jeVote = votePermission.getJeVote(maMenu.getPermissions().get(ANYONE_ROLE_ID));
                 if (jeVote == JeVote.FORBID || jeVote != JeVote.ALLOW) {
                     return false;
                 }
@@ -242,7 +246,7 @@ public class AuthService {
         PropertyFilter filter = new PropertyFilter();
         if (user == null) {
             // 匿名用户
-            permissionFilter(maMenu, -1L, filter);
+            permissionFilter(maMenu, ANYONE_ROLE_ID, filter);
 
         } else {
             // 开发者用户
@@ -251,7 +255,7 @@ public class AuthService {
             }
 
             // 所有用户
-            permissionFilter(maMenu, 0L, filter);
+            permissionFilter(maMenu, LOGIN_ROLE_ID, filter);
 
             // 用户角色
             for (JiUserRole userRole : user.userRoles()) {
