@@ -273,11 +273,21 @@ public abstract class KernelArray {
                 while (true) {
                     nPos = string.indexOf(',', start);
                     if (nPos < start) {
-                        array[size] = start < string.length() ? (byte) string.charAt(start) : (byte) 0;
+                        try {
+                            array[size] = java.lang.Byte.parseByte(string.substring(start));
+
+                        } catch (Exception e) {
+                        }
+
                         break;
                     }
 
-                    array[size] = start < nPos ? (byte) string.charAt(start) : (byte) 0;
+                    try {
+                        array[size] = java.lang.Byte.parseByte(string.substring(start, nPos));
+
+                    } catch (Exception e) {
+                    }
+
                     size++;
                     start = nPos + 1;
                 }

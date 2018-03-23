@@ -1,6 +1,7 @@
 package com.absir.core.test;
 
 import com.absir.core.kernel.KernelArray;
+import com.absir.core.kernel.KernelObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -66,7 +67,11 @@ public class KernelArrayTest {
     public void testArray(String start, Object array) {
         String params = KernelArray.serializer(start, array);
         System.out.println((array == null ? null : Array.getLength(array)) + " => " + params);
-        array = KernelArray.deserialize(start, params, array == null ? int.class : array.getClass().getComponentType());
+        Object newArray = KernelArray.deserialize(start, params, array == null ? int.class : array.getClass().getComponentType());
         System.out.println(params + " <= " + (array == null ? null : Array.getLength(array)));
+
+        if (!KernelObject.equals(params, KernelArray.serializer(start, newArray))) {
+            System.err.println("testArray  fail at " + params);
+        }
     }
 }
