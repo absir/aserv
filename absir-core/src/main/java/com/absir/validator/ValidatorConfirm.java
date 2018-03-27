@@ -10,6 +10,8 @@ package com.absir.validator;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.lang.ILangMessage;
 import com.absir.bean.lang.LangCodeUtils;
+import com.absir.core.kernel.KernelDyna;
+import com.absir.core.kernel.KernelList;
 import com.absir.core.kernel.KernelString;
 import com.absir.property.PropertyResolverAbstract;
 import com.absir.validator.value.Confirm;
@@ -17,11 +19,23 @@ import com.absir.validator.value.Confirm;
 import java.util.Map;
 
 @Bean
-public class ValidatorConfirm extends PropertyResolverAbstract<ValidatorObject, Confirm> {
+public class ValidatorConfirm extends PropertyResolverAbstract<ValidatorObject, Confirm> implements KernelList.Orderable {
 
     public static final String CONFIRM = LangCodeUtils.get("内容不一致", ValidatorConfirm.class);
 
-    public ValidatorObject getPropertyObjectPattern(ValidatorObject propertyObject, final String confirm, String lang) {
+    public static final Validator CONFIRM_VALIDATE = new Validator() {
+        @Override
+        public String validate(Object value, ILangMessage langMessage) {
+            return null;
+        }
+
+        @Override
+        public String getValidateClass(Map<String, Object> validatorMap) {
+            return null;
+        }
+    };
+
+    public ValidatorObject getPropertyObjectPattern(ValidatorObject propertyObject, final String confirm, String lang, boolean client) {
         if (propertyObject == null) {
             propertyObject = new ValidatorObject();
         }
@@ -32,10 +46,14 @@ public class ValidatorConfirm extends PropertyResolverAbstract<ValidatorObject, 
         }
 
         final String caption = langCode;
-        propertyObject.addValidator(new ValidatorValue() {
+        if (client) {
+            propertyObject.addValidator(CONFIRM_VALIDATE);
+        }
+
+        propertyObject.addValidator(new Validator() {
 
             @Override
-            public String validateValue(Object value, ILangMessage langMessage) {
+            public String validate(Object value, ILangMessage langMessage) {
                 return null;
             }
 
@@ -52,11 +70,17 @@ public class ValidatorConfirm extends PropertyResolverAbstract<ValidatorObject, 
 
     @Override
     public ValidatorObject getPropertyObjectAnnotation(ValidatorObject propertyObject, Confirm annotation) {
-        return getPropertyObjectPattern(propertyObject, annotation.value(), annotation.lang());
+        return getPropertyObjectPattern(propertyObject, annotation.value(), annotation.lang(), annotation.client());
     }
 
     @Override
     public ValidatorObject getPropertyObjectAnnotationValue(ValidatorObject propertyObject, String annotationValue) {
-        return getPropertyObjectPattern(propertyObject, annotationValue, null);
+        String[] parameters = annotationValue.split(",");
+        return getPropertyObjectPattern(propertyObject, parameters[0], parameters.length > 1 ? parameters[1] : null, parameters.length > 2 ? true : KernelDyna.toBoolean(parameters[2], Boolean.TRUE));
+    }
+
+    @Override
+    public int getOrder() {
+        return -64;
     }
 }

@@ -20,4 +20,6 @@ public @interface Confirm {
 
     String lang() default "";
 
+    boolean client() default true;
+
 }

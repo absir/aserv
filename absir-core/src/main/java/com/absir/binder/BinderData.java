@@ -13,11 +13,13 @@ import com.absir.bean.lang.ILangMessage;
 import com.absir.bean.lang.LangCodeUtils;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelDyna;
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.property.Property;
 import com.absir.property.PropertyData;
 import com.absir.validator.IValidator;
 import com.absir.validator.Validator;
+import com.absir.validator.ValidatorConfirm;
 import com.absir.validator.ValidatorSupply;
 
 import java.lang.reflect.Type;
@@ -214,7 +216,7 @@ public class BinderData extends DynaBinder {
                             }
                         }
 
-                        validateValue(property.getAccessor().get(toObject), propertyData, property, toObject);
+                        validateValue(KernelLang.NULL_OBJECT, propertyData, property, toObject);
                     }
                 }
 
@@ -277,7 +279,7 @@ public class BinderData extends DynaBinder {
         if (binderPaths != null) {
             binderPaths.add(binderResult.getPropertyPath());
         }
-        
+
         value = binderSupply.bindValue(propertyData, value, null, this, toObject);
         try {
             property.getAccessor().set(toObject, value);
@@ -294,7 +296,15 @@ public class BinderData extends DynaBinder {
 
     protected void validateValue(Object value, PropertyData propertyData, Property property, Object toObject) {
         List<Validator> validators = validatorSupply.getPropertyObject(propertyData);
-        if (validators != null) {
+        if (validators != null && validators.size() > 0) {
+            if (validators.get(0) == ValidatorConfirm.CONFIRM_VALIDATE) {
+                return;
+            }
+
+            if (value == KernelLang.NULL_OBJECT) {
+                value = property.getAccessor().get(toObject);
+            }
+
             if (value == null) {
                 int last = binderResult.getPropertyErrors().size() - 1;
                 if (last >= 0 && binderResult.getPropertyErrors().get(last).getPropertyPath() == binderResult.getPropertyPath()) {
