@@ -61,7 +61,7 @@ stop(){
 
         for app in ${apps[*]}
         do
-            command="work/webResources/$app/protected/maintenance/scripts/shutdown.sh"
+            command="work/webResources/$app/protected/maintenance/scripts/shutdown.sh :8787"
             printf "$command\r\n"
             $command
         done
