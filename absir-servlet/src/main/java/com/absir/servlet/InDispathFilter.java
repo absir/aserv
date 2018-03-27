@@ -12,6 +12,7 @@ import com.absir.bean.basis.Configure;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Orders;
+import com.absir.context.core.ContextDaemon;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelDyna;
@@ -40,12 +41,17 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
     private static String contextResourcePath;
 
     private static String contextPath;
+
     @Orders
     @Inject
     private static IFilter[] filters;
+
     private int contextPathLength;
+
     private String uriContextPath;
+
     private int uriContextPathLength;
+
     private boolean urlDecode;
 
     public static ServletContext getServletContext() {
@@ -98,6 +104,11 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if (ContextDaemon.ME.isShutDowning()) {
+            response.getWriter().write(ContextDaemon.ME.isShutDowned() ? "shutDowned" : "shutDowning");
+            return;
+        }
+
         if (!getRouteAdapter().isStarted()) {
             response.getWriter().write("route adapter not started");
             return;
@@ -190,6 +201,17 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
 
     @Override
     public boolean on(String uri, HttpServletRequest req, HttpServletResponse res) throws Throwable {
+        if (uri.equals("@shutdown") && req.getLocalAddr().equals("127.0.0.1")) {
+            res.getWriter().write("shutdown");
+            new Thread() {
+                @Override
+                public void run() {
+                    ContextDaemon.ME.shutdown(false);
+                }
+            }.start();
+            return true;
+        }
+
         if (filters != null) {
             for (IFilter filter : filters) {
                 if (filter.doFilter(uri, req, res)) {

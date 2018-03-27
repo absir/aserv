@@ -36,8 +36,11 @@ public class ContextDaemon implements Runnable {
     @Value("daemon.developer.timeout")
     protected long developerTimeout = 300000;
 
-    @Value("daemon.idle.time")
-    protected long idleTime = 2000;
+    @Value("daemon.shutdown.f")
+    protected boolean shutdownF = false;
+
+    @Value("daemon.shutdown.idle")
+    protected long shutdownIdle = 2000;
 
     @Inject
     protected void injectShutDown() throws IOException {
@@ -55,10 +58,12 @@ public class ContextDaemon implements Runnable {
         }
 
         developerFile = new File(daemonDir + "developer");
-        Thread thread = new Thread(ME);
-        thread.setDaemon(true);
-        thread.setName("ContextDaemon");
-        thread.start();
+        if (shutdownF) {
+            Thread thread = new Thread(ME);
+            thread.setDaemon(true);
+            thread.setName("ContextDaemon");
+            thread.start();
+        }
     }
 
     public boolean isDeveloper(String daemon) {
@@ -79,24 +84,9 @@ public class ContextDaemon implements Runnable {
     public void run() {
         while (Environment.isActive()) {
             try {
-                Thread.sleep(idleTime);
+                Thread.sleep(shutdownIdle);
                 if (shutdownFile.exists()) {
-                    File stoppingFile = new File(daemonDir + "stopping");
-                    stoppingFile.createNewFile();
-                    Environment.setActive(false);
-                    boolean done = false;
-                    while (!done) {
-                        try {
-                            shutdown();
-                            stoppedFile.createNewFile();
-                            stoppingFile.delete();
-                            done = true;
-                            BeanFactoryStopping.stoppingAll();
-
-                        } catch (Throwable e) {
-                            Environment.throwable(e);
-                        }
-                    }
+                    shutdown(true);
                 }
 
             } catch (Throwable e) {
@@ -105,19 +95,68 @@ public class ContextDaemon implements Runnable {
         }
     }
 
-    protected void shutdown() {
-        ContextFactory contextFactory = ContextUtils.getContextFactory();
-        for (Class cls : contextFactory.getContextClasses()) {
-            Map<Serializable, Context> map = contextFactory.getContextMap(cls);
-            Iterator<Map.Entry<Serializable, Context>> iterator = map.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Context context = iterator.next().getValue();
-                if (context != null && context.unInitializeDone()) {
-                    context.unInitialize();
+    protected boolean shutDowning;
+
+    protected boolean shutDowned;
+
+    public boolean isShutDowning() {
+        return shutDowning;
+    }
+
+    public boolean isShutDowned() {
+        return shutDowned;
+    }
+
+    public synchronized void shutdown(boolean stopFile) {
+        if (shutDowning) {
+            return;
+        }
+
+        shutDowning = true;
+        try {
+            File stoppingFile = null;
+            if (stopFile) {
+                stoppingFile = new File(daemonDir + "stopping");
+                try {
+                    stoppingFile.createNewFile();
+
+                } catch (Throwable e) {
+                    Environment.throwable(e);
+                }
+            }
+
+            try {
+                Environment.setActive(false);
+                ContextFactory contextFactory = ContextUtils.getContextFactory();
+                for (Class cls : contextFactory.getContextClasses()) {
+                    Map<Serializable, Context> map = contextFactory.getContextMap(cls);
+                    Iterator<Map.Entry<Serializable, Context>> iterator = map.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        Context context = iterator.next().getValue();
+                        if (context != null && context.unInitializeDone()) {
+                            context.unInitialize();
+                        }
+
+                        iterator.remove();
+                    }
                 }
 
-                iterator.remove();
+                BeanFactoryStopping.stoppingAll();
+
+            } finally {
+                if (stoppingFile != null) {
+                    try {
+                        stoppedFile.createNewFile();
+                        stoppingFile.delete();
+
+                    } catch (Throwable e) {
+                        Environment.throwable(e);
+                    }
+                }
             }
+
+        } finally {
+            shutDowned = true;
         }
     }
 
