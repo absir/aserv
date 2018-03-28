@@ -182,17 +182,12 @@ public class BinderData extends DynaBinder {
                     if (property.allow(binderResult.getGroup())) {
                         if (property.getAllow() <= 0) {
                             String name = entry.getKey();
-                            boolean remove = map.containsKey(name + '!');
                             Object value = map.get(name);
-                            if (remove || value != null || map.containsKey(name)) {
+                            if (value != null || map.containsKey(name)) {
                                 bindingStep = 1;
                                 binderResult.setPropertyPath(propertyPrefix + name);
                                 if (binderResult.allowPropertyPath()) {
                                     bindingStep = 2;
-                                    if (remove && value != null) {
-                                        property.getAccessor().set(toObject, KernelDyna.to(null, property.getAccessor().getType()));
-                                    }
-
                                     bindValue(value, propertyData, property, toObject);
                                     if (toObject instanceof IBinder) {
                                         value = map.get(name + ":");

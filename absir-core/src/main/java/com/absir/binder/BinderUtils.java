@@ -77,7 +77,9 @@ public class BinderUtils {
             }
 
             String[] propertyPaths = propertyPath.replace("[", ".[").split("\\.");
-            dataValue = addDataObject(propertyPaths, 0, propertyPaths.length, entry.getValue(), dataObject, handler);
+            int last = propertyPath.length();
+            Object value = last > 0 && propertyPath.charAt(last - 1) == '.' ? null : entry.getValue();
+            dataValue = addDataObject(propertyPaths, 0, propertyPaths.length, value, dataObject, handler);
             if (dataObject == null) {
                 dataObject = dataValue;
             }
