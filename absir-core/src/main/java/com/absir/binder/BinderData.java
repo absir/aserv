@@ -182,7 +182,7 @@ public class BinderData extends DynaBinder {
                     if (property.allow(binderResult.getGroup())) {
                         if (property.getAllow() <= 0) {
                             String name = entry.getKey();
-                            boolean remove = map.containsKey(map.get(name + '!'));
+                            boolean remove = map.containsKey(name + '!');
                             Object value = map.get(name);
                             if (remove || value != null || map.containsKey(name)) {
                                 bindingStep = 1;
