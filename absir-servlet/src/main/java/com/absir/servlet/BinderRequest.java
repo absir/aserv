@@ -12,6 +12,7 @@ import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelArray.ArrayAccessor;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelDyna;
+import com.absir.core.kernel.KernelString;
 import com.absir.property.PropertyError;
 import org.apache.commons.lang3.StringUtils;
 
@@ -147,6 +148,10 @@ public class BinderRequest extends BinderData {
                 }
 
                 if (valueClass == null) {
+                    if (KernelString.isEmpty(params[0])) {
+                        return null;
+                    }
+                    
                     toObject = super.bindCollection(obj, name, toClass, toType, toObject);
                     List<PropertyError> propertyErrors = getBinderResult().getPropertyErrors();
                     int size = propertyErrors.size();

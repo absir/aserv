@@ -21,8 +21,8 @@ import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.EntityService;
-import com.absir.aserv.system.service.UserRolePermissionsService;
 import com.absir.aserv.system.service.SecurityService;
+import com.absir.aserv.system.service.UserRolePermissionsService;
 import com.absir.aserv.system.service.utils.AccessServiceUtils;
 import com.absir.aserv.system.service.utils.AuthServiceUtils;
 import com.absir.aserv.system.service.utils.InputServiceUtils;
@@ -305,6 +305,7 @@ public class Admin_entity extends AdminServer {
         }
 
         crudSupply.mergeEntity(entityName, entity, crudCreate);
+        crudSupply.flush();
         if (create) {
             //crudSupply.flush();
             model.put("create", true);
