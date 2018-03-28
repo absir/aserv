@@ -42,13 +42,11 @@ public class JUser extends JbUser implements IUser, JiUserBase, JiRoleLevel, JpM
     @JaLang("邮箱")
     @Prop(include = 1)
     @Email
-    @Column(unique = true)
     private String email;
 
     @JaLang("手机")
     @Prop(include = 1)
     @Regex(value = "^\\d*$")
-    @Column(unique = true)
     private String mobile;
 
     @JaLang("创建时间")
