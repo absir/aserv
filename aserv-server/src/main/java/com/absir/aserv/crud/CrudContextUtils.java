@@ -84,6 +84,7 @@ public abstract class CrudContextUtils extends CrudUtils {
             filter = filter.newly();
         }
 
+        boolean eInput = false;
         if (errors != null && input != null) {
             final List<Object> entities = new ArrayList<Object>();
             final List<CrudProperty> crudProperties = new ArrayList<CrudProperty>();
@@ -115,19 +116,20 @@ public abstract class CrudContextUtils extends CrudUtils {
                 ((ICrudProcessorInput) crudProperty.crudProcessor).crud(crudProperty, entities.get(i), crudInvoker, user, requestBodies.get(i));
             }
 
-            if (entity instanceof ICrudBean) {
-                ((ICrudBean) entity).processCrud(crud, crudInvoker, input);
+            if (errors.hashErrors()) {
+                return crudInvoker.doCreate();
             }
 
-            return crudInvoker.doCreate();
+            eInput = true;
         }
 
+        final boolean curdInput = eInput;
         crudFilter.setPropertyPath("");
         CrudInvoker crudInvoker = new CrudInvoker(crud, crudRecord, crudFilter, crudEntity, entity, errors) {
 
             @Override
             public boolean isSupport(CrudProperty crudProperty) {
-                return true;
+                return curdInput ? !(crudProperty.crudProcessor instanceof ICrudProcessorInput) : true;
             }
 
             @Override
@@ -149,4 +151,5 @@ public abstract class CrudContextUtils extends CrudUtils {
     public static boolean crud(JaCrud.Crud crud, boolean persist, Map<String, Object> crudRecord, JoEntity joEntity, Object entity, JiUserBase user, PropertyFilter filter) {
         return crud(crud, persist, crudRecord, joEntity, entity, user, filter, null, null);
     }
+
 }
