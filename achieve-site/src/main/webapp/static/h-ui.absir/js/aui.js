@@ -179,7 +179,7 @@ $(function () {
         }
 
         $.fn.ab_toggle_fun = function (ui) {
-            (ui ? $("[ab_toggle],[ab_toggles]", $(ui)) : $("[ab_toggle]")).each(function () {
+            (ui ? $("[ab_toggle],[ab_toggles]", $(ui)) : $("[ab_toggle],[ab_toggles]")).each(function () {
                 var $this = $(this);
                 var name = $this.attr('ab_toggle');
                 if (name) {
@@ -862,7 +862,7 @@ $(function () {
             if (depth) {
                 var $group = ab_groupDiv($this, 'div,table');
                 if ($group) {
-                    $this.change(function () {
+                    $this.click(function () {
                         var found = 0;
                         var checked = $this.prop('checked');
                         $("[type='checkbox'][depth]", $group).each(function () {
@@ -875,6 +875,7 @@ $(function () {
                                 var $self = $(this);
                                 if ($self.attr('depth') > depth) {
                                     $self.prop('checked', checked);
+                                    $self.change();
 
                                 } else {
                                     return false;

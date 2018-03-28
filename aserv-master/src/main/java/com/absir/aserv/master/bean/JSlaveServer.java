@@ -95,7 +95,7 @@ public class JSlaveServer extends JbBean implements ICrudBean {
 
     @JaLang("组号")
     @JaColum(indexs = @Index(columnList = "groupId"))
-    private String groupId;
+    private String groupId = "0";
 
     public String getName() {
         return name;
