@@ -23,9 +23,9 @@ public interface IDeveloper {
 
     public int getDeveloperNewType();
 
-    public long getDeveloperNewTime();
+    public int getDeveloperNewTime();
 
-    public void setDeveloperNewTime(long developerNewTime);
+    public void setDeveloperNewTime(int developerNewTime);
 
     public IModel getModelEntity(JoEntity joEntity);
 

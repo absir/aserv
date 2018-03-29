@@ -260,7 +260,7 @@ public class DeveloperUtils {
                                 }
 
                                 IRender.ME.rend(outputStream, includePath, renders);
-                                String dev = IRender.ME.dev(UtilContext.getCurrentTime());
+                                String dev = IRender.ME.dev(UtilContext.getCurrentShort());
                                 if (!KernelString.isEmpty(dev)) {
                                     HelperIO.write(dev, output);
                                     HelperIO.write("\r\n", output);

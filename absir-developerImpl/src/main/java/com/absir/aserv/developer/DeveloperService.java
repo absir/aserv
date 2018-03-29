@@ -25,6 +25,7 @@ import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.util.UtilAbsir;
 import com.absir.core.util.UtilContext;
 import com.absir.orm.value.JoEntity;
 import org.apache.commons.io.FileUtils;
@@ -53,7 +54,7 @@ public class DeveloperService implements IDeveloper, IDeploy {
     protected int developerNewType = 2;
 
     @Value("developer.new.time")
-    protected long developerNewTime;
+    protected int developerNewTime;
 
     @Value("developer.diy")
     protected boolean developerDiy;
@@ -140,11 +141,11 @@ public class DeveloperService implements IDeveloper, IDeploy {
         return developerNewType;
     }
 
-    public long getDeveloperNewTime() {
+    public int getDeveloperNewTime() {
         return developerNewTime;
     }
 
-    public void setDeveloperNewTime(long developerNewTime) {
+    public void setDeveloperNewTime(int developerNewTime) {
         this.developerNewTime = developerNewTime;
     }
 
@@ -158,10 +159,10 @@ public class DeveloperService implements IDeveloper, IDeploy {
             developerNewTime = 0;
 
         } else if (developerNewType == 1) {
-            developerNewTime = HelperFile.lastModified(new File(BeanFactoryUtils.getBeanConfig().getClassPath()));
+            developerNewTime = UtilAbsir.shortTime(HelperFile.lastModified(new File(BeanFactoryUtils.getBeanConfig().getClassPath())));
 
         } else {
-            developerNewTime = UtilContext.getCurrentTime();
+            developerNewTime = UtilAbsir.shortTime(UtilContext.getCurrentTime());
         }
     }
 

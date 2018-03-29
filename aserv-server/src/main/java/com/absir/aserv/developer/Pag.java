@@ -38,6 +38,7 @@ import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.util.UtilAbsir;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.orm.value.JePermission;
 import com.absir.orm.value.JoEntity;
@@ -85,14 +86,20 @@ public class Pag {
         forEntityMapValue.put("value", new HashMap<String, Object>());
     }
 
-    public static void dev(long devTime) {
+    public static void devI(int devTime) {
         if (IDeveloper.ME != null) {
-            long newTime = IDeveloper.ME.getDeveloperNewTime();
-            if (newTime != 0) {
+            int newTime = IDeveloper.ME.getDeveloperNewTime();
+            if (newTime > 0) {
                 if (devTime < newTime) {
                     throw new DeveloperBreak();
                 }
             }
+        }
+    }
+
+    public static void dev(long devTime) {
+        if (IDeveloper.ME != null) {
+            devI(UtilAbsir.shortTime(devTime));
         }
     }
 

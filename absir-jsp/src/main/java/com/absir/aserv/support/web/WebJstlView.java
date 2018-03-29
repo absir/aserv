@@ -153,8 +153,8 @@ public class WebJstlView extends ReturnedResolverView implements IRender, IRende
     }
 
     @Override
-    public String dev(long devTime) {
-        return "<% Pag.dev(" + devTime + "); %>";
+    public String dev(int devTime) {
+        return "<% Pag.devI(" + devTime + "); %>";
     }
 
     @Override

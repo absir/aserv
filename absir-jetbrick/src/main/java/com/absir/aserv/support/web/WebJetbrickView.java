@@ -57,8 +57,8 @@ public class WebJetbrickView extends ServerDiyView implements IPagLang {
     }
 
     @Override
-    public String dev(long devTime) {
-        return "${Pag::dev(" + devTime + "L)}";
+    public String dev(int devTime) {
+        return "${Pag::devI(" + devTime + ")}";
     }
 
     @Override

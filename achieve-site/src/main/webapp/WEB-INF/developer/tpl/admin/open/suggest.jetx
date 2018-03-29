@@ -1,11 +1,9 @@
 #tag layout_block("tpl")
+
 #include('../../../type/suggest.jetx', {
 joEntity : joEntity,
 entity : 'suggest'
 }, 'suggests')
-#end
-${Pag::generateTpl("suggest/" + entityName + ".jetx", tpl)}
-\#include("suggest/" + entityName + ".jetx")
 
 {
 \#for(suggest : entities)
@@ -15,3 +13,9 @@ ${suggests}
 \${for.index == 1 ? '': ','}\${Pag::json(EntityStatics::getPrimary(suggest, "${entityModel.getPrimary().getName()}"))}:\${Pag::json(value)}
 \#end
 }
+
+#end
+
+${Pag::generateTpl("suggest/" + entityName + ".jetx", tpl)}
+\#include("suggest/" + entityName + ".jetx")
+

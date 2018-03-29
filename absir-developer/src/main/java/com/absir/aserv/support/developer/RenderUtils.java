@@ -66,7 +66,7 @@ public class RenderUtils {
     public static void generateTpl(String include, String tpl, Object... renders) throws IOException {
         include = IRender.ME.getFullPath(include);
         if (IDeveloper.ME != null) {
-            tpl = IRender.ME.dev(ContextUtils.getContextTime()) + "\r\n" + tpl;
+            tpl = IRender.ME.dev(ContextUtils.getContextShortTime()) + "\r\n" + tpl;
             include = IDeveloper.ME.getGeneratePath(include);
         }
 
