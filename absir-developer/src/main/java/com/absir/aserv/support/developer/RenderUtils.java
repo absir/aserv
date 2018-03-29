@@ -8,6 +8,7 @@
 package com.absir.aserv.support.developer;
 
 import com.absir.context.core.ContextUtils;
+import com.absir.core.helper.HelperFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -60,6 +61,10 @@ public class RenderUtils {
         }
 
         return false;
+    }
+
+    public static void generateTpl(String include, String tpl, Object... renders) throws IOException {
+        HelperFile.writeStringToFile(new File(IRender.ME.getRealPath(include)), tpl);
     }
 
 }

@@ -1,7 +1,12 @@
+#tag layout_block("tpl")
 #include('../../../type/suggest.jetx', {
 joEntity : joEntity,
 entity : 'suggest'
 }, 'suggests')
+#end
+${Pag::generateTpl("suggest/" + entityName + ".jetx", tpl)}
+\#include("suggest/" + entityName + ".jetx")
+
 {
 \#for(suggest : entities)
 \#tag layout_block("value")

@@ -261,6 +261,10 @@ public class Pag {
         RenderUtils.generate(include, includeGen, ServerDiyView.getRenders(OnPut.get().getInput()));
     }
 
+    public static void generateTpl(String include, String tpl) throws IOException {
+        RenderUtils.generateTpl(include, tpl, ServerDiyView.getRenders(OnPut.get().getInput()));
+    }
+
     public static String transferred(String str) {
         return KernelString.transferred(str);
     }
