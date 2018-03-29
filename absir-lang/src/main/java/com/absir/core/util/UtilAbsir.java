@@ -105,6 +105,17 @@ public class UtilAbsir {
         }
     }
 
+    public static Object doubleIntValue(Double value) {
+        double f = value;
+        int i = (int) f;
+        if (f == (double) i) {
+            return i;
+
+        } else {
+            return value;
+        }
+    }
+
     public static void throwRuntimeException(Exception e) {
         throw e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
     }

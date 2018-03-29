@@ -30,7 +30,7 @@ public class JConfigureOpt extends JConfigureBase {
     protected Object set(String value, Field field) {
         Class<? extends Serializable> identifierType = SessionFactoryUtils.getIdentifierType(null, field.getType(), SessionFactoryUtils.get().getSessionFactory());
         if (identifierType == null) {
-            return DynaBinderUtils.to(value, field.getGenericType());
+            return DynaBinderUtils.toType(value, field.getGenericType());
 
         } else {
             return BeanService.ME.get(field.getType(), DynaBinderUtils.to(value, identifierType));

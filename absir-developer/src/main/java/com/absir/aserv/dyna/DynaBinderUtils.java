@@ -15,12 +15,14 @@ import com.absir.bean.inject.value.Started;
 import com.absir.binder.BinderSupply;
 import com.absir.binder.BinderUtils;
 import com.absir.client.helper.HelperJson;
+import com.absir.core.base.IBase;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.dyna.DynaConvert;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.util.UtilAbsir;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 import com.absir.property.PropertyData;
 import com.absir.property.PropertyHolder;
@@ -160,6 +162,10 @@ public class DynaBinderUtils extends DynaBinder {
     }
 
     public static <T> T to(Object obj, Class<T> toClass) {
+        return toIBase(obj, toClass, false);
+    }
+
+    public static <T> T toIBase(Object obj, Class<T> toClass, boolean iBase) {
         if (obj == null) {
             return KernelDyna.nullTo(toClass);
         }
@@ -169,29 +175,55 @@ public class DynaBinderUtils extends DynaBinder {
         }
 
         if (toClass.isAssignableFrom(String.class)) {
-            if (!is(obj.getClass())) {
+            if (iBase && obj instanceof IBase) {
+                obj = ((IBase) obj).getId();
+            }
+
+            if (is(obj.getClass())) {
+                if (obj.getClass() == Boolean.class) {
+                    obj = (Boolean) obj ? "1" : "0";
+
+                } else if (obj.getClass() == Float.class) {
+                    obj = UtilAbsir.floatIntValue((Float) obj).toString();
+
+                } else if (obj.getClass() == Double.class) {
+                    obj = UtilAbsir.doubleIntValue((Double) obj).toString();
+                }
+
+            } else {
                 return (T) HelperJson.encodeNull(obj);
             }
 
         } else {
+            if (iBase) {
+                if (IBase.class.isAssignableFrom(toClass)) {
+                    T toObject = DynaBinder.to(obj, toClass);
+                    if (toObject != null) {
+                        return toObject;
+                    }
+
+                } else {
+                    iBase = false;
+                }
+            }
+
             if (obj instanceof String && !is(toClass)) {
                 return HelperJson.decodeNull((String) obj, toClass);
             }
 
-            T to = DynaBinder.to(obj, toClass);
-            return to;
+            if (iBase) return null;
         }
 
         return DynaBinder.to(obj, toClass);
     }
 
-    public static Object to(Object obj, Type toType) {
-        if (obj == null) {
-            return null;
-        }
+    public static Object toType(Object obj, Type toType) {
+        return toTypeIBase(obj, toType, false);
+    }
 
+    public static Object toTypeIBase(Object obj, Type toType, boolean iBase) {
         if (toType instanceof Class) {
-            return to(obj, (Class) toType);
+            return toIBase(obj, (Class) toType, iBase);
         }
 
         if (obj instanceof String) {
@@ -218,7 +250,7 @@ public class DynaBinderUtils extends DynaBinder {
     public static Object getMapValue(Map map, Object name, Type toType) {
         Object obj = map.get(name);
         if (obj != null) {
-            Object toObject = to(obj, toType);
+            Object toObject = toType(obj, toType);
             if (toObject != obj) {
                 map.put(name, toObject);
             }
