@@ -50,7 +50,7 @@ public class DeveloperService implements IDeveloper, IDeploy {
     private static String developerWeb;
 
     @Value("developer.new.type")
-    protected int developerNewType = 1;
+    protected int developerNewType = 2;
 
     @Value("developer.new.time")
     protected long developerNewTime;
