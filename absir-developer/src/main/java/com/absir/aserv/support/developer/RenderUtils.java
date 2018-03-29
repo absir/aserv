@@ -64,6 +64,11 @@ public class RenderUtils {
     }
 
     public static void generateTpl(String include, String tpl, Object... renders) throws IOException {
+        include = IRender.ME.getFullPath(include);
+        if (IDeveloper.ME != null) {
+            include = IDeveloper.ME.getGeneratePath(include);
+        }
+
         HelperFile.writeStringToFile(new File(IRender.ME.getRealPath(include)), tpl);
     }
 

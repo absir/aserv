@@ -35,6 +35,8 @@ public interface IDeveloper {
 
     public int diy(Object render);
 
+    public String getGeneratePath(String generatePath);
+
     public String getDeveloperPath(String includePath);
 
     public void copyDeveloper(File file, String filePath) throws IOException;

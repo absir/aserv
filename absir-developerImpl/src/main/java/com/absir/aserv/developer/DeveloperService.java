@@ -242,6 +242,11 @@ public class DeveloperService implements IDeveloper, IDeploy {
     }
 
     @Override
+    public String getGeneratePath(String generatePath) {
+        return DeveloperUtils.getGeneratePath(generatePath);
+    }
+
+    @Override
     public String getDeveloperPath(String includePath) {
         return DeveloperUtils.getDeveloperPath(includePath);
     }

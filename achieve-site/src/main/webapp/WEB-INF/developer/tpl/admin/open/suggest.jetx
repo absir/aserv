@@ -5,7 +5,7 @@ entity : 'suggest'
 }, 'suggests')
 #end
 ${Pag::generateTpl("suggest/" + entityName + ".jetx", tpl)}
-\#include("suggest/${entityName}.jetx")
+\#include("suggest/" + entityName + ".jetx")
 
 {
 \#for(suggest : entities)
