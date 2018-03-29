@@ -11,8 +11,11 @@ import com.absir.aserv.dyna.DynaBinderUtils;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.core.base.Base;
+import com.absir.core.base.IBase;
+import com.absir.core.dyna.DynaBinder;
 import com.absir.core.helper.HelperFile;
 import com.absir.core.kernel.KernelLang;
+import com.absir.core.util.UtilAbsir;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -71,6 +74,13 @@ public class XlsBase extends Base<Serializable> {
             return (T) XlsUtils.findXlsBean((Class<? extends XlsBase>) toClass, value);
         }
 
+        if (IBase.class.isAssignableFrom(toClass)) {
+            T toObject = DynaBinder.to(value, toClass);
+            if (toObject != null) {
+                return toObject;
+            }
+        }
+
         return DynaBinderUtils.to(value, toClass);
     }
 
@@ -79,10 +89,19 @@ public class XlsBase extends Base<Serializable> {
             return;
         }
 
-        if (obj instanceof XlsBase) {
-            obj = ((XlsBase) obj).getId();
+        if (obj instanceof IBase) {
+            obj = ((IBase<?>) obj).getId();
         }
 
-        hssfCell.setCellValue(DynaBinderUtils.to(obj, String.class));
+        if (obj != null) {
+            if (obj.getClass() == Boolean.class) {
+                obj = (Boolean) obj ? "1" : "0";
+
+            } else if (obj.getClass() == Float.class) {
+                obj = UtilAbsir.floatIntValue((Float) obj).toString();
+            }
+
+            hssfCell.setCellValue(DynaBinderUtils.to(obj, String.class));
+        }
     }
 }
