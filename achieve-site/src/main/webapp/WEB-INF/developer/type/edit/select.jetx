@@ -24,18 +24,18 @@ import = "org.jsoup.nodes.*"
     <option value="">${Pag::getLang('未选择')}</option>
     #end
 \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get("suggest")}', INPUT))
-\#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
     #if(ajax)
-    \#if(selected==value)
+    \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))\#if(selected==value)
     <option value="\${value}" selected>
         ${suggests}
     </option>
     \#end
     #else
+    \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
     <option value="\${value}" \${selected==value ? 'selected' : ''}>
+        ${suggests}
+    </option>
     #end
-    ${suggests}
-</option>
 \#end
 
 #end

@@ -20,14 +20,14 @@ import = "org.jsoup.nodes.*"
     #end
 \#set(selected = ${iselects ? ('Pag::params(' + inputval + ', true)') : ('EntityStatics::getPrimaries(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
 \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get("suggest")}', INPUT))
-\#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
     #if(ajax)
-    \#if(Pag::isParams(selected, value))
+    \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))\#if(Pag::isParams(selected, value))
     <option value="\${value}" selected>
         ${suggests}
     </option>
     \#end
     #else
+    \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
     <option value="\${value}" \${Pag::isParams(selected, value) ? 'selected' : ''}>
         ${suggests}
     </option>

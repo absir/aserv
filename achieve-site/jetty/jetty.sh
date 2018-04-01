@@ -36,7 +36,7 @@ start(){
         if [ $evnDebug -le 0 ];then
             _JAVA_OPTS_="$_JAVA_OPTS -Xms1024m -Xmx6096m -XX:PermSize=256m -XX:MaxPermSize=512m"
         else
-            _JAVA_OPTS_="$_JAVA_OPTS -Xms128m -Xmx512m -XX:PermSize=64m -XX:MaxPermSize=128m"
+            _JAVA_OPTS_="$_JAVA_OPTS -Xms128m -Xmx128m -XX:PermSize=64m -XX:MaxPermSize=64m"
             _JAVA_OPTS_="$_JAVA_OPTS_ -Xdebug -Xrunjdwp:transport=dt_socket,address=18080,suspend=n,server=y"
         fi
 
