@@ -88,7 +88,7 @@
 <div id="importXls" class="modal hide fade" role="dialog"
      ab_toggle="resize" resize="data-width" minSize="500">
     <div class="page-container">
-        <form action="\${ADMIN_ROUTE}entity/edit/${entityName}${id ? ('/' + id) : ''}"
+        <form action="\${ADMIN_ROUTE}entity/edit/${entityName}\${id ? ('/' + id) : ''}"
               enctype="multipart/form-data" method="post">
             <div class="row cl">
                 <label class="form-label col-xs-4 col-sm-3">${Pag::getLang('导入')}：</label>

@@ -53,15 +53,15 @@ public abstract class XlsUtils {
     }
 
     public static <T extends XlsBase> XlsDao<T, Serializable> getXlsDao(Class<T> xlsClass) {
-        return getXlsDao(xlsClass, false);
+        return getXlsDao(xlsClass, -1);
     }
 
-    public static <T extends XlsBase> XlsDao<T, Serializable> getXlsDao(Class<T> xlsClass, boolean reload) {
-        XlsDao<T, Serializable> xlsDao = reload ? null : XlsAccessorUtils.getXlsDao(xlsClass);
-        if (xlsDao == null) {
+    public static <T extends XlsBase> XlsDao<T, Serializable> getXlsDao(Class<T> xlsClass, int expireTime) {
+        XlsDao<T, Serializable> xlsDao = expireTime == 0 ? null : XlsAccessorUtils.getXlsDao(xlsClass);
+        if (xlsDao == null || (expireTime > 0 && expireTime < xlsDao.getLoadTime())) {
             synchronized (xlsClass) {
-                xlsDao = XlsAccessorUtils.getXlsDao(xlsClass);
-                if (xlsDao == null || reload) {
+                xlsDao = expireTime == 0 ? null : XlsAccessorUtils.getXlsDao(xlsClass);
+                if (xlsDao == null || (expireTime > 0 && expireTime < xlsDao.getLoadTime())) {
                     try {
                         reloadXlsDao(xlsClass);
 
@@ -102,7 +102,7 @@ public abstract class XlsUtils {
     }
 
     public static <T extends XlsBase> XlsDao<T, ? extends Serializable> getReloadXlsDao(Class<T> xlsClass) {
-        return getXlsDao(xlsClass, true);
+        return getXlsDao(xlsClass, 0);
     }
 
     public static <T extends XlsBase> T getXlsBean(Class<T> xlsClass, Serializable id) {

@@ -19,6 +19,7 @@ import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelReflect;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.util.UtilContext;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
@@ -304,15 +305,22 @@ public class XlsAccessorUtils {
                     XlsDaoBean dao = (XlsDaoBean) xlsDao;
                     xlsDao = xlsDaoBean;
                     xlsDaoBean = dao;
-                    dao.beans.clear();
+                    //dao.beans.clear();
 
                 } else {
                     xlsDaoBase.beans.addAll(xlsDao.getAll());
                     XlsDaoBase dao = (XlsDaoBase) xlsDao;
                     xlsDao = xlsDaoBase;
                     xlsDaoBase = dao;
-                    dao.beans.clear();
+                    //dao.beans.clear();
                 }
+            }
+
+            if (xlsDaoBean == null) {
+                xlsDaoBase.setLoadTime(UtilContext.getCurrentShort());
+
+            } else {
+                xlsDaoBean.setLoadTime(UtilContext.getCurrentShort());
             }
         }
 

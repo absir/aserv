@@ -16,6 +16,8 @@ public abstract class XlsDao<T, ID extends Serializable> {
 
     private Class<ID> idType;
 
+    private int loadTime;
+
     public XlsDao(Class<ID> idType) {
         this.idType = idType;
     }
@@ -31,5 +33,13 @@ public abstract class XlsDao<T, ID extends Serializable> {
     public T find(Object id) {
         ID identifier = KernelDyna.to(id, idType);
         return identifier == null ? null : get(identifier);
+    }
+
+    public int getLoadTime() {
+        return loadTime;
+    }
+
+    public void setLoadTime(int loadTime) {
+        this.loadTime = loadTime;
     }
 }
