@@ -18,21 +18,25 @@ import = "org.jsoup.nodes.*"
         \${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
         #end
     #end
-\#set(selected = ${iselects ? ('Pag::params(' + inputval + ', true)') : ('EntityStatics::getPrimaries(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
-\#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get("suggest")}', INPUT))
     #if(ajax)
-    \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))\#if(Pag::isParams(selected, value))
+    \#set(selecteds = ${iselects ? inputval : ('EntityStatics::primaries(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
+    \#for(suggest : EntityStatics::suggestSelects(EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get(
+        "suggest")}', INPUT), '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}', selecteds))
+    \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
     <option value="\${value}" selected>
         ${suggests}
     </option>
     \#end
     #else
+    \#set(selected = ${iselects ? ('Pag::params(' + inputval + ', true)') : ('EntityStatics::getPrimaries(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
+    \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get(
+        "suggest")}', INPUT))
     \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
     <option value="\${value}" \${Pag::isParams(selected, value) ? 'selected' : ''}>
         ${suggests}
     </option>
+    \#end
     #end
-\#end
 
 #end
 

@@ -19,24 +19,28 @@ import = "org.jsoup.nodes.*"
         \${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
         #end
     #end
-\#set(selected = ${iselect ? ('Pag::value(' + inputval + ')') : ('EntityStatics::getPrimary(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
     #if(field.isNullable())
     <option value="">${Pag::getLang('未选择')}</option>
     #end
-\#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get("suggest")}', INPUT))
     #if(ajax)
-    \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))\#if(selected==value)
-    <option value="\${value}" selected>
+    \#set(selected = ${iselect ? inputval : ('EntityStatics::primary(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
+    \#set(suggest = EntityStatics::suggestSelect(EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get(
+        "suggest")}', INPUT), '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}', selected))\#if(suggest)
+    <option value="\${EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}')}"
+            selected>
         ${suggests}
     </option>
     \#end
     #else
+    \#set(selected = ${iselect ? ('Pag::value(' + inputval + ')') : ('EntityStatics::getPrimary(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
+    \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get(
+        "suggest")}', INPUT))
     \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
     <option value="\${value}" \${selected==value ? 'selected' : ''}>
         ${suggests}
     </option>
+    \#end
     #end
-\#end
 
 #end
 

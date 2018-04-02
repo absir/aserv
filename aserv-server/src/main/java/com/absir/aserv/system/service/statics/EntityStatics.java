@@ -19,19 +19,18 @@ import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.bean.basis.Configure;
 import com.absir.bean.inject.value.Value;
 import com.absir.core.dyna.DynaBinder;
-import com.absir.core.kernel.KernelCharset;
-import com.absir.core.kernel.KernelCollection;
-import com.absir.core.kernel.KernelLang;
-import com.absir.core.kernel.KernelString;
+import com.absir.core.kernel.*;
 import com.absir.core.util.UtilAccessor;
 import com.absir.core.util.UtilRuntime;
 import com.absir.server.in.IAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -40,6 +39,32 @@ public class EntityStatics {
 
     @Value("suggest.max.results")
     private static int suggestMaxResults = 20;
+
+    public static Object primary(Object entity, String primary) {
+        return UtilAccessor.get(entity, primary);
+    }
+
+    public static Object[] primaries(Collection<?> entities, String primary) {
+        if (entities == null || entities.size() == 0) {
+            return null;
+        }
+
+        int size = entities.size();
+        Object[] primaries = new Object[size];
+        int i = 0;
+        UtilAccessor.Accessor accessor = null;
+        for (Object entity : entities) {
+            if (entity != null) {
+                if (accessor == null) {
+                    accessor = UtilAccessor.getAccessorProperty(entity.getClass(), primary);
+                }
+
+                primaries[i++] = accessor.get(entity);
+            }
+        }
+
+        return primaries;
+    }
 
     public static String getPrimary(Object entity, String primary) {
         return DynaBinderUtils.getParamFromValue(UtilAccessor.get(entity, primary));
@@ -57,8 +82,15 @@ public class EntityStatics {
         int size = entities.size();
         String[] primaries = new String[size];
         int i = 0;
+        UtilAccessor.Accessor accessor = null;
         for (Object entity : entities) {
-            primaries[i++] = getPrimary(entity, primary);
+            if (entity != null) {
+                if (accessor == null) {
+                    accessor = UtilAccessor.getAccessorProperty(entity.getClass(), primary);
+                }
+
+                primaries[i++] = DynaBinderUtils.getParamFromValue(accessor.get(entity));
+            }
         }
 
         return primaries;
@@ -248,4 +280,83 @@ public class EntityStatics {
         Developer.setRuntime(runtimeName, value);
     }
 
+    public static Object suggestSelect(List entities, String primary, Object selected) {
+        if (selected == null || entities == null || entities.size() == 0) {
+            return null;
+        }
+
+        boolean selectedDyna = false;
+        UtilAccessor.Accessor accessor = null;
+        for (Object entity : entities) {
+            if (entity != null) {
+                if (accessor == null) {
+                    accessor = UtilAccessor.getAccessorProperty(entity.getClass(), primary);
+                }
+
+                Object value = accessor.get(entity);
+                if (value != null) {
+                    if (!selectedDyna) {
+                        selectedDyna = true;
+                        selected = DynaBinder.to(selected, value.getClass());
+                    }
+
+                    if (KernelObject.equals(value, selected)) {
+                        return entity;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static List<Object> suggestSelects(List entities, String primary, Object selecteds) {
+        if (selecteds == null || entities == null || entities.size() == 0) {
+            return null;
+        }
+
+        KernelArray.ArrayAccessor sAccessor;
+        int sLen = 0;
+        Collection sList = null;
+        if (selecteds.getClass().isArray()) {
+            sAccessor = KernelArray.forClass(selecteds.getClass());
+            sLen = Array.getLength(selecteds);
+
+        } else if (selecteds instanceof Collections) {
+            sAccessor = null;
+            sList = (Collection) selecteds;
+
+        } else {
+            return null;
+        }
+
+        List<Object> sEntities = new ArrayList<Object>();
+        UtilAccessor.Accessor accessor = null;
+        for (Object entity : entities) {
+            if (entity != null) {
+                if (accessor == null) {
+                    accessor = UtilAccessor.getAccessorProperty(entity.getClass(), primary);
+                }
+
+                Object value = accessor.get(entity);
+                if (value != null) {
+                    if (sAccessor == null) {
+                        if (sList.contains(value)) {
+                            sEntities.add(entity);
+                        }
+
+                    } else {
+                        for (int i = 0; i < sLen; i++) {
+                            if (KernelObject.equals(accessor.get(entity), sAccessor.get(selecteds, i))) {
+                                sEntities.add(entity);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return sEntities;
+    }
 }
