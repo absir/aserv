@@ -103,6 +103,11 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
                 .getContextMap(SERVER_CONTEXT_CLASS);
     }
 
+    protected int xlsReloadTime;
+
+    protected void beforeReloadXls() {
+    }
+
     /**
      * 载入配置
      */
@@ -146,8 +151,10 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
             });
         }
 
+        xlsReloadTime = ContextUtils.getContextShortTime();
+        beforeReloadXls();
         for (XlsField xlsField : xlsFields) {
-            XlsDao xlsDao = XlsUtils.getReloadXlsDao(xlsField.xlsType);
+            XlsDao xlsDao = XlsUtils.getXlsDao(xlsField.xlsType, xlsReloadTime);
             try {
                 LOGGER.info("loaded " + xlsField.workbook + " => " + xlsField.xlsType + ", size = " + xlsDao.getAll().size());
                 xlsField.setXlsDao(this, xlsDao);

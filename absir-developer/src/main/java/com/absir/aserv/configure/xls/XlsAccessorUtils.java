@@ -317,10 +317,10 @@ public class XlsAccessorUtils {
             }
 
             if (xlsDaoBean == null) {
-                xlsDaoBase.setLoadTime(UtilContext.getCurrentShort());
+                xlsDaoBase.setLoadedTime(UtilContext.getCurrentShort());
 
             } else {
-                xlsDaoBean.setLoadTime(UtilContext.getCurrentShort());
+                xlsDaoBean.setLoadedTime(UtilContext.getCurrentShort());
             }
         }
 

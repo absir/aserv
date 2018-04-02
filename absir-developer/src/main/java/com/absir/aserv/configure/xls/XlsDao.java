@@ -16,7 +16,7 @@ public abstract class XlsDao<T, ID extends Serializable> {
 
     private Class<ID> idType;
 
-    private int loadTime;
+    private int loadedTime;
 
     public XlsDao(Class<ID> idType) {
         this.idType = idType;
@@ -35,11 +35,11 @@ public abstract class XlsDao<T, ID extends Serializable> {
         return identifier == null ? null : get(identifier);
     }
 
-    public int getLoadTime() {
-        return loadTime;
+    public int getLoadedTime() {
+        return loadedTime;
     }
 
-    public void setLoadTime(int loadTime) {
-        this.loadTime = loadTime;
+    public void setLoadedTime(int loadedTime) {
+        this.loadedTime = loadedTime;
     }
 }

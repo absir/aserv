@@ -9,7 +9,6 @@ package com.absir.aserv.configure.xls;
 
 import com.absir.aserv.configure.xls.value.XaWorkbook;
 import com.absir.bean.core.BeanConfigImpl;
-import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang.CallbackTemplate;
@@ -53,23 +52,20 @@ public abstract class XlsUtils {
     }
 
     public static <T extends XlsBase> XlsDao<T, Serializable> getXlsDao(Class<T> xlsClass) {
-        return getXlsDao(xlsClass, -1);
+        return getXlsDao(xlsClass, 0);
     }
 
-    public static <T extends XlsBase> XlsDao<T, Serializable> getXlsDao(Class<T> xlsClass, int expireTime) {
-        XlsDao<T, Serializable> xlsDao = expireTime == 0 ? null : XlsAccessorUtils.getXlsDao(xlsClass);
-        if (xlsDao == null || (expireTime > 0 && expireTime < xlsDao.getLoadTime())) {
+    public static <T extends XlsBase> XlsDao<T, Serializable> getXlsDao(Class<T> xlsClass, int reloadTime) {
+        XlsDao<T, Serializable> xlsDao = reloadTime < 0 ? null : XlsAccessorUtils.getXlsDao(xlsClass);
+        if (xlsDao == null || (reloadTime > xlsDao.getLoadedTime())) {
             synchronized (xlsClass) {
-                xlsDao = expireTime == 0 ? null : XlsAccessorUtils.getXlsDao(xlsClass);
-                if (xlsDao == null || (expireTime > 0 && expireTime < xlsDao.getLoadTime())) {
+                xlsDao = reloadTime < 0 ? null : XlsAccessorUtils.getXlsDao(xlsClass);
+                if (xlsDao == null || (reloadTime > xlsDao.getLoadedTime())) {
                     try {
                         reloadXlsDao(xlsClass);
 
                     } catch (IOException e) {
-                        if (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP) {
-                            e.printStackTrace();
-                        }
-
+                        Environment.throwable(e);
                         return null;
                     }
 
@@ -102,7 +98,7 @@ public abstract class XlsUtils {
     }
 
     public static <T extends XlsBase> XlsDao<T, ? extends Serializable> getReloadXlsDao(Class<T> xlsClass) {
-        return getXlsDao(xlsClass, 0);
+        return getXlsDao(xlsClass, -1);
     }
 
     public static <T extends XlsBase> T getXlsBean(Class<T> xlsClass, Serializable id) {
