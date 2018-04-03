@@ -26,7 +26,7 @@ public class JAnnouncement extends JbPlatform {
     @JaLang("公告列表")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonDynamic")
     @Embedded
-    public DAnnouncement announcement;
+    private DAnnouncement announcement;
 
     public Long getId() {
         return id;

@@ -25,6 +25,10 @@ import com.absir.data.value.IThrift;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.absir.data.value.IThrift;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.absir.data.value.IThrift;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.absir.data.value.IThrift;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @MappedSuperclass
 @SuppressWarnings({ "cast", "rawtypes", "serial", "unchecked" })

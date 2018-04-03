@@ -62,7 +62,7 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
 
     protected List<PlatformAnnouncement> announcementList;
 
-    protected List<PlatformServer> serverList;
+    protected List<PlatformServerList> serverList;
 
     @Value("platform.serverIds.count")
     protected int serverIdsCount = 4;
@@ -181,7 +181,7 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
     protected void reloadSettings() {
         try {
             List<JSetting> list = new ArrayList<JSetting>(settingDCacheOpen.getCacheMap().values());
-            Collections.sort(list, BeanService.COMPARATOR);
+            Collections.sort(list, BeanService.COMPARATOR_ID_DESC);
             settingList = list;
 
         } catch (ConcurrentModificationException e) {
@@ -215,31 +215,33 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
     @Async(notifier = true)
     @Transaction(readOnly = true)
     protected void reloadServers() {
-        List<PlatformServer> list = new ArrayList<PlatformServer>();
+        List<PlatformServerList> list = new ArrayList<PlatformServerList>();
         try {
             List<JServer> servers = new ArrayList<JServer>(serverDCacheOpen.getCacheMap().values());
             Collections.sort(servers, BeanService.COMPARATOR_ID_DESC);
             for (JServer server : servers) {
                 DServer[] dServers = server.getServers();
-                if (dServers != null) {
+                if (dServers != null && dServers.length > 0) {
+                    PlatformServerList platformServerList = new PlatformServerList();
+                    list.add(platformServerList);
+                    platformServerList.server = server;
+                    List<PlatformServer> platformServers = platformServerList.platformServers;
                     int last = dServers.length - 1;
                     for (; last >= 0; last--) {
                         DServer dServer = dServers[last];
                         JSlaveServer slaveServer = BeanService.ME.get(JSlaveServer.class, dServer.getId());
                         if (slaveServer != null) {
                             PlatformServer platformServer = new PlatformServer();
-                            platformServer.server = server;
                             platformServer.value = createDServer(dServer);
                             platformServer.dServer = dServer;
                             setDServer(platformServer, slaveServer);
-                            list.add(platformServer);
+                            platformServers.add(platformServer);
                         }
                     }
                 }
             }
 
             serverList = list;
-            KernelList.sortOrderableDesc(serverList);
 
         } catch (ConcurrentModificationException e) {
             Environment.throwable(e);
@@ -281,14 +283,16 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         if (entity != null) {
             boolean deleted = false;
             long serverId = entity.getId();
-            for (PlatformServer platformServer : serverList) {
-                if (platformServer.dServer.getId() == serverId) {
-                    if (mergeType == MergeType.DELETE) {
-                        deleted = true;
-                        break;
+            for (PlatformServerList platformServerList : serverList) {
+                for (PlatformServer platformServer : platformServerList.platformServers) {
+                    if (platformServer.dServer.getId() == serverId) {
+                        if (mergeType == MergeType.DELETE) {
+                            deleted = true;
+                            break;
 
-                    } else {
-                        setDServer(platformServer, entity);
+                        } else {
+                            setDServer(platformServer, entity);
+                        }
                     }
                 }
             }
@@ -428,26 +432,26 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         DPlatformFrom platformFrom = ME.getPlatformFromId(fromId);
         long contextTime = ContextUtils.getContextTime();
         List<DServer> servers = new ArrayList<DServer>(serverList.size());
-        PlatformServer lastMatchClosedServer = null;
-        for (PlatformServer server : serverList) {
-            if (isMatchPlatform(server.getPlatform(), review, platformFrom)) {
-                if (server.closed || server.beginTime < contextTime) {
-                    if (server.beginTime - contextTime > 60000) {
-                        lastMatchClosedServer = server;
-                        continue;
+        PlatformServer waiteServer = null;
+        for (PlatformServerList platformServerList : serverList) {
+            if (isMatchPlatform(platformServerList.getPlatform(), review, platformFrom)) {
+                for (PlatformServer server : platformServerList.platformServers) {
+                    if (server.passTime > contextTime) {
+                        if (server.beginTime > contextTime) {
+                            waiteServer = server;
+                            continue;
+                        }
+
+                        servers.add(server.value);
                     }
-
-                    server.value.setStatus(EServerStatus.wait);
                 }
-
-                servers.add(server.value);
             }
         }
 
-        if (servers.isEmpty() && lastMatchClosedServer != null) {
-            PlatformServer server = lastMatchClosedServer;
-            server.value.setStatus(EServerStatus.wait);
-            servers.add(server.value);
+        if (servers.isEmpty() && waiteServer != null) {
+            DServer dServer = waiteServer.dServer.clone();
+            dServer.setStatus(EServerStatus.wait);
+            servers.add(dServer);
         }
 
         return servers;
@@ -586,7 +590,7 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
 
     }
 
-    public static class PlatformAnnouncement {
+    public static class PlatformAnnouncement implements KernelList.Orderable {
 
         protected JAnnouncement announcement;
 
@@ -600,11 +604,29 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
             return value;
         }
 
+        @Override
+        public int getOrder() {
+            return announcement.getOrdinal();
+        }
+    }
+
+    public static class PlatformServerList implements KernelList.Orderable {
+
+        protected JServer server;
+
+        protected final List<PlatformServer> platformServers = new ArrayList<PlatformServer>();
+
+        public JbPlatform getPlatform() {
+            return server;
+        }
+
+        @Override
+        public int getOrder() {
+            return server.getOrdinal();
+        }
     }
 
     public static class PlatformServer implements KernelList.Orderable {
-
-        protected JServer server;
 
         protected DServer value;
 
@@ -615,10 +637,6 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         protected long passTime;
 
         protected boolean closed;
-
-        public JbPlatform getPlatform() {
-            return server;
-        }
 
         public Object getValue() {
             return value;

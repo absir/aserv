@@ -76,10 +76,12 @@ struct DServer {
 
 // 服务状态
 enum EServerStatus {
+    // 开放,
+    open,
+    // 新服
+    newly,
     // 等待
     wait,
-    // 强开,
-    open,
     // 维护
     maintain,
     // 爆满,
