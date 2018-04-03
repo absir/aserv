@@ -96,7 +96,7 @@ public class SlaverSyncService {
      *添加RPC同步
      */
     public void addMasterSynchRpcIndex(int masterIndex, String id, RpcData rpcData) {
-        addMasterSynchDataIndex(masterIndex, id, rpcData.getUri(), rpcData.getParamData(), true);
+        ME.addMasterSynchDataIndex(masterIndex, id, rpcData.getUri(), rpcData.getParamData(), true);
     }
 
     /**

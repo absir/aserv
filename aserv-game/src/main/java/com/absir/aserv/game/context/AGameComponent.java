@@ -173,7 +173,7 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
         return SERVER_CONTEXT_MAP.get(serverId);
     }
 
-    public abstract JbPlayer createPlayer(Long serverId);
+    public abstract JbPlayer createPlayer(Long serverId, Long userId);
 
     public abstract JbPlayerA createPlayerA();
 

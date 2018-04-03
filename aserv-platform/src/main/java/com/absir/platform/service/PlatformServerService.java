@@ -19,13 +19,11 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Started;
+import com.absir.bean.inject.value.Value;
 import com.absir.context.core.ContextUtils;
 import com.absir.context.schedule.value.Schedule;
 import com.absir.core.base.Environment;
-import com.absir.core.kernel.KernelCollection;
-import com.absir.core.kernel.KernelLang;
-import com.absir.core.kernel.KernelList;
-import com.absir.core.kernel.KernelString;
+import com.absir.core.kernel.*;
 import com.absir.open.bean.JPayTrade;
 import com.absir.open.bean.value.JePayStatus;
 import com.absir.open.service.PayUtils;
@@ -37,6 +35,7 @@ import com.absir.platform.bean.base.JbPlatform;
 import com.absir.thrift.IFaceServer;
 import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.TException;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import tplatform.*;
 
@@ -65,6 +64,9 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
 
     protected List<PlatformServer> serverList;
 
+    @Value("platform.serverIds.count")
+    protected int serverIdsCount = 4;
+
     public static boolean isExcludeIds(String ids, String id) {
         if (!KernelString.isEmpty(ids)) {
             if (KernelString.patternInclude(ids, id)) {
@@ -79,6 +81,48 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
 
     protected static String[] getMoreDatas(List<String> moreDatas) {
         return moreDatas == null || moreDatas.size() == 0 ? null : (KernelCollection.toArray(moreDatas, String.class));
+    }
+
+    protected String findServerIds(Session session, Long userId, Long serverId) {
+        SQLQuery query = QueryDaoUtils.createSQLQuery(session, "SELECT IF(lastServerId = ?, '*', serverIds) as serverIds FROM JUserServerIds WHERE id = ?", serverId, userId);
+        List list = query.list();
+        return list == null || list.size() == 0 ? null : (String) list.get(0);
+    }
+
+    @Transaction
+    public void enterServer(Long userId, Long serverId) {
+        Session session = BeanDao.getSession();
+        String serverIds = findServerIds(session, userId, serverId);
+        if (serverIds == null) {
+            serverIds = String.valueOf(serverId);
+
+        } else if ("*".equals(serverIds)) {
+            return;
+
+        } else {
+            String splitServerId = "," + serverId;
+            int pos = serverIds.indexOf(splitServerId);
+            if (pos > 0) {
+                serverIds = serverId + ',' + serverIds.substring(0, pos) + serverIds.substring(pos + splitServerId.length());
+
+            } else {
+                int count = KernelString.countChar(serverIds, ',', 0);
+                if (count > 0 && count < serverIdsCount) {
+                    serverIds = serverId + ',' + serverIds;
+
+                } else {
+                    serverIds = serverId + ',' + serverIds.substring(0, serverIds.lastIndexOf(','));
+                }
+            }
+        }
+
+        // 保存最后一次进服
+        JUserServerIds userServerIds = new JUserServerIds();
+        userServerIds.setId(userId);
+        userServerIds.setLastServerId(serverId);
+        userServerIds.setServerIds(serverIds);
+        session.merge(userServerIds);
+        session.flush();
     }
 
     @Inject
@@ -413,7 +457,8 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         return platformFrom == null ? null : (platformFrom.getPlatform() + '@' + platformFrom.getChannel());
     }
 
-    protected DIdentityResult loginUser(int fromId, boolean serverIds, JiUserBase user, String userData) {
+    @Transaction
+    protected DIdentityResult loginUser(int fromId, long lastUserId, JiUserBase user, String userData) {
         if (user == null) {
             return null;
         }
@@ -447,20 +492,28 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
             identityResult.setUserId(platformUser.getId());
             identityResult.setUserData(userData);
             identityResult.setSessionId(platformUser.getSessionId());
+
+            // 切换用户下发最近服务器列表
+            if (lastUserId >= 0 && lastUserId != identityResult.getUserId()) {
+                String serverIdsParams = (String) BeanService.ME.selectQuerySingle("SELECT o.serverIds FROM JUserServerIds o WHERE o.id = ?", platformUser.getId());
+                if (serverIdsParams != null) {
+                    identityResult.setServerIds(KernelArray.deserializeList(null, serverIdsParams, Long.class));
+                }
+            }
         }
 
         return identityResult;
     }
 
     @Override
-    public DIdentityResult identity(int fromId, boolean serverIds, String identities) throws TException {
+    public DIdentityResult identity(int fromId, long lastUserId, String identities) throws TException {
         String[] parameters = HelperString.split(identities, ',');
         JiUserBase userBase = IdentityServiceLocal.getUserBaseParams(parameters, null);
-        return loginUser(fromId, serverIds, userBase, parameters[0] == null ? parameters[1] : null);
+        return loginUser(fromId, lastUserId, userBase, parameters[0] == null ? parameters[1] : null);
     }
 
     @Override
-    public DLoginResult login(int fromId, boolean serverIds, String username, String password) throws TException {
+    public DLoginResult login(int fromId, long lastUserId, String username, String password) throws TException {
         JiUserBase userBase = SecurityService.ME.getUserBase(username, 0);
         DLoginResult loginResult = new DLoginResult();
         if (userBase == null) {
@@ -470,7 +523,7 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
             IUser user = (IUser) (userBase);
             if (PasswordCrudFactory.getPasswordEncrypt(password, user.getSalt(), user.getSaltCount()).equals(user.getPassword())) {
                 loginResult.setError(ELoginError.success);
-                loginResult.setResult(loginUser(fromId, serverIds, userBase, null));
+                loginResult.setResult(loginUser(fromId, lastUserId, userBase, null));
                 loginResult.setUserId(userBase.getUserId());
 
             } else {
@@ -482,13 +535,18 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
     }
 
     @Override
-    public DIdentityResult loginUUID(int fromId, boolean serverIds, String uuid) throws TException {
-        return loginUser(fromId, serverIds, SecurityService.ME.openUserBase(uuid, null, "UUID", null), null);
+    public DIdentityResult loginUUID(int fromId, long lastUserId, String uuid) throws TException {
+        return loginUser(fromId, lastUserId, SecurityService.ME.openUserBase(uuid, null, "UUID", null), null);
     }
 
     @Override
     public DRegisterResult sign(int fromId, String username, String password) throws TException {
         return signUUID(fromId, username, password, null);
+    }
+
+    @Override
+    public void enter(long userId, String sessionId, long serverId) {
+        ME.enterServer(userId, serverId);
     }
 
     @Override

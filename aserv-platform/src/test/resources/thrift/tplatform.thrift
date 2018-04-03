@@ -233,13 +233,13 @@ service PlatformFromService {
     list<DServer> servers(1:i32 fromId, 2:bool review)
 
     // 授权
-    DIdentityResult identity(1:i32 fromId, 2:bool serverIds, 3:string identity)
+    DIdentityResult identity(1:i32 fromId, 2:i64 lastUserId, 3:string identity)
 
     // 登陆账号
-    DLoginResult login(1:i32 fromId, 2:bool serverIds, 3:string username, 4:string password)
+    DLoginResult login(1:i32 fromId, 2:i64 lastUserId, 3:string username, 4:string password)
 
     // 游客登录
-    DIdentityResult loginUUID(1:i32 fromId, 2:bool serverIds, 3:string uuid)
+    DIdentityResult loginUUID(1:i32 fromId, 2:i64 lastUserId, 3:string uuid)
 
     // 注册账号
     DRegisterResult sign(1:i32 fromId, 2:string username, 3:string password)
@@ -249,6 +249,9 @@ service PlatformFromService {
 
     // 修改密码
     EPasswordResult password(1:i64 userId, 2:string sessionId, 3:string oldPassword, 4:string newPassword)
+
+    // 进入游戏
+    void enter(1:i64 userId, 2:string sessionId, 3:i64 serverId);
 
     // 下订单
     DOrderResult order(1:i32 fromId, 2:DOrderInfo info)

@@ -86,7 +86,7 @@ public interface BeanService {
     };
 
     @Transaction(readOnly = true)
-    public boolean exist(String entityName, Serializable id);
+    public boolean exist(String hql, Serializable id);
 
     @Transaction(readOnly = true)
     public <T> T get(Class<T> entityClass, Serializable id);

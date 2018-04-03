@@ -957,4 +957,32 @@ public abstract class KernelArray {
         ArrayAccessor accessor = forComponentType(componentClass);
         return accessor.split(params, ',', pos);
     }
+
+    public static <T> List<T> deserializeList(String start, String params, Class<T> componentClass) {
+        if (params == null) {
+            return null;
+        }
+
+        int pos = 0;
+        if (start != null && start.length() > 0) {
+            if (params.startsWith(start)) {
+                pos = start.length();
+            }
+        }
+
+        List list = new ArrayList();
+        int nPos;
+        while (true) {
+            nPos = params.indexOf(',', pos);
+            if (nPos < pos) {
+                list.add(DynaBinder.to(params.substring(pos), componentClass));
+                break;
+            }
+
+            list.add(DynaBinder.to(params.substring(pos, nPos), componentClass));
+            pos = nPos + 1;
+        }
+
+        return list;
+    }
 }

@@ -14,10 +14,10 @@ public class GenerateThriftPlatform {
     public static void main(String[] args) throws Exception {
         String classPath = HelperFileName.getClassPath(null);
         System.out.println(classPath);
-        HelperIO.execute("pwd");
-        HelperIO.execute("rm -rf ./target/test-classes/thrift/gen-java");
-        HelperIO.execute("thrift --gen java ./target/test-classes/thrift/tplatform.thrift");
-        HelperIO.execute("mv -f gen-java ./target/test-classes/thrift/");
+        //HelperIO.execute("pwd");
+        HelperIO.execute("rm -rf " + classPath + "thrift/gen-java");
+        HelperIO.execute("thrift --gen java:generated_annotations=undated " + classPath + "thrift/tplatform.thrift");
+        HelperIO.execute("mv -f gen-java " + classPath + "thrift/");
         ThriftJavaMerger javaMerger = new ThriftJavaMerger();
         javaMerger.mergeBaseDir(new File(classPath + "/thrift/gen-java"), new File(classPath + "../../src/main/java"));
     }

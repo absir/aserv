@@ -118,9 +118,9 @@ public abstract class PlayerService {
      * 查找或创建角色ID
      */
     public Long openPlayerId(Long serverId, Long userId) {
-        Long playerId = openPlayerId(serverId, userId);
+        Long playerId = playerId(serverId, userId);
         if (playerId == null) {
-            JbPlayer player = AGameComponent.ME.createPlayer(serverId);
+            JbPlayer player = AGameComponent.ME.createPlayer(serverId, userId);
             player.setCreateTime(ContextUtils.getContextTime());
             player.setServerId(serverId);
             player.setUserId(userId);
@@ -257,7 +257,7 @@ public abstract class PlayerService {
             platformUser.setServerId(serverId);
         }
 
-        JbPlayer player = AGameComponent.ME.createPlayer(serverId);
+        JbPlayer player = AGameComponent.ME.createPlayer(serverId, platformUser.getUserId());
         player.setServerId(serverId);
         player.setUserId(userBase.getUserId());
         player.setName(name);
