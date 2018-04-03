@@ -103,15 +103,15 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
             String splitServerId = "," + serverId;
             int pos = serverIds.indexOf(splitServerId);
             if (pos > 0) {
-                serverIds = serverId + ',' + serverIds.substring(0, pos) + serverIds.substring(pos + splitServerId.length());
+                serverIds = serverId + "," + serverIds.substring(0, pos) + serverIds.substring(pos + splitServerId.length());
 
             } else {
                 int count = KernelString.countChar(serverIds, ',', 0);
-                if (count > 0 && count < serverIdsCount) {
-                    serverIds = serverId + ',' + serverIds;
+                if (count < serverIdsCount - 1) {
+                    serverIds = serverId + "," + serverIds;
 
                 } else {
-                    serverIds = serverId + ',' + serverIds.substring(0, serverIds.lastIndexOf(','));
+                    serverIds = serverId + "," + serverIds.substring(0, serverIds.lastIndexOf(','));
                 }
             }
         }
