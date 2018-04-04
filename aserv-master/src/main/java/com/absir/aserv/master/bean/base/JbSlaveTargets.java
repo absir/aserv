@@ -32,6 +32,7 @@ public class JbSlaveTargets extends JbBean {
     @JaName("JSlaveAppCode")
     public String appCode;
 
+    //@Access(AccessType.PROPERTY)
     @JaLang(value = "目标节点", tag = "targetSlave")
     @JaName("JSlave")
     @JaEdit(groups = JaEdit.GROUP_LIST, suggest = true, metas = "{\"suggest\":\"appCode=NONE\"}")
@@ -41,6 +42,7 @@ public class JbSlaveTargets extends JbBean {
 
     private transient String[] lastSlaveIds;
 
+    //@Access(AccessType.PROPERTY)
     @JaLang("全部节点")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean allSlaveIds;

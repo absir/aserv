@@ -98,6 +98,10 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
         return bodyDeclaration;
     }
 
+    protected int getModifierFieldDeclaration(String name, FieldDeclaration fieldDeclaration) {
+        return Modifier.PROTECTED;
+    }
+
     @Override
     public void mergeCompilationUnit(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
                                      TypeDeclaration fromType, TypeDeclaration toType, TypeDeclaration defineType, Map<String, FieldDeclaration> fromFieldMap, Map<String, BodyDeclaration> declarationMap) {
@@ -190,7 +194,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                         }
 
                     } else {
-                        fieldDeclaration.setModifiers(Modifier.PROTECTED);
+                        fieldDeclaration.setModifiers(getModifierFieldDeclaration(name, fieldDeclaration));
                         fieldDeclaration.setType(fromFieldDeclaration.getType());
                         FieldDeclaration defineFieldDeclaration = defineFieldDeclarationMap == null ? null : defineFieldDeclarationMap.remove(name);
                         fieldDeclaration.setAnnotations(mergeAnnotationExpr(fromFieldDeclaration.getAnnotations(), defineFieldDeclaration == null ? fieldDeclaration.getAnnotations() : defineFieldDeclaration.getAnnotations(), bodyDeclaration));

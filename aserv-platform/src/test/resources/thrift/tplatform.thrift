@@ -20,6 +20,8 @@ struct DPlatformFromSetting {
     2: bool review;
     // 客户端配置
     3: optional DFromSetting setting;
+    // 客户端分组
+    4: optional string group;
 }
 
 // 来源设置
@@ -229,10 +231,10 @@ service PlatformFromService {
     DPlatformFromSetting setting(1:DPlatformFrom platformFrom, 2:string versionName)
 
     // 公告列表
-    list<DAnnouncement> announcements(1:i32 fromId, 2:bool review)
+    list<DAnnouncement> announcements(1:i32 fromId, 2:bool review, 3:string group)
 
     // 服务列表
-    list<DServer> servers(1:i32 fromId, 2:bool review)
+    list<DServer> servers(1:i32 fromId, 2:bool review, 3:string group)
 
     // 授权
     DIdentityResult identity(1:i32 fromId, 2:i64 lastUserId, 3:string identity)

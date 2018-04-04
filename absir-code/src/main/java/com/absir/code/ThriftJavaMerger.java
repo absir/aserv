@@ -67,6 +67,15 @@ public class ThriftJavaMerger extends BeanJavaMerger {
     }
 
     @Override
+    protected int getModifierFieldDeclaration(String name, FieldDeclaration fieldDeclaration) {
+//        if ("__isset_bitfield".equals(name)) {
+//            return Modifier.PROTECTED | Modifier.TRANSIENT;
+//        }
+
+        return super.getModifierFieldDeclaration(name, fieldDeclaration);
+    }
+
+    @Override
     protected void processBodyDeclaration(BodyDeclaration bodyDeclaration, String declarationAsString) {
         if (bodyDeclaration instanceof MethodDeclaration) {
             MethodDeclaration methodDeclaration = (MethodDeclaration) bodyDeclaration;

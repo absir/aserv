@@ -28,9 +28,9 @@ public class PlatformFromService {
 
         public DPlatformFromSetting setting(DPlatformFrom platformFrom, String versionName) throws org.apache.thrift.TException;
 
-        public List<DAnnouncement> announcements(int fromId, boolean review) throws org.apache.thrift.TException;
+        public List<DAnnouncement> announcements(int fromId, boolean review, String group) throws org.apache.thrift.TException;
 
-        public List<DServer> servers(int fromId, boolean review) throws org.apache.thrift.TException;
+        public List<DServer> servers(int fromId, boolean review, String group) throws org.apache.thrift.TException;
 
         public DIdentityResult identity(int fromId, long lastUserId, String identity) throws org.apache.thrift.TException;
 
@@ -55,9 +55,9 @@ public class PlatformFromService {
 
         public void setting(DPlatformFrom platformFrom, String versionName, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-        public void announcements(int fromId, boolean review, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void announcements(int fromId, boolean review, String group, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-        public void servers(int fromId, boolean review, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void servers(int fromId, boolean review, String group, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
         public void identity(int fromId, long lastUserId, String identity, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -123,15 +123,16 @@ public class PlatformFromService {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "setting failed: unknown result");
         }
 
-        public List<DAnnouncement> announcements(int fromId, boolean review) throws org.apache.thrift.TException {
-            send_announcements(fromId, review);
+        public List<DAnnouncement> announcements(int fromId, boolean review, String group) throws org.apache.thrift.TException {
+            send_announcements(fromId, review, group);
             return recv_announcements();
         }
 
-        public void send_announcements(int fromId, boolean review) throws org.apache.thrift.TException {
+        public void send_announcements(int fromId, boolean review, String group) throws org.apache.thrift.TException {
             announcements_args args = new announcements_args();
             args.setFromId(fromId);
             args.setReview(review);
+            args.setGroup(group);
             sendBase("announcements", args);
         }
 
@@ -144,15 +145,16 @@ public class PlatformFromService {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "announcements failed: unknown result");
         }
 
-        public List<DServer> servers(int fromId, boolean review) throws org.apache.thrift.TException {
-            send_servers(fromId, review);
+        public List<DServer> servers(int fromId, boolean review, String group) throws org.apache.thrift.TException {
+            send_servers(fromId, review, group);
             return recv_servers();
         }
 
-        public void send_servers(int fromId, boolean review) throws org.apache.thrift.TException {
+        public void send_servers(int fromId, boolean review, String group) throws org.apache.thrift.TException {
             servers_args args = new servers_args();
             args.setFromId(fromId);
             args.setReview(review);
+            args.setGroup(group);
             sendBase("servers", args);
         }
 
@@ -422,9 +424,9 @@ public class PlatformFromService {
             }
         }
 
-        public void announcements(int fromId, boolean review, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void announcements(int fromId, boolean review, String group, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
             checkReady();
-            announcements_call method_call = new announcements_call(fromId, review, resultHandler, this, ___protocolFactory, ___transport);
+            announcements_call method_call = new announcements_call(fromId, review, group, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
             ___manager.call(method_call);
         }
@@ -435,10 +437,13 @@ public class PlatformFromService {
 
             private boolean review;
 
-            public announcements_call(int fromId, boolean review, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+            private String group;
+
+            public announcements_call(int fromId, boolean review, String group, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.fromId = fromId;
                 this.review = review;
+                this.group = group;
             }
 
             public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
@@ -446,6 +451,7 @@ public class PlatformFromService {
                 announcements_args args = new announcements_args();
                 args.setFromId(fromId);
                 args.setReview(review);
+                args.setGroup(group);
                 args.write(prot);
                 prot.writeMessageEnd();
             }
@@ -460,9 +466,9 @@ public class PlatformFromService {
             }
         }
 
-        public void servers(int fromId, boolean review, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void servers(int fromId, boolean review, String group, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
             checkReady();
-            servers_call method_call = new servers_call(fromId, review, resultHandler, this, ___protocolFactory, ___transport);
+            servers_call method_call = new servers_call(fromId, review, group, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
             ___manager.call(method_call);
         }
@@ -473,10 +479,13 @@ public class PlatformFromService {
 
             private boolean review;
 
-            public servers_call(int fromId, boolean review, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+            private String group;
+
+            public servers_call(int fromId, boolean review, String group, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.fromId = fromId;
                 this.review = review;
+                this.group = group;
             }
 
             public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
@@ -484,6 +493,7 @@ public class PlatformFromService {
                 servers_args args = new servers_args();
                 args.setFromId(fromId);
                 args.setReview(review);
+                args.setGroup(group);
                 args.write(prot);
                 prot.writeMessageEnd();
             }
@@ -946,7 +956,7 @@ public class PlatformFromService {
 
             public announcements_result getResult(I iface, announcements_args args) throws org.apache.thrift.TException {
                 announcements_result result = new announcements_result();
-                result.success = iface.announcements(args.fromId, args.review);
+                result.success = iface.announcements(args.fromId, args.review, args.group);
                 return result;
             }
         }
@@ -967,7 +977,7 @@ public class PlatformFromService {
 
             public servers_result getResult(I iface, servers_args args) throws org.apache.thrift.TException {
                 servers_result result = new servers_result();
-                result.success = iface.servers(args.fromId, args.review);
+                result.success = iface.servers(args.fromId, args.review, args.group);
                 return result;
             }
         }
@@ -1295,7 +1305,7 @@ public class PlatformFromService {
             }
 
             public void start(I iface, announcements_args args, org.apache.thrift.async.AsyncMethodCallback<List<DAnnouncement>> resultHandler) throws TException {
-                iface.announcements(args.fromId, args.review, resultHandler);
+                iface.announcements(args.fromId, args.review, args.group, resultHandler);
             }
         }
 
@@ -1349,7 +1359,7 @@ public class PlatformFromService {
             }
 
             public void start(I iface, servers_args args, org.apache.thrift.async.AsyncMethodCallback<List<DServer>> resultHandler) throws TException {
-                iface.servers(args.fromId, args.review, resultHandler);
+                iface.servers(args.fromId, args.review, args.group, resultHandler);
             }
         }
 
@@ -2653,6 +2663,8 @@ public class PlatformFromService {
 
         private static final org.apache.thrift.protocol.TField REVIEW_FIELD_DESC = new org.apache.thrift.protocol.TField("review", org.apache.thrift.protocol.TType.BOOL, (short) 2);
 
+        private static final org.apache.thrift.protocol.TField GROUP_FIELD_DESC = new org.apache.thrift.protocol.TField("group", org.apache.thrift.protocol.TType.STRING, (short) 3);
+
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
 
         static {
@@ -2666,9 +2678,12 @@ public class PlatformFromService {
         // required
         public boolean review;
 
+        // required
+        public String group;
+
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 
-            FROM_ID((short) 1, "fromId"), REVIEW((short) 2, "review");
+            FROM_ID((short) 1, "fromId"), REVIEW((short) 2, "review"), GROUP((short) 3, "group");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -2686,6 +2701,9 @@ public class PlatformFromService {
                     case // REVIEW
                     2:
                         return REVIEW;
+                    case // GROUP
+                    3:
+                        return GROUP;
                     default:
                         return null;
                 }
@@ -2733,6 +2751,7 @@ public class PlatformFromService {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.FROM_ID, new org.apache.thrift.meta_data.FieldMetaData("fromId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
             tmpMap.put(_Fields.REVIEW, new org.apache.thrift.meta_data.FieldMetaData("review", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+            tmpMap.put(_Fields.GROUP, new org.apache.thrift.meta_data.FieldMetaData("group", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
             metaDataMap = Collections.unmodifiableMap(tmpMap);
             org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(announcements_args.class, metaDataMap);
         }
@@ -2740,18 +2759,22 @@ public class PlatformFromService {
         public announcements_args() {
         }
 
-        public announcements_args(int fromId, boolean review) {
+        public announcements_args(int fromId, boolean review, String group) {
             this();
             this.fromId = fromId;
             setFromIdIsSet(true);
             this.review = review;
             setReviewIsSet(true);
+            this.group = group;
         }
 
         public announcements_args(announcements_args other) {
             __isset_bitfield = other.__isset_bitfield;
             this.fromId = other.fromId;
             this.review = other.review;
+            if (other.isSetGroup()) {
+                this.group = other.group;
+            }
         }
 
         public announcements_args deepCopy() {
@@ -2764,6 +2787,7 @@ public class PlatformFromService {
             this.fromId = 0;
             setReviewIsSet(false);
             this.review = false;
+            this.group = null;
         }
 
         public int getFromId() {
@@ -2812,6 +2836,30 @@ public class PlatformFromService {
             __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __REVIEW_ISSET_ID, value);
         }
 
+        public String getGroup() {
+            return this.group;
+        }
+
+        public announcements_args setGroup(String group) {
+            this.group = group;
+            return this;
+        }
+
+        public void unsetGroup() {
+            this.group = null;
+        }
+
+        /** Returns true if field group is set (has been assigned a value) and false otherwise */
+        public boolean isSetGroup() {
+            return this.group != null;
+        }
+
+        public void setGroupIsSet(boolean value) {
+            if (!value) {
+                this.group = null;
+            }
+        }
+
         public void setFieldValue(_Fields field, Object value) {
             switch(field) {
                 case FROM_ID:
@@ -2828,6 +2876,13 @@ public class PlatformFromService {
                         setReview((Boolean) value);
                     }
                     break;
+                case GROUP:
+                    if (value == null) {
+                        unsetGroup();
+                    } else {
+                        setGroup((String) value);
+                    }
+                    break;
             }
         }
 
@@ -2837,6 +2892,8 @@ public class PlatformFromService {
                     return getFromId();
                 case REVIEW:
                     return isReview();
+                case GROUP:
+                    return getGroup();
             }
             throw new IllegalStateException();
         }
@@ -2850,6 +2907,8 @@ public class PlatformFromService {
                     return isSetFromId();
                 case REVIEW:
                     return isSetReview();
+                case GROUP:
+                    return isSetGroup();
             }
             throw new IllegalStateException();
         }
@@ -2882,6 +2941,14 @@ public class PlatformFromService {
                 if (this.review != that.review)
                     return false;
             }
+            boolean this_present_group = true && this.isSetGroup();
+            boolean that_present_group = true && that.isSetGroup();
+            if (this_present_group || that_present_group) {
+                if (!(this_present_group && that_present_group))
+                    return false;
+                if (!this.group.equals(that.group))
+                    return false;
+            }
             return true;
         }
 
@@ -2896,6 +2963,10 @@ public class PlatformFromService {
             list.add(present_review);
             if (present_review)
                 list.add(review);
+            boolean present_group = true && (isSetGroup());
+            list.add(present_group);
+            if (present_group)
+                list.add(group);
             return list.hashCode();
         }
 
@@ -2921,6 +2992,16 @@ public class PlatformFromService {
             }
             if (isSetReview()) {
                 lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.review, other.review);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            lastComparison = Boolean.valueOf(isSetGroup()).compareTo(other.isSetGroup());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetGroup()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.group, other.group);
                 if (lastComparison != 0) {
                     return lastComparison;
                 }
@@ -2951,6 +3032,15 @@ public class PlatformFromService {
                 sb.append(", ");
             sb.append("review:");
             sb.append(this.review);
+            first = false;
+            if (!first)
+                sb.append(", ");
+            sb.append("group:");
+            if (this.group == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.group);
+            }
             first = false;
             sb.append(")");
             return sb.toString();
@@ -3013,6 +3103,15 @@ public class PlatformFromService {
                                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                             }
                             break;
+                        case // GROUP
+                        3:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                                struct.group = iprot.readString();
+                                struct.setGroupIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
                         default:
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                     }
@@ -3032,6 +3131,11 @@ public class PlatformFromService {
                 oprot.writeFieldBegin(REVIEW_FIELD_DESC);
                 oprot.writeBool(struct.review);
                 oprot.writeFieldEnd();
+                if (struct.group != null) {
+                    oprot.writeFieldBegin(GROUP_FIELD_DESC);
+                    oprot.writeString(struct.group);
+                    oprot.writeFieldEnd();
+                }
                 oprot.writeFieldStop();
                 oprot.writeStructEnd();
             }
@@ -3056,19 +3160,25 @@ public class PlatformFromService {
                 if (struct.isSetReview()) {
                     optionals.set(1);
                 }
-                oprot.writeBitSet(optionals, 2);
+                if (struct.isSetGroup()) {
+                    optionals.set(2);
+                }
+                oprot.writeBitSet(optionals, 3);
                 if (struct.isSetFromId()) {
                     oprot.writeI32(struct.fromId);
                 }
                 if (struct.isSetReview()) {
                     oprot.writeBool(struct.review);
                 }
+                if (struct.isSetGroup()) {
+                    oprot.writeString(struct.group);
+                }
             }
 
             @Override
             public void read(org.apache.thrift.protocol.TProtocol prot, announcements_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
-                BitSet incoming = iprot.readBitSet(2);
+                BitSet incoming = iprot.readBitSet(3);
                 if (incoming.get(0)) {
                     struct.fromId = iprot.readI32();
                     struct.setFromIdIsSet(true);
@@ -3076,6 +3186,10 @@ public class PlatformFromService {
                 if (incoming.get(1)) {
                     struct.review = iprot.readBool();
                     struct.setReviewIsSet(true);
+                }
+                if (incoming.get(2)) {
+                    struct.group = iprot.readString();
+                    struct.setGroupIsSet(true);
                 }
             }
         }
@@ -3474,6 +3588,8 @@ public class PlatformFromService {
 
         private static final org.apache.thrift.protocol.TField REVIEW_FIELD_DESC = new org.apache.thrift.protocol.TField("review", org.apache.thrift.protocol.TType.BOOL, (short) 2);
 
+        private static final org.apache.thrift.protocol.TField GROUP_FIELD_DESC = new org.apache.thrift.protocol.TField("group", org.apache.thrift.protocol.TType.STRING, (short) 3);
+
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
 
         static {
@@ -3487,9 +3603,12 @@ public class PlatformFromService {
         // required
         public boolean review;
 
+        // required
+        public String group;
+
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 
-            FROM_ID((short) 1, "fromId"), REVIEW((short) 2, "review");
+            FROM_ID((short) 1, "fromId"), REVIEW((short) 2, "review"), GROUP((short) 3, "group");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -3507,6 +3626,9 @@ public class PlatformFromService {
                     case // REVIEW
                     2:
                         return REVIEW;
+                    case // GROUP
+                    3:
+                        return GROUP;
                     default:
                         return null;
                 }
@@ -3554,6 +3676,7 @@ public class PlatformFromService {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.FROM_ID, new org.apache.thrift.meta_data.FieldMetaData("fromId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
             tmpMap.put(_Fields.REVIEW, new org.apache.thrift.meta_data.FieldMetaData("review", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
+            tmpMap.put(_Fields.GROUP, new org.apache.thrift.meta_data.FieldMetaData("group", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
             metaDataMap = Collections.unmodifiableMap(tmpMap);
             org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(servers_args.class, metaDataMap);
         }
@@ -3561,18 +3684,22 @@ public class PlatformFromService {
         public servers_args() {
         }
 
-        public servers_args(int fromId, boolean review) {
+        public servers_args(int fromId, boolean review, String group) {
             this();
             this.fromId = fromId;
             setFromIdIsSet(true);
             this.review = review;
             setReviewIsSet(true);
+            this.group = group;
         }
 
         public servers_args(servers_args other) {
             __isset_bitfield = other.__isset_bitfield;
             this.fromId = other.fromId;
             this.review = other.review;
+            if (other.isSetGroup()) {
+                this.group = other.group;
+            }
         }
 
         public servers_args deepCopy() {
@@ -3585,6 +3712,7 @@ public class PlatformFromService {
             this.fromId = 0;
             setReviewIsSet(false);
             this.review = false;
+            this.group = null;
         }
 
         public int getFromId() {
@@ -3631,6 +3759,29 @@ public class PlatformFromService {
             __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __REVIEW_ISSET_ID, value);
         }
 
+        public String getGroup() {
+            return this.group;
+        }
+
+        public servers_args setGroup(String group) {
+            this.group = group;
+            return this;
+        }
+
+        public void unsetGroup() {
+            this.group = null;
+        }
+
+        public boolean isSetGroup() {
+            return this.group != null;
+        }
+
+        public void setGroupIsSet(boolean value) {
+            if (!value) {
+                this.group = null;
+            }
+        }
+
         public void setFieldValue(_Fields field, Object value) {
             switch(field) {
                 case FROM_ID:
@@ -3647,6 +3798,13 @@ public class PlatformFromService {
                         setReview((Boolean) value);
                     }
                     break;
+                case GROUP:
+                    if (value == null) {
+                        unsetGroup();
+                    } else {
+                        setGroup((String) value);
+                    }
+                    break;
             }
         }
 
@@ -3656,6 +3814,8 @@ public class PlatformFromService {
                     return getFromId();
                 case REVIEW:
                     return isReview();
+                case GROUP:
+                    return getGroup();
             }
             throw new IllegalStateException();
         }
@@ -3669,6 +3829,8 @@ public class PlatformFromService {
                     return isSetFromId();
                 case REVIEW:
                     return isSetReview();
+                case GROUP:
+                    return isSetGroup();
             }
             throw new IllegalStateException();
         }
@@ -3701,6 +3863,14 @@ public class PlatformFromService {
                 if (this.review != that.review)
                     return false;
             }
+            boolean this_present_group = true && this.isSetGroup();
+            boolean that_present_group = true && that.isSetGroup();
+            if (this_present_group || that_present_group) {
+                if (!(this_present_group && that_present_group))
+                    return false;
+                if (!this.group.equals(that.group))
+                    return false;
+            }
             return true;
         }
 
@@ -3715,6 +3885,10 @@ public class PlatformFromService {
             list.add(present_review);
             if (present_review)
                 list.add(review);
+            boolean present_group = true && (isSetGroup());
+            list.add(present_group);
+            if (present_group)
+                list.add(group);
             return list.hashCode();
         }
 
@@ -3740,6 +3914,16 @@ public class PlatformFromService {
             }
             if (isSetReview()) {
                 lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.review, other.review);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            lastComparison = Boolean.valueOf(isSetGroup()).compareTo(other.isSetGroup());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetGroup()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.group, other.group);
                 if (lastComparison != 0) {
                     return lastComparison;
                 }
@@ -3770,6 +3954,15 @@ public class PlatformFromService {
                 sb.append(", ");
             sb.append("review:");
             sb.append(this.review);
+            first = false;
+            if (!first)
+                sb.append(", ");
+            sb.append("group:");
+            if (this.group == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.group);
+            }
             first = false;
             sb.append(")");
             return sb.toString();
@@ -3832,6 +4025,15 @@ public class PlatformFromService {
                                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                             }
                             break;
+                        case // GROUP
+                        3:
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
+                                struct.group = iprot.readString();
+                                struct.setGroupIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
                         default:
                             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                     }
@@ -3851,6 +4053,11 @@ public class PlatformFromService {
                 oprot.writeFieldBegin(REVIEW_FIELD_DESC);
                 oprot.writeBool(struct.review);
                 oprot.writeFieldEnd();
+                if (struct.group != null) {
+                    oprot.writeFieldBegin(GROUP_FIELD_DESC);
+                    oprot.writeString(struct.group);
+                    oprot.writeFieldEnd();
+                }
                 oprot.writeFieldStop();
                 oprot.writeStructEnd();
             }
@@ -3875,19 +4082,25 @@ public class PlatformFromService {
                 if (struct.isSetReview()) {
                     optionals.set(1);
                 }
-                oprot.writeBitSet(optionals, 2);
+                if (struct.isSetGroup()) {
+                    optionals.set(2);
+                }
+                oprot.writeBitSet(optionals, 3);
                 if (struct.isSetFromId()) {
                     oprot.writeI32(struct.fromId);
                 }
                 if (struct.isSetReview()) {
                     oprot.writeBool(struct.review);
                 }
+                if (struct.isSetGroup()) {
+                    oprot.writeString(struct.group);
+                }
             }
 
             @Override
             public void read(org.apache.thrift.protocol.TProtocol prot, servers_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
-                BitSet incoming = iprot.readBitSet(2);
+                BitSet incoming = iprot.readBitSet(3);
                 if (incoming.get(0)) {
                     struct.fromId = iprot.readI32();
                     struct.setFromIdIsSet(true);
@@ -3895,6 +4108,10 @@ public class PlatformFromService {
                 if (incoming.get(1)) {
                     struct.review = iprot.readBool();
                     struct.setReviewIsSet(true);
+                }
+                if (incoming.get(2)) {
+                    struct.group = iprot.readString();
+                    struct.setGroupIsSet(true);
                 }
             }
         }

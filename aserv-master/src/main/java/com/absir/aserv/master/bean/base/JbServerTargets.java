@@ -23,6 +23,7 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class JbServerTargets extends JbBean {
 
+    //@Access(AccessType.PROPERTY)
     @JaLang(value = "目标服务", tag = "targetServer")
     @JaName("JSlaveServer")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -32,6 +33,7 @@ public class JbServerTargets extends JbBean {
 
     private transient long[] lastServerIds;
 
+    //@Access(AccessType.PROPERTY)
     @JaLang("全部服务")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private boolean allServerIds;

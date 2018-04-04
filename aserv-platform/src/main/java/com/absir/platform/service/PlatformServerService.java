@@ -32,6 +32,7 @@ import com.absir.orm.hibernate.boost.IEntityMerge;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.platform.bean.*;
 import com.absir.platform.bean.base.JbPlatform;
+import com.absir.platform.bean.base.JbPlatformGroup;
 import com.absir.thrift.IFaceServer;
 import org.apache.thrift.TBaseProcessor;
 import org.apache.thrift.TException;
@@ -346,6 +347,10 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
     }
 
     public boolean isMatchPlatform(JbPlatform platform, boolean review, DPlatformFrom platformFrom) {
+        if (platform == null || platformFrom == null) {
+            return false;
+        }
+
         if (!platform.isOpen()) {
             return false;
         }
@@ -390,6 +395,39 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         return true;
     }
 
+    public static class DPlatformFromRef {
+
+        protected boolean loaded;
+
+        protected DPlatformFrom platformFrom;
+
+    }
+
+    public boolean isMatchPlatformGroup(JbPlatformGroup platformGroup, String group, boolean review, long platformFromId, DPlatformFromRef platformFromRef) {
+        if (platformGroup.isNotReview()) {
+            review = platformGroup.isReview();
+
+        } else if (review != platformGroup.isReview()) {
+            return false;
+        }
+
+        if (!KernelString.isEmpty(platformGroup.getGroupIds())) {
+            return !KernelString.isEmpty(group) && platformGroup.getGroupIds().contains(group);
+        }
+
+        DPlatformFrom platformFrom = null;
+        if (platformFromRef != null) {
+            if (!platformFromRef.loaded) {
+                platformFromRef.loaded = true;
+                platformFromRef.platformFrom = ME.getPlatformFromId(platformFromId);
+            }
+
+            return isMatchPlatform(platformGroup, review, platformFromRef.platformFrom);
+        }
+
+        return isMatchPlatform(platformGroup, review, ME.getPlatformFromId(platformFromId));
+    }
+
     @Override
     public TBaseProcessor<PlatformFromService.Iface> getBaseProcessor() {
         return new PlatformFromService.Processor<PlatformFromService.Iface>(ME);
@@ -410,16 +448,22 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         DPlatformFromSetting setting = new DPlatformFromSetting();
         setting.setFromId((int) (long) jPlatformFrom.getId());
         setting.setReview(review);
-        setting.setSetting(fromSetting);
+        if (fromSetting != null) {
+            setting.setSetting(fromSetting);
+            if (!KernelString.isEmpty(fromSetting.groupId)) {
+                setting.setGroup(fromSetting.groupId);
+            }
+        }
+
         return setting;
     }
 
     @Override
-    public List<DAnnouncement> announcements(int fromId, boolean review) throws TException {
-        DPlatformFrom platformFrom = ME.getPlatformFromId(fromId);
+    public List<DAnnouncement> announcements(int fromId, boolean review, String group) throws TException {
+        DPlatformFromRef platformFromRef = new DPlatformFromRef();
         List<DAnnouncement> announcements = new ArrayList<DAnnouncement>(announcementList.size());
         for (PlatformAnnouncement announcement : announcementList) {
-            if (isMatchPlatform(announcement.getPlatform(), review, platformFrom)) {
+            if (isMatchPlatformGroup(announcement.announcement, group, review, fromId, platformFromRef)) {
                 announcements.add(announcement.value);
             }
         }
@@ -428,13 +472,13 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
     }
 
     @Override
-    public List<DServer> servers(int fromId, boolean review) throws TException {
-        DPlatformFrom platformFrom = ME.getPlatformFromId(fromId);
+    public List<DServer> servers(int fromId, boolean review, String group) throws TException {
+        DPlatformFromRef platformFromRef = new DPlatformFromRef();
         long contextTime = ContextUtils.getContextTime();
         List<DServer> servers = new ArrayList<DServer>(serverList.size());
         PlatformServer waiteServer = null;
         for (PlatformServerList platformServerList : serverList) {
-            if (isMatchPlatform(platformServerList.getPlatform(), review, platformFrom)) {
+            if (isMatchPlatformGroup(platformServerList.server, group, review, fromId, platformFromRef)) {
                 for (PlatformServer server : platformServerList.platformServers) {
                     if (server.passTime > contextTime) {
                         if (server.beginTime > contextTime) {
@@ -596,10 +640,6 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
 
         protected DAnnouncement value;
 
-        public JbPlatform getPlatform() {
-            return announcement;
-        }
-
         public Object getValue() {
             return value;
         }
@@ -615,10 +655,6 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         protected JServer server;
 
         protected final List<PlatformServer> platformServers = new ArrayList<PlatformServer>();
-
-        public JbPlatform getPlatform() {
-            return server;
-        }
 
         @Override
         public int getOrder() {

@@ -4,7 +4,7 @@ import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
-import com.absir.platform.bean.base.JbPlatform;
+import com.absir.platform.bean.base.JbPlatformGroup;
 import org.hibernate.annotations.Type;
 import tplatform.DAnnouncement;
 
@@ -15,7 +15,7 @@ import javax.persistence.*;
  */
 @MaEntity(parent = {@MaMenu("平台管理")}, name = "公告")
 @Entity
-public class JAnnouncement extends JbPlatform {
+public class JAnnouncement extends JbPlatformGroup {
 
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("纪录编号")
