@@ -17,6 +17,8 @@ public abstract class JbServerContext<SA extends JbServerA> extends ContextBean<
     @JaLang("服务区")
     protected SA serverA;
 
+    protected boolean checkOnlineDayed;
+
     public SA getServerA() {
         return serverA;
     }
@@ -30,6 +32,7 @@ public abstract class JbServerContext<SA extends JbServerA> extends ContextBean<
 
         loadDone();
         checkOnlineDay();
+        checkOnlineDayed = true;
     }
 
     /**

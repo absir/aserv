@@ -283,6 +283,13 @@ public abstract class PlayerService {
         return (JbPlayer) BeanDao.get(BeanDao.getSession(), AGameComponent.ME.PLAYER_CLASS, playerId);
     }
 
+    @Transaction
+    public void mergePlayer(JbPlayerContext playerContext) {
+        Session session = BeanDao.getSession();
+        session.merge(playerContext.getPlayer());
+        session.flush();
+    }
+
     /**
      * 获取玩家列表
      */

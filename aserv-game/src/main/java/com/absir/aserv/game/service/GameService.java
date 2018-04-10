@@ -11,6 +11,7 @@ import com.absir.aserv.configure.JConfigureUtils;
 import com.absir.aserv.game.context.AGameComponent;
 import com.absir.aserv.game.context.JbPlayerContext;
 import com.absir.aserv.game.context.JbServerContext;
+import com.absir.aserv.game.context.PlayerService;
 import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -128,9 +129,46 @@ public class GameService {
     @Async(notifier = true)
     @Schedule(cron = "0 0 0 * * *")
     protected void updateServerGameDay() {
+        mergeAllPlayer();
         updateOnlineServerContext();
         updateGameDay();
         checkOnlinePlayerContexts();
+    }
+
+    public void mergeAllPlayer() {
+        if (AGameComponent.ME.PLAYER_CONTEXT_MAP == null) {
+            return;
+        }
+
+        for (JbPlayerContext playerContext : (Collection<JbPlayerContext>) AGameComponent.ME.PLAYER_CONTEXT_MAP
+                .values()) {
+            try {
+                if (!playerContext.unInitializeDone()) {
+                    PlayerService.ME.mergePlayer(playerContext);
+                }
+
+            } catch (Exception e) {
+                LOGGER.error("mergeAllPlayer", e);
+            }
+        }
+    }
+
+    public void saveAllPlayer() {
+        if (AGameComponent.ME.PLAYER_CONTEXT_MAP == null) {
+            return;
+        }
+
+        for (JbPlayerContext playerContext : (Collection<JbPlayerContext>) AGameComponent.ME.PLAYER_CONTEXT_MAP
+                .values()) {
+            try {
+                if (!playerContext.unInitializeDone()) {
+                    playerContext.unInitialize();
+                }
+
+            } catch (Exception e) {
+                LOGGER.error("saveAllPlayer", e);
+            }
+        }
     }
 
     /**
