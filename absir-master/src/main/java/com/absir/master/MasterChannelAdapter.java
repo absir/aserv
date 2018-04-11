@@ -6,6 +6,7 @@ import com.absir.client.SocketNIO;
 import com.absir.client.callback.CallbackMsg;
 import com.absir.context.core.ContextUtils;
 import com.absir.data.helper.HelperDataFormat;
+import com.absir.server.socket.SocketServer;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -48,7 +49,14 @@ public class MasterChannelAdapter extends SocketAdapterSel {
     @Override
     public void close() {
         super.close();
-        channel = null;
+        if (channel != null) {
+            try {
+                SocketServer.close(channel);
+
+            } finally {
+                channel = null;
+            }
+        }
     }
 
     @Override

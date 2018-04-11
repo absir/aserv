@@ -275,9 +275,11 @@ public class SocketAdapter {
         return bytes;
     }
 
-//    public static final void _debugInfo(String info) {
-//        System.out.println("[SOCKET.DEBUG.INFO]  " + info);
-//    }
+    /*
+    public static final void _debugInfo(String info) {
+        System.out.println("[SOCKET.DEBUG.INFO]  " + info);
+    }
+    //*/
 
     public static final void setVarintsLength(byte[] destination, int destionationIndex, int length) {
         if (length > VARINTS_1_LENGTH) {
@@ -1214,7 +1216,7 @@ public class SocketAdapter {
     public byte[] sendDataBytesVarintsReal(int off, String uri, boolean human, byte flag, int callbackIndex, byte[] postBytes, int postOff, int postLen) {
         flag |= URI_DICT_FLAG;
         byte[] dataBytes;
-        Integer index = getUriVarints(uri);
+        Integer index = registered ? getUriVarints(uri) : null;
         if (index == null) {
             //没找到压缩字典，添加压缩回调参数
             flag |= ERROR_OR_SPECIAL_FLAG;

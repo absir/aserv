@@ -17,6 +17,7 @@ import java.nio.channels.SocketChannel;
 public class SocketNIO {
 
     public static boolean _debugInfo;
+
     private static long writeTimeout = 20000;
 
     public static long getWriteTimeout() {
@@ -49,6 +50,7 @@ public class SocketNIO {
                 _debugInfo = false;
 
             } else {
+                //new Exception().printStackTrace();
                 //SocketAdapter._debugInfo("SocketNIO send  => " + Arrays.toString(Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit())));
             }
 
