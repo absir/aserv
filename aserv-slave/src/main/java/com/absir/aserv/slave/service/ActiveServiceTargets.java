@@ -26,6 +26,11 @@ public abstract class ActiveServiceTargets<T extends JiActive, K> extends Active
         return targetsActivity.getSingleActivity(serverId);
     }
 
+    public T getSingleEntryKey(long serverId) {
+        ObjectEntry<T, K> entry = getSingleEntry(serverId);
+        return entry == null ? null : entry.getKey();
+    }
+
     public K getSingleEntryValue(long serverId) {
         ObjectEntry<T, K> entry = getSingleEntry(serverId);
         return entry == null ? null : entry.getValue();
