@@ -15,6 +15,7 @@ import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Domain;
 import com.absir.context.core.ContextUtils;
+import com.absir.core.kernel.KernelString;
 import com.absir.open.bean.JPayHistory;
 import com.absir.open.bean.JPayTrade;
 import com.absir.orm.hibernate.SessionFactoryUtils;
@@ -40,9 +41,9 @@ public class TradeService {
 
     @Transaction
     public boolean addPayHistory(JPayTrade payTrade) {
-        String tradeNo = payTrade.getPlatform() + "@" + payTrade.getTradeNo();
+        String tradeNo = KernelString.isEmpty(payTrade.getTradeNo()) ? null : (payTrade.getPlatform() + "@" + payTrade.getTradeNo());
         Session session = BeanDao.getSession();
-        if (QueryDaoUtils.createQueryArray(session,
+        if (tradeNo != null && QueryDaoUtils.createQueryArray(session,
                 "SELECT o FROM JPayHistory o WHERE o.tradeNo = ?", tradeNo).iterate()
                 .hasNext()) {
             return false;

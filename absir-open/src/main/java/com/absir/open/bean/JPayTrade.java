@@ -30,7 +30,7 @@ public class JPayTrade extends JbBase {
     @JaLang("创建时间")
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST, listColType = 1)
     //@Temporal(TemporalType.TIMESTAMP)
-    private long createTime;
+    private int createTime;
 
     @JaLang(value = "平台名称", tag = "platformName")
     @JaEdit(groups = JaEdit.GROUP_LIST)
@@ -112,11 +112,11 @@ public class JPayTrade extends JbBase {
         this.id = id;
     }
 
-    public long getCreateTime() {
+    public int getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(long createTime) {
+    public void setCreateTime(int createTime) {
         this.createTime = createTime;
     }
 

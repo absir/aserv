@@ -14,6 +14,7 @@ import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.InjectType;
 import com.absir.core.base.Environment;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.util.UtilContext;
 import com.absir.open.bean.JPayTrade;
 import com.absir.open.bean.value.JePayStatus;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ public abstract class PayUtils {
     public static JPayTrade createTrade(int configureId, String platform, String platformData, String channel, String goodsId, int goodsNumber, float amount, long userId, long serverId, long playerId, boolean shortTradeId, String[] moreDatas) {
         JPayTrade payTrade = new JPayTrade();
         payTrade.setConfigureId(configureId);
+        payTrade.setCreateTime(UtilContext.getCurrentShort());
         payTrade.setPlatform(platform);
         payTrade.setPlatformData(platformData);
         payTrade.setChannel(channel);
