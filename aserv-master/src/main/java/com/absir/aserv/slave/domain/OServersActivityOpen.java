@@ -44,7 +44,7 @@ public abstract class OServersActivityOpen<T extends JbServerTargetsO, O extends
 
     protected String selectServerActivityQuery;
 
-    protected OServersActivity<List<O>> serversActivity = new OServersActivity<List<O>>();
+    protected OServersActivityGroup<List<O>> serversActivity = new OServersActivityGroup<List<O>>();
 
     public OServersActivityOpen() {
         serversClass = KernelClass.typeClass(getClass(), TARGETS_VARIABLE);
@@ -100,7 +100,16 @@ public abstract class OServersActivityOpen<T extends JbServerTargetsO, O extends
     protected void addActivity(O activity) {
         synchronized (serversActivity) {
             if (activity.getServerIds() == null || activity.getServerIds().length == 0) {
-                serversActivity.singleActivity = mergeActivities(serversActivity.singleActivity, activity);
+                if (activity.getGroupIds() == null || activity.getGroupIds().length == 0) {
+                    serversActivity.singleActivity = mergeActivities(serversActivity.singleActivity, activity);
+
+                } else {
+                    // 添加新服活动Group配置支持
+                    for (String groupId : activity.getGroupIds()) {
+                        serversActivity.groupActivityMap.put(groupId,
+                                mergeActivities(serversActivity.groupActivityMap.get(groupId), activity));
+                    }
+                }
 
             } else {
                 for (long targetId : activity.getServerIds()) {
@@ -162,7 +171,7 @@ public abstract class OServersActivityOpen<T extends JbServerTargetsO, O extends
      * 激活服务
      */
     public void reActivityServer(JSlaveServer server) {
-        List<O> activities = serversActivity.getSingleActivity(server.getId());
+        List<O> activities = serversActivity.getSingleActivityGroup(server.getId(), server.getGroupId());
         if (activities == null || activities.isEmpty()) {
             return;
         }

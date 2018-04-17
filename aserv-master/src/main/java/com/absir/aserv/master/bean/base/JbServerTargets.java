@@ -13,6 +13,7 @@ import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JaModel;
 import com.absir.aserv.system.bean.value.JaName;
 import com.absir.core.kernel.KernelLang;
+import com.absir.core.kernel.KernelString;
 import com.absir.validator.value.NotEmpty;
 import org.hibernate.annotations.Type;
 
@@ -91,12 +92,21 @@ public class JbServerTargets extends JbBean {
     }
 
     public String[] getGroupIds() {
+        if (groupIds != null) {
+            if (groupIds.length == 0) {
+                groupIds = null;
+
+            } else if (groupIds.length == 1 && KernelString.isEmpty(groupIds[0])) {
+                groupIds = null;
+            }
+        }
+
         return groupIds;
     }
 
     public void setGroupIds(String[] groupIds) {
         if (lastGroupIds == null) {
-            lastGroupIds = groupIds == null ? KernelLang.NULL_STRINGS : groupIds;
+            lastGroupIds = groupIds == null ? KernelLang.NULL_STRINGS : getGroupIds();
         }
 
         this.groupIds = groupIds;

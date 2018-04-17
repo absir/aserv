@@ -10,6 +10,7 @@ package com.absir.aserv.slave.bean.base;
 import com.absir.aserv.system.bean.base.JbBeanL;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
+import com.absir.core.kernel.KernelString;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
@@ -51,6 +52,15 @@ public class JbServerTargets extends JbBeanL {
     }
 
     public String[] getGroupIds() {
+        if (groupIds != null) {
+            if (groupIds.length == 0) {
+                groupIds = null;
+
+            } else if (groupIds.length == 1 && KernelString.isEmpty(groupIds[0])) {
+                groupIds = null;
+            }
+        }
+
         return groupIds;
     }
 

@@ -91,6 +91,9 @@ public class JSlave extends JbBase implements JiOpen {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private int serverPort;
 
+    @JaLang("服务组号")
+    private String serverGroup;
+
     public String getId() {
         return id;
     }
@@ -219,4 +222,11 @@ public class JSlave extends JbBase implements JiOpen {
         this.serverPort = serverPort;
     }
 
+    public String getServerGroup() {
+        return serverGroup;
+    }
+
+    public void setServerGroup(String serverGroup) {
+        this.serverGroup = serverGroup;
+    }
 }

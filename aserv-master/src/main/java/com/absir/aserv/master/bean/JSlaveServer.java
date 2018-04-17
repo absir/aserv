@@ -95,7 +95,7 @@ public class JSlaveServer extends JbBean implements ICrudBean {
 
     @JaLang("组号")
     @JaColum(indexs = @Index(columnList = "groupId"))
-    private String groupId = "0";
+    private String groupId;
 
     public String getName() {
         return name;
@@ -242,6 +242,10 @@ public class JSlaveServer extends JbBean implements ICrudBean {
                 } else {
                     port = slave.getServerPort();
                 }
+            }
+
+            if (KernelString.isEmpty(groupId)) {
+                groupId = slave.getServerGroup();
             }
         }
     }
