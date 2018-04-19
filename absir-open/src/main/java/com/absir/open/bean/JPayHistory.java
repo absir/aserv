@@ -12,7 +12,6 @@ import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.base.JbBase;
 import com.absir.aserv.system.bean.value.JaEdit;
 import com.absir.aserv.system.bean.value.JaLang;
-import com.absir.context.core.ContextUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +31,7 @@ public class JPayHistory extends JbBase {
 
     @JaLang("创建时间")
     @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST, listColType = 1)
-    private long createTime = ContextUtils.getContextTime();
+    private int createTime;
 
     public String getId() {
         return id;
@@ -50,11 +49,11 @@ public class JPayHistory extends JbBase {
         this.tradeNo = tradeNo;
     }
 
-    public long getCreateTime() {
+    public int getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(long createTime) {
+    public void setCreateTime(int createTime) {
         this.createTime = createTime;
     }
 }

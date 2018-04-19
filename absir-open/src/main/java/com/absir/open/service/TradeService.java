@@ -29,7 +29,7 @@ public class TradeService {
     public static final TradeService ME = BeanFactoryUtils.get(TradeService.class);
 
     @Domain
-    private DSequence tradeSequence;
+    protected DSequence tradeSequence;
 
     public String nextTradeId() {
         return tradeSequence.getNextId();
@@ -41,18 +41,28 @@ public class TradeService {
 
     @Transaction
     public boolean addPayHistory(JPayTrade payTrade) {
+        String tradeId = payTrade.getId();
         String tradeNo = KernelString.isEmpty(payTrade.getTradeNo()) ? null : (payTrade.getPlatform() + "@" + payTrade.getTradeNo());
         Session session = BeanDao.getSession();
-        if (tradeNo != null && QueryDaoUtils.createQueryArray(session,
-                "SELECT o FROM JPayHistory o WHERE o.tradeNo = ?", tradeNo).iterate()
-                .hasNext()) {
-            return false;
+        if (tradeNo == null) {
+            if (QueryDaoUtils.createQueryArray(session,
+                    "SELECT o.id FROM JPayHistory o WHERE o.id = ?", tradeId).iterate()
+                    .hasNext()) {
+                return false;
+            }
+
+        } else {
+            if (QueryDaoUtils.createQueryArray(session,
+                    "SELECT o.id FROM JPayHistory o WHERE o.id = ? OR o.tradeNo = ?", tradeId, tradeNo).iterate()
+                    .hasNext()) {
+                return false;
+            }
         }
 
         JPayHistory payHistory = new JPayHistory();
-        payHistory.setId(payTrade.getId());
+        payHistory.setId(tradeId);
         payHistory.setTradeNo(tradeNo);
-        payHistory.setCreateTime(ContextUtils.getContextTime());
+        payHistory.setCreateTime(ContextUtils.getContextShortTime());
         try {
             session.persist(payHistory);
 

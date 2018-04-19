@@ -1,0 +1,4 @@
+{
+"message": "\${message ?! ${Pag::getLang('没有权限', false)}}",
+"icon": "2"
+}

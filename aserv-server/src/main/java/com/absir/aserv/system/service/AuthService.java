@@ -112,6 +112,18 @@ public class AuthService {
     @Transaction(readOnly = true)
     public boolean permission(String entityName, JiUserBase user, JeVotePermission votePermission) {
         JMaMenu maMenu = BeanDao.get(BeanDao.getSession(), JMaMenu.class, entityName);
+        return permission(maMenu, user, votePermission);
+    }
+
+    /**
+     * 实体授权判断
+     *
+     * @param maMenu
+     * @param user
+     * @param votePermission
+     * @return
+     */
+    private boolean permission(JMaMenu maMenu, JiUserBase user, JeVotePermission votePermission) {
         if (maMenu == null || maMenu.getPermissions() == null) {
             return false;
         }
@@ -135,18 +147,6 @@ public class AuthService {
             return true;
         }
 
-        return permission(maMenu, user, votePermission);
-    }
-
-    /**
-     * 实体授权判断
-     *
-     * @param maMenu
-     * @param user
-     * @param votePermission
-     * @return
-     */
-    private boolean permission(JMaMenu maMenu, JiUserBase user, JeVotePermission votePermission) {
         boolean allow = false;
         // 所有用户
         JPermission permission = maMenu.getPermissions().get(LOGIN_ROLE_ID);
@@ -229,17 +229,14 @@ public class AuthService {
      */
     @Transaction(readOnly = true)
     public PropertyFilter permissionFilter(JoEntity joEntity, JiUserBase user, JeVotePermission votePermission) {
-        // 插叙删除过滤
-        if (votePermission == JeVotePermission.SELECTABLE || votePermission == JeVotePermission.DELETEABLE) {
-            if (permission(joEntity.getEntityName(), user, votePermission)) {
+        JMaMenu maMenu = BeanDao.get(BeanDao.getSession(), JMaMenu.class, joEntity.getEntityName());
+        if (permission(maMenu, user, votePermission)) {
+            // 插叙删除过滤
+            if (votePermission == JeVotePermission.SELECTABLE || votePermission == JeVotePermission.DELETEABLE) {
                 return null;
             }
 
-            throw new ServerException(ServerStatus.ON_DENIED);
-        }
-
-        JMaMenu maMenu = BeanDao.get(BeanDao.getSession(), JMaMenu.class, joEntity.getEntityName());
-        if (maMenu == null || maMenu.getPermissions() == null) {
+        } else {
             throw new ServerException(ServerStatus.ON_DENIED);
         }
 
