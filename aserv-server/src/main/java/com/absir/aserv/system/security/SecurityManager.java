@@ -36,14 +36,14 @@ public class SecurityManager {
         if (error <= 0) {
             error = beanConfig.getExpressionValue("security.session.error", null, int.class);
             if (error == 0) {
-                error = 5;
+                error = 20;
             }
         }
 
         if (errorTime <= 0) {
             errorTime = beanConfig.getExpressionValue("security.session.errorTime", null, long.class);
             if (errorTime == 0) {
-                errorTime = 180000;
+                errorTime = 600000;
             }
         }
 

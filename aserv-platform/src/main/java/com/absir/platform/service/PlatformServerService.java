@@ -5,11 +5,11 @@ import com.absir.aserv.master.bean.JSlave;
 import com.absir.aserv.master.bean.JSlaveServer;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.value.IUser;
-import com.absir.aserv.system.crud.PasswordCrudFactory;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.domain.DCacheOpen;
 import com.absir.aserv.system.helper.HelperString;
+import com.absir.aserv.system.security.SecurityManager;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.aserv.system.service.impl.IdentityServiceLocal;
@@ -569,13 +569,14 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
 
         } else {
             IUser user = (IUser) (userBase);
-            if (PasswordCrudFactory.getPasswordEncrypt(password, user.getSalt(), user.getSaltCount()).equals(user.getPassword())) {
+            SecurityManager securityManager = SecurityService.ME.getSecurityManager("api");
+            if (SecurityService.ME.validator(userBase, password, securityManager.getError(), securityManager.getErrorTime(), null)) {
                 loginResult.setError(ELoginError.success);
                 loginResult.setResult(loginUser(fromId, lastUserId, userBase, null));
                 loginResult.setUserId(userBase.getUserId());
 
             } else {
-                loginResult.setError(ELoginError.passwordError);
+                loginResult.setError(user.getErrorLogin() >= securityManager.getError() ? ELoginError.passwordErrorMax : ELoginError.passwordError);
             }
         }
 

@@ -4,6 +4,7 @@ import com.absir.client.SocketAdapter;
 import com.absir.client.helper.HelperEncrypt;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,7 +61,7 @@ public class TSocketAdapter implements SocketAdapter.CallbackAdapter {
 
             long serverTime = 0;
             if (buffer.length > ++length) {
-                String[] params = new String(buffer, length, buffer.length - length).split(",", 3);
+                String[] params = StringUtils.split(new String(buffer, length, buffer.length - length), ",", 3);
                 serverTime = KernelDyna.to(params[0], long.class);
                 registerEncryptKey(params.length == 1 ? null : params[1]);
             }

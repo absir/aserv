@@ -404,7 +404,15 @@ public class Admin_entity extends AdminServer {
     }
 
     public String deleteJson(String entityName, @Param String ids, Input input) throws IOException {
-        return delete(entityName, (String[]) HelperJson.decode(ids, String[].class), input);
+        String[] _ids;
+        try {
+            _ids = (String[]) HelperJson.decode(ids, String[].class);
+
+        } catch (Exception e) {
+            throw new ServerException(ServerStatus.IN_404);
+        }
+
+        return delete(entityName, _ids, input);
     }
 
     /**
@@ -449,9 +457,17 @@ public class Admin_entity extends AdminServer {
     }
 
     @Body
-    public void exportJson(String entityName, @Nullable @Param String ids, Input input, HttpServletResponse response)
+    public void exportJson(String entityName, @Param String ids, Input input, HttpServletResponse response)
             throws IOException {
-        export(entityName, (String[]) HelperJson.decode(ids, String[].class), input, response);
+        String[] _ids;
+        try {
+            _ids = (String[]) HelperJson.decode(ids, String[].class);
+
+        } catch (Exception e) {
+            throw new ServerException(ServerStatus.IN_404);
+        }
+
+        export(entityName, _ids, input, response);
     }
 
     /**

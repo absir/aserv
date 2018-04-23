@@ -893,7 +893,7 @@ public abstract class KernelClass {
                         return declaredSend(targetClass, commands[1]);
 
                     } else {
-                        return declaredSendArray(targetClass, commands[1], commands[2].split(","));
+                        return declaredSendArray(targetClass, commands[1], KernelString.split(commands[2], ',', 0, 0));
                     }
                 }
             }

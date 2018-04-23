@@ -9,6 +9,7 @@ package com.absir.aserv.dyna;
 
 import com.absir.aserv.configure.xls.XlsBase;
 import com.absir.aserv.configure.xls.XlsUtils;
+import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
 import com.absir.bean.basis.Configure;
 import com.absir.bean.inject.value.Started;
@@ -51,7 +52,7 @@ public class DynaBinderUtils extends DynaBinder {
         if (param != null && KernelClass.isCustomClass(paramType)) {
             T paramValue = KernelClass.newInstance(paramType);
             if (paramValue != null) {
-                String[] params = param.split("_");
+                String[] params = HelperString.split(param, '`');
                 BinderSupply binderSupply = BinderUtils.getBinderSupply();
                 PropertyHolder propertyHolder = PropertyUtils.getPropertyMap(paramType, binderSupply);
                 int index = 0;
@@ -92,7 +93,7 @@ public class DynaBinderUtils extends DynaBinder {
                 }
             }
 
-            return KernelString.implode(params, '_');
+            return KernelString.implode(params, '`');
         }
 
         return DynaBinder.to(paramValue, String.class);

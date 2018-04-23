@@ -115,6 +115,8 @@ enum ELoginError
     userNotExist,
     // 密码错误
     passwordError,
+    // 密码错误次数太多
+    passwordErrorMax,
     // 未知
     unkown,
 }
@@ -163,6 +165,8 @@ enum EPasswordResult
     validateError,
     // 密码错误
     passwordError,
+    // 密码错误次数太多
+    passwordErrorMax,
     // 未知
     unkown,
 }

@@ -429,7 +429,7 @@ public class BeanConfigImpl implements BeanConfig {
                 for (Object obj : list) {
                     String param = DynaBinder.to(obj, String.class);
                     if (!KernelString.isEmpty(param)) {
-                        String[] params = param.split(",");
+                        String[] params = KernelString.split(param, ',', 0, 0);
                         nameMapParams.put(params[0], params);
                     }
                 }

@@ -90,7 +90,9 @@ public class Admin_login extends AdminServer {
 
         if (!HelperInput.isAjax(input)) {
             String redirect = input.getParam("redirect");
-            ServerResolverRedirect.redirect(KernelString.isEmpty(redirect) ? (getAdminRoute() + "main") : redirect, false, input);
+            //(redirect + "?" + input.getParam("s")
+            ServerResolverRedirect.redirect(KernelString.isEmpty(redirect) ? (getAdminRoute() + "main") : redirect, false, input)
+            ;
         }
 
         return "admin/login.success";

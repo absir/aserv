@@ -153,6 +153,7 @@ public class SocketBufferResolver implements IBufferResolver {
                         socketBuffer.setBuff(buffLength == 0 ? KernelLang.NULL_BYTES : new byte[buffLength]);
 
                     } else {
+                        SocketServer.close(selSession, null);
                         socketBuffer.setLength(0);
                         socketBuffer.setLengthIndex(0);
                     }

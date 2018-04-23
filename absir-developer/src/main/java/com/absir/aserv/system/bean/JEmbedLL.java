@@ -68,6 +68,6 @@ public class JEmbedLL implements JiEmbed {
 
     @Override
     public String toString() {
-        return eid + "_" + mid;
+        return eid + "`" + mid;
     }
 }

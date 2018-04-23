@@ -340,7 +340,7 @@ public class HelperQuery {
             return null;
         }
 
-        String[] orderStrs = orderQueue.split(",");
+        String[] orderStrs = HelperString.split(orderQueue, ',');
         final List<Comparator<Object>> comparators = new ArrayList<Comparator<Object>>();
         for (String orderStr : orderStrs) {
             Matcher matcher = NAME_PATTERN.matcher(orderStr);

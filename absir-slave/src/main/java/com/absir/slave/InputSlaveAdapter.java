@@ -129,6 +129,11 @@ public class InputSlaveAdapter extends SocketAdapterSel {
         return slaveKey;
     }
 
+    @Override
+    public int getMaxBufferLength() {
+        return 2048000;
+    }
+
     /**
      * 连接
      */

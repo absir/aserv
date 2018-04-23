@@ -70,7 +70,7 @@ public class JEmbedLS implements JiEmbed {
 
     @Override
     public String toString() {
-        return eid + "_" + mid;
+        return eid + "`" + mid;
     }
 
 }

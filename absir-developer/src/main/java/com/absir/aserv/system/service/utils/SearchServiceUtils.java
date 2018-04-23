@@ -10,6 +10,7 @@ package com.absir.aserv.system.service.utils;
 import com.absir.aserv.dyna.DynaBinderUtils;
 import com.absir.aserv.jdbc.JdbcCondition;
 import com.absir.aserv.system.helper.HelperCondition;
+import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelCollection;
@@ -141,7 +142,7 @@ public abstract class SearchServiceUtils {
         }
 
         boolean expression = expressionIndex > 0;
-        String[] propertyNames = (expression ? KernelString.leftString(propertyExpression, expressionIndex) : propertyExpression).split("\\.");
+        String[] propertyNames = HelperString.split(expression ? KernelString.leftString(propertyExpression, expressionIndex) : propertyExpression, '.');
         int last = propertyNames.length - 1;
         if (last < 0) {
             return;
@@ -265,7 +266,7 @@ public abstract class SearchServiceUtils {
             if (metas.length == 2) {
                 String entityName = (String) metas[1];
                 if (propertyValue instanceof String) {
-                    propertyValue = ((String) propertyValue).split(",");
+                    propertyValue = HelperString.split((String) propertyValue, ',');
 
                 } else if (propertyValue instanceof Collection) {
                     propertyValue = KernelCollection.toArray((Collection<?>) propertyValue, Object.class);

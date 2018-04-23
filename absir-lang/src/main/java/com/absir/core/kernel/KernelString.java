@@ -720,12 +720,34 @@ public abstract class KernelString {
     }
 
     public static int countChar(String str, char chr, int start) {
+        return countCharMax(str, chr, start, 0);
+    }
+
+    public static int countCharMax(String str, char chr, int start, int max) {
         int count = 0;
         while ((start = str.indexOf(chr, start)) >= 0) {
             count++;
+            if (max > 0 && max <= count) {
+                return count;
+            }
+
             start++;
         }
 
         return count;
+    }
+
+    public static String[] split(String str, char chr, int start, int maxCount) {
+        int count = maxCount == 1 ? 0 : countCharMax(str, chr, start, maxCount - 1);
+        String[] strs = new String[count + 1];
+        int pos;
+        for (int i = 0; i < count; i++) {
+            pos = str.indexOf(chr, start);
+            strs[i] = str.substring(start, pos);
+            start = pos + 1;
+        }
+
+        strs[count] = str.substring(start, str.length());
+        return strs;
     }
 }

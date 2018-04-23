@@ -8,7 +8,6 @@
 package com.absir.aserv.jdbc;
 
 import com.absir.core.dyna.DynaBinder;
-import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.kernel.KernelString.ImplodeBuilder;
@@ -60,7 +59,10 @@ public class JdbcDriver {
                             } else {
                                 targets[0] = KernelString.replaceLast((String) targets[0], "?",
                                         KernelString.repeateString(null, "?, ", length - 1, "?"));
-                                KernelCollection.addAll((Collection<Object>) targets[1], DynaBinder.to(value, Object[].class));
+                                Collection<Object> collection = (Collection<Object>) targets[1];
+                                for (Object val : DynaBinder.to(value, Object[].class)) {
+                                    collection.add(val);
+                                }
                             }
 
                         } else {

@@ -9,6 +9,7 @@ package com.absir.aserv.system.bean;
 
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.aserv.system.bean.value.JeVote;
+import com.absir.validator.value.NotEmpty;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Embeddable;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 public class JPermission implements Serializable {
 
     @JaLang("查看")
+    @NotEmpty
     private JeVote selectable;
 
     @JaLang("编辑")

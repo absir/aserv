@@ -24,6 +24,7 @@ import com.absir.bean.inject.value.InjectType;
 import com.absir.bean.inject.value.Value;
 import com.absir.core.helper.HelperFileName;
 import com.absir.core.kernel.KernelArray;
+import com.absir.core.kernel.KernelCharset;
 import com.absir.core.kernel.KernelCollection;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.util.UtilAbsir;
@@ -44,7 +45,9 @@ import com.absir.server.value.*;
 import com.absir.servlet.InputRequest;
 import org.hibernate.exception.ConstraintViolationException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -54,8 +57,8 @@ public abstract class AdminServer {
     @Value("admin.login.remember")
     protected static boolean remember = true;
 
-    @Value("admin.login.level")
-    protected static int roleLevel = JeRoleLevel.ROLE_ADMIN.ordinal();
+    //@Value("admin.login.level")
+    //protected static int roleLevel = JeRoleLevel.ROLE_ADMIN.ordinal();
 
     private static String route = "admin";
 
@@ -67,7 +70,15 @@ public abstract class AdminServer {
     protected SecurityContext onAuthentication(Input input) throws Exception {
         SecurityContext securityContext = SecurityService.ME.autoLogin("admin", true, JeRoleLevel.ROLE_ADMIN.ordinal(), input);
         if (securityContext == null || !securityContext.getUser().isActivation()) {
-            ServerResolverRedirect.redirect(MenuContextUtils.getAdminRoute() + "login?redirect=" + MenuContextUtils.getSiteRoute() + input.getUri(), false, input);
+            if (input instanceof InputRequest) {
+                HttpServletRequest request = ((InputRequest) input).getRequest();
+                String queryString = request.getQueryString();
+                //ServerResolverRedirect.redirect(MenuContextUtils.getAdminRoute() + "login?redirect=" + request.getRequestURI() + "&s=" + (KernelString.isEmpty(queryString) ? "" : URLEncoder.encode(request.getQueryString(), KernelCharset.getDefault().name())), false, input);
+                ServerResolverRedirect.redirect(MenuContextUtils.getAdminRoute() + "login?redirect=" + request.getRequestURI() + (KernelString.isEmpty(queryString) ? "" : URLEncoder.encode("?" + queryString, KernelCharset.getDefault().name())), false, input);
+
+            } else {
+                ServerResolverRedirect.redirect(MenuContextUtils.getAdminRoute() + "login?redirect=" + MenuContextUtils.getSiteRoute() + input.getUri(), false, input);
+            }
         }
 
         return securityContext;

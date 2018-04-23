@@ -13,6 +13,7 @@ import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
 import com.absir.server.socket.InputSocketImpl;
 import com.absir.server.socket.SocketServerContext.ChannelContext;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.channels.SocketChannel;
 
@@ -29,7 +30,7 @@ public class InputMaster extends InputSocketImpl {
 
         String slaveKey = input.getParam("_sly");
         if (slaveKey != null) {
-            String[] slaveKeys = slaveKey.split("_");
+            String[] slaveKeys = StringUtils.split(slaveKey, '_');
             if (slaveKeys.length == 2) {
                 String id = slaveKeys[0];
                 ChannelContext channelContext = InputMasterContext.ME.getServerContext().getChannelContexts().get(id);

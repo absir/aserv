@@ -768,6 +768,7 @@ public class SocketAdapter {
                             }
 
                         } else {
+                            close();
                             lengthIndex = 0;
                             buffLength = 0;
                         }

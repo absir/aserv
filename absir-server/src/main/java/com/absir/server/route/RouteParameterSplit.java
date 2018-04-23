@@ -9,20 +9,30 @@ package com.absir.server.route;
 
 import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelString;
+import org.apache.commons.lang3.StringUtils;
 
 public class RouteParameterSplit extends RouteParameter {
 
     private String regex;
 
     public RouteParameterSplit(String regex) {
-        regex = regex.replace("\\.", "\\\\.");
-        regex = regex.replace("\\*", "\\\\*");
+        //regex = regex.replace("\\.", "\\\\.");
+        //regex = regex.replace("\\*", "\\\\*");
         this.regex = regex;
     }
 
     @Override
     public String[] findParameters(String parameterPathName) {
-        return parameterPathName.split(regex);
+        return StringUtils.split(parameterPathName, regex);
+    }
+
+    public String[] findParametersMax(String parameterPathName, int max) {
+        if (regex.length() == 1) {
+            return KernelString.split(parameterPathName, regex.charAt(0), 0, max);
+
+        } else {
+            return StringUtils.split(parameterPathName, regex, max);
+        }
     }
 
     @Override

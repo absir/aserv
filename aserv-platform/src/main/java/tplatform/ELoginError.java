@@ -12,7 +12,7 @@ import org.apache.thrift.TEnum;
 
 public enum ELoginError implements org.apache.thrift.TEnum {
 
-    success(0), userNotExist(1), passwordError(2), unkown(3);
+    success(0), userNotExist(1), passwordError(2), passwordErrorMax(3), unkown(4);
 
     private final int value;
 
@@ -40,6 +40,8 @@ public enum ELoginError implements org.apache.thrift.TEnum {
             case 2:
                 return passwordError;
             case 3:
+                return passwordErrorMax;
+            case 4:
                 return unkown;
             default:
                 return null;

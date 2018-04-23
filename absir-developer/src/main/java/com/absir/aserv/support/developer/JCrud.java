@@ -8,6 +8,7 @@
 package com.absir.aserv.support.developer;
 
 import com.absir.aserv.system.bean.value.JaCrud;
+import com.absir.aserv.system.helper.HelperString;
 import com.absir.core.kernel.KernelArray;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelString;
@@ -47,7 +48,7 @@ public class JCrud implements Serializable {
 
     public void setJaCrudValue(String crudValue) {
         if (!KernelString.isEmpty(crudValue)) {
-            String[] params = crudValue.split(",");
+            String[] params = HelperString.split(crudValue, ',');
             int length = params.length;
             if (length == 1) {
                 value = params[0];

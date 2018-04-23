@@ -9,6 +9,7 @@ package com.absir.core.util;
 
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelReflect;
+import com.absir.core.kernel.KernelString;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -113,7 +114,7 @@ public class UtilAccessor {
     }
 
     public static Accessor getAccessorCls(Class cls, String propertyPath) {
-        return getAccessorClass(cls, null, propertyPath.split("\\."), 0);
+        return getAccessorClass(cls, null, KernelString.split(propertyPath, '.', 0, 0), 0);
     }
 
     public static Accessor getAccessorCls(Class cls, String propertyPath, boolean cacheable) {
@@ -136,7 +137,7 @@ public class UtilAccessor {
     }
 
     public static Accessor getAccessorObj(Object obj, String propertyPath) {
-        return getAccessorObject(obj, null, propertyPath.split("\\."), 0);
+        return getAccessorObject(obj, null, KernelString.split(propertyPath, '.', 0, 0), 0);
     }
 
     public static Accessor getAccessorObj(Object obj, String propertyPath, String accessorName) {

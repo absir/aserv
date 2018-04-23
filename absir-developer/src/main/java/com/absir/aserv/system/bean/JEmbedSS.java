@@ -74,6 +74,6 @@ public class JEmbedSS implements JiEmbed {
 
     @Override
     public String toString() {
-        return eid + "_" + mid;
+        return eid + "`" + mid;
     }
 }
