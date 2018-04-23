@@ -9,7 +9,7 @@ package com.absir.server.route;
 
 public class RouteParameter {
 
-    public String[] findParameters(String parameterPath) {
+    public String[] findParameters(String parameterPath, RouteMatcher routeMatcher) {
         return new String[]{parameterPath};
     }
 

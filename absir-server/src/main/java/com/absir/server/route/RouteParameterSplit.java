@@ -22,17 +22,12 @@ public class RouteParameterSplit extends RouteParameter {
     }
 
     @Override
-    public String[] findParameters(String parameterPathName) {
-        return StringUtils.split(parameterPathName, regex);
-    }
-
-    public String[] findParametersMax(String parameterPathName, int max) {
+    public String[] findParameters(String parameterPathName, RouteMatcher routeMatcher) {
         if (regex.length() == 1) {
-            return KernelString.split(parameterPathName, regex.charAt(0), 0, max);
-
-        } else {
-            return StringUtils.split(parameterPathName, regex, max);
+            return KernelString.split(parameterPathName, regex.charAt(0), 0, routeMatcher.getParameterLength());
         }
+
+        return StringUtils.split(parameterPathName, regex);
     }
 
     @Override

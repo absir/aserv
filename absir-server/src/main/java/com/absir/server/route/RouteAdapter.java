@@ -218,7 +218,6 @@ public class RouteAdapter implements IBeanFactoryStarted {
             RouteParameter mRouteParameter;
             RouteParameter routeParameter = null;
             boolean urlDecode = false;
-            boolean maxSplitRouted = false;
             for (; max >= min; max--) {
                 // 路由匹配
                 RouteMatcher routeMatcher = matchers.get(max);
@@ -265,22 +264,14 @@ public class RouteAdapter implements IBeanFactoryStarted {
                     if (mlen == imlen && slen == islen) {
                         if (routeParameter != mRouteParameter && (parameters.length != 1 || mRouteParameter.getClass() != RouteParameter.class)) {
                             routeParameter = mRouteParameter;
-                            parameters = routeParameter.findParameters(parameterPath);
+                            parameters = routeParameter.findParameters(parameterPath, routeMatcher);
                         }
 
                     } else {
                         mlen = imlen;
                         slen = islen;
                         parameterPath = new String(uries, mlen, length - slen - mlen);
-                        String[] mParameters;
-                        if (maxSplitRouted || mRouteParameter.getClass() != RouteParameterSplit.class) {
-                            maxSplitRouted = true;
-                            mParameters = mRouteParameter.findParameters(parameterPath);
-
-                        } else {
-                            mParameters = ((RouteParameterSplit) mRouteParameter).findParametersMax(parameterPath, routeMatcher.getParameterLength());
-                        }
-
+                        String[] mParameters = mRouteParameter.findParameters(parameterPath, routeMatcher);
                         if (mParameters == null) {
                             continue;
                         }

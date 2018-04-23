@@ -19,7 +19,7 @@ public class RouteParameterPattern extends RouteParameter {
     }
 
     @Override
-    public String[] findParameters(String parameterPathName) {
+    public String[] findParameters(String parameterPathName, RouteMatcher routeMatcher) {
         Matcher matcher = pattern.matcher(parameterPathName);
         if (matcher.find()) {
             int count = matcher.groupCount();
