@@ -7,6 +7,7 @@
  */
 package com.absir.aserv.configure.xls;
 
+import com.absir.core.base.Environment;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 
 public class XlsCellObject extends XlsCellBase {
@@ -22,6 +23,11 @@ public class XlsCellObject extends XlsCellBase {
 
     @Override
     public void writeHssfCell(HSSFCell hssfCell) {
-        xlsBase.write(hssfCell, obj);
+        try {
+            xlsBase.write(hssfCell, obj);
+
+        } catch (Exception e) {
+            Environment.throwable(e);
+        }
     }
 }

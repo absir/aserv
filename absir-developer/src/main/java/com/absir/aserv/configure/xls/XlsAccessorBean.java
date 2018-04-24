@@ -73,7 +73,7 @@ public class XlsAccessorBean extends XlsAccessor {
             } else {
                 if (type.isArray()) {
                     Class<?> componentType = type.getComponentType();
-                    if ((field.getAnnotation(XaParam.class) != null && KernelClass.isBasicClass(componentType)) || XlsBase.class.isAssignableFrom(componentType)) {
+                    if ((KernelClass.isBasicClass(componentType) && componentType != String.class) || (field.getAnnotation(XaParam.class) != null && KernelClass.isBasicClass(componentType)) || XlsBase.class.isAssignableFrom(componentType)) {
                         xlsAccessors.add(new XlsAccessorParam(field, beanClass, componentType));
 
                     } else {

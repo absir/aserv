@@ -13,10 +13,17 @@ import com.absir.aserv.jdbc.JdbcCondition;
 import com.absir.aserv.jdbc.JdbcPage;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.service.CrudService;
+import com.absir.binder.BinderSupply;
+import com.absir.binder.BinderUtils;
 import com.absir.core.dyna.DynaBinder;
+import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
+import com.absir.property.PropertyData;
+import com.absir.property.PropertyHolder;
+import com.absir.property.PropertyUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,19 +70,75 @@ public abstract class CrudServiceUtils {
     }
 
     public static JdbcCondition ids(String entityName, Object[] ids, ICrudSupply crudSupply, JdbcCondition jdbcCondition) {
+        int length = ids == null ? 0 : ids.length;
+        if (length == 0) {
+            return jdbcCondition;
+        }
+
         if (jdbcCondition == null) {
             jdbcCondition = new JdbcCondition();
         }
 
         Class<? extends Serializable> identifierType = crudSupply.getIdentifierType(entityName);
-        int length = ids.length;
         Object[] identifiers = new Object[length];
         for (int i = 0; i < length; i++) {
             identifiers[i] = DynaBinderUtils.getParamObject(ids[i], identifierType);
         }
 
-        jdbcCondition.getConditions().add(0, JdbcCondition.ALIAS + "." + crudSupply.getIdentifierName(entityName) + " IN (?)");
-        jdbcCondition.getConditions().add(1, identifiers);
+        List<Object> conditions = jdbcCondition.getConditions();
+        if (KernelClass.isCustomClass(identifierType)) {
+            String conditionStr = JdbcCondition.ALIAS + '.' + crudSupply.getIdentifierName(entityName) + '.';
+            BinderSupply binderSupply = BinderUtils.getBinderSupply();
+            PropertyHolder propertyHolder = PropertyUtils.getPropertyMap(identifierType, binderSupply);
+            StringBuilder stringBuilder = new StringBuilder();
+            for (Map.Entry<String, PropertyData> entry : propertyHolder.getNameMapPropertyData().entrySet()) {
+                PropertyData propertyData = entry.getValue();
+                if (propertyData.getProperty().getAllow() == 0) {
+                    if (stringBuilder.length() == 0) {
+                        stringBuilder.append('(');
+
+                    } else {
+                        stringBuilder.append(" AND ");
+                    }
+
+                    stringBuilder.append(conditionStr);
+                    stringBuilder.append(entry.getKey());
+                    stringBuilder.append(" = ?");
+                }
+            }
+
+            stringBuilder.append(')');
+            conditionStr = stringBuilder.toString();
+            stringBuilder.setLength(0);
+            List<Object> params = new ArrayList<Object>();
+            for (int i = 0; i < length; i++) {
+                Object identifier = identifiers[i];
+                if (identifier != null) {
+                    if (stringBuilder.length() == 0) {
+                        stringBuilder.append('(');
+                    } else {
+                        stringBuilder.append(" OR ");
+                    }
+
+                    stringBuilder.append(conditionStr);
+                    for (Map.Entry<String, PropertyData> entry : propertyHolder.getNameMapPropertyData().entrySet()) {
+                        PropertyData propertyData = entry.getValue();
+                        if (propertyData.getProperty().getAllow() == 0) {
+                            params.add(propertyData.getProperty().getAccessor().get(identifier));
+                        }
+                    }
+                }
+            }
+
+            stringBuilder.append(')');
+            conditions.add(stringBuilder.toString());
+            conditions.add(params);
+
+        } else {
+            conditions.add(0, JdbcCondition.ALIAS + "." + crudSupply.getIdentifierName(entityName) + " IN (?)");
+            conditions.add(1, identifiers);
+        }
+
         return jdbcCondition;
     }
 
