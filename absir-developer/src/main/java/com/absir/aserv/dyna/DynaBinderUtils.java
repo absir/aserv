@@ -52,7 +52,7 @@ public class DynaBinderUtils extends DynaBinder {
         if (param != null && KernelClass.isCustomClass(paramType)) {
             T paramValue = KernelClass.newInstance(paramType);
             if (paramValue != null) {
-                String[] params = HelperString.split(param, '`');
+                String[] params = HelperString.split(param, '~');
                 BinderSupply binderSupply = BinderUtils.getBinderSupply();
                 PropertyHolder propertyHolder = PropertyUtils.getPropertyMap(paramType, binderSupply);
                 int index = 0;
@@ -61,6 +61,9 @@ public class DynaBinderUtils extends DynaBinder {
                     if (propertyData.getProperty().getAllow() == 0) {
                         propertyData.getProperty().getAccessor().set(paramValue,
                                 binderSupply.bindValue(propertyData, params[index++], null, DynaBinder.INSTANCE, null));
+                        if (index >= params.length) {
+                            break;
+                        }
                     }
                 }
 
@@ -93,7 +96,7 @@ public class DynaBinderUtils extends DynaBinder {
                 }
             }
 
-            return KernelString.implode(params, '`');
+            return KernelString.implode(params, '~');
         }
 
         return DynaBinder.to(paramValue, String.class);

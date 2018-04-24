@@ -10,6 +10,7 @@ import com.absir.core.kernel.KernelReflect;
 import com.absir.core.kernel.KernelString;
 import com.absir.server.value.Close;
 import com.absir.server.value.Handler;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ public class HandlerAdapter {
             }
 
             Handler handler = BeanConfigImpl.getTypeAnnotation(beanType, Handler.class);
-            if (handler == null) {
+            if (handler != null && !handler.value()) {
                 continue;
             }
 
@@ -50,30 +51,39 @@ public class HandlerAdapter {
 
     protected void addHandlerBeanType(Map<String, HandlerAction> map, IHandler handlerBean, Handler handler, Class<? extends IHandler> beanType) {
         IHandlerProxy handlerProxy = null;
-        if (handler instanceof IHandlerProxy) {
-            handlerProxy = (IHandlerProxy) handler;
+        if (handlerBean instanceof IHandlerProxy) {
+            handlerProxy = (IHandlerProxy) handlerBean;
             beanType = handlerProxy.getInterface();
         }
 
         Map<Method, HandlerAction> methodMapAction = new HashMap<Method, HandlerAction>();
-        for (Class<?> rpcType : beanType.getInterfaces()) {
-            String rpcName = RpcInterface.getRpcName(null, rpcType);
-            if (rpcName != null) {
-                for (Method method : rpcType.getMethods()) {
-                    method = KernelReflect.realMethod(beanType, method);
-                    String uri = RpcInterface.getRpcUri(rpcName, method);
-                    if (map.containsKey(uri)) {
-                        throw new RuntimeException("HandlerAdapter[" + beanType + "] has conflict method uri = " + uri);
-                    }
+        Class<?> bType = beanType;
+        while (bType != null && bType != Object.class) {
+            for (Class<?> rpcType : bType.getInterfaces()) {
+                if (handler != null && ArrayUtils.contains(handler.closeInterfaces(), rpcType)) {
+                    continue;
+                }
 
-                    HandlerAction action = new HandlerAction();
-                    action.handler = handlerBean;
-                    action.handlerProxy = handlerProxy;
-                    action.handlerMethod = HandlerType.createHandlerMethod(method);
-                    map.put(uri, action);
-                    methodMapAction.put(method, action);
+                String rpcName = RpcInterface.getRpcName(null, rpcType);
+                if (rpcName != null) {
+                    for (Method method : rpcType.getMethods()) {
+                        method = KernelReflect.realMethod(beanType, method);
+                        String uri = RpcInterface.getRpcUri(rpcName, method);
+                        if (map.containsKey(uri)) {
+                            throw new RuntimeException("HandlerAdapter[" + beanType + "] has conflict method uri = " + uri);
+                        }
+
+                        HandlerAction action = new HandlerAction();
+                        action.handler = handlerBean;
+                        action.handlerProxy = handlerProxy;
+                        action.handlerMethod = HandlerType.createHandlerMethod(method);
+                        map.put(uri, action);
+                        methodMapAction.put(method, action);
+                    }
                 }
             }
+
+            bType = bType.getSuperclass();
         }
 
         HandlerType<?> handlerType = HandlerType.create(beanType, handler != null && handler.value(), methodMapAction);
