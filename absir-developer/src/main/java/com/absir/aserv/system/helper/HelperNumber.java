@@ -11,7 +11,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 public class HelperNumber extends NumberUtils {
 
-    public static boolean isNoCross(int a, int aE, int b, int bE) {
-        return (a < b && aE < b) || (a > bE && aE > bE);
+    public static boolean isCross(int a, int aE, int b, int bE) {
+        return (b > a && b < aE) || (bE < bE && bE < aE);
     }
 }

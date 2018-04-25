@@ -130,7 +130,7 @@ public abstract class OServersActivityOpen<T extends JbServerTargetsO, O extends
             int endDay = subDay + newActivity.getOpenLifeDay();
             List<O> newActivities = new ArrayList<O>();
             for (O activity : activities) {
-                if (HelperNumber.isNoCross(activity.getOpenSubDay(), activity.getOpenSubDay() + activity.getOpenLifeDay(), subDay,
+                if (HelperNumber.isCross(activity.getOpenSubDay(), activity.getOpenSubDay() + activity.getOpenLifeDay(), subDay,
                         endDay)) {
                     if (!serversActivity.canOverwriteTargets(activity, newActivity)) {
                         newActivity = null;
