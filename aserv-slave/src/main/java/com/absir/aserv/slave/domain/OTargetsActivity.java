@@ -62,6 +62,7 @@ public class OTargetsActivity<T> {
 
     public void clearActivity() {
         singleActivity = null;
+        groupActivityMap.clear();
         singleActivityMap.clear();
     }
 
