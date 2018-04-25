@@ -8,6 +8,7 @@
 package com.absir.aserv.configure.xls;
 
 import com.absir.aserv.dyna.DynaBinderUtils;
+import com.absir.aserv.system.bean.proxy.JiBase;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.core.base.Base;
@@ -48,7 +49,7 @@ public class XlsBase extends Base<Serializable> {
     }
 
     protected boolean is(Class<?> cls) {
-        return DynaBinderUtils.is(cls) || XlsBase.class.isAssignableFrom(cls);
+        return DynaBinderUtils.is(cls) || XlsBase.class.isAssignableFrom(cls) || JiBase.class.isAssignableFrom(cls);
     }
 
     protected HSSFWorkbook getHssfWorkbook(String workbook) throws IOException {
