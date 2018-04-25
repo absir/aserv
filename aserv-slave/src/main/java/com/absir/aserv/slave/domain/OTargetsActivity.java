@@ -21,6 +21,8 @@ public class OTargetsActivity<T> {
 
     private T singleActivity;
 
+    private boolean grouped;
+
     private Map<String, T> groupActivityMap = new HashMap<String, T>();
 
     private Map<Long, T> singleActivityMap = new HashMap<Long, T>();
@@ -46,13 +48,15 @@ public class OTargetsActivity<T> {
             return activity;
         }
 
-        SocketSer socketSer = SockserService.ME.getOnlineActiveContexts().get(serverId);
-        if (socketSer != null) {
-            JServer server = (JServer) socketSer.getServer();
-            if (server.getGroupId() != null) {
-                activity = groupActivityMap.get(server.getGroupId());
-                if (activity != null) {
-                    return activity;
+        if (grouped) {
+            SocketSer socketSer = SockserService.ME.getOnlineActiveContexts().get(serverId);
+            if (socketSer != null) {
+                JServer server = (JServer) socketSer.getServer();
+                if (server.getGroupId() != null) {
+                    activity = groupActivityMap.get(server.getGroupId());
+                    if (activity != null) {
+                        return activity;
+                    }
                 }
             }
         }
@@ -62,6 +66,7 @@ public class OTargetsActivity<T> {
 
     public void clearActivity() {
         singleActivity = null;
+        grouped = false;
         groupActivityMap.clear();
         singleActivityMap.clear();
     }
@@ -119,6 +124,7 @@ public class OTargetsActivity<T> {
                 for (String groupId : targets.getGroupIds()) {
                     T oldActivity = groupActivityMap.get(groupId);
                     if (oldActivity == null || canOverwrite(oldActivity, targets)) {
+                        grouped = true;
                         groupActivityMap.put(groupId, activity);
                     }
                 }
