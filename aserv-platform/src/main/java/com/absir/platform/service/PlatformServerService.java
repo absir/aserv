@@ -415,7 +415,6 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
             return !KernelString.isEmpty(group) && platformGroup.getGroupIds().contains(group);
         }
 
-        DPlatformFrom platformFrom = null;
         if (platformFromRef != null) {
             if (!platformFromRef.loaded) {
                 platformFromRef.loaded = true;
@@ -489,11 +488,13 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
                         servers.add(server.value);
                     }
                 }
+
+                break;
             }
         }
 
         if (servers.isEmpty() && waiteServer != null) {
-            DServer dServer = waiteServer.dServer.clone();
+            DServer dServer = waiteServer.value.clone();
             dServer.setStatus(EServerStatus.wait);
             servers.add(dServer);
         }
