@@ -12,7 +12,6 @@ import com.absir.aserv.slave.bean.base.JbServerTargets;
 import com.absir.aserv.system.helper.HelperArray;
 import com.absir.sockser.SocketSer;
 import com.absir.sockser.SockserService;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +20,8 @@ import java.util.Map.Entry;
 public class OTargetsActivity<T> {
 
     private T singleActivity;
+
+    private Map<String, T> groupActivityMap = new HashMap<String, T>();
 
     private Map<Long, T> singleActivityMap = new HashMap<Long, T>();
 
@@ -41,7 +42,22 @@ public class OTargetsActivity<T> {
 
     public T getSingleActivity(long serverId) {
         T activity = singleActivityMap.get(serverId);
-        return activity == null ? singleActivity : activity;
+        if (activity != null) {
+            return activity;
+        }
+
+        SocketSer socketSer = SockserService.ME.getOnlineActiveContexts().get(serverId);
+        if (socketSer != null) {
+            JServer server = (JServer) socketSer.getServer();
+            if (server.getGroupId() != null) {
+                activity = groupActivityMap.get(server.getGroupId());
+                if (activity != null) {
+                    return activity;
+                }
+            }
+        }
+
+        return singleActivity;
     }
 
     public void clearActivity() {
@@ -99,15 +115,10 @@ public class OTargetsActivity<T> {
 
         } else {
             if (targets.isAllServerIds()) {
-                String[] groupIds = targets.getGroupIds();
-                for (SocketSer socketSer : SockserService.ME.getOnlineActiveContexts().values()) {
-                    JServer server = (JServer) socketSer.getServer();
-                    if (ArrayUtils.contains(groupIds, server.getGroupId())) {
-                        Long targetId = server.getId();
-                        T oldActivity = singleActivityMap.get(targetId);
-                        if (oldActivity == null || canOverwrite(oldActivity, targets)) {
-                            singleActivityMap.put(targetId, activity);
-                        }
+                for (String groupId : targets.getGroupIds()) {
+                    T oldActivity = groupActivityMap.get(groupId);
+                    if (oldActivity == null || canOverwrite(oldActivity, targets)) {
+                        groupActivityMap.put(groupId, activity);
                     }
                 }
 
