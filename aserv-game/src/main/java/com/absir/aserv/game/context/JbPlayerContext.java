@@ -172,56 +172,30 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         }
     }
 
-    protected synchronized void asyncRun(final ARunnable<R> runnable) {
-        if (asyncRunning) {
-            if (runnable != null) {
-                if (asyncRunnables == null) {
-                    asyncRunnables = new ArrayList<ARunnable<R>>();
+    private Object asyncRunningLock = new Object();
+
+    protected void asyncRun(final ARunnable<R> runnable) {
+        synchronized (asyncRunningLock) {
+            if (asyncRunning) {
+                if (runnable != null) {
+                    if (asyncRunnables == null) {
+                        asyncRunnables = new ArrayList<ARunnable<R>>();
+                    }
+
+                    asyncRunnables.add(runnable);
                 }
 
-                asyncRunnables.add(runnable);
+                return;
             }
 
-            return;
-        }
-
-        try {
-            asyncRunning = true;
-            ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        R _receiver = receiver;
-                        if (runnable != null) {
-                            try {
-                                doAsync(runnable, _receiver);
-
-                            } catch (Throwable e) {
-                                LOGGER.error("asyncRun error", e);
-                            }
-                        }
-
-                        while (true) {
-                            List<ARunnable<R>> runnables = null;
-                            synchronized (JbPlayerContext.this) {
-                                _receiver = receiver;
-                                runnables = asyncRunnables;
-                                asyncRunnables = null;
-                            }
-
-                            if (runnables == null) {
-                                synchronized (this) {
-                                    asyncRunning = false;
-                                }
-
-                                break;
-                            }
-
-                            for (ARunnable runnable : runnables) {
-                                if (_receiver != null && _receiver != receiver) {
-                                    _receiver = null;
-                                }
-
+            try {
+                asyncRunning = true;
+                ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            R _receiver = receiver;
+                            if (runnable != null) {
                                 try {
                                     doAsync(runnable, _receiver);
 
@@ -229,24 +203,54 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
                                     LOGGER.error("asyncRun error", e);
                                 }
                             }
-                        }
 
-                    } finally {
-                        synchronized (JbPlayerContext.this) {
-                            if (asyncRunning) {
-                                asyncRunning = false;
-                                if (asyncRunnables != null) {
-                                    asyncWrite(null);
+                            while (true) {
+                                List<ARunnable<R>> runnables = null;
+                                synchronized (asyncRunningLock) {
+                                    _receiver = receiver;
+                                    runnables = asyncRunnables;
+                                    asyncRunnables = null;
+                                }
+
+                                if (runnables == null) {
+                                    synchronized (asyncRunningLock) {
+                                        asyncRunning = false;
+                                    }
+
+                                    break;
+                                }
+
+                                for (ARunnable runnable : runnables) {
+                                    if (_receiver != null && _receiver != receiver) {
+                                        _receiver = null;
+                                    }
+
+                                    try {
+                                        doAsync(runnable, _receiver);
+
+                                    } catch (Throwable e) {
+                                        LOGGER.error("asyncRun error", e);
+                                    }
+                                }
+                            }
+
+                        } finally {
+                            synchronized (asyncRunningLock) {
+                                if (asyncRunning) {
+                                    asyncRunning = false;
+                                    if (asyncRunnables != null) {
+                                        asyncWrite(null);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
 
-        } catch (Throwable e) {
-            asyncRunnablesClear();
-            asyncRunning = false;
+            } catch (Throwable e) {
+                asyncRunnablesClear();
+                asyncRunning = false;
+            }
         }
     }
 
@@ -257,7 +261,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
     /**
      * 异步写入
      */
-    public synchronized void asyncWrite(final ReceiverRunnable<R> receiverRunnable) {
+    public void asyncWrite(final ReceiverRunnable<R> receiverRunnable) {
         asyncRun(receiverRunnable);
     }
 
