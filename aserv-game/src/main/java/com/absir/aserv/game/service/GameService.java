@@ -153,20 +153,32 @@ public class GameService {
         }
     }
 
-    public void saveAllPlayer() {
-        if (AGameComponent.ME.PLAYER_CONTEXT_MAP == null) {
-            return;
+    public void saveAllPlayerAndServer() {
+        if (AGameComponent.ME.PLAYER_CONTEXT_MAP != null) {
+            for (JbPlayerContext playerContext : (Collection<JbPlayerContext>) AGameComponent.ME.PLAYER_CONTEXT_MAP
+                    .values()) {
+                try {
+                    if (!playerContext.unInitializeDone()) {
+                        playerContext.unInitialize();
+                    }
+
+                } catch (Exception e) {
+                    LOGGER.error("saveAllPlayer", e);
+                }
+            }
         }
 
-        for (JbPlayerContext playerContext : (Collection<JbPlayerContext>) AGameComponent.ME.PLAYER_CONTEXT_MAP
-                .values()) {
-            try {
-                if (!playerContext.unInitializeDone()) {
-                    playerContext.unInitialize();
-                }
+        if (AGameComponent.ME.SERVER_CONTEXT_MAP != null) {
+            for (JbServerContext serverContext : (Collection<JbServerContext>) AGameComponent.ME.SERVER_CONTEXT_MAP
+                    .values()) {
+                try {
+                    if (!serverContext.unInitializeDone()) {
+                        serverContext.unInitialize();
+                    }
 
-            } catch (Exception e) {
-                LOGGER.error("saveAllPlayer", e);
+                } catch (Exception e) {
+                    LOGGER.error("saveAllServer", e);
+                }
             }
         }
     }

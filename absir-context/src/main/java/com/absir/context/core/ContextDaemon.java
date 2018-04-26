@@ -126,22 +126,33 @@ public class ContextDaemon implements Runnable {
             }
 
             try {
-                Environment.setActive(false);
-                ContextFactory contextFactory = ContextUtils.getContextFactory();
-                for (Class cls : contextFactory.getContextClasses()) {
-                    Map<Serializable, Context> map = contextFactory.getContextMap(cls);
-                    Iterator<Map.Entry<Serializable, Context>> iterator = map.entrySet().iterator();
-                    while (iterator.hasNext()) {
-                        Context context = iterator.next().getValue();
-                        if (context != null && !context.unInitializeDone()) {
-                            context.unInitialize();
+                try {
+                    Environment.setActive(false);
+                    ContextFactory contextFactory = ContextUtils.getContextFactory();
+                    for (Class cls : contextFactory.getContextClasses()) {
+                        Map<Serializable, Context> map = contextFactory.getContextMap(cls);
+                        Iterator<Map.Entry<Serializable, Context>> iterator = map.entrySet().iterator();
+                        while (iterator.hasNext()) {
+                            Context context = iterator.next().getValue();
+                            if (context != null && !context.unInitializeDone()) {
+                                for (int i = 0; i < ContextUtils.getContextFactory().getUnInitCount(); i++) {
+                                    try {
+                                        context.unInitialize();
+                                        break;
+
+                                    } catch (Exception e) {
+                                        Environment.throwable(e);
+                                    }
+                                }
+                            }
+
+                            iterator.remove();
                         }
-
-                        iterator.remove();
                     }
-                }
 
-                BeanFactoryStopping.stoppingAll();
+                } finally {
+                    BeanFactoryStopping.stoppingAll();
+                }
 
             } finally {
                 if (stoppingFile != null) {
