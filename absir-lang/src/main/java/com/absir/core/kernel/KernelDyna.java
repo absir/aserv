@@ -7,6 +7,8 @@
  */
 package com.absir.core.kernel;
 
+import com.absir.core.util.UtilAbsir;
+
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -412,6 +414,12 @@ public abstract class KernelDyna {
     }
 
     public static Integer toInteger(String str, Integer defaultValue) {
+        str = str.trim();
+        if (KernelString.indexOf(str, DATE_CHARS) > 0) {
+            Date date = toDate(str);
+            return date == null ? 0 : UtilAbsir.shortTime(date.getTime());
+        }
+
         try {
             return Integer.valueOf(str);
 
