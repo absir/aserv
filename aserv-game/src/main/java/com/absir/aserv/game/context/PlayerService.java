@@ -286,7 +286,7 @@ public abstract class PlayerService {
     @Transaction
     public void mergePlayer(JbPlayerContext playerContext) {
         Session session = BeanDao.getSession();
-        session.merge(playerContext.getPlayer());
+        session.update(playerContext.getPlayer());
         session.flush();
     }
 

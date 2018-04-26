@@ -308,6 +308,8 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         stepDone(ContextUtils.getContextTime());
     }
 
+    boolean newPlayerA;
+
     /**
      * 载入数据
      */
@@ -319,7 +321,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
             throw new ServerException(ServerStatus.NO_LOGIN);
         }
 
-        boolean newPlayerA = false;
+        newPlayerA = false;
         playerA = (A) BeanDao.get(session, AGameComponent.ME.PLAYERA_CLASS, getId());
         if (playerA == null) {
             newPlayerA = true;
@@ -441,8 +443,14 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
      */
     protected void save() {
         Session session = BeanDao.getSession();
-        session.merge(player);
-        session.merge(playerA);
+        session.update(player);
+        if (newPlayerA) {
+            session.merge(playerA);
+            newPlayerA = false;
+
+        } else {
+            session.update(playerA);
+        }
     }
 
     /*

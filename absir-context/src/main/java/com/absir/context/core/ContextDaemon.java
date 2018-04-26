@@ -138,6 +138,7 @@ public class ContextDaemon implements Runnable {
                                 for (int i = 0; i < ContextUtils.getContextFactory().getUnInitCount(); i++) {
                                     try {
                                         context.unInitialize();
+                                        iterator.remove();
                                         break;
 
                                     } catch (Exception e) {
@@ -145,8 +146,6 @@ public class ContextDaemon implements Runnable {
                                     }
                                 }
                             }
-
-                            iterator.remove();
                         }
                     }
 
