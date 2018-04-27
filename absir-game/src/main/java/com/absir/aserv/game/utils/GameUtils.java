@@ -163,6 +163,10 @@ public abstract class GameUtils {
         levelExpCxt.setExp(obj, number);
     }
 
+    public static <V> int getMaxLevelExp(V value, List<? extends IExpValue<V>> iExpValues, int maxLevel) {
+        return iExpValues.get(maxLevel).getExp(value);
+    }
+
     public static <T, V> void modifyExpNumberValue(int number, V value, T obj, ILevelExpCxt<T> levelExpCxt, List<? extends IExpValue<V>> iExpValues, int maxLevel) {
         number += levelExpCxt.getExp(obj);
         if (number < 0) {
