@@ -39,6 +39,10 @@ public abstract class PropertySupply<O extends PropertyObject<T>, T> {
         for (int i = 0; i < supplySize; i++) {
             propertySupplies.get(i).supplyIndex = i;
         }
+
+        if (supplySize == 0) {
+            supplySize = 1;
+        }
     }
 
     protected Class<? extends Annotation> ingoreAnnotationClass;
