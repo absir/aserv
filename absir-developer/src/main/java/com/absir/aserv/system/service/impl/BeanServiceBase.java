@@ -291,6 +291,11 @@ public class BeanServiceBase implements BeanService, ICrudSupply {
     }
 
     @Override
+    public List selectQueryMaxResults(int maxResults, String queryString, Object... parameters) {
+        return QueryDaoUtils.createQueryArray(getSession(), queryString, parameters).setMaxResults(maxResults).list();
+    }
+
+    @Override
     public int executeUpdate(String queryString, Object... parameters) {
         return QueryDaoUtils.createQueryArray(getSession(), queryString, parameters).executeUpdate();
     }

@@ -175,6 +175,9 @@ public interface BeanService {
     @Transaction(readOnly = true)
     public Object selectQuerySingle(String queryString, Object... parameters);
 
+    @Transaction(readOnly = true)
+    public List selectQueryMaxResults(int maxResults, String queryString, Object... parameters);
+
     @Transaction
     public int executeUpdate(String queryString, Object... parameters);
 
