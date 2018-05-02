@@ -446,6 +446,7 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         session.update(player);
         if (newPlayerA) {
             session.merge(playerA);
+            session.flush();
             newPlayerA = false;
 
         } else {
