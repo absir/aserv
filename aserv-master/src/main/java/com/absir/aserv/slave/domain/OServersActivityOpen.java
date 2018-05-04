@@ -99,7 +99,7 @@ public abstract class OServersActivityOpen<T extends JbServerTargetsO, O extends
 
     protected void addActivity(O activity) {
         synchronized (serversActivity) {
-            if (activity.getServerIds() == null || activity.getServerIds().length == 0) {
+            if (activity.isAllServerIds()) {
                 if (activity.getGroupIds() == null || activity.getGroupIds().length == 0) {
                     serversActivity.singleActivity = mergeActivities(serversActivity.singleActivity, activity);
 
@@ -112,9 +112,11 @@ public abstract class OServersActivityOpen<T extends JbServerTargetsO, O extends
                 }
 
             } else {
-                for (long targetId : activity.getServerIds()) {
-                    serversActivity.singleActivityMap.put(targetId,
-                            mergeActivities(serversActivity.singleActivityMap.get(targetId), activity));
+                if (activity.getServerIds() != null && activity.getServerIds().length > 0) {
+                    for (long targetId : activity.getServerIds()) {
+                        serversActivity.singleActivityMap.put(targetId,
+                                mergeActivities(serversActivity.singleActivityMap.get(targetId), activity));
+                    }
                 }
             }
         }

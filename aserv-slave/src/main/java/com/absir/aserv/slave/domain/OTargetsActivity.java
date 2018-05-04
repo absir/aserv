@@ -116,11 +116,11 @@ public class OTargetsActivity<T> {
     }
 
     public void addActivity(JbServerTargets targets, T activity) {
-        if (targets == null || (targets.isAllServerIds() || targets.getGroupIds() == null || targets.getGroupIds().length == 0)) {
-            singleActivity = activity;
+        if (targets.isAllServerIds()) {
+            if (targets.getGroupIds() == null || targets.getGroupIds().length == 0) {
+                singleActivity = activity;
 
-        } else {
-            if (targets.isAllServerIds()) {
+            } else {
                 for (String groupId : targets.getGroupIds()) {
                     T oldActivity = groupActivityMap.get(groupId);
                     if (oldActivity == null || canOverwrite(oldActivity, targets)) {
@@ -128,8 +128,10 @@ public class OTargetsActivity<T> {
                         groupActivityMap.put(groupId, activity);
                     }
                 }
+            }
 
-            } else {
+        } else {
+            if (targets.getServerIds() != null && targets.getServerIds().length > 0) {
                 for (long targetId : targets.getServerIds()) {
                     T oldActivity = singleActivityMap.get(targetId);
                     if (oldActivity == null || canOverwrite(oldActivity, targets)) {

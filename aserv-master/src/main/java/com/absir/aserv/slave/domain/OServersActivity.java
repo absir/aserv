@@ -97,11 +97,11 @@ public class OServersActivity<T> {
     }
 
     public void addActivity(JbServerTargets targets, T activity) {
-        if (targets == null || (targets.isAllServerIds() || targets.getGroupIds() == null || targets.getGroupIds().length == 0)) {
-            singleActivity = activity;
+        if (targets.isAllServerIds()) {
+            if (targets.getGroupIds() == null || targets.getGroupIds().length == 0) {
+                singleActivity = activity;
 
-        } else {
-            if (targets.isAllServerIds()) {
+            } else {
                 for (JSlaveServer server : MasterSyncService.ME.getSlaveServersFromGroupIds(targets.getGroupIds())) {
                     Long targetId = server.getId();
                     T oldActivity = singleActivityMap.get(targetId);
@@ -109,8 +109,10 @@ public class OServersActivity<T> {
                         singleActivityMap.put(targetId, activity);
                     }
                 }
+            }
 
-            } else {
+        } else {
+            if (targets.getServerIds() != null && targets.getServerIds().length > 0) {
                 for (long targetId : targets.getServerIds()) {
                     T oldActivity = singleActivityMap.get(targetId);
                     if (oldActivity == null || canOverwrite(oldActivity, targets)) {
