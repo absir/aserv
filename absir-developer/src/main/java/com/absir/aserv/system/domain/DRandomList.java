@@ -21,7 +21,7 @@ public class DRandomList<T> {
 
     }
 
-    LinkedHashMap<Serializable, HelperRandom.RandomPool<T>> idMapRandPool;
+    LinkedHashMap<Serializable, HelperRandom.RandomPool<IRandElement<T>>> idMapRandPool;
 
     public void clear() {
         idMapRandPool = null;
@@ -33,17 +33,17 @@ public class DRandomList<T> {
         }
 
         if (idMapRandPool == null) {
-            idMapRandPool = new LinkedHashMap<Serializable, HelperRandom.RandomPool<T>>();
+            idMapRandPool = new LinkedHashMap<Serializable, HelperRandom.RandomPool<IRandElement<T>>>();
         }
 
         for (IRandElement<T> randElement : randElements) {
-            HelperRandom.RandomPool<T> randomPool = idMapRandPool.get(randElement.forId());
+            HelperRandom.RandomPool<IRandElement<T>> randomPool = idMapRandPool.get(randElement.forId());
             if (randomPool == null) {
-                randomPool = new HelperRandom.RandomPool<T>();
+                randomPool = new HelperRandom.RandomPool<IRandElement<T>>();
                 idMapRandPool.put(randElement.forId(), randomPool);
             }
 
-            randomPool.add(randElement.forElement(), randElement.getRare());
+            randomPool.add(randElement, randElement.getRare());
         }
     }
 
@@ -53,8 +53,11 @@ public class DRandomList<T> {
         }
 
         List<T> elements = new ArrayList<T>(idMapRandPool.size());
-        for (HelperRandom.RandomPool<T> randomPool : idMapRandPool.values()) {
-            elements.add(randomPool.randElement());
+        for (HelperRandom.RandomPool<IRandElement<T>> randomPool : idMapRandPool.values()) {
+            T element = randomPool.randElement().forElement();
+            if (element != null) {
+                elements.add(element);
+            }
         }
 
         return elements;
