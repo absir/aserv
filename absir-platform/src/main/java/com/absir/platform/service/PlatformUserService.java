@@ -20,6 +20,7 @@ import com.absir.bean.inject.value.Value;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
+import com.absir.core.util.UtilContext;
 import com.absir.orm.transaction.value.Transaction;
 import com.absir.platform.bean.JPlatformSession;
 import com.absir.platform.bean.JPlatformUser;
@@ -73,6 +74,7 @@ public class PlatformUserService {
     @Transaction
     public JPlatformUser createPlatformUser(String platform, String username, String channel) {
         JPlatformUser platformUser = new JPlatformUser();
+        platformUser.setCreateTime(UtilContext.getCurrentShort());
         platformUser.setPlatform(platform);
         platformUser.setUsername(username);
         platformUser.setChannel(channel);

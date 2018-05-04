@@ -33,6 +33,10 @@ import java.util.Map;
 @Entity
 public class JPlatformUser extends JbBeanAL implements JiUserBase {
 
+    @JaLang("创建时间")
+    @JaEdit(types = "dateTime", groups = JaEdit.GROUP_LIST, listColType = 1)
+    private int createTime;
+
     @JaLang("平台")
     @JaEdit(groups = {JaEdit.GROUP_SUGGEST})
     @JaColum(indexs = @Index(columnList = "platform,username", unique = true))
@@ -75,6 +79,14 @@ public class JPlatformUser extends JbBeanAL implements JiUserBase {
     @JaLang("扩展纪录")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonMap")
     private Map<String, String> metaMap;
+
+    public int getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(int createTime) {
+        this.createTime = createTime;
+    }
 
     public String getPlatform() {
         return platform;
