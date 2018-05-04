@@ -1,6 +1,6 @@
 package com.absir.platform.service;
 
-import com.absir.aserv.system.domain.DCacheOpen;
+import com.absir.aserv.system.domain.DCacheOpenEntity;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.bean.basis.Base;
 import com.absir.bean.core.BeanFactoryUtils;
@@ -27,7 +27,7 @@ public class ProxyService implements IFilter {
 
     public static final ProxyService ME = BeanFactoryUtils.get(ProxyService.class);
 
-    protected DCacheOpen<String, JProxy> proxyDCacheOpen;
+    protected DCacheOpenEntity<JProxy> proxyDCacheOpen;
 
     @Override
     public boolean doFilter(String uri, HttpServletRequest req, HttpServletResponse res) throws Throwable {
@@ -65,7 +65,7 @@ public class ProxyService implements IFilter {
 
     @Inject
     protected void initService() {
-        proxyDCacheOpen = new DCacheOpen<String, JProxy>(JProxy.class, null);
+        proxyDCacheOpen = new DCacheOpenEntity<JProxy>(JProxy.class, null);
         proxyDCacheOpen.addEntityMerges();
         proxyDCacheOpen.reloadCacheTransaction();
     }

@@ -7,7 +7,7 @@ import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.value.IUser;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
-import com.absir.aserv.system.domain.DCacheOpen;
+import com.absir.aserv.system.domain.DCacheOpenEntity;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.security.SecurityManager;
 import com.absir.aserv.system.service.BeanService;
@@ -53,11 +53,11 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
 
     public static final JPlatformConfigure CONFIGURE = JConfigureUtils.getConfigure(JPlatformConfigure.class);
 
-    protected DCacheOpen<Long, JSetting> settingDCacheOpen;
+    protected DCacheOpenEntity<JSetting> settingDCacheOpen;
 
-    protected DCacheOpen<Long, JAnnouncement> announcementDCacheOpen;
+    protected DCacheOpenEntity<JAnnouncement> announcementDCacheOpen;
 
-    protected DCacheOpen<Long, JServer> serverDCacheOpen;
+    protected DCacheOpenEntity<JServer> serverDCacheOpen;
 
     protected List<JSetting> settingList;
 
@@ -128,11 +128,11 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
 
     @Inject
     protected void initService() {
-        settingDCacheOpen = new DCacheOpen<Long, JSetting>(JSetting.class, null);
+        settingDCacheOpen = new DCacheOpenEntity<JSetting>(JSetting.class, null);
         settingDCacheOpen.addEntityMerges();
-        announcementDCacheOpen = new DCacheOpen<Long, JAnnouncement>(JAnnouncement.class, null);
+        announcementDCacheOpen = new DCacheOpenEntity<JAnnouncement>(JAnnouncement.class, null);
         announcementDCacheOpen.addEntityMerges();
-        serverDCacheOpen = new DCacheOpen<Long, JServer>(JServer.class, null);
+        serverDCacheOpen = new DCacheOpenEntity<JServer>(JServer.class, null);
         serverDCacheOpen.addEntityMerges();
     }
 

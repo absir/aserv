@@ -9,15 +9,15 @@ package com.absir.aserv.system.domain;
 
 import com.absir.aserv.system.bean.value.JiOpen;
 
-public abstract class DCacheOpen<K extends JiOpen, V> extends DCache<K, V> {
+public class DCacheOpenEntity<K extends JiOpen> extends DCacheOpen<K, K> {
 
-    public DCacheOpen(Class<K> entityClass, String entityName) {
+    public DCacheOpenEntity(Class<K> entityClass, String entityName) {
         super(entityClass, entityName);
     }
 
-    protected String genReloadHsql() {
-        return "SELECT o FROM " + entityName + " o WHERE o.open = true";
+    @Override
+    protected K getCacheValue(K entity) {
+        return entity;
     }
-
 
 }

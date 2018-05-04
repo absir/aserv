@@ -52,12 +52,10 @@ public abstract class OServersActivityOpen<T extends JbServerTargetsO, O extends
         serversName = serversClass.getSimpleName();
         serversOpenName = serversOpenClass.getSimpleName();
         initQueryString();
-        reloadTargetsActivity();
         L2EntityMergeService.ME.addEntityMerges(serversOpenClass, new IEntityMerge<O>() {
 
             @Override
-            public void merge(String entityName, O entity,
-                              com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType, Object mergeEvent) {
+            public void merge(String entityName, O entity, com.absir.orm.hibernate.boost.IEntityMerge.MergeType mergeType, Object mergeEvent) {
                 if (mergeType == MergeType.INSERT) {
                     addActivity(entity);
 
@@ -68,6 +66,8 @@ public abstract class OServersActivityOpen<T extends JbServerTargetsO, O extends
                 MasterActivityService.ME.reTargetsActivityOpen(OServersActivityOpen.this);
             }
         });
+
+        reloadTargetsActivity();
     }
 
     public Class<T> getServersClass() {
@@ -130,7 +130,7 @@ public abstract class OServersActivityOpen<T extends JbServerTargetsO, O extends
             int endDay = subDay + newActivity.getOpenLifeDay();
             List<O> newActivities = new ArrayList<O>();
             for (O activity : activities) {
-                if (HelperNumber.isCross(activity.getOpenSubDay(), activity.getOpenSubDay() + activity.getOpenLifeDay(), subDay,
+                if (!HelperNumber.isNoCross(activity.getOpenSubDay(), activity.getOpenSubDay() + activity.getOpenLifeDay(), subDay,
                         endDay)) {
                     if (!serversActivity.canOverwriteTargets(activity, newActivity)) {
                         newActivity = null;

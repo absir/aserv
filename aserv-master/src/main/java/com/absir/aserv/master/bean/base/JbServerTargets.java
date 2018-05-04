@@ -42,6 +42,7 @@ public class JbServerTargets extends JbBean {
     private transient int lastAllServerIds;
 
     @JaLang("组号")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonArray")
     private String[] groupIds;
 
     private transient String[] lastGroupIds;

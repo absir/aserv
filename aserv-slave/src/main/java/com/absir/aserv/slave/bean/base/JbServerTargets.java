@@ -29,6 +29,7 @@ public class JbServerTargets extends JbBeanL {
     private boolean allServerIds;
 
     @JaLang("组号")
+    @Type(type = "com.absir.aserv.system.bean.type.JtJsonArray")
     private String[] groupIds;
 
     @JaLang("备注")

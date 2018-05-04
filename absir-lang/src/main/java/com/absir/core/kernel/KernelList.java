@@ -153,4 +153,16 @@ public abstract class KernelList {
     public interface Orderable {
         public int getOrder();
     }
+
+    public static <T> void addObjectComparator(List<T> list, T element, Comparator<T> comparator) {
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            if (comparator.compare(element, list.get(i)) < 0) {
+                list.add(i, element);
+                return;
+            }
+        }
+
+        list.add(element);
+    }
 }
