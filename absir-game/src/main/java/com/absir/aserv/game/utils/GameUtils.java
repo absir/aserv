@@ -127,7 +127,10 @@ public abstract class GameUtils {
                 }
 
                 if (level >= maxLevel) {
-                    exp = 0;
+                    if (!(levelExpCxt instanceof ITopLevel && level < ((ITopLevel) levelExpCxt).getTopLevel())) {
+                        exp = 0;
+                    }
+
                     level = maxLevel;
                 }
             }
