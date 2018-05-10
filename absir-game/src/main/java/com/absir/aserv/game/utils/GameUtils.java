@@ -159,6 +159,19 @@ public abstract class GameUtils {
         return maxExp - levelExpCxt.getExp(obj);
     }
 
+    public static <T extends ILevelExp, V> int getAllExpValue(int exp, V value, T obj, List<? extends IExpValue<V>> iExpValues) {
+        return getAllExpValue(exp, value, obj, LEVEL_EXP_CXT, iExpValues);
+    }
+
+    public static <T, V> int getAllExpValue(int exp, V value, T obj, ILevelExpCxt<T> levelExpCxt, List<? extends IExpValue<V>> iExpValues) {
+        int level = levelExpCxt.getLevel(obj);
+        while (--level > 0) {
+            exp += iExpValues.get(level).getExp(value);
+        }
+
+        return exp;
+    }
+
     public static <T extends ILevelExp> void modifyExpNumber(int number, ILevelExp iLevelExp, List<? extends IExp> iExps, int maxLevel) {
         modifyExpNumber(number, iLevelExp, LEVEL_EXP_CXT, iExps, maxLevel);
     }
