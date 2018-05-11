@@ -129,10 +129,22 @@ public class GameService {
     @Async(notifier = true)
     @Schedule(cron = "0 0 0 * * *")
     protected void updateServerGameDay() {
-        mergeAllPlayer();
-        updateOnlineServerContext();
-        updateGameDay();
-        checkOnlinePlayerContexts();
+        try {
+            mergeAllPlayer();
+
+        } finally {
+            try {
+                updateOnlineServerContext();
+
+            } finally {
+                try {
+                    updateGameDay();
+
+                } finally {
+                    checkOnlinePlayerContexts();
+                }
+            }
+        }
     }
 
     public void mergeAllPlayer() {

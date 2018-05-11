@@ -357,11 +357,6 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
      * 更新在线天数
      */
     public void updatePlayerDay(int onlineDay) {
-        int passDay = GameService.getGameDay() - playerA.getGameDay();
-        if (passDay < 1) {
-            passDay = 1;
-        }
-
         playerA.setGameDay(GameService.getGameDay());
         playerA.setOnlineDay(onlineDay);
         if (AGameComponent.ME.PLAYER_CONTEXT_UPDATE_DAY_CALLS.hasCalls()) {
