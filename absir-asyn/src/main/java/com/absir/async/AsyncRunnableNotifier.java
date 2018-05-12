@@ -24,7 +24,9 @@ public class AsyncRunnableNotifier extends AsyncRunnable {
 
         }
     };
+
     private boolean notifying;
+
     private NotifierIterator notifierIterator;
 
     public AsyncRunnableNotifier(long timeout, boolean thread) {
@@ -36,30 +38,41 @@ public class AsyncRunnableNotifier extends AsyncRunnable {
             Runnable _runnable = proxy.getNotifierRunnable();
             if (_runnable == null) {
                 proxy.setNotifierRunnable(_NOTIFIER_RUNNABLE);
-                ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        Runnable _runnable = runnable;
-                        while (_runnable != null) {
-                            try {
-                                runnable.run();
+                try {
+                    ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Runnable _runnable = runnable;
+                            while (true) {
+                                if (runnable != null) {
+                                    try {
+                                        runnable.run();
 
-                            } catch (Throwable e) {
-                                LOGGER.error("notifierProxyRun run error: " + proxy, e);
-                            }
-
-                            synchronized (proxy) {
-                                _runnable = proxy.getNotifierRunnable();
-                                if (_runnable == null || _runnable == _NOTIFIER_RUNNABLE) {
-                                    proxy.setNotifierRunnable(null);
-                                    return;
+                                    } catch (Throwable e) {
+                                        LOGGER.error("notifierProxyRun run error: " + proxy, e);
+                                    }
                                 }
 
-                                proxy.setNotifierRunnable(_NOTIFIER_RUNNABLE);
+                                synchronized (proxy) {
+                                    _runnable = proxy.getNotifierRunnable();
+                                    if (_runnable == null || _runnable == _NOTIFIER_RUNNABLE) {
+                                        proxy.setNotifierRunnable(null);
+                                        return;
+                                    }
+
+                                    proxy.setNotifierRunnable(_NOTIFIER_RUNNABLE);
+                                }
                             }
                         }
+                    });
+
+                    _runnable = _NOTIFIER_RUNNABLE;
+
+                } finally {
+                    if (_runnable == null) {
+                        proxy.setNotifierRunnable(null);
                     }
-                });
+                }
 
             } else {
                 proxy.setNotifierRunnable(runnable);
