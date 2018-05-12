@@ -63,79 +63,83 @@ public class UtilScheduler<T extends NextRunnable> extends Thread {
     @Override
     public void run() {
         while (Environment.isActive() && starting) {
-            long time = UtilContext.getCurrentTime();
-            Date date = UtilContext.getCurrentDate();
-            UtilNode<T> node = runnableHeader.getNext();
-            UtilNode<T> nodeNext = null;
-            T runnable;
-            while (node != null) {
-                nodeNext = node.getNext();
-                runnable = node.getElement();
-                if (runnable.getNextTime() <= time) {
-                    try {
-                        runnable.run(date);
-
-                    } catch (Throwable e) {
-                        logThrowable(e);
-                    }
-
+            try {
+                long time = UtilContext.getCurrentTime();
+                Date date = UtilContext.getCurrentDate();
+                UtilNode<T> node = runnableHeader.getNext();
+                UtilNode<T> nodeNext = null;
+                T runnable;
+                while (node != null) {
+                    nodeNext = node.getNext();
+                    runnable = node.getElement();
                     if (runnable.getNextTime() <= time) {
-                        removeRunnableNode(node);
-
-                    } else {
-                        sortNextRunnableNode(node);
-                    }
-
-                } else {
-                    break;
-                }
-
-                node = nodeNext;
-            }
-
-            if (addRunnables != null) {
-                List<T> adds = addRunnables;
-                synchronized (this) {
-                    addRunnables = null;
-                }
-
-                for (T add : adds) {
-                    add.start(date);
-                    if (add.getNextTime() <= time) {
                         try {
-                            add.run(date);
+                            runnable.run(date);
 
                         } catch (Throwable e) {
                             logThrowable(e);
                         }
 
-                        if (add.getNextTime() <= time) {
-                            continue;
+                        if (runnable.getNextTime() <= time) {
+                            removeRunnableNode(node);
+
+                        } else {
+                            sortNextRunnableNode(node);
                         }
+
+                    } else {
+                        break;
                     }
 
-                    addNextRunnableNode(add);
+                    node = nodeNext;
                 }
-            }
 
-            node = runnableHeader.getNext();
-            if (node == null) {
-                nextRunnableTime = time + getMaxSleepTime();
+                if (addRunnables != null) {
+                    List<T> adds = addRunnables;
+                    synchronized (this) {
+                        addRunnables = null;
+                    }
 
-            } else {
-                nextRunnableTime = node.getElement().getNextTime();
-            }
+                    for (T add : adds) {
+                        add.start(date);
+                        if (add.getNextTime() <= time) {
+                            try {
+                                add.run(date);
 
-            if (nextRunnableTime > time) {
-                try {
-                    Thread.sleep(nextRunnableTime - time);
+                            } catch (Throwable e) {
+                                logThrowable(e);
+                            }
 
-                } catch (InterruptedException e) {
-                    break;
+                            if (add.getNextTime() <= time) {
+                                continue;
+                            }
+                        }
+
+                        addNextRunnableNode(add);
+                    }
                 }
+
+                node = runnableHeader.getNext();
+                if (node == null) {
+                    nextRunnableTime = time + getMaxSleepTime();
+
+                } else {
+                    nextRunnableTime = node.getElement().getNextTime();
+                }
+
+                if (nextRunnableTime > time) {
+                    try {
+                        Thread.sleep(nextRunnableTime - time);
+
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
+
+            } catch (Throwable e) {
+                logThrowable(e);
             }
         }
-
     }
 
     protected void logThrowable(Throwable e) {
