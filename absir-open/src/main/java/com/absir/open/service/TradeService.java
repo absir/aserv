@@ -7,6 +7,7 @@
  */
 package com.absir.open.service;
 
+import com.absir.aserv.configure.JConfigureUtils;
 import com.absir.aserv.system.dao.BeanDao;
 import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.domain.DSequence;
@@ -16,6 +17,7 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Domain;
 import com.absir.context.core.ContextUtils;
 import com.absir.core.kernel.KernelString;
+import com.absir.open.bean.JPayConfigure;
 import com.absir.open.bean.JPayHistory;
 import com.absir.open.bean.JPayTrade;
 import com.absir.orm.hibernate.SessionFactoryUtils;
@@ -27,6 +29,8 @@ import org.hibernate.Session;
 public class TradeService {
 
     public static final TradeService ME = BeanFactoryUtils.get(TradeService.class);
+
+    public static final JPayConfigure PAY_CONFIGURE = JConfigureUtils.getConfigure(JPayConfigure.class);
 
     @Domain
     protected DSequence tradeSequence;

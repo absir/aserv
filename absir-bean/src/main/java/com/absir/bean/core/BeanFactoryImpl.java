@@ -8,10 +8,7 @@
 package com.absir.bean.core;
 
 import com.absir.bean.basis.*;
-import com.absir.bean.config.IBeanDefineAware;
-import com.absir.bean.config.IBeanDefineProcessor;
-import com.absir.bean.config.IBeanObjectProcessor;
-import com.absir.bean.config.IBeanSoftReferenceAware;
+import com.absir.bean.config.*;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelDyna;
@@ -354,10 +351,19 @@ public class BeanFactoryImpl implements BeanFactory {
                         Map<String, Object> beanDefines = new HashMap<String, Object>();
                         if (beanNamePrefixLength > 0) {
                             for (Entry<String, Object> entry : beanDefineMap.entrySet()) {
+                                if (entry.getValue() instanceof IBeanMap) {
+                                    beanName = ((IBeanMap) entry.getValue()).getMapKey(types[1]);
+                                    if (beanName != null) {
+                                        beanDefines.put(beanName, entry.getValue());
+                                        continue;
+                                    }
+                                }
+
                                 beanName = entry.getKey();
                                 int length = beanName.length();
-                                if (length > 7 && beanName.endsWith("Service")) {
-                                    beanName = KernelString.capitalize(beanName.substring(0, length - 7));
+                                int sPos;
+                                if (length > 7 && (sPos = beanName.lastIndexOf("Service")) > 0) {
+                                    beanName = KernelString.capitalize(beanName.substring(0, sPos));
 
                                 } else if (beanNamePrefixLength > 0 && beanNamePrefixLength < beanName.length()
                                         && beanName.startsWith(beanNamePrefix)) {

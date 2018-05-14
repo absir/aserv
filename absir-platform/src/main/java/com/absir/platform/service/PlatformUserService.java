@@ -175,7 +175,7 @@ public class PlatformUserService {
                     platformUser.setSessionId(nextSessionId());
                 }
 
-                BeanDao.getSession().merge(platformUser);
+                BeanDao.getSession().update(platformUser);
             }
         }
 
@@ -223,7 +223,7 @@ public class PlatformUserService {
 
     public JPlatformUser loginValidateSessionId(Long id, String sessionId) {
         JPlatformUser platformUser = id == null ? null : BeanService.ME.get(JPlatformUser.class, id);
-        if (platformUser != null && KernelObject.equals(platformUser.getSessionId(), sessionId)) {
+        if (platformUser != null && platformUser.getPassTime() > ContextUtils.getContextTime() && KernelObject.equals(platformUser.getSessionId(), sessionId)) {
             return platformUser;
         }
 

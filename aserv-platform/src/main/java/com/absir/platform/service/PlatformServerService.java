@@ -11,10 +11,12 @@ import com.absir.aserv.system.domain.DCacheOpenEntity;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.security.SecurityManager;
 import com.absir.aserv.system.service.BeanService;
+import com.absir.aserv.system.service.IdentityService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.aserv.system.service.impl.IdentityServiceLocal;
 import com.absir.async.value.Async;
 import com.absir.bean.basis.Base;
+import com.absir.bean.config.IBeanMap;
 import com.absir.bean.core.BeanFactoryUtils;
 import com.absir.bean.inject.value.Bean;
 import com.absir.bean.inject.value.Inject;
@@ -40,6 +42,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import tplatform.*;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -47,7 +50,7 @@ import java.util.*;
  */
 @Base
 @Bean
-public abstract class PlatformServerService implements IEntityMerge<JSlaveServer>, IFaceServer<PlatformFromService.Iface>, PlatformFromService.Iface {
+public abstract class PlatformServerService implements IdentityService, IBeanMap, IEntityMerge<JSlaveServer>, IFaceServer<PlatformFromService.Iface>, PlatformFromService.Iface {
 
     public static final PlatformServerService ME = BeanFactoryUtils.get(PlatformServerService.class);
 
@@ -552,6 +555,20 @@ public abstract class PlatformServerService implements IEntityMerge<JSlaveServer
         }
 
         return identityResult;
+    }
+
+    @Override
+    public JiUserBase getUserBase(String[] parameters, String address) {
+        if (parameters.length == 3) {
+            return PlatformUserService.ME.loginValidateSessionId(Long.parseLong(parameters[1]), parameters[2]);
+        }
+
+        return null;
+    }
+
+    @Override
+    public String getMapKey(Type valueType) {
+        return "Session";
     }
 
     @Override

@@ -77,6 +77,9 @@ public class JPayTrade extends JbBase {
     @JaEdit(groups = JaEdit.GROUP_LIST, listColType = 1)
     private float amount;
 
+    @JaLang("实付金额")
+    private float realAmount;
+
     @JaLang("用户编号")
     @JaEdit(groups = JaEdit.GROUP_LIST, listColType = 1)
     private long userId;
@@ -214,6 +217,14 @@ public class JPayTrade extends JbBase {
 
     public void setAmount(float amount) {
         this.amount = amount;
+    }
+
+    public float getRealAmount() {
+        return realAmount;
+    }
+
+    public void setRealAmount(float realAmount) {
+        this.realAmount = realAmount;
     }
 
     public String getSource() {
