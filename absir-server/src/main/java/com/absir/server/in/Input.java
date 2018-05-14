@@ -27,10 +27,7 @@ import com.absir.server.route.RouteMatcher;
 import com.absir.server.route.returned.ReturnedResolver;
 import com.absir.server.route.returned.ReturnedResolverView;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -274,6 +271,8 @@ public abstract class Input extends Bean<Serializable> implements IAttributes, I
      * @param code 1 success 501+ error
      */
     public abstract boolean setCode(int code);
+
+    public abstract void setRequestCharacterEncoding(String charset) throws UnsupportedEncodingException;
 
     public abstract void setCharacterEncoding(String charset);
 

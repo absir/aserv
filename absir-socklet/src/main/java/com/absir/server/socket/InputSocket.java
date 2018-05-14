@@ -171,6 +171,10 @@ public abstract class InputSocket extends Input {
     }
 
     @Override
+    public void setRequestCharacterEncoding(String charset) {
+    }
+
+    @Override
     public void setContentTypeCharset(String contentTypeCharset) {
     }
 

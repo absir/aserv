@@ -27,6 +27,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -214,6 +215,10 @@ public class InputRequest extends Input {
     public boolean setCode(int code) {
         ((HttpServletResponse) response).setStatus(code == 1 ? 200 : (501 + code));
         return true;
+    }
+
+    public void setRequestCharacterEncoding(String charset) throws UnsupportedEncodingException {
+        request.setCharacterEncoding(charset);
     }
 
     @Override
