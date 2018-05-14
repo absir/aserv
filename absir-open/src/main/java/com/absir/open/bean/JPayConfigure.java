@@ -4,6 +4,7 @@ import com.absir.aserv.configure.JConfigureBase;
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.value.JaLang;
+import com.absir.core.kernel.KernelString;
 import org.hibernate.annotations.Type;
 
 import java.util.Map;
@@ -23,14 +24,14 @@ public class JPayConfigure extends JConfigureBase {
         this.amountDict = amountDict;
     }
 
-    public boolean validatePayAmount(JPayTrade payTrade, float payAmount) {
+    public boolean validatePayAmount(JPayTrade payTrade, float payAmount, String productId) {
         if (payAmount >= payTrade.getAmount()) {
             payTrade.setAmount(payAmount);
             return true;
         }
 
-        if (amountDict != null) {
-            Float orgAmount = amountDict.get(payTrade.getPlatform() + "@" + payTrade.getPlatformData() + "@" + payTrade.getGoodsId());
+        if (!KernelString.isEmpty(productId) && amountDict != null) {
+            Float orgAmount = amountDict.get(payTrade.getPlatform() + "@" + payTrade.getPlatformData() + "@" + productId);
             if (orgAmount != null) {
                 if (orgAmount >= payTrade.getAmount()) {
                     payTrade.setRealAmount(payAmount);
