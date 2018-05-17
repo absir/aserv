@@ -11,18 +11,12 @@ import com.absir.aserv.system.bean.value.JaLang;
 public enum EServerStatus implements org.apache.thrift.TEnum {
 
     @JaLang("开放")
-    open(0),
-    @JaLang("新服")
-    newly(1),
-    @JaLang("待开")
-    wait(2),
-    @JaLang("维护")
-    maintain(3),
-    @JaLang("爆满")
-    full(4),
-    @JaLang("审核")
-    review(5),
-    @JaLang("测试")
+    open(0), @JaLang("新服")
+    newly(1), @JaLang("待开")
+    wait(2), @JaLang("维护")
+    maintain(3), @JaLang("爆满")
+    full(4), @JaLang("审核")
+    review(5), @JaLang("测试")
     test(6);
 
     private final int value;

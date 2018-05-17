@@ -6,10 +6,6 @@
  */
 package tplatform;
 
-import java.util.Map;
-import java.util.HashMap;
-import org.apache.thrift.TEnum;
-
 public enum ERegisterError implements org.apache.thrift.TEnum {
 
     success(0), usernameError(1), passwordError(2), usernameExist(3), unkown(4);

@@ -114,6 +114,18 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
         return false;
     }
 
+    public static boolean hasImport(List<ImportDeclaration> imports, String declaration) {
+        if (imports != null) {
+            for (ImportDeclaration importDeclaration : imports) {
+                if (importDeclaration.getName().equals(declaration)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     @Override
     public void mergeCompilationUnit(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
                                      TypeDeclaration fromType, TypeDeclaration toType, TypeDeclaration defineType, Map<String, FieldDeclaration> fromFieldMap, Map<String, BodyDeclaration> declarationMap) {

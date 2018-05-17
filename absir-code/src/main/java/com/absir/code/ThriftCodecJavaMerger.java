@@ -23,8 +23,10 @@ public class ThriftCodecJavaMerger extends ThriftJavaMerger {
     protected void setBeanInterface(List<ClassOrInterfaceType> implementsList, CompilationUnit toCompilationUnit) {
         if (!hasClass(implementsList, "IThrift")) {
             implementsList.add(new ClassOrInterfaceType("IThrift"));
-            toCompilationUnit.getImports()
-                    .add(new ImportDeclaration(new NameExpr("com.absir.data.value.IThrift"), false, false));
+            if (!hasImport(toCompilationUnit.getImports(), "com.absir.data.value.IThrift")) {
+                toCompilationUnit.getImports()
+                        .add(new ImportDeclaration(new NameExpr("com.absir.data.value.IThrift"), false, false));
+            }
         }
     }
 

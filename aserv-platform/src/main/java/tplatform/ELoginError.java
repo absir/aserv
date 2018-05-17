@@ -6,10 +6,6 @@
  */
 package tplatform;
 
-import java.util.Map;
-import java.util.HashMap;
-import org.apache.thrift.TEnum;
-
 public enum ELoginError implements org.apache.thrift.TEnum {
 
     success(0), userNotExist(1), passwordError(2), passwordErrorMax(3), unkown(4);
