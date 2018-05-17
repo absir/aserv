@@ -117,7 +117,7 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
     public static boolean hasImport(List<ImportDeclaration> imports, String declaration) {
         if (imports != null) {
             for (ImportDeclaration importDeclaration : imports) {
-                if (importDeclaration.getName().equals(declaration)) {
+                if (importDeclaration.getName().toString().equals(declaration)) {
                     return true;
                 }
             }

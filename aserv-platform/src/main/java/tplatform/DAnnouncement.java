@@ -16,7 +16,6 @@ import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.SchemeFactory;
 import org.apache.thrift.scheme.StandardScheme;
 import org.apache.thrift.scheme.TupleScheme;
-
 import javax.annotation.Generated;
 import java.util.*;
 
