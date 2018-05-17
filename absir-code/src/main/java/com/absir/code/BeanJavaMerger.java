@@ -159,8 +159,12 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
                 if (dirtyM > 0) {
                     if (typeDeclaration.getExtends() == null || typeDeclaration.getExtends().isEmpty()) {
                         String extendName = dirtyM == 1 ? "DDirty" : "DDirtyM";
-                        toCompilationUnit.getImports().add(
-                                new ImportDeclaration(new NameExpr("com.absir.data.base." + extendName), false, false));
+                        String importName = "com.absir.data.base." + extendName;
+                        if (!hasImport(toCompilationUnit.getImports(), importName)) {
+                            toCompilationUnit.getImports().add(
+                                    new ImportDeclaration(new NameExpr(importName), false, false));
+                        }
+                        
                         List<ClassOrInterfaceType> extendsList = new ArrayList<ClassOrInterfaceType>();
                         extendsList.add(new ClassOrInterfaceType(extendName));
                         typeDeclaration.setExtends(extendsList);
