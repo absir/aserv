@@ -29,11 +29,13 @@ public class ThriftJavaMerger extends BeanJavaMerger {
 
     @Override
     protected void setBeanInterface(List<ClassOrInterfaceType> implementsList, CompilationUnit toCompilationUnit) {
-        implementsList.add(new ClassOrInterfaceType("IThrift"));
-        toCompilationUnit.getImports()
-                .add(new ImportDeclaration(new NameExpr("com.absir.data.value.IThrift"), false, false));
-        toCompilationUnit.getImports()
-                .add(new ImportDeclaration(new NameExpr("com.fasterxml.jackson.annotation.JsonIgnore"), false, false));
+        if (!hasClass(implementsList, "IThrift")) {
+            implementsList.add(new ClassOrInterfaceType("IThrift"));
+            toCompilationUnit.getImports()
+                    .add(new ImportDeclaration(new NameExpr("com.absir.data.value.IThrift"), false, false));
+            toCompilationUnit.getImports()
+                    .add(new ImportDeclaration(new NameExpr("com.fasterxml.jackson.annotation.JsonIgnore"), false, false));
+        }
     }
 
     @Override

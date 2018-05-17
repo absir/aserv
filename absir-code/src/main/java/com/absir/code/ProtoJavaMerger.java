@@ -32,9 +32,11 @@ public class ProtoJavaMerger extends BeanJavaMerger {
 
     @Override
     protected void setBeanInterface(List<ClassOrInterfaceType> implementsList, CompilationUnit toCompilationUnit) {
-        implementsList.add(new ClassOrInterfaceType("IProto"));
-        toCompilationUnit.getImports()
-                .add(new ImportDeclaration(new NameExpr("com.absir.data.value.IProto"), false, false));
+        if (!hasClass(implementsList, "IProto")) {
+            implementsList.add(new ClassOrInterfaceType("IProto"));
+            toCompilationUnit.getImports()
+                    .add(new ImportDeclaration(new NameExpr("com.absir.data.value.IProto"), false, false));
+        }
     }
 
     @Override

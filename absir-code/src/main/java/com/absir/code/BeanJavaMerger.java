@@ -102,6 +102,18 @@ public abstract class BeanJavaMerger extends CodeJavaMerger {
         return Modifier.PROTECTED;
     }
 
+    public static boolean hasClass(List<ClassOrInterfaceType> implementsList, String className) {
+        if (implementsList != null) {
+            for (ClassOrInterfaceType type : implementsList) {
+                if (type.getName().equals(className)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     @Override
     public void mergeCompilationUnit(String className, CompilationUnit fromCompilationUnit, CompilationUnit toCompilationUnit,
                                      TypeDeclaration fromType, TypeDeclaration toType, TypeDeclaration defineType, Map<String, FieldDeclaration> fromFieldMap, Map<String, BodyDeclaration> declarationMap) {

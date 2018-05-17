@@ -306,6 +306,7 @@ public class DeveloperUtils {
             }
 
         } catch (Exception e) {
+            HelperFile.deleteQuietly(new File(filePath));
             // 显示生成错误
             if (BeanFactoryUtils.getBeanConfig().getEnvironment() == Environment.DEVELOP && !(e instanceof DeveloperBreak)) {
                 //e.printStackTrace();
