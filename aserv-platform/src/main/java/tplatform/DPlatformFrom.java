@@ -16,19 +16,10 @@ import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.SchemeFactory;
 import org.apache.thrift.scheme.StandardScheme;
 import org.apache.thrift.scheme.TupleScheme;
+
 import javax.annotation.Generated;
 import javax.persistence.MappedSuperclass;
 import java.util.*;
-import com.absir.data.value.IThrift;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.absir.data.value.IThrift;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.absir.data.value.IThrift;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.absir.data.value.IThrift;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.absir.data.value.IThrift;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @MappedSuperclass
 @SuppressWarnings({ "cast", "rawtypes", "serial", "unchecked" })

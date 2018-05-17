@@ -437,7 +437,8 @@ public abstract class PlatformServerService implements IdentityService, IBeanMap
 
     @Override
     public DPlatformFromSetting setting(DPlatformFrom platformFrom, String versionName) throws TException {
-        boolean review = CONFIGURE.isReview(platformFrom.getPackageName(), versionName);
+        int reviewType = CONFIGURE.getReviewType(platformFrom.getPackageName(), versionName, platformFrom.getFromStr());
+        boolean review = reviewType != 0;
         DFromSetting fromSetting = null;
         for (JSetting setting : settingList) {
             if (isMatchPlatform(setting, review, platformFrom)) {
@@ -449,7 +450,7 @@ public abstract class PlatformServerService implements IdentityService, IBeanMap
         JPlatformFrom jPlatformFrom = ME.getPlatformFrom(platformFrom);
         DPlatformFromSetting setting = new DPlatformFromSetting();
         setting.setFromId((int) (long) jPlatformFrom.getId());
-        setting.setReview(review);
+        setting.setReview(reviewType);
         if (fromSetting != null) {
             setting.setSetting(fromSetting);
             if (!KernelString.isEmpty(fromSetting.groupId)) {
@@ -479,6 +480,8 @@ public abstract class PlatformServerService implements IdentityService, IBeanMap
         long contextTime = ContextUtils.getContextTime();
         List<DServer> servers = new ArrayList<DServer>(serverList.size());
         PlatformServer waiteServer = null;
+        long newlyTime = CONFIGURE.getNewlyTime();
+        newlyTime = newlyTime <= 0 ? 0 : (contextTime + newlyTime);
         for (PlatformServerList platformServerList : serverList) {
             if (isMatchPlatformGroup(platformServerList.server, group, review, fromId, platformFromRef)) {
                 for (PlatformServer server : platformServerList.platformServers) {
@@ -488,7 +491,14 @@ public abstract class PlatformServerService implements IdentityService, IBeanMap
                             continue;
                         }
 
-                        servers.add(server.value);
+                        if (newlyTime > 0 && server.beginTime < newlyTime && server.value.getStatus() == EServerStatus.open) {
+                            DServer dServer = server.value.clone();
+                            dServer.setStatus(EServerStatus.newly);
+                            servers.add(dServer);
+
+                        } else {
+                            servers.add(server.value);
+                        }
                     }
                 }
 

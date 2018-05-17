@@ -17,11 +17,13 @@ struct DPlatformFromSetting {
     // 平台来源信息编号
     1: i32 fromId;
     // 审核状态
-    2: bool review;
+    2: i32 review;
     // 客户端配置
     3: optional DFromSetting setting;
     // 客户端分组
     4: optional string group;
+    // 服务器时间
+    5: optional i32 time;
 }
 
 // 来源设置

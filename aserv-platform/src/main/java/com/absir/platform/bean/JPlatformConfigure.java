@@ -4,7 +4,7 @@ import com.absir.aserv.configure.JConfigureBase;
 import com.absir.aserv.menu.value.MaEntity;
 import com.absir.aserv.menu.value.MaMenu;
 import com.absir.aserv.system.bean.value.JaLang;
-import com.absir.core.kernel.KernelLang;
+import com.absir.core.kernel.KernelString;
 import org.hibernate.annotations.Type;
 
 import java.util.Map;
@@ -15,19 +15,30 @@ import java.util.Map;
 @MaEntity(parent = {@MaMenu("平台管理")}, name = "平台")
 public class JPlatformConfigure extends JConfigureBase {
 
+    @JaLang("新开时间")
+    private long newlyTime;
+
     @JaLang("审核字典")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonMap")
-    private Map<String, Boolean> reviewMap;
+    private Map<String, Integer> reviewMap;
 
     @JaLang("映射字典")
     @Type(type = "com.absir.aserv.system.bean.type.JtJsonMap")
     private Map<String, String> mappingMap;
 
-    public Map<String, Boolean> getReviewMap() {
+    public long getNewlyTime() {
+        return newlyTime;
+    }
+
+    public void setNewlyTime(long newlyTime) {
+        this.newlyTime = newlyTime;
+    }
+
+    public Map<String, Integer> getReviewMap() {
         return reviewMap;
     }
 
-    public void setReviewMap(Map<String, Boolean> reviewMap) {
+    public void setReviewMap(Map<String, Integer> reviewMap) {
         this.reviewMap = reviewMap;
     }
 
@@ -39,8 +50,15 @@ public class JPlatformConfigure extends JConfigureBase {
         this.mappingMap = mappingMap;
     }
 
-    public boolean isReview(String packageName, String versionName) {
-        return reviewMap == null || reviewMap.isEmpty() ? false : KernelLang.isBoolean(reviewMap.get(packageName + '@' + versionName));
+    public int getReviewType(String packageName, String versionName, String fromStr) {
+        if (reviewMap != null) {
+            Integer review = reviewMap.get(KernelString.isEmpty(fromStr) ? (packageName + '@' + versionName) : (packageName + '@' + versionName + '@' + fromStr));
+            if (review != null) {
+                return review;
+            }
+        }
+
+        return 0;
     }
 
 }
