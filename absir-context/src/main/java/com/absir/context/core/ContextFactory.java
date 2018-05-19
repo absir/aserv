@@ -352,7 +352,7 @@ public class ContextFactory {
             stepAllThread = new Thread() {
                 @Override
                 public void run() {
-                    while (stepAllThread == this) {
+                    while (stepAllThread == this && !isInterrupted()) {
                         long time = System.currentTimeMillis();
                         try {
                             stepAll();
@@ -383,7 +383,12 @@ public class ContextFactory {
     @Stopping
     private void stop() {
         LOGGER.info("stop begin");
+        Thread thread = stepAllThread;
         stepAllThread = null;
+        if (thread != null) {
+            thread.interrupt();
+        }
+
         final UtilAtom utilAtom = getUtilAtom(maxThread * 10);
         utilAtom.increment();
         Queue<ContextBase> contextBases = this.contextBases;
