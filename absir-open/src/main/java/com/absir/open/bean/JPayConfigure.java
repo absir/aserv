@@ -31,7 +31,7 @@ public class JPayConfigure extends JConfigureBase {
         }
 
         if (!KernelString.isEmpty(productId) && amountDict != null) {
-            Float orgAmount = amountDict.get(payTrade.getPlatform() + "@" + payTrade.getPlatformData() + "@" + productId);
+            Float orgAmount = amountDict.get(payTrade.getPlatform() + "@" + productId);
             if (orgAmount != null) {
                 if (orgAmount >= payTrade.getAmount()) {
                     payTrade.setRealAmount(payAmount);
