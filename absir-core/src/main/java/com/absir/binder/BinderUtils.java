@@ -19,10 +19,7 @@ import com.absir.property.PropertyUtils;
 import com.absir.validator.Validator;
 import com.absir.validator.ValidatorSupply;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 @SuppressWarnings("unchecked")
@@ -65,23 +62,40 @@ public class BinderUtils {
             from += '.';
         }
 
-        for (Entry<String, Object> entry : propertyMap.entrySet()) {
-            String propertyPath = entry.getKey();
-            if (length != 0) {
-                if (length >= propertyPath.length() || !propertyPath.startsWith(from)) {
-                    continue;
-
-                } else {
-                    propertyPath = propertyPath.substring(length);
-                }
+        Collection<Entry<String, Object>> delaySet = null;
+        for (int i = 0; i < 2; i++) {
+            if (i == 1 && delaySet == null) {
+                break;
             }
 
-            String[] propertyPaths = propertyPath.replace("[", ".[").split("\\.");
-            int last = propertyPath.length();
-            Object value = last > 0 && propertyPath.charAt(last - 1) == '.' ? null : entry.getValue();
-            dataValue = addDataObject(propertyPaths, 0, propertyPaths.length, value, dataObject, handler);
-            if (dataObject == null) {
-                dataObject = dataValue;
+            for (Entry<String, Object> entry : i == 0 ? propertyMap.entrySet() : delaySet) {
+                String propertyPath = entry.getKey();
+                if (i == 0 && propertyPath.indexOf("!!for_key") > 0) {
+                    // 延迟绑定!for_key
+                    if (delaySet == null) {
+                        delaySet = new HashSet<Entry<String, Object>>();
+                    }
+
+                    delaySet.add(entry);
+                    continue;
+                }
+
+                if (length != 0) {
+                    if (length >= propertyPath.length() || !propertyPath.startsWith(from)) {
+                        continue;
+
+                    } else {
+                        propertyPath = propertyPath.substring(length);
+                    }
+                }
+
+                String[] propertyPaths = propertyPath.replace("[", ".[").split("\\.");
+                int last = propertyPath.length();
+                Object value = last > 0 && propertyPath.charAt(last - 1) == '.' ? null : entry.getValue();
+                dataValue = addDataObject(propertyPaths, 0, propertyPaths.length, value, dataObject, handler);
+                if (dataObject == null) {
+                    dataObject = dataValue;
+                }
             }
         }
 
