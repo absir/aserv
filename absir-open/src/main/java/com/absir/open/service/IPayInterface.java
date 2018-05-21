@@ -18,9 +18,9 @@ public interface IPayInterface<T> {
     public T getConfigure();
 
     // return tradeData
-    public String order(T configure, JPayTrade payTrade, String prepare, String[] moreDatas) throws Exception;
+    public String order(JPayTrade payTrade, T configure, String prepare, String[] moreDatas) throws Exception;
 
     // return unique tradeId
-    public String validator(T configure, String platformData, String tradeNo, String tradeReceipt, String goodsId, int goodsNumber, float amount, boolean sandbox, String[] moreDatas) throws Exception;
+    public String validator(JPayTrade payTrade, T configure, String platformData, String tradeNo, String tradeReceipt, String goodsId, int goodsNumber, float amount, boolean sandbox, String[] moreDatas) throws Exception;
 
 }

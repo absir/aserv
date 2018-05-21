@@ -70,7 +70,7 @@ public abstract class PayUtils {
                 IPayInterface payInterface = payInterfaceMap.get(platform);
                 if (payInterface != null) {
                     payTrade.setPlatform(platform);
-                    return payInterface.order(getPayConfigure(payInterface, platform, payTrade.getConfigureId()), payTrade, prepare, moreDatas);
+                    return payInterface.order(payTrade, getPayConfigure(payInterface, platform, payTrade.getConfigureId()), prepare, moreDatas);
                 }
             }
         }
@@ -79,13 +79,13 @@ public abstract class PayUtils {
     }
 
     // return unique tradeId
-    public static String validator(int configureId, String platform, String platformData, String tradeNo, String tradeReceipt, String goodsId, int goodsNumber, float amount, boolean sandbox, String... moreDatas) throws Exception {
+    public static String validator(JPayTrade payTrade, int configureId, String platform, String platformData, String tradeNo, String tradeReceipt, String goodsId, int goodsNumber, float amount, boolean sandbox, String... moreDatas) throws Exception {
         if (payInterfaceMap != null && !KernelString.isEmpty(platform)) {
             IPayInterface<Object> payInterface = payInterfaceMap.get(platform);
             if (payInterface != null) {
                 Object configure = getPayConfigure(payInterface, platform, configureId);
                 if (configure != null) {
-                    return payInterface.validator(configure, platformData, tradeNo, tradeReceipt, goodsId, goodsNumber, amount, sandbox, moreDatas);
+                    return payInterface.validator(payTrade, configure, platformData, tradeNo, tradeReceipt, goodsId, goodsNumber, amount, sandbox, moreDatas);
                 }
             }
         }
@@ -96,7 +96,7 @@ public abstract class PayUtils {
     public static String validator(JPayTrade payTrade) throws Exception {
         JePayStatus status = payTrade.getStatus();
         if (status == null || status.compareTo(JePayStatus.ERROR) <= 0) {
-            return validator(payTrade.getConfigureId(), payTrade.getPlatform(), payTrade.getPlatformData(), payTrade.getTradeNo(), payTrade.getTradeReceipt(), payTrade.getGoodsId(), payTrade.getGoodsNumber(), payTrade.getAmount(), payTrade.isSandbox(), payTrade.getMoreDatas());
+            return validator(payTrade, payTrade.getConfigureId(), payTrade.getPlatform(), payTrade.getPlatformData(), payTrade.getTradeNo(), payTrade.getTradeReceipt(), payTrade.getGoodsId(), payTrade.getGoodsNumber(), payTrade.getAmount(), payTrade.isSandbox(), payTrade.getMoreDatas());
         }
 
         return null;
