@@ -481,7 +481,7 @@ public abstract class PlatformServerService implements IdentityService, IBeanMap
         List<DServer> servers = new ArrayList<DServer>(serverList.size());
         PlatformServer waiteServer = null;
         long newlyTime = CONFIGURE.getNewlyTime();
-        newlyTime = newlyTime <= 0 ? 0 : (contextTime + newlyTime);
+        newlyTime = newlyTime <= 0 ? 0 : (contextTime - newlyTime);
         for (PlatformServerList platformServerList : serverList) {
             if (isMatchPlatformGroup(platformServerList.server, group, review, fromId, platformFromRef)) {
                 for (PlatformServer server : platformServerList.platformServers) {
@@ -491,7 +491,7 @@ public abstract class PlatformServerService implements IdentityService, IBeanMap
                             continue;
                         }
 
-                        if (newlyTime > 0 && server.beginTime < newlyTime && server.value.getStatus() == EServerStatus.open) {
+                        if (newlyTime > 0 && server.beginTime > newlyTime && server.value.getStatus() == EServerStatus.open) {
                             DServer dServer = server.value.clone();
                             dServer.setStatus(EServerStatus.newly);
                             servers.add(dServer);
