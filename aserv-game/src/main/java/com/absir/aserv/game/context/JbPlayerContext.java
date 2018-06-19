@@ -254,8 +254,10 @@ public abstract class JbPlayerContext<P extends JbPlayer, A extends JbPlayerA, R
         }
     }
 
-    protected synchronized void asyncRunnablesClear() {
-        asyncRunnables = null;
+    protected final void asyncRunnablesClear() {
+        synchronized (asyncRunningLock) {
+            asyncRunnables = null;
+        }
     }
 
     /**
