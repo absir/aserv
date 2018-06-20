@@ -399,9 +399,10 @@ public class XlsAccessorUtils {
                 }
             }
 
+            boolean beanXlsBase = xlsBase.getClass().isAssignableFrom(beanClass);
             for (int j = 0; j < size; j++) {
                 Object bean = beans.get(j + first);
-                xlsAccessorContext.setObject(bean, cells.get(j), xlsBase, null);
+                xlsAccessorContext.setObject(bean, cells.get(j), beanXlsBase ? (XlsBase) bean : xlsBase, null);
             }
         }
 
