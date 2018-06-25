@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 
-public class InDispathContext extends InDispathFilter {
+public class InDispatchContext extends InDispatchFilter {
 
     protected Logger logger;
 
@@ -37,7 +37,7 @@ public class InDispathContext extends InDispathFilter {
         }
 
         beanProviderContext.scan(HelperFileName.getClassPath(null), getContextResourcePath() + "/../../webResources/" + contextName, null, null, filterConfig.getServletContext());
-        logger = LoggerFactory.getLogger(InDispathContext.class);
+        logger = LoggerFactory.getLogger(InDispatchContext.class);
         logger.info("start beanFactory from " + this);
         beanProviderContext.started();
     }

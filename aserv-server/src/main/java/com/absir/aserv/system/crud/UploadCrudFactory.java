@@ -89,25 +89,39 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     public static final String RECORD = "UPLOAD@";
 
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
+
     public static final String UPLOAD = "upload/";
+
     public static final int UPLOAD_LENGTH = UPLOAD.length();
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(UploadCrudFactory.class);
+
     protected static final String[] UPLOAD_ROLE_REPLACES = new String[]{":name", ":id", ":ext", ":rand"};
+
     private static String uploadUrl;
+
     private static String uploadPath;
+
     private static String protectedUrl;
+
     private static String protectedPath;
+
     @Value(value = "upload.passTime")
     private static long uploadPassTime = 3600000;
+
     @Domain
     private DSequence nameSequence;
+
     @Value("upload.image.extension")
     private String imageExtension = "gif|jpg|jpeg|png|bmp";
+
     @Value("upload.manager.dir")
     private String managerDir = "";
+
     @Orders
     @Inject(type = InjectType.Selectable)
     private IUploadProcessor[] uploadProcessors;
+
     @Value("upload.cache.control")
     private String cacheControl = "max-age=3600";
 

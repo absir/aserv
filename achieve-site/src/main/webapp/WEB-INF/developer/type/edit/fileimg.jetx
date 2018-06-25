@@ -1,0 +1,13 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+#include('file.jetx')
+
+#set(width = field.getMetas().get("width"))
+#set(height = field.getMetas().get("height"))
+#tag layout_block("shtml")
+<img src="${SITE_ROUTE}public/upload/\${${inputval}}" ${width ? ('width="'+width+'"') : ''} ${height ? ('height="'+height+'"') : ''}/>
+#end
+
+${ScriptNode::append(input.parent().parent(), shtml).voidValue()}

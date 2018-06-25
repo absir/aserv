@@ -7,12 +7,12 @@
     <display-name>achieve-site</display-name>
 
     <filter>
-        <filter-name>InDispath</filter-name>
-        <filter-class>com.absir.servlet.InDispathContext</filter-class>
+        <filter-name>InDispatch</filter-name>
+        <filter-class>com.absir.servlet.InDispatchContext</filter-class>
     </filter>
 
     <filter-mapping>
-        <filter-name>InDispath</filter-name>
+        <filter-name>InDispatch</filter-name>
         <url-pattern>*</url-pattern>
     </filter-mapping>
 

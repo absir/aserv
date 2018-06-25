@@ -11,16 +11,110 @@ import com.absir.aserv.game.bean.JbServerA;
 import com.absir.aserv.game.service.GameService;
 import com.absir.aserv.system.bean.value.JaLang;
 import com.absir.context.core.ContextBean;
+import com.absir.context.core.ContextUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class JbServerContext<SA extends JbServerA> extends ContextBean<Long> {
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(JbServerContext.class);
 
     @JaLang("服务区")
     protected SA serverA;
 
     protected boolean checkOnlineDayed;
 
+    private boolean asyncRunning;
+
+    private List<Runnable> asyncRunnables;
+
     public SA getServerA() {
         return serverA;
+    }
+
+    private Object asyncRunningLock = new Object();
+
+    protected void asyncRun(final Runnable runnable) {
+        synchronized (asyncRunningLock) {
+            if (asyncRunning) {
+                if (runnable != null) {
+                    if (asyncRunnables == null) {
+                        asyncRunnables = new ArrayList<Runnable>();
+                    }
+
+                    asyncRunnables.add(runnable);
+                }
+
+                return;
+            }
+
+            try {
+                asyncRunning = true;
+                ContextUtils.getThreadPoolExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (runnable != null) {
+                                try {
+                                    runnable.run();
+
+                                } catch (Throwable e) {
+                                    LOGGER.error("asyncRun error", e);
+                                }
+                            }
+
+                            while (true) {
+                                List<Runnable> runnables = null;
+                                synchronized (asyncRunningLock) {
+                                    runnables = asyncRunnables;
+                                    asyncRunnables = null;
+                                }
+
+                                if (runnables == null) {
+                                    synchronized (asyncRunningLock) {
+                                        asyncRunning = false;
+                                    }
+
+                                    break;
+                                }
+
+                                for (Runnable runnable : runnables) {
+                                    try {
+                                        runnable.run();
+
+                                    } catch (Throwable e) {
+                                        LOGGER.error("asyncRun error", e);
+                                    }
+                                }
+                            }
+
+                        } finally {
+                            synchronized (asyncRunningLock) {
+                                if (asyncRunning) {
+                                    asyncRunning = false;
+                                    if (asyncRunnables != null) {
+                                        asyncRun(null);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+            } catch (Throwable e) {
+                asyncRunnablesClear();
+                asyncRunning = false;
+            }
+        }
+    }
+
+    protected final void asyncRunnablesClear() {
+        synchronized (asyncRunningLock) {
+            asyncRunnables = null;
+        }
     }
 
     @Override

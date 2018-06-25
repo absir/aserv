@@ -43,7 +43,7 @@ import com.absir.core.util.UtilAccessor.Accessor;
 import com.absir.core.util.UtilContext;
 import com.absir.orm.value.JoEntity;
 import com.absir.server.exception.ServerException;
-import com.absir.servlet.InDispathFilter;
+import com.absir.servlet.InDispatchFilter;
 import jetbrick.io.resource.Resource;
 import jetbrick.template.JetEngine;
 import jetbrick.template.JetGlobalContext;
@@ -95,7 +95,7 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
             BeanConfigImpl.readProperties(BeanFactoryUtils.getBeanConfig(),
                     (Map<String, Object>) (Object) configProperties,
                     new File(BeanFactoryUtils.getBeanConfig().getClassPath("jetbrick.properties")), null);
-            ServletContext servletContext = InDispathFilter.getServletContext();
+            ServletContext servletContext = InDispatchFilter.getServletContext();
             if (servletContext == null) {
                 engine = JetEngine.create(configProperties);
 

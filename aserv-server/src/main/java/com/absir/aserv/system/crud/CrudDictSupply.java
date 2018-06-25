@@ -26,6 +26,7 @@ import java.util.Set;
 public class CrudDictSupply implements ICrudSupply {
 
     protected static final String NAME_PRE = "JDict@";
+
     protected static final int NAME_PRE_LENGTH = NAME_PRE.length();
 
     @Override

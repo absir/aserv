@@ -19,7 +19,7 @@ import com.absir.core.kernel.KernelLang;
 import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
 import com.absir.server.route.returned.ReturnedResolverView;
-import com.absir.servlet.InDispathFilter;
+import com.absir.servlet.InDispatchFilter;
 import com.absir.servlet.InputRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +90,7 @@ public class WebJstlView extends ReturnedResolverView implements IRender, IRende
 
     private String getLayoutFilename(String filename) {
         if (Server_Context_Path == null) {
-            Server_Context_Path = InDispathFilter.getServletContext().getRealPath("");
+            Server_Context_Path = InDispatchFilter.getServletContext().getRealPath("");
         }
 
         String layoutFilename = File_Name_Map_Layout_Name.get(filename);
@@ -189,7 +189,7 @@ public class WebJstlView extends ReturnedResolverView implements IRender, IRende
 
     @Override
     public String getRealPath(String path, Object... renders) throws IOException {
-        return InDispathFilter.getServletContext().getRealPath(path);
+        return InDispatchFilter.getServletContext().getRealPath(path);
     }
 
     @Override

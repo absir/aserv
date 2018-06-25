@@ -15,7 +15,7 @@ import com.absir.bean.inject.value.Bean;
 import com.absir.client.ServerEnvironment;
 import com.absir.core.kernel.KernelObject;
 import com.absir.core.kernel.KernelString;
-import com.absir.servlet.InDispathContext;
+import com.absir.servlet.InDispatchContext;
 
 import java.io.IOException;
 
@@ -25,7 +25,7 @@ public class UpgradeServiceImpl extends UpgradeService {
 
     @Override
     protected Object stop() throws IOException {
-        Object context = InDispathContext.getServletContext();
+        Object context = InDispatchContext.getServletContext();
         if (context != null) {
             context = KernelObject.declaredGet(context, "context");
             if (context != null) {
@@ -68,7 +68,7 @@ public class UpgradeServiceImpl extends UpgradeService {
                 break;
             }
 
-            Object context = InDispathContext.getServletContext();
+            Object context = InDispatchContext.getServletContext();
             if (context != null) {
                 context = KernelObject.declaredGet(context, "context");
                 if (context != null) {

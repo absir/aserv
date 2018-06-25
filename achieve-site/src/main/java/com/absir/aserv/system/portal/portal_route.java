@@ -15,6 +15,10 @@ public class portal_route extends PortalServer {
 
     @Body
     public void portal(String view, InputRequest inputRequest) throws Exception {
+        if (view.indexOf("..") >= 0) {
+            return;
+        }
+
         try {
             ServerDiyView.ME.render("/WEB-INF/portal/" + view + ServerDiyView.ME.getSuffix(), inputRequest);
 

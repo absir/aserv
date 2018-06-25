@@ -14,6 +14,8 @@ import com.absir.bean.inject.value.Inject;
 import com.absir.bean.inject.value.Orders;
 import com.absir.context.core.ContextDaemon;
 import com.absir.context.core.ContextUtils;
+import com.absir.core.helper.HelperIO;
+import com.absir.core.kernel.KernelCharset;
 import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelReflect;
@@ -26,15 +28,17 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.beans.Introspector;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URLDecoder;
 
 @Configure
-public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServletResponse> implements Filter {
+public class InDispatchFilter extends InDispatcher<HttpServletRequest, HttpServletResponse> implements Filter {
 
-    public static final String REQUEST_INPUT = InDispathFilter.class.getName() + "@REQUEST_INPUT";
+    public static final String REQUEST_INPUT = InDispatchFilter.class.getName() + "@REQUEST_INPUT";
 
     private static ServletContext servletContext;
 
@@ -89,16 +93,16 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
         contextPathLength = contextPath.length();
         uriContextPath = filterConfig.getInitParameter("uri");
         uriContextPathLength = uriContextPath == null ? -1 : (contextPathLength + uriContextPath.length());
-        String urlDecodeing = filterConfig.getInitParameter("urlDecode");
-        if (urlDecodeing == null) {
+        String urlDecoding = filterConfig.getInitParameter("urlDecode");
+        if (urlDecoding == null) {
             BeanFactory beanFactory = BeanFactoryUtils.get();
             if (beanFactory != null) {
-                urlDecodeing = KernelDyna.to(beanFactory.getBeanConfig().getValue("urlDecode"), String.class);
+                urlDecoding = KernelDyna.to(beanFactory.getBeanConfig().getValue("urlDecode"), String.class);
             }
         }
 
-        if (urlDecodeing != null) {
-            urlDecode = KernelDyna.to(urlDecodeing, boolean.class);
+        if (urlDecoding != null) {
+            urlDecode = KernelDyna.to(urlDecoding, boolean.class);
         }
     }
 
@@ -212,11 +216,27 @@ public class InDispathFilter extends InDispatcher<HttpServletRequest, HttpServle
             return true;
         }
 
+        if (uri.indexOf('%') >= 0) {
+            try {
+                uri = URLDecoder.decode(uri, KernelCharset.UTF8.displayName());
+
+            } catch (Throwable e) {
+            }
+        }
+
         if (filters != null) {
             for (IFilter filter : filters) {
                 if (filter.doFilter(uri, req, res)) {
                     return true;
                 }
+            }
+        }
+
+        if (uri.length() > 7 && uri.startsWith("public/") && uri.indexOf("..") < 0) {
+            File file = new File(BeanFactoryUtils.getBeanConfig().getResourcePath() + uri);
+            if (file.exists() && file.isFile()) {
+                HelperIO.copy(new FileInputStream(file), res.getOutputStream());
+                return true;
             }
         }
 

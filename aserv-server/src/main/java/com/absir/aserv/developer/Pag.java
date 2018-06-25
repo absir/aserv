@@ -44,7 +44,7 @@ import com.absir.orm.value.JePermission;
 import com.absir.orm.value.JoEntity;
 import com.absir.server.in.Input;
 import com.absir.server.on.OnPut;
-import com.absir.servlet.InDispathFilter;
+import com.absir.servlet.InDispatchFilter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -135,7 +135,7 @@ public class Pag {
     }
 
     public static Input getInput(ServletRequest request) {
-        return InDispathFilter.getInput(request);
+        return InDispatchFilter.getInput(request);
     }
 
     public static boolean isI18n() {
