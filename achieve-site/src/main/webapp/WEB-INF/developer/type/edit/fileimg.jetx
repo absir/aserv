@@ -7,7 +7,9 @@ import = "org.jsoup.nodes.*"
 #set(width = field.getMetas().get("width"))
 #set(height = field.getMetas().get("height"))
 #tag layout_block("shtml")
+\#if(${inputval})
 <img src="${SITE_ROUTE}public/upload/\${${inputval}}" ${width ? ('width="'+width+'"') : ''} ${height ? ('height="'+height+'"') : ''}/>
+\#end
 #end
 
 ${ScriptNode::append(input.parent().parent(), shtml).voidValue()}

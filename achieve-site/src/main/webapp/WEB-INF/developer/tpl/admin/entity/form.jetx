@@ -217,7 +217,6 @@ ${ScriptNode::html(element) + "\r\n"}
     #end
     #if(!generator.print(identifier, out))
         #set(subtableNum = KernelDyna::to(field.getMetas().get("subtableNum"), int::class))
-
         #tag scriptEcho()
         ${identifier} >
 
@@ -311,17 +310,22 @@ ${ScriptNode::html(element) + "\r\n"}
 
             #tag scriptEcho()
             <th>
-                                    <span style="position:relative;">
+                #if(subtableNum <= 0)
+
+                    <span style="position:relative;">
                                         <input type="text" value="1" class="num-add" size="2.5">
                                         <a href="javascript:;" class="btn btn-primary size-MINI radius"
                                            ab_toggle="addItem"><i class="Hui-iconfont">&#xe600;</i></a>
                                     </span>
+                #end
             </th>
         </tr>
         #tag layout_block("node")
         <td>
-            <a href="javascript:;" class="btn btn-danger size-MINI radius" ab_toggle="removeItem">
-                <i class="Hui-iconfont">&#xe6e2;</i></a>
+            #if(subtableNum <= 0)
+                <a href="javascript:;" class="btn btn-danger size-MINI radius" ab_toggle="removeItem">
+                    <i class="Hui-iconfont">&#xe6e2;</i></a>
+            #end
             <a href="javascript:;" class="btn btn-success size-MINI radius" ab_toggle="upItem">
                 <i class="Hui-iconfont">&#xe679;</i></a>
         </td>
@@ -334,8 +338,9 @@ ${ScriptNode::html(element) + "\r\n"}
             ${doc.removeAttr('name').voidValue()}
         #end
         #tag scriptEcho()
-        <tr class="archetype">
-            <!--archetype
+            #if(subtableNum <= 0)
+            <tr class="archetype">
+                    <!--archetype
                                 ##编辑元素集合属性(完成)
                                 ${DeveloperUtils::includeExistName("edit", entityModel.getJoEntity().getEntityName(), request)}
                                 \#set(for_index = '')
@@ -345,16 +350,34 @@ ${ScriptNode::html(element) + "\r\n"}
                                 \#set(entity = for_entity)
                                 archetype--${'>'}
                             </tr>
+        #end
                         </thead>
                         <tbody>
+                            #if(subtableNum > 0)
+                            \#set(subtableNum = ${subtableNum})
+                            #end
                             \#for(entity : entities)
                                 \#if(entity)
                                 ##\#set(for_index = for.index)
                             <tr>
                                 ${element_html}
+                                 #if(subtableNum > 0)
+                                    \#set(subtableNum = subtableNum - 1)
+                                #end
                             </tr>
                                 \#end
                             \#end
+                            #if(subtableNum > 0)
+                            \#set(for_index = '')
+                            \#set(for_entity = entity)
+                            \#set(entity = Pag::getForEntityMap(${archetype_map}))
+                            \#for(i : range(1, subtableNum))
+                            <tr>
+                                ${ScriptNode::html(element) + "\r\n"}
+                                </tr>
+                            \#end
+                            \#set(entity = for_entity)
+                                #end
                         </tbody>
                     </table>
                     #end

@@ -24,7 +24,7 @@ td .ab_check{zoom: 1}
 .ab_search_more.open{display: block}
 .ab_nav_close{margin-left: 5px; margin-right: -20px}
 .input-text{background: #fff}
-.ab_locked{background: #f6f6f6 !important}
+input:read-only, .ab_locked{background: #f6f6f6 !important}
 input.required{background: url("../images/required.png") right center no-repeat}
 .ab_requiredDiv label.error{right: 25px; z-index: 1000}
 .btn-upload{overflow: visible}

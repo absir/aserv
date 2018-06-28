@@ -22,7 +22,8 @@ import = "com.absir.aserv.system.bean.value.JeEditable"
     #else
 
     #tag layout_block("shtml")
-    \#set(readonly = filter && !filter.isMatch('${inputname}'))
+        #set(_for = field.getMetas().get("lock"))
+    \#set(readonly = ${_for ? 'entity.' + _for + ' || ' : ''} filter && !filter.isMatch('${inputname}'))
     #end
     ${input.before(ScriptNode::node(shtml)).voidValue()}
     ${ScriptNode::attr(input, "${readonly ? '" + readonlyDisabled + "' : '' }")}

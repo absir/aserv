@@ -1,0 +1,18 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+#if(field.getMetas().get("list"))
+    #set(width = field.getMetas().get("lwidth") ?! field.getMetas().get("width"))
+    #set(height = field.getMetas().get("lheight") ?! field.getMetas().get("height"))
+    #set(inputval = "entity." + field.getName())
+#tag layout_block("shtml")
+\#if(${inputval})
+<img src="${SITE_ROUTE}public/upload/\${${inputval}}" ${width ?
+     ('width="'+width+'"') : ''} ${height ? ('height="'+height+'"') : ''}/>
+\#end
+#end
+
+${node.empty().voidValue()}
+${node.appendChild(ScriptNode::node(shtml)).voidValue()}
+#end
