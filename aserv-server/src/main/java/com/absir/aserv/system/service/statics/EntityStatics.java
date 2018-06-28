@@ -16,6 +16,7 @@ import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.CrudService;
 import com.absir.aserv.system.service.utils.AccessServiceUtils;
 import com.absir.aserv.system.service.utils.CrudServiceUtils;
+import com.absir.aserv.system.service.utils.SearchServiceUtils;
 import com.absir.bean.basis.Configure;
 import com.absir.bean.inject.value.Value;
 import com.absir.core.dyna.DynaBinder;
@@ -28,10 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 @Configure
@@ -231,7 +229,7 @@ public class EntityStatics {
                     condition.addConditions(new Object[]{param.substring(1), KernelLang.NULL_OBJECT});
 
                 } else {
-                    condition.addConditions(HelperString.split(param, "=&"));
+                    condition = SearchServiceUtils.getSearchCondition(entityName, null, Arrays.asList((Object[]) HelperString.split(param, "=&")), null);
                 }
             }
 
