@@ -10,7 +10,7 @@ import = "com.absir.aserv.system.bean.value.JeEditable"
 
     #elseif(input.tagName() == 'input')
         #set(inputType = input.attr('type'))
-        #if(input.tagName() == 'text' || input.tagName() == 'password')
+        #if(inputType == 'text' || inputType == 'password')
             #set(readonlyDisabled = 'readonly')
         #end
     #end
