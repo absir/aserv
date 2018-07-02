@@ -63,6 +63,7 @@ public class UtilContext {
             public void run() {
                 try {
                     currentCalendar = Calendar.getInstance();
+                    currentCalendar.setFirstDayOfWeek(Calendar.MONDAY);
                     currentDate = currentCalendar.getTime();
                     currentTime = currentCalendar.getTimeInMillis();
 

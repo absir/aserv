@@ -51,9 +51,9 @@ public abstract class JbServerContext<SA extends JbServerA> extends ContextBean<
      */
     public void updateGameDay(int gameDay) {
         serverA.setGameDay(gameDay);
-        updateWeek = serverA.getGameWeek() != GameService.getGameWeek();
+        updateWeek = serverA.getGameWeek() != GameService.getGameWeekUp();
         if (updateWeek) {
-            serverA.setGameWeek(GameService.getGameWeek());
+            serverA.setGameWeek(GameService.getGameWeekUp());
         }
 
         if (AGameComponent.ME.SERVER_CONTEXT_UPDATE_DAY_CALLS.hasCalls()) {

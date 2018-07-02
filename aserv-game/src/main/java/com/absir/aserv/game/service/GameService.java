@@ -45,6 +45,8 @@ public class GameService {
 
     private static int gameDay;
 
+    private static int gameWeekUp;
+
     private static int gameWeek;
 
     private boolean gameDayUpdated;
@@ -61,6 +63,10 @@ public class GameService {
         return gameDay;
     }
 
+    public static int getGameWeekUp() {
+        return gameWeekUp;
+    }
+
     public static int getGameWeek() {
         return gameWeek;
     }
@@ -71,6 +77,13 @@ public class GameService {
         return day == 0 || day >= 6;
     }
 
+    // 服务运算周刷新
+    protected final int updateGameWeekUp() {
+        calendar.setTimeInMillis(ContextUtils.getContextTime());
+        gameWeekUp = calendar.get(Calendar.WEEK_OF_YEAR);
+        return gameWeekUp;
+    }
+
     /**
      * 更新在线天数
      */
@@ -79,9 +92,8 @@ public class GameService {
         int day = (int) ((time + timeZoneRawOffset) / UtilAbsir.DAY_TIME);
         if (day != gameDay) {
             gameDay = day;
-            calendar.setTimeInMillis(time);
             JConfigureUtils.setOption(UPDATE_ONLINE_DAY, gameDay);
-            int week = calendar.get(Calendar.WEEK_OF_YEAR);
+            int week = updateGameWeekUp();
             boolean updateWeek = week != gameWeek;
             if (updateWeek) {
                 gameWeek = week;
@@ -134,14 +146,19 @@ public class GameService {
 
         } finally {
             try {
-                updateOnlineServerContext();
+                updateGameWeekUp();
 
             } finally {
                 try {
-                    updateGameDay();
+                    updateOnlineServerContext();
 
                 } finally {
-                    checkOnlinePlayerContexts();
+                    try {
+                        updateGameDay();
+
+                    } finally {
+                        checkOnlinePlayerContexts();
+                    }
                 }
             }
         }
