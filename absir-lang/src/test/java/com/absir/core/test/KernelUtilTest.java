@@ -3,6 +3,7 @@ package com.absir.core.test;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelString;
 import com.absir.core.kernel.KernelUtil;
+import com.absir.core.util.UtilTest;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,26 @@ public class KernelUtilTest {
 
     @Test
     public void test() {
+        testMath();
+    }
+
+    protected void testMath() {
+        UtilTest.spanStart();
+        for (int i = 0; i < 10000; i++) {
+            Math.sin(10);
+        }
+
+        System.out.println("sin span time " + UtilTest.spanTime() + "ms");
+
+        UtilTest.spanStart();
+        for (int i = 0; i < 10000; i++) {
+            Math.log(10);
+        }
+
+        System.out.println("log span time " + UtilTest.spanTime() + "ms");
+    }
+
+    protected void testCompareVersion() {
         System.out.println(KernelString.transferred("\\\\\"\""));
         System.out.println(KernelString.unTransferred("\"\\\"\""));
         System.out.println(KernelString.capitalize("abc"));
