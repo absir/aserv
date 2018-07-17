@@ -18,11 +18,22 @@ public class JServer extends JbServerBase {
     @JaLang("组号")
     private String groupId;
 
+    @JaLang("合服编号")
+    private long poolingId;
+
     public String getGroupId() {
         return groupId;
     }
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public long getPoolingId() {
+        return poolingId;
+    }
+
+    public void setPoolingId(long poolingId) {
+        this.poolingId = poolingId;
     }
 }

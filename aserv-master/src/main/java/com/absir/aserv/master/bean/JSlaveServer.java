@@ -97,6 +97,9 @@ public class JSlaveServer extends JbBean implements ICrudBean {
     @JaColum(indexs = @Index(columnList = "groupId"))
     private String groupId;
 
+    @JaLang("合服编号")
+    private long poolingId;
+
     public String getName() {
         return name;
     }
@@ -207,6 +210,14 @@ public class JSlaveServer extends JbBean implements ICrudBean {
 
     public void setGroupId(String groupId) {
         this.groupId = groupId;
+    }
+
+    public long getPoolingId() {
+        return poolingId;
+    }
+
+    public void setPoolingId(long poolingId) {
+        this.poolingId = poolingId;
     }
 
     @Override
