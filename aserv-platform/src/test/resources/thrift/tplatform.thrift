@@ -258,7 +258,7 @@ service PlatformFromService {
     DRegisterResult signUUID(1:i32 fromId, 2:string username, 3:string password, 4:string uuid)
 
     // 修改密码
-    EPasswordResult password(1:i64 userId, 2:string sessionId, 3:string oldPassword, 4:string newPassword)
+    EPasswordResult password(1:string username, 2:string oldPassword, 3:string newPassword)
 
     // 进入游戏
     void enter(1:i64 userId, 2:string sessionId, 3:i64 serverId);

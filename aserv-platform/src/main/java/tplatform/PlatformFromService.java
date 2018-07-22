@@ -42,7 +42,7 @@ public class PlatformFromService {
 
         public DRegisterResult signUUID(int fromId, String username, String password, String uuid) throws org.apache.thrift.TException;
 
-        public EPasswordResult password(long userId, String sessionId, String oldPassword, String newPassword) throws org.apache.thrift.TException;
+        public EPasswordResult password(String username, String oldPassword, String newPassword) throws org.apache.thrift.TException;
 
         public void enter(long userId, String sessionId, long serverId) throws org.apache.thrift.TException;
 
@@ -69,7 +69,7 @@ public class PlatformFromService {
 
         public void signUUID(int fromId, String username, String password, String uuid, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-        public void password(long userId, String sessionId, String oldPassword, String newPassword, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void password(String username, String oldPassword, String newPassword, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
         public void enter(long userId, String sessionId, long serverId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -279,15 +279,14 @@ public class PlatformFromService {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "signUUID failed: unknown result");
         }
 
-        public EPasswordResult password(long userId, String sessionId, String oldPassword, String newPassword) throws org.apache.thrift.TException {
-            send_password(userId, sessionId, oldPassword, newPassword);
+        public EPasswordResult password(String username, String oldPassword, String newPassword) throws org.apache.thrift.TException {
+            send_password(username, oldPassword, newPassword);
             return recv_password();
         }
 
-        public void send_password(long userId, String sessionId, String oldPassword, String newPassword) throws org.apache.thrift.TException {
+        public void send_password(String username, String oldPassword, String newPassword) throws org.apache.thrift.TException {
             password_args args = new password_args();
-            args.setUserId(userId);
-            args.setSessionId(sessionId);
+            args.setUsername(username);
             args.setOldPassword(oldPassword);
             args.setNewPassword(newPassword);
             sendBase("password", args);
@@ -726,27 +725,24 @@ public class PlatformFromService {
             }
         }
 
-        public void password(long userId, String sessionId, String oldPassword, String newPassword, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void password(String username, String oldPassword, String newPassword, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
             checkReady();
-            password_call method_call = new password_call(userId, sessionId, oldPassword, newPassword, resultHandler, this, ___protocolFactory, ___transport);
+            password_call method_call = new password_call(username, oldPassword, newPassword, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
             ___manager.call(method_call);
         }
 
         public static class password_call extends org.apache.thrift.async.TAsyncMethodCall {
 
-            private long userId;
-
-            private String sessionId;
+            private String username;
 
             private String oldPassword;
 
             private String newPassword;
 
-            public password_call(long userId, String sessionId, String oldPassword, String newPassword, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+            public password_call(String username, String oldPassword, String newPassword, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
-                this.userId = userId;
-                this.sessionId = sessionId;
+                this.username = username;
                 this.oldPassword = oldPassword;
                 this.newPassword = newPassword;
             }
@@ -754,8 +750,7 @@ public class PlatformFromService {
             public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
                 prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("password", org.apache.thrift.protocol.TMessageType.CALL, 0));
                 password_args args = new password_args();
-                args.setUserId(userId);
-                args.setSessionId(sessionId);
+                args.setUsername(username);
                 args.setOldPassword(oldPassword);
                 args.setNewPassword(newPassword);
                 args.write(prot);
@@ -1103,7 +1098,7 @@ public class PlatformFromService {
 
             public password_result getResult(I iface, password_args args) throws org.apache.thrift.TException {
                 password_result result = new password_result();
-                result.success = iface.password(args.userId, args.sessionId, args.oldPassword, args.newPassword);
+                result.success = iface.password(args.username, args.oldPassword, args.newPassword);
                 return result;
             }
         }
@@ -1683,7 +1678,7 @@ public class PlatformFromService {
             }
 
             public void start(I iface, password_args args, org.apache.thrift.async.AsyncMethodCallback<EPasswordResult> resultHandler) throws TException {
-                iface.password(args.userId, args.sessionId, args.oldPassword, args.newPassword, resultHandler);
+                iface.password(args.username, args.oldPassword, args.newPassword, resultHandler);
             }
         }
 
@@ -9122,13 +9117,11 @@ public class PlatformFromService {
 
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("password_args");
 
-        private static final org.apache.thrift.protocol.TField USER_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("userId", org.apache.thrift.protocol.TType.I64, (short) 1);
+        private static final org.apache.thrift.protocol.TField USERNAME_FIELD_DESC = new org.apache.thrift.protocol.TField("username", org.apache.thrift.protocol.TType.STRING, (short) 1);
 
-        private static final org.apache.thrift.protocol.TField SESSION_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("sessionId", org.apache.thrift.protocol.TType.STRING, (short) 2);
+        private static final org.apache.thrift.protocol.TField OLD_PASSWORD_FIELD_DESC = new org.apache.thrift.protocol.TField("oldPassword", org.apache.thrift.protocol.TType.STRING, (short) 2);
 
-        private static final org.apache.thrift.protocol.TField OLD_PASSWORD_FIELD_DESC = new org.apache.thrift.protocol.TField("oldPassword", org.apache.thrift.protocol.TType.STRING, (short) 3);
-
-        private static final org.apache.thrift.protocol.TField NEW_PASSWORD_FIELD_DESC = new org.apache.thrift.protocol.TField("newPassword", org.apache.thrift.protocol.TType.STRING, (short) 4);
+        private static final org.apache.thrift.protocol.TField NEW_PASSWORD_FIELD_DESC = new org.apache.thrift.protocol.TField("newPassword", org.apache.thrift.protocol.TType.STRING, (short) 3);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
 
@@ -9138,10 +9131,7 @@ public class PlatformFromService {
         }
 
         // required
-        public long userId;
-
-        // required
-        public String sessionId;
+        public String username;
 
         // required
         public String oldPassword;
@@ -9151,7 +9141,7 @@ public class PlatformFromService {
 
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
 
-            USER_ID((short) 1, "userId"), SESSION_ID((short) 2, "sessionId"), OLD_PASSWORD((short) 3, "oldPassword"), NEW_PASSWORD((short) 4, "newPassword");
+            USERNAME((short) 1, "username"), OLD_PASSWORD((short) 2, "oldPassword"), NEW_PASSWORD((short) 3, "newPassword");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -9163,17 +9153,14 @@ public class PlatformFromService {
 
             public static _Fields findByThriftId(int fieldId) {
                 switch(fieldId) {
-                    case // USER_ID
+                    case // USERNAME
                     1:
-                        return USER_ID;
-                    case // SESSION_ID
-                    2:
-                        return SESSION_ID;
+                        return USERNAME;
                     case // OLD_PASSWORD
-                    3:
+                    2:
                         return OLD_PASSWORD;
                     case // NEW_PASSWORD
-                    4:
+                    3:
                         return NEW_PASSWORD;
                     default:
                         return null;
@@ -9210,16 +9197,11 @@ public class PlatformFromService {
         }
 
         // isset id assignments
-        private static final int __USERID_ISSET_ID = 0;
-
-        private byte __isset_bitfield = 0;
-
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
 
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
-            tmpMap.put(_Fields.USER_ID, new org.apache.thrift.meta_data.FieldMetaData("userId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
-            tmpMap.put(_Fields.SESSION_ID, new org.apache.thrift.meta_data.FieldMetaData("sessionId", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
+            tmpMap.put(_Fields.USERNAME, new org.apache.thrift.meta_data.FieldMetaData("username", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
             tmpMap.put(_Fields.OLD_PASSWORD, new org.apache.thrift.meta_data.FieldMetaData("oldPassword", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
             tmpMap.put(_Fields.NEW_PASSWORD, new org.apache.thrift.meta_data.FieldMetaData("newPassword", org.apache.thrift.TFieldRequirementType.DEFAULT, new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING)));
             metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -9229,20 +9211,16 @@ public class PlatformFromService {
         public password_args() {
         }
 
-        public password_args(long userId, String sessionId, String oldPassword, String newPassword) {
+        public password_args(String username, String oldPassword, String newPassword) {
             this();
-            this.userId = userId;
-            setUserIdIsSet(true);
-            this.sessionId = sessionId;
+            this.username = username;
             this.oldPassword = oldPassword;
             this.newPassword = newPassword;
         }
 
         public password_args(password_args other) {
-            __isset_bitfield = other.__isset_bitfield;
-            this.userId = other.userId;
-            if (other.isSetSessionId()) {
-                this.sessionId = other.sessionId;
+            if (other.isSetUsername()) {
+                this.username = other.username;
             }
             if (other.isSetOldPassword()) {
                 this.oldPassword = other.oldPassword;
@@ -9258,57 +9236,31 @@ public class PlatformFromService {
 
         @Override
         public void clear() {
-            setUserIdIsSet(false);
-            this.userId = 0;
-            this.sessionId = null;
+            this.username = null;
             this.oldPassword = null;
             this.newPassword = null;
         }
 
-        public long getUserId() {
-            return this.userId;
+        public String getUsername() {
+            return this.username;
         }
 
-        public password_args setUserId(long userId) {
-            this.userId = userId;
-            setUserIdIsSet(true);
+        public password_args setUsername(String username) {
+            this.username = username;
             return this;
         }
 
-        public void unsetUserId() {
-            __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __USERID_ISSET_ID);
+        public void unsetUsername() {
+            this.username = null;
         }
 
-        /** Returns true if field userId is set (has been assigned a value) and false otherwise */
-        public boolean isSetUserId() {
-            return EncodingUtils.testBit(__isset_bitfield, __USERID_ISSET_ID);
+        public boolean isSetUsername() {
+            return this.username != null;
         }
 
-        public void setUserIdIsSet(boolean value) {
-            __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __USERID_ISSET_ID, value);
-        }
-
-        public String getSessionId() {
-            return this.sessionId;
-        }
-
-        public password_args setSessionId(String sessionId) {
-            this.sessionId = sessionId;
-            return this;
-        }
-
-        public void unsetSessionId() {
-            this.sessionId = null;
-        }
-
-        /** Returns true if field sessionId is set (has been assigned a value) and false otherwise */
-        public boolean isSetSessionId() {
-            return this.sessionId != null;
-        }
-
-        public void setSessionIdIsSet(boolean value) {
+        public void setUsernameIsSet(boolean value) {
             if (!value) {
-                this.sessionId = null;
+                this.username = null;
             }
         }
 
@@ -9362,18 +9314,11 @@ public class PlatformFromService {
 
         public void setFieldValue(_Fields field, Object value) {
             switch(field) {
-                case USER_ID:
+                case USERNAME:
                     if (value == null) {
-                        unsetUserId();
+                        unsetUsername();
                     } else {
-                        setUserId((Long) value);
-                    }
-                    break;
-                case SESSION_ID:
-                    if (value == null) {
-                        unsetSessionId();
-                    } else {
-                        setSessionId((String) value);
+                        setUsername((String) value);
                     }
                     break;
                 case OLD_PASSWORD:
@@ -9395,10 +9340,8 @@ public class PlatformFromService {
 
         public Object getFieldValue(_Fields field) {
             switch(field) {
-                case USER_ID:
-                    return getUserId();
-                case SESSION_ID:
-                    return getSessionId();
+                case USERNAME:
+                    return getUsername();
                 case OLD_PASSWORD:
                     return getOldPassword();
                 case NEW_PASSWORD:
@@ -9412,10 +9355,8 @@ public class PlatformFromService {
                 throw new IllegalArgumentException();
             }
             switch(field) {
-                case USER_ID:
-                    return isSetUserId();
-                case SESSION_ID:
-                    return isSetSessionId();
+                case USERNAME:
+                    return isSetUsername();
                 case OLD_PASSWORD:
                     return isSetOldPassword();
                 case NEW_PASSWORD:
@@ -9436,20 +9377,12 @@ public class PlatformFromService {
         public boolean equals(password_args that) {
             if (that == null)
                 return false;
-            boolean this_present_userId = true;
-            boolean that_present_userId = true;
-            if (this_present_userId || that_present_userId) {
-                if (!(this_present_userId && that_present_userId))
+            boolean this_present_username = true && this.isSetUsername();
+            boolean that_present_username = true && that.isSetUsername();
+            if (this_present_username || that_present_username) {
+                if (!(this_present_username && that_present_username))
                     return false;
-                if (this.userId != that.userId)
-                    return false;
-            }
-            boolean this_present_sessionId = true && this.isSetSessionId();
-            boolean that_present_sessionId = true && that.isSetSessionId();
-            if (this_present_sessionId || that_present_sessionId) {
-                if (!(this_present_sessionId && that_present_sessionId))
-                    return false;
-                if (!this.sessionId.equals(that.sessionId))
+                if (!this.username.equals(that.username))
                     return false;
             }
             boolean this_present_oldPassword = true && this.isSetOldPassword();
@@ -9474,14 +9407,10 @@ public class PlatformFromService {
         @Override
         public int hashCode() {
             List<Object> list = new ArrayList<Object>();
-            boolean present_userId = true;
-            list.add(present_userId);
-            if (present_userId)
-                list.add(userId);
-            boolean present_sessionId = true && (isSetSessionId());
-            list.add(present_sessionId);
-            if (present_sessionId)
-                list.add(sessionId);
+            boolean present_username = true && (isSetUsername());
+            list.add(present_username);
+            if (present_username)
+                list.add(username);
             boolean present_oldPassword = true && (isSetOldPassword());
             list.add(present_oldPassword);
             if (present_oldPassword)
@@ -9499,22 +9428,12 @@ public class PlatformFromService {
                 return getClass().getName().compareTo(other.getClass().getName());
             }
             int lastComparison = 0;
-            lastComparison = Boolean.valueOf(isSetUserId()).compareTo(other.isSetUserId());
+            lastComparison = Boolean.valueOf(isSetUsername()).compareTo(other.isSetUsername());
             if (lastComparison != 0) {
                 return lastComparison;
             }
-            if (isSetUserId()) {
-                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.userId, other.userId);
-                if (lastComparison != 0) {
-                    return lastComparison;
-                }
-            }
-            lastComparison = Boolean.valueOf(isSetSessionId()).compareTo(other.isSetSessionId());
-            if (lastComparison != 0) {
-                return lastComparison;
-            }
-            if (isSetSessionId()) {
-                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.sessionId, other.sessionId);
+            if (isSetUsername()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.username, other.username);
                 if (lastComparison != 0) {
                     return lastComparison;
                 }
@@ -9558,16 +9477,11 @@ public class PlatformFromService {
         public String toString() {
             StringBuilder sb = new StringBuilder("password_args(");
             boolean first = true;
-            sb.append("userId:");
-            sb.append(this.userId);
-            first = false;
-            if (!first)
-                sb.append(", ");
-            sb.append("sessionId:");
-            if (this.sessionId == null) {
+            sb.append("username:");
+            if (this.username == null) {
                 sb.append("null");
             } else {
-                sb.append(this.sessionId);
+                sb.append(this.username);
             }
             first = false;
             if (!first)
@@ -9605,8 +9519,6 @@ public class PlatformFromService {
 
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
-                // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
-                __isset_bitfield = 0;
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
             } catch (org.apache.thrift.TException te) {
                 throw new java.io.IOException(te);
@@ -9631,26 +9543,17 @@ public class PlatformFromService {
                         break;
                     }
                     switch(schemeField.id) {
-                        case // USER_ID
+                        case // USERNAME
                         1:
-                            if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
-                                struct.userId = iprot.readI64();
-                                struct.setUserIdIsSet(true);
-                            } else {
-                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
-                            }
-                            break;
-                        case // SESSION_ID
-                        2:
                             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
-                                struct.sessionId = iprot.readString();
-                                struct.setSessionIdIsSet(true);
+                                struct.username = iprot.readString();
+                                struct.setUsernameIsSet(true);
                             } else {
                                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
                             }
                             break;
                         case // OLD_PASSWORD
-                        3:
+                        2:
                             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
                                 struct.oldPassword = iprot.readString();
                                 struct.setOldPasswordIsSet(true);
@@ -9659,7 +9562,7 @@ public class PlatformFromService {
                             }
                             break;
                         case // NEW_PASSWORD
-                        4:
+                        3:
                             if (schemeField.type == org.apache.thrift.protocol.TType.STRING) {
                                 struct.newPassword = iprot.readString();
                                 struct.setNewPasswordIsSet(true);
@@ -9680,12 +9583,9 @@ public class PlatformFromService {
             public void write(org.apache.thrift.protocol.TProtocol oprot, password_args struct) throws org.apache.thrift.TException {
                 struct.validate();
                 oprot.writeStructBegin(STRUCT_DESC);
-                oprot.writeFieldBegin(USER_ID_FIELD_DESC);
-                oprot.writeI64(struct.userId);
-                oprot.writeFieldEnd();
-                if (struct.sessionId != null) {
-                    oprot.writeFieldBegin(SESSION_ID_FIELD_DESC);
-                    oprot.writeString(struct.sessionId);
+                if (struct.username != null) {
+                    oprot.writeFieldBegin(USERNAME_FIELD_DESC);
+                    oprot.writeString(struct.username);
                     oprot.writeFieldEnd();
                 }
                 if (struct.oldPassword != null) {
@@ -9716,24 +9616,18 @@ public class PlatformFromService {
             public void write(org.apache.thrift.protocol.TProtocol prot, password_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
-                if (struct.isSetUserId()) {
+                if (struct.isSetUsername()) {
                     optionals.set(0);
                 }
-                if (struct.isSetSessionId()) {
+                if (struct.isSetOldPassword()) {
                     optionals.set(1);
                 }
-                if (struct.isSetOldPassword()) {
+                if (struct.isSetNewPassword()) {
                     optionals.set(2);
                 }
-                if (struct.isSetNewPassword()) {
-                    optionals.set(3);
-                }
-                oprot.writeBitSet(optionals, 4);
-                if (struct.isSetUserId()) {
-                    oprot.writeI64(struct.userId);
-                }
-                if (struct.isSetSessionId()) {
-                    oprot.writeString(struct.sessionId);
+                oprot.writeBitSet(optionals, 3);
+                if (struct.isSetUsername()) {
+                    oprot.writeString(struct.username);
                 }
                 if (struct.isSetOldPassword()) {
                     oprot.writeString(struct.oldPassword);
@@ -9746,20 +9640,16 @@ public class PlatformFromService {
             @Override
             public void read(org.apache.thrift.protocol.TProtocol prot, password_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
-                BitSet incoming = iprot.readBitSet(4);
+                BitSet incoming = iprot.readBitSet(3);
                 if (incoming.get(0)) {
-                    struct.userId = iprot.readI64();
-                    struct.setUserIdIsSet(true);
+                    struct.username = iprot.readString();
+                    struct.setUsernameIsSet(true);
                 }
                 if (incoming.get(1)) {
-                    struct.sessionId = iprot.readString();
-                    struct.setSessionIdIsSet(true);
-                }
-                if (incoming.get(2)) {
                     struct.oldPassword = iprot.readString();
                     struct.setOldPasswordIsSet(true);
                 }
-                if (incoming.get(3)) {
+                if (incoming.get(2)) {
                     struct.newPassword = iprot.readString();
                     struct.setNewPasswordIsSet(true);
                 }
@@ -10264,6 +10154,7 @@ public class PlatformFromService {
             __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __USERID_ISSET_ID);
         }
 
+        /** Returns true if field userId is set (has been assigned a value) and false otherwise */
         public boolean isSetUserId() {
             return EncodingUtils.testBit(__isset_bitfield, __USERID_ISSET_ID);
         }
@@ -10285,6 +10176,7 @@ public class PlatformFromService {
             this.sessionId = null;
         }
 
+        /** Returns true if field sessionId is set (has been assigned a value) and false otherwise */
         public boolean isSetSessionId() {
             return this.sessionId != null;
         }
