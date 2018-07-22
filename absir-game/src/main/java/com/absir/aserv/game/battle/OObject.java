@@ -81,7 +81,7 @@ public abstract class OObject<O extends OObject, R extends IResult> {
     // 获取BUFF状态
     public final Object getBuffStatus(Object name) {
         if (buffDict == null) {
-            return 0;
+            return null;
         }
 
         return buffDict.get(name);
