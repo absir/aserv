@@ -15,6 +15,7 @@ import com.absir.aserv.support.developer.JCrudField;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.value.JaCrud;
 import com.absir.core.kernel.KernelDyna;
+import com.absir.core.util.UtilAbsir;
 import com.absir.orm.value.JoEntity;
 import com.absir.server.in.Input;
 
@@ -23,7 +24,12 @@ public class DateCrudFactory implements ICrudFactory, ICrudProcessor {
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user, Input input) {
         if (crudHandler.getCrud() != JaCrud.Crud.CREATE || KernelDyna.to(crudProperty.get(entity), long.class) <= 0) {
-            crudProperty.set(entity, KernelDyna.to(System.currentTimeMillis(), crudProperty.getType()));
+            if (crudProperty.getType() == int.class) {
+                crudProperty.set(entity, UtilAbsir.shortTime(System.currentTimeMillis()));
+
+            } else {
+                crudProperty.set(entity, KernelDyna.to(System.currentTimeMillis(), crudProperty.getType()));
+            }
         }
     }
 

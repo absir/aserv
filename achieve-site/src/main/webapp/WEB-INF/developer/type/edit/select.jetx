@@ -12,11 +12,14 @@ import = "org.jsoup.nodes.*"
 
     #set(ajax = field.metas.ajax != null)
     #set(linkage = field.metas.linkage != null)
+    #set(linkName = field.metas.linkName ?! joEntity.getEntityName())
+
+    #set(parent = field.metas.parent)
 
 #tag layout_block("shtml")
-    #if(ajax || linkage)
-        #if(!Pag::suggest(joEntity.getEntityName()))
-        \${EntityStatics::suggestPermission('${joEntity.getEntityName()}', request)}
+    #if(ajax || linkage || parent)
+        #if(!Pag::suggest(linkName))
+        \${EntityStatics::suggestPermission('${linkName}', request)}
         #end
     #end
     #if(field.isNullable())
@@ -25,7 +28,8 @@ import = "org.jsoup.nodes.*"
     #if(ajax)
     \#set(selected = ${iselect ? inputval : ('EntityStatics::primary(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
     \#set(suggest = EntityStatics::suggestSelect(EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get(
-        "suggest")}', INPUT), '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}', selected))\#if(suggest)
+        "suggest")}', INPUT), '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}', selected))
+    \#if(suggest)
     <option value="\${EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}')}"
             selected>
         ${suggests}
@@ -33,13 +37,24 @@ import = "org.jsoup.nodes.*"
     \#end
     #else
     \#set(selected = ${iselect ? ('Pag::value(' + inputval + ')') : ('EntityStatics::getPrimary(' + inputval + ", '" + entityModel.getPrimary().getName() + "')")})
-    \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get(
-        "suggest")}', INPUT))
-    \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
-    <option value="\${value}" \${selected==value ? 'selected' : ''}>
-        ${suggests}
-    </option>
-    \#end
+        #if(parent)
+        \#set(suggest = EntityStatics::suggestSelect(EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get(
+            "suggest")}', INPUT), '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}', selected))
+        \#if(suggest)
+        <option value="\${EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}')}"
+                selected>
+            ${suggests}
+        </option>
+        \#end
+        #else
+        \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '${field.getMetas().get(
+            "suggest")}', INPUT))
+        \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
+        <option value="\${value}" \${selected==value ? 'selected' : ''}>
+            ${suggests}
+        </option>
+        \#end
+        #end
     #end
 
 #end
@@ -64,9 +79,57 @@ ${input.attr('ab_toggle', 'ajaxselect')}
     ${input.attr('ab_toggles', 'linkage')}
     ${input.attr('linkage', field.metas.linkage)}
     ${input.attr('select',
-        "${SITE_ROUTE}admin/open/suggest/"+joEntity.getEntityName()+"?"+(field.metas.linkParent ?! "parent")+"=$val")}
+        "${SITE_ROUTE}admin/open/suggest/"+linkName+"?"+(field.metas.linkParent ?! "parent")+"=$val")}
 #end
 
 ${input.appendChild(ScriptNode::node(shtml)).voidValue()}
+
+##b_if
+#if(parent && field.metas.level > 0)
+    ${input.addClass('ab_aw')}
+    #set(parent = field.metas.parent)
+    #set(sinput = input)
+    #set(sname = input.attr('name'))
+    #set(svalue = 'selectEntity')
+#tag layout_block("shtml")
+\#set(selectEntity = ${iselect ? "EntityStatics::find('${joEntity.getEntityName()}')" : inputval})
+#end
+$(input.parent.before(ScriptNode::node(shtml)).voidValue())
+##b_for
+#for (int i : range(1, field.metas.level))
+##b_layout
+#tag layout_block("shtml")
+#set(svalue = svalue + '.' + parent)
+\#set(selected = EntityStatics::primary(${svalue}, '${entityModel.getPrimary().getName()}'))
+<select aname="_cat_${i}" class="input-text required ab_aw " ab_toggle="ajaxselect" ab_toggles="linkage"
+        linkage="${sname}" select="${SITE_ROUTE}admin/open/suggest/${linkName}?${parent}=$val">
+    #if(i == field.metas.level)
+        \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '$o.${parent} IS NULL', INPUT))
+        \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
+        <option value="\${value}" \${selected==value ? 'selected' : ''}>
+        ${suggests}
+        </option>
+        \#end
+    #else
+        \#set(suggest = EntityStatics::suggestSelect(EntityStatics::suggestParam('${joEntity.getEntityName()}',
+        '${field.getMetas().get("suggest")}', INPUT), '${DeveloperUtils
+        ::getEntityModel(joEntity).getPrimary().getName()}',
+        selected))
+        \#if(suggest)
+        <option value="\${EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}')}"
+                selected>
+            ${suggests}
+        </option>
+        \#end
+    #end
+</select>
+#end
+##e_layout
+#set(sinput = sinput.before(ScriptNode::node(shtml)))
+#set(sname = input.attr('aname'))
+#end
+##e_if
+#end
+##e_for
 
 #end

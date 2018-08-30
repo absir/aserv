@@ -292,7 +292,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     /**
      * 远程下载
      */
-    public String remoteDownload(String url, String defaultExtension, JiUserBase user) {
+    public String remoteDownload(String dir, long passTime, String url, String defaultExtension, JiUserBase user) {
         String extension = HelperFileName.getExtension(url);
         if (KernelString.isEmpty(extension)) {
             extension = defaultExtension;
@@ -302,7 +302,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         }
 
         try {
-            return uploadExtension(extension, HelperClient.openConnection((HttpURLConnection) (new URL(url)).openConnection()), user);
+            return uploadExtension(dir, passTime, extension, HelperClient.openConnection((HttpURLConnection) (new URL(url)).openConnection()), user);
 
         } catch (Throwable e) {
             return null;
@@ -312,7 +312,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
     /**
      * 上传扩展名内容
      */
-    public String uploadExtension(String extension, InputStream inputStream, JiUserBase user) throws IOException {
+    public String uploadExtension(String dir, long passTime, String extension, InputStream inputStream, JiUserBase user) throws IOException {
         if (KernelString.isEmpty(extension)) {
             throw new ServerException(ServerStatus.ON_DENIED, "extension");
         }
@@ -331,11 +331,14 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         upload.setFileType(extension);
         upload.setFileSize(fileSize);
         inputStream = uploadProcessor(extension, upload, inputStream);
-        String uploadFile = randUploadFile(inputStream.hashCode()) + '.' + extension;
+        String uploadFile = dir + "/" + randUploadFile(inputStream.hashCode()) + '.' + extension;
         upload(uploadFile, inputStream);
         long contextTime = ContextUtils.getContextTime();
         upload.setCreateTime(contextTime);
-        upload.setPassTime(contextTime + uploadPassTime);
+        if (passTime != 0) {
+            upload.setPassTime(contextTime + (passTime > 0 ? passTime : (-uploadPassTime - 1)));
+        }
+
         if (user != null) {
             upload.setUserId(user.getUserId());
         }
@@ -400,7 +403,6 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         }
 
         if (crud == Crud.CREATE) {
-            upload.setImaged(imageExtension.contains(upload.getFileType()));
             String filename = upload.getFilename();
             String dirPath = HelperFileName.getPath(filename);
             if (KernelString.isEmpty(dirPath)) {
@@ -432,7 +434,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         while (iterator.hasNext()) {
             FileItemStream fileItem = iterator.next();
             if (!KernelString.isEmpty(fileItem.getName())) {
-                paths.add(UploadCrudFactory.ME.uploadExtension(HelperFileName.getExtension(fileItem.getName()), fileItem.openStream(), user));
+                paths.add(UploadCrudFactory.ME.uploadExtension("uploads", 0, HelperFileName.getExtension(fileItem.getName()), fileItem.openStream(), user));
             }
         }
 

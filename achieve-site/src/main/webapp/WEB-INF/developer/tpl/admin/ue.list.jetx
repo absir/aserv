@@ -1,0 +1,12 @@
+{
+"state": "\${state ?! 'SUCCESS'}",
+"list": [
+\#for(upload : uploads)
+{
+"url": "\${SITE_ROUTE}public/upload/\${upload.dirPath}\${upload.filename}"
+}\${for.last ? '' : ','}
+\#end
+],
+"start": \${(jdbcPage.pageIndex - 1) * jdbcPage.pageSize},
+"total": \${jdbcPage.totalCount}
+}

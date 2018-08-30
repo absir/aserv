@@ -704,7 +704,7 @@ $(function () {
             if ($form && $form.length) {
                 var linkage = $this.attr('linkage');
                 var name = $this.attr('linkage_name') || $this.attr('name');
-                var $linkage = $('[name="' + linkage + '"]', $form);
+                var $linkage = $('[aname="' + linkage + '"],[name="' + linkage + '"]', $form);
                 if ($linkage && $linkage.length) {
                     var params = $linkage[0].tagName.toUpperCase() === 'SELECT' ? ab_evalParams($this.attr('select')) : undefined;
                     var noParam = params ? $linkage.attr('linkage_noParam') : undefined;
@@ -886,5 +886,26 @@ $(function () {
                 }
             }
         }
+
+        abToggles['fileimg'] = function ($this) {
+            $div = $this.closest('.formControls')
+            $img = $('img', $div);
+            if ($img) {
+                $this = $('[type="file"]', $div);
+                if ($this) {
+                    $this.change(function () {
+                        $img.load(function () {
+                            window.URL.revokeObjectURL(wuc);
+                        });
+
+                        var uri = $this[0].files[0];
+                        var wuc = window.URL.createObjectURL(uri);
+                        $img.attr('src', wuc);
+                        $img.val(wuc);
+                    });
+                }
+            }
+        }
+
     }
 );

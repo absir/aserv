@@ -4,12 +4,12 @@ import = "org.jsoup.nodes.*"
 
 #include('file.jetx')
 
+${input.attr('ab_toggle', 'fileimg')}
+
 #set(width = field.getMetas().get("width"))
 #set(height = field.getMetas().get("height"))
 #tag layout_block("shtml")
-\#if(${inputval})
-<img src="${SITE_ROUTE}public/upload/\${${inputval}}" ${width ? ('width="'+width+'"') : ''} ${height ? ('height="'+height+'"') : ''}/>
-\#end
+<img src="\${${inputval} ? SITE_ROUTE+'public/upload/'+${inputval} : ''}" ${width ? ('width="'+width+'"') : ''} ${height ? ('height="'+height+'"') : ''}/>
 #end
-
-${ScriptNode::append(input.parent().parent(), shtml).voidValue()}
+${input.parent().parent().append(shtml).voidValue()}
+##${ScriptNode::append(input.parent().parent(), shtml).voidValue()}

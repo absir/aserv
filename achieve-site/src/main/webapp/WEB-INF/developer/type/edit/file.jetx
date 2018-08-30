@@ -8,7 +8,8 @@ import = "org.jsoup.nodes.*"
 	<a href="javascript:void();" class="btn btn-primary upload-btn">
         <i class="Hui-iconfont">&#xe642;</i>${Pag::getLang('浏览文件')}
     </a>
-    <input type="file" multiple name="${input.attr('name')}_file" class="input-file">
+    #set(parameters = field.getCrudField().getjCrud().getParameters())
+    <input type="file" multiple name="${input.attr('name')}_file" class="input-file" ${parameters ? 'accept=".'+parameters[parameters.length - 1].toString().replace(',', ',.')+'"' : ''}>
 </span>
 #end
 

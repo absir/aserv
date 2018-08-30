@@ -1,0 +1,4 @@
+{
+"state": "\${state ?! 'SUCCESS'}",
+"url": "\${SITE_ROUTE}public/upload/\${file}"
+}

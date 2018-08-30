@@ -4,11 +4,15 @@ import com.absir.aserv.crud.ICrudSupply;
 import com.absir.aserv.jdbc.JdbcCondition;
 import com.absir.aserv.jdbc.JdbcPage;
 import com.absir.aserv.menu.value.MaPermission;
+import com.absir.aserv.system.bean.proxy.JiUserBase;
 import com.absir.aserv.system.bean.value.JeRoleLevel;
 import com.absir.aserv.system.crud.RichCrudFactory;
 import com.absir.aserv.system.crud.UploadCrudFactory;
+import com.absir.aserv.system.dao.BeanDao;
+import com.absir.aserv.system.dao.utils.QueryDaoUtils;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.security.SecurityContext;
+import com.absir.aserv.system.service.AuthService;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.aserv.system.service.SecurityService;
 import com.absir.aserv.system.service.statics.EntityStatics;
@@ -16,12 +20,18 @@ import com.absir.aserv.system.service.utils.AccessServiceUtils;
 import com.absir.aserv.system.service.utils.InputServiceUtils;
 import com.absir.aserv.transaction.TransactionIntercepter;
 import com.absir.bean.basis.Base;
+import com.absir.core.helper.HelperFileName;
+import com.absir.core.kernel.KernelDyna;
+import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelString;
+import com.absir.server.exception.ServerException;
+import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.InMethod;
 import com.absir.server.in.InModel;
 import com.absir.server.in.Input;
 import com.absir.server.value.*;
 import com.absir.servlet.InputRequest;
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 
 import java.io.IOException;
@@ -90,7 +100,7 @@ public class admin_open extends AdminServer {
     }
 
     /**
-     * 上传图片
+     * 上传文件
      */
     @MaPermission(RichCrudFactory.UPLOAD)
     public void upload(InputRequest inputRequest) throws IOException, FileUploadException {
@@ -108,11 +118,37 @@ public class admin_open extends AdminServer {
     /**
      * UE编辑器后端支持
      */
-    public String ue(InputRequest inputRequest) {
+    public String ue(InputRequest inputRequest) throws IOException {
         String action = inputRequest.getParam("action");
         if (!KernelString.isEmpty(action)) {
             if (action.equals("config")) {
                 return "admin/ue.config";
+
+            } else if (action.startsWith("upload")) {
+                // 检测上传权限
+                JiUserBase userBase = SecurityService.ME.getUserBase(inputRequest);
+                if (!AuthService.ME.menuPermission(RichCrudFactory.UPLOAD, userBase)) {
+                    throw new ServerException(ServerStatus.ON_DENIED);
+                }
+
+                FileItem fileItem = UploadCrudFactory.getUploadFile(inputRequest, "upfile");
+                if (fileItem != null) {
+                    String fileType = action.substring("upload".length());
+                    String uploadFile = UploadCrudFactory.ME.uploadExtension(fileType, -1, HelperFileName.getExtension(fileItem.getName()).toLowerCase(), fileItem.getInputStream(), userBase);
+                    inputRequest.getModel().put("file", uploadFile);
+                    return "admin/ue.upload";
+                }
+
+            } else if (action.startsWith("list")) {
+                String fileType = action.substring("list".length());
+                JdbcPage jdbcPage = new JdbcPage();
+                jdbcPage.setPageSize(KernelDyna.to(inputRequest.getParam("size"), int.class));
+                jdbcPage.setPageIndex(KernelDyna.to(inputRequest.getParam("start"), int.class) / jdbcPage.getPageSize() + 1);
+                TransactionIntercepter.open(inputRequest, BeanService.ME.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
+                Object list = QueryDaoUtils.selectQuery(BeanDao.getSession(), "JUpload", null, null, new Object[]{"o.dirPath like ?", fileType + "/%", "o.fileType IS NOT NULL", KernelLang.NULL_OBJECT}, "ORDER BY o.id DESC", jdbcPage);
+                inputRequest.getModel().put("uploads", list);
+                inputRequest.getModel().put("jdbcPage", jdbcPage);
+                return "admin/ue.list";
             }
         }
 

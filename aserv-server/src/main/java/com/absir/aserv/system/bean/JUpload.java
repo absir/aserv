@@ -48,10 +48,6 @@ public class JUpload extends JbBean implements JiPass, ICrudBean {
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private String fileType;
 
-    @JaLang("图片")
-    @JaEdit(groups = JaEdit.GROUP_LIST)
-    private boolean imaged;
-
     @JaLang("文件大小")
     @JaEdit(groups = JaEdit.GROUP_LIST)
     private long fileSize;
@@ -96,14 +92,6 @@ public class JUpload extends JbBean implements JiPass, ICrudBean {
 
     public void setFileType(String fileType) {
         this.fileType = fileType;
-    }
-
-    public boolean isImaged() {
-        return imaged;
-    }
-
-    public void setImaged(boolean imaged) {
-        this.imaged = imaged;
     }
 
     public long getFileSize() {

@@ -197,7 +197,7 @@ public class RichCrudFactory implements ICrudFactory, ICrudProcessorInput<Object
                 String src = matcher.group(1);
                 if (!UploadCrudFactory.ME.isUploadUrl(src)) {
                     String find = matcher.group();
-                    String replace = UploadCrudFactory.ME.remoteDownload(src, "jpg", user);
+                    String replace = UploadCrudFactory.ME.remoteDownload("remote", -1, src, "jpg", user);
                     if (replace == null) {
                         stringBuilder.append(chars, end, matcher.end() - end);
 
