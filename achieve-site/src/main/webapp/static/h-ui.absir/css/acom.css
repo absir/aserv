@@ -38,3 +38,5 @@ input.required{background: url("../images/required.png") right center no-repeat}
 .bootstrap-select.input-text>button{line-height: 21px !important}
 .bootstrap-select.ab_td_input{border: 0}
 .bootstrap-select.ab_aw{width: auto !important; min-width: 160px}
+.arel{position: relative}
+.atip{position: absolute; top: 10px; right: 10px}

@@ -190,6 +190,10 @@ public class Pag {
         }
     }
 
+    public static Object config(String name) {
+        return BeanFactoryUtils.getBeanConfig().getValue(name);
+    }
+
     public static JSiteConfigure configure() {
         return CONFIGURE;
     }

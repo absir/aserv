@@ -134,7 +134,7 @@ public class admin_open extends AdminServer {
                 FileItem fileItem = UploadCrudFactory.getUploadFile(inputRequest, "upfile");
                 if (fileItem != null) {
                     String fileType = action.substring("upload".length());
-                    String uploadFile = UploadCrudFactory.ME.uploadExtension(fileType, -1, HelperFileName.getExtension(fileItem.getName()).toLowerCase(), fileItem.getInputStream(), userBase);
+                    String uploadFile = UploadCrudFactory.ME.uploadExtension(fileType, 0, HelperFileName.getExtension(fileItem.getName()).toLowerCase(), fileItem.getInputStream(), userBase);
                     inputRequest.getModel().put("file", uploadFile);
                     return "admin/ue.upload";
                 }

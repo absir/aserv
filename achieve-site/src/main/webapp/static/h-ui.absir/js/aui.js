@@ -907,5 +907,79 @@ $(function () {
             }
         }
 
+        abToggles['location'] = function ($this) {
+            if (AMap) {
+                var name = $this.attr('name');
+                if (name) {
+                    AMapUI.loadUI(['misc/PoiPicker', 'misc/PositionPicker'], function (PoiPicker, PositionPicker) {
+                        var val = $this.val();
+                        var vals = val && val.split(',');
+                        $this.parent().append('<div class="arel"><div id="' + name + '_amap" style="height: 320px"></div><div class="atip"><input type="text" id="' + name + '_atip" class="input-text"/></div></div>');
+                        var $form = $this.closest('form');
+                        var $city = $form && $('[name="city"]', $form);
+                        var $address = $form && $('[name="address"]', $form);
+                        var $adcode = $form && $('[name="adcode"]', $form);
+                        var map = new AMap.Map(name + '_amap', {
+                            resizeEnable: true,
+                            center: vals && vals.length >= 2 ? [vals[0], vals[1]] : [118.76741, 32.041546],
+                            zoom: 11
+                        });
+
+                        map.plugin(["AMap.ToolBar"], function () {
+                            map.addControl(new AMap.ToolBar());
+                        });
+
+                        var poiPicker = {
+                            input: name + '_atip'
+                        };
+
+                        var _city = function () {
+                            var str = $city.find("option:selected").text();
+                            if (str) {
+                                var lp = str.lastIndexOf('.');
+                                if (lp) {
+                                    str = str.substr(lp + 1).replace(/[ \r\n]/g, "");
+                                }
+                            }
+
+                            return str;
+                        }
+
+                        if ($city) {
+                            poiPicker.city = _city();
+                        }
+
+                        var poiPicker = new PoiPicker(poiPicker);
+                        if ($city) {
+                            $city.change(function () {
+                                map.setCity(_city());
+                            });
+                        }
+
+                        poiPicker.on('poiPicked', function (poiResult) {
+                            map.setCenter(poiResult.item.location)
+                        });
+
+                        var positionPicker = new PositionPicker({
+                            mode: 'dragMap',
+                            map: map
+                        });
+
+                        positionPicker.on('success', function (pRes) {
+                            $this.val(pRes.position.lng + ',' + pRes.position.lat)
+                            if ($address) {
+                                $address.val(pRes.address);
+                            }
+
+                            if ($adcode) {
+                                $adcode.val(pRes.regeocode.addressComponent.adcode);
+                            }
+                        });
+                        positionPicker.start();
+                    });
+                }
+            }
+        }
+
     }
 );
