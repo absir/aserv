@@ -888,8 +888,8 @@ $(function () {
         }
 
         abToggles['fileimg'] = function ($this) {
-            $div = $this.closest('.formControls')
-            $img = $('img', $div);
+            var $div = $this.closest('.formControls')
+            var $img = $('img', $div);
             if ($img) {
                 $this = $('[type="file"]', $div);
                 if ($this) {
