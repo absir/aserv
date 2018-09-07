@@ -5,6 +5,7 @@ import com.absir.core.base.Environment;
 import com.absir.server.exception.ServerException;
 import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.Input;
+import com.absir.server.on.OnPut;
 import com.absir.server.value.Body;
 import com.absir.server.value.OnException;
 import org.slf4j.Logger;
@@ -22,7 +23,8 @@ public abstract class ApiBase {
      */
     @Body
     @OnException(Throwable.class)
-    protected Object onException(Throwable e, Input input) {
+    protected Object onException(Throwable e, OnPut onPut) {
+        Input input = onPut.getInput();
         input.setStatus(ServerStatus.ON_ERROR.getCode());
         if (BeanFactoryUtils.getEnvironment() == Environment.DEVELOP) {
             e.printStackTrace();
@@ -33,6 +35,7 @@ public abstract class ApiBase {
             LOGGER.debug("on server " + input.getUri(), e);
         }
 
+        onPut.setReturnedFixed(false);
         if (e instanceof ServerException) {
             ServerException exception = (ServerException) e;
             Object data = exception.getExceptionData();
@@ -48,7 +51,7 @@ public abstract class ApiBase {
             messageCode.setServerException(exception);
             return messageCode;
         }
-
+        
         return new MessageCode(e);
     }
 
@@ -60,6 +63,8 @@ public abstract class ApiBase {
         public String message;
 
         public int code;
+
+        public Object data;
 
         public MessageCode() {
         }

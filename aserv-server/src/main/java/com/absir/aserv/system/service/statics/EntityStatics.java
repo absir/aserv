@@ -330,25 +330,22 @@ public class EntityStatics {
 
         List<Object> sEntities = new ArrayList<Object>();
         UtilAccessor.Accessor accessor = null;
-        for (Object entity : entities) {
-            if (entity != null) {
-                if (accessor == null) {
-                    accessor = UtilAccessor.getAccessorProperty(entity.getClass(), primary);
-                }
+        for (int i = 0; i < sLen; i++) {
+            Object selected = sAccessor == null ? null : sAccessor.get(selecteds, i);
+            for (Object entity : entities) {
+                if (entity != null) {
+                    if (accessor == null) {
+                        accessor = UtilAccessor.getAccessorProperty(entity.getClass(), primary);
+                    }
 
-                Object value = accessor.get(entity);
-                if (value != null) {
-                    if (sAccessor == null) {
-                        if (sList.contains(value)) {
-                            sEntities.add(entity);
-                        }
-
-                    } else {
-                        for (int i = 0; i < sLen; i++) {
-                            if (KernelObject.equals(accessor.get(entity), sAccessor.get(selecteds, i))) {
+                    Object value = accessor.get(entity);
+                    if (value != null) {
+                        if (selected == null || KernelObject.equals(accessor.get(entity), selected)) {
+                            if (sList == null || sList.contains(value)) {
                                 sEntities.add(entity);
-                                break;
                             }
+
+                            break;
                         }
                     }
                 }

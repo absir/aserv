@@ -89,7 +89,7 @@ public abstract class JConfigureUtils {
         return (T) configure;
     }
 
-    protected static void initConfigure(final JConfigureBase configureBase) {
+    public static void initConfigure(final JConfigureBase configureBase) {
         configureBase.loadInit();
     }
 

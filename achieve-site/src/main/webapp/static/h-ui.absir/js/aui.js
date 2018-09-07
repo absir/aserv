@@ -748,7 +748,9 @@ $(function () {
                             '!suggest': '{{{q}}}'
                         }
                     },
-                    log: 3,
+                    log: 0,
+                    emptyRequest: 1,
+                    preserveSelectedPosition: 'before',
                     preprocessData: function (data) {
                         var array = []
                         if (nullable) {
@@ -772,7 +774,22 @@ $(function () {
 
                 $this.ajaxSelectPicker(options);
                 $this.trigger('change');
+
+                setTimeout(function () {
+                    var $searchbox = $this.data('selectpicker').$searchbox;
+                    $searchbox.trigger({type: "keyup", keyCode: 13});
+                }, 1000);
             }
+
+            if ($this.attr('params')) {
+                var $input = $this.before('<input type="hidden" name="' + $this.attr('name') + '" value="' + $this.val() + '"/>').prev();
+                $this.removeAttr('name');
+                $this.change(function () {
+                    var val = $this.val()
+                    $input.val(val ? val.toString() : '');
+                });
+            }
+
         }
 
         abToggles['iencrypt'] = function ($this) {
