@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -118,6 +119,10 @@ public abstract class AGameComponent<P extends JbPlayerContext, S extends JbServ
             KernelReflect.doWithDeclaredFields(getClass(), new KernelLang.CallbackBreak<Field>() {
                 @Override
                 public void doWith(Field template) throws KernelLang.BreakException {
+                    if (Modifier.isTransient(template.getModifiers())) {
+                        return;
+                    }
+
                     Class fieldType = template.getType();
                     int type = 0;
                     if (XlsDao.class.isAssignableFrom(fieldType)) {

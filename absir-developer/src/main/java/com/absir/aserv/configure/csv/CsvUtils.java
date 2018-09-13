@@ -71,7 +71,7 @@ public class CsvUtils {
     }
 
     public static void write(Class<?> beanClass, Collection<?> bases, boolean bom, final boolean header,
-                             OutputStream outputStream, ICsvWriteHandler handler) throws IOException {
+                             OutputStream outputStream, ICsvWriteHandler handler) throws Exception {
 
         if (handler == null) {
             handler = CsvWriteHandler.Default;
@@ -229,7 +229,7 @@ public class CsvUtils {
     }
 
     public static void writeFile(Class<?> beanClass, Collection<?> bases, boolean bom, final boolean header,
-                                 File file, final ICsvWriteHandler writeHandler) throws IOException {
+                                 File file, final ICsvWriteHandler writeHandler) throws Exception {
         FileOutputStream outputStream = HelperFile.openOutputStream(file);
         try {
             write(beanClass, bases, bom, header, outputStream, writeHandler);

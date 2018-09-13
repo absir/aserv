@@ -502,16 +502,9 @@ public class Admin_entity extends AdminServer {
             return "admin/entity/import.error";
         }
 
-        try {
-            EntityService.ME.merge(entityName, crudSupply, user, entities, filter);
-            JLog.log("admin", "importXls/" + entityName, input.getAddress(), user == null ? null : user.getUsername(), true);
-            return "admin/entity/import";
-
-        } catch (ServerException e) {
-            model.put("e", e);
-            model.put("message", e.getExceptionData());
-            return "admin/entity/error";
-        }
+        EntityService.ME.merge(entityName, crudSupply, user, entities, filter);
+        JLog.log("admin", "importXls/" + entityName, input.getAddress(), user == null ? null : user.getUsername(), true);
+        return "admin/entity/import";
     }
 
     /**
