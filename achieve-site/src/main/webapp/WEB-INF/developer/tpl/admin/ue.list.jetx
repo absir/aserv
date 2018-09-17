@@ -3,7 +3,7 @@
 "list": [
 \#for(upload : uploads)
 {
-"url": "\${SITE_ROUTE}public/upload/\${upload.dirPath}\${upload.filename}"
+"url": "\${Pag::uploadUrl(upload.dirPath + upload.filename)}"
 }\${for.last ? '' : ','}
 \#end
 ],

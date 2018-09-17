@@ -20,6 +20,7 @@ import com.absir.aserv.support.web.value.BaMethod;
 import com.absir.aserv.support.web.value.BaTag;
 import com.absir.aserv.system.bean.JConfigure;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.aserv.system.crud.UploadCrudFactory;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.statics.EntityStatics;
 import com.absir.bean.basis.Basis;
@@ -319,6 +320,7 @@ public class WebJetbrickSupply implements IMethodSupport<ConfigureFound> {
             globalContext.set("SITE_ROUTE", MenuContextUtils.getSiteRoute());
             globalContext.set("ADMIN_ROUTE", MenuContextUtils.getAdminRoute());
             globalContext.set("SITE_STATIC", KernelString.isEmpty(MenuContextUtils.getSiteRoute()) ? "/static" : (MenuContextUtils.getSiteRoute() + "static"));
+            globalContext.set("UPLOAD_URL", UploadCrudFactory.ME.getUploadUrl(""));
         }
     }
 

@@ -52,12 +52,19 @@ public abstract class MenuContextUtils {
         return InitBeanFactory.ME.getAppName();
     }
 
+    @Value("upload.route")
+    private static String uploadRoute;
+
     public static String getSiteRoute() {
         return InitBeanFactory.ME.getAppRoute();
     }
 
     public static String getAdminRoute() {
         return CONTEXT.Admin_Route;
+    }
+
+    public static String getUploadRoute() {
+        return uploadRoute;
     }
 
     /**

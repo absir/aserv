@@ -212,7 +212,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     public String getUploadUrl(String filePath) {
         if (KernelString.isEmpty(filePath)) {
-            return null;
+            return uploadUrl;
         }
 
         if (filePath.charAt(0) == '@') {
@@ -262,9 +262,9 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     @Started
     protected void started() {
-        uploadUrl = getConfigUrlPath("resource.upload.url", MenuContextUtils.getSiteRoute(), "upload/", true);
+        uploadUrl = getConfigUrlPath("resource.upload.url", MenuContextUtils.getSiteRoute(), "public/upload/", true);
         uploadPath = getConfigUrlPath("resource.upload.path", BeanFactoryUtils.getBeanConfig().getResourcePath(), "public/upload/", false);
-        protectedUrl = getConfigUrlPath("resource.protected.url", MenuContextUtils.getSiteRoute(), "api/entity/resource/", true);
+        protectedUrl = getConfigUrlPath("resource.protected.url", MenuContextUtils.getSiteRoute(), "api/entity/resource/@", true);
         protectedPath = getConfigUrlPath("resource.protected.path", BeanFactoryUtils.getBeanConfig().getResourcePath(), "protected/", false);
     }
 
