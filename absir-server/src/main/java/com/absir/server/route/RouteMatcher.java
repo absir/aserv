@@ -53,7 +53,7 @@ public class RouteMatcher extends InMatcher {
     }
 
     public boolean find(InMethod inMethod) {
-        return inMethod == null || inMethods == null ? true : KernelArray.contain(inMethods, inMethod);
+        return inMethod == null || inMethods == null || inMethod == InMethod.OPTIONS ? true : KernelArray.contain(inMethods, inMethod);
     }
 
     public InModel find(String[] parameters) {
