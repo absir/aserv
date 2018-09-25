@@ -92,21 +92,23 @@ ${input.appendChild(ScriptNode::node(shtml)).voidValue()}
     #set(sname = input.attr('name'))
     #set(svalue = 'selectEntity')
 #tag layout_block("shtml")
-\#set(selectEntity = ${iselect ? "EntityStatics::find('${joEntity.getEntityName()}')" : inputval})
+\#set(selectEntity = ${iselect ? "EntityStatics::find('"+joEntity.getEntityName()+"', "+inputval+")" : inputval})
 #end
-$(input.parent.before(ScriptNode::node(shtml)).voidValue())
+#set(_node = input.parent().before(ScriptNode::node(shtml)))
 ##b_for
 #for (int i : range(1, field.metas.level))
 ##b_layout
 #tag layout_block("shtml")
 #set(svalue = svalue + '.' + parent)
-\#set(selected = EntityStatics::primary(${svalue}, '${entityModel.getPrimary().getName()}'))
+\#set(selected = EntityStatics::getPrimary(${svalue}, '${entityModel.getPrimary().getName()}'))
 <select aname="_cat_${i}" class="input-text required ab_aw " ab_toggle="ajaxselect" ab_toggles="linkage"
         linkage="${sname}" select="${SITE_ROUTE}admin/open/suggest/${linkName}?${parent}=$val">
     #if(i == field.metas.level)
         \#for(suggest : EntityStatics::suggestParam('${joEntity.getEntityName()}', '$o.${parent} IS NULL', INPUT))
-        \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils::getEntityModel(joEntity).getPrimary().getName()}'))
-        <option value="\${value}" \${selected==value ? 'selected' : ''}>
+        \#set(value = EntityStatics::getPrimary(suggest, '${DeveloperUtils
+        ::getEntityModel(joEntity).getPrimary().getName()}'))
+        <option value="\${value}" \${selected==value ?
+        'selected' : ''}>
         ${suggests}
         </option>
         \#end

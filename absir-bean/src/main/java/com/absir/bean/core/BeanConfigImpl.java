@@ -758,10 +758,12 @@ public class BeanConfigImpl implements BeanConfig {
                     }
                 });
 
-                for (File file : files) {
-                    filename = file.getPath();
-                    if (!loadedPropertyFilenames.contains(filename)) {
-                        propertyFilenames.add(file.getPath());
+                if (files != null) {
+                    for (File file : files) {
+                        filename = file.getPath();
+                        if (!loadedPropertyFilenames.contains(filename)) {
+                            propertyFilenames.add(file.getPath());
+                        }
                     }
                 }
 
