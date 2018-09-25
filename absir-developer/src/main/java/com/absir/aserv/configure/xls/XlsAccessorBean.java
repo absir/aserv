@@ -81,7 +81,12 @@ public class XlsAccessorBean extends XlsAccessor {
                     }
 
                 } else if (Collection.class.isAssignableFrom(type)) {
-                    xlsAccessors.add(new XlsAccessorCollection(field, beanClass, KernelClass.componentClass(field.getGenericType()), xlsBase, context));
+                    if (field.getAnnotation(XaParam.class) != null) {
+                        xlsAccessors.add(new XlsAccessorParam(field, beanClass, KernelClass.componentClass(field.getGenericType())));
+
+                    } else {
+                        xlsAccessors.add(new XlsAccessorCollection(field, beanClass, KernelClass.componentClass(field.getGenericType()), xlsBase, context));
+                    }
 
                 } else if (Map.class.isAssignableFrom(type)) {
                     Type[] types = KernelClass.typeArguments(field.getGenericType());

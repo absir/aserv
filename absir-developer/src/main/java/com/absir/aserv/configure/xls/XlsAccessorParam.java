@@ -8,6 +8,7 @@
 package com.absir.aserv.configure.xls;
 
 import com.absir.aserv.system.helper.HelperString;
+import com.absir.core.base.IBase;
 import com.absir.core.dyna.DynaBinder;
 import com.absir.core.kernel.KernelLang.ObjectTemplate;
 import com.absir.core.kernel.KernelString;
@@ -75,14 +76,16 @@ public class XlsAccessorParam extends XlsAccessor {
         }
 
         Object[] params = DynaBinder.to(value, Object[].class);
-        if (xlsClass != null) {
-            int length = params.length;
-            Object[] values = new Object[length];
-            for (int i = 0; i < length; i++) {
-                values[i] = ((XlsBase) params[i]).getId();
+        int length = params.length;
+        for (int i = 0; i < length; i++) {
+            Object val = params[i];
+            if (i == 0) {
+                if (val == null || !(val instanceof IBase)) {
+                    break;
+                }
             }
 
-            params = values;
+            params[i] = ((IBase) params[i]).getId();
         }
 
         return KernelString.implode(params, ';');
