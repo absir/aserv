@@ -93,6 +93,7 @@ function ab_removeSubAttr($node, name, subName, value) {
 
 function ab_reloadSelect(data, $select) {
     var opts = '';
+    var val = $select.val();
     for (var k in data) {
         if (opts) {
             opts += '\r';
@@ -101,10 +102,12 @@ function ab_reloadSelect(data, $select) {
         opts += '<option value="' + k + '">' + data[k] + '</option>';
     }
 
-    var val = $select.val();
     $select.html(opts);
     $select.val(val);
     ab_init($select.parent());
+    setTimeout(function () {
+        $select.val(val);
+    }, 1)
 }
 
 $(function () {
