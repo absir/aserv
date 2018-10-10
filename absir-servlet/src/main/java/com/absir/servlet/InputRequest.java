@@ -136,6 +136,20 @@ public class InputRequest extends Input {
 
     @Override
     public String getParam(String name) {
+        if (parameterMap != null) {
+            Object vals = parameterMap.get(name);
+            if (vals != null) {
+                if (vals instanceof String[]) {
+                    String[] sVals = (String[]) vals;
+                    if (sVals.length > 0) {
+                        return sVals[0];
+                    }
+                }
+
+                return null;
+            }
+        }
+
         return request.getParameter(name);
     }
 
@@ -172,8 +186,7 @@ public class InputRequest extends Input {
                             }
 
                             if (parameters != null) {
-                                parameterMap.put(entry.getKey(),
-                                        DynaBinder.to(parameters, fileItem ? Object[].class : String[].class));
+                                parameterMap.put(entry.getKey(), DynaBinder.to(parameters, fileItem ? Object[].class : String[].class));
                             }
                         }
 

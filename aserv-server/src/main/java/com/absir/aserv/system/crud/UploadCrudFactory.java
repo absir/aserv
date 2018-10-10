@@ -48,20 +48,14 @@ import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.Input;
 import com.absir.servlet.IFilter;
 import com.absir.servlet.InputRequest;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.*;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -504,6 +498,94 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         return true;
     }
 
+
+    protected static FileItem DEL_FILE_ITEM = new FileItem() {
+        @Override
+        public InputStream getInputStream() throws IOException {
+            return null;
+        }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public boolean isInMemory() {
+            return false;
+        }
+
+        @Override
+        public long getSize() {
+            return 0;
+        }
+
+        @Override
+        public byte[] get() {
+            return new byte[0];
+        }
+
+        @Override
+        public String getString(String s) throws UnsupportedEncodingException {
+            return null;
+        }
+
+        @Override
+        public String getString() {
+            return null;
+        }
+
+        @Override
+        public void write(File file) throws Exception {
+
+        }
+
+        @Override
+        public void delete() {
+
+        }
+
+        @Override
+        public String getFieldName() {
+            return null;
+        }
+
+        @Override
+        public void setFieldName(String s) {
+
+        }
+
+        @Override
+        public boolean isFormField() {
+            return false;
+        }
+
+        @Override
+        public void setFormField(boolean b) {
+
+        }
+
+        @Override
+        public OutputStream getOutputStream() throws IOException {
+            return null;
+        }
+
+        @Override
+        public FileItemHeaders getHeaders() {
+            return null;
+        }
+
+        @Override
+        public void setHeaders(FileItemHeaders fileItemHeaders) {
+
+        }
+    };
+
     @Override
     public FileItem crud(CrudProperty crudProperty, PropertyErrors errors, CrudHandler handler, JiUserBase user, Input input) {
         if (handler.getCrud() != Crud.DELETE) {
@@ -515,7 +597,15 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                     return file;
                 }
             }
+
+            String del = input.getParam(field + "_file_del");
+            if (del != null) {
+                if (KernelDyna.to(del, boolean.class)) {
+                    return DEL_FILE_ITEM;
+                }
+            }
         }
+
 
         return null;
     }
@@ -528,6 +618,13 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                 if (!KernelString.isEmpty(uploadFile)) {
                     handler.getCrudRecord().put(RECORD + uploadFile, Boolean.TRUE);
                 }
+            }
+
+        } else if (requestBody == DEL_FILE_ITEM) {
+            String uploadFile = (String) crudProperty.get(entity);
+            if (!KernelString.isEmpty(uploadFile)) {
+                delete(uploadFile);
+                crudProperty.set(entity, null);
             }
 
         } else {
@@ -621,7 +718,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler crudHandler, JiUserBase user, Input input) {
-        if (crudHandler.getCrud() == Crud.DELETE) {
+        if (crudHandler.isPersist() && crudHandler.getCrud() == Crud.DELETE) {
             String uploadFile = (String) crudProperty.get(entity);
             if (!KernelString.isEmpty(uploadFile)) {
                 delete(uploadFile);

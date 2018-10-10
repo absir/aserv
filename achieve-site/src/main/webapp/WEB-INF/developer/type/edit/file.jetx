@@ -11,6 +11,10 @@ import = "org.jsoup.nodes.*"
     #set(parameters = field.getCrudField().getjCrud().getParameters())
     <input type="file" multiple name="${input.attr('name')}_file" class="input-file" ${parameters ? 'accept=".'+parameters[parameters.length - 1].toString().replace(',', ',.')+'"' : ''}>
 </span>
+#if(field.getMetas().get("del"))
+    ${Pag::getLang('删除')}
+<input type="checkbox" class="ab_check" name="${input.attr('name')}_file_del" value="1">
+#end
 #end
 
 ${input.addClass('upload-url')}
