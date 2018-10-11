@@ -28,6 +28,8 @@ public class HelperRandom {
     //abcdefghijklmnopqrstuvwxyz
     private static final char[] DIG_LETTER_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
+    private static final char[] DIG_LETTER_M_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
+
     public static int nextInt(int max) {
         return RANDOM.nextInt(max);
     }
@@ -375,8 +377,8 @@ public class HelperRandom {
         return ((time >> 16) | (time << 16));
     }
 
-    public static IFormatType newFormatType(final char[] chars) {
-        final int charsLen = chars.length;
+    public static IFormatType newFormatType(final char[] fChars) {
+        final int charsLen = fChars.length;
         int len;
         {
             len = 0;
@@ -418,7 +420,7 @@ public class HelperRandom {
 
             @Override
             public char[] charsForLong(long l) {
-                char[] chars = new char[l >= Integer.MIN_VALUE && l <= Integer.MAX_VALUE ? intLen() : longLen()];
+                char[] buffer = new char[l >= Integer.MIN_VALUE && l <= Integer.MAX_VALUE ? intLen() : longLen()];
                 int i = 0;
                 int ci;
                 while (l != 0) {
@@ -427,12 +429,12 @@ public class HelperRandom {
                         ci = -ci;
                     }
 
-                    chars[i] = DIG_LETTER_CHARS[ci];
+                    buffer[i] = fChars[ci];
                     l /= charsLen;
                     i++;
                 }
 
-                return Arrays.copyOfRange(chars, 0, i);
+                return Arrays.copyOfRange(buffer, 0, i);
             }
         };
     }
@@ -484,6 +486,8 @@ public class HelperRandom {
         };
 
         public static IFormatType DIG_LETTER = newFormatType(DIG_LETTER_CHARS);
+
+        public static IFormatType DIG_M_LETTER = newFormatType(DIG_LETTER_M_CHARS);
 
     }
 

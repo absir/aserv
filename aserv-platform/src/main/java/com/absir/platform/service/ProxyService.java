@@ -71,7 +71,7 @@ public class ProxyService implements IFilter {
     }
 
     public void proxyRequest(String url, byte[] postData, HttpServletResponse res) throws IOException {
-        HttpURLConnection httpURLConnection = HelperClient.openConnection(url, false, postData, 0, 0);
+        HttpURLConnection httpURLConnection = HelperClient.newConnection(url, false, postData, 0, 0);
         if (res == null) {
             HelperIO.toByteArray(httpURLConnection.getInputStream());
 

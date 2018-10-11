@@ -1,9 +1,6 @@
 package com.absir.core.test;
 
-import com.absir.aserv.system.domain.DSequence;
 import com.absir.aserv.system.helper.HelperRandom;
-import com.absir.aserv.system.helper.HelperString;
-import com.absir.client.helper.HelperJson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -32,12 +29,14 @@ public class HelperTest {
         //testRandomFormatType(HelperRandom.FormatType.DIG_LETTER);
 
 
-        System.out.println(HelperJson.encode(HelperString.split("a=b&c=d", "=&")));
-        DSequence sequence = new DSequence();
-        for (int i = 0; i <= 1296; i++) {
-            System.out.println(sequence.getNextId());
-            //System.out.println(sequence.getNextDigLetterId());
-        }
+        System.out.println(HelperRandom.randSecondBuilder(System.currentTimeMillis() >> 2, 5, HelperRandom.FormatType.DIG_M_LETTER).substring(4));
+
+//        System.out.println(HelperJson.encode(HelperString.split("a=b&c=d", "=&")));
+//        DSequence sequence = new DSequence();
+//        for (int i = 0; i <= 1296; i++) {
+//            System.out.println(sequence.getNextId());
+//            //System.out.println(sequence.getNextDigLetterId());
+//        }
 
         //System.out.println(Math.);
     }

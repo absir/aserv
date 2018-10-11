@@ -258,18 +258,18 @@ public abstract class KernelObject {
         return null;
     }
 
-    public static <T> T clone(T obj) {
-        if (obj == null) {
+    public static <T> T clone(T from) {
+        if (from == null) {
             return null;
         }
 
         try {
-            if (obj.getClass().isArray()) {
-                return KernelArray.clone(obj);
+            if (from.getClass().isArray()) {
+                return KernelArray.clone(from);
 
             } else {
-                T clone = (T) obj.getClass().newInstance();
-                clone(obj, clone);
+                T clone = (T) from.getClass().newInstance();
+                clone(from, clone);
                 return clone;
             }
 
@@ -280,24 +280,24 @@ public abstract class KernelObject {
         return null;
     }
 
-    public static <T> void clone(final T obj, final T clone) {
-        if (obj.getClass().isArray()) {
-            KernelArray.copy(obj, clone);
+    public static <T> void clone(final T from, final T to) {
+        if (from.getClass().isArray()) {
+            KernelArray.copy(from, to);
 
-        } else if (obj instanceof Collection) {
-            KernelCollection.copy((Collection) obj, (Collection) clone);
+        } else if (from instanceof Collection) {
+            KernelCollection.copy((Collection) from, (Collection) to);
 
-        } else if (obj instanceof Map) {
-            KernelMap.copy((Map<Object, Object>) obj, (Map<Object, Object>) clone);
+        } else if (from instanceof Map) {
+            KernelMap.copy((Map<Object, Object>) from, (Map<Object, Object>) to);
 
         } else {
-            KernelReflect.doWithDeclaredFields(obj.getClass(), new CallbackBreak<Field>() {
+            KernelReflect.doWithDeclaredFields(from.getClass(), new CallbackBreak<Field>() {
 
                 @Override
                 public void doWith(Field template) throws BreakException {
                     template.setAccessible(true);
                     try {
-                        template.set(clone, template.get(obj));
+                        template.set(to, template.get(from));
 
                     } catch (IllegalArgumentException e) {
                     } catch (IllegalAccessException e) {
@@ -307,23 +307,23 @@ public abstract class KernelObject {
         }
     }
 
-    public static void copy(final Object obj, final Object copy) {
-        final Class cls = copy.getClass();
-        if (obj.getClass().isArray()) {
-            KernelArray.copy(obj, copy);
+    public static void copy(final Object from, final Object to) {
+        final Class cls = to.getClass();
+        if (from.getClass().isArray()) {
+            KernelArray.copy(from, to);
 
-        } else if (obj instanceof Collection) {
-            if (copy instanceof Collection) {
-                KernelCollection.copy((Collection) obj, (Collection) copy);
+        } else if (from instanceof Collection) {
+            if (to instanceof Collection) {
+                KernelCollection.copy((Collection) from, (Collection) to);
             }
 
-        } else if (obj instanceof Map) {
-            if (copy instanceof Map) {
-                KernelMap.copy((Map<Object, Object>) obj, (Map<Object, Object>) copy);
+        } else if (from instanceof Map) {
+            if (to instanceof Map) {
+                KernelMap.copy((Map<Object, Object>) from, (Map<Object, Object>) to);
             }
 
         } else {
-            KernelReflect.doWithDeclaredFields(obj.getClass(), new CallbackBreak<Field>() {
+            KernelReflect.doWithDeclaredFields(from.getClass(), new CallbackBreak<Field>() {
 
                 @Override
                 public void doWith(Field template) throws BreakException {
@@ -331,7 +331,7 @@ public abstract class KernelObject {
                     if (field != null && field.getType().isAssignableFrom(template.getType())) {
                         template.setAccessible(true);
                         try {
-                            field.set(copy, template.get(obj));
+                            field.set(to, template.get(from));
 
                         } catch (IllegalArgumentException e) {
                         } catch (IllegalAccessException e) {

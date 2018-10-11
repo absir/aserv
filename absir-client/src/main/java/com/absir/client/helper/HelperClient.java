@@ -71,7 +71,15 @@ public class HelperClient {
         return openConnection(url, post, postBytes, off, 0, type);
     }
 
-    public static HttpURLConnection openConnection(String url, boolean post, byte[] postBytes, int off, int len)
+    public static HttpURLConnection newConnection(String url, boolean post, Object postData) throws IOException {
+        if (postData != null) {
+            return newConnection(url, true, HelperJson.encode(postData).getBytes(KernelCharset.UTF8), 0, 0);
+        }
+
+        return newConnection(url, post, null, 0, 0);
+    }
+
+    public static HttpURLConnection newConnection(String url, boolean post, byte[] postBytes, int off, int len)
             throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) (new URL(url)).openConnection();
         if (post || postBytes != null) {
@@ -96,7 +104,7 @@ public class HelperClient {
 
     public static <T> T openConnection(String url, boolean post, byte[] postBytes, int off, int len, Class<T> type) {
         try {
-            HttpURLConnection urlConnection = openConnection(url, post, postBytes, off, len);
+            HttpURLConnection urlConnection = newConnection(url, post, postBytes, off, len);
             return openConnection(urlConnection, type);
 
         } catch (Throwable e) {
@@ -110,7 +118,7 @@ public class HelperClient {
                                                      Class<T> type) {
         DResponse<T> response = null;
         try {
-            HttpURLConnection urlConnection = openConnection(url, post, postBytes, off, len);
+            HttpURLConnection urlConnection = newConnection(url, post, postBytes, off, len);
             response = new DResponse<T>();
             response.code = urlConnection.getResponseCode();
             response.input = openConnection(urlConnection);
