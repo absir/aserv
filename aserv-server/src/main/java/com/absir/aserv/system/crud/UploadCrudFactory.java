@@ -632,12 +632,12 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                 if (thumbDef.tForceSize) {
                     BufferedImage bufferedImage = ImageIO.read(inputStream);
                     builder = Thumbnails.of(bufferedImage);
-                    int width = thumbDef.tWidth / thumbDef.tHeight * bufferedImage.getHeight();
-                    if (width == thumbDef.tWidth) {
+                    float ws = bufferedImage.getWidth() * thumbDef.tHeight / (float) (bufferedImage.getHeight() * thumbDef.tWidth);
+                    if (ws == 1) {
                         builder.size(thumbDef.tWidth, thumbDef.tHeight);
 
                     } else {
-                        if (width < thumbDef.tWidth) {
+                        if (ws < 1) {
                             builder.size(thumbDef.tWidth, bufferedImage.getHeight());
 
                         } else {
