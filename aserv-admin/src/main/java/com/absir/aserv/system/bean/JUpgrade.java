@@ -143,7 +143,7 @@ public class JUpgrade extends JbBean implements ICrudBean {
                 }
 
                 if (versionMap == null || !UpgradeService.ME.validateAppCode(versionMap, InitBeanFactory.ME.getAppCode())) {
-                    UploadCrudFactory.ME.delete(upgradeFile);
+                    UploadCrudFactory.ME.delete(null, upgradeFile);
                     errors.addPropertyError("upgradeFile", LangCodeUtils.getLangMessage(UpgradeService.NOT_VALIDATOR, input), upgradeFile);
                     return;
 

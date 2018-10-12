@@ -145,8 +145,8 @@ public class JSlaveUpgrade extends JbSlaveTargets implements ICrudBean {
 
                 } finally {
                     if (errors.hashErrors()) {
-                        UploadCrudFactory.ME.delete(slaveUpgrade.getUpgradeFile());
-                        UploadCrudFactory.ME.delete(slaveUpgrade.getResourceFile());
+                        UploadCrudFactory.ME.delete(null, slaveUpgrade.getUpgradeFile());
+                        UploadCrudFactory.ME.delete(null, slaveUpgrade.getResourceFile());
                     }
                 }
             }

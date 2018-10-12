@@ -16,6 +16,22 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UploadRule {
 
-    String value();
+    String value() default "";
+
+    boolean thumb() default false;
+
+    boolean tDel() default true;
+
+    String tExt() default ".jpg";
+
+    boolean tForceSize() default false;
+
+    int tWidth() default 128;
+
+    int tHeight() default 128;
+
+    float tQuality() default 0.5f;
+
+    int tScaleType() default 0;
 
 }

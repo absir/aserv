@@ -48,13 +48,18 @@ import com.absir.server.exception.ServerStatus;
 import com.absir.server.in.Input;
 import com.absir.servlet.IFilter;
 import com.absir.servlet.InputRequest;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
+import net.coobird.thumbnailator.resizers.configurations.ScalingMode;
 import org.apache.commons.fileupload.*;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
@@ -277,9 +282,16 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         }
     }
 
-    public void delete(String uploadFile) {
+    public void delete(CrudProperty crudProperty, String uploadFile) {
         if (uploadFile != null) {
             HelperFile.deleteQuietly(getUploadFile(uploadFile));
+            if (crudProperty != null) {
+                Object[] parameters = crudProperty.getjCrud().getParameters();
+                MultipartUploader multipartUploader = parameters.length == 0 ? null : (MultipartUploader) parameters[0];
+                if (multipartUploader != null && multipartUploader.thumbDef != null && multipartUploader.thumbDef.tDel && !KernelString.isEmpty(multipartUploader.thumbDef.tExt)) {
+                    HelperFile.deleteQuietly(getUploadFile(uploadFile + multipartUploader.thumbDef.tExt));
+                }
+            }
         }
     }
 
@@ -610,6 +622,50 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         return null;
     }
 
+    protected InputStream thumbStream(ThumbDef thumbDef, InputStream inputStream) throws IOException {
+        if (thumbDef == null) {
+            return inputStream;
+
+        } else {
+            try {
+                Thumbnails.Builder builder;
+                if (thumbDef.tForceSize) {
+                    BufferedImage bufferedImage = ImageIO.read(inputStream);
+                    builder = Thumbnails.of(bufferedImage);
+                    int width = thumbDef.tWidth / thumbDef.tHeight * bufferedImage.getHeight();
+                    if (width == thumbDef.tWidth) {
+                        builder.size(thumbDef.tWidth, thumbDef.tHeight);
+
+                    } else {
+                        if (width < thumbDef.tWidth) {
+                            builder.size(thumbDef.tWidth, bufferedImage.getHeight());
+
+                        } else {
+                            builder.size(bufferedImage.getWidth(), thumbDef.tHeight);
+                        }
+
+                        builder.outputFormat(HelperFileName.getExtension(thumbDef.tExt));
+                        builder = Thumbnails.of(builder.asBufferedImage());
+                        builder.size(thumbDef.tWidth, thumbDef.tHeight);
+                        builder.sourceRegion(Positions.CENTER, thumbDef.tWidth, thumbDef.tHeight);
+                    }
+
+                } else {
+                    builder = Thumbnails.of(inputStream);
+                    builder.size(thumbDef.tWidth, thumbDef.tHeight);
+                }
+
+                builder.outputFormat(HelperFileName.getExtension(thumbDef.tExt));
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                builder.scalingMode(thumbDef.tScaleType).outputQuality(thumbDef.tQuality).toOutputStream(outputStream);
+                return new ByteArrayInputStream(outputStream.toByteArray());
+
+            } finally {
+                HelperIO.closeQuietly(inputStream);
+            }
+        }
+    }
+
     @Override
     public void crud(CrudProperty crudProperty, Object entity, CrudHandler handler, JiUserBase user, FileItem requestBody) {
         if (requestBody == null) {
@@ -623,7 +679,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         } else if (requestBody == DEL_FILE_ITEM) {
             String uploadFile = (String) crudProperty.get(entity);
             if (!KernelString.isEmpty(uploadFile)) {
-                delete(uploadFile);
+                delete(crudProperty, uploadFile);
                 crudProperty.set(entity, null);
             }
 
@@ -637,7 +693,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
             String uploadFile = (String) crudProperty.get(entity);
             if (!KernelString.isEmpty(uploadFile)) {
                 if (handler.getCrudRecord() == null || !handler.getCrudRecord().containsKey(RECORD + uploadFile)) {
-                    delete(uploadFile);
+                    delete(crudProperty, uploadFile);
                 }
 
                 uploadFile = null;
@@ -645,6 +701,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
             InputStream uploadStream = null;
             String extensionName = HelperFileName.getExtension(requestBody.getName());
+            boolean nRoleName = false;
             try {
                 Object[] parameters = crudProperty.getjCrud().getParameters();
                 MultipartUploader multipartUploader = parameters.length == 0 ? null : (MultipartUploader) parameters[0];
@@ -656,12 +713,27 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                             UploadRule uploadRule = BeanConfigImpl.getAccessorAnnotation(accessor, UploadRule.class, false);
                             if (uploadRule != null) {
                                 ruleName = uploadRule.value();
-                                multipartUploader.ided = ruleName.contains(":id");
-                                if (multipartUploader.ided && KernelString.isEmpty(HelperFileName.getPath(ruleName))) {
-                                    ruleName = "entity/" + ruleName;
+                                if (!KernelString.isEmpty(ruleName)) {
+                                    multipartUploader.ided = ruleName.contains(":id");
+                                    if (multipartUploader.ided && KernelString.isEmpty(HelperFileName.getPath(ruleName))) {
+                                        ruleName = "entity/" + ruleName;
+                                    }
+
+                                    multipartUploader.rand = ruleName.contains(":rand");
                                 }
 
-                                multipartUploader.rand = ruleName.contains(":rand");
+                                if (uploadRule.thumb()) {
+                                    ThumbDef thumbDef = new ThumbDef();
+                                    thumbDef.tDel = uploadRule.tDel();
+                                    thumbDef.tExt = uploadRule.tExt();
+                                    thumbDef.tForceSize = uploadRule.tForceSize();
+                                    thumbDef.tWidth = uploadRule.tWidth();
+                                    thumbDef.tHeight = uploadRule.tHeight();
+                                    thumbDef.tQuality = uploadRule.tQuality();
+                                    thumbDef.tScaleType = KernelDyna.to(uploadRule.tScaleType(), ScalingMode.class);
+
+                                    multipartUploader.thumbDef = thumbDef;
+                                }
                             }
                         }
 
@@ -669,7 +741,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                     }
 
                     if ("".equals(multipartUploader.ruleName)) {
-                        multipartUploader = null;
+                        nRoleName = true;
 
                     } else {
                         String identity = "";
@@ -689,7 +761,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                     }
                 }
 
-                if (multipartUploader == null && entity instanceof IUploadRule) {
+                if (nRoleName && entity instanceof IUploadRule) {
                     IUploadRule uploadRule = (IUploadRule) entity;
                     uploadFile = uploadRule.getUploadRuleName(crudProperty.getName(), extensionName);
                     if (uploadFile != null) {
@@ -705,8 +777,18 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                     uploadStream = requestBody.getInputStream();
                 }
 
+                int thumbType = multipartUploader.thumbDef != null ? KernelString.isEmpty(multipartUploader.thumbDef.tExt) ? 1 : 2 : 0;
+                if (thumbType == 1) {
+                    uploadStream = thumbStream(multipartUploader.thumbDef, uploadStream);
+                }
+
                 uploadStream = uploadProcessor(extensionName, null, uploadStream);
                 upload(uploadFile, uploadStream);
+
+                if (thumbType == 2) {
+                    ThumbDef thumbDef = multipartUploader.thumbDef;
+                    upload(uploadFile + thumbDef.tExt, thumbStream(thumbDef, getUploadStream(uploadFile)));
+                }
 
             } catch (IOException e) {
                 LOGGER.error("upload error", e);
@@ -721,7 +803,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         if (crudHandler.isPersist() && crudHandler.getCrud() == Crud.DELETE) {
             String uploadFile = (String) crudProperty.get(entity);
             if (!KernelString.isEmpty(uploadFile)) {
-                delete(uploadFile);
+                delete(crudProperty, uploadFile);
             }
         }
     }
@@ -769,6 +851,24 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         return false;
     }
 
+    public static class ThumbDef {
+
+        protected boolean tDel;
+
+        protected String tExt;
+
+        protected int tWidth;
+
+        protected int tHeight;
+
+        protected boolean tForceSize;
+
+        protected float tQuality;
+
+        protected ScalingMode tScaleType;
+
+    }
+
     public static class MultipartUploader {
 
         private long minSize;
@@ -777,11 +877,13 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
         private String[] extensions;
 
-        private String ruleName;
+        protected String ruleName;
 
-        private boolean ided;
+        protected boolean ided;
 
-        private boolean rand;
+        protected boolean rand;
+
+        protected ThumbDef thumbDef;
 
         public MultipartUploader(Object[] parameters) {
             int last = parameters.length - 1;

@@ -30,7 +30,7 @@ ${ScriptNode::attr(input, 'readonly')}
         #end
     #end
 #end
-##${input.removeAttr('name')}
+${input.removeAttr('name')}
 ##${input.attr('style', 'width:200px')}
 #set(span = ScriptNode::append(input.parent(), shtml)[0])
 ${input.remove()}
