@@ -131,7 +131,14 @@ public class HelperCondition {
         }
 
         last -= 2;
-        conditions.set(last, conditions.get(last) + ")");
+        String str = String.valueOf(conditions.get(last));
+        if (str.indexOf('?') > 0) {
+            conditions.set(last, str + ")");
+
+        } else {
+            conditions.set(last, str + " = ?)");
+        }
+
         return true;
     }
 
