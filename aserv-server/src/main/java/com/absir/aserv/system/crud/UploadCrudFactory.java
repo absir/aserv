@@ -622,12 +622,22 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         return null;
     }
 
-    protected InputStream thumbStream(ThumbDef thumbDef, InputStream inputStream) throws IOException {
+    public static boolean isTransExt(String inExt) {
+        if (inExt == null) {
+            return false;
+        }
+
+        inExt = inExt.toLowerCase();
+        return inExt.endsWith("png") || inExt.endsWith("gif");
+    }
+
+    protected InputStream thumbStream(String inExt, ThumbDef thumbDef, InputStream inputStream) throws IOException {
         if (thumbDef == null) {
             return inputStream;
 
         } else {
             try {
+
                 Thumbnails.Builder builder;
                 if (thumbDef.tForceSize) {
                     BufferedImage bufferedImage = ImageIO.read(inputStream);
@@ -644,7 +654,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                             builder.size(bufferedImage.getWidth(), thumbDef.tHeight);
                         }
 
-                        builder.outputFormat(HelperFileName.getExtension(thumbDef.tExt));
+                        builder.outputFormat(!KernelString.isEmpty(inExt) ? inExt : HelperFileName.getExtension(thumbDef.tExt));
                         builder = Thumbnails.of(builder.asBufferedImage());
                         builder.size(thumbDef.tWidth, thumbDef.tHeight);
                         builder.sourceRegion(Positions.CENTER, thumbDef.tWidth, thumbDef.tHeight);
@@ -655,7 +665,14 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                     builder.size(thumbDef.tWidth, thumbDef.tHeight);
                 }
 
-                builder.outputFormat(HelperFileName.getExtension(thumbDef.tExt));
+                String outExt = HelperFileName.getExtension(thumbDef.tExt);
+                if (isTransExt(inExt) && !isTransExt(outExt)) {
+                    builder.outputFormat(inExt);
+
+                } else {
+                    builder.outputFormat(outExt);
+                }
+
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 builder.scalingMode(thumbDef.tScaleType).outputQuality(thumbDef.tQuality).toOutputStream(outputStream);
                 return new ByteArrayInputStream(outputStream.toByteArray());
@@ -779,7 +796,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
                 int thumbType = multipartUploader.thumbDef != null ? KernelString.isEmpty(multipartUploader.thumbDef.tExt) ? 1 : 2 : 0;
                 if (thumbType == 1) {
-                    uploadStream = thumbStream(multipartUploader.thumbDef, uploadStream);
+                    uploadStream = thumbStream(extensionName, multipartUploader.thumbDef, uploadStream);
                 }
 
                 uploadStream = uploadProcessor(extensionName, null, uploadStream);
@@ -787,7 +804,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
                 if (thumbType == 2) {
                     ThumbDef thumbDef = multipartUploader.thumbDef;
-                    upload(uploadFile + thumbDef.tExt, thumbStream(thumbDef, getUploadStream(uploadFile)));
+                    upload(uploadFile + thumbDef.tExt, thumbStream(extensionName, thumbDef, getUploadStream(uploadFile)));
                 }
 
             } catch (IOException e) {
