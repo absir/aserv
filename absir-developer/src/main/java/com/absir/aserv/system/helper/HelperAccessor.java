@@ -28,10 +28,16 @@ public class HelperAccessor {
         while (cls != null) {
             for (Field field : cls.getDeclaredFields()) {
                 if (isAccessor(field)) {
+                    boolean filter = false;
                     for (Class<? extends Annotation> filterAnnotation : filterAnnotations) {
                         if (field.getAnnotation(filterAnnotation) != null) {
+                            filter = true;
                             continue;
                         }
+                    }
+
+                    if (filter) {
+                        continue;
                     }
 
                     field.setAccessible(true);

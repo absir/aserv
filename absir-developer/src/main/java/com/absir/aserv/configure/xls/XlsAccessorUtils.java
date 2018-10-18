@@ -280,7 +280,7 @@ public class XlsAccessorUtils {
 
     private static <T> List<T> readXlsBeans(HSSFSheet[] hssfSheets, int[][] accessors, Class<T> beanClass, XlsBase xlsBase,
                                             boolean cacheable) {
-        XlsAccessorContext xlsAccessorContext = getAccessorContext(beanClass, xlsBase, false);
+        XlsAccessorContext xlsAccessorContext = getAccessorContext(beanClass, xlsBase, cacheable);
         XlsDao<? extends XlsBase, Serializable> xlsDao = null;
         XlsDaoBase xlsDaoBase = null;
         XlsDaoBean xlsDaoBean = null;

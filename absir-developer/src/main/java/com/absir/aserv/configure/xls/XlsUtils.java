@@ -139,6 +139,25 @@ public abstract class XlsUtils {
         return XlsAccessorUtils.getXlsBeans(workbook, sheets, beanClass, xlsBase, cacheable);
     }
 
+    public static List<Map> getXlsBindList(List<?> list, Class<?> beanClass, XlsBase xlsBase, boolean cacheable) {
+        if (list == null) {
+            return null;
+        }
+
+        XlsAccessorContext xlsAccessorContext = XlsAccessorUtils.getAccessorContext(beanClass, xlsBase, cacheable);
+        List<Map> mapList = new ArrayList<Map>();
+        for (Object el : list) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            for (XlsAccessor xlsAccessor : xlsAccessorContext.accessors) {
+                map.put(xlsAccessor.getField().getName(), xlsAccessor.getAccessor().get(el));
+            }
+
+            mapList.add(map);
+        }
+
+        return mapList;
+    }
+
     public static HSSFWorkbook getWorkbook(Class<? extends XlsBase> beanClass) {
         return getWorkbook(null, beanClass, null, KernelClass.newInstance(beanClass));
     }

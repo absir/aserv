@@ -495,8 +495,10 @@ public class Admin_entity extends AdminServer {
                 return "admin/entity/import.error";
             }
 
-            entities = XlsUtils.getXlsList(workbook, null, crudSupply.getEntityClass(entityName),
-                    XlsUtils.XLS_BASE, false);
+            Class<?> entityClass = crudSupply.getEntityClass(entityName);
+            entities = XlsUtils.getXlsList(workbook, null, entityClass,
+                    XlsUtils.XLS_BASE, true);
+            entities = XlsUtils.getXlsBindList(entities, entityClass, XlsUtils.XLS_BASE, true);
 
         } catch (Exception e) {
             return "admin/entity/import.error";
