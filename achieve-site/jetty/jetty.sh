@@ -26,10 +26,10 @@ start(){
         fi
 
         evnDebug=0
-        if [ "$EVN" == "DEVELOP" ];then
+        if [ "$EVN" == "TEST" ];then
             evnDebug=1
         elif [ "$EVN" == "DEBUG" ];then
-            evnDebug=1
+            evnDebug=2
         fi
 
         _JAVA_OPTS_=""

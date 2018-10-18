@@ -233,6 +233,7 @@ public class EntityStatics {
                 }
             }
 
+            //suggestMaxResults
             entities = CrudServiceUtils.list(entityName, AccessServiceUtils.suggestCondition(entityName, condition), null, 0, 0);
             input.setAttribute(entitiesKey, entities);
         }
@@ -241,9 +242,10 @@ public class EntityStatics {
     }
 
     public static List suggestCondition(String entityName, JdbcCondition condition, IAttributes input) {
-        if (condition == null || condition.getConditions().isEmpty()) {
-            return suggest(entityName, input);
-        }
+        //返回数据太多
+//        if (condition == null || condition.getConditions().isEmpty()) {
+//            return suggest(entityName, input);
+//        }
 
         String entitiesKey = EntityStatics.class.getName() + "-" + entityName + "@SUGGEST";
         List entities = (List) input.getAttribute(entitiesKey);
