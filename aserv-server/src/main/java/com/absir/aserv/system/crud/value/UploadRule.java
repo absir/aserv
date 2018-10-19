@@ -34,4 +34,23 @@ public @interface UploadRule {
 
     int tScaleType() default 0;
 
+    boolean thumbSelf() default false;
+
+    ThumbSelfRule thumbSelfRule() default @ThumbSelfRule();
+
+    public @interface ThumbSelfRule {
+
+        boolean tForceSize() default false;
+
+        int tWidth() default 1024;
+
+        int tHeight() default 1024;
+
+        float tQuality() default 0.8f;
+
+        int tScaleType() default 0;
+
+    }
+
 }
+

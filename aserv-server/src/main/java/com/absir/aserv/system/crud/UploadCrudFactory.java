@@ -670,7 +670,12 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                     builder.outputFormat(inExt);
 
                 } else {
-                    builder.outputFormat(outExt);
+                    if (!KernelString.isEmpty(outExt)) {
+                        builder.outputFormat(outExt);
+
+                    } else if (!KernelString.isEmpty(inExt)) {
+                        builder.outputFormat(inExt);
+                    }
                 }
 
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -751,6 +756,18 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
                                     multipartUploader.thumbDef = thumbDef;
                                 }
+
+                                if (uploadRule.thumbSelf()) {
+                                    ThumbDef thumbDef = new ThumbDef();
+                                    UploadRule.ThumbSelfRule thumbSelfRule = uploadRule.thumbSelfRule();
+                                    thumbDef.tForceSize = thumbSelfRule.tForceSize();
+                                    thumbDef.tWidth = thumbSelfRule.tWidth();
+                                    thumbDef.tHeight = thumbSelfRule.tHeight();
+                                    thumbDef.tQuality = thumbSelfRule.tQuality();
+                                    thumbDef.tScaleType = KernelDyna.to(thumbSelfRule.tScaleType(), ScalingMode.class);
+
+                                    multipartUploader.thumbDefSelf = thumbDef;
+                                }
                             }
                         }
 
@@ -795,7 +812,10 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
                 }
 
                 int thumbType = multipartUploader.thumbDef != null ? KernelString.isEmpty(multipartUploader.thumbDef.tExt) ? 1 : 2 : 0;
-                if (thumbType == 1) {
+                if (multipartUploader.thumbDefSelf != null) {
+                    uploadStream = thumbStream(extensionName, multipartUploader.thumbDefSelf, uploadStream);
+
+                } else if (thumbType == 1) {
                     uploadStream = thumbStream(extensionName, multipartUploader.thumbDef, uploadStream);
                 }
 
@@ -901,6 +921,8 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         protected boolean rand;
 
         protected ThumbDef thumbDef;
+
+        protected ThumbDef thumbDefSelf;
 
         public MultipartUploader(Object[] parameters) {
             int last = parameters.length - 1;
