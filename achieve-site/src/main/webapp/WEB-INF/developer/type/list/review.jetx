@@ -8,6 +8,7 @@ import = "org.jsoup.nodes.*"
 
 #tag layout_block("shtml")
 
+    #set(not = field.getMetas().get('not'))
     #set(submit = field.getMetas().get('submit'))
     #set(submit = KernelString.isEmpty(submit) ? null : submit)
     #set(authName = submit == null ? field.getName() : submit)
@@ -19,7 +20,7 @@ import = "org.jsoup.nodes.*"
 
 \#if(${authName}_Auth)
 
-\#if(${nodeval})
+\#if(${not?'!':''}${nodeval})
 ##\${${nodeval}}
 \#else
 <input class="btn radius btn-warning size-S" type="button" value="${Pag::getLang('确认')}"
@@ -30,6 +31,16 @@ import = "org.jsoup.nodes.*"
        url="\${ADMIN_ROUTE}entity/saveAjaxSubmit/${entityName}/\${id}/${field.getName()}?!submitOption=${submit}"
     #end
        ab_toggle="ajaxReview">
+
+    #set(submit2 = field.getMetas().get('submit2'))
+    #if(submit2 != null)
+    \#if(update && (filter == null || filter.isMatchPath('@${submit2}')))
+    <input class="btn radius btn-danger size-S" type="button" value="${Pag::getLang('拒接')}"
+           url="\${ADMIN_ROUTE}entity/saveAjaxSubmit/${entityName}/\${id}/${field.getName()}?!submitOption=${submit2}"
+           ab_toggle="ajaxReview">
+    \#end
+    #end
+
 \#end
 
 \#else

@@ -333,10 +333,9 @@ public class Admin_entity extends AdminServer {
         return data;
     }
 
-    @Body
+    //@Body
     public Object saveAjaxSubmit(String entityName, Object id, String name, Input input) throws IOException {
-        save(entityName, id, input);
-        return input.getModel().get(ICrudSubmit.AJAX_CODE);
+        return save(entityName, id, input);
     }
 
     /**
@@ -432,6 +431,9 @@ public class Admin_entity extends AdminServer {
         List<Object> entities = ids == null ? EntityService.ME.list(entityName, crudSupply, user, null,
                 InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), filter, null, input),
                 InputServiceUtils.getOrderQueue(entityName, input), null) : EntityService.ME.list(entityName, crudSupply, user, null, ids);
+
+        entities = XlsUtils.forXlsExports(entities, 0);
+
         HSSFWorkbook workbook = XlsUtils.getWorkbook(entities, XlsUtils.XLS_BASE);
         response.addHeader("Content-Disposition", "attachment;filename=" + entityName + ".xls");
         workbook.write(response.getOutputStream());
@@ -451,6 +453,9 @@ public class Admin_entity extends AdminServer {
         Object entity = edit(entityName, id, crudSupply, user);
         List<Object> entities = new ArrayList<Object>();
         entities.add(entity);
+
+        entities = XlsUtils.forXlsExports(entities, 0);
+
         HSSFWorkbook workbook = XlsUtils.getWorkbook(entities, XlsUtils.XLS_BASE);
         response.addHeader("Content-Disposition", "attachment;filename=" + entityName + (id == null ? "" : ("." + id)) + ".xls");
         workbook.write(response.getOutputStream());

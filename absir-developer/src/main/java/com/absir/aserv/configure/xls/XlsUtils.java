@@ -7,6 +7,8 @@
  */
 package com.absir.aserv.configure.xls;
 
+import com.absir.aserv.configure.xls.value.IExport;
+import com.absir.aserv.configure.xls.value.IExportList;
 import com.absir.aserv.configure.xls.value.XaWorkbook;
 import com.absir.bean.core.BeanConfigImpl;
 import com.absir.core.base.Environment;
@@ -210,5 +212,34 @@ public abstract class XlsUtils {
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
         XlsAccessorUtils.writeHssfWorkbook(hssfWorkbook, beanClass, beans, xlsBase);
         return hssfWorkbook;
+    }
+
+    public static List<Object> forXlsExports(List<Object> entities, int type) {
+        if (entities == null || entities.isEmpty()) {
+            return null;
+        }
+
+        if (entities.get(0) instanceof IExport) {
+            return getXlsExports((List<? extends IExport>) (Object) entities, type);
+        }
+
+        if (entities.get(0) instanceof IExportList) {
+            return ((IExportList) entities.get(0)).exportDts(entities, type);
+        }
+
+        return entities;
+    }
+
+    public static List<Object> getXlsExports(List<? extends IExport> entities, int type) {
+        if (entities == null || entities.isEmpty()) {
+            return null;
+        }
+
+        List<Object> entityList = new ArrayList<Object>(entities.size());
+        for (IExport entity : entities) {
+            entityList.add(entity.exportDt(type));
+        }
+
+        return entityList;
     }
 }
