@@ -16,30 +16,34 @@ import javax.persistence.Embeddable;
 
 @SuppressWarnings("serial")
 @Embeddable
-public class JEmbedLL implements JiEmbed {
+public class JEmbedILL implements JiEmbed {
 
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("编号")
-    private Long eid;
+    private Integer eid;
 
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("关联")
     private Long mid;
 
-    public JEmbedLL() {
+    @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
+    @JaLang("关联2")
+    private Long mid2;
 
+    public JEmbedILL() {
     }
 
-    public JEmbedLL(Long eid, Long mid) {
+    public JEmbedILL(Integer eid, Long mid, Long mid2) {
         this.eid = eid;
         this.mid = mid;
+        this.mid2 = mid2;
     }
 
-    public Long getEid() {
+    public Integer getEid() {
         return eid;
     }
 
-    public void setEid(Long eid) {
+    public void setEid(Integer eid) {
         this.eid = eid;
     }
 
@@ -51,16 +55,24 @@ public class JEmbedLL implements JiEmbed {
         this.mid = mid;
     }
 
+    public Long getMid2() {
+        return mid2;
+    }
+
+    public void setMid2(Long mid2) {
+        this.mid2 = mid2;
+    }
+
     @Override
     public int hashCode() {
-        return KernelObject.hashCode(eid) + KernelObject.hashCode(mid);
+        return KernelObject.hashCode(eid) + KernelObject.hashCode(mid) + KernelObject.hashCode(mid2);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof JEmbedLL) {
-            JEmbedLL target = (JEmbedLL) obj;
-            return KernelObject.equals(eid, target.eid) && KernelObject.equals(mid, target.mid);
+        if (obj != null && obj instanceof JEmbedILL) {
+            JEmbedILL target = (JEmbedILL) obj;
+            return KernelObject.equals(eid, target.eid) && KernelObject.equals(mid, target.mid) && KernelObject.equals(mid2, target.mid2);
         }
 
         return false;
@@ -68,6 +80,6 @@ public class JEmbedLL implements JiEmbed {
 
     @Override
     public String toString() {
-        return eid + "`" + mid;
+        return eid + "`" + mid + "`" + mid2;
     }
 }

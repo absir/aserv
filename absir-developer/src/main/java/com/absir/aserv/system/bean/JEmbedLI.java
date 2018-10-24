@@ -59,7 +59,7 @@ public class JEmbedLI implements JiEmbed {
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof JEmbedLI) {
             JEmbedLI target = (JEmbedLI) obj;
-            return mid == target.mid && KernelObject.equals(eid, target.eid);
+            return KernelObject.equals(eid, target.eid) && KernelObject.equals(mid, target.mid);
         }
 
         return false;

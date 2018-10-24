@@ -16,30 +16,29 @@ import javax.persistence.Embeddable;
 
 @SuppressWarnings("serial")
 @Embeddable
-public class JEmbedLL implements JiEmbed {
+public class JEmbedIL implements JiEmbed {
 
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("编号")
-    private Long eid;
+    private Integer eid;
 
     @JaEdit(groups = {JaEdit.GROUP_SUG, JaEdit.GROUP_SUGGEST})
     @JaLang("关联")
     private Long mid;
 
-    public JEmbedLL() {
-
+    public JEmbedIL() {
     }
 
-    public JEmbedLL(Long eid, Long mid) {
+    public JEmbedIL(Integer eid, Long mid) {
         this.eid = eid;
         this.mid = mid;
     }
 
-    public Long getEid() {
+    public Integer getEid() {
         return eid;
     }
 
-    public void setEid(Long eid) {
+    public void setEid(Integer eid) {
         this.eid = eid;
     }
 
@@ -58,8 +57,8 @@ public class JEmbedLL implements JiEmbed {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof JEmbedLL) {
-            JEmbedLL target = (JEmbedLL) obj;
+        if (obj != null && obj instanceof JEmbedIL) {
+            JEmbedIL target = (JEmbedIL) obj;
             return KernelObject.equals(eid, target.eid) && KernelObject.equals(mid, target.mid);
         }
 
