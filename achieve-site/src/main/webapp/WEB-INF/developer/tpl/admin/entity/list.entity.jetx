@@ -68,7 +68,7 @@
         \#end
         <span class="">
             <a href="javascript:;" ab_toggle="click" ab_confirm="${Pag::getLang('导出全部记录?')}"
-               ab_click="ab_open('\${ADMIN_ROUTE}entity/export/${entityName}')"
+               ab_click="ab_open('\${ADMIN_ROUTE}entity/export/${entityName}\\$P{SEARCH}')"
                class="btn btn-success radius mb-5">
                 <i class="Hui-iconfont">&#xe644;</i>${Pag::getLang('导出全部')}
             </a>

@@ -88,6 +88,10 @@ function ab_groupTrigger(sel, node, trigger) {
 
 function ab_getParam(sel, node, json) {
     if (!json) {
+        if (sel === 'SEARCH') {
+            return window.location.search
+        }
+
         if (sel[0] === '$') {
             json = true;
             sel = sel.substring(1);
