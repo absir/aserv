@@ -286,7 +286,7 @@ public class EntityModel implements IModel {
             if (set != null) {
                 for (String r : set) {
                     if (field != null) {
-                        if (r == JaEdit.GROUP_SEARCH && !isCloudSearchField(field)) {
+                        if (r.equals(JaEdit.GROUP_SEARCH) && !isCloudSearchField(field)) {
                             continue;
                         }
                     }

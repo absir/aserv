@@ -41,3 +41,5 @@ input.required{background: url("../images/required.png") right center no-repeat}
 .arel{position: relative}
 .atip{position: absolute; top: 10px; right: 10px}
 .input-file{overflow: hidden}
+
+.dislpayArrow a{top: 20% !important;}
