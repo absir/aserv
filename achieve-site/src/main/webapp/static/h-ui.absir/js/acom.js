@@ -207,7 +207,9 @@ function ab_ajax(url, callback, complete, dt) {
 
         complete(data, dt);
 
-    } : callback;
+    } : function (data) {
+        callback(data)
+    };
     opts.error = function () {
         layer.alert(ab_lang_map.request_fail, {icon: 3});
     }

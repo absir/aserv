@@ -34,14 +34,19 @@ public class TransactionIntercepter implements Interceptor {
             if (status == TransactionStatus.class) {
                 transactionStatus = new TransactionStatus();
                 input.setAttribute(TRANSACTION_STATUS_NAME, transactionStatus);
+                transactionStatus.open(transactionName, transactionAttribute);
 
-            } else if (status instanceof TransactionStatus) {
+            }
+
+            /*
+             else if (status instanceof TransactionStatus) {
                 transactionStatus = (TransactionStatus) status;
             }
 
             if (transactionStatus != null) {
                 transactionStatus.open(transactionName, transactionAttribute);
             }
+             */
         }
     }
 

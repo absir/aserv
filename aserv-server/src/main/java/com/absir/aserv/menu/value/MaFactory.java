@@ -26,4 +26,5 @@ public @interface MaFactory {
     MaMenu[] parent() default {};
 
     MaMenu menu() default @MaMenu;
+
 }

@@ -1,5 +1,5 @@
 \#tag layout("/WEB-INF/tpl/layout/admin.jetx")
-${Pag::includeGen("list/" + entityName + ".jetx", "list.entity.jetx")}
+${Pag::includeGen2("list/" + entityName + ".jetx", "list.entity.jetx", "list."+entityName+".jetx")}
 \#include("list/" + entityName + ".jetx")
 \#end
 

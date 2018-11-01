@@ -43,6 +43,18 @@ public class RenderUtils {
         }
     }
 
+    public static void generate2(String include, String includeGen, String includeGen2, Object... renders) throws IOException {
+        if (IDeveloper.ME != null) {
+            String full2 = IRender.ME.getFullPath(includeGen2, renders);
+            if (HelperFile.fileExists(IRender.ME.getRealPath(full2, renders))) {
+                IDeveloper.ME.generate(IRender.ME.getFullPath(include, renders), full2, renders);
+
+            } else {
+                IDeveloper.ME.generate(IRender.ME.getFullPath(include, renders), IRender.ME.getFullPath(includeGen, renders), renders);
+            }
+        }
+    }
+
     public static void include(String include, Object... renders) throws IOException {
         if (IDeveloper.ME != null) {
             include(include, IRender.ME.getPath(renders), renders);

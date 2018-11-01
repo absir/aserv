@@ -89,8 +89,9 @@ public class Admin_entity extends AdminServer {
         model.put("page", jdbcPage);
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
         String queue = InputServiceUtils.getOrderQueue(entityName, input);
+        Class<?> entityClass = crudSupply.getEntityClass(entityName);
         model.put("entities", EntityService.ME.list(entityName, crudSupply, user, null,
-                InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), filter, null, input),
+                InputServiceUtils.getSearchCondition(entityName, entityClass, filter, null, input),
                 queue, jdbcPage));
     }
 
@@ -336,6 +337,34 @@ public class Admin_entity extends AdminServer {
     //@Body
     public Object saveAjaxSubmit(String entityName, Object id, String name, Input input) throws IOException {
         return save(entityName, id, input);
+    }
+
+    public Object saveJson(String entityName, @Param String ids, Input input) throws IOException {
+        String[] _ids;
+        try {
+            _ids = (String[]) HelperJson.decode(ids, String[].class);
+
+        } catch (Exception e) {
+            throw new ServerException(ServerStatus.IN_404);
+        }
+
+        List<String> binderPaths = new ArrayList<String>();
+        input.getBinderData().setBinderPaths(binderPaths);
+        Map<String, Object> dataMap = ParameterResolverBinder.getPropertyMap(input);
+        dataMap.remove("ids");
+
+        //TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
+        for (String id : _ids) {
+            save(entityName, id, input);
+        }
+
+        input.getModel().remove("create");
+        input.getModel().remove("id");
+        input.getModel().remove("url");
+
+        input.getModel().put("url", 1);
+
+        return "admin/entity/save.option";
     }
 
     /**
