@@ -34,7 +34,7 @@ public abstract class KernelClass {
 
     public static boolean isBasicClass(Class cls) {
         return cls.getPackage() == Character.class.getPackage() || Date.class.isAssignableFrom(cls)
-                || Enum.class.isAssignableFrom(cls) || !Object.class.isAssignableFrom(cls);
+                || Enum.class.isAssignableFrom(cls) || !Object.class.isAssignableFrom(cls) || Number.class.isAssignableFrom(cls);
     }
 
     public static boolean isCustomClass(Class cls) {
