@@ -22,7 +22,7 @@ public class ValidatorMax extends PropertyResolverAbstract<ValidatorObject, Max>
 
     public static final String MAX = LangCodeUtils.get("请输入不大于 {0} 的数值", ValidatorMax.class);
 
-    public ValidatorObject getPropertyObjectMax(ValidatorObject propertyObject, final int max) {
+    public ValidatorObject getPropertyObjectMax(ValidatorObject propertyObject, final float max) {
         if (propertyObject == null) {
             propertyObject = new ValidatorObject();
         }
@@ -31,7 +31,7 @@ public class ValidatorMax extends PropertyResolverAbstract<ValidatorObject, Max>
 
             @Override
             public String validateValue(Object value, ILangMessage langMessage) {
-                if (DynaBinder.to(value, int.class) > max) {
+                if (DynaBinder.to(value, float.class) > max) {
                     return langMessage == null ? (max + " Max") : MessageFormat.format(langMessage.getLangMessage(MAX), max);
                 }
 

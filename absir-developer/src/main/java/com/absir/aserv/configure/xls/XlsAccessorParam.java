@@ -75,7 +75,7 @@ public class XlsAccessorParam extends XlsAccessor {
             return null;
         }
 
-        Object[] params = DynaBinder.to(value, Object[].class);
+        Object[] params = DynaBinder.to(value instanceof Object[] ? DynaBinder.to(value, ArrayList.class) : value, Object[].class);
         int length = params.length;
         for (int i = 0; i < length; i++) {
             Object val = params[i];

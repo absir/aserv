@@ -20,9 +20,9 @@ import java.util.Map;
 @Bean
 public class ValidatorMin extends PropertyResolverAbstract<ValidatorObject, Min> {
 
-    public static final String MIN = LangCodeUtils.get("请输入不大于 {0} 的数值", ValidatorMin.class);
+    public static final String MIN = LangCodeUtils.get("请输入不小于 {0} 的数值", ValidatorMin.class);
 
-    public ValidatorObject getPropertyObjectMin(ValidatorObject propertyObject, final int min) {
+    public ValidatorObject getPropertyObjectMin(ValidatorObject propertyObject, final float min) {
         if (propertyObject == null) {
             propertyObject = new ValidatorObject();
         }
@@ -31,7 +31,7 @@ public class ValidatorMin extends PropertyResolverAbstract<ValidatorObject, Min>
 
             @Override
             public String validateValue(Object value, ILangMessage langMessage) {
-                if (DynaBinder.to(value, int.class) < min) {
+                if (DynaBinder.to(value, float.class) < min) {
                     return langMessage == null ? (min + " Min") : MessageFormat.format(langMessage.getLangMessage(MIN), min);
                 }
 
