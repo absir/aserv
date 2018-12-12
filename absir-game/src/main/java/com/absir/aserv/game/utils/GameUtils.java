@@ -73,6 +73,7 @@ public abstract class GameUtils {
             if (level >= maxLevel) {
                 exp = 0;
                 level = maxLevel;
+                break;
             }
         }
 

@@ -226,6 +226,7 @@ public class ThriftService implements ISessionResolver, IBufferResolver.IServerD
         return new InputSocket.InputSocketAtt(id, buffer, flag, off, selSession, inputStream);
     }
 
+    @Override
     public void doDispatch(SelSession selSession, SocketChannel socketChannel, Serializable id, byte[] buffer, byte flag, int off,
                            SocketBuffer socketBuffer, InputStream inputStream, long currentTime) {
         if ((flag & SocketAdapter.RESPONSE_FLAG) == 0) {
