@@ -1,0 +1,10 @@
+#options (
+import = "org.jsoup.nodes.*"
+)
+
+##${node.empty().voidValue()}
+##${node.appendChild(ScriptNode::node('$' + '{Pag::dateValue(' + nodeval + ')}')).voidValue()}
+${node.attr('ab_toggle', 'qrcode')}
+${node.attr('qr_pre', field.metas.pre)}
+
+${Pag::setNameTag(INPUT, 'footer', '<script type="text/javascript" src="${SITE_STATIC}/../lib/qrcode/qrcode.min.js"></script>')}

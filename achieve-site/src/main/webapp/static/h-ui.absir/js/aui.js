@@ -999,7 +999,20 @@ $(function () {
                     });
                 }
             }
-        }
+        };
+
+        abToggles['qrcode'] = function ($this) {
+            var val = $this.attr('qr_pre')
+            val = val ? (val + $this.text()) : this.text()
+            new QRCode($this[0], {
+                text: val,
+                width: 80,
+                height: 80,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        };
 
     }
 );

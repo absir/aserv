@@ -25,6 +25,7 @@ public class JbBean extends JbBase implements JiBean {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Override
     public Long getId() {
         return id;
     }

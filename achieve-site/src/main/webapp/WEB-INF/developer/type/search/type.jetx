@@ -5,7 +5,7 @@ import = "com.absir.aserv.system.bean.value.JeEditable"
 
 #if(Scenario::pop("search", request) != null)
     #if(input)
-        #if(KernelClass::getMatchNumberClass(field.getType()) != null)
+        #if(KernelClass::getMatchNumberClass(field.getType()) != null && !(field.getName().endsWith("id") || field.getName().endsWith("Id")))
             #set(name = input.attr('name'))
         #tag layout_block("shtml")
         <div class="ab_span">
