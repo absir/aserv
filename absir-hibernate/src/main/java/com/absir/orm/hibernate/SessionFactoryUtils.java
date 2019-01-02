@@ -19,6 +19,8 @@ import com.absir.core.util.UtilAbsir;
 import com.absir.orm.hibernate.boost.EntityAssoc.AssocEntity;
 import com.absir.orm.hibernate.boost.EntityAssoc.AssocField;
 import com.absir.orm.hibernate.boost.EntityAssoc.EntityAssocEntity;
+import com.absir.orm.value.JaClasses;
+import com.absir.orm.value.JaNames;
 import com.absir.orm.value.JePermission;
 import com.absir.orm.value.JoEntity;
 import com.absir.property.PropertyUtils;
@@ -462,8 +464,26 @@ public abstract class SessionFactoryUtils {
                                 Object[] ms = null;
                                 Class<?> type = template.getType();
                                 if (KernelClass.isBasicClass(type) || type == Serializable.class) {
-                                    ms = new Object[1];
-                                    ms[0] = type;
+                                    String jpaName = null;
+                                    JaClasses classes = template.getAnnotation(JaClasses.class);
+                                    if (classes != null) {
+                                        jpaName = getJpaEntityName(classes.value());
+                                    }
+
+                                    JaNames names = template.getAnnotation(JaNames.class);
+                                    if (names != null) {
+                                        jpaName = names.value();
+                                    }
+
+                                    if (KernelString.isEmpty(jpaName)) {
+                                        ms = new Object[1];
+                                        ms[0] = type;
+
+                                    } else {
+                                        ms = new Object[2];
+                                        ms[0] = type;
+                                        ms[1] = jpaEntityName;
+                                    }
 
                                 } else {
                                     if (Map.class.isAssignableFrom(type)) {

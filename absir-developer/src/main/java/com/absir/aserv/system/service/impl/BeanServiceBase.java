@@ -11,7 +11,7 @@ import com.absir.aserv.crud.ICrudSupply;
 import com.absir.aserv.jdbc.JdbcCondition;
 import com.absir.aserv.jdbc.JdbcPage;
 import com.absir.aserv.lang.LangBundleImpl;
-import com.absir.aserv.system.bean.base.JbBean;
+import com.absir.aserv.system.bean.base.JbBase;
 import com.absir.aserv.system.bean.proxy.JiDeveloper;
 import com.absir.aserv.system.bean.proxy.JiSub;
 import com.absir.aserv.system.bean.proxy.JiTree;
@@ -46,7 +46,7 @@ public class BeanServiceBase implements BeanService, ICrudSupply {
     }
 
     public static void addSearchTreeObjects(Object object, Set<Object> jpTrees) {
-        if (object != null && object instanceof JbBean) {
+        if (object != null && object instanceof JbBase) {
             if (jpTrees.add(((JiTree<?>) object)) && object instanceof JiTree) {
                 JiTree<?> tree = (JiTree<?>) object;
                 if (tree.getChildren() != null) {
@@ -59,8 +59,8 @@ public class BeanServiceBase implements BeanService, ICrudSupply {
     }
 
     public static void addSearchTreeIds(Object object, Set<Serializable> serializables) {
-        if (object != null && object instanceof JbBean) {
-            if (serializables.add(((JbBean) object).getId()) && object instanceof JiTree) {
+        if (object != null && object instanceof JbBase) {
+            if (serializables.add(((JbBase) object).getId()) && object instanceof JiTree) {
                 JiTree<?> tree = (JiTree<?>) object;
                 if (tree.getChildren() != null) {
                     for (Object t : tree.getChildren()) {
