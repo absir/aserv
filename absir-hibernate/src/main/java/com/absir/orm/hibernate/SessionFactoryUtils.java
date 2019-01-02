@@ -482,7 +482,7 @@ public abstract class SessionFactoryUtils {
                                     } else {
                                         ms = new Object[2];
                                         ms[0] = type;
-                                        ms[1] = jpaEntityName;
+                                        ms[1] = jpaName;
                                     }
 
                                 } else {

@@ -13,13 +13,11 @@ import com.absir.aserv.system.helper.HelperCondition;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.BeanService;
 import com.absir.core.dyna.DynaBinder;
-import com.absir.core.kernel.KernelCollection;
-import com.absir.core.kernel.KernelDyna;
-import com.absir.core.kernel.KernelLang;
+import com.absir.core.kernel.*;
 import com.absir.core.kernel.KernelLang.PropertyFilter;
-import com.absir.core.kernel.KernelString;
 import com.absir.orm.hibernate.SessionFactoryUtils;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -280,6 +278,9 @@ public abstract class SearchServiceUtils {
                         jdbcCondition.pushAlias();
                         searchConditions.add(jdbcCondition.joinProperyName(propertyName) + '.' + SessionFactoryUtils.getIdentifierName(entityName, null, null) + " IN (?)");
                         jdbcCondition.popAlias();
+
+                    } else if (KernelClass.isBasicClass(fieldType) || fieldType == Serializable.class) {
+                        searchConditions.add(alias + '.' + propertyName + " IN (?)");
 
                     } else {
                         searchConditions.add(alias + '.' + propertyName + '.' + SessionFactoryUtils.getIdentifierName(entityName, null, null) + " IN (?)");
