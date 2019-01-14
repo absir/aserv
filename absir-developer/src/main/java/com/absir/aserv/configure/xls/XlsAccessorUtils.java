@@ -46,8 +46,13 @@ public class XlsAccessorUtils {
         if (hssfCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
             double value = hssfCell.getNumericCellValue();
             int intValue = (int) value;
-            if (value == (double) intValue) {
+            if ((double) intValue == value) {
                 return intValue;
+            }
+
+            long lValue = (long) value;
+            if ((double) lValue == value) {
+                return lValue;
             }
 
             return value;
