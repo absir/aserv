@@ -9,7 +9,7 @@ package com.absir.context.core;
 
 import java.io.Serializable;
 
-public abstract class ContextBeanO<ID extends Serializable> extends ContextBean<ID> {
+public abstract class ContextBeanOA<ID extends Serializable> extends ContextBean<ID> {
 
     Class<?> contextClass;
 
