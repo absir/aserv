@@ -428,6 +428,10 @@ public class EntityField extends DBField {
     }
 
     public static void addEntityFieldScope(String name, JoEntity joEntity, Collection<IField> fieldScope, EntityModel entityModel, IField fromField) {
+        addEntityFieldScope(name, joEntity, fieldScope, entityModel, fromField, false);
+    }
+
+    public static void addEntityFieldScope(String name, JoEntity joEntity, Collection<IField> fieldScope, EntityModel entityModel, IField fromField, boolean embedd) {
         String identifierName = null;
         String entityName = joEntity.getEntityName();
         if (entityName == null) {
@@ -461,6 +465,10 @@ public class EntityField extends DBField {
                 entityField = new EntityField(fieldName, property, editorObject, joEntity, fromField);
                 if ((entityField.getType() == Object.class || entityField.getType() == Serializable.class) && IBase.class.isAssignableFrom(joEntity.getEntityClass()) && fieldName.equals("id")) {
                     entityField.getCrudField().setType(KernelClass.typeClass(joEntity.getEntityClass(), IBase.ID_VARIABLE));
+                }
+
+                if (embedd) {
+                    continue;
                 }
 
                 primary = true;
@@ -629,7 +637,7 @@ public class EntityField extends DBField {
 
         //&& editable != JeEditable.LOCKED
         if (embedd) {
-            addEntityFieldScope(crudField.getName(), crudField.getJoEntity(), fieldScope, entityModel, this);
+            addEntityFieldScope(crudField.getName(), crudField.getJoEntity(), fieldScope, entityModel, this, true);
 
         } else {
             fieldScope.add(this);
