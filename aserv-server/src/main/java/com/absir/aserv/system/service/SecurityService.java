@@ -486,7 +486,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IA
     }
 
     @Override
-    public boolean validator(JiUserBase userBase, String password, int error, long errorTime, String address) {
+    public boolean validator(Object userBase, String password, int error, long errorTime, String address) {
         if (password == null) {
             return true;
         }

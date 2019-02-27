@@ -850,6 +850,35 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         return ME;
     }
 
+    public boolean file(String uri, HttpServletRequest req, HttpServletResponse res) throws Throwable {
+        File file = getUploadFile(uri);
+        if (file.exists()) {
+            String modified = String.valueOf(file.lastModified());
+            String ifModifiedSince = req.getHeader("If-Modified-Since");
+            if (ifModifiedSince != null && modified.equals(ifModifiedSince)) {
+                res.setStatus(304);
+                return true;
+            }
+
+            res.addHeader("cache-control", cacheControl);
+            res.addHeader("last-modified", modified);
+            InputStream inputStream = null;
+            try {
+                inputStream = new FileInputStream(file);
+                HelperIO.copy(inputStream, res.getOutputStream());
+
+            } finally {
+                if (inputStream != null) {
+                    UtilPipedStream.closeCloseable(inputStream);
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * 上传文件静态文件服务(Cached)
      */
@@ -858,30 +887,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         if (uri.length() > UPLOAD_LENGTH && uri.startsWith(UPLOAD)) {
             uri = uri.substring(UPLOAD.length());
             if (uri.charAt(0) != '@') {
-                File file = getUploadFile(uri);
-                if (file.exists()) {
-                    String modified = String.valueOf(file.lastModified());
-                    String ifModifiedSince = req.getHeader("If-Modified-Since");
-                    if (ifModifiedSince != null && modified.equals(ifModifiedSince)) {
-                        res.setStatus(304);
-                        return true;
-                    }
-
-                    res.addHeader("cache-control", cacheControl);
-                    res.addHeader("last-modified", modified);
-                    InputStream inputStream = null;
-                    try {
-                        inputStream = new FileInputStream(file);
-                        HelperIO.copy(inputStream, res.getOutputStream());
-
-                    } finally {
-                        if (inputStream != null) {
-                            UtilPipedStream.closeCloseable(inputStream);
-                        }
-                    }
-
-                    return true;
-                }
+                return file(uri, req, res);
             }
         }
 

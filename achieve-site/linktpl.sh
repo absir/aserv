@@ -19,9 +19,15 @@ if [ -d "$toPath/static" ]; then
 	exit 0
 fi
 
+rm "$toPath/static"
 ln -s "$fromPath/static" "$toPath/static"
+rm "$toPath/lib"
 ln -s "$fromPath/lib" "$toPath/lib"
+rm "$toPath/WEB-INF/developer"
 ln -s "$fromPath/WEB-INF/developer" "$toPath/WEB-INF/developer"
+rm "$toPath/WEB-INF/tpl"
 ln -s "$fromPath/WEB-INF/tpl" "$toPath/WEB-INF/tpl"
 
 mkdir "$toPath/../webapp0"
+
+read line
