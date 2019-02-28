@@ -82,6 +82,21 @@ public class DBField implements IField {
         return crudField.getName();
     }
 
+    String nameId;
+
+    public String getNameId() {
+        if (nameId == null) {
+            String name = crudField.getName();
+            if (name.indexOf('.') >= 0) {
+                name = name.replace('.', '_');
+            }
+
+            nameId = name;
+        }
+
+        return nameId;
+    }
+
     public String getNodeName() {
         if (nodeName == null) {
             nodeName = crudField.getName().replace('.', '-');

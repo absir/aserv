@@ -22,6 +22,8 @@ public interface IField {
 
     public String getName();
 
+    public String getNameId();
+
     public Class<?> getType();
 
     public IField getValueField();

@@ -487,15 +487,19 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IA
 
     @Override
     public boolean validator(Object userBase, String password, int error, long errorTime, String address) {
+        return validator(userBase, userBase, password, error, errorTime, address);
+    }
+
+    public boolean validator(Object userBase, Object security, String password, int error, long errorTime, String address) {
         if (password == null) {
             return true;
         }
 
-        if (!(userBase instanceof IUser)) {
+        if (!(security instanceof IUser)) {
             return false;
         }
 
-        IUser user = (IUser) userBase;
+        IUser user = (IUser) security;
         int errorLogin = user.getErrorLogin();
         long contextTime = ContextUtils.getContextTime();
         if (user.getLastErrorLogin() <= contextTime) {
@@ -511,7 +515,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IA
             user.setLastLogin(contextTime);
             user.setLoginTimes(user.getLoginTimes() + 1);
             user.setLoginAddress(address);
-            BeanService.ME.merge(user);
+            BeanService.ME.merge(userBase);
             return true;
         }
 
@@ -520,7 +524,7 @@ public abstract class SecurityService implements ISecurityService, ISecurity, IA
             user.setErrorLogin(++errorLogin);
             user.setLastErrorLogin(contextTime + errorTime);
             user.setLastErrorTimes(error - errorLogin);
-            BeanService.ME.merge(user);
+            BeanService.ME.merge(userBase);
 
         } else {
             user.setLastErrorTimes(-1);
