@@ -38,6 +38,10 @@ public class ModelFactory {
         return getModelEntity(CrudUtils.newJoEntity(null, entityClass));
     }
 
+    public static void clearModelEntity(Class<?> entityClass) {
+        Jo_Entity_Map_Entity_Model.remove(CrudUtils.newJoEntity(null, entityClass));
+    }
+
     public static EntityModel getModelEntity(JoEntity joEntity) {
         if (joEntity.getEntityClass() == null) {
             return null;
