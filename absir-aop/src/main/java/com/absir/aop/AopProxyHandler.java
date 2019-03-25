@@ -80,7 +80,7 @@ public class AopProxyHandler {
             }
 
         } else if (length == 1) {
-            Integer interceptor = AOP_PROXY_METHOD_ZERO.get(method.getName());
+            Integer interceptor = AOP_PROXY_METHOD_ONE.get(method.getName());
             if (interceptor != null) {
                 switch (interceptor) {
                     case 0:

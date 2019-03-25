@@ -17,6 +17,7 @@ import com.absir.aserv.system.bean.JLog;
 import com.absir.aserv.system.bean.JUserRolePermissions;
 import com.absir.aserv.system.bean.base.JbUserRole;
 import com.absir.aserv.system.bean.proxy.JiUserBase;
+import com.absir.aserv.system.bean.value.ICopy;
 import com.absir.aserv.system.bean.value.JaCrud.Crud;
 import com.absir.aserv.system.helper.HelperString;
 import com.absir.aserv.system.service.BeanService;
@@ -365,6 +366,96 @@ public class Admin_entity extends AdminServer {
         input.getModel().put("url", 1);
 
         return "admin/entity/save.option";
+    }
+
+    public Object copyJson(String entityName, @Param String ids, Input input) throws IOException {
+        String[] _ids;
+        try {
+            _ids = (String[]) HelperJson.decode(ids, String[].class);
+
+        } catch (Exception e) {
+            throw new ServerException(ServerStatus.IN_404);
+        }
+
+        for (String id : _ids) {
+            copy(entityName, id, input);
+        }
+
+        input.getModel().remove("create");
+        input.getModel().remove("id");
+        input.getModel().remove("url");
+
+        input.getModel().put("url", 1);
+
+        return "admin/entity/save.option";
+    }
+
+    public String copy(String entityName, Object id, Input input) throws IOException {
+        ICrudSupply crudSupply = getCrudSupply(entityName, input);
+        if (!crudSupply.support(Crud.CREATE)) {
+            throw new ServerException(ServerStatus.IN_404);
+        }
+
+        JiUserBase user = SecurityService.ME.getUserBase(input);
+        PropertyFilter filter = null;
+        try {
+            filter = AuthServiceUtils.insertPropertyFilter(entityName, crudSupply, user);
+
+        } catch (ServerException e) {
+            JLog.log("admin", "copy/" + entityName + "/" + id, input.getAddress(),
+                    user == null ? null : user.getUsername(), false);
+            return "admin/entity/save.denied";
+        }
+
+        TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_WRITE);
+        Object old = edit(entityName, id, crudSupply, user);
+        String identifierName = crudSupply.getIdentifierName(entityName);
+        crudSupply.evict(old);
+
+        ICopy iCopy = ICopy.class.isAssignableFrom(old.getClass()) ? (ICopy) old : null;
+        boolean success = false;
+        Object entity;
+        try {
+            entity = iCopy == null ? KernelObject.clone(old) : iCopy.copyFrom();
+            Map<String, Object> dataMap = ParameterResolverBinder.getPropertyMap(input);
+            if (!KernelString.isEmpty(identifierName)) {
+                dataMap.put(identifierName, null);
+            }
+
+            Map<String, Object> crudRecord = CrudUtils.crudRecord(new JoEntity(entityName, entity.getClass()), entity, filter);
+            BinderData binderData = input.getBinderData();
+            binderData.setLangMessage(input);
+            BinderResult binderResult = binderData.getBinderResult();
+            binderResult.setPropertyFilter(filter);
+            binderData.mapBind(dataMap, entity);
+            JoEntity joEntity = (JoEntity) input.getAttribute("joEntity");
+            boolean crudCreate = CrudContextUtils.crud(Crud.CREATE, true, crudRecord, joEntity, entity, user, filter, binderResult, input);
+            InModel model = input.getModel();
+            model.put("entity", entity);
+            if (binderResult.hashErrors()) {
+                model.put("errors", binderResult.getPropertyErrors());
+                return "admin/entity/save.error";
+            }
+
+            crudSupply.mergeEntity(entityName, entity, crudCreate);
+            crudSupply.flush();
+            success = true;
+
+        } finally {
+            if (iCopy != null) {
+                iCopy.copyDone(success);
+            }
+        }
+
+        InModel model = input.getModel();
+        model.put("create", true);
+        Object nId = crudSupply.getIdentifier(entityName, entity);
+        model.put("id", nId);
+        model.put("url", getAdminRoute() + "entity/edit/" + entityName + "/" + id);
+
+        JLog.log("admin", "copy/" + id + "-" + nId, input.getAddress(), user == null ? null
+                : user.getUsername(), true);
+        return "admin/entity/save";
     }
 
     /**
