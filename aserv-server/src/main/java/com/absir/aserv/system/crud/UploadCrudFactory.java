@@ -241,6 +241,21 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
         return new File(uploadPath + HelperFileName.normalize(filePath));
     }
 
+    public boolean copyUploadFile(String filePath, String toPath) {
+        File file = getUploadFile(filePath);
+        if (file.exists()) {
+            try {
+                HelperFile.copyFile(file, getUploadFile(toPath));
+                return true;
+
+            } catch (IOException e) {
+                LOGGER.error("copy err at " + filePath + " => " + toPath, e);
+            }
+        }
+
+        return false;
+    }
+
     public File getProtectedFile(String filePath) {
         if (filePath.charAt(0) == '@') {
             filePath = filePath.substring(1);

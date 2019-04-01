@@ -2,8 +2,8 @@ package com.absir.aserv.system.bean.value;
 
 public interface ICopy {
 
-        Object copyFrom();
+    Object copyFrom();
 
-        void copyDone(boolean success);
+    void copyDone(boolean success, Object old);
 
-    }
+}

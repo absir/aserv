@@ -414,9 +414,8 @@ public class Admin_entity extends AdminServer {
 
         ICopy iCopy = ICopy.class.isAssignableFrom(old.getClass()) ? (ICopy) old : null;
         boolean success = false;
-        Object entity;
+        Object entity = iCopy == null ? KernelObject.clone(old) : iCopy.copyFrom();
         try {
-            entity = iCopy == null ? KernelObject.clone(old) : iCopy.copyFrom();
             Map<String, Object> dataMap = ParameterResolverBinder.getPropertyMap(input);
             if (!KernelString.isEmpty(identifierName)) {
                 dataMap.put(identifierName, null);
@@ -443,7 +442,7 @@ public class Admin_entity extends AdminServer {
 
         } finally {
             if (iCopy != null) {
-                iCopy.copyDone(success);
+                ((ICopy) entity).copyDone(success, old);
             }
         }
 
