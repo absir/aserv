@@ -87,6 +87,24 @@ public class AsyncRunnableNotifier extends AsyncRunnable {
             @Override
             public void run() {
                 try {
+                    synchronized (AsyncRunnableNotifier.this) {
+                        if (notifying) {
+                            if (notifierIterator == null) {
+                                notifierIterator = new NotifierIterator();
+                            }
+
+                            notifierIterator.proxy = proxy;
+                            notifierIterator.iterator = iterator;
+                            notifierIterator.proxyHandler = proxyHandler;
+                            notifierIterator.method = method;
+                            notifierIterator.args = args;
+                            notifierIterator.methodProxy = methodProxy;
+                            return;
+                        }
+
+                        notifying = true;
+                    }
+
                     proxyHandler.invoke(proxy, iterator, method, args, methodProxy);
 
                 } catch (Throwable e) {
@@ -102,13 +120,12 @@ public class AsyncRunnableNotifier extends AsyncRunnable {
     protected void checkNotifierIterator() {
         NotifierIterator iterator = null;
         synchronized (this) {
+            notifying = false;
             if (notifierIterator == null) {
-                notifying = false;
                 return;
 
             } else {
                 iterator = notifierIterator;
-                notifierIterator = null;
             }
         }
 
@@ -125,24 +142,6 @@ public class AsyncRunnableNotifier extends AsyncRunnable {
     @Override
     public void aysnc(Object proxy, Iterator<AopInterceptor> iterator, AopProxyHandler proxyHandler, Method method, Object[] args,
                       MethodProxy methodProxy) throws Throwable {
-        synchronized (this) {
-            if (notifying) {
-                if (notifierIterator == null) {
-                    notifierIterator = new NotifierIterator();
-                }
-
-                notifierIterator.proxy = proxy;
-                notifierIterator.iterator = iterator;
-                notifierIterator.proxyHandler = proxyHandler;
-                notifierIterator.method = method;
-                notifierIterator.args = args;
-                notifierIterator.methodProxy = methodProxy;
-                return;
-            }
-
-            notifying = true;
-        }
-
         try {
             aysncRun(notifierRunnable(proxy, iterator, proxyHandler, method, args, methodProxy));
 

@@ -243,7 +243,7 @@ public class UploadCrudFactory implements ICrudFactory, ICrudProcessorInput<File
 
     public boolean copyUploadFile(String filePath, String toPath) {
         File file = getUploadFile(filePath);
-        if (file.exists()) {
+        if (file != null && file.exists()) {
             try {
                 HelperFile.copyFile(file, getUploadFile(toPath));
                 return true;
