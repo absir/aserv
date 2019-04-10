@@ -149,7 +149,14 @@ function ab_getParam(sel, node, json) {
         }
     }
 
-    return vals && vals.length ? $.toJSON(vals) : undefined;
+    if (vals && vals.length) {
+        vals = $.toJSON(vals)
+        vals = '%5b' + vals.substr(1, vals.length - 2) + '%5d'
+        return vals;
+
+    } else {
+        return undefined;
+    }
 }
 
 function ab_open(href) {

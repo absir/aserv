@@ -976,13 +976,16 @@ $(function () {
                             });
                         }
 
-                        poiPicker.on('poiPicked', function (poiResult) {
-                            map.setCenter(poiResult.item.location)
+                        var positionPicker = new PositionPicker({
+                            mode: 'dragMarker',
+                            map: map
                         });
 
-                        var positionPicker = new PositionPicker({
-                            mode: 'dragMap',
-                            map: map
+                        poiPicker.on('poiPicked', function (poiResult) {
+                            map.setCenter(poiResult.item.location)
+                            positionPicker.marker.setPosition(poiResult.item.location)
+
+                            positionPicker.getPosition(poiResult.item.location)
                         });
 
                         positionPicker.on('success', function (pRes) {

@@ -6,7 +6,7 @@ ${Scenario::set("edit", request)}
 #tag script()
 #set(element = document.appendElement("div"))
 ##<!--form body
-#set(readonly = !create)
+##set(readonly = !create)
 ##编辑实体主键
 #for(field : entityModel.getPrimaries())
 #if(!generator.allow(field))
@@ -37,10 +37,10 @@ ${Scenario::set("edit", request)}
 </div>
 #end
 #set(nodes = ScriptNode::append(element, node))
-#if(readonly)
-    ${ScriptNode::attr(nodes.get(0).getElementsByTag("input").get(0), "readonly")}
-    ${nodes.get(0).getElementsByTag("input").get(0).addClass("ab_locked")}
-#end
+###if(readonly)
+    ${ScriptNode::attr(nodes.get(0).getElementsByTag("input").get(0), "${create ? '' : 'readonly'}")}
+    ##${nodes.get(0).getElementsByTag("input").get(0).addClass("ab_locked")}
+###end
 ${DeveloperUtils::includeExist("edit", field.getTypes(), request)}
 #end
 #end
