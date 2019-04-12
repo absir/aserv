@@ -445,10 +445,17 @@ public abstract class SessionFactoryUtils {
         return getJpaEntityNames(getReferencedEntityNames(joEntity, field));
     }
 
-    public static Map<String, Object[]> getEntityFieldMetas(final String jpaEntityName, Class<?> entityClass) {
+    public static Map<String, Object[]> getEntityFieldMetas(String jpaName, Class<?> entityClass) {
         if (entityClass == null) {
-            entityClass = getEntityClass(jpaEntityName);
+            entityClass = getEntityClass(jpaName);
         }
+
+        if (KernelString.isEmpty(jpaName)) {
+            // 会冲突
+            jpaName = entityClass.getName();
+        }
+
+        final String jpaEntityName = jpaName;
 
         Map<String, Object[]> metas = Entity_Name_Map_Field_Metas.get(jpaEntityName);
         if (metas == null) {

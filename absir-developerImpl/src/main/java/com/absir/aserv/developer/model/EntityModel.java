@@ -231,6 +231,7 @@ public class EntityModel implements IModel {
     }
 
     protected boolean isCloudSearchField(IField field) {
+        //todo 不稳定
         Map<String, Object[]> fieldMetas = SessionFactoryUtils.getEntityFieldMetas(joEntity.getEntityName(), joEntity.getEntityClass());
         if (fieldMetas == null) {
             return false;

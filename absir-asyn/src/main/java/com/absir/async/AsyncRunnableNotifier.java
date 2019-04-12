@@ -126,6 +126,7 @@ public class AsyncRunnableNotifier extends AsyncRunnable {
 
             } else {
                 iterator = notifierIterator;
+                notifierIterator = null;
             }
         }
 
