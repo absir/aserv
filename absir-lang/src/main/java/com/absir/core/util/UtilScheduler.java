@@ -68,11 +68,13 @@ public class UtilScheduler<T extends NextRunnable> extends Thread {
                 Date date = UtilContext.getCurrentDate();
                 UtilNode<T> node = runnableHeader.getNext();
                 UtilNode<T> nodeNext = null;
+                long nt = 0;
                 T runnable;
                 while (node != null) {
                     nodeNext = node.getNext();
                     runnable = node.getElement();
-                    if (runnable.getNextTime() <= time) {
+                    nt = runnable.getNextTime();
+                    if (nt <= time) {
                         try {
                             runnable.run(date);
 
@@ -80,7 +82,7 @@ public class UtilScheduler<T extends NextRunnable> extends Thread {
                             logThrowable(e);
                         }
 
-                        if (runnable.getNextTime() <= time) {
+                        if (runnable.getNextTime() <= nt) {
                             removeRunnableNode(node);
 
                         } else {
@@ -101,7 +103,6 @@ public class UtilScheduler<T extends NextRunnable> extends Thread {
                     }
 
                     for (T add : adds) {
-                        add.start(date);
                         if (add.getNextTime() <= time) {
                             try {
                                 add.run(date);

@@ -29,6 +29,6 @@ public class CronExpressionRunnable extends CronFixDelayRunnable {
 
     @Override
     public long getNextScheduleTime(Date date) {
-        return cronSequenceGenerator.next(date).getTime() + getFixDelay();
+        return cronSequenceGenerator.next(date).getTime();
     }
 }

@@ -77,7 +77,8 @@ public class ScheduleFactory extends UtilScheduler<ScheduleRunnable> implements 
         }
 
         scheduleRunnable.setNextTime(inject.initialDelay());
-        addNextRunnableNode(scheduleRunnable);
+        addRunnable(scheduleRunnable);
+        //addNextRunnableNode(scheduleRunnable);
     }
 
     /**

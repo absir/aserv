@@ -24,6 +24,17 @@ public class UtilNode<T> {
         this.element = element;
     }
 
+    public int nextSize() {
+        int size = 1;
+        UtilNode<T> node = next;
+        while (node != null) {
+            size++;
+            node = node.next;
+        }
+
+        return size;
+    }
+
     public static <T extends Orderable> void insertOrderableNode(UtilNode<T> orderableHeader, T orderable) {
         insertOrderableNode(orderableHeader, new UtilNode<T>(orderable));
     }

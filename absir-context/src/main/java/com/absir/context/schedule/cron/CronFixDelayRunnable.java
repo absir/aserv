@@ -35,7 +35,7 @@ public class CronFixDelayRunnable extends ScheduleRunnableAbstract {
         }
 
         long minTime = date.getTime();
-        while (nextTime < minTime) {
+        while (nextTime <= minTime) {
             nextTime += fixDelay;
         }
 
