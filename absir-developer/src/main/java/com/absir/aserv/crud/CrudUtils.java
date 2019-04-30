@@ -442,6 +442,9 @@ public abstract class CrudUtils {
             return crudEntity;
         }
 
+        crudEntity = new CrudEntity();
+        Jo_Entity_Map_Crud_Entity.put(joEntity, crudEntity);
+
         List<JCrudField> crudFields = null;
         String runtimeName = UtilRuntime.getRuntimeName(CrudUtils.class, "Crud_Fields_" + joEntity.toString());
         if (IDeveloper.ME == null) {
@@ -451,13 +454,11 @@ public abstract class CrudUtils {
             crudFields = IDeveloper.ME.getCrudFields(joEntity);
         }
 
-        crudEntity = new CrudEntity();
         for (JCrudField crudField : crudFields) {
             addCrudEntityProperty(joEntity, crudEntity, crudField, joEntity.getEntityClass());
         }
 
         crudEntity.joEntity = joEntity;
-        Jo_Entity_Map_Crud_Entity.put(joEntity, crudEntity);
         crudEntity.initCrudEntity();
         return crudEntity;
     }
