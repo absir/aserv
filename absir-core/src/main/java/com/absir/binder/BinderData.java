@@ -12,6 +12,7 @@ import com.absir.bean.inject.value.Inject;
 import com.absir.bean.lang.ILangMessage;
 import com.absir.bean.lang.LangCodeUtils;
 import com.absir.core.dyna.DynaBinder;
+import com.absir.core.kernel.KernelClass;
 import com.absir.core.kernel.KernelDyna;
 import com.absir.core.kernel.KernelLang;
 import com.absir.core.kernel.KernelLang.BreakException;
@@ -278,6 +279,14 @@ public class BinderData extends DynaBinder {
     protected void bindValue(Object value, PropertyData propertyData, Property property, Object toObject) {
         if (binderPaths != null) {
             binderPaths.add(binderResult.getPropertyPath());
+        }
+
+        if (value instanceof Map && KernelClass.isCustomClass(property.getType())) {
+            Object val = property.getAccessor().get(toObject);
+            if (val != null) {
+                mapBind((Map<?, ?>) value, val);
+                return;
+            }
         }
 
         value = binderSupply.bindValue(propertyData, value, null, this, toObject);
