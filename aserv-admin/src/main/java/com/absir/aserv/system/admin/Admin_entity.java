@@ -301,6 +301,9 @@ public class Admin_entity extends AdminServer {
                         model.put("message", ICrudSubmit.OPTION_FAIL);
                     }
 
+                    JLog.log("admin", "save/" + (id == null ? entityName : (entityName + "/" + id)) + option, input.getAddress(), user == null ? null
+                            : user.getUsername(), true);
+
                     return KernelString.isEmpty(tpl) ? "admin/entity/save.option" : tpl;
                 }
             }
