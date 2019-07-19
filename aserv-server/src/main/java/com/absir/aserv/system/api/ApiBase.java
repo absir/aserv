@@ -32,7 +32,7 @@ public abstract class ApiBase {
 
         if (BeanFactoryUtils.getEnvironment().compareTo(Environment.DEBUG) <= 0 || input.isDebug()
                 || !(e instanceof ServerException)) {
-            LOGGER.debug("on server " + input.getUri(), e);
+            LOGGER.error("on server " + input.getUri(), e);
         }
 
         onPut.setReturnedFixed(false);
@@ -51,7 +51,7 @@ public abstract class ApiBase {
             messageCode.setServerException(exception);
             return messageCode;
         }
-        
+
         return new MessageCode(e);
     }
 
