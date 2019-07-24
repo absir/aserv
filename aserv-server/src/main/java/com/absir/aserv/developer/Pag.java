@@ -285,7 +285,7 @@ public class Pag {
     }
 
     public static String value(Object obj) {
-        return obj == null ? "" : obj.toString();
+        return obj == null ? "" : obj instanceof Enum ? ((Enum) obj).name() : obj.toString();
     }
 
     public static String dateValue(Object obj) {
