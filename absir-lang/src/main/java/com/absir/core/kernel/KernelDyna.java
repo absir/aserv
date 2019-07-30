@@ -550,12 +550,26 @@ public abstract class KernelDyna {
 
         } catch (Exception e) {
             try {
+                if (IEnum.class.isAssignableFrom(enumType)) {
+                    Object[] enums = enumType.getEnumConstants();
+                    if (enums.length > 0) {
+                        return ((IEnum) (enums[0])).fromId(str);
+                    }
+
+                    return null;
+                }
+
                 return toEnum(Float.valueOf(str), enumType);
 
             } catch (Exception ex) {
                 return null;
             }
         }
+    }
+
+    public interface IEnum {
+
+        Enum fromId(String id);
     }
 
     public static Enum toEnum(Number num, Class<? extends Enum> enumType) {
