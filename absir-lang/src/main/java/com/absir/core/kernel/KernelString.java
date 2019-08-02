@@ -26,7 +26,7 @@ public abstract class KernelString {
         }
     }
 
-    public static boolean empty(CharSequence string) {
+    static boolean empty(CharSequence string) {
         return string.length() == 0;
     }
 
