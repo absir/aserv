@@ -8,14 +8,15 @@
 package com.absir.aserv.system.helper;
 
 import com.absir.client.helper.HelperEncrypt;
+import com.absir.core.kernel.KernelByte;
 import com.absir.core.kernel.KernelLang.BreakException;
 import com.absir.core.kernel.KernelLang.FilterTemplate;
 import com.absir.core.kernel.KernelObject;
 
 import java.awt.*;
 import java.security.SecureRandom;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class HelperRandom {
 
@@ -248,6 +249,23 @@ public class HelperRandom {
 
     public static void appendFormatLongMd5(StringBuilder stringBuilder, IFormatType type, long l, int size) {
         appendFormatLongMd5(stringBuilder, type, Long.toHexString(l).getBytes(), size);
+    }
+
+    static byte[] srKey = HelperEncrypt.getSROREncryptKey("*&^()!@#$~_+<>?");
+
+    public static void appendFormatSrLong(StringBuilder sb, long l, boolean time, IFormatType type) {
+        byte[] bytes;
+        if (time || l <= 0) {
+            bytes = KernelByte.getLongBytes(l <= 0 ? System.currentTimeMillis() : l);
+            bytes[0] = (byte) RANDOM.nextInt(255);
+            bytes[1] = (byte) RANDOM.nextInt(255);
+
+        } else {
+            bytes = KernelByte.getLongBytes(l);
+        }
+
+        HelperEncrypt.decryptSRORKey(bytes, srKey);
+        appendFormatLong(sb, type, KernelByte.getLong(bytes, 0));
     }
 
     public static void appendFormatLongMd5(StringBuilder stringBuilder, IFormatType type, byte[] bytes, int size) {

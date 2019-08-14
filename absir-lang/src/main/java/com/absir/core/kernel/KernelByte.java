@@ -9,6 +9,7 @@ package com.absir.core.kernel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 public class KernelByte {
 
@@ -36,6 +37,20 @@ public class KernelByte {
         byte[] destination = new byte[4];
         setLength(destination, 0, length);
         return destination;
+    }
+
+    public static byte[] getLongBytes(long val) {
+        byte[] bytes = new byte[8];
+        ByteBuffer.wrap(bytes).putLong(0, val);
+        return bytes;
+    }
+
+    public static void setLong(byte[] bytes, int off, long val) {
+        ByteBuffer.wrap(bytes).putLong(off, val);
+    }
+
+    public static long getLong(byte[] bytes, int off) {
+        return ByteBuffer.wrap(bytes).getLong(off);
     }
 
     public static final void copy(byte[] source, byte[] destination, int sourceIndex, int destionationIndex,
