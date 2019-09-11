@@ -281,6 +281,15 @@ public class EntityStatics {
         Developer.setRuntime(runtimeName, value);
     }
 
+    public static Object suggestSelectAjax(String entityName, Object selected, IAttributes attributes) {
+        List<Object> list = list(entityName, new Object[]{selected}, attributes);
+        return list == null || list.isEmpty() ? null : list.get(0);
+    }
+
+    public static List<Object> suggestSelectsAjax(String entityName, Object selecteds, IAttributes attributes) {
+        return list(entityName, DynaBinder.to(selecteds, Object[].class), attributes);
+    }
+
     public static Object suggestSelect(List entities, String primary, Object selected) {
         if (selected == null || entities == null || entities.size() == 0) {
             return null;
