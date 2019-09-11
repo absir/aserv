@@ -552,7 +552,7 @@ public class Admin_entity extends AdminServer {
         TransactionIntercepter.open(input, crudSupply.getTransactionName(), BeanService.TRANSACTION_READ_ONLY);
         List<Object> entities = ids == null ? EntityService.ME.list(entityName, crudSupply, user, null,
                 InputServiceUtils.getSearchCondition(entityName, crudSupply.getEntityClass(entityName), filter, null, input),
-                InputServiceUtils.getOrderQueue(entityName, input), null) : EntityService.ME.list(entityName, crudSupply, user, null, ids);
+                InputServiceUtils.getOrderQueue(entityName, input), 0, 65535) : EntityService.ME.list(entityName, crudSupply, user, null, ids);
 
         entities = XlsUtils.forXlsExports(entities, 0);
 
