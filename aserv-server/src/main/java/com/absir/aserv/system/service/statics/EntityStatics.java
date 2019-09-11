@@ -235,7 +235,7 @@ public class EntityStatics {
 
             //suggestMaxResults
             // 限制最大数量
-            entities = CrudServiceUtils.list(entityName, AccessServiceUtils.suggestCondition(entityName, condition), null, 0, 65535);
+            entities = CrudServiceUtils.list(entityName, AccessServiceUtils.suggestCondition(entityName, condition), null, 0, 1024);
             input.setAttribute(entitiesKey, entities);
         }
 
